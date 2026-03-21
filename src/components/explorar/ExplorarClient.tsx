@@ -102,7 +102,7 @@ export function ExplorarClient({ mapItems, oportunidades }: ExplorarClientProps)
                     >
                         {activeTab === 'wiki' && <WikiView />}
                         {activeTab === 'mapa' && (
-                            <div className="mt-8">
+                            <div className="w-full h-full min-h-[700px]">
                                 <MapClient initialItems={mapItems} />
                             </div>
                         )}
