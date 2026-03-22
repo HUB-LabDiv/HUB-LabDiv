@@ -10,8 +10,9 @@ import { Trail } from '@/types';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
 import { updateProfile } from '@/app/actions/profiles';
-import { Download, FileText, ChevronDown } from 'lucide-react';
+import { Download, FileText, ChevronDown, RefreshCw } from 'lucide-react';
 import { TrilhasFeedbackCard } from './TrilhasFeedbackCard';
+import { JupiterEvolutionModal } from './JupiterEvolutionModal';
 
 const COURSE_MAPS = [
     { id: 'bach', name: 'Bacharelado em Física', image: '/unnamed.jpg', pdf: '/Manual-Bacharelado-Fisica-IFUSP-2025_0.pdf' },
@@ -72,6 +73,7 @@ export default function TrilhasClient({
     const [viewMode, setViewMode] = useState<'grid' | 'tree'>('grid');
     const [selectedCourseMap, setSelectedCourseMap] = useState(COURSE_MAPS[0]);
     const [isVisualMapOpen, setIsVisualMapOpen] = useState(false);
+    const [isEvolutionModalOpen, setIsEvolutionModalOpen] = useState(false);
     const router = useRouter();
 
     const resolvePrereqName = (prereqCode: string) => {
@@ -167,7 +169,7 @@ export default function TrilhasClient({
             let effectiveCategory = t.category;
 
             // Relatividade de Categoria (v4.20: Prioridade absoluta para o filtro ativo)
-            if (t.course_map) {
+            if (t.category_map) {
                 let contextAxis = axisFilter && axisFilter !== 'comum' ? contextAxisMap[axisFilter] : null;
 
                 // Se não houver filtro ativo, usamos o curso do usuário
@@ -178,8 +180,8 @@ export default function TrilhasClient({
                             courseStr.includes('bacharelado') ? 'bacharelado' : null;
                 }
 
-                if (contextAxis && t.course_map[contextAxis] && t.course_map[contextAxis] !== 'nao_se_aplica') {
-                    effectiveCategory = t.course_map[contextAxis] as any;
+                if (contextAxis && t.category_map[contextAxis] && t.category_map[contextAxis] !== 'nao_se_aplica') {
+                    effectiveCategory = t.category_map[contextAxis] as any;
                 }
             }
 
@@ -188,11 +190,11 @@ export default function TrilhasClient({
 
             return { ...t, effectiveCategory, isEquivalencyOnly };
         }).filter(t => {
-            // DIRETRIZ 1: Filtro de Curso baseado no course_map
+            // DIRETRIZ 1: Filtro de Curso baseado no category_map
             let axisMatch = true;
             if (axisFilter && axisFilter !== 'comum') {
                 const dbKey = contextAxisMap[axisFilter];
-                axisMatch = !!(t.course_map && t.course_map[dbKey] && t.course_map[dbKey] !== 'nao_se_aplica');
+                axisMatch = !!(t.category_map && t.category_map[dbKey] && t.category_map[dbKey] !== 'nao_se_aplica');
             }
 
             // DIRETRIZ 2: "Ciclo Básico" como filtro transversal (semester <= 4 + Obrigatória)
@@ -253,10 +255,10 @@ export default function TrilhasClient({
             // Requisito: Apenas matérias do eixo específico ou comum (CIC)
             if (t.axis !== userAxisFallback && t.axis !== 'comum') return false;
 
-            // Prioriza course_map
-            if (t.course_map && t.course_map[userAxisKey]) {
-                if (t.course_map[userAxisKey] === 'obrigatoria') return true;
-                if (t.course_map[userAxisKey] !== 'nao_se_aplica') return false;
+            // Prioriza category_map
+            if (t.category_map && t.category_map[userAxisKey]) {
+                if (t.category_map[userAxisKey] === 'obrigatoria') return true;
+                if (t.category_map[userAxisKey] !== 'nao_se_aplica') return false;
             }
 
             // Fallback (apenas se nao tiver mapa)
@@ -268,8 +270,8 @@ export default function TrilhasClient({
         const cursandoTotal = initialTrails.filter(t => cursandoIds.includes(t.id));
 
         const mandatoryAll = initialTrails.filter(t => {
-            if (!t.course_map || !userAxisKey) return false;
-            return t.course_map[userAxisKey] === 'obrigatoria';
+            if (!t.category_map || !userAxisKey) return false;
+            return t.category_map[userAxisKey] === 'obrigatoria';
         });
 
         const completedMandatory = mandatoryAll.filter(t => effectiveCompletedIds.includes(t.id));
@@ -380,7 +382,7 @@ export default function TrilhasClient({
         <>
             <TrilhasFeedbackCard className="block lg:hidden mt-6" />
 
-            <main className="py-20 min-h-screen dark:text-white text-gray-900 transition-colors">
+            <div className="dark:text-white text-gray-900 transition-colors">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
 
                     {/* Header */}
@@ -463,6 +465,13 @@ export default function TrilhasClient({
                                         </div>
                                     </div>
                                     <div className="flex items-center gap-3">
+                                        <button
+                                            onClick={() => setIsEvolutionModalOpen(true)}
+                                            className="flex items-center gap-2 px-3 py-1.5 bg-[#00A3FF]/10 text-[#00A3FF] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#00A3FF]/20 transition-all border border-[#00A3FF]/20 cursor-pointer"
+                                        >
+                                            <RefreshCw size={14} />
+                                            Sincronizar Júpiter
+                                        </button>
                                         <button
                                             onClick={() => setIsVisualMapOpen(true)}
                                             className="flex items-center gap-2 px-3 py-1.5 bg-brand-blue/10 text-brand-blue rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-blue/20 transition-all border border-brand-blue/20 cursor-pointer"
@@ -1088,7 +1097,7 @@ export default function TrilhasClient({
                         </div>
                     )}
                 </div>
-            </main>
+            </div>
 
             {/* Global Sync Overlay */}
             {/* Sincronizador Atômico (Canto Superior Direito) */}
@@ -1237,6 +1246,16 @@ export default function TrilhasClient({
                     </div>
                 )}
             </AnimatePresence>
+
+            <JupiterEvolutionModal
+                isOpen={isEvolutionModalOpen}
+                onClose={() => setIsEvolutionModalOpen(false)}
+                onSuccess={() => {
+                    setTimeout(() => {
+                        router.refresh();
+                    }, 500);
+                }}
+            />
         </>
     );
 }

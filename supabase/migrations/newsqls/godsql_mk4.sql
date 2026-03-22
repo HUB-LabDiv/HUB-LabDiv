@@ -324,3 +324,166 @@ ON CONFLICT DO NOTHING;
 
 -- RELOAD CACHE
 NOTIFY pgrst, 'reload schema';
+-- Migration: 20260321_granular_reset.sql
+-- Description: Funções para resets granulares na Zona de Perigo.
+
+-- 1. Reset de Perfis (Mantém as trilhas, mas reseta usuários)
+CREATE OR REPLACE FUNCTION public.reset_only_profiles()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  -- Truncar profiles (isso cascateia para submissions, etc. se houver FK)
+  TRUNCATE TABLE public.profiles CASCADE;
+  
+  -- Remover todos os usuários do auth
+  DELETE FROM auth.users;
+END;
+$$;
+
+-- 2. Reset de Conteúdo (Mantém usuários e trilhas, apaga posts/perguntas/logs)
+CREATE OR REPLACE FUNCTION public.reset_only_content()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  TRUNCATE TABLE public.submissions CASCADE;
+  TRUNCATE TABLE public.perguntas CASCADE;
+  TRUNCATE TABLE public.comments CASCADE;
+  TRUNCATE TABLE public.micro_articles CASCADE;
+  TRUNCATE TABLE public.messages CASCADE;
+  TRUNCATE TABLE public.entanglement_messages CASCADE;
+  TRUNCATE TABLE public.reports CASCADE;
+  TRUNCATE TABLE public.feedback_reports CASCADE;
+  TRUNCATE TABLE public.notifications CASCADE;
+  TRUNCATE TABLE public.quiz_attempts CASCADE;
+  TRUNCATE TABLE public.reading_history CASCADE;
+  TRUNCATE TABLE public.analytics_plays CASCADE;
+  TRUNCATE TABLE public.challenge_submissions CASCADE;
+  TRUNCATE TABLE public.adoption_validations CASCADE;
+END;
+$$;
+
+-- 3. Busca e Destruição (Deleta tudo de um usuário específico)
+CREATE OR REPLACE FUNCTION public.delete_specific_user(target_uid UUID)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+  -- O delete em auth.users cascateia para public.profiles (via FK ON DELETE CASCADE)
+  -- e do profiles para submissions, etc.
+  DELETE FROM auth.users WHERE id = target_uid;
+END;
+$$;
+
+-- 4. Re-granting permissions if needed
+GRANT EXECUTE ON FUNCTION public.reset_only_profiles() TO postgres;
+GRANT EXECUTE ON FUNCTION public.reset_only_content() TO postgres;
+GRANT EXECUTE ON FUNCTION public.delete_specific_user(UUID) TO postgres;
+-- Migration: Add official and public flags to entangled groups
+-- Path: ./supabase/migrations/newsqls/20260321_focal_groups.sql
+
+ALTER TABLE entangled_groups 
+ADD COLUMN IF NOT EXISTS is_official BOOLEAN DEFAULT false,
+ADD COLUMN IF NOT EXISTS is_public BOOLEAN DEFAULT true,
+ADD COLUMN IF NOT EXISTS focal_isotope TEXT,
+ADD COLUMN IF NOT EXISTS description TEXT;
+
+-- Seed some official focal groups
+INSERT INTO entangled_groups (name, is_official, is_public, focal_isotope, description)
+VALUES 
+('Física de Partículas', true, true, 'Física de Partículas', 'Grupo dedicado ao estudo e discussões sobre o modelo padrão e física subatômica.'),
+('Astrofísica & Cosmologia', true, true, 'Astrofísica', 'Explorando as fronteiras do universo, de buracos negros à expansão cósmica.'),
+('Fotografia Científica', true, true, 'Fotografia', 'Unindo técnica fotográfica e visualização de dados na ciência.'),
+('Educação e Extensão', true, true, 'Educação', 'Debates sobre métodos de ensino de física e divulgação científica.');
+-- Enable Realtime for messages to allow sidebar and chat to update instantly
+ALTER PUBLICATION supabase_realtime ADD TABLE messages;
+-- Admin Notifications Management Table
+-- Tracks notifications sent by moderators/admins to users
+
+CREATE TABLE IF NOT EXISTS admin_notifications (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  sender_id UUID REFERENCES profiles(id),
+  title TEXT NOT NULL,
+  message TEXT NOT NULL,
+  link TEXT,
+  target_type TEXT NOT NULL CHECK (target_type IN ('broadcast', 'user', 'group')),
+  target_value TEXT, -- user_id for 'user', category name for 'group', null for 'broadcast'
+  recipients_count INT DEFAULT 0,
+  scheduled_at TIMESTAMPTZ, -- null = immediate send
+  sent_at TIMESTAMPTZ, -- filled when actually sent
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'sent', 'scheduled')),
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Index for history queries
+CREATE INDEX idx_admin_notifications_status ON admin_notifications(status);
+CREATE INDEX idx_admin_notifications_created ON admin_notifications(created_at DESC);
+
+-- RLS
+ALTER TABLE admin_notifications ENABLE ROW LEVEL SECURITY;
+
+-- Only moderators and admins can manage
+CREATE POLICY "Moderators and admins can manage admin_notifications"
+  ON admin_notifications FOR ALL
+  USING (
+    EXISTS (
+      SELECT 1 FROM profiles
+      WHERE profiles.id = auth.uid()
+      AND profiles.role IN ('admin', 'moderator')
+    )
+  );
+/*
+  # Academic Visibility RLS Fix
+  
+  Enables authenticated users to view completed trails and trail progress.
+  Required for the Arena / Match Acadêmico feature where researchers view student profiles.
+*/
+
+-- Unify SELECT access for authenticated users on academic tables
+DROP POLICY IF EXISTS "Public can view completed trails" ON user_completed_trails;
+CREATE POLICY "Public can view completed trails" 
+ON user_completed_trails FOR SELECT 
+TO authenticated 
+USING (true);
+
+DROP POLICY IF EXISTS "Public can view trail progress" ON user_trail_progress;
+CREATE POLICY "Public can view trail progress" 
+ON user_trail_progress FOR SELECT 
+TO authenticated 
+USING (true);
+-- Add content_format column to submissions and wiki_articles
+ALTER TABLE public.submissions ADD COLUMN IF NOT EXISTS content_format TEXT;
+ALTER TABLE public.wiki_articles ADD COLUMN IF NOT EXISTS content_format TEXT;
+
+-- Initialize content_format based on media_type in submissions
+-- Using ::text to avoid enum comparison issues
+UPDATE public.submissions 
+SET content_format = CASE 
+    WHEN media_type::text = 'image' THEN 'image'
+    WHEN media_type::text = 'video' THEN 'video'
+    ELSE 'text'
+END
+WHERE content_format IS NULL;
+
+-- Set default for wiki_articles
+UPDATE public.wiki_articles SET content_format = 'text' WHERE content_format IS NULL;
+
+-- Add comment for documentation
+COMMENT ON COLUMN public.submissions.content_format IS 'Scientific Telemetry: text, audio, image, video, mixed';
+COMMENT ON COLUMN public.wiki_articles.content_format IS 'Scientific Telemetry: text, audio, image, video, mixed';
+-- Migration: Add isotopes to submissions table
+-- For sprint 11: Interest Analysis
+
+-- 1. Add isotopes column
+ALTER TABLE public.submissions 
+ADD COLUMN IF NOT EXISTS isotopes text[] DEFAULT '{}'::text[];
+
+-- 2. Add index for better performance when querying by isotope
+CREATE INDEX IF NOT EXISTS idx_submissions_isotopes ON public.submissions USING GIN (isotopes);
+
+-- 3. Update RLS (if needed, but usually automatically handled by table permissions)
+-- Profiles that can select/update/delete submissions can still do so.
