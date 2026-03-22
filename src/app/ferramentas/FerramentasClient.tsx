@@ -2,7 +2,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { fetchUserAcademicdata } from '@/app/actions/disciplines';
-import { Loader2, Calendar, Plus, GraduationCap, Info, MessageSquareCode, Trash2, Share2, FileText, CalendarDays, Table } from 'lucide-react';
+import { 
+    X, Eye, Edit3, ChevronLeft, ChevronRight, Search, Plus, Trash2, Info, Loader2, BookOpen, 
+    GraduationCap, CalendarDays, FileText, Table, Calendar, MessageSquareCode, Share2,
+    RefreshCw, Undo2, Settings
+} from 'lucide-react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
@@ -11,9 +15,11 @@ import listPlugin from '@fullcalendar/list';
 import { Draggable } from '@fullcalendar/interaction';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
-import { X, Eye, Edit3, ChevronLeft, ChevronRight } from 'lucide-react';
 import * as CalendarActions from '@/app/actions/calendar';
+import { resetUserAcademicData } from '@/app/actions/calendar';
 import { FerramentasFeedbackCard } from './FerramentasFeedbackCard';
+import { SubjectSelectorModal } from './SubjectSelectorModal';
+import { JupiterSyncModal } from './JupiterSyncModal';
 
 interface CalendarEvent {
     id: string;
@@ -22,12 +28,17 @@ interface CalendarEvent {
     end: any;
     color?: string;
     extendedProps?: any;
+    daysOfWeek?: number[];
+    startTime?: string;
+    endTime?: string;
 }
 
 const DISCIPLINE_COLORS = [
     { bg: '#3B82F6', border: '#2563EB', name: 'blue' },
-    { bg: '#EF4444', border: '#DC2626', name: 'red' },
+    { bg: '#06B6D4', border: '#0891B2', name: 'cyan' },
     { bg: '#EAB308', border: '#CA8A04', name: 'yellow' },
+    { bg: '#F97316', border: '#EA580C', name: 'orange' },
+    { bg: '#EF4444', border: '#DC2626', name: 'red' },
 ];
 
 const getStableColor = (id: string, title?: string) => {
@@ -58,24 +69,153 @@ const fixEncoding = (text: string) => {
     }
 };
 
+const formatEventWithRecurrence = (e: any): CalendarEvent => {
+    const isRecurring = e.extendedProps?.type === 'aula' || e.extendedProps?.type === 'estudo';
+    const startDate = new Date(e.start);
+    const endDate = e.end ? new Date(e.end) : new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
+    
+    return {
+        ...e,
+        color: e.color || getStableColor(e.extendedProps?.sourceId || e.id, e.title).bg,
+        ...(isRecurring ? {
+            daysOfWeek: [startDate.getDay()],
+            startTime: startDate.getHours().toString().padStart(2, '0') + ':' + startDate.getMinutes().toString().padStart(2, '0'),
+            endTime: endDate.getHours().toString().padStart(2, '0') + ':' + endDate.getMinutes().toString().padStart(2, '0'),
+        } : {})
+    };
+};
+
 export default function FerramentasClient({ profile }: { profile: any }) {
     const [academicData, setAcademicData] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [events, setEvents] = useState<CalendarEvent[]>([]);
+    const [history, setHistory] = useState<CalendarEvent[][]>([]);
     const [customBlocks, setCustomBlocks] = useState<{id: string, title: string, duration: number}[]>([]);
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
+    const [isJupiterModalOpen, setIsJupiterModalOpen] = useState(false);
     const [newBlockName, setNewBlockName] = useState('');
     const [newBlockDuration, setNewBlockDuration] = useState(2);
     const [isUpdating, setIsUpdating] = useState<string | null>(null);
+    const [isResetting, setIsResetting] = useState(false);
+    const [calendarStart, setCalendarStart] = useState('08:00');
+    const [calendarEnd, setCalendarEnd] = useState('23:00');
+    const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+    const [clipboard, setClipboard] = useState<string[]>([]);
     const [viewMode, setViewMode] = useState<'view' | 'edit'>('edit');
     const [isMobile, setIsMobile] = useState(false);
     const [selectedBlockToAdd, setSelectedBlockToAdd] = useState<any>(null);
-    const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+    const [selectedEventIds, setSelectedEventIds] = useState<string[]>([]);
     const [isHelpModalOpen, setIsHelpModalOpen] = useState(false);
     const draggableRef = React.useRef<any>(null);
     const calendarRef = React.useRef<any>(null);
     const enrollmentListRef = React.useRef<HTMLDivElement>(null);
+
+    const saveToHistory = () => {
+        setHistory(prev => [JSON.parse(JSON.stringify(events)), ...prev].slice(0, 10));
+    };
+
+    const handleUndo = async () => {
+        if (history.length === 0) return;
+        
+        const prevState = history[0];
+        const currentState = [...events];
+        setHistory(prev => prev.slice(1));
+
+        // Visual Undo
+        setEvents(prevState);
+        
+        toast.promise(
+            (async () => {
+                const prevIds = new Set(prevState.map(e => e.id));
+                const currentIds = new Set(currentState.map(e => e.id));
+
+                const toReinsert = prevState.filter(e => !currentIds.has(e.id));
+                const toDelete = currentState.filter(e => !prevIds.has(e.id));
+                const toRevert = prevState.filter(pe => {
+                    const ce = currentState.find(c => c.id === pe.id);
+                    return ce && (ce.start !== pe.start || ce.end !== pe.end);
+                });
+
+                const syncPromises = [];
+                for (const event of toReinsert) syncPromises.push(CalendarActions.upsertCalendarEvent(event));
+                for (const event of toDelete) syncPromises.push(CalendarActions.deleteCalendarEvent(event.id));
+                for (const event of toRevert) syncPromises.push(CalendarActions.upsertCalendarEvent(event));
+
+                await Promise.all(syncPromises);
+            })(),
+            {
+                loading: 'Desfazendo alteração...',
+                success: 'Alteração desfeita!',
+                error: 'Erro ao sincronizar no servidor'
+            }
+        );
+    };
+
+    useEffect(() => {
+        const handleKeys = async (e: KeyboardEvent) => {
+            // Ignore if typing in an input
+            if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return;
+
+            // Delete / Backspace
+            if ((e.key === 'Delete' || e.key === 'Backspace') && selectedEventIds.length > 0) {
+                saveToHistory();
+                const toDelete = [...selectedEventIds];
+                setEvents(prev => prev.filter(ev => !toDelete.includes(ev.id)));
+                setSelectedEventIds([]);
+                await Promise.all(toDelete.map(id => CalendarActions.deleteCalendarEvent(id)));
+                toast.success(`${toDelete.length > 1 ? toDelete.length + ' eventos removidos' : 'Evento removido'}`);
+                return;
+            }
+
+            // Ctrl + C (Copy)
+            if (e.ctrlKey && e.key.toLowerCase() === 'c' && selectedEventIds.length > 0) {
+                setClipboard([...selectedEventIds]);
+                toast.success(`${selectedEventIds.length > 1 ? selectedEventIds.length + ' eventos copiados' : 'Evento copiado'}`);
+                return;
+            }
+
+            // Ctrl + V (Paste)
+            if (e.ctrlKey && e.key.toLowerCase() === 'v' && clipboard.length > 0) {
+                saveToHistory();
+                const toDuplicate = events.filter(ev => clipboard.includes(ev.id));
+                if (toDuplicate.length === 0) return;
+
+                const newEvents: CalendarEvent[] = toDuplicate.map(ev => ({
+                    ...ev,
+                    id: Math.random().toString(), // Temp ID
+                    title: `${ev.title} (Cópia)`
+                }));
+
+                setEvents(prev => [...prev, ...newEvents]);
+                
+                toast.promise(
+                    Promise.all(newEvents.map(async (ev) => {
+                        const res = await CalendarActions.upsertCalendarEvent(ev);
+                        if (res.success && res.data) {
+                            setEvents(prev => prev.map(e => e.id === ev.id ? { ...e, id: res.data.id } : e));
+                        }
+                    })),
+                    {
+                        loading: 'Duplicando eventos...',
+                        success: 'Eventos duplicados!',
+                        error: 'Erro ao duplicar'
+                    }
+                );
+                return;
+            }
+
+            // Ctrl + Z (Undo)
+            if (e.ctrlKey && e.key.toLowerCase() === 'z') {
+                e.preventDefault();
+                handleUndo();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeys);
+        return () => window.removeEventListener('keydown', handleKeys);
+    }, [selectedEventIds, events, clipboard, history]);
 
     useEffect(() => {
         const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -83,6 +223,105 @@ export default function FerramentasClient({ profile }: { profile: any }) {
         window.addEventListener('resize', checkMobile);
         return () => window.removeEventListener('resize', checkMobile);
     }, []);
+
+    const handleAddTurma = async (subject: any, turma: any) => {
+        const DOW_MAP: Record<string, number> = {
+            'dom': 0, 'seg': 1, 'ter': 2, 'qua': 3, 'qui': 4, 'sex': 5, 'sab': 6, 'sáb': 6
+        };
+        const today = new Date();
+        const currentDay = today.getDay();
+        const startOfWeek = new Date(today);
+        startOfWeek.setDate(today.getDate() - currentDay);
+        startOfWeek.setHours(0,0,0,0);
+
+        const newEvents: CalendarEvent[] = [];
+        let addedCount = 0;
+
+        for (const h of turma.horarios) {
+            const parts = h.toLowerCase().split(' ');
+            if (parts.length >= 3) {
+                const dayStr = parts[0];
+                const startStr = parts[1];
+                const endStr = parts[2];
+
+                const dow = DOW_MAP[dayStr] ?? 1;
+                const eventDate = new Date(startOfWeek);
+                eventDate.setDate(startOfWeek.getDate() + dow);
+                
+                const startDateStr = `${eventDate.toISOString().split('T')[0]}T${startStr}:00`;
+                const endDateStr = `${eventDate.toISOString().split('T')[0]}T${endStr}:00`;
+
+                const seed = subject.codigo;
+                let hash = 0;
+                for (let i = 0; i < seed.length; i++) { hash = ((hash << 5) - hash) + seed.charCodeAt(i); hash |= 0; }
+                const colors = ['#3B82F6', '#EF4444', '#EAB308'];
+                const color = colors[Math.abs(hash) % colors.length];
+
+                const tempId = Math.random().toString();
+                const durationHours = (new Date(endDateStr).getTime() - new Date(startDateStr).getTime()) / 3600000;
+                
+                const baseEvent = {
+                    id: tempId,
+                    title: subject.nome || subject.codigo,
+                    start: startDateStr,
+                    end: endDateStr,
+                    color: color,
+                    extendedProps: { type: 'aula', sourceId: subject.codigo, duration: durationHours.toString() }
+                };
+                const event = formatEventWithRecurrence(baseEvent);
+                newEvents.push(event);
+                addedCount++;
+
+                // Add 1:1 study block (8h-22h)
+                const durationMs = new Date(endDateStr).getTime() - new Date(startDateStr).getTime();
+                const { start: studyStart, end: studyEnd } = calculateStudyTime(endDateStr, durationMs);
+                
+                const studyEvent = {
+                    id: Math.random().toString(),
+                    title: `📚 Estudo: ${subject.nome || subject.codigo}`,
+                    start: studyStart,
+                    end: studyEnd,
+                    color: '#10B981',
+                    extendedProps: { type: 'estudo', sourceId: subject.codigo, duration: (durationMs / 3600000).toString() }
+                };
+                newEvents.push(studyEvent);
+            }
+        }
+
+        if (addedCount === 0) {
+            toast.error('Nenhum horário válido encontrado na turma.');
+            return;
+        }
+
+        setEvents(prev => [...prev, ...newEvents]);
+        setIsSubjectModalOpen(false);
+        toast.success(`Turma ${turma.codigo} de ${subject.codigo} adicionada à grade!`);
+
+        for (const event of newEvents) {
+            const res = await CalendarActions.upsertCalendarEvent(event);
+            if (res.success && res.data) {
+                 setEvents(prev => prev.map(e => e.id === event.id ? { ...e, id: res.data.id } : e));
+            }
+        }
+    };
+
+    const handleRemoveTurma = async (subjectCode: string) => {
+        const toDelete = events.filter(e => e.extendedProps?.sourceId === subjectCode);
+        if (toDelete.length === 0) return;
+
+        setEvents(prev => prev.filter(e => e.extendedProps?.sourceId !== subjectCode));
+        toast.success(`${subjectCode} removida da grade.`);
+
+        const promises = toDelete.map(e => CalendarActions.deleteCalendarEvent(e.id));
+        await Promise.all(promises);
+    };
+
+    const handleDeleteEvent = async (eventId: string) => {
+        setEvents(prev => prev.filter(e => e.id !== eventId));
+        setSelectedEventIds(prev => prev.filter(id => id !== eventId));
+        toast.success('Evento removido!');
+        await CalendarActions.deleteCalendarEvent(eventId);
+    };
 
     const toggleCursando = async (e: React.MouseEvent, trailId: string) => {
         e.preventDefault();
@@ -115,38 +354,145 @@ export default function FerramentasClient({ profile }: { profile: any }) {
         }
     };
 
-    useEffect(() => {
-        const init = async () => {
-            setIsLoading(true);
-            const [academicRes, calendarRes, blocksRes] = await Promise.all([
-                fetchUserAcademicdata(),
-                CalendarActions.getCalendarEvents(),
-                CalendarActions.getCustomBlocks()
-            ]);
+    const calculateStudyTime = (endDateStr: string, durationMs: number) => {
+        const bufferOffset = 3600000; // 1 hour buffer
+        const studyStart = new Date(new Date(endDateStr).getTime() + bufferOffset);
+        let studyEnd = new Date(studyStart.getTime() + durationMs);
 
-            if (academicRes.success) {
-                setAcademicData(academicRes.data);
-            }
-            if (calendarRes.success) {
-                const verifiedEvents = (calendarRes.data as any[]).map(e => ({
-                    ...e,
-                    color: getStableColor(e.extendedProps?.sourceId || e.id, e.title).bg
-                }));
-                setEvents(verifiedEvents);
-            }
-            if (blocksRes.success) {
-                setCustomBlocks(blocksRes.data as any);
-            }
-            setIsLoading(false);
+        const startHour = 8;
+        // Move to next day 08:00 if the study block would end after 22:30
+        // (Assuming the user's calendar view ends at 23:00)
+        const endsTooLate = studyEnd.getHours() >= 23 || (studyEnd.getHours() === 22 && studyEnd.getMinutes() > 30) || (studyEnd.getDate() !== studyStart.getDate());
+
+        if (endsTooLate) {
+            // Move to next day 08:00
+            studyStart.setDate(studyStart.getDate() + 1);
+            studyStart.setHours(startHour, 0, 0, 0);
+            studyEnd = new Date(studyStart.getTime() + durationMs);
+        }
+
+        return {
+            start: studyStart.toISOString(),
+            end: studyEnd.toISOString()
         };
+    };
 
-        init();
+    const handleReset = async () => {
+        if (!confirm('🚨 ATENÇÃO: Isso apagará permanentemente todos os seus eventos da grade e blocos customizados. Deseja continuar?')) {
+            return;
+        }
+        saveToHistory();
+
+        setIsResetting(true);
+        try {
+            const res = await resetUserAcademicData();
+            if (res.success) {
+                // Fetch fresh data instead of reloading
+                const eventsRes = await CalendarActions.getCalendarEvents();
+                if (eventsRes.success && eventsRes.data) {
+                    setEvents(eventsRes.data.map(formatEventWithRecurrence));
+                }
+                
+                toast.success('Grade resetada! Suas aulas oficiais foram mantidas.');
+            } else {
+                toast.error(res.error || 'Erro ao resetar dados.');
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error('Erro crítico ao resetar dados.');
+        } finally {
+            setIsResetting(false);
+        }
+    };
+
+    const handleAutoGenerateStudy = async () => {
+        saveToHistory();
+        setIsUpdating('auto-study');
+        let generated = 0;
+        const newEvents: CalendarEvent[] = [];
+
+        for (const event of events) {
+            if (event.extendedProps?.type === 'aula' || event.extendedProps?.type === 'custom') {
+                const durationMs = new Date(event.end).getTime() - new Date(event.start).getTime();
+                const { start: studyStart, end: studyEnd } = calculateStudyTime(event.end, durationMs);
+                
+                const cleanTitle = event.title.replace('🎓 Aula: ', '');
+                const titleParts = cleanTitle.split(' - ');
+                const subjectName = titleParts.length > 1 ? titleParts[1].trim() : titleParts[0].trim();
+                const studyTitle = `📚 Estudo: ${subjectName}`;
+
+                const alreadyExists = events.find(e => 
+                    e.extendedProps?.type === 'estudo' && 
+                    (event.extendedProps?.sourceId 
+                        ? e.extendedProps?.sourceId === event.extendedProps?.sourceId 
+                        : e.title === studyTitle) && 
+                    Math.abs(new Date(e.start).getTime() - new Date(studyStart).getTime()) < 60000
+                );
+
+                if (!alreadyExists) {
+                    const studyEvent: CalendarEvent = {
+                        id: Math.random().toString(),
+                        title: studyTitle,
+                        start: studyStart,
+                        end: studyEnd,
+                        color: '#10B981',
+                        extendedProps: { type: 'estudo', sourceId: event.extendedProps.sourceId, duration: (durationMs / 3600000).toString() }
+                    };
+                    newEvents.push(studyEvent);
+                    generated++;
+                }
+            }
+        }
+
+        if (generated > 0) {
+            setEvents(prev => [...prev, ...newEvents]);
+            for (const sem of newEvents) {
+                await CalendarActions.upsertCalendarEvent(sem);
+            }
+            const disciplinesNames = Array.from(new Set(newEvents.map(e => e.title.replace('📚 Estudo: ', ''))));
+            toast.success(`${generated} blocos gerados para: ${disciplinesNames.join(', ')}`);
+        } else {
+            toast('Todos os blocos de estudo já estão na grade.', { icon: '✨' });
+        }
+        setIsUpdating(null);
+    };
+
+
+    const loadData = async () => {
+        setIsLoading(true);
+        const [academicRes, calendarRes, blocksRes] = await Promise.all([
+            fetchUserAcademicdata(),
+            CalendarActions.getCalendarEvents(),
+            CalendarActions.getCustomBlocks()
+        ]);
+
+        if (academicRes.success) {
+            setAcademicData(academicRes.data);
+        }
+        if (calendarRes.success) {
+            const verifiedEvents = (calendarRes.data as any[]).map(formatEventWithRecurrence);
+            setEvents(verifiedEvents);
+        }
+        if (blocksRes.success) {
+            setCustomBlocks(blocksRes.data as any);
+        }
+        setIsLoading(false);
+    };
+
+    useEffect(() => {
+        loadData();
     }, []);
 
     // Setup Draggable for enrollment items
     useEffect(() => {
-        const draggableEl = document.getElementById('enrollment-list');
-        if (draggableEl && !draggableRef.current) {
+        const draggableEl = enrollmentListRef.current;
+        if (draggableEl) {
+            // Cleanup previous instance if any
+            if (draggableRef.current) {
+                draggableRef.current.destroy();
+                draggableRef.current = null;
+            }
+
             draggableRef.current = new Draggable(draggableEl, {
                 itemSelector: '.draggable-item',
                 eventData: function(eventEl: any) {
@@ -178,7 +524,13 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                 }
             });
         }
-    }, [isLoading, academicData, customBlocks]);
+        return () => {
+            if (draggableRef.current) {
+                draggableRef.current.destroy();
+                draggableRef.current = null;
+            }
+        };
+    }, [isLoading, academicData, customBlocks, viewMode]);
 
     if (isLoading) {
         return (
@@ -194,8 +546,22 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                 .fc { --fc-border-color: rgba(var(--brand-blue-rgb), 0.1); }
                 .dark .fc { --fc-border-color: rgba(255, 255, 255, 0.03); }
                 
-                .fc-theme-standard td, .fc-theme-standard th, .fc-scrollgrid { 
+                .fc-theme-standard .fc-scrollgrid { 
                     border: 0 !important; 
+                }
+                .fc-theme-standard td, .fc-theme-standard th {
+                    border: 0 !important;
+                }
+                /* Re-enable major slot borders (solid) and minor (dashed via gradient) */
+                .fc-timegrid-slots td {
+                    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+                }
+                .fc-timegrid-slot-minor {
+                    border-bottom: 0 !important;
+                    background-image: linear-gradient(to right, rgba(255, 255, 255, 0.15) 50%, transparent 50%) !important;
+                    background-position: bottom !important;
+                    background-size: 6px 1px !important;
+                    background-repeat: repeat-x !important;
                 }
                 .fc-toolbar-chunk .fc-button {
                     border-radius: 9999px !important;
@@ -221,46 +587,32 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     font-size: 1.25rem !important;
                 }
                 
-                /* Canva-style resizing handles */
+                /* 🏆 Premium Dot Resizer: Only at the bottom */
                 .fc-event-resizer {
-                    width: 14px !important;
-                    height: 14px !important;
-                    border-radius: 9999px !important;
-                    background-color: white !important;
-                    border: 3px solid #3b82f6 !important;
-                    box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;
-                    right: -7px !important;
-                    bottom: -7px !important;
-                    opacity: 0;
-                    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+                    width: 100% !important;
+                    height: 12px !important;
+                    background: transparent !important;
+                    border: 0 !important;
+                    box-shadow: none !important;
+                    opacity: 1 !important;
+                    right: 0 !important;
+                    left: 0 !important;
+                    bottom: -2px !important;
                     z-index: 50 !important;
                     cursor: ns-resize !important;
                 }
-                
+
                 .fc-event-resizer-y-top {
-                    top: -7px !important;
-                    bottom: auto !important;
+                    display: none !important;
                 }
-
-                .fc-event:hover .fc-event-resizer, 
-                .fc-event-dragging .fc-event-resizer,
-                .fc-event-resizing .fc-event-resizer {
-                    opacity: 1 !important;
-                    transform: scale(1.1);
+                
+                .fc-v-event {
+                    transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
                 }
-
-                @media (max-width: 768px) {
-                    .fc-event-resizer {
-                        width: 18px !important;
-                        height: 18px !important;
-                        opacity: 1 !important;
-                        right: -9px !important;
-                        bottom: -9px !important;
-                        border-width: 4px !important;
-                    }
-                    .fc-event-resizer-y-top {
-                        top: -9px !important;
-                    }
+                
+                .fc-event-selected, .fc-event:active {
+                    z-index: 100 !important;
+                    transform: scale(1.02);
                 }
                 
                 .scrollbar-hide {
@@ -271,7 +623,8 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     display: none;
                 }
 
-                .fc .fc-timegrid-slot { height: 3.5em !important; border-bottom: 0 !important; }
+                .fc .fc-timegrid-slot { height: 4em !important; }
+                .fc-timegrid-slot-label { border-bottom: 0 !important; }
                 
                 .fc-v-event { 
                     border: 0 !important; 
@@ -288,7 +641,14 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                 .fc-v-event .fc-event-main { 
                     color: white !important; 
                     font-weight: 800 !important; 
-                    font-size: 10px !important;
+                    font-size: 7px !important;
+                    text-transform: uppercase;
+                    line-height: 1.0;
+                    letter-spacing: -0.02em;
+                    padding: 2px 4px !important;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
                     text-shadow: 0 1px 2px rgba(0,0,0,0.3);
                 }
                 
@@ -366,15 +726,34 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     <p className="text-gray-400 font-medium italic">Seu cockpit de navegação pelo IFUSP.</p>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => setIsHelpModalOpen(true)}
-                        className="flex items-center justify-center p-3 rounded-2xl bg-brand-blue/10 border border-brand-blue/20 text-brand-blue hover:bg-brand-blue/20 transition-colors"
-                        title="Como usar o cronograma?"
-                    >
-                        <Info className="w-5 h-5" />
-                    </button>
-                </div>
+                    <div className="flex items-center gap-3">
+                        <button
+                            onClick={handleReset}
+                            disabled={isResetting}
+                            className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
+                            title="Resetar todos os dados de estudos"
+                        >
+                            {isResetting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                            <span className="hidden sm:inline">Resetar Grade</span>
+                        </button>
+                        <button
+                            onClick={handleAutoGenerateStudy}
+                            disabled={isUpdating === 'auto-study'}
+                            className="flex items-center gap-2 px-4 py-2 bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-yellow hover:text-white transition-all disabled:opacity-50"
+                            title="Gerar 1h de estudo para cada 1h de aula na grade"
+                        >
+                            {isUpdating === 'auto-study' ? <Loader2 className="w-4 h-4 animate-spin" /> : <BookOpen className="w-4 h-4" />}
+                            <span className="hidden sm:inline">Gerar Estudos (1:1)</span>
+                        </button>
+                        <button
+                            onClick={() => setIsJupiterModalOpen(true)}
+                            className="flex items-center gap-2 px-4 py-2 bg-brand-blue/10 text-brand-blue border border-brand-blue/20 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-blue hover:text-white transition-all disabled:opacity-50"
+                            title="Sincronizar com sistema USP"
+                        >
+                            <RefreshCw className="w-4 h-4" />
+                            <span className="hidden sm:inline">Sincronizar Júpiter</span>
+                        </button>
+                    </div>
             </header>
 
             <FerramentasFeedbackCard className="block lg:hidden" />
@@ -386,15 +765,19 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                         <div className="flex items-center justify-between">
                             <h4 className="text-sm font-black uppercase text-brand-blue tracking-widest flex items-center gap-2">
                                 <GraduationCap className="w-4 h-4" />
-                                Suas Matrículas
+                                Turmas disponíveis
                             </h4>
                             <div className="flex items-center gap-4">
                                 <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest hidden sm:block">
                                     Arraste os blocos abaixo para o cronograma
                                 </p>
-                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest sm:hidden">
-                                    {selectedBlockToAdd ? 'Toque no calendário para alocar' : 'Toque num bloco para selecioná-lo'}
-                                </p>
+                                <button
+                                    onClick={() => setIsSubjectModalOpen(true)}
+                                    className="flex items-center gap-2 px-4 py-2 bg-[#00A3FF]/10 text-[#00A3FF] border border-[#00A3FF]/20 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#00A3FF] hover:text-white transition-all shrink-0"
+                                >
+                                    <Search className="w-3 h-3" />
+                                    Buscar Turmas
+                                </button>
                                 <button
                                     onClick={() => setIsCreateModalOpen(true)}
                                     className="flex items-center gap-2 px-4 py-2 bg-brand-blue text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-transform shrink-0"
@@ -570,47 +953,77 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     </div>
 
                     <div className="space-y-6">
-                        <div className="flex items-center justify-between">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                             <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white uppercase tracking-tighter">Cronograma Semanal</h3>
-                            <div className="flex items-center gap-3">
-                                <button
-                                    onClick={() => setViewMode(prev => prev === 'view' ? 'edit' : 'view')}
-                                    className={`flex items-center gap-2 px-4 py-2 rounded-2xl transition-all border ${
-                                        viewMode === 'view' 
-                                            ? 'bg-brand-blue text-white border-brand-blue shadow-lg shadow-brand-blue/20' 
-                                            : 'bg-gray-100 dark:bg-white/5 border-gray-200 dark:border-white/10 text-gray-800 dark:text-white hover:bg-gray-200 dark:hover:bg-white/10'
-                                    }`}
-                                >
-                                    {viewMode === 'view' ? <Edit3 className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                                    <span className="text-[10px] font-black uppercase tracking-widest">
-                                        {isMobile ? 'Ver / Editar' : (viewMode === 'view' ? 'Editar Cronograma' : 'Ver Cronograma')}
-                                    </span>
-                                </button>
-                                <button
-                                    onClick={() => setIsExportModalOpen(true)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-800 dark:text-white rounded-2xl transition-all hover:bg-gray-200 dark:hover:bg-white/10"
-                                    title="Exportar Calendário"
-                                >
-                                    <Share2 className="w-4 h-4" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Exportar</span>
-                                </button>
-                                <div 
-                                    id="calendar-trash"
-                                    onClick={async () => {
-                                        if (selectedEventId) {
-                                            setEvents(prev => prev.filter(e => e.id !== selectedEventId));
-                                            await CalendarActions.deleteCalendarEvent(selectedEventId);
-                                            toast.success('Evento removido');
-                                            setSelectedEventId(null);
-                                        } else if (isMobile) {
-                                            toast.error('Selecione um bloco no calendário primeiro');
-                                        }
-                                    }}
-                                    className={`flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/20 text-red-500 rounded-2xl transition-all hover:bg-red-500 hover:text-white cursor-pointer ${viewMode === 'view' ? 'hidden' : ''}`}
-                                    title="Arraste aqui para excluir, ou clique após selecionar o bloco"
-                                >
-                                    <Trash2 className="w-4 h-4 transition-transform" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Excluir</span>
+                            <div className="flex flex-col gap-2 items-end">
+                                {/* Row 1: Excluir and Info */}
+                                <div className="flex items-center gap-3">
+                                    <div 
+                                        id="calendar-trash"
+                                        onClick={async () => {
+                                            if (selectedEventIds.length > 0) {
+                                                saveToHistory();
+                                                const toDelete = [...selectedEventIds];
+                                                setEvents(prev => prev.filter(e => !toDelete.includes(e.id)));
+                                                setSelectedEventIds([]);
+                                                await Promise.all(toDelete.map(id => CalendarActions.deleteCalendarEvent(id)));
+                                                toast.success(`${toDelete.length > 1 ? toDelete.length + ' eventos removidos' : 'Evento removido'}`);
+                                            } else if (isMobile) {
+                                                toast.error('Selecione um bloco no calendário primeiro');
+                                            }
+                                        }}
+                                        className={`flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/20 text-red-500 rounded-2xl transition-all hover:bg-red-500 hover:text-white cursor-pointer ${viewMode === 'view' ? 'hidden' : ''}`}
+                                        title="Arraste aqui para excluir, ou clique após selecionar o bloco"
+                                    >
+                                        <Trash2 className="w-4 h-4 transition-transform" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Excluir</span>
+                                    </div>
+                                    <button
+                                        onClick={handleUndo}
+                                        disabled={history.length === 0}
+                                        className={`p-2.5 rounded-2xl bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20 hover:bg-brand-yellow hover:text-black transition-all active:scale-95 disabled:opacity-30 ${viewMode === 'view' ? 'hidden' : ''}`}
+                                        title="Desfazer última alteração"
+                                    >
+                                        <Undo2 className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => setIsHelpModalOpen(true)}
+                                        className="p-2.5 rounded-2xl bg-brand-blue/10 text-brand-blue border border-brand-blue/20 hover:bg-brand-blue/20 transition-all active:scale-95"
+                                        title="Como usar o cronograma?"
+                                    >
+                                        <Info className="w-4 h-4" />
+                                    </button>
+                                </div>
+                                {/* Row 2: Ver Cronograma and Exportar */}
+                                <div className="flex items-center gap-3">
+                                    <button
+                                        onClick={() => setIsSettingsOpen(true)}
+                                        className="p-2.5 rounded-2xl bg-brand-red/10 text-brand-red border border-brand-red/20 hover:bg-brand-red hover:text-white transition-all active:scale-95"
+                                        title="Configurações de Horário"
+                                    >
+                                        <Settings className="w-4 h-4" />
+                                    </button>
+                                    <button
+                                        onClick={() => setViewMode(prev => prev === 'view' ? 'edit' : 'view')}
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-2xl transition-all border ${
+                                            viewMode === 'view' 
+                                                ? 'bg-brand-yellow text-black border-brand-yellow shadow-lg shadow-brand-yellow/20' 
+                                                : 'bg-brand-yellow/10 dark:bg-brand-yellow/5 border-brand-yellow/20 dark:border-brand-yellow/10 text-brand-yellow hover:bg-brand-yellow hover:text-black'
+                                        }`}
+                                    >
+                                        {viewMode === 'view' ? <Edit3 className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                        <span className="text-[10px] font-black uppercase tracking-widest">
+                                            {isMobile ? 'Ver / Editar' : (viewMode === 'view' ? 'Editar Cronograma' : 'Ver Cronograma')}
+                                        </span>
+                                    </button>
+                                    <button
+                                        onClick={() => setIsExportModalOpen(true)}
+                                        className="flex items-center gap-2 px-4 py-2 bg-brand-blue/10 dark:bg-brand-blue/5 border border-brand-blue/20 dark:border-brand-blue/10 text-brand-blue rounded-2xl transition-all hover:bg-brand-blue hover:text-white"
+                                        title="Exportar Calendário"
+                                    >
+                                        <Share2 className="w-4 h-4" />
+                                        <span className="text-[10px] font-black uppercase tracking-widest hidden sm:inline">Exportar</span>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -638,7 +1051,18 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                     </button>
                                     <div id="view-calendar-scroll" className="flex flex-row gap-4 overflow-x-auto pb-8 scrollbar-hide snap-x px-8 sm:px-0">
                                         {['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'].map((dayName, dayIdx) => {
-                                            const dayEvents = events.filter(e => new Date(e.start).getDay() === dayIdx).sort((a,b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+                                            const dayEvents = events.filter(e => {
+                                                const eventDate = new Date(e.start);
+                                                // Support for recurring events (daysOfWeek) or exact date match (getDay)
+                                                if (e.daysOfWeek && Array.isArray(e.daysOfWeek)) {
+                                                    return e.daysOfWeek.includes(dayIdx);
+                                                }
+                                                return eventDate.getDay() === dayIdx;
+                                            }).sort((a,b) => {
+                                                const timeA = new Date(a.start).getHours() * 60 + new Date(a.start).getMinutes();
+                                                const timeB = new Date(b.start).getHours() * 60 + new Date(b.start).getMinutes();
+                                                return timeA - timeB;
+                                            });
                                             const dayColor = dayIdx === 0 ? '#888' : (dayIdx % 3 === 1 ? '#3b82f6' : (dayIdx % 3 === 2 ? '#ef4444' : '#eab308'));
                                             
                                             return (
@@ -693,8 +1117,10 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                         right: 'timeGridDay,timeGridWeek'
                                     } : false}
                                     dayHeaderFormat={{ weekday: 'long' }}
-                                    slotMinTime="06:00:00"
-                                    slotMaxTime="24:00:00"
+                                    slotMinTime={`${calendarStart}:00`}
+                                    slotMaxTime={`${calendarEnd}:00`}
+                                    slotDuration="00:30:00"
+                                    slotLabelInterval="01:00"
                                     allDaySlot={false}
                                     height="auto"
                                     events={events}
@@ -708,6 +1134,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                     nowIndicator={true}
                                     dateClick={async (info) => {
                                         if (isMobile && selectedBlockToAdd) {
+                                            saveToHistory();
                                             const durationStr = selectedBlockToAdd.extendedProps.duration;
                                             let durationHours = 2;
                                             
@@ -739,41 +1166,91 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                                 toast.error('Erro ao salvar no banco');
                                                 setEvents(prev => prev.filter(e => e.id !== tempId));
                                             }
-                                        } else if (selectedEventId) {
-                                            const eventToMove = events.find(e => e.id === selectedEventId);
+                                        } else if (selectedEventIds.length > 0) {
+                                            saveToHistory();
+                                            const eventToMove = events.find(e => e.id === selectedEventIds[0]);
                                             if (eventToMove) {
                                                 const durationMs = new Date(eventToMove.end).getTime() - new Date(eventToMove.start).getTime();
                                                 const newStart = info.dateStr;
                                                 const newEnd = new Date(new Date(newStart).getTime() + durationMs).toISOString();
                                                 
                                                 const updatedEvent = { ...eventToMove, start: newStart, end: newEnd };
-                                                setEvents(prev => prev.map(e => e.id === selectedEventId ? updatedEvent : e));
-                                                setSelectedEventId(null);
+                                                setEvents(prev => prev.map(e => e.id === selectedEventIds[0] ? updatedEvent : e));
+                                                setSelectedEventIds([]);
                                                 toast.success('Horário Atualizado!');
                                                 
                                                 await CalendarActions.upsertCalendarEvent(updatedEvent);
                                             }
                                         }
                                     }}
+                                    eventContent={(eventInfo) => {
+                                        const isSelected = selectedEventIds.includes(eventInfo.event.id);
+                                        const startStr = eventInfo.event.start?.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                                        const endStr = eventInfo.event.end?.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                                        
+                                        return (
+                                            <div className="flex flex-col h-full w-full p-2 relative group overflow-hidden">
+                                                <div className="flex items-start justify-between gap-1 overflow-hidden">
+                                                    <span className="text-[7.5px] font-black truncate leading-tight flex-1">
+                                                        {eventInfo.event.title}
+                                                    </span>
+                                                    {isSelected && (
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                handleDeleteEvent(eventInfo.event.id);
+                                                            }}
+                                                            className="p-1 bg-brand-red hover:bg-red-600 rounded text-white transition-all shadow-lg active:scale-95"
+                                                        >
+                                                            <Trash2 className="w-2.5 h-2.5" />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                                
+                                                <div className="mt-0.5 text-[6.5px] font-bold opacity-80 flex items-center gap-1">
+                                                    <span>{startStr}</span>
+                                                    <span className="opacity-40">-</span>
+                                                    <span>{endStr}</span>
+                                                </div>
+                                                
+                                                {/* Single resize indicator "dot" */}
+                                                <div className="mt-auto flex justify-center pb-0.5 pointer-events-none">
+                                                    <div className="w-1.5 h-1.5 rounded-full bg-white/50 shadow-sm" />
+                                                </div>
+                                            </div>
+                                        );
+                                    }}
                                     eventClick={(info) => {
-                                        if (selectedEventId === info.event.id) {
-                                            setSelectedEventId(null);
+                                        const eventId = info.event.id;
+                                        const isCtrlPressed = info.jsEvent.ctrlKey || info.jsEvent.metaKey;
+
+                                        if (isCtrlPressed) {
+                                            setSelectedEventIds(prev => 
+                                                prev.includes(eventId) 
+                                                    ? prev.filter(id => id !== eventId) 
+                                                    : [...prev, eventId]
+                                            );
                                         } else {
-                                            setSelectedEventId(info.event.id);
-                                            if (isMobile) {
-                                                toast('Bloco Selecionado! Toque na lixeira para excluir ou em outro horário para mover.', { icon: '👆', duration: 3000 });
+                                            if (selectedEventIds.length === 1 && selectedEventIds[0] === eventId) {
+                                                setSelectedEventIds([]);
+                                            } else {
+                                                setSelectedEventIds([eventId]);
+                                                if (isMobile) {
+                                                    toast('Bloco Selecionado! Toque na lixeira para excluir ou em outro horário para mover.', { icon: '👆', duration: 3000 });
+                                                }
                                             }
                                         }
                                     }}
                                     eventClassNames={(arg) => {
-                                        if (arg.event.id === selectedEventId) {
+                                        if (selectedEventIds.includes(arg.event.id)) {
                                             return ['ring-4', 'ring-white', 'ring-offset-2', 'ring-offset-black'];
                                         }
                                         return [];
                                     }}
                                     eventReceive={async (info: any) => {
+                                        saveToHistory();
                                         const tempId = Math.random().toString();
-                                        const newEvent: CalendarEvent = {
+                                        const baseEvent = {
                                             id: tempId,
                                             title: info.event.title,
                                             start: info.event.start,
@@ -781,9 +1258,28 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                             color: info.event.backgroundColor,
                                             extendedProps: info.event.extendedProps
                                         };
+                                        const newEvent = formatEventWithRecurrence(baseEvent);
                                         
                                         setEvents((prev) => [...prev, newEvent]);
                                         info.event.remove();
+
+                                        // Auto-generate 1:1 study block if it's a class (aula) or custom block
+                                        if (newEvent.extendedProps?.type === 'aula' || newEvent.extendedProps?.type === 'custom') {
+                                            const durationMs = new Date(newEvent.end).getTime() - new Date(newEvent.start).getTime();
+                                            const { start: studyStart, end: studyEnd } = calculateStudyTime(newEvent.end, durationMs);
+                                            
+                                            const studyEvent: CalendarEvent = {
+                                                id: Math.random().toString(),
+                                                title: `📚 Estudo: ${newEvent.title.replace('🎓 Aula: ', '')}`,
+                                                start: studyStart,
+                                                end: studyEnd,
+                                                color: '#10B981',
+                                                extendedProps: { type: 'estudo', sourceId: newEvent.extendedProps.sourceId, duration: (durationMs / 3600000).toString() }
+                                            };
+                                            
+                                            setEvents(prev => [...prev, studyEvent]);
+                                            await CalendarActions.upsertCalendarEvent(studyEvent);
+                                        }
 
                                         const res = await CalendarActions.upsertCalendarEvent(newEvent);
                                         if (res.success && res.data) {
@@ -794,6 +1290,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                         }
                                     }}
                                     eventDrop={async (info: any) => {
+                                        saveToHistory();
                                         const updatedEvent = {
                                             id: info.event.id,
                                             title: info.event.title,
@@ -806,6 +1303,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                         const res = await CalendarActions.upsertCalendarEvent(updatedEvent);
                                     }}
                                     eventResize={async (info: any) => {
+                                        saveToHistory();
                                         const updatedEvent = {
                                             id: info.event.id,
                                             title: info.event.title,
@@ -855,6 +1353,14 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     </div>
                 </div>
             </div>
+
+            <SubjectSelectorModal
+                isOpen={isSubjectModalOpen}
+                onClose={() => setIsSubjectModalOpen(false)}
+                onAddTurma={handleAddTurma}
+                onRemoveTurma={handleRemoveTurma}
+                currentEvents={events}
+            />
 
             {isCreateModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -909,6 +1415,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     </div>
                 </div>
             )}
+
 
             {isExportModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -997,12 +1504,94 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                             </li>
                         </ul>
 
+                        <div className="mt-8 pt-8 border-t border-white/5">
+                            <h4 className="font-bold text-white text-sm mb-4 uppercase tracking-wider">Atalhos de Teclado</h4>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                                    <span className="text-[10px] font-bold text-gray-500">Deletar Bloco</span>
+                                    <kbd className="px-2 py-1 bg-white/10 rounded-md text-[9px] font-black text-white">DEL</kbd>
+                                </div>
+                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                                    <span className="text-[10px] font-bold text-gray-500">Duplicar (Copy)</span>
+                                    <kbd className="px-2 py-1 bg-white/10 rounded-md text-[9px] font-black text-white">CTRL+C</kbd>
+                                </div>
+                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                                    <span className="text-[10px] font-bold text-gray-500">Duplicar (Paste)</span>
+                                    <kbd className="px-2 py-1 bg-white/10 rounded-md text-[9px] font-black text-white">CTRL+V</kbd>
+                                </div>
+                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
+                                    <span className="text-[10px] font-bold text-gray-500">Desfazer (Undo)</span>
+                                    <kbd className="px-2 py-1 bg-white/10 rounded-md text-[9px] font-black text-white">CTRL+Z</kbd>
+                                </div>
+                            </div>
+                        </div>
+
                         <button onClick={() => setIsHelpModalOpen(false)} className="mt-10 w-full py-4 bg-white/5 rounded-2xl font-bold text-xs uppercase text-white hover:bg-brand-blue hover:text-white transition-colors border border-white/10">
                             Entendi!
                         </button>
                     </div>
                 </div>
             )}
+
+            {isSettingsOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsSettingsOpen(false)} />
+                    <div className="relative bg-[#1e1e1e] border border-white/10 rounded-[40px] p-10 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200">
+                        <div className="flex items-center gap-4 mb-8">
+                            <div className="size-12 rounded-2xl bg-brand-red/10 flex items-center justify-center text-brand-red border border-brand-red/20">
+                                <Settings className="w-6 h-6" />
+                            </div>
+                            <h3 className="text-2xl font-display font-black text-white uppercase tracking-tight">Visualização</h3>
+                        </div>
+
+                        <div className="space-y-6">
+                            <div>
+                                <label className="block text-[10px] font-black uppercase text-gray-500 tracking-widest mb-3">Horário de Início</label>
+                                <select 
+                                    value={calendarStart}
+                                    onChange={(e) => setCalendarStart(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold text-sm focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
+                                >
+                                    {Array.from({ length: 24 }).map((_, i) => {
+                                        const h = i.toString().padStart(2, '0') + ':00';
+                                        return <option key={h} value={h} className="bg-[#1e1e1e]">{h}</option>;
+                                    })}
+                                </select>
+                            </div>
+
+                            <div>
+                                <label className="block text-[10px] font-black uppercase text-gray-500 tracking-widest mb-3">Horário de Término</label>
+                                <select 
+                                    value={calendarEnd}
+                                    onChange={(e) => setCalendarEnd(e.target.value)}
+                                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold text-sm focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
+                                >
+                                    {Array.from({ length: 24 }).map((_, i) => {
+                                        const h = i.toString().padStart(2, '0') + ':00';
+                                        return <option key={h} value={h} className="bg-[#1e1e1e]">{h}</option>;
+                                    })}
+                                </select>
+                            </div>
+                        </div>
+
+                        <button 
+                            onClick={() => setIsSettingsOpen(false)} 
+                            className="mt-10 w-full py-4 bg-brand-red text-white rounded-2xl font-bold text-xs uppercase hover:scale-[1.02] transition-transform"
+                        >
+                            Salvar Configuração
+                        </button>
+                    </div>
+                </div>
+            )}
+            <JupiterSyncModal 
+                isOpen={isJupiterModalOpen} 
+                onClose={() => setIsJupiterModalOpen(false)}
+                onSuccess={() => {
+                    saveToHistory();
+                    loadData();
+                    toast.success('Grade sincronizada! Você pode desfazer se necessário.');
+                }}
+            />
         </div>
     );
 }

@@ -103,6 +103,26 @@ export async function executeContentWipe(formData: FormData) {
 }
 
 /**
+ * 🎓 WIPE DE TRILHAS: Apaga apenas as trilhas de aprendizagem.
+ */
+export async function executeTrailsWipe(formData: FormData) {
+    const check = await verifyAdmin();
+    if (!check.success) return check;
+
+    if (formData.get('secret_key') !== process.env.ADMIN_PASSWORD) {
+        return { success: false, error: 'Chave secreta inválida.' };
+    }
+
+    const supabase = await createServerSupabase();
+    const { error } = await supabase.rpc('reset_only_trails');
+
+    if (error) return { success: false, error: error.message };
+
+    revalidatePath('/admin');
+    return { success: true, message: 'Wipe de Trilhas concluído.' };
+}
+
+/**
  * 🎯 BUSCA E DESTRUIÇÃO: Deleta UID específico.
  */
 export async function executeSpecificUserWipe(targetUid: string, secretKey: string) {
