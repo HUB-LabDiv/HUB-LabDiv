@@ -691,9 +691,12 @@ export async function fetchRecentEntanglements() {
     log("Starting fetchRecentEntanglements (HARDCODED USER MODE)");
     const supabaseServer = await createServerSupabase();
 
-    // FOR TESTING ONLY: Hardcode Joao's ID
-    const user = { id: '64f451cd-54db-44bd-814f-a91c1fc77f0a' };
-    log(`Using HARDCODED User ID: ${user.id}`);
+    const { data: { user } } = await supabaseServer.auth.getUser();
+    if (!user) {
+        log("No authenticated user found in fetchRecentEntanglements");
+        return [];
+    }
+    log(`Fetching for User ID: ${user.id}`);
 
     // 1. Busca mensagens para identificar conversas ativas
     const { data: messages, error: mError } = await supabaseServer

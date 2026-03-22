@@ -7,7 +7,8 @@ import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { Header } from '@/components/layout/Header';
 import { getProfileById, fetchRecentEntanglements } from '@/app/actions/submissions';
 import { searchUsersByName } from '@/app/actions/profiles';
-import { createEntangledGroup, fetchMyGroups, fetchGroupMessages, sendGroupMessage } from '@/app/actions/groups';
+import { createEntangledGroup, fetchMyGroups, fetchGroupMessages, sendGroupMessage, fetchOfficialGroups, joinGroup } from '@/app/actions/groups';
+import { getUserInterest } from '@/app/actions/recommendations';
 import { ParticleEntanglement } from '@/components/engagement/ParticleEntanglement';
 import { User, Loader2, Search, X, Users, Plus, Send } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
@@ -47,6 +48,12 @@ export default function EmaranhamentoPage() {
     const [isLoadingGroupChat, setIsLoadingGroupChat] = useState(false);
     const groupChatRef = useRef<HTMLDivElement>(null);
 
+    // Focal groups state
+    const [officialGroups, setOfficialGroups] = useState<any[]>([]);
+    const [isOfficialLoading, setIsOfficialLoading] = useState(false);
+    const [userTopInterest, setUserTopInterest] = useState<string | null>(null);
+    const [activeTab, setActiveTab] = useState<'conversas' | 'hubs'>('conversas');
+
     // Load user profile for 1-to-1 chat
     useEffect(() => {
         if (userId) {
@@ -82,6 +89,18 @@ export default function EmaranhamentoPage() {
             }
         }).finally(() => setIsGroupsLoading(false));
     }, [groupId]);
+
+    // Load official groups and user interest
+    useEffect(() => {
+        setIsOfficialLoading(true);
+        Promise.all([
+            fetchOfficialGroups(),
+            getUserInterest()
+        ]).then(([groupsRes, interest]) => {
+            if (groupsRes.data) setOfficialGroups(groupsRes.data);
+            if (interest) setUserTopInterest(interest);
+        }).finally(() => setIsOfficialLoading(false));
+    }, []);
 
     // Debounced user search
     useEffect(() => {
@@ -201,6 +220,20 @@ export default function EmaranhamentoPage() {
             setGroupMessage(msg);
         }
         setIsSendingGroupMsg(false);
+    };
+
+    const handleJoinGroup = async (groupId: string) => {
+        const res = await joinGroup(groupId);
+        if (res.error) {
+            toast.error(res.error);
+        } else {
+            toast.success('Você entrou no hub!');
+            // Refresh groups
+            fetchMyGroups().then(r => r.data && setMyGroups(r.data));
+            // Find the group to open it
+            const g = officialGroups.find(og => og.id === groupId);
+            if (g) openGroupChat(g);
+        }
     };
 
     return (
@@ -413,13 +446,16 @@ export default function EmaranhamentoPage() {
                                         <div className="space-y-2">
                                             {myGroups.map((group) => (
                                                 <button key={group.id} onClick={() => openGroupChat(group)}
-                                                    className="w-full flex items-center gap-3 p-4 bg-white/5 hover:bg-brand-yellow/10 rounded-2xl border border-white/5 hover:border-brand-yellow/30 transition-all text-left group">
-                                                    <div className="size-10 rounded-full bg-brand-yellow/10 flex items-center justify-center text-brand-yellow">
+                                                    className={`w-full flex items-center gap-3 p-4 bg-white/5 hover:bg-brand-yellow/10 rounded-2xl border border-white/5 hover:border-brand-yellow/30 transition-all text-left group ${group.is_official ? 'border-l-4 border-l-brand-yellow' : ''}`}>
+                                                    <div className={`size-10 rounded-full flex items-center justify-center ${group.is_official ? 'bg-brand-yellow text-gray-900 shadow-[0_0_15px_rgba(255,193,7,0.3)]' : 'bg-brand-yellow/10 text-brand-yellow'}`}>
                                                         <Users className="w-5 h-5" />
                                                     </div>
                                                     <div className="flex-1 min-w-0">
-                                                        <div className="text-xs font-black text-white uppercase truncate group-hover:text-brand-yellow transition-colors">{group.name}</div>
-                                                        <div className="text-[9px] text-gray-500 mt-0.5">
+                                                        <div className="flex items-center gap-2">
+                                                            <div className="text-xs font-black text-white uppercase truncate group-hover:text-brand-yellow transition-colors">{group.name}</div>
+                                                            {group.is_official && <span className="bg-brand-yellow/20 text-brand-yellow text-[8px] px-1 rounded uppercase font-black">Official</span>}
+                                                        </div>
+                                                        <div className="text-[9px] text-gray-500 mt-0.5 truncate">
                                                             {group.members?.map((m: any) => m.full_name?.split(' ')[0] || '').filter(Boolean).join(', ')}
                                                         </div>
                                                     </div>
@@ -428,7 +464,82 @@ export default function EmaranhamentoPage() {
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-center text-[10px] text-gray-500 italic py-4">Nenhum grupo ainda. Crie um!</p>
+                                        <p className="text-center text-[10px] text-gray-500 italic py-4">Nenhum grupo ainda. Participe de um Hub ou crie um!</p>
+                                    )}
+                                </div>
+
+                                {/* OFFICIAL HUBS / PRE-MADE GROUPS */}
+                                <div className="w-full max-w-md mb-8">
+                                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-blue flex items-center gap-2 mb-4">
+                                        <span className="material-symbols-outlined text-sm">hub</span> Hubs por Foco
+                                    </h3>
+                                    
+                                    {isOfficialLoading ? (
+                                        <div className="flex justify-center py-4"><Loader2 className="w-5 h-5 text-brand-blue/30 animate-spin" /></div>
+                                    ) : (
+                                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                            {officialGroups.map((group) => {
+                                                const matchesUser = userTopInterest && group.focal_isotope && userTopInterest.toLowerCase().includes(group.focal_isotope.toLowerCase());
+                                                const isAlreadyMember = myGroups.some(mg => mg.id === group.id);
+                                                
+                                                return (
+                                                    <div 
+                                                        key={group.id} 
+                                                        className={`flex flex-col p-5 rounded-[32px] border transition-all duration-500 relative overflow-hidden group/hub ${
+                                                            matchesUser 
+                                                            ? 'bg-gradient-to-br from-brand-blue/10 to-transparent border-brand-blue/30 shadow-[0_0_30px_rgba(0,163,255,0.1)] hover:shadow-[0_0_40px_rgba(0,163,255,0.2)]' 
+                                                            : 'bg-white/5 border-white/5 hover:border-white/20 hover:bg-white/[0.07]'
+                                                        }`}
+                                                    >
+                                                        {matchesUser && (
+                                                            <div className="absolute top-0 right-0 px-3 py-1 bg-brand-blue text-white text-[9px] font-black uppercase tracking-[0.2em] rounded-bl-2xl animate-pulse">
+                                                                Sugerido por Foco
+                                                            </div>
+                                                        )}
+                                                        
+                                                        <div className={`size-12 rounded-2xl flex items-center justify-center mb-4 transition-all duration-500 group-hover/hub:scale-110 group-hover/hub:rotate-3 ${
+                                                            matchesUser ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20' : 'bg-white/10 text-gray-400'
+                                                        }`}>
+                                                            <span className="material-symbols-outlined text-2xl">
+                                                                {group.name.includes('Foto') ? 'photo_camera' : 
+                                                                 group.name.includes('Astro') ? 'flare' : 
+                                                                 group.name.includes('Educa') ? 'school' : 
+                                                                 group.name.includes('Partícula') ? 'blur_on' : 'hub'}
+                                                            </span>
+                                                        </div>
+                                                        
+                                                        <h4 className="text-xs font-black uppercase text-white tracking-widest mb-1 group-hover/hub:text-brand-blue transition-colors">
+                                                            {group.name}
+                                                        </h4>
+                                                        <p className="text-[10px] text-gray-500 line-clamp-2 leading-relaxed mb-4 opacity-80 group-hover/hub:opacity-100 transition-opacity">
+                                                            {group.description}
+                                                        </p>
+                                                        
+                                                        <div className="flex items-center justify-between mt-auto pt-3 border-t border-white/5">
+                                                            <div className="flex flex-col">
+                                                                <span className="text-[8px] font-black text-gray-600 uppercase tracking-widest">Atividade</span>
+                                                                <span className="text-[10px] font-bold text-brand-blue">{group.memberCount} Conexões</span>
+                                                            </div>
+                                                            <button 
+                                                                onClick={() => isAlreadyMember ? openGroupChat(group) : handleJoinGroup(group.id)}
+                                                                className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
+                                                                    isAlreadyMember 
+                                                                    ? 'bg-white/10 text-white hover:bg-white/20' 
+                                                                    : 'bg-brand-blue text-white hover:shadow-[0_0_20px_rgba(0,163,255,0.4)] hover:scale-105 active:scale-95'
+                                                                }`}
+                                                            >
+                                                                {isAlreadyMember ? 'Participar' : 'Entrar no Hub'}
+                                                            </button>
+                                                        </div>
+
+                                                        {/* Decorative Background Elements */}
+                                                        {matchesUser && (
+                                                            <div className="absolute -bottom-4 -right-4 size-20 bg-brand-blue/10 blur-2xl rounded-full" />
+                                                        )}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
                                     )}
                                 </div>
 
@@ -465,8 +576,6 @@ export default function EmaranhamentoPage() {
                             </div>
                         )}
                     </div>
-
-
                 </div>
 
                 {/* CREATE GROUP MODAL */}

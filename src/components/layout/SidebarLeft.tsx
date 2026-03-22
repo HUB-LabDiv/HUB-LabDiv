@@ -99,11 +99,10 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
         // Listen for new messages to update the recent list
         const channel = supabase
             .channel('sidebar_entanglements')
-            .on('postgres_changes', {
-                event: 'INSERT',
-                schema: 'public',
-                table: 'messages'
-            }, () => {
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, () => {
+                loadSidebarData();
+            })
+            .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'group_messages' }, () => {
                 loadSidebarData();
             })
             .subscribe();

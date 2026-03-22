@@ -585,13 +585,15 @@ export async function searchUsersByName(query: string) {
     if (!user) return { error: 'Não autorizado' };
     if (!query || query.trim().length < 2) return { success: true, data: [] };
 
+    const searchTerm = `%${query.trim()}%`;
+
     const { data, error } = await supabase
         .from('profiles')
         .select('id, full_name, username, use_nickname, avatar_url, course, institute, user_category')
-        .eq('is_visible', true)
-        .eq('review_status', 'approved')
+        .in('review_status', ['approved', 'pending'])
+        .not('full_name', 'is', null) // Only find users who finished profile setup
         .neq('id', user.id)
-        .ilike('full_name', `%${query.trim()}%`)
+        .or(`full_name.ilike.${searchTerm},username.ilike.${searchTerm}`)
         .limit(10);
 
     if (error) {

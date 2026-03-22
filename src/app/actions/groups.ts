@@ -3,7 +3,7 @@
 import { createServerSupabase } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 
-export async function createEntangledGroup(name: string, memberIds: string[]) {
+export async function createEntangledGroup(name: string, memberIds: string[], focalIsotope?: string) {
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -14,17 +14,23 @@ export async function createEntangledGroup(name: string, memberIds: string[]) {
     // Create the group
     const { data: group, error: gError } = await supabase
         .from('entangled_groups')
-        .insert({ name: name.trim(), created_by: user.id })
+        .insert({ 
+            name: name.trim(), 
+            created_by: user.id,
+            is_public: true,
+            focal_isotope: focalIsotope || null 
+        })
         .select()
         .single();
 
     if (gError || !group) {
         console.error('Error creating group:', gError);
-        return { error: 'Erro ao criar grupo' };
+        return { error: `Erro ao criar grupo: ${gError?.message || 'Sem resposta'}` };
     }
 
-    // Add creator + members
-    const allMembers = [user.id, ...memberIds].map(uid => ({
+    // Add creator + members, ensuring unique IDs
+    const uniqueMemberIds = Array.from(new Set([user.id, ...memberIds]));
+    const allMembers = uniqueMemberIds.map(uid => ({
         group_id: group.id,
         user_id: uid
     }));
@@ -37,10 +43,10 @@ export async function createEntangledGroup(name: string, memberIds: string[]) {
         console.error('Error adding members:', mError);
         // Cleanup the group
         await supabase.from('entangled_groups').delete().eq('id', group.id);
-        return { error: 'Erro ao adicionar membros' };
+        return { error: `Erro ao adicionar membros: ${mError.message}` };
     }
 
-    revalidatePath('/emaranhamento');
+    revalidatePath('/interacao');
     return { success: true, data: group };
 }
 
@@ -84,6 +90,58 @@ export async function fetchMyGroups() {
     );
 
     return { success: true, data: enrichedGroups };
+}
+
+export async function fetchOfficialGroups() {
+    const supabase = await createServerSupabase();
+    
+    const { data: groups, error } = await supabase
+        .from('entangled_groups')
+        .select('*')
+        .eq('is_official', true)
+        .order('name', { ascending: true });
+
+    if (error) return { error: 'Erro ao buscar grupos oficiais' };
+
+    // Fetch member count for each
+    const enriched = await Promise.all(
+        (groups || []).map(async (group) => {
+            const { count } = await supabase
+                .from('entangled_group_members')
+                .select('*', { count: 'exact', head: true })
+                .eq('group_id', group.id);
+            
+            return { ...group, memberCount: count || 0 };
+        })
+    );
+
+    return { success: true, data: enriched };
+}
+
+export async function joinGroup(groupId: string) {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: 'Não autorizado' };
+
+    // Check if already a member
+    const { data: existing } = await supabase
+        .from('entangled_group_members')
+        .select('*')
+        .eq('group_id', groupId)
+        .eq('user_id', user.id)
+        .single();
+    
+    if (existing) return { success: true, message: 'Já é membro' };
+
+    const { error } = await supabase
+        .from('entangled_group_members')
+        .insert({ group_id: groupId, user_id: user.id });
+    
+    if (error) return { error: 'Erro ao entrar no grupo' };
+
+    revalidatePath('/emaranhamento');
+    return { success: true };
 }
 
 export async function fetchGroupMessages(groupId: string) {
@@ -135,4 +193,37 @@ export async function sendGroupMessage(groupId: string, content: string, attachm
         .eq('id', groupId);
 
     return { success: true };
+}
+
+export async function fetchRecommendedGroups() {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    const { getUserInterest } = await import('@/app/actions/recommendations');
+    
+    const userFocus = await getUserInterest(user?.id);
+    if (!userFocus) return { data: [] };
+
+    // Find official OR public groups with same focus
+    const { data: groups, error } = await supabase
+        .from('entangled_groups')
+        .select('*')
+        .eq('focal_isotope', userFocus)
+        .eq('is_public', true)
+        .limit(5);
+
+    if (error) return { error: 'Error fetching recommendations' };
+
+    // Fetch member count for each
+    const enriched = await Promise.all(
+        (groups || []).map(async (group) => {
+            const { count } = await supabase
+                .from('entangled_group_members')
+                .select('*', { count: 'exact', head: true })
+                .eq('group_id', group.id);
+            
+            return { ...group, memberCount: count || 0 };
+        })
+    );
+
+    return { success: true, data: enriched };
 }

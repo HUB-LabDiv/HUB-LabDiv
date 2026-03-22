@@ -66,7 +66,15 @@ export async function getForYouRecommendations(userId: string | undefined): Prom
     return recommendations.map(sub => ({ post: mapToPostDTO(sub) }));
 }
 
-export async function getUserInterest(userId: string): Promise<string | null> {
+export async function getUserInterest(userId?: string): Promise<string | null> {
+    let targetId = userId;
+    
+    if (!targetId) {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return null;
+        targetId = user.id;
+    }
+
     const counts: Record<string, number> = {};
 
     // Source 1: Reading History (Weights: 1)
@@ -76,7 +84,7 @@ export async function getUserInterest(userId: string): Promise<string | null> {
             submission_id,
             submissions (isotopes, tags)
         `)
-        .eq('user_id', userId)
+        .eq('user_id', targetId)
         .order('last_accessed_at', { ascending: false });
 
     if (history && history.length > 0) {
@@ -96,7 +104,7 @@ export async function getUserInterest(userId: string): Promise<string | null> {
     const { data: ownSubs } = await supabase
         .from('submissions')
         .select('isotopes, tags')
-        .eq('user_id', userId)
+        .eq('user_id', targetId)
         .eq('status', 'aprovado');
 
     if (ownSubs && ownSubs.length > 0) {
@@ -114,7 +122,7 @@ export async function getUserInterest(userId: string): Promise<string | null> {
     const { data: profile } = await supabase
         .from('profiles')
         .select('interests, artistic_interests, ic_research_area, interest_area, research_line')
-        .eq('id', userId)
+        .eq('id', targetId)
         .single();
 
     if (profile) {
