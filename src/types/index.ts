@@ -222,7 +222,7 @@ export interface Trail {
     description: string | null;
     axis: string;
     category: 'obrigatoria' | 'eletiva' | 'livre';
-    course_map?: Record<string, 'obrigatoria' | 'eletiva' | 'livre' | 'nao_se_aplica'>;
+    category_map?: Record<string, 'obrigatoria' | 'eletiva' | 'livre' | 'nao_se_aplica'>;
     course_code: string | null;
     effectiveCategory?: 'obrigatoria' | 'eletiva' | 'livre';
     excitation_level: number | null;
