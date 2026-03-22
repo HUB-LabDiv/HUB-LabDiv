@@ -37,22 +37,6 @@
   /* Neutral Dark for Lab-Div Identity */
 }
 
-/* 📱 Responsive Gutter Audit: Only for Desktop (1024px+) */
-:root {
-  scrollbar-gutter: auto;
-}
-
-@media (min-width: 1024px) {
-  :root {
-    scrollbar-gutter: stable both-edges;
-  }
-}
-
-@media (max-width: 1023px) {
-  :root {
-    scrollbar-gutter: auto !important;
-  }
-}
 
 html {
   scroll-behavior: smooth;

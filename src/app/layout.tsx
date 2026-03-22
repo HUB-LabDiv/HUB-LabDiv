@@ -132,7 +132,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} ${materialSymbols.variable} font-sans selection:bg-brand-yellow selection:text-brand-blue bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 transition-colors duration-200 antialiased`}
+        className={`${inter.variable} ${spaceGrotesk.variable} ${materialSymbols.variable} font-sans selection:bg-brand-yellow selection:text-brand-blue bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 transition-colors duration-200 antialiased overflow-x-hidden`}
         suppressHydrationWarning
       >
         <LazyMotion features={domAnimation}>

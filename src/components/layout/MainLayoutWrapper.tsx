@@ -11,6 +11,7 @@ interface MainLayoutWrapperProps {
     children: React.ReactNode;
     focusMode?: boolean;
     wide?: boolean; // New prop for broader layouts
+    fullWidth?: boolean; // New prop for edge-to-edge fluid layouts
     userId?: string;
     rightSidebar?: React.ReactNode;
 }
@@ -19,22 +20,20 @@ interface MainLayoutWrapperProps {
  * Standardized structure for V4.0 Golden Master pages.
  * Ensures consistent padding, header, and footer mounting.
  */
-export function MainLayoutWrapper({ children, focusMode = false, wide = false, userId, rightSidebar }: MainLayoutWrapperProps) {
+export function MainLayoutWrapper({ children, focusMode = false, wide = false, fullWidth = false, userId, rightSidebar }: MainLayoutWrapperProps) {
     return (
-        <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col">
+        <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col overflow-x-hidden">
             <Header />
 
             {!focusMode ? (
-                <div className="flex-1 w-full max-w-[1920px] mx-auto flex justify-center">
+                <div className="flex-1 w-full max-w-[1920px] mx-auto flex justify-center overflow-hidden">
                     {/* Left Sidebar (Desktop) */}
                     <aside className="hidden xl:block w-[280px] shrink-0 border-r border-gray-200 dark:border-gray-800 bg-transparent">
-                        <div className="sticky top-0">
-                            <SidebarLeft userId={userId} />
-                        </div>
+                        <SidebarLeft userId={userId} />
                     </aside>
 
                     {/* Content Area */}
-                    <main className={`flex-1 ${wide ? 'max-w-[1400px]' : 'max-w-[800px]'} w-full px-4 sm:px-6 pt-16 pb-8 lg:pb-12 transition-all duration-500`}>
+                    <main className={`flex-1 min-w-0 ${fullWidth ? 'max-w-full' : wide ? 'max-w-[1400px]' : 'max-w-[800px]'} w-full px-4 sm:px-6 pt-20 pb-8 lg:pb-12 transition-all duration-500`}>
                         {children}
                     </main>
 

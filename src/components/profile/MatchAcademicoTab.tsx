@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { fetchFreshmenForAdoption, fetchStudentsSeekingIC, fetchResearchersSeekingAssistants, getStudentMiniPortfolio } from '@/app/actions/profiles';
+import { fetchClassmates } from '@/app/actions/match';
+import * as CalendarActions from '@/app/actions/calendar';
 import { Avatar } from '@/components/ui/Avatar';
 import { 
     GraduationCap, 
@@ -37,7 +39,10 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
     const [people, setPeople] = useState<any[]>([]);
     const [myContacts, setMyContacts] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [subTab, setSubTab] = useState<'available' | 'mine'>('available');
+    const [subTab, setSubTab] = useState<'available' | 'mine' | 'classmates'>('available');
+    const [enrolledSubjects, setEnrolledSubjects] = useState<any[]>([]);
+    const [selectedSubject, setSelectedSubject] = useState<string | null>(null);
+    const [classmates, setClassmates] = useState<any[]>([]);
     const { trackEvent } = useTelemetry();
     const [selectedPerson, setSelectedPerson] = useState<any | null>(null);
     const [isPortfolioLoading, setIsPortfolioLoading] = useState(false);
@@ -65,11 +70,28 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
                 } else if (res?.error) {
                     toast.error(res.error);
                 }
-            } else {
+            } else if (subTab === 'mine') {
                 const { fetchMyAdoptedFreshmen } = await import('@/app/actions/profiles');
                 const res = await fetchMyAdoptedFreshmen();
                 if (res.success && res.data) {
                     setMyContacts(res.data);
+                }
+            } else if (subTab === 'classmates') {
+                const calRes = await CalendarActions.getCalendarEvents();
+                if (calRes.success && calRes.data) {
+                    const subjects = new Map();
+                    calRes.data.forEach((e: any) => {
+                        const code = e.extendedProps?.sourceId;
+                        if (code && !subjects.has(code)) {
+                            subjects.set(code, { code, title: e.title.split(' - ')[0] });
+                        }
+                    });
+                    const subjectList = Array.from(subjects.values());
+                    setEnrolledSubjects(subjectList);
+                    
+                    if (subjectList.length > 0 && !selectedSubject) {
+                        setSelectedSubject(subjectList[0].code);
+                    }
                 }
             }
         } catch (error) {
@@ -92,8 +114,22 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
 
     useEffect(() => {
         loadData();
-        trackEvent('TAB_CHANGE', { tab: `Match Acadêmico: ${subTab === 'available' ? 'Disponíveis' : 'Meus Contatos'}` });
+        trackEvent('TAB_CHANGE', { tab: `Match Acadêmico: ${subTab}` });
     }, [subTab]);
+
+    useEffect(() => {
+        if (subTab === 'classmates' && selectedSubject) {
+            const loadClassmates = async () => {
+                setIsLoading(true);
+                const res = await fetchClassmates(selectedSubject);
+                if (res.success && res.data) {
+                    setClassmates(res.data);
+                }
+                setIsLoading(false);
+            };
+            loadClassmates();
+        }
+    }, [subTab, selectedSubject]);
 
     if (!isStudent && !isResearcher && !isMentor) {
         return (
@@ -152,12 +188,109 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
                         >
                             {isMentor ? 'Meus Bixos' : 'Meus Contatos'}
                         </button>
+                        <button
+                            onClick={() => setSubTab('classmates')}
+                            className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${subTab === 'classmates'
+                                ? 'bg-white dark:bg-brand-blue text-brand-blue dark:text-white shadow-sm'
+                                : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'
+                                }`}
+                        >
+                            Meus Colegas
+                        </button>
                     </div>
                 </div>
 
                 {isLoading ? (
                     <div className="flex items-center justify-center py-20">
                         <Loader2 className="w-8 h-8 text-brand-blue animate-spin" />
+                    </div>
+                ) : subTab === 'classmates' ? (
+                    <div className="space-y-8">
+                        {/* Selector for Enrolled Subjects */}
+                        {enrolledSubjects.length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                                {enrolledSubjects.map(sub => (
+                                    <button
+                                        key={sub.code}
+                                        onClick={() => setSelectedSubject(sub.code)}
+                                        className={`px-4 py-2 rounded-xl border text-[10px] font-black uppercase tracking-widest transition-all ${
+                                            selectedSubject === sub.code 
+                                            ? 'bg-brand-blue border-brand-blue text-white shadow-lg shadow-brand-blue/20' 
+                                            : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20'
+                                        }`}
+                                    >
+                                        {sub.code}
+                                    </button>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="p-8 rounded-3xl border border-dashed border-white/10 text-center space-y-4">
+                                <p className="text-xs text-gray-500 font-bold uppercase tracking-widest">
+                                    Nenhuma matéria do IF/IME encontrada na sua grade.
+                                </p>
+                                <a href="/ferramentas" className="inline-flex items-center gap-2 px-6 py-3 bg-brand-blue text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:scale-105 transition-transform">
+                                    <BookOpen className="w-4 h-4" />
+                                    Montar Grade
+                                </a>
+                            </div>
+                        )}
+
+                        {/* Classmates List */}
+                        {selectedSubject && (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {classmates.length === 0 ? (
+                                    <div className="col-span-full py-12 flex flex-col items-center justify-center text-gray-500">
+                                        <UserPlus className="w-12 h-12 mb-4 opacity-20" />
+                                        <p className="text-xs font-bold uppercase tracking-widest">Ninguém mais adicionou esta matéria ainda.</p>
+                                    </div>
+                                ) : (
+                                    classmates.map((person) => (
+                                        <div
+                                            key={person.id}
+                                            className="glass-card p-6 rounded-[32px] group hover:scale-[1.02] transition-all duration-300 border border-gray-100 dark:border-white/5"
+                                        >
+                                            <div className="flex items-start gap-4 mb-6">
+                                                <Avatar
+                                                    src={person.avatar_url}
+                                                    name={person.full_name}
+                                                    size="md"
+                                                />
+                                                <div className="flex-1 min-w-0">
+                                                    <h3 className="font-display font-bold text-gray-900 dark:text-white truncate">
+                                                        {person.full_name}
+                                                    </h3>
+                                                    <span className="px-2 py-0.5 bg-brand-blue/10 text-brand-blue text-[9px] font-black rounded uppercase tracking-tighter">
+                                                        Aluno USP
+                                                    </span>
+                                                </div>
+                                            </div>
+
+                                            {person.bio && (
+                                                <p className="text-[13px] text-gray-600 dark:text-gray-400 italic mb-6 line-clamp-3 leading-relaxed">
+                                                    "{person.bio}"
+                                                </p>
+                                            )}
+
+                                            <div className="flex items-center gap-2 pt-4 border-t border-gray-50 dark:border-white/5">
+                                                {person.id.startsWith('dummy') && (
+                                                    <div className="flex-1 py-2 text-[8px] font-black uppercase text-brand-blue/60 text-center bg-brand-blue/5 rounded-xl border border-brand-blue/10">
+                                                        Usuário Beta (Teste)
+                                                    </div>
+                                                )}
+                                                {!person.id.startsWith('dummy') && (
+                                                    <button
+                                                        onClick={() => handleViewPortfolio(person.id)}
+                                                        className="flex-1 py-2.5 bg-brand-blue text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-blue/90 transition-all text-center"
+                                                    >
+                                                        Ver Perfil
+                                                    </button>
+                                                )}
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
+                            </div>
+                        )}
                     </div>
                 ) : displayData.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-20 text-center">

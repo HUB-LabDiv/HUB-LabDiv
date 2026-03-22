@@ -113,7 +113,13 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
     }, []);
 
     return (
-        <aside className="sticky top-0 h-screen w-full flex flex-col gap-2 pt-[72px] py-6 pr-4 overflow-y-auto hidden-scrollbar">
+        <aside className="sticky top-0 h-screen w-full flex flex-col gap-2 pt-[72px] py-6 px-4 overflow-y-auto hidden-scrollbar">
+            {/* 
+               --- NOTA PARA O DEV (AMIGO DO USUÁRIO) ---
+               O padding lateral ('px-4') fica nesta tag <aside> raiz.
+               Isso garante que *todos* os botões e itens do menu fiquem desgrudados
+               da beirada esquerda da tela e fiquem "flutuando" lindamente (como na Imagem 1).
+            */}
             {/* Primary Navigation */}
             <nav className="flex flex-col gap-1">
                 {/* Main Links */}
@@ -181,12 +187,20 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                 <div className="h-px bg-gray-100 dark:bg-white/5 my-2 mx-4" />
             </nav>
 
+            {/* 
+               --- NOTA PARA O DEV ---
+               [ Central de Interações ] 
+               Para manter tudo alinhado, removemos o "px-4" do container <div> pai.
+               O padding e a margem de recuo (px-4, gap-4) agora estão diretos no <Link>.
+               Isso faz com que o marcador colorido (a borda vermelha/azul de seleção) 
+               fique exatamente na mesma linha vertical que os itens lá de cima ("Comunidade" etc).
+            */}
             {/* Interaction Section */}
-            <div className="px-4 mt-4">
+            <div className="mt-4 flex flex-col gap-1">
                 <Link
                     href="/interacao?tab=emaranhamento"
                     onClick={() => trackEvent('TAB_CHANGE', { tab: 'Central de Interações', hub: 'sidebar' })}
-                    className={`flex items-center gap-4 px-4 py-3 rounded-2xl transition-all group mb-4 border-l-[3px] ${pathname.startsWith('/interacao') ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20 border-l-brand-blue' : 'border-l-transparent hover:border-l-brand-blue text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'}`}
+                    className={`flex items-center gap-4 px-4 py-3 rounded-2xl transition-all group border-l-[3px] ${pathname.startsWith('/interacao') ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20 border-l-brand-blue' : 'border-l-transparent hover:border-l-brand-blue text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'}`}
                 >
                     <span className="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">hub</span>
                     <div className="flex flex-col overflow-hidden">
@@ -196,88 +210,99 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                 </Link>
 
                 {/* Quick Access Buttons */}
-                <div className="grid grid-cols-2 gap-2 mb-4">
-                    <Link
-                        href="/interacao?tab=lab"
-                        className="flex flex-col items-center justify-center p-2 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 hover:border-brand-blue/30 transition-all text-center group"
-                    >
-                        <span className="material-symbols-outlined text-lg text-brand-blue mb-1">person</span>
-                        <span className="text-[9px] font-black uppercase tracking-tighter text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white">Laboratório</span>
-                    </Link>
-                    <Link
-                        href="/interacao?tab=perguntas"
-                        className="flex flex-col items-center justify-center p-2 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 hover:border-brand-blue/30 transition-all text-center group"
-                    >
-                        <span className="material-symbols-outlined text-lg text-brand-blue mb-1">quiz</span>
-                        <span className="text-[9px] font-black uppercase tracking-tighter text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white">Pergunte</span>
-                    </Link>
+                <div className="px-4 my-2">
+                    <div className="grid grid-cols-2 gap-2">
+                        <Link
+                            href="/interacao?tab=lab"
+                            className="flex flex-col items-center justify-center p-2 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 hover:border-brand-blue/30 transition-all text-center group"
+                        >
+                            <span className="material-symbols-outlined text-lg text-brand-blue mb-1">person</span>
+                            <span className="text-[9px] font-black uppercase tracking-tighter text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white">Laboratório</span>
+                        </Link>
+                        <Link
+                            href="/interacao?tab=perguntas"
+                            className="flex flex-col items-center justify-center p-2 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 hover:border-brand-blue/30 transition-all text-center group"
+                        >
+                            <span className="material-symbols-outlined text-lg text-brand-blue mb-1">quiz</span>
+                            <span className="text-[9px] font-black uppercase tracking-tighter text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white">Pergunte</span>
+                        </Link>
+                    </div>
                 </div>
 
-                <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-4 ml-1">Partículas Emaranhadas</h2>
-                <div className="space-y-3">
-                    {isLoading && recentEntanglements.length === 0 ? (
-                        <div className="flex items-center gap-3 p-2 animate-pulse">
-                            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-800" />
-                            <div className="flex flex-col gap-1">
-                                <div className="w-20 h-2 bg-gray-200 dark:bg-gray-800 rounded" />
-                                <div className="w-12 h-1.5 bg-gray-100 dark:bg-gray-900 rounded" />
-                            </div>
-                        </div>
-                    ) : recentEntanglements.length > 0 ? (
-                        recentEntanglements.map((profile) => (
-                            <Link
-                                key={profile.id}
-                                href={`/emaranhamento?userId=${profile.id}`}
-                                className={`flex items-center gap-3 p-2 rounded-2xl transition-all group relative border border-transparent hover:border-white/5 ${pathname === '/emaranhamento' && userId === profile.id ? 'bg-white/10' : 'hover:bg-gray-100 dark:hover:bg-white/5'}`}
-                            >
-                                <Avatar
-                                    src={profile.avatar}
-                                    name={profile.name}
-                                    size="md"
-                                    className="border border-white/10"
-                                    xp={profile.xp}
-                                    level={profile.level}
-                                />
-                                <div className="absolute -bottom-0.5 -right-0.5 size-3 bg-brand-blue border-2 border-white dark:border-[#121212] rounded-full" />
-                                <div className="flex flex-col overflow-hidden min-w-0">
-                                    <div className="flex items-center justify-between gap-2">
-                                        <span className="text-xs font-bold text-gray-900 dark:text-white truncate">{profile.name}</span>
-                                        {profile.lastAt && (
-                                            <span className="text-[8px] text-gray-500 font-bold shrink-0">
-                                                {new Date(profile.lastAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                            </span>
-                                        )}
-                                    </div>
-                                    <span className="text-[10px] text-gray-400 font-medium truncate italic opacity-80 group-hover:opacity-100">
-                                        {profile.lastMessage || profile.handle}
-                                    </span>
+                <div className="flex flex-col mt-2">
+                    <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 px-5">Partículas Emaranhadas</h2>
+                    <div className="space-y-1">
+                        {isLoading && recentEntanglements.length === 0 ? (
+                            <div className="flex items-center gap-3 px-4 py-2 animate-pulse">
+                                <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-800" />
+                                <div className="flex flex-col gap-1">
+                                    <div className="w-20 h-2 bg-gray-200 dark:bg-gray-800 rounded" />
+                                    <div className="w-12 h-1.5 bg-gray-100 dark:bg-gray-900 rounded" />
                                 </div>
-                            </Link>
-                        ))
-                    ) : (
-                        <div className="flex items-center gap-3 p-2 rounded-xl border border-dashed border-gray-200 dark:border-gray-800 opacity-50">
-                            <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                                <MessageSquare className="w-5 h-5 text-gray-400" />
                             </div>
-                            <div className="flex flex-col">
-                                <span className="text-xs font-bold text-gray-500">Sem conexões ativas</span>
-                                <span className="text-[10px] text-gray-400">Inicie um emaranhamento</span>
+                        ) : recentEntanglements.length > 0 ? (
+                            recentEntanglements.map((profile) => (
+                                <Link
+                                    key={profile.id}
+                                    href={`/emaranhamento?userId=${profile.id}`}
+                                    className={`flex items-center gap-3 px-4 py-2 rounded-2xl transition-all group relative border-l-[3px] border-l-transparent hover:border-white/5 ${pathname === '/emaranhamento' && userId === profile.id ? 'bg-white/10' : 'hover:bg-gray-100 dark:hover:bg-white/5'}`}
+                                >
+                                    <Avatar
+                                        src={profile.avatar}
+                                        name={profile.name}
+                                        size="md"
+                                        className="border border-white/10"
+                                        xp={profile.xp}
+                                        level={profile.level}
+                                    />
+                                    <div className="absolute -bottom-0.5 -right-0.5 size-3 bg-brand-blue border-2 border-white dark:border-[#121212] rounded-full" />
+                                    <div className="flex flex-col overflow-hidden min-w-0">
+                                        <div className="flex items-center justify-between gap-2">
+                                            <span className="text-xs font-bold text-gray-900 dark:text-white truncate">{profile.name}</span>
+                                            {profile.lastAt && (
+                                                <span className="text-[8px] text-gray-500 font-bold shrink-0">
+                                                    {new Date(profile.lastAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <span className="text-[10px] text-gray-400 font-medium truncate italic opacity-80 group-hover:opacity-100">
+                                            {profile.lastMessage || profile.handle}
+                                        </span>
+                                    </div>
+                                </Link>
+                            ))
+                        ) : (
+                            <div className="mx-4 flex items-center gap-3 p-2 rounded-xl border border-dashed border-gray-200 dark:border-gray-800 opacity-50">
+                                <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                                    <MessageSquare className="w-5 h-5 text-gray-400" />
+                                </div>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-bold text-gray-500">Sem conexões ativas</span>
+                                    <span className="text-[10px] text-gray-400">Inicie um emaranhamento</span>
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             </div>
 
+            {/* 
+               --- NOTA PARA O DEV ---
+               [ Suporte e Dúvidas ]
+               A mesma lógica foi aplicada aqui: "px-4 gap-4" nos links individuais (<a href...>)
+               ao invés de botar padding no pai. O Header (<h2>) de suporte recebe "px-5" 
+               para o texto dar uma emparelhada suave com o início dos ícones. 
+            */}
             {/* Suporte e Dúvidas */}
-            <div className="px-4 mt-auto mb-2">
-                <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 ml-1">Suporte do hub</h2>
-                <div className="space-y-1">
-                    <a href="https://wa.me/5511968401823" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-gray-500 hover:bg-green-500/10 hover:text-green-600 dark:hover:text-green-400 transition-colors group">
-                        <MessageCircle className="w-4 h-4 opacity-60 group-hover:opacity-100" />
+            <div className="mt-auto mb-2 flex flex-col pt-4">
+                <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 px-5">Suporte do hub</h2>
+                <div className="flex flex-col gap-1">
+                    <a href="https://wa.me/5511968401823" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 px-4 py-3 rounded-2xl text-sm text-gray-500 hover:bg-green-500/10 hover:text-green-600 dark:hover:text-green-400 transition-colors group border-l-[3px] border-l-transparent">
+                        <MessageCircle className="w-5 h-5 opacity-60 group-hover:opacity-100" />
                         <span className="font-bold">WhatsApp Direto</span>
                     </a>
-                    <a href="mailto:joaopaulostangorlini@usp.br" className="flex items-center gap-3 px-3 py-2 rounded-xl text-sm text-gray-500 hover:bg-brand-red/10 hover:text-brand-red transition-colors group">
-                        <Mail className="w-4 h-4 opacity-60 group-hover:opacity-100" />
+                    <a href="mailto:joaopaulostangorlini@usp.br" className="flex items-center gap-4 px-4 py-3 rounded-2xl text-sm text-gray-500 hover:bg-brand-red/10 hover:text-brand-red transition-colors group border-l-[3px] border-l-transparent">
+                        <Mail className="w-5 h-5 opacity-60 group-hover:opacity-100" />
                         <span className="font-bold">Enviar e-mail</span>
                     </a>
                 </div>
@@ -289,7 +314,7 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                     <Link
                         key={link.name}
                         href={link.href}
-                        className="flex items-center gap-3 px-4 py-2 rounded-xl text-sm text-gray-500 hover:text-brand-blue transition-colors group"
+                        className="flex items-center gap-4 px-4 py-3 rounded-2xl text-sm text-gray-500 hover:text-brand-blue transition-colors group border-l-[3px] border-l-transparent"
                     >
                         <span className="opacity-60 group-hover:opacity-100">
                             {link.icon}

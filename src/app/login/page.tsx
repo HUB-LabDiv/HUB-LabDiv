@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy } from 'lucide-react';
+import toast from 'react-hot-toast';
 
 
 function LoginContent() {
@@ -22,8 +23,6 @@ function LoginContent() {
             if (category) {
                 redirectTo += `&category=${category}`;
             }
-
-            console.log(`[Auth Login] Generated RedirectTo: ${redirectTo}`);
 
             const options: any = {
                 redirectTo,
@@ -56,19 +55,16 @@ function LoginContent() {
         if (choice === 'switch') {
             handleLogin('usp');
         } else {
-            // Force external track and redirect to onboarding
             const next = searchParams.get('next') || '/';
             router.push(`/onboarding?track=external&next=${encodeURIComponent(next)}`);
         }
     };
 
-    // Fix Auth Loop: Limpar logic traps (storage keys vazias ou corrompidas) no client-side
     useEffect(() => {
         try {
             Object.keys(localStorage).forEach((key) => {
                 if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
                     localStorage.removeItem(key);
-                    console.log(`[Auth Loop Fix] Removed corrupted storage key: ${key}`);
                 }
             });
         } catch (error) {
@@ -96,14 +92,14 @@ function LoginContent() {
                             Bem-vindo à <span className="text-brand-blue">Comunidade</span>
                         </h1>
                         <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-[260px]">
-                            Conecte-se para compartilhar suas descobertas, fotos e ganhar selos de contribuição.
+                            Conecte-se para compartilhar suas descobertas e acessar ferramentas exclusivas.
                         </p>
                     </div>
 
                     <div className="space-y-4">
                         {errorParam === 'usp-domain-required' && (
                             <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs text-center font-bold animate-pulse">
-                                Acesso Negado: E-mail @usp.br obrigatório para esta opção.
+                                Acesso Negado: E-mail @usp.br obrigatório.
                             </div>
                         )}
 
@@ -141,7 +137,7 @@ function LoginContent() {
                         <button
                             onClick={() => handleLogin('external')}
                             disabled={isLoading}
-                            className="w-full flex items-center justify-center gap-4 bg-transparent hover:bg-white/5 text-gray-300 border-2 border-gray-700 hover:border-gray-500 py-3 px-6 rounded-2xl font-bold transition-all active:scale-[0.98] disabled:opacity-50"
+                            className="w-full flex items-center justify-center gap-4 bg-transparent hover:bg-white/5 text-gray-400 border-2 border-gray-100 dark:border-gray-800 py-3 px-6 rounded-2xl font-bold transition-all active:scale-[0.98] disabled:opacity-50"
                         >
                             Curioso / Outras Instituições
                         </button>
@@ -168,7 +164,6 @@ function LoginContent() {
                 </div>
             </div>
 
-            {/* Conflict Modal: Scientifically Precise UX */}
             <AnimatePresence>
                 {hasConflict && (
                     <motion.div
@@ -200,7 +195,7 @@ function LoginContent() {
                                     onClick={() => handleConflictChoice('switch')}
                                     className="w-full py-4 bg-transparent border-2 border-gray-100 dark:border-gray-800 text-gray-600 dark:text-gray-400 rounded-2xl font-bold hover:bg-gray-50 dark:hover:bg-white/5 transition-all text-xs"
                                 >
-                                    Trocar para Conta USP
+                                    Tentar novamente
                                 </button>
                             </div>
                         </motion.div>

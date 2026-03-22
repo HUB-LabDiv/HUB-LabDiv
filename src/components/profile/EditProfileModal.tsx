@@ -754,14 +754,26 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                                 {institutes.map(inst => <option key={inst} value={inst}>{inst}</option>)}
                                             </select>
                                         </div>
-                                        <div className="space-y-2">
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Curso</label>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Curso</label>
+                                        {selectedInstitute === 'IF-USP' ? (
+                                            <select
+                                                {...register('course')}
+                                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all appearance-none cursor-pointer font-bold"
+                                            >
+                                                <option value="" disabled>Selecione seu curso</option>
+                                                <option value="Bacharelado em Física">Bacharelado em Física</option>
+                                                <option value="Licenciatura em Física">Licenciatura em Física</option>
+                                                <option value="Física Médica">Física Médica</option>
+                                            </select>
+                                        ) : (
                                             <input
                                                 {...register('course')}
-                                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all"
-                                                placeholder="Ex: Bacharelado em Física"
+                                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all font-bold"
+                                                placeholder="Ex: Bacharelado em Matemática"
                                             />
-                                        </div>
+                                        )}
+                                    </div>
                                     </div>
 
                                     <div className="space-y-2">

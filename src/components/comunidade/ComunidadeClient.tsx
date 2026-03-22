@@ -157,7 +157,7 @@ export function ComunidadeClient({ initialFluxoData }: ComunidadeClientProps) {
             <HubHeader />
 
             {/* Content Area */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8">
                 <AnimatePresence mode="wait">
                     {activeTab === 'mural' ? (
                         <motion.div

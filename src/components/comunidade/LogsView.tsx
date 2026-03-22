@@ -145,7 +145,7 @@ export function LogsView() {
     const recentDrops = useMemo(() => drops.filter(d => !d.is_featured), [drops]);
 
     return (
-        <div className="max-w-2xl mx-auto space-y-12 pb-20 pt-8">
+        <div className="max-w-4xl mx-auto space-y-12 pb-20 pt-8">
             <div className="flex flex-col gap-3 relative">
                 <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-red/5 rounded-full blur-[60px] pointer-events-none"></div>
                 <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-red flex items-center gap-4 relative z-10">

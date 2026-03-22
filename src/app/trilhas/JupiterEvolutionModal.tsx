@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { X, Loader2, RefreshCw, Lock, Check, CheckCircle2, Clock } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { syncJupiterEvolution } from '../actions/progress';
+import { syncJupiterEvolution } from '@/app/actions/progress';
 
 interface JupiterEvolutionModalProps {
     isOpen: boolean;

@@ -15,6 +15,7 @@ export default async function FerramentasLayout({ children }: { children: React.
     return (
         <MainLayoutWrapper
             userId={user.id}
+            wide={true}
             rightSidebar={<FerramentasFeedbackCard />}
         >
             <ToolsSubNav />

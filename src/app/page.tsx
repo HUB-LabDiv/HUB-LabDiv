@@ -27,6 +27,7 @@ export default async function Home() {
         <MainLayoutWrapper
             userId={undefined}
             rightSidebar={<><FluxoFeedbackCard /><SidebarRight /></>}
+            fullWidth={true}
         >
             <ComunidadeClient initialFluxoData={initialFluxoData} />
         </MainLayoutWrapper>

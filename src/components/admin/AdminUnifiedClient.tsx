@@ -14,7 +14,8 @@ import {
     executeNuclearReset, 
     executeProfileWipe, 
     executeContentWipe, 
-    executeSpecificUserWipe 
+    executeSpecificUserWipe,
+    executeTrailsWipe
 } from '@/app/actions/reset';
 import { DeleteUserModal } from '@/components/admin/DeleteUserModal';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
@@ -203,6 +204,23 @@ export function AdminUnifiedClient() {
             setTargetUid('');
         } else {
             toast.error(result.error || 'Erro na Remoção do Usuário');
+        }
+        setIsDangerLoading(false);
+    };
+
+    const handleTrailsWipe = async () => {
+        if (!secretKey) return toast.error('Insira a chave secreta.');
+        if (!confirm('Apagar TODAS AS TRILHAS do sistema? (Usuários e posts serão mantidos)')) return;
+
+        setIsDangerLoading(true);
+        const formData = new FormData();
+        formData.append('secret_key', secretKey);
+        const result = await executeTrailsWipe(formData) as any;
+
+        if (result.success) {
+            toast.success(result.message || 'Wipe de Trilhas Concluído');
+        } else {
+            toast.error(result.error || 'Erro no Wipe de Trilhas');
         }
         setIsDangerLoading(false);
     };
@@ -443,6 +461,18 @@ export function AdminUnifiedClient() {
                                         <span className="material-symbols-outlined text-brand-yellow">inventory_2</span>
                                     </div>
                                     <p className="text-xs text-brand-yellow/40">Limpa submissões, logs e feedback.</p>
+                                </button>
+
+                                <button
+                                    onClick={handleTrailsWipe}
+                                    disabled={isDangerLoading}
+                                    className="p-8 bg-brand-blue/5 border border-brand-blue/20 rounded-[32px] hover:bg-brand-blue/10 transition-all text-left"
+                                >
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="font-black text-brand-blue uppercase tracking-widest text-sm">Wipe de Trilhas</span>
+                                        <span className="material-symbols-outlined text-brand-blue">route</span>
+                                    </div>
+                                    <p className="text-xs text-brand-blue/40">Remove APENAS as trilhas do sistema.</p>
                                 </button>
                             </div>
                         </div>
