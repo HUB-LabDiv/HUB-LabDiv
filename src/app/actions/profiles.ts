@@ -6,6 +6,7 @@ import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { Profile, Freshman } from '@/types';
 import { sendAdminNotification } from '@/lib/notifications';
+import { sendAutomaticNotification } from './notifications';
 
 async function checkIsAdmin() {
     const supabase = await createServerSupabase();
@@ -275,6 +276,7 @@ export async function updateProfileAsAdmin(profileId: string, updates: Partial<P
             ic_research_area: updates.ic_research_area,
             ic_preferred_department: updates.ic_preferred_department,
             ic_preferred_lab: updates.ic_preferred_lab,
+            ic_letter_of_interest: updates.ic_letter_of_interest,
             office_room: updates.office_room,
             laboratory_name: updates.laboratory_name,
             department: updates.department
@@ -380,20 +382,26 @@ export async function fetchMyAdoptedFreshmen() {
     const { data: adoptions, error } = await supabase
         .from('adoptions')
         .select(`
+            status,
             freshman:profiles!freshman_id(id, full_name, username, use_nickname, avatar_url, course, institute, entrance_year, bio, whatsapp, email, xp, level, is_labdiv)
         `)
         .eq('mentor_id', user.id)
-        .eq('status', 'approved');
+        .in('status', ['approved', 'pending']);
 
     if (error) {
         console.error('Error fetching my adopted freshmen:', error);
         return { error: 'Erro ao buscar seus bixos adotados' };
     }
 
-    // Supabase can return the joined profile as an object or an array of one element
-    const flattened = (adoptions || []).map((a: any) =>
-        Array.isArray(a.freshman) ? a.freshman[0] : a.freshman
-    ).filter(Boolean);
+    // Supabase returns { freshman: { ... } } or { freshman: [ { ... } ] }
+    const flattened = (adoptions || []).map((a: any) => {
+        const profile = Array.isArray(a.freshman) ? a.freshman[0] : a.freshman;
+        if (!profile) return null;
+        return {
+            ...profile,
+            adoptionStatus: a.status
+        };
+    }).filter(Boolean);
 
     return { success: true, data: flattened as Freshman[] };
 }
@@ -418,6 +426,34 @@ export async function requestAdoption(freshmanId: string) {
         if (error.code === '23505') return { error: 'Você já solicitou a adoção deste bixo' };
         console.error('Error requesting adoption:', error);
         return { error: 'Erro ao solicitar adoção' };
+    }
+
+    // Send Notifications
+    try {
+        const { data: freshman } = await supabase.from('profiles').select('full_name').eq('id', freshmanId).single();
+        const { data: mentor } = await supabase.from('profiles').select('full_name, username').eq('id', user.id).single();
+
+        if (freshman && mentor) {
+            // To Mentor
+            await sendAutomaticNotification({
+                userId: user.id,
+                title: 'Solicitação de Adoção Enviada! 🤝',
+                message: `Aguardando validação da adoção de ${freshman.full_name}. Fale e ajude seu bixo para ela ser validada.`,
+                link: `/lab?user=${freshmanId}`,
+                type: 'adoption'
+            });
+
+            // To Freshman
+            await sendAutomaticNotification({
+                userId: freshmanId,
+                title: 'Alguém quer te adotar! 🎉',
+                message: `O veterano/mentor ${mentor.full_name} solicitou sua adoção. Fique atento e procure por ele no Lab!`,
+                link: `/lab?user=${user.id}`,
+                type: 'adoption'
+            });
+        }
+    } catch (e) {
+        console.error('Error sending adoption request notifications:', e);
     }
 
     return { success: true, data };
@@ -465,39 +501,307 @@ export async function updateAdoptionStatus(adoptionId: string, status: 'approved
     const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
     if (profile?.role !== 'admin') return { error: 'Acesso negado' };
 
-    const { error } = await supabase
+    const { error: updateError } = await supabase
         .from('adoptions')
         .update({ status, updated_at: new Date().toISOString() })
         .eq('id', adoptionId);
 
-    if (error) {
-        console.error('Error updating adoption status:', error);
+    if (updateError) {
+        console.error('Error updating adoption status:', updateError);
         return { error: 'Erro ao atualizar status da adoção' };
     }
 
+    if (status === 'approved') {
+        try {
+            // Fetch detailed info for notifications
+            const { data: adoptionData } = await supabase
+                .from('adoptions')
+                .select(`
+                    *,
+                    mentor:profiles!mentor_id(full_name, username),
+                    freshman:profiles!freshman_id(full_name, username)
+                `)
+                .eq('id', adoptionId)
+                .single();
+
+            if (adoptionData) {
+                const mentor = Array.isArray(adoptionData.mentor) ? adoptionData.mentor[0] : adoptionData.mentor;
+                const freshman = Array.isArray(adoptionData.freshman) ? adoptionData.freshman[0] : adoptionData.freshman;
+
+                // Notify Mentor (Adopter)
+                await sendAutomaticNotification({
+                    userId: adoptionData.mentor_id,
+                    title: 'Adoção Confirmada! 🤝',
+                    message: `Você adotou ${freshman?.full_name || 'um calouro'}. Agora você é oficialmente um mentor/padrinho.`,
+                    link: `/perfil/${freshman?.username || adoptionData.freshman_id}`,
+                    type: 'adoption'
+                });
+
+                // Notify Freshman (Adopted)
+                await sendAutomaticNotification({
+                    userId: adoptionData.freshman_id,
+                    title: 'Você foi Adotado! 🎉',
+                    message: `Ótimas notícias! O veterano/mentor ${mentor?.full_name || 'um veterano'} acabou de te adotar.`,
+                    link: `/perfil/${mentor?.username || adoptionData.mentor_id}`,
+                    type: 'adoption'
+                });
+            }
+        } catch (e) {
+            console.error('Error sending adoption notifications:', e);
+        }
+    } else if (status === 'rejected') {
+        try {
+            const { data: adoptionData } = await supabase
+                .from('adoptions')
+                .select('mentor_id, freshman_id')
+                .eq('id', adoptionId)
+                .single();
+
+            if (adoptionData) {
+                // Notify Mentor
+                await sendAutomaticNotification({
+                    userId: adoptionData.mentor_id,
+                    title: 'Adoção não Validada ❌',
+                    message: 'A moderação não validou sua adoção, caso queira saber mais contate o suporte.',
+                    type: 'system'
+                });
+
+                // Notify Freshman (Optional but good)
+                await sendAutomaticNotification({
+                    userId: adoptionData.freshman_id,
+                    title: 'Adoção não Validada ❌',
+                    message: 'A solicitação de adoção não foi validada pela moderação.',
+                    type: 'system'
+                });
+            }
+        } catch (e) {
+            console.error('Error sending rejection notifications:', e);
+        }
+    }
+
     revalidatePath('/admin/adocoes');
+    revalidatePath('/lab');
     return { success: true };
 }
+
+
+// RESEARCH ADOPTIONS (ASSISTANTS)
+export async function approveStudentAsAssistant(studentId: string) {
+    const supabase = await createServerSupabase();
+    const { data: { user: researcher } } = await supabase.auth.getUser();
+
+    if (!researcher) return { error: 'Não autorizado' };
+
+    // Verify if already exists
+    const { data: existing } = await supabase
+        .from('research_adoptions')
+        .select('id')
+        .eq('researcher_id', researcher.id)
+        .eq('student_id', studentId)
+        .single();
+
+    if (existing) return { error: 'Este aluno já é seu ajudante' };
+
+    const { error } = await supabase
+        .from('research_adoptions')
+        .insert({
+            researcher_id: researcher.id,
+            student_id: studentId,
+            status: 'pending'
+        });
+
+    if (error) {
+        console.error('Error approving assistant:', error);
+        return { error: 'Erro ao aprovar ajudante' };
+    }
+
+    // Send Notifications
+    try {
+        const { data: student } = await supabase.from('profiles').select('full_name, email').eq('id', studentId).single();
+        const { data: researcherProfile } = await supabase.from('profiles').select('full_name, email').eq('id', researcher.id).single();
+
+        if (student && researcherProfile) {
+            // Notification to Student
+            await sendAutomaticNotification({
+                userId: studentId,
+                title: '🎉 Seleção de Iniciação Científica',
+                message: `O pesquisador ${researcherProfile.full_name} aprovou seu pedido pelo Quero uma IC! Entre em contato pelo e-mail: ${researcherProfile.email}`,
+                link: `mailto:${researcherProfile.email}`,
+                type: 'match'
+            });
+
+            // Notification to Researcher
+            await sendAutomaticNotification({
+                userId: researcher.id,
+                title: '⚡ Confirmação de Ajudante',
+                message: `Você aprovou o pedido do estudante ${student.full_name}. Não se esqueça de contatá-lo (${student.email}), ou o suporte do HUB caso tenha sido um erro.`,
+                link: `mailto:${student.email}`,
+                type: 'match'
+            });
+        }
+    } catch (e) {
+        console.error('Error sending notifications:', e);
+    }
+
+    revalidatePath('/arena');
+    revalidatePath('/ferramentas/match');
+    return { success: true };
+}
+
+export async function fetchMyResearchAssistants() {
+    const supabase = await createServerSupabase();
+    const { data: { user: researcher } } = await supabase.auth.getUser();
+
+    if (!researcher) return { error: 'Não autorizado' };
+
+    const { data: adoptions, error } = await supabase
+        .from('research_adoptions')
+        .select(`
+            status,
+            student:profiles!student_id(*)
+        `)
+        .eq('researcher_id', researcher.id)
+        .in('status', ['approved', 'pending']);
+
+    if (error) {
+        console.error('Error fetching research assistants:', error);
+        return { error: 'Erro ao buscar seus ajudantes' };
+    }
+
+    const flattened = (adoptions || []).map((a: any) => {
+        const student = Array.isArray(a.student) ? a.student[0] : a.student;
+        if (student) {
+            return { ...student, adoptionStatus: a.status };
+        }
+        return null;
+    }).filter(Boolean);
+
+    return { success: true, data: flattened };
+}
+
+export async function fetchAllResearchAdoptions() {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: 'Não autorizado' };
+
+    // Admin check
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    if (profile?.role !== 'admin') return { error: 'Acesso negado' };
+
+    const { data, error } = await supabase
+        .from('research_adoptions')
+        .select(`
+            *,
+            researcher:profiles!researcher_id(*),
+            student:profiles!student_id(*)
+        `)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching all research adoptions:', error);
+        return { error: 'Erro ao buscar validações de IC' };
+    }
+
+    return { success: true, data };
+}
+
+export async function updateResearchAdoptionStatus(adoptionId: string, status: 'approved' | 'rejected') {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: 'Não autorizado' };
+
+    // Admin check
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    if (profile?.role !== 'admin') return { error: 'Acesso negado' };
+
+    const { data, error } = await supabase
+        .from('research_adoptions')
+        .update({ status, updated_at: new Date().toISOString() })
+        .eq('id', adoptionId)
+        .select();
+
+    if (error || !data || data.length === 0) {
+        console.error('Error updating research adoption status:', error || 'No rows affected (RLS?)');
+        return { error: 'Erro ao atualizar status do ajudante' };
+    }
+
+    if (status === 'approved') {
+        try {
+            const { data: raData } = await supabase
+                .from('research_adoptions')
+                .select('researcher_id, student_id')
+                .eq('id', adoptionId)
+                .single();
+            
+            if (raData) {
+                await sendAutomaticNotification({
+                    userId: raData.researcher_id,
+                    title: 'Match IC Validado! ✅',
+                    message: 'A moderação validou seu match de Iniciação Científica.',
+                    type: 'match'
+                });
+            }
+        } catch (e) { console.error(e); }
+    } else if (status === 'rejected') {
+        try {
+            const { data: raData } = await supabase
+                .from('research_adoptions')
+                .select('researcher_id, student_id')
+                .eq('id', adoptionId)
+                .single();
+            
+            if (raData) {
+                await sendAutomaticNotification({
+                    userId: raData.researcher_id,
+                    title: 'Match IC não Validado ❌',
+                    message: 'A moderação não validou seu match de IC comercial / acadêmico. Caso queira saber mais, contate o suporte.',
+                    type: 'system'
+                });
+            }
+        } catch (e) { console.error(e); }
+    }
+
+    revalidatePath('/admin/adocoes');
+    revalidatePath('/arena');
+    revalidatePath('/ferramentas/match');
+    return { success: true };
+}
+
 export async function fetchStudentsSeekingIC() {
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) return { error: 'Não autorizado' };
 
-    const { data: rawData, error } = await supabase
+    // Get IDs of students who already have an approved advisor
+    const { data: activeAdoptions } = await supabase
+        .from('research_adoptions')
+        .select('student_id')
+        .in('status', ['approved', 'pending']);
+
+    const excludedIds = activeAdoptions?.map(a => a.student_id) || [];
+
+    let query = supabase
         .from('profiles')
         .select('*, pending_edits')
         .or('seeking_ic.eq.true,pending_edits->>seeking_ic.eq.true')
         .in('review_status', ['approved', 'pending'])
-        .eq('is_visible', true)
-        .order('created_at', { ascending: false });
+        .eq('is_visible', true);
+
+    if (excludedIds.length > 0) {
+        query = query.not('id', 'in', `(${excludedIds.join(',')})`);
+    }
+
+    const { data: rawData, error } = await query.order('created_at', { ascending: false });
 
     if (error) {
         console.error('Error fetching students for IC:', error);
         return { error: 'Erro ao buscar alunos interessados em IC' };
     }
 
-    // Merge pending edits so researchers see real-time updates (especially during testing)
+    // Merge pending edits
     const data = (rawData || []).map(p => ({
         ...p,
         ...(p.pending_edits || {})
@@ -599,6 +903,38 @@ export async function searchUsersByName(query: string) {
     if (error) {
         console.error('Error searching users:', error);
         return { error: 'Erro ao buscar usuários' };
+    }
+
+    return { success: true, data };
+}
+
+export async function fetchMyResearchAdoptionStatus() {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: 'Não autorizado' };
+
+    const { data, error } = await supabase
+        .from('research_adoptions')
+        .select(`
+            id,
+            status,
+            created_at,
+            researcher:profiles!researcher_id(
+                id,
+                full_name,
+                laboratory_name,
+                email,
+                avatar_url
+            )
+        `)
+        .eq('student_id', user.id)
+        .in('status', ['approved', 'pending'])
+        .single();
+
+    if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching my research adoption status:', error);
+        return { error: 'Erro ao buscar status de IC' };
     }
 
     return { success: true, data };

@@ -63,6 +63,7 @@ export interface Profile {
     ic_research_area?: string;
     ic_preferred_department?: string;
     ic_preferred_lab?: string;
+    ic_letter_of_interest?: string;
     
     // Researcher fields (New Sprint V3.2.2)
     research_line?: string;
@@ -92,6 +93,7 @@ export interface Freshman {
     xp?: number;
     level?: number;
     is_labdiv?: boolean;
+    adoptionStatus?: 'pending' | 'approved' | 'rejected';
 }
 
 export interface Submission {

@@ -44,7 +44,7 @@ export default function AdminLayout({
         { name: 'Moderação do Fluxo', href: '/admin/moderacao', icon: 'verified_user' },
         { name: 'Arena de Desafios', href: '/admin/desafios', icon: 'emoji_events' },
         { name: 'Aprovação de Perfis', href: '/admin/profiles', icon: 'manage_accounts', adminOnly: true },
-        { name: 'Validação de Adoções', href: '/admin/adocoes', icon: 'favorite' },
+        { name: 'Validação do Match', href: '/admin/adocoes', icon: 'favorite' },
         { name: 'Pergunte a um Cientista', href: '/admin/perguntas', icon: 'quiz' },
         { name: 'Central de Anomalias', href: '/admin/reports', icon: 'bug_report' },
         { name: 'Trilhas de Aprendizagem', href: '/admin/trilhas', icon: 'route', adminOnly: true },

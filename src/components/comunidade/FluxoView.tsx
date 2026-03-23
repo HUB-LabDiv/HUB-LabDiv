@@ -348,7 +348,7 @@ export const FluxoView = ({
 
 
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 min-h-[600px] w-full mx-auto">
+            <div className="grid grid-cols-1 gap-8 min-h-[600px] w-full max-w-2xl mx-auto">
                 {items.length > 0 ? (
                     items.map((item, index) => {
                         const isAboveFold = index < 2;

@@ -3,14 +3,16 @@
 import React, { useState, useEffect } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
-import { fetchNotifications, markNotificationAsRead, getUnreadCount } from '@/app/actions/notifications';
+import { fetchNotifications, markNotificationAsRead, getUnreadCount, markAllNotificationsAsRead } from '@/app/actions/notifications';
 import { supabase } from '@/lib/supabase';
 import { useHistoryBack } from '@/hooks/useHistoryBack';
+import { toast } from 'react-hot-toast';
 
 export const NotificationBell = ({ userId }: { userId: string | undefined }) => {
     const [notifications, setNotifications] = useState<any[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
+    const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
     // [B14] Support hardware back button to close the menu
     useHistoryBack(isOpen, () => setIsOpen(false));
@@ -61,6 +63,29 @@ export const NotificationBell = ({ userId }: { userId: string | undefined }) => 
         setUnreadCount(prev => Math.max(0, prev - 1));
     };
 
+    const handleMarkAllAsRead = async () => {
+        if (!userId || unreadCount === 0) return;
+        
+        const res = await markAllNotificationsAsRead(userId);
+        if (res.success) {
+            setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
+            setUnreadCount(0);
+            toast.success('Todas as notificações foram lidas!');
+        } else {
+            toast.error('Erro ao marcar notificações');
+        }
+    };
+
+    const toggleExpand = (e: React.MouseEvent, id: string) => {
+        e.stopPropagation();
+        setExpandedIds(prev => {
+            const next = new Set(prev);
+            if (next.has(id)) next.delete(id);
+            else next.add(id);
+            return next;
+        });
+    };
+
     return (
         <div className="relative">
             <button
@@ -105,42 +130,77 @@ export const NotificationBell = ({ userId }: { userId: string | undefined }) => 
                             <>
                                 <div className="p-4 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between bg-gray-50/50 dark:bg-gray-900/50">
                                     <span className="text-xs font-black uppercase tracking-widest text-gray-500">Notificações</span>
-                                    <button className="text-[10px] font-bold text-brand-blue hover:underline">Marcar todas como lidas</button>
+                                    <button 
+                                        onClick={handleMarkAllAsRead}
+                                        disabled={unreadCount === 0}
+                                        className="text-[10px] font-bold text-brand-blue hover:underline disabled:opacity-30 disabled:no-underline"
+                                    >
+                                        Marcar todas como lidas
+                                    </button>
                                 </div>
 
-                                <div className="max-h-96 overflow-y-auto no-scrollbar">
+                                <div className="max-h-[32rem] overflow-y-auto no-scrollbar">
                                     {notifications.length === 0 ? (
                                         <div className="p-12 text-center text-gray-400">
                                             <span className="material-symbols-outlined text-4xl opacity-20 block mb-2">notifications_off</span>
                                             <p className="text-xs font-medium">Nada por aqui ainda.</p>
                                         </div>
                                     ) : (
-                                        notifications.map(notif => (
-                                            <Link
-                                                key={notif.id}
-                                                href={notif.link || '#'}
-                                                onClick={() => {
-                                                    handleMarkAsRead(notif.id);
-                                                    setIsOpen(false);
-                                                }}
-                                                className={`flex gap-3 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-50 dark:border-gray-800/50 relative ${!notif.is_read ? 'bg-brand-blue/5' : ''}`}
-                                            >
-                                                <div className={`size-10 rounded-full flex items-center justify-center flex-shrink-0 ${notif.type === 'atomic' ? 'bg-brand-blue/20 text-brand-blue shadow-[0_0_10px_rgba(59,130,246,0.2)]' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
-                                                    }`}>
-                                                    <span className="material-symbols-outlined filled">
-                                                        {notif.type === 'atomic' ? 'offline_bolt' : 'notifications'}
-                                                    </span>
+                                        notifications.map(notif => {
+                                            const isExpanded = expandedIds.has(notif.id);
+                                            const canExpand = notif.message?.length > 60;
+
+                                            return (
+                                                <div
+                                                    key={notif.id}
+                                                    onClick={() => handleMarkAsRead(notif.id)}
+                                                    className={`flex gap-3 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-50 dark:border-gray-800/50 relative cursor-pointer ${!notif.is_read ? 'bg-brand-blue/5' : ''}`}
+                                                >
+                                                    <div className={`size-10 rounded-full flex items-center justify-center flex-shrink-0 ${notif.type === 'atomic' ? 'bg-brand-blue/20 text-brand-blue shadow-[0_0_10px_rgba(59,130,246,0.2)]' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
+                                                        }`}>
+                                                        <span className="material-symbols-outlined filled">
+                                                            {notif.type === 'atomic' ? 'offline_bolt' : 'notifications'}
+                                                        </span>
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-xs font-bold text-gray-900 dark:text-white leading-tight mb-0.5">{notif.title}</p>
+                                                        <p className={`text-[11px] text-gray-500 leading-snug whitespace-pre-wrap ${isExpanded ? '' : 'line-clamp-2'}`}>
+                                                            {notif.message}
+                                                        </p>
+                                                        
+                                                        {canExpand && (
+                                                            <button 
+                                                                onClick={(e) => toggleExpand(e, notif.id)}
+                                                                className="text-[9px] font-black text-brand-blue uppercase tracking-tighter mt-1 hover:underline"
+                                                            >
+                                                                {isExpanded ? 'Ver Menos' : 'Ver Mais'}
+                                                            </button>
+                                                        )}
+
+                                                        <div className="flex items-center justify-between mt-2">
+                                                            <p className="text-[9px] text-gray-400 font-medium">{new Date(notif.created_at).toLocaleDateString()}</p>
+                                                            {notif.link && notif.link !== '#' && (
+                                                                <Link 
+                                                                    href={notif.link}
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        handleMarkAsRead(notif.id);
+                                                                        setIsOpen(false);
+                                                                    }}
+                                                                    className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-blue text-white hover:bg-blue-600 transition-all shadow-sm"
+                                                                >
+                                                                    <span className="material-symbols-outlined text-[10px] font-bold">link</span>
+                                                                    <span className="text-[8px] font-black uppercase tracking-tighter">LINK</span>
+                                                                </Link>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                    {!notif.is_read && (
+                                                        <div className="size-1.5 bg-brand-blue rounded-full absolute top-4 right-4 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
+                                                    )}
                                                 </div>
-                                                <div className="flex-1 min-w-0">
-                                                    <p className="text-xs font-bold text-gray-900 dark:text-white leading-tight mb-0.5">{notif.title}</p>
-                                                    <p className="text-[11px] text-gray-500 line-clamp-2 leading-snug">{notif.message}</p>
-                                                    <p className="text-[9px] text-gray-400 mt-1 font-medium">{new Date(notif.created_at).toLocaleDateString()}</p>
-                                                </div>
-                                                {!notif.is_read && (
-                                                    <div className="size-2 bg-brand-blue rounded-full absolute top-4 right-4" />
-                                                )}
-                                            </Link>
-                                        ))
+                                            );
+                                        })
                                     )}
                                 </div>
                             </>

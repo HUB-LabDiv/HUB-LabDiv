@@ -22,13 +22,13 @@ interface MainLayoutWrapperProps {
  */
 export function MainLayoutWrapper({ children, focusMode = false, wide = false, fullWidth = false, userId, rightSidebar }: MainLayoutWrapperProps) {
     return (
-        <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col overflow-x-hidden">
+        <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col">
             <Header />
 
             {!focusMode ? (
-                <div className="flex-1 w-full max-w-[1920px] mx-auto flex justify-center overflow-hidden">
+                <div className="flex-1 w-full max-w-[1920px] mx-auto flex justify-center">
                     {/* Left Sidebar (Desktop) */}
-                    <aside className="hidden xl:block w-[280px] shrink-0 border-r border-gray-200 dark:border-gray-800 bg-transparent">
+                    <aside className="hidden xl:block w-[280px] shrink-0 border-r border-gray-200 dark:border-gray-800 bg-transparent sticky top-0 h-screen">
                         <SidebarLeft userId={userId} />
                     </aside>
 
@@ -38,8 +38,8 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = false, f
                     </main>
 
                     {/* Right Sidebar */}
-                    <aside className="hidden lg:block w-[320px] shrink-0 px-4 py-8 border-l border-gray-200 dark:border-gray-800 bg-transparent">
-                        <div className="sticky top-24 pt-4">
+                    <aside className="hidden lg:block w-[320px] shrink-0 px-4 pt-16 lg:pt-20 border-l border-gray-200 dark:border-gray-800 bg-transparent sticky top-0 h-screen overflow-y-auto hidden-scrollbar">
+                        <div className="py-8">
                             {rightSidebar}
                         </div>
                     </aside>

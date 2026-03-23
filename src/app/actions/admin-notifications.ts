@@ -12,7 +12,7 @@ const SendNotificationSchema = z.object({
     title: z.string().min(1, 'Título obrigatório').max(200),
     message: z.string().min(1, 'Mensagem obrigatória').max(1000),
     link: z.string().optional(),
-    targetType: z.enum(['broadcast', 'user', 'group']),
+    targetType: z.enum(['broadcast', 'user', 'group', 'automatic']),
     targetValue: z.string().optional(),
     scheduledAt: z.string().optional(), // ISO date string
 });

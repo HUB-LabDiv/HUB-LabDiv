@@ -6,6 +6,7 @@ import { PostDTO, mapToPostDTO } from '@/dtos/media';
 import { unstable_cache, revalidatePath } from 'next/cache';
 import { SubmissionSchema } from '@/lib/validations';
 import { z } from 'zod';
+import { sendAutomaticNotification } from './notifications';
 
 export interface AdminUpdate {
     status?: string;
@@ -585,6 +586,16 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
         category: newSub.category || 'Geral'
     });
 
+    // Notify Author: Conteúdo em Análise
+    if (initialStatus === 'pendente') {
+        await sendAutomaticNotification({
+            userId: user.id,
+            title: 'Conteúdo em Análise ⏳',
+            message: `Seu envio para o [${newSub.category || 'Fluxo/Logs'}] foi recebido pelo Painel Administrativo e aguarda moderação. Avisaremos assim que for aprovado!`,
+            type: 'submission'
+        });
+    }
+
     // Knowledge Graph: Insert Junction Records
     if (selected_departments && selected_departments.length > 0) {
         await serverSupabase.from('submission_departments').insert(selected_departments.map((id: string) => ({ submission_id: newSub.id, department_id: id })));
@@ -632,7 +643,28 @@ export async function updateSubmissionAdmin(id: string, updates: AdminUpdate) {
         .select()
         .single();
 
-    if (!error) {
+    if (!error && data) {
+        // Trigger Notifications for Author
+        if (updates.status === 'aprovado') {
+            const hasFeedback = !!updates.admin_feedback;
+            const title = hasFeedback ? 'Conteúdo Aprovado com Review! 📝' : 'Conteúdo Aprovado! 🚀';
+            let message = hasFeedback 
+                ? 'Seu conteúdo foi aprovado e um revisor deixou um feedback para você.'
+                : 'Seu envio saiu do Painel Adm e já está publicado na comunidade!';
+            
+            if (hasFeedback) {
+                message += `\n\n"${updates.admin_feedback}"`;
+            }
+
+            await sendAutomaticNotification({
+                userId: data.user_id,
+                title,
+                message,
+                link: `/fluxo/${data.id}`, // Standard link to the post
+                type: 'approval'
+            });
+        }
+
         revalidatePath('/');
         revalidatePath('/admin');
         revalidatePath('/admin/pendentes');

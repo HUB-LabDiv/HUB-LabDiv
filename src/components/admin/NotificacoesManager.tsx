@@ -15,7 +15,8 @@ import {
     ChevronDown,
     Trash2,
     Calendar,
-    Link as LinkIcon
+    Link as LinkIcon,
+    Settings
 } from 'lucide-react';
 import { 
     sendAdminNotificationAction, 
@@ -35,6 +36,7 @@ interface HistoryItem {
     created_at: string;
     scheduled_at: string | null;
     sent_at: string | null;
+    link: string | null;
     sender: {
         full_name: string;
         username: string;
@@ -44,6 +46,7 @@ interface HistoryItem {
 export default function NotificacoesManager() {
     const [isLoading, setIsLoading] = useState(false);
     const [history, setHistory] = useState<HistoryItem[]>([]);
+    const [showOnlyAutomatic, setShowOnlyAutomatic] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [isSearching, setIsSearching] = useState(false);
@@ -139,6 +142,8 @@ export default function NotificacoesManager() {
         }
     };
 
+    const filteredHistory = showOnlyAutomatic ? history.filter(h => h.target_type === 'automatic') : history;
+
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header Area */}
@@ -176,7 +181,9 @@ export default function NotificacoesManager() {
                                             : 'bg-white/5 border-white/10 text-gray-400 hover:border-white/20'
                                         }`}
                                     >
-                                        <type.icon className={`w-5 h-5 ${formData.targetType === type.id ? 'text-white' : 'text-gray-500 group-hover:text-gray-300'}`} />
+                                        <type.icon className={`w-5 h-5 ${formData.targetType === type.id 
+                                            ? 'text-white' 
+                                            : 'text-gray-500 group-hover:text-gray-300'}`} />
                                         <div className="flex flex-col">
                                             <span className="text-xs font-black uppercase tracking-widest">{type.label}</span>
                                             <span className="text-[10px] opacity-60 font-bold leading-none mt-0.5">{type.desc}</span>
@@ -358,21 +365,35 @@ export default function NotificacoesManager() {
                 <div className="lg:col-span-5 space-y-6">
                     <div className="bg-neutral-900/50 border border-white/5 rounded-[32px] p-6 backdrop-blur-xl h-full flex flex-col">
                         <div className="flex items-center justify-between mb-6">
-                            <h3 className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
-                                <History className="w-4 h-4" />
-                                Histórico Recente
-                            </h3>
+                            <div className="flex items-center gap-4">
+                                <h3 className="text-xs font-black uppercase tracking-widest text-gray-500 flex items-center gap-2">
+                                    <History className="w-4 h-4" />
+                                    Histórico Recente
+                                </h3>
+                                <button
+                                    onClick={() => setShowOnlyAutomatic(!showOnlyAutomatic)}
+                                    className={`px-3 py-1.5 rounded-lg flex items-center gap-2 text-[10px] font-black uppercase tracking-widest transition-all ${
+                                        showOnlyAutomatic 
+                                        ? 'bg-brand-yellow text-gray-900 border border-brand-yellow/50 shadow-md shadow-brand-yellow/10' 
+                                        : 'bg-white/5 text-brand-yellow/60 border border-white/10 hover:bg-white/10 hover:text-brand-yellow'
+                                    }`}
+                                    title="Filtrar por automáticas"
+                                >
+                                    <Settings className={`w-3 h-3 ${showOnlyAutomatic ? 'animate-spin-slow' : ''}`} />
+                                    Automáticas
+                                </button>
+                            </div>
                             <button onClick={loadHistory} className="text-[10px] font-bold text-brand-blue hover:underline">Atualizar</button>
                         </div>
 
                         <div className="flex-1 space-y-4 overflow-y-auto pr-2 no-scrollbar max-h-[600px]">
-                            {history.length === 0 ? (
+                            {filteredHistory.length === 0 ? (
                                 <div className="h-40 flex flex-col items-center justify-center text-center p-8 border-2 border-dashed border-white/5 rounded-3xl">
-                                    <AlertCircle className="w-8 h-8 text-gray-700 mb-2" />
-                                    <p className="text-xs font-bold text-gray-600 uppercase tracking-widest">Nenhum envio registrado</p>
-                                </div>
-                            ) : (
-                                history.map((item) => (
+                                        <AlertCircle className="w-8 h-8 text-gray-700 mb-2" />
+                                        <p className="text-xs font-bold text-gray-600 uppercase tracking-widest">Nenhum envio registrado</p>
+                                    </div>
+                                ) : (
+                                    filteredHistory.map((item) => (
                                     <div key={item.id} className="p-4 bg-white/5 border border-white/5 rounded-2xl space-y-3 relative group">
                                         <div className="flex items-start justify-between gap-4">
                                             <div className="min-w-0">
@@ -380,11 +401,12 @@ export default function NotificacoesManager() {
                                                 <p className="text-[11px] text-gray-500 line-clamp-2 mt-0.5">{item.message}</p>
                                             </div>
                                             <div className={`shrink-0 px-2 py-1 rounded text-[9px] font-black uppercase tracking-tighter ${
+                                                item.target_type === 'automatic' ? 'bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20' :
                                                 item.status === 'sent' ? 'bg-green-500/10 text-green-500' : 
                                                 item.status === 'scheduled' ? 'bg-brand-blue/10 text-brand-blue' : 
                                                 'bg-amber-500/10 text-amber-500'
                                             }`}>
-                                                {item.status === 'sent' ? 'Enviado' : item.status === 'scheduled' ? 'Agendado' : 'Pendente'}
+                                                {item.target_type === 'automatic' ? 'Auto-Trigger' : item.status === 'sent' ? 'Enviado' : item.status === 'scheduled' ? 'Agendado' : 'Pendente'}
                                             </div>
                                         </div>
 
@@ -399,6 +421,7 @@ export default function NotificacoesManager() {
                                                 <span className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">
                                                     {item.target_type === 'broadcast' ? 'Broadcast' : 
                                                      item.target_type === 'group' ? `${item.target_value}` : 
+                                                     item.target_type === 'automatic' ? 'Sistema / Automática' :
                                                      'Personalizado'}
                                                 </span>
                                             </div>
@@ -408,6 +431,17 @@ export default function NotificacoesManager() {
                                                     {new Date(item.created_at).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' })}
                                                 </span>
                                             </div>
+                                            {item.link && (
+                                                <a 
+                                                    href={item.link} 
+                                                    target="_blank" 
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center gap-1 px-2 py-0.5 rounded-md bg-brand-blue/10 text-brand-blue border border-brand-blue/20 hover:bg-brand-blue/20 transition-all ml-auto"
+                                                >
+                                                    <LinkIcon className="w-2.5 h-2.5" />
+                                                    <span className="text-[8px] font-black uppercase tracking-tighter">LINK</span>
+                                                </a>
+                                            )}
                                         </div>
                                     </div>
                                 ))
