@@ -2,6 +2,11 @@ import { fetchSubmissions } from "@/app/actions/submissions";
 import { SobreClient } from "./SobreClient";
 import { createServerSupabase } from "@/lib/supabase/server";
 
+export const metadata = {
+    title: 'LabDiv | Hub Lab-Div',
+    description: 'Conheça o Laboratório de Divulgação Científica do IFUSP e o projeto do Hub.',
+};
+
 export default async function SobrePage() {
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();

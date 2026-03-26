@@ -208,7 +208,11 @@ const quizCell = {
     cta: 'Iniciar Varredura'
 };
 
-export function WikiView() {
+interface WikiViewProps {
+    onNavigateToInstituto?: () => void;
+}
+
+export function WikiView({ onNavigateToInstituto }: WikiViewProps) {
     return (
         <div className="bg-transparent pb-12 overflow-x-hidden pt-8">
             <div className="max-w-6xl mx-auto">
@@ -240,9 +244,12 @@ export function WikiView() {
                     className="relative group w-full mb-12"
                 >
                     <div className="absolute -inset-0.5 bg-[#17739A]/30 rounded-[32px] blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <Link
-                        href={institutoCell.href}
-                        className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-gradient-to-r from-[#17739A]/20 to-brand-blue/10 backdrop-blur-2xl border border-white/5 hover:border-[#17739A]/40 transition-all overflow-hidden"
+                    <button
+                        onClick={onNavigateToInstituto ? (e) => {
+                            e.preventDefault();
+                            onNavigateToInstituto();
+                        } : undefined}
+                        className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-gradient-to-r from-[#17739A]/20 to-brand-blue/10 backdrop-blur-2xl border border-white/5 hover:border-[#17739A]/40 transition-all overflow-hidden text-left"
                     >
                         <div className="absolute top-0 right-0 w-64 h-64 bg-[#17739A]/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4"></div>
                         <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
@@ -266,7 +273,7 @@ export function WikiView() {
                                 {institutoCell.cta} <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                             </div>
                         </div>
-                    </Link>
+                    </button>
                 </motion.div>
 
                 {/* --- Wiki Matrix (Grid de Elite 3x3) --- */}

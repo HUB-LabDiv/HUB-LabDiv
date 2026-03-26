@@ -30,12 +30,12 @@ import { useTelemetry } from '@/hooks/useTelemetry';
 
 const mainLinks = [
     { name: 'Comunidade', href: '/', icon: <span className="material-symbols-outlined text-2xl">groups</span>, color: 'brand-red' },
-    { name: 'Explorar Hub', href: '/explorar', icon: <span className="material-symbols-outlined text-2xl">search</span>, color: 'brand-yellow' },
-    { name: 'Sobre o HUB LabDiv', href: '/sobre', icon: <span className="material-symbols-outlined text-2xl">info</span>, color: 'brand-blue' },
+    { name: 'O Grande Colisor do IF', href: '/explorar', icon: <span className="material-symbols-outlined text-2xl">search</span>, color: 'brand-yellow' },
+    { name: 'LabDiv', href: '/sobre', icon: <span className="material-symbols-outlined text-2xl">info</span>, color: 'brand-blue' },
 ];
 
 const categoryLinks = [
-    { name: 'Ferramentas Acadêmicas', href: '/ferramentas', icon: <span className="material-symbols-outlined text-2xl">construction</span>, color: 'brand-blue', role: 'aluno_usp' },
+    { name: 'Ferramentas Acadêmicas', href: '/ferramentas', icon: <span className="material-symbols-outlined text-2xl">construction</span>, color: 'brand-red', role: 'aluno_usp' },
     { name: 'Como Ingressar', href: '/ingresso', icon: <span className="material-symbols-outlined text-2xl">login</span>, color: 'brand-yellow', role: 'curioso' },
     { name: 'Observatório de Pesquisa', href: '/arena', icon: <span className="material-symbols-outlined text-2xl">visibility</span>, color: 'brand-red', role: 'pesquisador' },
 ];

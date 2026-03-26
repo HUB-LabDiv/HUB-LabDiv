@@ -91,7 +91,7 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
                             }`}
                         >
                             <Info className="w-4 h-4" />
-                            Sobre o HUB LabDiv
+                            O Hub
                         </button>
                     </div>
                 </div>

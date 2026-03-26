@@ -44,6 +44,7 @@ export function Header() {
     const { user: authUser } = useAuth();
     const [matchCount, setMatchCount] = useState(0);
     const [currentMatch, setCurrentMatch] = useState(0);
+    const [isSearchOpen, setSearchOpen] = useState(false);
     const inputRef = React.useRef<HTMLInputElement>(null);
     const lastFindQuery = React.useRef<string>('');
 
@@ -134,6 +135,7 @@ export function Header() {
             const target = e.target as HTMLElement;
             if (!target.closest('#search-container')) {
                 setSuggestionsVisible(false);
+                setSearchOpen(false);
             }
             if (!target.closest('#profile-menu-container')) {
                 setProfileMenuOpen(false);
@@ -210,83 +212,100 @@ export function Header() {
                         </div>
                     </Link>
 
-                    {/* Middle: Defensive Search Rendering */}
-                    <div className="flex-1 max-w-2xl relative group hidden md:block" id="search-container">
-                        <span className="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-blue transition-colors">search</span>
-                        <input
-                            ref={inputRef}
-                            type="text"
-                            placeholder={placeholder}
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') {
-                                    if (query.trim()) {
+                    {/* Middle: Nav Tabs + Search */}
+                    <div className="flex-1 hidden md:flex items-center justify-center gap-1">
+                        {[
+                            { label: 'Comunidade', href: '/', color: 'brand-red' },
+                            { label: 'GCI', href: '/explorar', color: 'brand-yellow' },
+                            { label: 'LabDiv', href: '/sobre', color: 'brand-blue' },
+                            { label: 'Ferramentas', href: '/ferramentas', color: 'brand-red' },
+                            { label: 'Interações', href: '/interacao', color: 'brand-blue' },
+                        ].map((tab) => {
+                            const isActive = pathname === tab.href || (tab.href !== '/' && pathname.startsWith(tab.href));
+                            const colorMap: Record<string, { active: string; hover: string }> = {
+                                'brand-red': { active: 'text-brand-red bg-brand-red/10 border border-brand-red/20', hover: 'hover:text-brand-red hover:bg-brand-red/5' },
+                                'brand-yellow': { active: 'text-brand-yellow bg-brand-yellow/10 border border-brand-yellow/20', hover: 'hover:text-brand-yellow hover:bg-brand-yellow/5' },
+                                'brand-blue': { active: 'text-brand-blue bg-brand-blue/10 border border-brand-blue/20', hover: 'hover:text-brand-blue hover:bg-brand-blue/5' },
+                            };
+                            const styles = colorMap[tab.color];
+                            return (
+                                <Link
+                                    key={tab.href}
+                                    href={tab.href}
+                                    className={`px-4 py-1.5 text-[11px] font-black uppercase tracking-widest rounded-lg transition-all whitespace-nowrap ${
+                                        isActive
+                                            ? styles.active
+                                            : `text-gray-500 ${styles.hover}`
+                                    }`}
+                                >
+                                    {tab.label}
+                                </Link>
+                            );
+                        })}
+
+                        {/* Inline Search Bar */}
+                        <div className="relative ml-3 group" id="search-container">
+                            <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-yellow transition-colors text-[18px]">search</span>
+                            <input
+                                ref={inputRef}
+                                type="text"
+                                placeholder="Buscar..."
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && query.trim()) {
                                         trackEvent('SEARCH_QUERY', { query: query.trim() });
                                         const forward = !e.shiftKey;
                                         // @ts-ignore
                                         const found = window.find(query, false, !forward, true, false, true, false);
-
                                         if (found) {
-                                            setCurrentMatch(prev => {
-                                                if (forward) return prev < matchCount ? prev + 1 : 1;
-                                                return prev > 1 ? prev - 1 : matchCount;
-                                            });
+                                            setCurrentMatch(prev => forward ? (prev < matchCount ? prev + 1 : 1) : (prev > 1 ? prev - 1 : matchCount));
                                         } else {
-                                            // Wrap around
                                             // @ts-ignore
                                             window.find(query, false, !forward, true, false, true, true);
                                             setCurrentMatch(forward ? 1 : matchCount);
                                         }
                                         inputRef.current?.focus();
                                     }
-                                }
-                            }}
-                            onFocus={() => setSuggestionsVisible(true)}
-                            className="w-full bg-gray-100 dark:bg-white/5 border-none rounded-2xl py-3 pl-12 pr-16 text-sm focus:ring-2 focus:ring-brand-blue/30 outline-none transition-all dark:text-white"
-                        />
-                        {query && matchCount > 0 && (
-                            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 px-2 py-1 bg-brand-blue/10 rounded-lg pointer-events-none">
-                                <span className="text-[10px] font-black text-brand-blue/80 uppercase tracking-tighter">
-                                    {currentMatch}/{matchCount}
-                                </span>
-                            </div>
-                        )}
+                                }}
+                                onFocus={() => setSuggestionsVisible(true)}
+                                className="w-[180px] focus:w-[260px] bg-white/5 border border-white/10 rounded-xl py-1.5 pl-9 pr-3 text-xs focus:ring-2 focus:ring-brand-yellow/30 outline-none transition-all text-white placeholder:text-gray-500"
+                            />
+                            {query && matchCount > 0 && (
+                                <div className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-brand-yellow/10 rounded pointer-events-none">
+                                    <span className="text-[9px] font-black text-brand-yellow/80">{currentMatch}/{matchCount}</span>
+                                </div>
+                            )}
 
-                        {/* Search Suggestions Dropdown V8.0 - CSS Animation for Performance */}
-                        {isSuggestionsVisible && (isSearchLoading || suggestions.length > 0) && (
-                            <div
-                                className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#1E1E1E] border border-gray-100 dark:border-white/10 rounded-2xl shadow-2xl overflow-hidden z-[60] transition-all duration-200 transform opacity-100 translate-y-0"
-                            >
-                                {isSearchLoading ? (
-                                    <div className="p-4 flex items-center gap-3 text-gray-400 text-xs font-bold uppercase tracking-widest">
-                                        <span className="material-symbols-outlined animate-spin text-brand-blue">progress_activity</span>
-                                        Pesquisando...
-                                    </div>
-                                ) : (
-                                    <div className="py-2">
-                                        {suggestions.map((s) => (
-                                            <button
-                                                key={s.id}
-                                                 onClick={() => {
-                                                    trackEvent('SEARCH_SUCCESS', { 
-                                                        query: query.trim(),
-                                                        suggestion_id: s.id,
-                                                        suggestion_title: s.title 
-                                                    });
-                                                    setQuery(s.title);
-                                                    setSuggestionsVisible(false);
-                                                }}
-                                                className="w-full px-4 py-3 flex items-center gap-3 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors text-left group"
-                                            >
-                                                <span className="material-symbols-outlined text-gray-400 group-hover:text-brand-blue transition-colors">history</span>
-                                                <span className="text-sm text-gray-700 dark:text-gray-300 font-medium">{s.title}</span>
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                            {/* Search Suggestions Dropdown */}
+                            {isSuggestionsVisible && (isSearchLoading || suggestions.length > 0) && (
+                                <div className="absolute top-full right-0 mt-2 w-[350px] bg-[#1E1E1E] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-[60]">
+                                    {isSearchLoading ? (
+                                        <div className="p-3 flex items-center gap-3 text-gray-400 text-xs font-bold uppercase tracking-widest">
+                                            <span className="material-symbols-outlined animate-spin text-brand-yellow text-[16px]">progress_activity</span>
+                                            Pesquisando...
+                                        </div>
+                                    ) : (
+                                        <div className="py-1">
+                                            {suggestions.map((s) => (
+                                                <button
+                                                    key={s.id}
+                                                    onClick={() => {
+                                                        trackEvent('SEARCH_SUCCESS', { query: query.trim(), suggestion_id: s.id, suggestion_title: s.title });
+                                                        setQuery(s.title);
+                                                        setSuggestionsVisible(false);
+                                                    }}
+                                                    className="w-full px-3 py-2 flex items-center gap-3 hover:bg-white/5 transition-colors text-left group rounded-lg"
+                                                >
+                                                    <span className="material-symbols-outlined text-gray-400 group-hover:text-brand-yellow transition-colors text-[16px]">history</span>
+                                                    <span className="text-sm text-gray-300 font-medium">{s.title}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     </div>
 
                     {/* Right: Sharded Actions */}
@@ -382,6 +401,8 @@ export function Header() {
                     </div>
                 </div>
             </header>
+
+
 
             <ReportModal
                 isOpen={isReportModalOpen}

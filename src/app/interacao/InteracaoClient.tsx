@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
+import { useSearchParams } from 'next/navigation';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { LabTabContent } from './LabTabContent';
 import { PerguntasTabContent } from './PerguntasTabContent';
@@ -9,7 +9,6 @@ import { EmaranhamentoTabContent } from './EmaranhamentoTabContent';
 
 export default function InteracaoClient() {
     const searchParams = useSearchParams();
-    const router = useRouter();
     const initialTab = searchParams.get('tab') || 'emaranhamento';
     const [activeTab, setActiveTab ] = useState(initialTab);
 
@@ -22,7 +21,7 @@ export default function InteracaoClient() {
 
     const handleTabChange = (tab: string) => {
         setActiveTab(tab);
-        router.push(`/interacao?tab=${tab}`, { scroll: false });
+        window.history.replaceState(null, '', `/interacao?tab=${tab}`);
     };
 
     return (
@@ -34,7 +33,7 @@ export default function InteracaoClient() {
                         Central de Colaboração
                     </div>
                     <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white uppercase tracking-tighter leading-none">
-                        Portal de <span className="text-brand-blue">Interação</span>
+                        Central de <span className="text-brand-blue">Interações</span>
                     </h1>
                     <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm font-medium max-w-2xl leading-relaxed">
                         Pesquisa pessoal, conexão neural entre membros e canal direto com a equipe científica do Instituto de Física.

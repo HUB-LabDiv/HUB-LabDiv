@@ -4,7 +4,7 @@ import { fetchSubmissions } from '@/app/actions/submissions';
 import { supabase } from '@/lib/supabase';
 
 export const metadata = {
-    title: 'Explorar Hub | Hub Lab-Div',
+    title: 'O Grande Colisor do IF | Hub Lab-Div',
     description: 'Wiki, Mapa e Grande Colisor unificados para exploração simplificada.',
 };
 
