@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import puppeteer from 'puppeteer';
+import puppeteerCore from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
+
+export const maxDuration = 60;
 import { createServerSupabase } from '@/lib/supabase/server';
 import { createAdminSupabase } from '@/lib/supabase/admin';
 
@@ -15,10 +18,21 @@ export async function POST(req: NextRequest) {
 
         const supabaseAdmin = createAdminSupabase();
 
-        browser = await puppeteer.launch({ 
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'] 
-        });
+        const isLocal = !process.env.VERCEL_ENV && process.env.NODE_ENV === 'development';
+        const executablePath = isLocal
+            ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+            : await chromium.executablePath();
+
+        browser = await puppeteerCore.launch({
+            // @ts-ignore
+            args: isLocal ? ['--no-sandbox', '--disable-setuid-sandbox'] : chromium.args,
+            // @ts-ignore
+            defaultViewport: chromium.defaultViewport,
+            executablePath: executablePath,
+            // @ts-ignore
+            headless: chromium.headless,
+            ignoreHTTPSErrors: true,
+        } as any);
         
         const page = await browser.newPage();
         await page.setUserAgent(
