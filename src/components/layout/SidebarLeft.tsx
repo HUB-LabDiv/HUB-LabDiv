@@ -27,10 +27,11 @@ import { fetchRecentEntanglements } from '@/app/actions/submissions';
 import { Avatar } from '../ui/Avatar';
 import { supabase } from '@/lib/supabase';
 import { useTelemetry } from '@/hooks/useTelemetry';
+import { ColisorIcon } from '../icons/ColisorIcon';
 
 const mainLinks = [
     { name: 'Comunidade', href: '/', icon: <span className="material-symbols-outlined text-2xl">groups</span>, color: 'brand-red' },
-    { name: 'O Grande Colisor do IF', href: '/explorar', icon: <span className="material-symbols-outlined text-2xl">search</span>, color: 'brand-yellow' },
+    { name: 'O Grande Colisor do IF', href: '/explorar', icon: <ColisorIcon className="w-6 h-6" />, color: 'brand-yellow' },
     { name: 'LabDiv', href: '/sobre', icon: <span className="material-symbols-outlined text-2xl">info</span>, color: 'brand-blue' },
 ];
 
