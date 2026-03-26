@@ -204,9 +204,9 @@ export function Header() {
                                     <span className="text-gray-900 dark:text-white">Hub</span>
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-brand-blue to-brand-yellow font-black">Lab-Div</span>
                                 </div>
-                                <div className="hidden sm:flex items-center gap-2 mt-0.5">
-                                    <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Instituto de Física</span>
-                                    <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10 text-gray-400/80">v3.1.5</span>
+                                <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5">
+                                    <span className="text-[7px] sm:text-[9px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Instituto de Física</span>
+                                    <span className="text-[7px] sm:text-[8px] font-black px-1 sm:px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10 text-gray-400/80 shrink-0">v3.1.5</span>
                                 </div>
                             </div>
                         </div>
