@@ -9,6 +9,7 @@ import { signOut } from '@/app/actions/auth';
 import { getAvatarUrl } from '@/lib/utils';
 import { NotificationBell } from './NotificationBell';
 import { ReportModal } from '../feedback/ReportModal';
+import { SearchOverlay } from './SearchOverlay';
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigationStore } from '@/store/useNavigationStore';
 import { Avatar } from '../ui/Avatar';
@@ -36,41 +37,12 @@ export function Header() {
 
     const [user, setUser] = useState<UserMinimalDTO | null>(null);
     const { user: authUser } = useAuth();
-    const [isSearchOpen, setSearchOpen] = useState(false);
-    
-    // Global Navigation Search State
-    const [searchQuery, setSearchQuery] = useState('');
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    
-    // Global System Routes for Navigation
-    const globalRoutes = [
-        { label: 'Grade Horária / Cronograma', href: '/ferramentas', icon: 'calendar_month', color: 'text-brand-red', desc: 'Monte seu cronograma semestral do Júpiter' },
-        { label: 'Trilhas de Aprendizado', href: '/trilhas', icon: 'auto_stories', color: 'text-brand-yellow', desc: 'Descubra a ordem ideal de matérias e o que estudar no IF' },
-        { label: 'O Grande Colisor (GCI)', href: '/explorar', icon: 'hub', color: 'text-brand-blue', desc: 'Explore laboratórios, oportunidades de pesquisa e projetos' },
-        { label: 'A Wikipédia do Instituto', href: '/explorar?tab=wiki', icon: 'menu_book', color: 'text-brand-yellow', desc: 'Base de conhecimento e manuais completos' },
-        { label: 'Meu Laboratório / Perfil', href: '/lab', icon: 'science', color: 'text-brand-red', desc: 'Seu perfil pessoal, pontos XP e painel de conquistas' },
-        { label: 'Comunidade & Interações', href: '/', icon: 'forum', color: 'text-brand-blue', desc: 'Mural público de networking e avisos' },
-        { label: 'Submeter ou Editar Wiki', href: '/interacao', icon: 'edit_square', color: 'text-brand-yellow', desc: 'Colabore criando novas páginas para a comunidade' },
-    ];
+    const [isSearchOverlayOpen, setSearchOverlayOpen] = useState(false);
 
-    const filteredRoutes = searchQuery.trim() === '' 
-        ? globalRoutes // Show all by default if open
-        : globalRoutes.filter(route => 
-            route.label.toLowerCase().includes(searchQuery.toLowerCase()) || 
-            route.desc.toLowerCase().includes(searchQuery.toLowerCase())
-        );
-
-    // Handle Clicks Outside
+    // Handle Clicks Outside (Profile menu only)
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
-            // Prevent closure if clicking the desktop search or mobile search overlay/button
-            if (!target.closest('#search-container') && 
-                !target.closest('#search-container-mobile') && 
-                !target.closest('#mobile-search-toggle')) {
-                setIsDropdownOpen(false);
-                setSearchOpen(false);
-            }
             if (!target.closest('#profile-menu-container')) {
                 setProfileMenuOpen(false);
             }
@@ -177,66 +149,22 @@ export function Header() {
                             );
                         })}
 
-                        {/* Global Search Bar */}
-                        <div className="relative ml-3 group" id="search-container">
-                            <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-yellow transition-colors text-[20px]">search</span>
-                            <input
-                                type="text"
-                                placeholder="Buscar no sistema..."
-                                value={searchQuery}
-                                onChange={(e) => {
-                                    setSearchQuery(e.target.value);
-                                    if (!isDropdownOpen) setIsDropdownOpen(true);
-                                }}
-                                onFocus={() => setIsDropdownOpen(true)}
-                                className="w-[180px] focus:w-[260px] bg-white/5 border border-white/10 rounded-xl py-1.5 pl-9 pr-3 text-xs focus:ring-2 focus:ring-brand-yellow/30 outline-none transition-all text-white placeholder:text-gray-500"
-                            />
-
-                            {/* Global Search Dropdown Overlay */}
-                            {isDropdownOpen && searchQuery.trim().length > 0 && (
-                                <div className="absolute top-1/2 mt-8 right-0 w-[400px] bg-[#1E1E1E] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-[60]">
-                                    {filteredRoutes.length > 0 ? (
-                                        <div className="py-1 flex flex-col max-h-[400px] overflow-y-auto">
-                                            {filteredRoutes.map((route, idx) => (
-                                                <Link
-                                                    key={idx}
-                                                    href={route.href}
-                                                    onClick={() => {
-                                                        setIsDropdownOpen(false);
-                                                        setSearchQuery('');
-                                                    }}
-                                                    className="w-full px-4 py-3 flex items-start gap-4 hover:bg-white/5 transition-colors text-left group border-b border-white/5 last:border-0"
-                                                >
-                                                    <div className={`mt-0.5 size-9 shrink-0 rounded-xl bg-white/5 flex items-center justify-center shadow-sm ${route.color}`}>
-                                                        <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">{route.icon}</span>
-                                                    </div>
-                                                    <div className="flex flex-col flex-1">
-                                                        <span className="text-sm font-bold text-gray-200 group-hover:text-white transition-colors leading-tight">{route.label}</span>
-                                                        <span className="text-[11px] text-gray-400 mt-1 leading-snug">{route.desc}</span>
-                                                    </div>
-                                                </Link>
-                                            ))}
-                                        </div>
-                                    ) : (
-                                        <div className="p-8 flex flex-col items-center justify-center gap-3 text-gray-400 text-center">
-                                            <span className="material-symbols-outlined text-[40px] text-brand-red opacity-80">sentiment_dissatisfied</span>
-                                            <div className="flex flex-col">
-                                                <span className="text-sm font-bold text-gray-300">Nenhum atalho encontrado</span>
-                                                <span className="text-xs mt-1">Não encontramos rotas para "{searchQuery}"</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
-                        </div>
+                        {/* Global Search Trigger */}
+                        <button
+                            onClick={() => setSearchOverlayOpen(true)}
+                            className="ml-3 flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-xs text-gray-500 hover:text-brand-yellow hover:border-brand-yellow/30 hover:bg-brand-yellow/5 transition-all group"
+                        >
+                            <span className="material-symbols-outlined text-[18px] group-hover:text-brand-yellow transition-colors">search</span>
+                            <span className="hidden lg:inline">Buscar...</span>
+                            <kbd className="hidden lg:flex items-center px-1.5 py-0.5 bg-white/5 rounded text-[9px] font-mono text-gray-600">/</kbd>
+                        </button>
                     </div>
 
                     {/* Right: Sharded Actions */}
                     <div className="flex items-center gap-1 sm:gap-4 shrink-0">
                         {/* Mobile Search Toggle */}
                         <button
-                            id="mobile-search-toggle"
-                            onClick={() => setSearchOpen(!isSearchOpen)}
+                            onClick={() => setSearchOverlayOpen(true)}
                             className="md:hidden size-10 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/5 text-gray-500 hover:text-brand-yellow transition-all border border-gray-200 dark:border-white/10"
                             aria-label="Abrir Busca"
                         >
@@ -333,83 +261,17 @@ export function Header() {
                         </div>
                     </div>
                 </div>
-                
-                {/* Mobile Search Overlay */}
-                <div className={`md:hidden absolute top-0 left-0 right-0 h-[60vh] bg-white dark:bg-[#121212] z-[60] px-4 pt-4 flex flex-col gap-4 transition-all duration-300 shadow-2xl rounded-b-[32px] border-b border-gray-100 dark:border-white/5 ${isSearchOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
-                    <div className="flex items-center gap-3">
-                        <div className="relative flex-1 group" id="search-container-mobile">
-                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-[20px]">search</span>
-                            <input
-                                type="text"
-                                placeholder="Buscar no sistema..."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-brand-yellow/30 outline-none transition-all text-gray-900 dark:text-white font-medium"
-                                autoFocus={isSearchOpen}
-                            />
-                        </div>
-                        <button 
-                            onClick={() => {
-                                setSearchOpen(false);
-                                setSearchQuery('');
-                            }}
-                            className="p-2 text-gray-500 font-black text-[10px] uppercase tracking-widest hover:text-brand-red transition-colors"
-                        >
-                            Fechar
-                        </button>
-                    </div>
-
-                    {/* Global Quick Links / Suggestions */}
-                    <div className="flex-1 overflow-y-auto pb-6 space-y-6">
-                        <div>
-                            <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] mb-3 px-1">
-                                {searchQuery.trim() === '' ? 'Navegação Rápida' : 'Resultados da Busca'}
-                            </h4>
-                            {filteredRoutes.length > 0 ? (
-                                <div className="grid grid-cols-1 gap-2">
-                                    {filteredRoutes.map((item, idx) => (
-                                        <Link
-                                            key={idx}
-                                            href={item.href}
-                                            onClick={() => {
-                                                setSearchOpen(false);
-                                                setSearchQuery('');
-                                            }}
-                                            className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-white/5 rounded-2xl border border-transparent active:border-brand-yellow/30 active:scale-[0.98] transition-all group"
-                                        >
-                                            <div className={`size-10 shrink-0 rounded-xl bg-white dark:bg-white/5 flex items-center justify-center shadow-sm ${item.color}`}>
-                                                <span className="material-symbols-outlined text-[24px] group-hover:scale-110 transition-transform">{item.icon}</span>
-                                            </div>
-                                            <div className="flex flex-col flex-1">
-                                                <span className="text-sm font-bold text-gray-900 dark:text-white leading-tight">{item.label}</span>
-                                                <span className="text-[11px] text-gray-500 font-medium mt-0.5 leading-snug">{item.desc}</span>
-                                            </div>
-                                            <span className="material-symbols-outlined ml-auto text-gray-300 text-[18px] group-active:translate-x-1 transition-transform">chevron_right</span>
-                                        </Link>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="p-8 flex flex-col items-center justify-center gap-3 text-gray-400 text-center bg-gray-50 dark:bg-[#121212] rounded-2xl border border-gray-100 dark:border-white/5">
-                                    <span className="material-symbols-outlined text-[40px] text-brand-red opacity-80">sentiment_dissatisfied</span>
-                                    <div className="flex flex-col">
-                                        <span className="text-sm font-bold text-gray-900 dark:text-gray-300">Nenhum atalho encontrado</span>
-                                        <span className="text-xs mt-1">Não encontramos rotas para "{searchQuery}"</span>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
             </header>
 
-
+            <SearchOverlay
+                isOpen={isSearchOverlayOpen}
+                onClose={() => setSearchOverlayOpen(false)}
+            />
 
             <ReportModal
                 isOpen={isReportModalOpen}
                 onClose={() => setReportModalOpen(false)}
             />
-
-
         </>
     );
 }
