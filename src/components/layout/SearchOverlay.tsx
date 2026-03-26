@@ -5,19 +5,86 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
-// ── Wiki content for deep keyword search ──
+// ── Wiki content for deep keyword + body-text search ──
+// `content` contains all text rendered on each wiki page for full-text search
 const wikiEntries = [
-    { title: 'Guia de Boas Práticas', href: '/wiki/guia-de-boas-praticas', desc: 'Diretrizes para produção de mídia: fotografia, vídeo e créditos.', keywords: ['guia', 'boas práticas', 'manual', 'foto', 'vídeo', 'créditos', 'qualidade', 'padrões'] },
-    { title: 'Emissão de Luz — Divulgação', href: '/wiki/divulgacao', desc: 'Toolkit de divulgação: VR, posters, design e impacto visual.', keywords: ['divulgação', 'design', '360', 'vr', 'poster', 'mídia', 'comunicação', 'impacto', 'toolkit'] },
-    { title: 'Interações de Fronteira — Extensão', href: '/wiki/extensao', desc: 'Extensão: grupos, eventos Física para Todos e projetos culturais.', keywords: ['extensão', 'cultura', 'eventos', 'física para todos', 'grupos', 'projetos'] },
-    { title: 'Iniciação de Partículas — Calouro', href: '/wiki/calouro', desc: 'Guia de sobrevivência: bandejão, CRUSP, JúpiterWeb e vida no campus.', keywords: ['bandejão', 'crusp', 'matão', 'sobrevivência', 'calouro', 'ajuda', 'logística', 'jupiter', 'sas', 'campus'] },
-    { title: 'Protocolos de Proteção', href: '/wiki/protecao', desc: 'Saúde mental, neurodiversidade (TEA), acolhimento e inclusão.', keywords: ['proteção', 'saúde mental', 'tea', 'neurodiversidade', 'acolhimento', 'suporte', 'inclusão', 'bem-estar', 'pcd', 'psicológico'] },
-    { title: 'Vetores de Carreira', href: '/wiki/carreira', desc: 'Trajetórias pós-IFUSP: academia, indústria, física médica e educação.', keywords: ['carreira', 'futuro', 'trabalho', 'indústria', 'academia', 'pós-graduação', 'ensino', 'vagas'] },
-    { title: 'Sistemas de Pesquisa', href: '/wiki/pesquisa', desc: 'Iniciação científica, laboratórios e sistema Ateneu.', keywords: ['pesquisa', 'ic', 'iniciação científica', 'laboratório', 'ateneu', 'orientador', 'ciência', 'partícula'] },
-    { title: 'Energia de Permanência — Bolsas', href: '/wiki/bolsas', desc: 'Auxílios PAPFE, editais de monitoria e suporte estudantil.', keywords: ['bolsas', 'papfe', 'permanência', 'monitoria', 'dinheiro', 'editais', 'auxílio'] },
-    { title: 'Estrutura da Matéria — Cursos IFUSP', href: '/wiki/ifusp', desc: 'Cursos, PPPs, departamentos e estrutura curricular.', keywords: ['ppp', 'bacharelado', 'licenciatura', 'física médica', 'grade', 'optativas', 'atpa', 'comissão'] },
-    { title: 'O Instituto de Física', href: '/wiki/instituto', desc: 'História, departamentos, espaços e organização do IFUSP.', keywords: ['ifusp', 'instituto', 'física', 'departamento', 'auditório', 'história', 'mapa'] },
-    { title: 'Quiz — Teste de Radiação', href: '/wiki/quiz', desc: 'Desafie seus conhecimentos sobre o IFUSP e a física.', keywords: ['quiz', 'teste', 'desafio', 'conhecimento', 'ranking'] },
+    {
+        title: 'Guia de Boas Práticas',
+        href: '/wiki/guia-de-boas-praticas',
+        desc: 'Diretrizes para produção de mídia: fotografia, vídeo e créditos.',
+        keywords: ['guia', 'boas práticas', 'manual', 'foto', 'vídeo', 'créditos', 'qualidade', 'padrões'],
+        content: 'Estrutura em 4 Etapas formulário Categoria Formato Detalhes Básicos obrigatórios Detalhes Complementares opcionais título impactante autor principal apelido acadêmico ano trabalho descrição upload arquivos 10MB link YouTube WhatsApp Tags Coautores Links Externos Drive GitHub Notion Detalhes Técnicos ISO Câmera Software Depoimento pessoal Apelidos Identidade Apelido Acadêmico nome exibição público Nomes ofensivos integridade comunidade Links Externos Grandes Arquivos limite upload 10MB datasets PDFs códigos campo Link Externo Google Drive Mini Quiz Gamificação Engajamento 2 perguntas conteúdo XP Hub recompensar comunidade Creative Commons CC-BY-SA conhecimento créditos',
+    },
+    {
+        title: 'Emissão de Luz — Divulgação',
+        href: '/wiki/divulgacao',
+        desc: 'Toolkit de divulgação: VR, posters, design e impacto visual.',
+        keywords: ['divulgação', 'design', '360', 'vr', 'poster', 'mídia', 'comunicação', 'impacto', 'toolkit'],
+        content: 'Fotografia Essencial Regra dos Terços intersecções grade equilíbrio ângulos tridimensionalidade equipamentos Iluminação Modo Pro ISO baixo 100-400 ruído Tempo Obturador congelar fenômenos alta energia celular bloqueio foco exposição Redação Divulgação gancho porquê mecanismo impacto Divulgação científica transporte conceitos complexos mentes curiosas Recursos Lab-Div KitDiv assets visuais tipografia oficial Mentoria equipe técnica comunicação',
+    },
+    {
+        title: 'Interações de Fronteira — Extensão',
+        href: '/wiki/extensao',
+        desc: 'Extensão: grupos, eventos Física para Todos e projetos culturais.',
+        keywords: ['extensão', 'cultura', 'eventos', 'física para todos', 'grupos', 'projetos'],
+        content: 'Mapeamento Grupos IFUSP coletivos transformam vivência acadêmica Vaca Esférica Rádio divulgação científica alunos LabDiv Laboratório Design Comunicação Show de Física experimentos público escolar Guia Integração Aquário vivência reuniões abertas colaboração força fundamental Amélia Império espaço Colisor HS Humanidades Debates éticos Síncrotron Pontes Docentes IC Professores pesquisadores Iniciação Científica proatividade email formal apresentar interesse sala conversar brevemente',
+    },
+    {
+        title: 'Iniciação de Partículas — Calouro',
+        href: '/wiki/calouro',
+        desc: 'Guia de sobrevivência: bandejão, CRUSP, JúpiterWeb e vida no campus.',
+        keywords: ['bandejão', 'crusp', 'matão', 'sobrevivência', 'calouro', 'ajuda', 'logística', 'jupiter', 'sas', 'campus'],
+        content: 'Mobilidade Circulares BUSP 8082-10 8083-10 8084-10 8085-10 fins semana madrugadas 8012-10 8022-10 cartão BUSP obrigatório gratuidade tarifa cobrada Bilhete Único Guia Bandejão Física mais próximo Central mais preferido Prefeitura melhor avaliado recarregar créditos RU Card aplicativo Cardápio USP PIX PAPFE sistema carrega créditos automaticamente Esporte Lazer CEPEUSP CEPE piscinas quadras academia gratuitas exame médico carteirinha USP digital desintegrar estresse provas Burocracia Infraestrutura Seção de Alunos trancamentos matrículas Pró-Aluno hub computação imprimir trabalhos softwares técnicos laboratórios Networking Acadêmico Professores pesquisadores Iniciação Científica proatividade email formal sala conversar',
+    },
+    {
+        title: 'Protocolos de Proteção',
+        href: '/wiki/protecao',
+        desc: 'Saúde mental, neurodiversidade (TEA), acolhimento e inclusão.',
+        keywords: ['proteção', 'saúde mental', 'tea', 'neurodiversidade', 'acolhimento', 'suporte', 'inclusão', 'bem-estar', 'pcd', 'psicológico'],
+        content: 'Acolhimento IFUSP Portal orientação apoio conflito escuta instituto Física Acolhe iniciativa suporte direto alunos ambiente acadêmico saudável integrado Direitos Inclusão Autismo TEA Portaria PRIP 059 avaliações salas separadas fones ouvido abafadores ruído conforto sensorial Programa ECOS Bandejão Central escuta acolhimento conflitos orientação institucional escutas pontuais comunidade Sistema USP Acolhimento SUA PRIP denúncias assédio discriminação violações direitos humanos Hospital Universitário HU acompanhamento psiquiátrico comunidade USP triagem encaminhamento consulta',
+    },
+    {
+        title: 'Vetores de Carreira',
+        href: '/wiki/carreira',
+        desc: 'Trajetórias pós-IFUSP: academia, indústria, física médica e educação.',
+        keywords: ['carreira', 'futuro', 'trabalho', 'indústria', 'academia', 'pós-graduação', 'ensino', 'vagas'],
+        content: 'em desenvolvimento caminhos graduação formação carreiras acadêmicas mercado trabalho novas fronteiras físicos',
+    },
+    {
+        title: 'Sistemas de Pesquisa',
+        href: '/wiki/pesquisa',
+        desc: 'Iniciação científica, laboratórios e sistema Ateneu.',
+        keywords: ['pesquisa', 'ic', 'iniciação científica', 'laboratório', 'ateneu', 'orientador', 'ciência', 'partícula'],
+        content: 'em desenvolvimento trajetória pesquisa científica softwares técnicos essenciais passo passo Iniciação Científica IC',
+    },
+    {
+        title: 'Energia de Permanência — Bolsas',
+        href: '/wiki/bolsas',
+        desc: 'Auxílios PAPFE, editais de monitoria e suporte estudantil.',
+        keywords: ['bolsas', 'papfe', 'permanência', 'monitoria', 'dinheiro', 'editais', 'auxílio'],
+        content: 'PAPFE Programa Apoio Permanência Formação Estudantil auxílios fundamentais alimentação transporte manutenção vulnerabilidade socioeconômica inscrição anual PRIP CRUSP Moradia Estudantil Conjunto Residencial USP moradia gratuita campus convivência suporte Bolsas Docência Licenciatura PIBID iniciação docência escolas públicas PROIAD monitoria apoio pedagógico SEDUC rede estadual São Paulo PEEG Programa Estímulo Ensino Graduação monitoria acadêmica materiais didáticos PUB Programa Unificado Bolsas Ensino Pesquisa Extensão Cultura PIBIC Pesquisa Acadêmica iniciação científica metodologia pensamento crítico PIBITI Inovação Desenvolvimento Tecnológico protótipos Pro-Aluno apoios institucionais Seção Alunos PRIP Pró-Reitoria Inclusão Pertencimento editais chamadas abertas',
+    },
+    {
+        title: 'Estrutura da Matéria — Cursos IFUSP',
+        href: '/wiki/ifusp',
+        desc: 'Cursos, PPPs, departamentos e estrutura curricular.',
+        keywords: ['ppp', 'bacharelado', 'licenciatura', 'física médica', 'grade', 'optativas', 'atpa', 'comissão'],
+        content: 'em desenvolvimento Projetos Político-Pedagógicos PPPs manual habilitação créditos necessários grade matérias semestres horas Atividades Extensão AEx formar',
+    },
+    {
+        title: 'O Instituto de Física',
+        href: '/wiki/instituto',
+        desc: 'História, departamentos, espaços e organização do IFUSP.',
+        keywords: ['ifusp', 'instituto', 'física', 'departamento', 'auditório', 'história', 'mapa'],
+        content: 'em desenvolvimento organização Instituto Física Diretoria Conselhos Comissões história pioneirismo excelência departamentos centros pesquisa cotidiano',
+    },
+    {
+        title: 'Quiz — Teste de Radiação',
+        href: '/wiki/quiz',
+        desc: 'Desafie seus conhecimentos sobre o IFUSP e a física.',
+        keywords: ['quiz', 'teste', 'desafio', 'conhecimento', 'ranking'],
+        content: 'Contador Geiger questões técnicas históricas explodir perfil Hub colidido impacto comunidade Curiosidades IF acelerador Pelletron inaugurado 1972 patrimônio científico Rua Matão Desafios Física problemas conceituais rápidos neurônios colisões mentais',
+    },
 ];
 
 // ── Navigation routes ──
@@ -105,13 +172,14 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             r.desc.toLowerCase().includes(q)
         );
 
-    // Deep wiki search (title + description + keywords)
+    // Deep wiki search (title + description + keywords + body content)
     const filteredWiki = q === ''
         ? []
         : wikiEntries.filter(w =>
             w.title.toLowerCase().includes(q) ||
             w.desc.toLowerCase().includes(q) ||
-            w.keywords.some(kw => kw.includes(q))
+            w.keywords.some(kw => kw.includes(q)) ||
+            w.content.toLowerCase().includes(q)
         );
 
     if (!isOpen) return null;
