@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -10,10 +10,9 @@ import { getAvatarUrl } from '@/lib/utils';
 import { NotificationBell } from './NotificationBell';
 import { ReportModal } from '../feedback/ReportModal';
 import { useTheme } from '@/hooks/useTheme';
-import { useSearch } from '@/providers/SearchProvider';
 import { useNavigationStore } from '@/store/useNavigationStore';
 import { Avatar } from '../ui/Avatar';
-import { UserMinimalDTO, SearchSuggestion } from '@/types/navigation';
+import { UserMinimalDTO } from '@/types/navigation';
 import { useAuth } from '@/providers/AuthProvider';
 import { useTelemetry } from '@/hooks/useTelemetry';
 
@@ -22,7 +21,6 @@ import { useTelemetry } from '@/hooks/useTelemetry';
  * Implements Layer Isolation, Strict Typing, and Sharded Navigation State.
  */
 export function Header() {
-    const { query, setQuery, placeholder } = useSearch();
     const { trackEvent } = useTelemetry();
     const pathname = usePathname();
     const { theme, toggleTheme } = useTheme();
@@ -31,8 +29,6 @@ export function Header() {
     const {
         isProfileMenuOpen,
         setProfileMenuOpen,
-        isSuggestionsVisible,
-        setSuggestionsVisible,
         isReportModalOpen,
         setReportModalOpen,
         closeAll
@@ -40,92 +36,29 @@ export function Header() {
 
     const [user, setUser] = useState<UserMinimalDTO | null>(null);
     const { user: authUser } = useAuth();
-    const [matchCount, setMatchCount] = useState(0);
-    const [currentMatch, setCurrentMatch] = useState(0);
     const [isSearchOpen, setSearchOpen] = useState(false);
-    const inputRef = React.useRef<HTMLInputElement>(null);
-    const lastFindQuery = React.useRef<string>('');
+    
+    // Global Navigation Search State
+    const [searchQuery, setSearchQuery] = useState('');
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+    
+    // Global System Routes for Navigation
+    const globalRoutes = [
+        { label: 'Grade Horária / Cronograma', href: '/ferramentas', icon: 'calendar_month', color: 'text-brand-red', desc: 'Monte seu cronograma semestral do Júpiter' },
+        { label: 'Trilhas de Aprendizado', href: '/trilhas', icon: 'auto_stories', color: 'text-brand-yellow', desc: 'Descubra a ordem ideal de matérias e o que estudar no IF' },
+        { label: 'O Grande Colisor (GCI)', href: '/explorar', icon: 'hub', color: 'text-brand-blue', desc: 'Explore laboratórios, oportunidades de pesquisa e projetos' },
+        { label: 'A Wikipédia do Instituto', href: '/explorar?tab=wiki', icon: 'menu_book', color: 'text-brand-yellow', desc: 'Base de conhecimento e manuais completos' },
+        { label: 'Meu Laboratório / Perfil', href: '/lab', icon: 'science', color: 'text-brand-red', desc: 'Seu perfil pessoal, pontos XP e painel de conquistas' },
+        { label: 'Comunidade & Interações', href: '/', icon: 'forum', color: 'text-brand-blue', desc: 'Mural público de networking e avisos' },
+        { label: 'Submeter ou Editar Wiki', href: '/interacao', icon: 'edit_square', color: 'text-brand-yellow', desc: 'Colabore criando novas páginas para a comunidade' },
+    ];
 
-    // Debounced F3 Search Logic
-    useEffect(() => {
-        if (!query.trim() || query === lastFindQuery.current) {
-            if (!query.trim()) {
-                setMatchCount(0);
-                setCurrentMatch(0);
-                lastFindQuery.current = '';
-            }
-            return;
-        }
-
-        const timer = setTimeout(() => {
-            const input = inputRef.current;
-            const start = input?.selectionStart;
-            const end = input?.selectionEnd;
-
-            // @ts-ignore
-            const found = window.find(query, false, false, true, false, true, false);
-            lastFindQuery.current = query;
-
-            if (found) {
-                setCurrentMatch(1);
-                const bodyText = document.body.innerText || '';
-                try {
-                    const matches = bodyText.match(new RegExp(query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'gi'));
-                    setMatchCount(matches ? matches.length : 0);
-                } catch (e) {
-                    setMatchCount(0);
-                }
-            } else {
-                setMatchCount(0);
-                setCurrentMatch(0);
-            }
-
-            // Restore focus and cursor position
-            if (input) {
-                input.focus();
-                if (typeof start === 'number' && typeof end === 'number') {
-                    input.setSelectionRange(start, end);
-                }
-            }
-        }, 400); // 400ms debounce to ensure smooth typing while find-in-page runs
-
-        return () => clearTimeout(timer);
-    }, [query]);
-
-    // Search Suggestions
-    const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([]);
-    const [isSearchLoading, setIsSearchLoading] = useState(false);
-
-    const fetchSuggestions = useCallback(async () => {
-        if (query.trim().length < 2) {
-            setSuggestions([]);
-            return;
-        }
-        setIsSearchLoading(true);
-        try {
-            const { data } = await supabase
-                .from('submissions')
-                .select('id, title')
-                .ilike('title', `%${query}%`)
-                .eq('status', 'aprovado')
-                .limit(5);
-            const results = (data as SearchSuggestion[]) || [];
-            if (results.length === 0 && query.trim().length > 2) {
-                trackEvent('SEARCH_FAIL', { query: query.trim() });
-            }
-            setSuggestions(results);
-        } catch (error) {
-            console.error('Search error:', error);
-            setSuggestions([]);
-        } finally {
-            setIsSearchLoading(false);
-        }
-    }, [query]);
-
-    useEffect(() => {
-        const timer = setTimeout(fetchSuggestions, 300);
-        return () => clearTimeout(timer);
-    }, [fetchSuggestions]);
+    const filteredRoutes = searchQuery.trim() === '' 
+        ? globalRoutes // Show all by default if open
+        : globalRoutes.filter(route => 
+            route.label.toLowerCase().includes(searchQuery.toLowerCase()) || 
+            route.desc.toLowerCase().includes(searchQuery.toLowerCase())
+        );
 
     // Handle Clicks Outside
     useEffect(() => {
@@ -135,7 +68,7 @@ export function Header() {
             if (!target.closest('#search-container') && 
                 !target.closest('#search-container-mobile') && 
                 !target.closest('#mobile-search-toggle')) {
-                setSuggestionsVisible(false);
+                setIsDropdownOpen(false);
                 setSearchOpen(false);
             }
             if (!target.closest('#profile-menu-container')) {
@@ -144,7 +77,7 @@ export function Header() {
         };
         document.addEventListener('click', handleClickOutside);
         return () => document.removeEventListener('click', handleClickOutside);
-    }, [setSuggestionsVisible, setProfileMenuOpen]);
+    }, [setProfileMenuOpen]);
 
     // Sync with AuthProvider — no duplicate auth calls
     useEffect(() => {
@@ -244,64 +177,53 @@ export function Header() {
                             );
                         })}
 
-                        {/* Inline Search Bar */}
+                        {/* Global Search Bar */}
                         <div className="relative ml-3 group" id="search-container">
                             <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-yellow transition-colors text-[20px]">search</span>
                             <input
-                                ref={inputRef}
                                 type="text"
-                                placeholder="Buscar..."
-                                value={query}
-                                onChange={(e) => setQuery(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' && query.trim()) {
-                                        trackEvent('SEARCH_QUERY', { query: query.trim() });
-                                        const forward = !e.shiftKey;
-                                        // @ts-ignore
-                                        const found = window.find(query, false, !forward, true, false, true, false);
-                                        if (found) {
-                                            setCurrentMatch(prev => forward ? (prev < matchCount ? prev + 1 : 1) : (prev > 1 ? prev - 1 : matchCount));
-                                        } else {
-                                            // @ts-ignore
-                                            window.find(query, false, !forward, true, false, true, true);
-                                            setCurrentMatch(forward ? 1 : matchCount);
-                                        }
-                                        inputRef.current?.focus();
-                                    }
+                                placeholder="Buscar no sistema..."
+                                value={searchQuery}
+                                onChange={(e) => {
+                                    setSearchQuery(e.target.value);
+                                    if (!isDropdownOpen) setIsDropdownOpen(true);
                                 }}
-                                onFocus={() => setSuggestionsVisible(true)}
+                                onFocus={() => setIsDropdownOpen(true)}
                                 className="w-[180px] focus:w-[260px] bg-white/5 border border-white/10 rounded-xl py-1.5 pl-9 pr-3 text-xs focus:ring-2 focus:ring-brand-yellow/30 outline-none transition-all text-white placeholder:text-gray-500"
                             />
-                            {query && matchCount > 0 && (
-                                <div className="absolute right-2 top-1/2 -translate-y-1/2 px-1.5 py-0.5 bg-brand-yellow/10 rounded pointer-events-none">
-                                    <span className="text-[9px] font-black text-brand-yellow/80">{currentMatch}/{matchCount}</span>
-                                </div>
-                            )}
 
-                            {/* Search Suggestions Dropdown */}
-                            {isSuggestionsVisible && (isSearchLoading || suggestions.length > 0) && (
-                                <div className="absolute top-full right-0 mt-2 w-[350px] bg-[#1E1E1E] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-[60]">
-                                    {isSearchLoading ? (
-                                        <div className="p-3 flex items-center gap-3 text-gray-400 text-xs font-bold uppercase tracking-widest">
-                                            <span className="material-symbols-outlined animate-spin text-brand-yellow text-[16px]">progress_activity</span>
-                                            Pesquisando...
+                            {/* Global Search Dropdown Overlay */}
+                            {isDropdownOpen && searchQuery.trim().length > 0 && (
+                                <div className="absolute top-1/2 mt-8 right-0 w-[400px] bg-[#1E1E1E] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-[60]">
+                                    {filteredRoutes.length > 0 ? (
+                                        <div className="py-1 flex flex-col max-h-[400px] overflow-y-auto">
+                                            {filteredRoutes.map((route, idx) => (
+                                                <Link
+                                                    key={idx}
+                                                    href={route.href}
+                                                    onClick={() => {
+                                                        setIsDropdownOpen(false);
+                                                        setSearchQuery('');
+                                                    }}
+                                                    className="w-full px-4 py-3 flex items-start gap-4 hover:bg-white/5 transition-colors text-left group border-b border-white/5 last:border-0"
+                                                >
+                                                    <div className={`mt-0.5 size-9 shrink-0 rounded-xl bg-white/5 flex items-center justify-center shadow-sm ${route.color}`}>
+                                                        <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">{route.icon}</span>
+                                                    </div>
+                                                    <div className="flex flex-col flex-1">
+                                                        <span className="text-sm font-bold text-gray-200 group-hover:text-white transition-colors leading-tight">{route.label}</span>
+                                                        <span className="text-[11px] text-gray-400 mt-1 leading-snug">{route.desc}</span>
+                                                    </div>
+                                                </Link>
+                                            ))}
                                         </div>
                                     ) : (
-                                        <div className="py-1">
-                                            {suggestions.map((s) => (
-                                                <button
-                                                    key={s.id}
-                                                    onClick={() => {
-                                                        trackEvent('SEARCH_SUCCESS', { query: query.trim(), suggestion_id: s.id, suggestion_title: s.title });
-                                                        setQuery(s.title);
-                                                        setSuggestionsVisible(false);
-                                                    }}
-                                                    className="w-full px-3 py-2 flex items-center gap-3 hover:bg-white/5 transition-colors text-left group rounded-lg"
-                                                >
-                                                    <span className="material-symbols-outlined text-gray-400 group-hover:text-brand-yellow transition-colors text-[16px]">history</span>
-                                                    <span className="text-sm text-gray-300 font-medium">{s.title}</span>
-                                                </button>
-                                            ))}
+                                        <div className="p-8 flex flex-col items-center justify-center gap-3 text-gray-400 text-center">
+                                            <span className="material-symbols-outlined text-[40px] text-brand-red opacity-80">sentiment_dissatisfied</span>
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-bold text-gray-300">Nenhum atalho encontrado</span>
+                                                <span className="text-xs mt-1">Não encontramos rotas para "{searchQuery}"</span>
+                                            </div>
                                         </div>
                                     )}
                                 </div>
@@ -419,15 +341,18 @@ export function Header() {
                             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-[20px]">search</span>
                             <input
                                 type="text"
-                                placeholder="Buscar no Hub..."
-                                value={query}
-                                onChange={(e) => setQuery(e.target.value)}
+                                placeholder="Buscar no sistema..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                                 className="w-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-brand-yellow/30 outline-none transition-all text-gray-900 dark:text-white font-medium"
                                 autoFocus={isSearchOpen}
                             />
                         </div>
                         <button 
-                            onClick={() => setSearchOpen(false)}
+                            onClick={() => {
+                                setSearchOpen(false);
+                                setSearchQuery('');
+                            }}
                             className="p-2 text-gray-500 font-black text-[10px] uppercase tracking-widest hover:text-brand-red transition-colors"
                         >
                             Fechar
@@ -437,53 +362,42 @@ export function Header() {
                     {/* Global Quick Links / Suggestions */}
                     <div className="flex-1 overflow-y-auto pb-6 space-y-6">
                         <div>
-                            <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] mb-3 px-1">Atalhos Globais</h4>
-                            <div className="grid grid-cols-1 gap-2">
-                                {[
-                                    { label: 'Grade Horária', href: '/ferramentas', icon: 'calendar_month', color: 'text-brand-red', desc: 'Monte seu cronograma' },
-                                    { label: 'Trilhas de Aprendizado', href: '/trilhas', icon: 'auto_stories', color: 'text-brand-yellow', desc: 'O que estudar no IF' },
-                                    { label: 'O Grande Colisor', href: '/explorar', icon: 'hub', color: 'text-brand-blue', desc: 'Oportunidades & Wiki' },
-                                    { label: 'Meu Laboratório', href: '/lab', icon: 'science', color: 'text-brand-red', desc: 'XP e conquistas' },
-                                ].map((item) => (
-                                    <Link
-                                        key={item.href}
-                                        href={item.href}
-                                        onClick={() => setSearchOpen(false)}
-                                        className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-white/5 rounded-2xl border border-transparent active:border-brand-yellow/30 active:scale-[0.98] transition-all group"
-                                    >
-                                        <div className={`size-10 rounded-xl bg-white dark:bg-white/5 flex items-center justify-center shadow-sm ${item.color}`}>
-                                            <span className="material-symbols-outlined text-[24px]">{item.icon}</span>
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-sm font-bold text-gray-900 dark:text-white">{item.label}</span>
-                                            <span className="text-[11px] text-gray-500 font-medium">{item.desc}</span>
-                                        </div>
-                                        <span className="material-symbols-outlined ml-auto text-gray-300 text-[18px] group-active:translate-x-1 transition-transform">chevron_right</span>
-                                    </Link>
-                                ))}
-                            </div>
-                        </div>
-
-                        {query.length > 0 && suggestions.length > 0 && (
-                            <div>
-                                <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] mb-3 px-1">Resultados da Busca</h4>
-                                <div className="space-y-2">
-                                    {suggestions.map((s) => (
-                                        <button
-                                            key={s.id}
+                            <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] mb-3 px-1">
+                                {searchQuery.trim() === '' ? 'Navegação Rápida' : 'Resultados da Busca'}
+                            </h4>
+                            {filteredRoutes.length > 0 ? (
+                                <div className="grid grid-cols-1 gap-2">
+                                    {filteredRoutes.map((item, idx) => (
+                                        <Link
+                                            key={idx}
+                                            href={item.href}
                                             onClick={() => {
-                                                setQuery(s.title);
                                                 setSearchOpen(false);
+                                                setSearchQuery('');
                                             }}
-                                            className="w-full flex items-center gap-4 p-4 hover:bg-white/5 transition-colors text-left group rounded-2xl"
+                                            className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-white/5 rounded-2xl border border-transparent active:border-brand-yellow/30 active:scale-[0.98] transition-all group"
                                         >
-                                            <span className="material-symbols-outlined text-gray-400 text-[18px]">history</span>
-                                            <span className="text-sm text-gray-300 font-medium">{s.title}</span>
-                                        </button>
+                                            <div className={`size-10 shrink-0 rounded-xl bg-white dark:bg-white/5 flex items-center justify-center shadow-sm ${item.color}`}>
+                                                <span className="material-symbols-outlined text-[24px] group-hover:scale-110 transition-transform">{item.icon}</span>
+                                            </div>
+                                            <div className="flex flex-col flex-1">
+                                                <span className="text-sm font-bold text-gray-900 dark:text-white leading-tight">{item.label}</span>
+                                                <span className="text-[11px] text-gray-500 font-medium mt-0.5 leading-snug">{item.desc}</span>
+                                            </div>
+                                            <span className="material-symbols-outlined ml-auto text-gray-300 text-[18px] group-active:translate-x-1 transition-transform">chevron_right</span>
+                                        </Link>
                                     ))}
                                 </div>
-                            </div>
-                        )}
+                            ) : (
+                                <div className="p-8 flex flex-col items-center justify-center gap-3 text-gray-400 text-center bg-gray-50 dark:bg-[#121212] rounded-2xl border border-gray-100 dark:border-white/5">
+                                    <span className="material-symbols-outlined text-[40px] text-brand-red opacity-80">sentiment_dissatisfied</span>
+                                    <div className="flex flex-col">
+                                        <span className="text-sm font-bold text-gray-900 dark:text-gray-300">Nenhum atalho encontrado</span>
+                                        <span className="text-xs mt-1">Não encontramos rotas para "{searchQuery}"</span>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </div>
             </header>
