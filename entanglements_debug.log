@@ -12076,3 +12076,5 @@
 [2026-03-26T21:44:35.681Z] No authenticated user found in fetchRecentEntanglements
 [2026-03-26T21:44:38.848Z] Starting fetchRecentEntanglements (HARDCODED USER MODE)
 [2026-03-26T21:44:38.856Z] No authenticated user found in fetchRecentEntanglements
+[2026-03-26T21:54:11.236Z] Starting fetchRecentEntanglements (HARDCODED USER MODE)
+[2026-03-26T21:54:11.846Z] Fetching for User ID: 8a3e4272-010d-4479-94cb-26178d544ea2

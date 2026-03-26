@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
   },
+  serverExternalPackages: ['puppeteer-core', '@sparticuz/chromium'],
   transpilePackages: ['recharts'],
   async redirects() {
     return [

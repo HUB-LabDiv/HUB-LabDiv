@@ -54,7 +54,6 @@
     "modern-screenshot": "^4.6.8",
     "next": "16.1.6",
     "pdf-parse": "^2.4.5",
-    "puppeteer": "^22.15.0",
     "puppeteer-core": "^24.40.0",
     "react": "19.2.3",
     "react-dom": "19.2.3",
