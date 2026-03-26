@@ -208,11 +208,7 @@ const quizCell = {
     cta: 'Iniciar Varredura'
 };
 
-interface WikiViewProps {
-    onNavigateToInstituto?: () => void;
-}
-
-export function WikiView({ onNavigateToInstituto }: WikiViewProps) {
+export function WikiView() {
     return (
         <div className="bg-transparent pb-12 overflow-x-hidden pt-8">
             <div className="max-w-6xl mx-auto">
@@ -236,45 +232,7 @@ export function WikiView({ onNavigateToInstituto }: WikiViewProps) {
                     </div>
                 </div>
 
-                {/* --- Horizontal Instituto Banner --- */}
-                <motion.div
-                    initial={{ opacity: 0, y: 40 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                    className="relative group w-full mb-12"
-                >
-                    <div className="absolute -inset-0.5 bg-[#17739A]/30 rounded-[32px] blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    <button
-                        onClick={onNavigateToInstituto ? (e) => {
-                            e.preventDefault();
-                            onNavigateToInstituto();
-                        } : undefined}
-                        className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-gradient-to-r from-[#17739A]/20 to-brand-blue/10 backdrop-blur-2xl border border-white/5 hover:border-[#17739A]/40 transition-all overflow-hidden text-left"
-                    >
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#17739A]/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4"></div>
-                        <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
-                            <div className="size-20 bg-[#17739A]/10 text-[#17739A] rounded-[28px] flex items-center justify-center ring-1 ring-[#17739A]/20 group-hover:scale-110 transition-all duration-700 shadow-2xl shadow-[#17739A]/20">
-                                {institutoCell.icon}
-                            </div>
-                            <div className="text-center md:text-left">
-                                <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
-                                    <h3 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter">
-                                        {institutoCell.title}
-                                    </h3>
-                                    <span className="hidden md:block px-3 py-1 bg-[#17739A]/20 border border-[#17739A]/30 text-[#17739A] text-[10px] font-black uppercase rounded-full italic">Institucional</span>
-                                </div>
-                                <p className="text-gray-400 font-medium max-w-md">
-                                    {institutoCell.description}
-                                </p>
-                            </div>
-                        </div>
-                        <div className="mt-8 md:mt-0 relative z-10">
-                            <div className="px-12 py-5 bg-[#17739A] text-white font-black rounded-[24px] group-hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-widest flex items-center gap-4 shadow-2xl shadow-[#17739A]/30">
-                                {institutoCell.cta} <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                            </div>
-                        </div>
-                    </button>
-                </motion.div>
+
 
                 {/* --- Wiki Matrix (Grid de Elite 3x3) --- */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
@@ -339,12 +297,50 @@ export function WikiView({ onNavigateToInstituto }: WikiViewProps) {
 
 
 
-                {/* --- Horizontal Quiz Banner --- */}
+                {/* --- Horizontal Instituto Banner --- */}
                 <motion.div
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.8, delay: 0.5 }}
+                    className="relative group w-full mb-12"
+                >
+                    <div className="absolute -inset-0.5 bg-[#17739A]/30 rounded-[32px] blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <Link
+                        href={institutoCell.href}
+                        className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-gradient-to-r from-[#17739A]/20 to-brand-blue/10 backdrop-blur-2xl border border-white/5 hover:border-[#17739A]/40 transition-all overflow-hidden text-left"
+                    >
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#17739A]/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4"></div>
+                        <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
+                            <div className="size-20 bg-[#17739A]/10 text-[#17739A] rounded-[28px] flex items-center justify-center ring-1 ring-[#17739A]/20 group-hover:scale-110 transition-all duration-700 shadow-2xl shadow-[#17739A]/20">
+                                {institutoCell.icon}
+                            </div>
+                            <div className="text-center md:text-left">
+                                <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
+                                    <h3 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter">
+                                        {institutoCell.title}
+                                    </h3>
+                                    <span className="hidden md:block px-3 py-1 bg-[#17739A]/20 border border-[#17739A]/30 text-[#17739A] text-[10px] font-black uppercase rounded-full italic">Institucional</span>
+                                </div>
+                                <p className="text-gray-400 font-medium max-w-md">
+                                    {institutoCell.description}
+                                </p>
+                            </div>
+                        </div>
+                        <div className="mt-8 md:mt-0 relative z-10">
+                            <div className="px-12 py-5 bg-[#17739A] text-white font-black rounded-[24px] group-hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-widest flex items-center gap-4 shadow-2xl shadow-[#17739A]/30">
+                                {institutoCell.cta} <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            </div>
+                        </div>
+                    </Link>
+                </motion.div>
+
+                {/* --- Horizontal Quiz Banner --- */}
+                <motion.div
+                    id="teste-radiacao"
+                    initial={{ opacity: 0, y: 40 }}
+                    animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.6 }}
-                    className="relative group w-full mb-4"
+                    className="relative group w-full mb-4 scroll-mt-32"
                 >
                     <div className="absolute -inset-0.5 bg-brand-blue/30 rounded-[32px] blur opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-500"></div>
                     <Link

@@ -112,6 +112,51 @@ export default function FerramentasClient({ profile }: { profile: any }) {
     const calendarRef = React.useRef<any>(null);
     const enrollmentListRef = React.useRef<HTMLDivElement>(null);
 
+    const handlePrint = () => {
+        const origStart = calendarStart;
+        const origEnd = calendarEnd;
+
+        let minH = 24;
+        let maxH = 0;
+        
+        events.forEach(e => {
+            const startH = new Date(e.start).getHours();
+            if (startH < minH) minH = startH;
+            
+            let endH = startH;
+            if (e.end) {
+                endH = new Date(e.end).getHours();
+                const endM = new Date(e.end).getMinutes();
+                if (endM > 0) endH++; 
+            } else {
+                endH = startH + 2; 
+            }
+            if (endH > maxH) maxH = endH;
+        });
+
+        if (events.length === 0) {
+            minH = 8;
+            maxH = 18;
+        }
+
+        const paddedMin = Math.max(0, minH - 1);
+        const paddedMax = Math.min(24, maxH + 1);
+
+        setCalendarStart(`${paddedMin.toString().padStart(2, '0')}:00`);
+        setCalendarEnd(`${paddedMax.toString().padStart(2, '0')}:00`);
+        setIsExportModalOpen(false);
+
+        // Wait to render
+        setTimeout(() => {
+            window.print();
+            // Restore original settings after print dialog closes
+            setTimeout(() => {
+                setCalendarStart(origStart);
+                setCalendarEnd(origEnd);
+            }, 1000);
+        }, 800);
+    };
+
     const saveToHistory = () => {
         setHistory(prev => [JSON.parse(JSON.stringify(events)), ...prev].slice(0, 10));
     };
@@ -702,19 +747,45 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                 .fc-timegrid-col.fc-day-today { background: rgba(59, 130, 246, 0.05) !important; }
 
                 @media print {
+                    * {
+                        -webkit-print-color-adjust: exact !important;
+                        print-color-adjust: exact !important;
+                    }
+                    @page {
+                        size: A4 landscape;
+                        margin: 1cm;
+                    }
+                    html, body {
+                        width: 100% !important;
+                        background: white !important; 
+                        color: black !important;
+                        margin: 0 !important;
+                        padding: 0 !important;
+                    }
                     nav, aside, footer, header, .print\:hidden, .fc-header-toolbar, 
                     .bg-gradient-to-br, .enrollment-section, #enrollment-list-container,
-                    .glass-card > div > div:first-child {
+                    .glass-card > div > div:first-child,
+                    button {
                         display: none !important;
                     }
-                    body { background: white !important; color: black !important; }
+                    /* Remove limitations do Modal do Cronograma para não cortar nas bordas */
+                    .fixed.inset-0.z-\[100\] { position: relative !important; inset: auto !important; }
+                    .absolute.inset-0.bg-black\/80 { display: none !important; }
+                    .relative.bg-\[\#1e1e1e\] { max-height: none !important; height: auto !important; overflow: visible !important; border: none !important; padding: 0 !important; box-shadow: none !important; margin: 0 !important; max-width: 100% !important; background: white !important; }
+                    
                     .glass-card { background: white !important; border: 0 !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
-                    .fc { background: white !important; }
-                    .fc-v-event { background-color: #f3f4f6 !important; color: black !important; box-shadow: none !important; border: 1px solid #ddd !important; }
-                    .fc-event-main { color: black !important; text-shadow: none !important; }
+                    .fc { background: white !important; height: auto !important; }
+                    
+                    /* Remove the forced white/gray backgrounds on events so their actual color shines through */
+                    .fc-v-event { box-shadow: none !important; border: 1px solid rgba(0,0,0,0.1) !important; }
+                    .fc-event-main { color: white !important; text-shadow: none !important; }
+                    
                     .fc-col-header-cell-cushion, .fc-timegrid-axis-cushion, .fc-timegrid-slot-label-cushion { color: #333 !important; }
-                    .main-content-layout { padding: 0 !important; margin: 0 !important; }
-                    .calendar-container { width: 100vw !important; height: 100vh !important; }
+                    .main-content-layout { padding: 0 !important; margin: 0 !important; width: 100% !important; height: auto !important; overflow: visible !important;}
+                    .calendar-container { width: 100% !important; height: auto !important; overflow: visible !important; border: none !important; padding: 0 !important; background: white !important; zoom: 0.82; }
+                    .fc-scroller { overflow: visible !important; height: auto !important; }
+                    
+                    #grade-horaria-actions { display: none !important; }
                 }
             `}</style>
 
@@ -726,37 +797,39 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     <p className="text-gray-400 font-medium italic">Seu cockpit de navegação pelo IFUSP.</p>
                 </div>
 
-                    <div className="flex items-center gap-3">
-                        <button
-                            onClick={handleReset}
-                            disabled={isResetting}
-                            className="flex items-center gap-2 px-4 py-2 bg-red-500/10 text-red-500 border border-red-500/20 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
-                            title="Resetar todos os dados de estudos"
-                        >
-                            {isResetting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-                            <span className="hidden sm:inline">Resetar Grade</span>
-                        </button>
-                        <button
-                            onClick={handleAutoGenerateStudy}
-                            disabled={isUpdating === 'auto-study'}
-                            className="flex items-center gap-2 px-4 py-2 bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-yellow hover:text-white transition-all disabled:opacity-50"
-                            title="Gerar 1h de estudo para cada 1h de aula na grade"
-                        >
-                            {isUpdating === 'auto-study' ? <Loader2 className="w-4 h-4 animate-spin" /> : <BookOpen className="w-4 h-4" />}
-                            <span className="hidden sm:inline">Gerar Estudos (1:1)</span>
-                        </button>
-                        <button
-                            onClick={() => setIsJupiterModalOpen(true)}
-                            className="flex items-center gap-2 px-4 py-2 bg-brand-blue/10 text-brand-blue border border-brand-blue/20 rounded-2xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-blue hover:text-white transition-all disabled:opacity-50"
-                            title="Sincronizar com sistema USP"
-                        >
-                            <RefreshCw className="w-4 h-4" />
-                            <span className="hidden sm:inline">Sincronizar Júpiter</span>
-                        </button>
-                    </div>
             </header>
 
             <FerramentasFeedbackCard className="block lg:hidden" />
+
+            {/* Action Buttons - Premium Refined Layout */}
+            <div id="grade-horaria-actions" className="flex flex-wrap items-center gap-3 py-4 border-t border-gray-100 dark:border-white/5">
+                <button
+                    onClick={handleReset}
+                    disabled={isResetting}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all disabled:opacity-50 shadow-sm group"
+                    title="Resetar todos os dados de estudos"
+                >
+                    {isResetting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4 group-hover:scale-110 transition-transform" />}
+                    <span className="inline">Resetar Grade</span>
+                </button>
+                <button
+                    onClick={handleAutoGenerateStudy}
+                    disabled={isUpdating === 'auto-study'}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3.5 bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-brand-yellow hover:text-white transition-all disabled:opacity-50 shadow-sm group"
+                    title="Gerar 1h de estudo para cada 1h de aula na grade"
+                >
+                    {isUpdating === 'auto-study' ? <Loader2 className="w-4 h-4 animate-spin" /> : <BookOpen className="w-4 h-4 group-hover:scale-110 transition-transform" />}
+                    <span className="inline">Gerar Estudos (1:1)</span>
+                </button>
+                <button
+                    onClick={() => setIsJupiterModalOpen(true)}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3.5 bg-brand-blue/10 text-brand-blue border border-brand-blue/20 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-brand-blue hover:text-white transition-all disabled:opacity-50 shadow-sm group"
+                    title="Sincronizar com sistema USP"
+                >
+                    <RefreshCw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
+                    <span className="inline">Sincronizar Júpiter</span>
+                </button>
+            </div>
 
 
             <div className="bg-transparent min-h-[600px] rounded-[40px] overflow-hidden">
@@ -953,7 +1026,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     </div>
 
                     <div className="space-y-6">
-                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
                             <h3 className="text-xl font-display font-bold text-gray-900 dark:text-white uppercase tracking-tighter">Cronograma Semanal</h3>
                             <div className="flex flex-col gap-2 items-end">
                                 {/* Row 1: Excluir and Info */}
@@ -1028,7 +1101,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                             </div>
                         </div>
                 
-                        <div className={`bg-white dark:bg-[#1e1e1e] p-6 rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden transition-all ${viewMode === 'view' ? 'bg-gray-50/50 dark:bg-[#121212] border-brand-blue/10' : ''}`}>
+                        <div className={`bg-white dark:bg-[#1e1e1e] p-6 rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden print:overflow-visible transition-all ${viewMode === 'view' ? 'bg-gray-50/50 dark:bg-[#121212] border-brand-blue/10' : 'print:border-none print:bg-white print:p-0 print:m-0'}`}>
                             {viewMode === 'view' ? (
                                 <div className="relative group/view-scroll">
                                     <button
@@ -1424,7 +1497,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                         <h3 className="text-2xl font-display font-black text-white uppercase tracking-tight mb-2">Exportar</h3>
                         <p className="text-gray-400 text-xs mb-8">Escolha o formato para salvar seu cronograma.</p>
                         <div className="grid grid-cols-1 gap-3">
-                            <button onClick={() => window.print()} className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors group text-left">
+                            <button onClick={handlePrint} className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors group text-left">
                                 <div className="size-10 bg-brand-red/10 rounded-xl flex items-center justify-center text-brand-red"><FileText className="w-5 h-5" /></div>
                                 <div><div className="text-sm font-bold text-white uppercase tracking-tight">Salvar como PDF</div><div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Ideal para imprimir</div></div>
                             </button>

@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { AppRoutes } from '@/types/navigation';
+import { ColisorIcon } from '../icons/ColisorIcon';
 
 export function Footer() {
     return (
@@ -34,7 +35,7 @@ export function Footer() {
                         <h4 className="font-bold text-gray-900 dark:text-white mb-6 uppercase text-xs tracking-wider border-l-4 border-brand-blue pl-3">Navegação</h4>
                         <ul className="space-y-3">
                             <li><Link href="/" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors"><span className="material-symbols-outlined text-xs">groups</span> Comunidade</Link></li>
-                            <li><Link href="/explorar" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors"><span className="material-symbols-outlined text-xs">search</span> O Grande Colisor do IF</Link></li>
+                            <li><Link href="/explorar" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors"><ColisorIcon size={14} animate={false} /> O Grande Colisor do IF</Link></li>
                             <li><Link href="/ferramentas" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors"><span className="material-symbols-outlined text-xs">construction</span> Ferramentas acadêmicas</Link></li>
                             <li><Link href="/perguntas" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors"><span className="material-symbols-outlined text-xs">help_outline</span> Interação (Pergunte/Lab)</Link></li>
                             <li><Link href="/sobre" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors"><span className="material-symbols-outlined text-xs">info</span> LabDiv</Link></li>

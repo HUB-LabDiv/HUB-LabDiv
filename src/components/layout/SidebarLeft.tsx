@@ -114,7 +114,7 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
     }, []);
 
     return (
-        <aside className="sticky top-0 h-screen w-full flex flex-col gap-2 pt-[72px] py-6 px-4 overflow-y-auto hidden-scrollbar">
+        <div className="w-full flex flex-col gap-2 pt-[72px] py-6 px-4">
             {/* 
                --- NOTA PARA O DEV (AMIGO DO USUÁRIO) ---
                O padding lateral ('px-4') fica nesta tag <aside> raiz.
@@ -324,6 +324,6 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                     </Link>
                 ))}
             </nav>
-        </aside>
+        </div>
     );
 };

@@ -8,6 +8,7 @@ import { NavItem, AppRoutes } from '@/types/navigation';
 import FocusLock from 'react-focus-lock';
 import { useAuth } from '@/providers/AuthProvider';
 import { supabase } from '@/lib/supabase';
+import { ColisorIcon } from '../icons/ColisorIcon';
 
 const drawerLinks: (NavItem & { color?: string })[] = [
     { name: 'Central de Interações', href: '/interacao?tab=emaranhamento', icon: 'hub', isPrimary: true, color: 'brand-blue' },
@@ -57,7 +58,7 @@ export const BottomNavBar = () => {
 
     const dynamicNavItems = [
         { name: 'Comunidade', href: '/', icon: 'groups', color: 'brand-red' },
-        { name: 'Colisor', href: '/explorar', icon: 'search', color: 'brand-yellow' },
+        { name: 'Colisor', href: '/explorar', icon: 'colisor', color: 'brand-yellow' },
         { name: 'Lançar', href: AppRoutes.ENVAR, icon: 'rocket_launch', isAction: true, color: 'brand-blue' },
         ...(userCategory === 'pesquisador' 
             ? [{ name: 'Pesquisa', href: '/arena', icon: 'visibility', color: 'brand-red' }]
@@ -125,9 +126,13 @@ export const BottomNavBar = () => {
                                     onClick={() => setDrawerOpen(true)}
                                     className={`flex flex-col items-center justify-center gap-0.5 p-2 rounded-2xl transition-all ${isDrawerOpen ? `text-${activeColor}` : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
                                 >
-                                    <span className={`material-symbols-outlined text-[22px] ${isDrawerOpen ? 'filled' : ''}`}>
-                                        {item.icon}
-                                    </span>
+                                    {item.icon === 'colisor' ? (
+                                        <ColisorIcon className="w-[22px] h-[22px]" animate={isDrawerOpen} />
+                                    ) : (
+                                        <span className={`material-symbols-outlined text-[22px] ${isDrawerOpen ? 'filled' : ''}`}>
+                                            {item.icon}
+                                        </span>
+                                    )}
                                     <span className="text-[8px] font-black uppercase tracking-tighter">
                                         {item.name}
                                     </span>
@@ -142,9 +147,15 @@ export const BottomNavBar = () => {
                                 href={item.href}
                                 className={`flex flex-col items-center justify-center gap-0.5 p-2 rounded-2xl transition-all relative ${isActive ? `text-${activeColor}` : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
                             >
-                                <span className={`material-symbols-outlined text-[22px] ${isActive ? 'filled' : ''}`}>
-                                    {item.icon}
-                                </span>
+                                <div className="size-[22px] flex items-center justify-center">
+                                    {item.icon === 'colisor' ? (
+                                        <ColisorIcon className="w-full h-full" animate={isActive} />
+                                    ) : (
+                                        <span className={`material-symbols-outlined text-[22px] ${isActive ? 'filled' : ''}`}>
+                                            {item.icon}
+                                        </span>
+                                    )}
+                                </div>
                                 <span className="text-[8px] font-black uppercase tracking-tighter">
                                     {item.name}
                                 </span>

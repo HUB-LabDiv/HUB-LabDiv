@@ -48,7 +48,6 @@ export default function AdminLayout({
         { name: 'Pergunte a um Cientista', href: '/admin/perguntas', icon: 'quiz' },
         { name: 'Central de Anomalias', href: '/admin/reports', icon: 'bug_report' },
         { name: 'Trilhas de Aprendizagem', href: '/admin/trilhas', icon: 'route', adminOnly: true },
-        { name: 'Telemetria & Dados', href: '/admin/telemetria', icon: 'analytics', adminOnly: true },
         { name: 'Oportunidades', href: '/admin/oportunidades', icon: 'event' },
         { name: 'Logs do IFUSP', href: '/admin/drops', icon: 'forum' },
         { name: 'Configurações Admin', href: '/admin/config', icon: 'admin_panel_settings', adminOnly: true },

@@ -134,7 +134,10 @@ export function Header() {
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
-            if (!target.closest('#search-container')) {
+            // Prevent closure if clicking the desktop search or mobile search overlay/button
+            if (!target.closest('#search-container') && 
+                !target.closest('#search-container-mobile') && 
+                !target.closest('#mobile-search-toggle')) {
                 setSuggestionsVisible(false);
                 setSearchOpen(false);
             }
@@ -311,6 +314,16 @@ export function Header() {
 
                     {/* Right: Sharded Actions */}
                     <div className="flex items-center gap-1 sm:gap-4 shrink-0">
+                        {/* Mobile Search Toggle */}
+                        <button
+                            id="mobile-search-toggle"
+                            onClick={() => setSearchOpen(!isSearchOpen)}
+                            className="md:hidden size-10 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/5 text-gray-500 hover:text-brand-yellow transition-all border border-gray-200 dark:border-white/10"
+                            aria-label="Abrir Busca"
+                        >
+                            <span className="material-symbols-outlined text-[22px]">search</span>
+                        </button>
+
                         <div className="flex items-center gap-1 sm:gap-2 pr-1.5 sm:pr-4 border-r border-gray-100 dark:border-white/10">
 
 
@@ -399,6 +412,81 @@ export function Header() {
                                 </div>
                             </button>
                         </div>
+                    </div>
+                </div>
+                
+                {/* Mobile Search Overlay */}
+                <div className={`md:hidden absolute top-0 left-0 right-0 h-[60vh] bg-white dark:bg-[#121212] z-[60] px-4 pt-4 flex flex-col gap-4 transition-all duration-300 shadow-2xl rounded-b-[32px] border-b border-gray-100 dark:border-white/5 ${isSearchOpen ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none'}`}>
+                    <div className="flex items-center gap-3">
+                        <div className="relative flex-1 group" id="search-container-mobile">
+                            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-[20px]">search</span>
+                            <input
+                                type="text"
+                                placeholder="Buscar no Hub..."
+                                value={query}
+                                onChange={(e) => setQuery(e.target.value)}
+                                className="w-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl py-3 pl-10 pr-4 text-sm focus:ring-2 focus:ring-brand-yellow/30 outline-none transition-all text-gray-900 dark:text-white font-medium"
+                                autoFocus={isSearchOpen}
+                            />
+                        </div>
+                        <button 
+                            onClick={() => setSearchOpen(false)}
+                            className="p-2 text-gray-500 font-black text-[10px] uppercase tracking-widest hover:text-brand-red transition-colors"
+                        >
+                            Fechar
+                        </button>
+                    </div>
+
+                    {/* Global Quick Links / Suggestions */}
+                    <div className="flex-1 overflow-y-auto pb-6 space-y-6">
+                        <div>
+                            <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] mb-3 px-1">Atalhos Globais</h4>
+                            <div className="grid grid-cols-1 gap-2">
+                                {[
+                                    { label: 'Grade Horária', href: '/ferramentas', icon: 'calendar_month', color: 'text-brand-red', desc: 'Monte seu cronograma' },
+                                    { label: 'Trilhas de Aprendizado', href: '/trilhas', icon: 'auto_stories', color: 'text-brand-yellow', desc: 'O que estudar no IF' },
+                                    { label: 'O Grande Colisor', href: '/explorar', icon: 'hub', color: 'text-brand-blue', desc: 'Oportunidades & Wiki' },
+                                    { label: 'Meu Laboratório', href: '/lab', icon: 'science', color: 'text-brand-red', desc: 'XP e conquistas' },
+                                ].map((item) => (
+                                    <Link
+                                        key={item.href}
+                                        href={item.href}
+                                        onClick={() => setSearchOpen(false)}
+                                        className="flex items-center gap-4 p-4 bg-gray-50 dark:bg-white/5 rounded-2xl border border-transparent active:border-brand-yellow/30 active:scale-[0.98] transition-all group"
+                                    >
+                                        <div className={`size-10 rounded-xl bg-white dark:bg-white/5 flex items-center justify-center shadow-sm ${item.color}`}>
+                                            <span className="material-symbols-outlined text-[24px]">{item.icon}</span>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-sm font-bold text-gray-900 dark:text-white">{item.label}</span>
+                                            <span className="text-[11px] text-gray-500 font-medium">{item.desc}</span>
+                                        </div>
+                                        <span className="material-symbols-outlined ml-auto text-gray-300 text-[18px] group-active:translate-x-1 transition-transform">chevron_right</span>
+                                    </Link>
+                                ))}
+                            </div>
+                        </div>
+
+                        {query.length > 0 && suggestions.length > 0 && (
+                            <div>
+                                <h4 className="text-[10px] font-black uppercase text-gray-400 tracking-[0.2em] mb-3 px-1">Resultados da Busca</h4>
+                                <div className="space-y-2">
+                                    {suggestions.map((s) => (
+                                        <button
+                                            key={s.id}
+                                            onClick={() => {
+                                                setQuery(s.title);
+                                                setSearchOpen(false);
+                                            }}
+                                            className="w-full flex items-center gap-4 p-4 hover:bg-white/5 transition-colors text-left group rounded-2xl"
+                                        >
+                                            <span className="material-symbols-outlined text-gray-400 text-[18px]">history</span>
+                                            <span className="text-sm text-gray-300 font-medium">{s.title}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
                     </div>
                 </div>
             </header>

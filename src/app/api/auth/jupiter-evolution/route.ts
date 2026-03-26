@@ -1,7 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import puppeteer from 'puppeteer';
-import * as fs from 'fs';
-import * as path from 'path';
 
 export async function POST(req: NextRequest) {
     let browser;
@@ -13,10 +11,8 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ success: false, error: 'Credenciais ausentes' }, { status: 400 });
         }
 
-        const logPath = path.join(process.cwd(), 'jupiter_sync.log');
         const log = (msg: string) => {
             console.log(msg);
-            fs.appendFileSync(logPath, `[${new Date().toISOString()}] ${msg}\n`);
         };
 
         log('[Puppeteer Sync] Starting browser automation...');
@@ -59,8 +55,6 @@ export async function POST(req: NextRequest) {
         // 3. Navigate to Evolution
         log('[Puppeteer Sync] Navigating to Evolution page...');
         await page.goto('https://uspdigital.usp.br/jupiterweb/evolucaoCurso?codmnu=4752', { waitUntil: 'networkidle2' });
-        await page.screenshot({ path: path.join(process.cwd(), 'jupiter_step1_evolution_load.png') });
-        fs.writeFileSync(path.join(process.cwd(), 'jupiter_step1_evolution_load.html'), await page.content());
 
         const isSelectionPage = await page.evaluate(() => {
             return !!document.getElementById('enviar') || !!document.getElementById('codpgm');
@@ -91,8 +85,6 @@ export async function POST(req: NextRequest) {
 
         log('[Puppeteer Sync] Buffer wait 8s...');
         await new Promise(resolve => setTimeout(resolve, 8000)); 
-        await page.screenshot({ path: path.join(process.cwd(), 'jupiter_step2_after_dwr.png') });
-        fs.writeFileSync(path.join(process.cwd(), 'jupiter_step2_after_dwr.html'), await page.content());
 
         // 4. Extraction Logic (Multi-frame support)
         log('[Puppeteer Sync] Running extraction script (checking all frames)...');
@@ -159,24 +151,6 @@ export async function POST(req: NextRequest) {
 
     } catch (error: any) {
         console.error('[Puppeteer Sync Error]:', error);
-        
-        // Detailed error logging to file
-        try {
-            const logPath = path.join(process.cwd(), 'jupiter_sync.log');
-            const logMsg = `[${new Date().toISOString()}] ERROR: ${error.message}\n${error.stack}\n\n`;
-            fs.appendFileSync(logPath, logMsg);
-            
-            if (browser) {
-                const pages = await browser.pages();
-                if (pages.length > 0) {
-                    await pages[0].screenshot({ path: path.join(process.cwd(), 'puppeteer_error.png') });
-                    const html = await pages[0].content();
-                    fs.writeFileSync(path.join(process.cwd(), 'puppeteer_error.html'), html);
-                }
-            }
-        } catch (logErr) {
-            console.error('Failed to write error logs:', logErr);
-        }
 
         if (browser) await browser.close();
         return NextResponse.json({ 

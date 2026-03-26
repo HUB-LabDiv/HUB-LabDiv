@@ -53,6 +53,8 @@ export function TelemetryManager() {
   const [isLoading, setIsLoading] = useState(true);
   const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d'>('7d');
   const [segment, setSegment] = useState<string>('all');
+  const [targetUserId, setTargetUserId] = useState<string>('');
+  const [uidInput, setUidInput] = useState<string>('');
   const [activeTab, setActiveTab] = useState<'geral' | 'ux' | 'valor' | 'empolgados' | 'eficiencia'>('geral');
   const [page, setPage] = useState(0);
   const pageSize = 20;
@@ -114,6 +116,10 @@ export function TelemetryManager() {
         } else {
           query = query.eq('profiles.user_category', segment);
         }
+      }
+
+      if (targetUserId) {
+        query = query.eq('user_id', targetUserId);
       }
 
       const { data, error } = await query;
@@ -376,7 +382,7 @@ export function TelemetryManager() {
 
   useEffect(() => {
     fetchTelemetry();
-  }, [timeRange, segment]);
+  }, [timeRange, segment, targetUserId]);
 
   const exportCSV = () => {
     const headers = ['ID', 'Horário', 'Tipo', 'Slug (URL)', 'Metadata', 'Sessão'];
@@ -436,7 +442,7 @@ export function TelemetryManager() {
 
           <select
             value={segment}
-            onChange={(e) => setSegment(e.target.value)}
+            onChange={(e) => { setSegment(e.target.value); setTargetUserId(''); setUidInput(''); }}
             className="bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-[9px] font-black uppercase tracking-widest text-white outline-none focus:ring-2 focus:ring-brand-blue/50 transition-all appearance-none cursor-pointer"
           >
             <option value="all">Filtro de Curso</option>
@@ -445,6 +451,33 @@ export function TelemetryManager() {
             <option value="pos_graduacao">Pós-Graduação</option>
             <option value="docente_pesquisador">Docente/Pesquisador</option>
           </select>
+
+          <div className="flex bg-white/5 border border-white/10 rounded-xl overflow-hidden focus-within:ring-2 focus-within:ring-brand-blue/50 transition-all">
+            <input
+              type="text"
+              placeholder="UID ESPECÍFICO"
+              value={uidInput}
+              onChange={(e) => setUidInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && setTargetUserId(uidInput)}
+              className="bg-transparent px-4 py-2 text-[9px] font-black uppercase tracking-widest text-white outline-none w-32 placeholder:text-white/20"
+            />
+            <button
+              onClick={() => setTargetUserId(uidInput)}
+              className="px-3 bg-white/5 hover:bg-white/10 transition-colors flex items-center justify-center border-l border-white/10"
+              title="Buscar Telemetria do Usuário"
+            >
+              <Search className="w-3 h-3 text-brand-blue" />
+            </button>
+            {targetUserId && (
+              <button
+                onClick={() => { setTargetUserId(''); setUidInput(''); }}
+                className="px-3 bg-brand-red/10 hover:bg-brand-red/20 text-brand-red transition-colors flex items-center justify-center border-l border-white/10"
+                title="Limpar Filtro de Usuário"
+              >
+                <div className="w-3 h-3 flex items-center justify-center font-black text-[10px]">X</div>
+              </button>
+            )}
+          </div>
 
           <button
             onClick={exportCSV}
@@ -756,9 +789,22 @@ export function TelemetryManager() {
                           <div className="text-[10px] font-black uppercase tracking-widest text-brand-blue">{user.category}</div>
                         </div>
                       </div>
-                      <div className="text-right">
-                        <div className="text-xl font-black text-white">{user.count}</div>
-                        <div className="text-[9px] font-black uppercase text-gray-600 tracking-widest">Ações</div>
+                      <div className="flex items-center gap-6">
+                        <div className="text-right">
+                          <div className="text-xl font-black text-white">{user.count}</div>
+                          <div className="text-[9px] font-black uppercase text-gray-600 tracking-widest">Ações</div>
+                        </div>
+                        <button
+                          onClick={() => {
+                            setUidInput(user.id);
+                            setTargetUserId(user.id);
+                            setActiveTab('geral');
+                            toast.success(`Filtrando dados para: ${user.name}`);
+                          }}
+                          className="px-4 py-2 bg-brand-blue/10 hover:bg-brand-blue text-brand-blue hover:text-white rounded-xl text-[9px] font-black uppercase tracking-widest transition-all"
+                        >
+                          Analisar
+                        </button>
                       </div>
                     </div>
                   ))}

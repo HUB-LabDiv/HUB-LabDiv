@@ -397,7 +397,7 @@ export default function TrilhasClient({
                                 </p>
                             </div>
 
-                            <TrilhasFeedbackCard className="block lg:hidden mt-6" />
+                            {/* Header mobile ja tem v3.1.2 superior */}
 
                             {userProfile && (
                                 <div className="dark:bg-[#1E1E1E] bg-white border border-gray-800 rounded-2xl p-4 flex items-center gap-4 animate-in fade-in slide-in-from-right-4 duration-700">

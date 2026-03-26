@@ -3,18 +3,18 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { 
-    Zap, 
     Brain, 
     ArrowRight, 
-    Target,
     BookOpen,
-    Info,
     Workflow,
+    Info,
     Landmark,
     Search,
     ChevronRight,
     Sparkles
 } from 'lucide-react';
+import { ColisorIcon } from '../icons/ColisorIcon';
+import { AppRoutes } from '@/types/navigation';
 import Link from 'next/link';
 import { NetflixFeed } from '@/components/shared/NetflixFeed';
 import { WikiView } from '@/components/wiki/WikiView';
@@ -82,10 +82,41 @@ const getPlatformIcon = (platform: string) => {
 
 export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorViewProps) {
     const wikiRef = React.useRef<HTMLDivElement>(null);
-    const institutoRef = React.useRef<HTMLDivElement>(null);
+    const [activeSection, setActiveSection] = React.useState<string>('');
 
-    const scrollToWiki = () => wikiRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    const scrollToInstituto = () => institutoRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const navItems = [
+        { id: 'oportunidades', label: 'Oportunidades', href: '#oportunidades', icon: 'campaign', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
+        { id: 'iniciativas', label: 'Iniciativas', href: '#iniciativas', icon: 'groups', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/20', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
+        { id: 'espaços', label: 'Espaços', href: '#espaços', icon: 'map', activeClass: 'text-brand-yellow bg-brand-yellow/10 border-brand-yellow/20', hoverClass: 'hover:text-brand-yellow hover:bg-brand-yellow/5' },
+        { id: 'influenciadores', label: 'Influenciadores', href: '#influenciadores', icon: 'record_voice_over', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
+        { id: 'wiki-hub-section', label: 'Wiki', href: '#wiki-hub-section', icon: 'hub', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/20', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
+        { id: 'teste-radiacao', label: 'Teste', href: '#teste-radiacao', icon: 'quiz', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
+    ];
+
+    React.useEffect(() => {
+        const handleScroll = () => {
+            const scrollPosition = window.scrollY + window.innerHeight / 3;
+            
+            // Loop backwards to find the deepest matching section
+            for (let i = navItems.length - 1; i >= 0; i--) {
+                const el = document.getElementById(navItems[i].id);
+                if (el) {
+                    const { offsetTop } = el;
+                    if (scrollPosition >= offsetTop) {
+                        setActiveSection(navItems[i].id);
+                        return;
+                    }
+                }
+            }
+            if (window.scrollY < 200) {
+                setActiveSection('');
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        handleScroll(); // initial check
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
         <div className="flex flex-col gap-32 pb-32">
@@ -99,7 +130,7 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
                         animate={{ scale: 1, opacity: 1 }}
                         className="w-20 h-20 bg-gradient-to-br from-brand-blue to-brand-red rounded-[28px] flex items-center justify-center text-white shadow-2xl shadow-brand-blue/30 rotate-3"
                     >
-                        <Zap className="w-10 h-10 fill-white" />
+                        <ColisorIcon className="w-12 h-12 text-white" animate />
                     </motion.div>
                     <div>
                         <h1 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter mb-4">
@@ -110,14 +141,36 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
                         </p>
                     </div>
                 </div>
-
             </section>
 
+            {/* NEW: Top Navigation Bar */}
+            <nav id="gcif-top-nav" className="flex flex-wrap items-center justify-center md:justify-start gap-2 sticky top-20 z-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-2 rounded-2xl border border-gray-100 dark:border-white/5 shadow-xl shadow-black/5 -mt-16 mb-8">
+                {navItems.map((item) => {
+                    const isActive = activeSection === item.id;
+                    return (
+                        <button
+                            key={item.label}
+                            onClick={() => {
+                                setActiveSection(item.id);
+                                document.querySelector(item.href)?.scrollIntoView({ behavior: 'smooth' });
+                            }}
+                            className={`flex items-center gap-2 px-4 py-2 text-[11px] font-black uppercase tracking-widest border transition-all whitespace-nowrap rounded-xl ${
+                                isActive 
+                                    ? item.activeClass 
+                                    : `border-transparent text-gray-400 bg-transparent ${item.hoverClass}`
+                            }`}
+                        >
+                            <span className="material-symbols-outlined text-[18px]">{item.icon}</span>
+                            {item.label}
+                        </button>
+                    );
+                })}
+            </nav>
             {/* 2. Oportunidades Section */}
             <section id="oportunidades" className="space-y-12">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-brand-red/10 rounded-2xl text-brand-red">
-                        <Target className="w-8 h-8" />
+                        <ColisorIcon size={32} animate={false} />
                     </div>
                     <div>
                         <h2 className="text-3xl font-black italic uppercase tracking-tighter">Oportunidades Ativas</h2>
@@ -168,8 +221,8 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
                 )}
             </section>
 
-            {/* 3 & 4. Iniciativas e Espaços Section */}
-            <section className="space-y-16">
+            {/* 3. Iniciativas Section */}
+            <section id="iniciativas" className="space-y-16">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-brand-blue/10 rounded-2xl text-brand-blue">
                         <Workflow className="w-8 h-8" />
@@ -183,7 +236,7 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
                 <div className="space-y-20">
                     <NetflixFeed 
                         title="Iniciativas de Impacto" 
-                        icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><Zap className="w-5 h-5" /></div>}
+                        icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><ColisorIcon size={20} animate={false} /></div>}
                     >
                         {/* Lab-Div Card */}
                         <div className="snap-center shrink-0 w-[300px] md:w-[400px] bg-[#1E1E1E] rounded-[40px] p-10 border border-white/5 relative overflow-hidden group flex flex-col">
@@ -218,7 +271,12 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
                             <a href="https://portal.if.usp.br/biblioteca/" target="_blank" className="mt-auto px-8 py-4 border border-brand-blue/20 text-brand-blue rounded-2xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-blue/10 transition-colors">Consultar</a>
                         </div>
                     </NetflixFeed>
+                </div>
+            </section>
 
+            {/* 4. Espaços Section */}
+            <section id="espaços" className="space-y-16">
+                <div className="space-y-20">
                     <NetflixFeed 
                         title="Espaços do IF" 
                         icon={<div className="p-2 bg-brand-yellow/10 rounded-xl text-brand-yellow"><Info className="w-5 h-5" /></div>}
@@ -282,7 +340,8 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
             </section>
 
             {/* 5. Influenciadores Feed */}
-            <NetflixFeed 
+            <section id="influenciadores">
+                <NetflixFeed 
                 title="Influenciadores do IF" 
                 icon={<div className="p-3 bg-brand-red/10 rounded-2xl text-brand-red"><Sparkles className="w-8 h-8" /></div>}
             >
@@ -301,66 +360,13 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
                         </div>
                     </div>
                 ))}
-            </NetflixFeed>
+                </NetflixFeed>
+            </section>
 
             {/* 6. Wiki Hub Section */}
-            <div ref={wikiRef} className="scroll-mt-32">
-                <div className="mb-12 flex flex-col md:flex-row items-center justify-between gap-8">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-brand-blue/10 rounded-2xl text-brand-blue">
-                            <BookOpen className="w-8 h-8" />
-                        </div>
-                        <div>
-                            <h2 className="text-3xl font-black italic uppercase tracking-tighter">Wiki Hub do Collider</h2>
-                            <p className="text-gray-500 font-medium">A base de dados estruturada do nosso universo.</p>
-                        </div>
-                    </div>
-                    <button 
-                        onClick={scrollToInstituto}
-                        className="px-8 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-2xl font-black uppercase tracking-widest text-[10px] text-brand-blue transition-all flex items-center gap-2"
-                    >
-                        Ver O Instituto & Mapa <ArrowRight className="w-4 h-4" />
-                    </button>
-                </div>
-                <WikiView onNavigateToInstituto={scrollToInstituto} />
+            <div id="wiki-hub-section" ref={wikiRef} className="scroll-mt-32">
+                <WikiView />
             </div>
-
-            {/* 7. O Instituto & Mapa Section */}
-            <div ref={institutoRef} className="scroll-mt-32">
-                <div className="mb-12 flex items-center gap-4">
-                    <div className="p-3 bg-brand-blue/10 rounded-2xl text-brand-blue">
-                        <Landmark className="w-8 h-8" />
-                    </div>
-                    <div>
-                        <h2 className="text-3xl font-black italic uppercase tracking-tighter text-white">O Instituto & Mapa</h2>
-                        <p className="text-gray-500 font-medium">A arquitetura física do nosso Instituto de Física.</p>
-                    </div>
-                </div>
-                <InstitutoView mapItems={mapItems} />
-            </div>
-
-            {/* 8. Radiation Test Section */}
-            <section className="relative py-20 px-8 rounded-[60px] bg-gradient-to-br from-brand-red to-brand-yellow overflow-hidden group">
-                <div className="absolute top-0 right-0 p-8 opacity-20 rotate-12 group-hover:scale-110 transition-transform duration-1000">
-                    <Zap className="w-64 h-64 text-white" />
-                </div>
-                
-                <div className="relative z-10 flex flex-col items-center text-center max-w-2xl mx-auto">
-                    <div className="inline-flex items-center gap-2 px-6 py-2 bg-black/20 backdrop-blur-xl border border-white/20 rounded-full text-white font-black text-[10px] uppercase tracking-[0.3em] mb-8">
-                        <Brain className="w-4 h-4" /> Alerta de Radiação
-                    </div>
-                    <h2 className="text-4xl md:text-6xl font-black italic uppercase text-white tracking-tighter mb-6">Teste de Radiação do IF</h2>
-                    <p className="text-white/80 font-medium leading-relaxed mb-10 text-lg">
-                        Prove seu conhecimento integral sobre o ecossistema IFUSP. Acumule Radiação (XP) e suba no ranking do Hub.
-                    </p>
-                    <Link 
-                        href="/wiki/quiz"
-                        className="px-12 py-6 bg-white text-brand-red rounded-[28px] font-black uppercase tracking-widest text-sm shadow-2xl shadow-brand-red/50 hover:scale-105 active:scale-95 transition-all"
-                    >
-                        Iniciar Varredura
-                    </Link>
-                </div>
-            </section>
         </div>
     );
 }

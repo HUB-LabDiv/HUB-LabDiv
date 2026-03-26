@@ -1,9 +1,11 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ColisorFeedbackCard } from './ColisorFeedbackCard';
 import { NetflixFeed } from '@/components/shared/NetflixFeed';
+import { ColisorIcon } from '@/components/icons/ColisorIcon';
 
 interface ColisorClientViewProps {
     oportunidades: any[] | null;
@@ -119,19 +121,134 @@ const getPlatformIcon = (platform: string) => {
 };
 
 export function ColisorClientView({ oportunidades }: ColisorClientViewProps) {
+    const [isWikiExpanded, setIsWikiExpanded] = useState(false);
+    const wikiCardRef = useRef<HTMLDivElement>(null);
+
+    const scrollToWiki = () => {
+        setIsWikiExpanded(true);
+        setTimeout(() => {
+            wikiCardRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
+    };
+
+    const navItems = [
+        { label: 'Wiki HUB', href: '#wiki-hub-card', icon: 'hub', onClick: (e: React.MouseEvent) => { e.preventDefault(); scrollToWiki(); } },
+        { label: 'Oportunidades', href: '#oportunidades', icon: 'campaign' },
+        { label: 'Iniciativas', href: '#iniciativas', icon: 'groups' },
+        { label: 'Mapa', href: '#mapa', icon: 'map' },
+        { label: 'Redes', icon: 'record_voice_over', href: '#influenciadores' },
+    ];
+
     return (
-        <div className="py-12 max-w-7xl mx-auto px-4 space-y-24">
-            {/* Wiki Header */}
-            <div className="text-center md:text-left">
-                <div className="flex items-center justify-center md:justify-start gap-4 mb-4">
-                    <div className="w-12 h-12 bg-brand-blue rounded-2xl flex items-center justify-center text-white shadow-xl shadow-brand-blue/20">
-                        <span className="material-symbols-outlined text-3xl font-black">network_node</span>
+        <div className="py-8 max-w-7xl mx-auto px-4 space-y-16">
+            {/* NEW: Top Navigation Bar */}
+            <nav id="gcif-top-nav" className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-8 sticky top-20 z-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-2 rounded-2xl border border-gray-100 dark:border-white/5 shadow-xl shadow-black/5">
+                {navItems.map((item) => (
+                    <button
+                        key={item.label}
+                        onClick={item.onClick || (() => document.querySelector(item.href as string)?.scrollIntoView({ behavior: 'smooth' }))}
+                        className="flex items-center gap-2 px-4 py-2 text-[11px] font-black uppercase tracking-widest text-gray-500 hover:text-brand-blue hover:bg-brand-blue/5 rounded-xl transition-all whitespace-nowrap"
+                    >
+                        <span className="material-symbols-outlined text-[18px]">{item.icon}</span>
+                        {item.label}
+                    </button>
+                ))}
+            </nav>
+
+            {/* Wiki Card - Now Collapsible */}
+            <div 
+                id="wiki-hub-card"
+                ref={wikiCardRef}
+                className={`bg-white dark:bg-card-dark rounded-[32px] border border-gray-100 dark:border-gray-800 shadow-2xl transition-all duration-500 overflow-hidden ${isWikiExpanded ? 'ring-2 ring-brand-blue/20' : 'hover:border-gray-200 dark:hover:border-gray-700'}`}
+            >
+                {/* Card Header (Clickable) */}
+                <button 
+                    onClick={() => setIsWikiExpanded(!isWikiExpanded)}
+                    className="w-full p-6 sm:p-10 flex flex-col md:flex-row items-center gap-8 text-left hover:bg-gray-50 dark:hover:bg-white/5 transition-colors relative group"
+                >
+                    <div className="flex items-center gap-8 flex-1">
+                        <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-xl transition-all duration-500 ${isWikiExpanded ? 'bg-brand-blue rotate-12 scale-110 shadow-brand-blue/40' : 'bg-gray-800 dark:bg-gray-800 group-hover:bg-brand-blue'}`}>
+                             <ColisorIcon className="w-8 h-8" animate={isWikiExpanded} />
+                        </div>
+                        
+                        <div className="flex-1 space-y-2">
+                            <div className="flex items-center gap-3">
+                                <h2 className="text-3xl font-display font-black text-gray-900 dark:text-white uppercase tracking-tighter">
+                                    O Instituto <span className="text-brand-blue">de Física</span>
+                                </h2>
+                                <span className={`material-symbols-outlined text-gray-400 transition-transform duration-500 ${isWikiExpanded ? 'rotate-180' : 'rotate-0'}`}>
+                                    expand_more
+                                </span>
+                            </div>
+                            <p className="text-gray-500 font-medium max-w-xl">Mergulhe na história do IFUSP e entenda como um dos institutos de física mais respeitados do mundo é organizado atualmente.</p>
+                        </div>
                     </div>
-                    <h1 className="text-3xl md:text-5xl font-black tracking-tighter uppercase italic">O Grande Colisor</h1>
-                </div>
-                <p className="text-gray-500 dark:text-gray-400 text-lg max-w-2xl leading-relaxed">
-                    O repositório técnico de conhecimento estruturado do Instituto de Física e da USP. Explore a conexão entre iniciativas e oportunidades.
-                </p>
+                </button>
+
+                {/* Collapsible Content */}
+                <AnimatePresence>
+                    {isWikiExpanded && (
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{ height: 'auto', opacity: 1 }}
+                            exit={{ height: 0, opacity: 0 }}
+                            transition={{ duration: 0.4, ease: [0.04, 0.62, 0.23, 0.98] }}
+                        >
+                            <div className="px-8 pb-8 pt-0 border-t border-gray-100 dark:border-gray-800/50">
+                                <div className="grid md:grid-cols-2 gap-8 pt-8">
+                                    <div className="space-y-4">
+                                        <h3 className="text-xs font-black uppercase tracking-widest text-brand-blue flex items-center gap-2">
+                                            <span className="material-symbols-outlined text-sm">info</span>
+                                            Sobre o Projeto
+                                        </h3>
+                                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                                            O Colisor é a espinha dorsal da informação no Hub. Aqui, cada iniciativa é catalogada, cada espaço é mapeado e cada oportunidade é conectada ao perfil do estudante.
+                                        </p>
+                                        <div className="flex items-center gap-4 py-2">
+                                            <div className="flex -space-x-2">
+                                                {[1,2,3].map(i => (
+                                                    <div key={i} className="size-8 rounded-full border-2 border-white dark:border-card-dark bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-[10px] font-bold">U{i}</div>
+                                                ))}
+                                            </div>
+                                            <span className="text-[10px] font-bold text-gray-500">+12 Contribuidores</span>
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div className="p-4 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 transition-colors hover:border-brand-blue/30 group">
+                                            <span className="material-symbols-outlined text-brand-blue text-xl mb-2 block group-hover:scale-110 transition-transform">database</span>
+                                            <h4 className="text-xs font-bold mb-1">Dados USP</h4>
+                                            <p className="text-[10px] text-gray-500">Sincronizado via JúpiterWeb</p>
+                                        </div>
+                                        <div className="p-4 rounded-2xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 transition-colors hover:border-brand-yellow/30 group">
+                                            <span className="material-symbols-outlined text-brand-yellow text-xl mb-2 block group-hover:scale-110 transition-transform">schema</span>
+                                            <h4 className="text-xs font-bold mb-1">Grafos</h4>
+                                            <p className="text-[10px] text-gray-500">Conexões inter-iniciativas</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div className="mt-8 flex justify-center md:hidden">
+                                     <button 
+                                        onClick={() => setIsWikiExpanded(false)}
+                                        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-gray-400"
+                                     >
+                                        Recolher Wiki <span className="material-symbols-outlined text-sm">expand_less</span>
+                                     </button>
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+                </AnimatePresence>
+                
+                {/* Base Toggle Link (User requested "seta abaixo") */}
+                {!isWikiExpanded && (
+                    <div 
+                        onClick={() => setIsWikiExpanded(true)}
+                        className="h-8 bg-gray-50/50 dark:bg-white/5 flex items-center justify-center cursor-pointer hover:bg-brand-blue/5 group transition-colors"
+                    >
+                        <span className="material-symbols-outlined text-gray-300 group-hover:text-brand-blue text-base animate-bounce">expand_more</span>
+                    </div>
+                )}
             </div>
 
             <ColisorFeedbackCard className="block lg:hidden mb-12" />
