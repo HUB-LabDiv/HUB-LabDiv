@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { useNavigationStore } from '@/store/useNavigationStore';
 import {
@@ -561,7 +561,9 @@ const pageContent: Record<string, any> = {
 
 export default function WikiSubPage() {
     const params = useParams();
+    const searchParams = useSearchParams();
     const slug = params.slug as string;
+    const highlightTerm = searchParams.get('hl')?.toLowerCase();
     const content = pageContent[slug];
     const { setReportModalOpen } = useNavigationStore();
     
@@ -579,6 +581,38 @@ export default function WikiSubPage() {
         content_format: 'text', // Wiki is predominantly text
         word_count: wordCount 
     });
+
+    // Handle initial scroll to highlight
+    React.useEffect(() => {
+        if (highlightTerm) {
+            // Small delay to ensure content is rendered
+            const timer = setTimeout(() => {
+                const mark = document.querySelector('mark');
+                if (mark) {
+                    mark.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 500);
+            return () => clearTimeout(timer);
+        }
+    }, [highlightTerm]);
+
+    // Helper to render text with highlights
+    const renderContent = (text: string) => {
+        if (!highlightTerm || !text) return text;
+        
+        const parts = text.split(new RegExp(`(${highlightTerm})`, 'gi'));
+        return (
+            <>
+                {parts.map((part, i) => 
+                    part.toLowerCase() === highlightTerm ? (
+                        <mark key={i} className="bg-brand-yellow/30 text-white rounded-sm px-0.5 border-b border-brand-yellow/50">
+                            {part}
+                        </mark>
+                    ) : part
+                )}
+            </>
+        );
+    };
 
     if (!content) {
         return (
@@ -639,7 +673,7 @@ export default function WikiSubPage() {
             <div className="min-h-screen bg-transparent pb-24 px-4 overflow-x-hidden">
                 <div className="max-w-6xl mx-auto">
 
-                    <Breadcrumbs slug={slug} title={content.title} />
+                    <Breadcrumbs slug={slug} title={renderContent(content.title)} />
 
                     <div className="flex flex-col gap-16">
 
@@ -656,10 +690,10 @@ export default function WikiSubPage() {
                                     </div>
                                     <div>
                                         <h1 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter mb-2">
-                                            {content.title}
+                                            {renderContent(content.title)}
                                         </h1>
                                         <p className="text-brand-blue text-xs font-black uppercase tracking-[0.3em]">
-                                            {content.subtitle}
+                                            {renderContent(content.subtitle)}
                                         </p>
                                     </div>
                                 </div>
@@ -676,7 +710,7 @@ export default function WikiSubPage() {
                                             transition={{ duration: 0.5, delay: idx * 0.1 }}
                                             className={`${section.fullWidth || idx % 3 === 0 ? 'md:col-span-2' : 'md:col-span-1'}`}
                                         >
-                                            <ContentSection title={section.title} color={content.color}>
+                                            <ContentSection title={renderContent(section.title)} color={content.color}>
                                                 <div className="relative group">
                                                     {/* Premium Glow effect */}
                                                     <div className="absolute -inset-0.5 bg-gradient-to-r from-brand-blue to-brand-red rounded-[40px] opacity-0 group-hover:opacity-10 transition-opacity duration-500 blur-xl" />
@@ -686,7 +720,7 @@ export default function WikiSubPage() {
                                                             <div className={`absolute top-4 right-8 text-[10px] font-black uppercase tracking-[0.2em] text-white/5 group-hover:${content.color.startsWith('#') ? `text-[${content.color}]` : `text-${content.color}`}/20 transition-colors`}>
                                                                 SEÇÃO {String(idx + 1).padStart(2, '0')}
                                                             </div>
-                                                            {section.content}
+                                                            {renderContent(section.content)}
                                                         </div>
                                                     ) : (
                                                         <div className="relative transition-all hover:-translate-y-1">

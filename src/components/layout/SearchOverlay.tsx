@@ -222,9 +222,13 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
     if (!isOpen) return null;
 
-    const handleNavigate = (href: string) => {
+    const handleNavigate = (href: string, overrideQuery?: string) => {
         onClose();
-        router.push(href);
+        const searchTerm = overrideQuery || query.trim();
+        const finalHref = searchTerm && href.startsWith('/wiki/') 
+            ? `${href}?hl=${encodeURIComponent(searchTerm)}` 
+            : href;
+        router.push(finalHref);
     };
 
     const hasResults = filteredNav.length > 0 || filteredWiki.length > 0 || dbResults.length > 0;

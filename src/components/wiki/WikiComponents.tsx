@@ -15,7 +15,7 @@ import {
 
 // --- ELITE COMPONENTS ---
 
-export const Breadcrumbs = ({ slug, title }: { slug: string, title: string }) => (
+export const Breadcrumbs = ({ slug, title }: { slug: string, title: React.ReactNode }) => (
     <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] mb-8 text-gray-500">
         <Link href="/wiki" className="hover:text-brand-blue transition-colors">Wiki Hub</Link>
         <ChevronRight className="w-3 h-3 text-white/20" />
@@ -23,7 +23,7 @@ export const Breadcrumbs = ({ slug, title }: { slug: string, title: string }) =>
     </nav>
 );
 
-export const TechnicalAccordion = ({ title, children }: { title: string, children: React.ReactNode }) => {
+export const TechnicalAccordion = ({ title, children }: { title: React.ReactNode, children: React.ReactNode }) => {
     const [isOpen, setIsOpen] = React.useState(false);
     return (
         <div className="border border-white/5 rounded-3xl overflow-hidden mb-4 bg-white/2">
@@ -80,7 +80,7 @@ export const ActionButton = ({ label, icon, href, variant = 'primary', color = '
     );
 };
 
-export const ContentSection = ({ title, children, color = 'brand-blue' }: { title: string, children: React.ReactNode, color?: string }) => (
+export const ContentSection = ({ title, children, color = 'brand-blue' }: { title: React.ReactNode, children: React.ReactNode, color?: string }) => (
     <section className="mb-16">
         <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter mb-8 flex items-center gap-4">
             <div className={`h-8 w-1.5 ${color.startsWith('#') ? `bg-[${color}]` : `bg-${color}`} rounded-full`} />
