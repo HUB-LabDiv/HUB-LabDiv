@@ -182,6 +182,44 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             w.content.toLowerCase().includes(q)
         );
 
+    // Extract a snippet around the matched term with highlight
+    const getContentSnippet = (content: string, searchTerm: string): React.ReactNode | null => {
+        const lowerContent = content.toLowerCase();
+        const idx = lowerContent.indexOf(searchTerm);
+        if (idx === -1) return null;
+
+        // Extract a window around the match
+        const snippetRadius = 40;
+        const start = Math.max(0, idx - snippetRadius);
+        const end = Math.min(content.length, idx + searchTerm.length + snippetRadius);
+        
+        // Find word boundaries to avoid cutting words
+        let snippetStart = start;
+        if (start > 0) {
+            const spaceIdx = content.indexOf(' ', start);
+            snippetStart = spaceIdx !== -1 && spaceIdx < idx ? spaceIdx + 1 : start;
+        }
+        let snippetEnd = end;
+        if (end < content.length) {
+            const spaceIdx = content.lastIndexOf(' ', end);
+            snippetEnd = spaceIdx > idx + searchTerm.length ? spaceIdx : end;
+        }
+
+        const before = content.slice(snippetStart, idx);
+        const match = content.slice(idx, idx + searchTerm.length);
+        const after = content.slice(idx + searchTerm.length, snippetEnd);
+
+        return (
+            <span className="text-[10px] text-gray-500 leading-snug">
+                {snippetStart > 0 && '…'}
+                {before}
+                <mark className="bg-brand-yellow/30 text-brand-yellow font-bold rounded px-0.5">{match}</mark>
+                {after}
+                {snippetEnd < content.length && '…'}
+            </span>
+        );
+    };
+
     if (!isOpen) return null;
 
     const handleNavigate = (href: string) => {
@@ -274,16 +312,23 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                                         <button
                                             key={idx}
                                             onClick={() => handleNavigate(wiki.href)}
-                                            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-brand-yellow/5 active:bg-brand-yellow/10 transition-all text-left group"
+                                            className="w-full flex items-start gap-3 px-3 py-2.5 rounded-xl hover:bg-brand-yellow/5 active:bg-brand-yellow/10 transition-all text-left group"
                                         >
-                                            <div className="size-8 shrink-0 rounded-lg bg-brand-yellow/10 flex items-center justify-center text-brand-yellow">
+                                            <div className="size-8 shrink-0 rounded-lg bg-brand-yellow/10 flex items-center justify-center text-brand-yellow mt-0.5">
                                                 <span className="material-symbols-outlined text-[18px]">menu_book</span>
                                             </div>
-                                            <div className="flex-1 min-w-0">
+                                            <div className="flex-1 min-w-0 overflow-hidden">
                                                 <span className="text-sm font-bold text-gray-200 group-hover:text-brand-yellow transition-colors block truncate">{wiki.title}</span>
                                                 <span className="text-[11px] text-gray-500 block truncate">{wiki.desc}</span>
+                                                {/* Content snippet with highlighted match */}
+                                                {wiki.content.toLowerCase().includes(q) && (
+                                                    <div className="mt-1.5 flex items-start gap-1.5 bg-brand-yellow/5 rounded-lg px-2.5 py-2 border border-brand-yellow/10">
+                                                        <span className="material-symbols-outlined text-brand-yellow/60 text-[14px] mt-px shrink-0">format_quote</span>
+                                                        {getContentSnippet(wiki.content, q)}
+                                                    </div>
+                                                )}
                                             </div>
-                                            <span className="material-symbols-outlined text-gray-600 text-[16px] group-hover:text-brand-yellow transition-colors">arrow_forward</span>
+                                            <span className="material-symbols-outlined text-gray-600 text-[16px] group-hover:text-brand-yellow transition-colors mt-1">arrow_forward</span>
                                         </button>
                                     ))}
                                 </div>
