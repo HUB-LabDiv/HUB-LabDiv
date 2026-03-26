@@ -92,35 +92,49 @@ export async function POST(req: NextRequest) {
 
         // 5. Extract Grid Data
         // Wait up to 15 seconds for the grid to appear, as JupiterWeb can be slow
-        await page.waitForSelector("tr[id='1']", { timeout: 15000 }).catch(() => null);
+        async function scrapeGrade() {
+            return await page.evaluate(() => {
+                const events: Array<{ code: string, dayOfWeek: number, startTime: string, endTime: string }> = [];
+                let rowIndex = 1;
+                while (document.getElementById(rowIndex.toString())) {
+                    const row = document.getElementById(rowIndex.toString());
+                    if (!row) break;
 
-        // 5. Extract Grid Data with Days and Times
-        const subjectsScraped = await page.evaluate(() => {
-            const events: Array<{ code: string, dayOfWeek: number, startTime: string, endTime: string }> = [];
-            let rowIndex = 1;
-            while (document.getElementById(rowIndex.toString())) {
-                const row = document.getElementById(rowIndex.toString());
-                if (!row) break;
-
-                const startCell = row.querySelector('td:nth-child(1)')?.textContent?.trim() || '08:00';
-                const endCell = row.querySelector('td:nth-child(2)')?.textContent?.trim() || '10:00';
-                
-                for (let i = 3; i <= 8; i++) {
-                    const subjectRaw = row.querySelector(`td:nth-child(${i})`)?.textContent?.trim();
-                    if (subjectRaw && subjectRaw.includes('-')) {
-                        const code = subjectRaw.split('-')[0].trim();
-                        events.push({
-                            code,
-                            dayOfWeek: i - 2, // 1 = Monday, ..., 6 = Saturday
-                            startTime: startCell,
-                            endTime: endCell
-                        });
+                    const startCell = row.querySelector('td:nth-child(1)')?.textContent?.trim() || '08:00';
+                    const endCell = row.querySelector('td:nth-child(2)')?.textContent?.trim() || '10:00';
+                    
+                    for (let i = 3; i <= 8; i++) {
+                        const subjectRaw = row.querySelector(`td:nth-child(${i})`)?.textContent?.trim();
+                        if (subjectRaw && subjectRaw.includes('-')) {
+                            const code = subjectRaw.split('-')[0].trim();
+                            events.push({
+                                code,
+                                dayOfWeek: i - 2, // 1 = Monday, ..., 6 = Saturday
+                                startTime: startCell,
+                                endTime: endCell
+                            });
+                        }
                     }
+                    rowIndex++;
                 }
-                rowIndex++;
+                return events;
+            });
+        }
+
+        let subjectsScraped = await scrapeGrade();
+
+        // Fallback: If no subjects found in the last option, try the one before (last-1)
+        if (subjectsScraped.length === 0 && options.length > 1) {
+            await page.select('select', options[options.length - 2]);
+            const navPromiseRetry = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 15000 }).catch(() => null);
+            const buscarBtnRetry = await page.$('input[type="button"][value="Buscar"]');
+            if (buscarBtnRetry) {
+                await buscarBtnRetry.click();
+                await navPromiseRetry;
+                await page.waitForSelector("tr[id='1']", { timeout: 10000 }).catch(() => null);
+                subjectsScraped = await scrapeGrade();
             }
-            return events;
-        });
+        }
 
         await browser.close();
 
