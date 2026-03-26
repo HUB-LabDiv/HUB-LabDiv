@@ -22,7 +22,7 @@ interface MainLayoutWrapperProps {
  */
 export function MainLayoutWrapper({ children, focusMode = false, wide = false, fullWidth = false, userId, rightSidebar }: MainLayoutWrapperProps) {
     return (
-        <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col">
+        <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col overflow-x-hidden">
             <Header />
 
             {!focusMode ? (

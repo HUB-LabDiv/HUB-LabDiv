@@ -187,7 +187,7 @@ export function Header() {
             <header
                 className="fixed top-0 left-0 right-0 h-16 glass-surface z-50 transition-colors"
             >
-                <div className="max-w-[1800px] mx-auto h-full px-4 flex items-center justify-between gap-4">
+                <div className="max-w-[1800px] mx-auto h-full px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-4">
                     {/* Left: Branding */}
                     <Link href="/" className="flex items-center gap-3 group shrink-0" onClick={closeAll}>
                         <div className="flex items-center gap-3">
@@ -204,7 +204,7 @@ export function Header() {
                                     <span className="text-gray-900 dark:text-white">Hub</span>
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-brand-blue to-brand-yellow font-black">Lab-Div</span>
                                 </div>
-                                <div className="flex items-center gap-2 mt-0.5">
+                                <div className="hidden sm:flex items-center gap-2 mt-0.5">
                                     <span className="text-[9px] font-bold text-gray-400 uppercase tracking-widest">Instituto de Física</span>
                                     <span className="text-[8px] font-black px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10 text-gray-400/80">v3.1.5</span>
                                 </div>
@@ -309,8 +309,8 @@ export function Header() {
                     </div>
 
                     {/* Right: Sharded Actions */}
-                    <div className="flex items-center gap-2 sm:gap-4 shrink-0">
-                        <div className="flex items-center gap-1 sm:gap-2 pr-2 sm:pr-4 border-r border-gray-100 dark:border-white/10">
+                    <div className="flex items-center gap-1 sm:gap-4 shrink-0">
+                        <div className="flex items-center gap-1 sm:gap-2 pr-1.5 sm:pr-4 border-r border-gray-100 dark:border-white/10">
 
 
                             <div className="flex items-center gap-2">

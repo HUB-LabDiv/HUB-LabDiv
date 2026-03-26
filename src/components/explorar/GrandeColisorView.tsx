@@ -91,7 +91,7 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
         <div className="flex flex-col gap-32 pb-32">
             {/* 1. Header & Intro */}
             <section className="relative pt-12 text-center md:text-left">
-                <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-blue/5 blur-[120px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/2" />
+                <div className="absolute top-0 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-brand-blue/5 blur-[80px] md:blur-[120px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/4 md:translate-x-1/2" />
                 
                 <div className="flex flex-col md:flex-row items-center gap-8 mb-12">
                     <motion.div 
