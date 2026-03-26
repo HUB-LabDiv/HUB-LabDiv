@@ -16,9 +16,6 @@ import { Avatar } from '../ui/Avatar';
 import { UserMinimalDTO, SearchSuggestion } from '@/types/navigation';
 import { useAuth } from '@/providers/AuthProvider';
 import { useTelemetry } from '@/hooks/useTelemetry';
-import { ColisorIcon } from '../icons/ColisorIcon';
-
-
 
 /**
  * V8.0 Header - Fort Knox Edition
@@ -249,7 +246,7 @@ export function Header() {
 
                         {/* Inline Search Bar */}
                         <div className="relative ml-3 group" id="search-container">
-                            <ColisorIcon className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-yellow transition-colors w-[18px] h-[18px]" animate={false} />
+                            <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-brand-yellow transition-colors text-[20px]">search</span>
                             <input
                                 ref={inputRef}
                                 type="text"

@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
-import puppeteer from 'puppeteer';
+import puppeteerCore from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
+
+export const maxDuration = 60; // Evita Timeout 504 na Vercel
 
 export async function POST(req: NextRequest) {
     let browser;
@@ -15,13 +18,31 @@ export async function POST(req: NextRequest) {
             console.log(msg);
         };
 
-        log('[Puppeteer Sync] Starting browser automation...');
+        const isLocal = !process.env.VERCEL_ENV && process.env.NODE_ENV === 'development';
+        log(`[Puppeteer Sync] Starting browser automation... IsLocal: ${isLocal}`);
 
         // 1. Setup Puppeteer
-        browser = await puppeteer.launch({ 
-            headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'] 
-        });
+        if (isLocal) {
+            // Fallback for local development using the standard package
+            const puppeteer = require('puppeteer');
+            browser = await puppeteer.launch({ 
+                headless: true,
+                args: ['--no-sandbox', '--disable-setuid-sandbox'] 
+            });
+        } else {
+            // Production Serverless (Vercel)
+            const executablePath = await chromium.executablePath();
+            browser = await puppeteerCore.launch({
+                // @ts-ignore
+                args: chromium.args,
+                // @ts-ignore
+                defaultViewport: chromium.defaultViewport,
+                executablePath: executablePath,
+                // @ts-ignore
+                headless: chromium.headless,
+                ignoreHTTPSErrors: true,
+            } as any);
+        }
         const page = await browser.newPage();
         await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36');
         await page.setViewport({ width: 1280, height: 800 });
