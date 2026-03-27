@@ -239,9 +239,9 @@ export const FluxoView = ({
             {/* New Blue Logs-style Header for Fluxo */}
             <div className="flex flex-col gap-3 relative mb-12">
                 <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-blue/5 rounded-full blur-[60px] pointer-events-none"></div>
-                <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-blue-accent flex items-center gap-4 relative z-10">
-                    <Zap className="w-12 h-12 fill-brand-blue-accent" />
-                    Fluxo
+                <h1 className="text-5xl font-black uppercase italic tracking-tighter text-[#1F9FCF] flex items-center gap-4 relative z-10">
+                    <Zap className="w-12 h-12 fill-[#1F9FCF]" />
+                    FLUXO
                 </h1>
                 <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px] border-l-2 border-brand-blue-accent pl-4 max-w-lg">
                     O ecossistema IFUSP em movimento. Documentação colaborativa e registro histórico da nossa ciência.

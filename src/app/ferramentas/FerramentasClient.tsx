@@ -579,8 +579,23 @@ export default function FerramentasClient({ profile }: { profile: any }) {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-[600px]">
-                <Loader2 className="w-8 h-8 text-brand-blue animate-spin" />
+            <div className="flex flex-col gap-8 animate-pulse p-6">
+                {/* Stats Skeleton */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {[1, 2, 3, 4].map(i => (
+                        <div key={i} className="h-32 bg-gray-200 dark:bg-white/5 rounded-[32px]" />
+                    ))}
+                </div>
+                
+                {/* Actions Skeleton */}
+                <div className="flex gap-3 py-4">
+                    <div className="h-12 w-32 bg-gray-200 dark:bg-white/5 rounded-2xl" />
+                    <div className="h-12 w-48 bg-gray-200 dark:bg-white/5 rounded-2xl" />
+                    <div className="h-12 w-40 bg-gray-200 dark:bg-white/5 rounded-2xl" />
+                </div>
+
+                {/* Main Content Skeleton */}
+                <div className="bg-gray-200 dark:bg-white/5 h-[600px] rounded-[40px]" />
             </div>
         );
     }
@@ -613,9 +628,9 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     text-transform: lowercase !important;
                     font-weight: 800 !important;
                     padding: 8px 20px !important;
-                    background-color: rgba(59, 130, 246, 0.1) !important;
-                    border: 1px solid rgba(59, 130, 246, 0.2) !important;
-                    color: #3b82f6 !important;
+                    background-color: rgba(15, 71, 128, 0.1) !important;
+                    border: 1px solid rgba(15, 71, 128, 0.2) !important;
+                    color: #0F4780 !important;
                     margin: 0 6px !important;
                     transition: all 0.2s;
                     display: flex !important;
@@ -623,7 +638,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     justify-content: center !important;
                 }
                 .fc-toolbar-chunk .fc-button:hover, .fc-button-active {
-                    background-color: #3b82f6 !important;
+                    background-color: #0F4780 !important;
                     color: white !important;
                 }
                 .fc-toolbar-title {
@@ -1136,7 +1151,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                                 const timeB = new Date(b.start).getHours() * 60 + new Date(b.start).getMinutes();
                                                 return timeA - timeB;
                                             });
-                                            const dayColor = dayIdx === 0 ? '#888' : (dayIdx % 3 === 1 ? '#3b82f6' : (dayIdx % 3 === 2 ? '#ef4444' : '#eab308'));
+                                            const dayColor = dayIdx === 0 ? '#888' : (dayIdx % 3 === 1 ? '#0F4780' : (dayIdx % 3 === 2 ? '#F14343' : '#FFCC00'));
                                             
                                             return (
                                                 <div key={dayName} className="flex flex-col gap-4 min-w-[280px] bg-gray-50/80 dark:bg-white/[0.03] rounded-[32px] p-5 border border-transparent dark:border-white/[0.05] snap-start">

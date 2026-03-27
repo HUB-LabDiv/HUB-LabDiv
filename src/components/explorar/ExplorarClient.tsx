@@ -13,7 +13,10 @@ interface ExplorarClientProps {
 
 export function ExplorarClient({ mapItems, oportunidades }: ExplorarClientProps) {
     return (
-        <MainLayoutWrapper rightSidebar={<ColisorFeedbackCard />}>
+        <MainLayoutWrapper 
+            rightSidebar={<ColisorFeedbackCard />}
+            fullWidth={true}
+        >
             <div className="min-h-screen py-6 px-4 max-w-7xl mx-auto">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}

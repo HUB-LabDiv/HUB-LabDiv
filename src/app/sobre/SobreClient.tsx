@@ -66,6 +66,7 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
     return (
         <MainLayoutWrapper
             rightSidebar={<SobreFeedbackCard />}
+            fullWidth={true}
         >
             <div className="max-w-7xl mx-auto px-4 py-8">
                 {/* Segmented Control for Institucional Hub */}

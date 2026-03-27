@@ -32,7 +32,7 @@ export function ToolsSubNav() {
                                     flex items-center gap-2.5 px-6 py-3 rounded-[16px] text-[10px] font-black uppercase tracking-widest
                                     transition-all duration-300 whitespace-nowrap
                                     ${active
-                                        ? 'bg-brand-blue-accent text-white shadow-lg shadow-brand-blue-accent/20'
+                                        ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20'
                                         : 'text-gray-500 hover:text-white hover:bg-white/5'
                                     }
                                 `}

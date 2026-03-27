@@ -114,7 +114,7 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
     }, []);
 
     return (
-        <div className="w-full flex flex-col gap-2 pt-[72px] py-6 px-4">
+        <div className="w-full h-full flex flex-col gap-2 py-6 overflow-x-hidden">
             {/* 
                --- NOTA PARA O DEV (AMIGO DO USUÁRIO) ---
                O padding lateral ('px-4') fica nesta tag <aside> raiz.
@@ -137,7 +137,7 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                             key={link.href}
                             href={link.href}
                             onClick={() => trackEvent('TAB_CHANGE', { tab: link.name, href: link.href })}
-                            className={`flex items-center gap-4 px-4 py-3 rounded-2xl transition-all group border-l-[3px] ${isActive
+                            className={`flex items-center gap-4 px-6 py-3 transition-all group border-l-[3px] ${isActive
                                 ? `${c.bg} ${c.text} ${c.border}`
                                 : `border-l-transparent ${c.hoverBorder} text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white`
                                 }`}
@@ -152,38 +152,47 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                     );
                 })}
 
-                {/* Category-Specific Links */}
-                {categoryLinks.filter(l => l.role === userCategory).map((link) => {
-                    const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
-                    const isGuest = !isLoggedIn;
-                    const displayName = (isGuest && link.role === 'curioso') ? 'Acesso ao Hub' : link.name;
-                    const displayHref = (isGuest && link.role === 'curioso') ? '/login' : link.href;
+                {/* Category-Specific Links - Enhanced for immediate visibility and skeletons */}
+                {isLoading ? (
+                    // Skeleton State
+                    <div className="flex flex-col gap-1 px-4">
+                        <div className="h-10 w-full bg-gray-200 dark:bg-white/5 rounded-xl animate-pulse" />
+                    </div>
+                ) : (
+                    categoryLinks
+                        .filter(l => l.role === userCategory || pathname.startsWith(l.href))
+                        .map((link) => {
+                            const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
+                            const isGuest = !isLoggedIn;
+                            const displayName = (isGuest && link.role === 'curioso') ? 'Acesso ao Hub' : link.name;
+                            const displayHref = (isGuest && link.role === 'curioso') ? '/login' : link.href;
 
-                    const colorMap: Record<string, { bg: string; text: string; border: string; hoverBorder: string }> = {
-                        'brand-blue': { bg: 'bg-brand-blue/10', text: 'text-brand-blue', border: 'border-l-brand-blue', hoverBorder: 'hover:border-l-brand-blue' },
-                        'brand-red': { bg: 'bg-brand-red/10', text: 'text-brand-red', border: 'border-l-brand-red', hoverBorder: 'hover:border-l-brand-red' },
-                        'brand-yellow': { bg: 'bg-brand-yellow/10', text: 'text-brand-yellow', border: 'border-l-brand-yellow', hoverBorder: 'hover:border-l-brand-yellow' },
-                    };
-                    const c = colorMap[link.color] || colorMap['brand-blue'];
-                    return (
-                        <Link
-                            key={link.href}
-                            href={displayHref}
-                            onClick={() => trackEvent('TAB_CHANGE', { tab: displayName, href: displayHref })}
-                            className={`flex items-center gap-4 px-4 py-3 rounded-2xl transition-all group border-l-[3px] ${isActive
-                                ? `${c.bg} ${c.text} ${c.border}`
-                                : `border-l-transparent ${c.hoverBorder} text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white`
-                                }`}
-                        >
-                            <span className={`transition-transform group-hover:scale-110 ${isActive ? c.text : ''}`}>
-                                {link.icon}
-                            </span>
-                            <span className={`font-bold text-base ${isActive ? 'text-gray-900 dark:text-white' : ''}`}>
-                                {displayName}
-                            </span>
-                        </Link>
-                    );
-                })}
+                            const colorMap: Record<string, { bg: string; text: string; border: string; hoverBorder: string }> = {
+                                'brand-blue': { bg: 'bg-brand-blue/10', text: 'text-brand-blue', border: 'border-l-brand-blue', hoverBorder: 'hover:border-l-brand-blue' },
+                                'brand-red': { bg: 'bg-brand-red/10', text: 'text-brand-red', border: 'border-l-brand-red', hoverBorder: 'hover:border-l-brand-red' },
+                                'brand-yellow': { bg: 'bg-brand-yellow/10', text: 'text-brand-yellow', border: 'border-l-brand-yellow', hoverBorder: 'hover:border-l-brand-yellow' },
+                            };
+                            const c = colorMap[link.color] || colorMap['brand-blue'];
+                            return (
+                                <Link
+                                    key={link.href}
+                                    href={displayHref}
+                                    onClick={() => trackEvent('TAB_CHANGE', { tab: displayName, href: displayHref })}
+                                    className={`flex items-center gap-4 px-6 py-3 transition-all group border-l-[3px] ${isActive
+                                        ? `${c.bg} ${c.text} ${c.border}`
+                                        : `border-l-transparent ${c.hoverBorder} text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white`
+                                        }`}
+                                >
+                                    <span className={`transition-transform group-hover:scale-110 ${isActive ? c.text : ''}`}>
+                                        {link.icon}
+                                    </span>
+                                    <span className={`font-bold text-base ${isActive ? 'text-gray-900 dark:text-white' : ''}`}>
+                                        {displayName}
+                                    </span>
+                                </Link>
+                            );
+                        })
+                )}
 
                 <div className="h-px bg-gray-100 dark:bg-white/5 my-2 mx-4" />
             </nav>
@@ -201,17 +210,19 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                 <Link
                     href="/interacao?tab=emaranhamento"
                     onClick={() => trackEvent('TAB_CHANGE', { tab: 'Central de Interações', hub: 'sidebar' })}
-                    className={`flex items-center gap-4 px-4 py-3 rounded-2xl transition-all group border-l-[3px] ${pathname.startsWith('/interacao') ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20 border-l-brand-blue' : 'border-l-transparent hover:border-l-brand-blue text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'}`}
+                    className={`flex items-center gap-4 px-6 py-3 transition-all group border-l-[3px] ${pathname.startsWith('/interacao') 
+                        ? 'bg-brand-blue/10 text-brand-blue border-l-brand-blue' 
+                        : 'border-l-transparent hover:border-l-brand-blue text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'}`}
                 >
-                    <span className="material-symbols-outlined text-2xl group-hover:scale-110 transition-transform">hub</span>
+                    <span className={`material-symbols-outlined text-2xl group-hover:scale-110 transition-transform ${pathname.startsWith('/interacao') ? 'text-brand-blue' : ''}`}>hub</span>
                     <div className="flex flex-col overflow-hidden">
-                        <span className="font-bold text-sm">Central de Interações</span>
+                        <span className={`font-bold text-sm ${pathname.startsWith('/interacao') ? 'text-gray-900 dark:text-white' : ''}`}>Central de Interações</span>
                         <span className="text-[9px] opacity-60 uppercase tracking-wider font-bold truncate">Nexus de Conexões</span>
                     </div>
                 </Link>
 
                 {/* Quick Access Buttons */}
-                <div className="px-4 my-2">
+                <div className="px-6 my-2">
                     <div className="grid grid-cols-2 gap-2">
                         <Link
                             href="/interacao?tab=lab"
@@ -246,7 +257,7 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                                 <Link
                                     key={profile.id}
                                     href={`/emaranhamento?userId=${profile.id}`}
-                                    className={`flex items-center gap-3 px-4 py-2 rounded-2xl transition-all group relative border-l-[3px] border-l-transparent hover:border-white/5 ${pathname === '/emaranhamento' && userId === profile.id ? 'bg-white/10' : 'hover:bg-gray-100 dark:hover:bg-white/5'}`}
+                                    className={`flex items-center gap-3 px-6 py-2 transition-all group relative border-l-[3px] border-l-transparent hover:border-white/5 ${pathname === '/emaranhamento' && userId === profile.id ? 'bg-white/10' : 'hover:bg-gray-100 dark:hover:bg-white/5'}`}
                                 >
                                     <Avatar
                                         src={profile.avatar}
@@ -298,12 +309,12 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
             <div className="mt-auto mb-2 flex flex-col pt-4">
                 <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 px-5">Suporte do hub</h2>
                 <div className="flex flex-col gap-1">
-                    <a href="https://wa.me/5511968401823" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 px-4 py-3 rounded-2xl text-sm text-gray-500 hover:bg-green-500/10 hover:text-green-600 dark:hover:text-green-400 transition-colors group border-l-[3px] border-l-transparent">
+                    <a href="https://wa.me/5511968401823" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 px-6 py-3 text-sm text-gray-500 hover:bg-green-500/10 hover:text-green-600 dark:hover:text-green-400 transition-colors group border-l-[3px] border-l-transparent">
                         <MessageCircle className="w-5 h-5 opacity-60 group-hover:opacity-100" />
                         <span className="font-bold">WhatsApp Direto</span>
                     </a>
-                    <a href="mailto:joaopaulostangorlini@usp.br" className="flex items-center gap-4 px-4 py-3 rounded-2xl text-sm text-gray-500 hover:bg-brand-red/10 hover:text-brand-red transition-colors group border-l-[3px] border-l-transparent">
-                        <Mail className="w-5 h-5 opacity-60 group-hover:opacity-100" />
+                    <a href="mailto:joaopaulostangorlini@usp.br" className="flex items-center gap-4 px-6 py-3 text-sm text-gray-500 hover:bg-brand-red/10 hover:text-brand-red transition-colors group border-l-[3px] border-l-transparent">
+                        <MessageSquare className="w-5 h-5 opacity-60 group-hover:opacity-100" />
                         <span className="font-bold">Enviar e-mail</span>
                     </a>
                 </div>
@@ -315,7 +326,7 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                     <Link
                         key={link.name}
                         href={link.href}
-                        className="flex items-center gap-4 px-4 py-3 rounded-2xl text-sm text-gray-500 hover:text-brand-blue transition-colors group border-l-[3px] border-l-transparent"
+                        className="flex items-center gap-4 px-6 py-3 text-sm text-gray-500 hover:text-brand-blue transition-colors group border-l-[3px] border-l-transparent"
                     >
                         <span className="opacity-60 group-hover:opacity-100">
                             {link.icon}

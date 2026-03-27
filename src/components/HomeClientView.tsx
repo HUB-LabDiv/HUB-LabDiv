@@ -288,7 +288,7 @@ export const HomeClientView = ({
             {/* DESTAQUES (V8.0 optimized) */}
             {featuredItems.length > 0 && !debouncedQuery && selectedCategories.includes('Todos') && (
                 <section className="mb-8">
-                    <FeaturedCarousel items={featuredItems} highlightQuery={searchQuery} />
+                    <FeaturedCarousel items={featuredItems} highlightQuery={searchQuery} hideTitle={true} />
                 </section>
             )}
 

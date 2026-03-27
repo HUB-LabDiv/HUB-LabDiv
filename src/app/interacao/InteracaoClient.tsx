@@ -25,7 +25,7 @@ export default function InteracaoClient() {
     };
 
     return (
-        <MainLayoutWrapper>
+        <MainLayoutWrapper fullWidth={true}>
             <div className="py-8 max-w-7xl mx-auto px-4">
                 <header className="mb-8">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 border border-brand-blue/20 text-brand-blue text-[10px] font-black uppercase tracking-widest mb-4">

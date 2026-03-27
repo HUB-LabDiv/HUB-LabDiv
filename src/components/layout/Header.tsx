@@ -92,7 +92,7 @@ export function Header() {
     return (
         <>
             <header
-                className="fixed top-0 left-0 right-0 h-16 glass-surface z-50 transition-colors"
+                className="fixed top-0 left-0 right-0 h-16 bg-transparent z-50 transition-colors"
             >
                 <div className="max-w-[1800px] mx-auto h-full px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-4">
                     {/* Left: Branding */}
@@ -120,47 +120,50 @@ export function Header() {
                         </div>
                     </Link>
 
-                    {/* Middle: Nav Tabs + Search */}
-                    <div className="flex-1 hidden md:flex items-center justify-center gap-1">
-                        {[
-                            { label: 'Comunidade', href: '/', color: 'brand-red' },
-                            { label: 'GCIF', href: '/explorar', color: 'brand-blue-accent' },
-                            { label: 'LabDiv', href: '/sobre', color: 'brand-yellow' },
-                            { label: 'Ferramentas', href: '/ferramentas', color: 'brand-red' },
-                            { label: 'Interações', href: '/interacao', color: 'brand-blue-accent' },
-                        ].map((tab) => {
-                            const isActive = pathname === tab.href || (tab.href !== '/' && pathname.startsWith(tab.href));
-                            const colorMap: Record<string, { active: string; hover: string }> = {
-                                'brand-red': { active: 'text-brand-red bg-brand-red/10 border border-brand-red/20', hover: 'hover:text-brand-red hover:bg-brand-red/5' },
-                                'brand-yellow': { active: 'text-brand-yellow bg-brand-yellow/10 border border-brand-yellow/20', hover: 'hover:text-brand-yellow hover:bg-brand-yellow/5' },
-                                'brand-blue': { active: 'text-brand-blue bg-brand-blue/10 border border-brand-blue/20', hover: 'hover:text-brand-blue hover:bg-brand-blue/5' },
-                                'brand-blue-accent': { active: 'text-brand-blue-accent bg-brand-blue-accent/10 border border-brand-blue-accent/20', hover: 'hover:text-brand-blue-accent hover:bg-brand-blue-accent/5' },
-                            };
-                            const styles = colorMap[tab.color];
-                            return (
-                                <Link
-                                    key={tab.href}
-                                    href={tab.href}
-                                    className={`px-4 py-1.5 text-[11px] font-black uppercase tracking-widest rounded-lg transition-all whitespace-nowrap ${
-                                        isActive
-                                            ? styles.active
-                                            : `text-gray-500 ${styles.hover}`
-                                    }`}
-                                >
-                                    {tab.label}
-                                </Link>
-                            );
-                        })}
-
-                        {/* Global Search Trigger */}
-                        <button
-                            onClick={() => setSearchOverlayOpen(true)}
-                            className="ml-3 flex items-center gap-2 px-3 py-1.5 bg-white/5 border border-white/10 rounded-xl text-xs text-gray-500 hover:text-brand-yellow hover:border-brand-yellow/30 hover:bg-brand-yellow/5 transition-all group"
-                        >
-                            <span className="material-symbols-outlined text-[18px] group-hover:text-brand-yellow transition-colors">search</span>
-                            <span className="hidden lg:inline">Buscar...</span>
-                            <kbd className="hidden lg:flex items-center px-1.5 py-0.5 bg-white/5 rounded text-[9px] font-mono text-gray-600">/</kbd>
-                        </button>
+                    {/* Middle: Nav Tabs + Search (The Notch) */}
+                    <div className="flex-1 hidden md:flex items-center justify-center self-start">
+                        <div className="bg-[#0F4780] rounded-b-[24px] px-8 py-3 flex items-center gap-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-x border-b border-white/10 backdrop-blur-xl">
+                            {[
+                                { label: 'Comunidade', href: '/', color: '#F14343' },
+                                { label: 'GCIF', href: '/explorar', color: 'white' },
+                                { label: 'LabDiv', href: '/sobre', color: '#FFCC00' },
+                                { label: 'Ferramentas', href: '/ferramentas', color: '#F14343' },
+                                { label: 'Interações', href: '/interacao', color: 'white' },
+                            ].map((tab) => {
+                                const isActive = pathname === tab.href || (tab.href !== '/' && pathname.startsWith(tab.href));
+                                
+                                return (
+                                    <Link
+                                        key={tab.href}
+                                        href={tab.href}
+                                        className={`px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl transition-all whitespace-nowrap relative group/tab ${
+                                            isActive
+                                                ? `text-white bg-white/10 ring-1 ring-inset ${tab.color === 'white' ? 'ring-white/30' : `ring-[${tab.color}]/50`}`
+                                                : `text-white/60 hover:text-white hover:bg-white/5`
+                                        }`}
+                                        style={isActive ? { color: tab.color } : {}}
+                                    >
+                                        {tab.label}
+                                        {isActive && (
+                                            <div 
+                                                className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full animate-premium-glow"
+                                                style={{ backgroundColor: tab.color }}
+                                            />
+                                        )}
+                                    </Link>
+                                );
+                            })}
+    
+                            {/* Global Search Trigger (Adjusted for Notch) */}
+                            <button
+                                onClick={() => setSearchOverlayOpen(true)}
+                                className="ml-4 flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs text-white/50 hover:text-white hover:border-white/30 hover:bg-white/10 transition-all group"
+                            >
+                                <span className="material-symbols-outlined text-[18px] group-hover:text-white transition-colors">search</span>
+                                <span className="hidden lg:inline text-[10px] font-bold uppercase tracking-widest">Buscar</span>
+                                <kbd className="hidden lg:flex items-center px-1.5 py-0.5 bg-white/5 rounded text-[9px] font-mono text-white/20">/</kbd>
+                            </button>
+                        </div>
                     </div>
 
                     {/* Right: Sharded Actions */}
