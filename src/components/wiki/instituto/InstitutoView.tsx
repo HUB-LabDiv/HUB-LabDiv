@@ -22,7 +22,7 @@ export function InstitutoView({ mapItems }: InstitutoViewProps) {
             <section className="space-y-6">
                 <div className="flex flex-col items-center text-center space-y-4 mb-8">
                     <h2 className="text-3xl font-black text-gray-900 dark:text-white uppercase italic tracking-tighter">
-                        Campus <span className="text-brand-yellow">Interativo</span>
+                        Campus <span className="text-brand-blue">Interativo</span>
                     </h2>
                     <p className="text-gray-400 font-medium max-w-2xl">
                         Navegue pelas descobertas e registros através da geografia do Instituto. 
@@ -36,7 +36,7 @@ export function InstitutoView({ mapItems }: InstitutoViewProps) {
 
                 <div className="max-w-2xl mx-auto p-6 rounded-3xl bg-white/5 border border-white/5 backdrop-blur-xl">
                     <h3 className="text-lg font-bold text-white mb-2 flex items-center gap-2">
-                        <HelpCircle className="w-5 h-5 text-brand-yellow" />
+                        <HelpCircle className="w-5 h-5 text-brand-blue" />
                         Como funciona?
                     </h3>
                     <p className="text-sm text-gray-400 leading-relaxed font-medium">

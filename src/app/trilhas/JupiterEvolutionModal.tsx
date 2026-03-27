@@ -140,7 +140,7 @@ export function JupiterEvolutionModal({ isOpen, onClose, onSuccess }: JupiterEvo
 
                                 <button
                                     type="submit"
-                                    className="w-full group relative flex items-center justify-center gap-3 bg-brand-blue hover:bg-blue-600 text-white font-black uppercase tracking-widest text-[11px] py-5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand-blue/20 mt-4"
+                                    className="w-full group relative flex items-center justify-center gap-3 bg-brand-blue hover:bg-brand-blue-accent text-white font-black uppercase tracking-widest text-[11px] py-5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand-blue/20 mt-4"
                                 >
                                     <RefreshCw className="w-5 h-5" />
                                     <span>Iniciar Resgate</span>
@@ -175,7 +175,7 @@ export function JupiterEvolutionModal({ isOpen, onClose, onSuccess }: JupiterEvo
                                             <div className="h-4 w-32 bg-white/10 rounded-full animate-pulse mb-4"></div>
                                             {[1, 2, 3].map(i => (
                                                 <div key={`skel-a-${i}`} className="flex items-center gap-3 p-3 bg-white/5 rounded-xl border border-white/5">
-                                                    <div className="w-8 h-8 rounded-full bg-amber-500/20 animate-pulse"></div>
+                                                    <div className="w-8 h-8 rounded-full bg-brand-yellow/20 animate-pulse"></div>
                                                     <div className="h-4 w-24 bg-white/10 rounded animate-pulse"></div>
                                                 </div>
                                             ))}
@@ -204,8 +204,8 @@ export function JupiterEvolutionModal({ isOpen, onClose, onSuccess }: JupiterEvo
                                         </div>
 
                                         <div className="space-y-3 pt-6 border-t border-white/5">
-                                            <h3 className="text-xs font-black uppercase text-gray-400 tracking-widest flex items-center gap-2 mb-4">
-                                                <Clock className="w-4 h-4 text-amber-500" />
+                                            <h3 className="text-xs font-black uppercase text-gray-400 tracking-widest flex items-center gap-1 mb-4">
+                                                <Clock className="w-4 h-4 text-brand-yellow" />
                                                 Cursando / Andamento ({cursando.length})
                                             </h3>
 
@@ -214,9 +214,9 @@ export function JupiterEvolutionModal({ isOpen, onClose, onSuccess }: JupiterEvo
                                             ) : (
                                                 <div className="grid grid-cols-2 gap-2">
                                                     {cursando.map(code => (
-                                                        <div key={code} className="flex items-center gap-2 p-2.5 bg-amber-500/10 border border-amber-500/20 rounded-xl">
-                                                            <div className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></div>
-                                                            <span className="text-xs font-bold text-amber-100 tracking-widest">{code}</span>
+                                                        <div key={code} className="flex items-center gap-2 p-2.5 bg-brand-yellow/10 border border-brand-yellow/20 rounded-xl">
+                                                            <div className="w-2 h-2 rounded-full bg-brand-yellow animate-pulse"></div>
+                                                            <span className="text-xs font-bold text-brand-yellow tracking-widest">{code}</span>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -230,7 +230,7 @@ export function JupiterEvolutionModal({ isOpen, onClose, onSuccess }: JupiterEvo
                                 onClick={handleFinalConfirm}
                                 disabled={isSubmitting || step === 'loading'}
                                 className={`w-full group relative flex items-center justify-center gap-3 font-black uppercase tracking-widest text-[11px] py-5 rounded-2xl transition-all shadow-lg hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50
-                                    ${step === 'loading' ? 'bg-white/10 text-gray-500 pointer-events-none' : 'bg-brand-blue hover:bg-blue-600 text-white shadow-brand-blue/20'}
+                                    ${step === 'loading' ? 'bg-white/10 text-gray-500 pointer-events-none' : 'bg-brand-blue hover:bg-brand-blue-accent text-white shadow-brand-blue/20'}
                                 `}
                             >
                                 {isSubmitting ? (

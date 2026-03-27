@@ -93,18 +93,18 @@ export function LabDivView() {
                     </div>
 
                     {/* Espaço Novo Milênio CTA */}
-                    <div className="relative overflow-hidden bg-gradient-to-br from-emerald-500/10 to-transparent dark:from-emerald-500/20 dark:to-card-dark rounded-3xl p-8 border border-emerald-500/20 hover:border-emerald-500/40 transition-colors group flex flex-col items-start">
+                    <div className="relative overflow-hidden bg-gradient-to-br from-brand-red/10 to-transparent dark:from-brand-red/20 dark:to-card-dark rounded-3xl p-8 border border-brand-red/20 hover:border-brand-red/40 transition-colors group flex flex-col items-start">
                         <div className="absolute top-0 right-0 p-8 opacity-10 rotate-6 group-hover:rotate-0 transition-transform duration-500">
-                            <span className="material-symbols-outlined text-[120px] text-emerald-500">meeting_room</span>
+                            <span className="material-symbols-outlined text-[120px] text-brand-red">meeting_room</span>
                         </div>
                         <div className="w-12 h-12 bg-white dark:bg-gray-900 rounded-2xl flex items-center justify-center mb-6 shadow-sm">
-                            <span className="material-symbols-outlined text-emerald-500 text-2xl">event_available</span>
+                            <span className="material-symbols-outlined text-brand-red text-2xl">event_available</span>
                         </div>
                         <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Espaço Novo Milênio</h2>
                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-8 max-w-sm relative z-10">
                             Um espaço multimídia do IFUSP disponível para gravações, reuniões e eventos acadêmicos. Agende a utilização e transforme suas ideias em produções profissionais.
                         </p>
-                        <a href="https://labdiv.notion.site" target="_blank" rel="noopener noreferrer" className="mt-auto relative z-10 px-6 py-3 bg-emerald-500 text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform group-hover:shadow-lg group-hover:shadow-emerald-500/20">
+                        <a href="https://labdiv.notion.site" target="_blank" rel="noopener noreferrer" className="mt-auto relative z-10 px-6 py-3 bg-brand-red text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform group-hover:shadow-lg group-hover:shadow-brand-red/20">
                             Agendar Espaço
                             <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
                         </a>
@@ -127,9 +127,9 @@ export function LabDivView() {
             <section id="equipe" className="py-12 max-w-7xl mx-auto px-4 border-t border-gray-100 dark:border-gray-800">
                 <div className="mb-12">
                     <h2 className="text-3xl font-black uppercase tracking-tighter text-gray-900 dark:text-white mb-2">
-                        Nossa <span className="text-brand-blue">Equipe</span>
+                        Nossa <span className="text-brand-blue-accent">Equipe</span>
                     </h2>
-                    <div className="h-1.5 w-24 rounded-full mb-2 bg-brand-blue"></div>
+                    <div className="h-1.5 w-24 rounded-full mb-2 bg-brand-blue-accent"></div>
                 </div>
 
                 <LabDivTeam />

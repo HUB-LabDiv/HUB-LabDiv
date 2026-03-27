@@ -89,13 +89,13 @@ const wikiEntries = [
 
 // ── Navigation routes ──
 const navRoutes = [
-    { label: 'Grade Horária / Cronograma', href: '/ferramentas', icon: 'calendar_month', color: 'text-brand-red', desc: 'Monte seu cronograma semestral do Júpiter' },
+    { label: 'Grade Horária / Cronograma', href: '/ferramentas', icon: 'calendar_month', color: 'text-brand-blue-accent', desc: 'Monte seu cronograma semestral do Júpiter' },
     { label: 'Trilhas de Aprendizado', href: '/trilhas', icon: 'auto_stories', color: 'text-brand-yellow', desc: 'Descubra a ordem ideal de matérias' },
-    { label: 'O Grande Colisor (GCI)', href: '/explorar', icon: 'hub', color: 'text-brand-blue', desc: 'Oportunidades de pesquisa e projetos' },
+    { label: 'GCIF (Grande Colisor do IF)', href: '/explorar', icon: 'hub', color: 'text-brand-blue-accent', desc: 'Oportunidades de pesquisa e projetos' },
     { label: 'Meu Laboratório / Perfil', href: '/lab', icon: 'science', color: 'text-brand-red', desc: 'XP, conquistas e painel pessoal' },
-    { label: 'Comunidade & Interações', href: '/', icon: 'forum', color: 'text-brand-blue', desc: 'Mural público e networking' },
-    { label: 'Submeter ou Editar Wiki', href: '/interacao', icon: 'edit_square', color: 'text-brand-yellow', desc: 'Colabore criando novas páginas' },
-    { label: 'Ferramentas', href: '/ferramentas', icon: 'construction', color: 'text-brand-red', desc: 'Grade, Trilhas e sincronização Júpiter' },
+    { label: 'Comunidade & Interações', href: '/', icon: 'forum', color: 'text-brand-red', desc: 'Mural público e networking' },
+    { label: 'Submeter ou Editar Wiki', href: '/interacao', icon: 'edit_square', color: 'text-brand-blue-accent', desc: 'Colabore criando novas páginas' },
+    { label: 'Ferramentas', href: '/ferramentas', icon: 'construction', color: 'text-brand-blue-accent', desc: 'Grade, Trilhas e sincronização Júpiter' },
 ];
 
 interface SearchOverlayProps {
@@ -213,7 +213,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             <span className="text-[10px] text-gray-500 leading-snug">
                 {snippetStart > 0 && '…'}
                 {before}
-                <mark className="bg-brand-yellow/30 text-brand-yellow font-bold rounded px-0.5">{match}</mark>
+                <mark className="bg-brand-blue/30 text-brand-blue font-bold rounded px-0.5">{match}</mark>
                 {after}
                 {snippetEnd < content.length && '…'}
             </span>
@@ -249,7 +249,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 >
                     {/* Search Input */}
                     <div className="flex items-center gap-3 px-5 py-4 border-b border-white/10">
-                        <span className="material-symbols-outlined text-brand-yellow text-[22px]">search</span>
+                        <span className="material-symbols-outlined text-brand-blue text-[22px]">search</span>
                         <input
                             ref={inputRef}
                             type="text"

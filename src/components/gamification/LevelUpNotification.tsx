@@ -47,7 +47,7 @@ export function LevelUpNotification() {
                                         particleCount: 200,
                                         spread: 100,
                                         origin: { y: 0.5 },
-                                        colors: ['#0055ff', '#ff0000', '#ffcc00', '#00ff00', '#ff00ff']
+                                        colors: ['#0F4780', '#F14343', '#FFCC00', '#1F9FCF']
                                     });
 
                                     // Second wave
@@ -57,14 +57,14 @@ export function LevelUpNotification() {
                                             angle: 60,
                                             spread: 55,
                                             origin: { x: 0 },
-                                            colors: ['#0055ff', '#ffcc00']
+                                            colors: ['#0F4780', '#FFCC00']
                                         });
                                         confetti({
                                             particleCount: 100,
                                             angle: 120,
                                             spread: 55,
                                             origin: { x: 1 },
-                                            colors: ['#ff0000', '#0055ff']
+                                            colors: ['#F14343', '#0F4780']
                                         });
                                     }, 400);
                                 }, 2500);
@@ -163,7 +163,7 @@ export function LevelUpNotification() {
                                     animate={{ opacity: 1 }}
                                     className="space-y-3"
                                 >
-                                    <h2 className="text-xl font-black text-yellow-400 uppercase tracking-tight">
+                                    <h2 className="text-xl font-black text-brand-yellow uppercase tracking-tight">
                                         Radiação Crítica Detectada!
                                     </h2>
                                     <div className="flex justify-center gap-1">
@@ -172,7 +172,7 @@ export function LevelUpNotification() {
                                                 key={i}
                                                 animate={{ height: [8, 20 + Math.random() * 20, 8] }}
                                                 transition={{ duration: 0.3, repeat: Infinity, delay: i * 0.05 }}
-                                                className="w-2 bg-yellow-400 rounded-full"
+                                                className="w-2 bg-brand-yellow rounded-full"
                                             />
                                         ))}
                                     </div>
@@ -191,7 +191,7 @@ export function LevelUpNotification() {
                                     className="space-y-2"
                                 >
                                     <m.h2
-                                        animate={{ scale: [1, 1.3, 1], color: ['#fff', '#ff0000', '#ffcc00'] }}
+                                        animate={{ scale: [1, 1.3, 1], color: ['#fff', '#F14343', '#FFCC00'] }}
                                         transition={{ duration: 0.5 }}
                                         className="text-3xl font-black uppercase"
                                     >

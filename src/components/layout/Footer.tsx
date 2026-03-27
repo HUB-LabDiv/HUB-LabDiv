@@ -3,10 +3,11 @@
 import Link from 'next/link';
 import { AppRoutes } from '@/types/navigation';
 import { ColisorIcon } from '../icons/ColisorIcon';
+import { USPLogo } from '../icons/USPLogo';
 
 export function Footer() {
     return (
-        <footer className="bg-[#0B1E3B] border-t border-[#1e3a8a] pt-16 pb-8 border-b-8 border-b-brand-blue text-white/90">
+        <footer className="bg-brand-blue border-t border-white/10 pt-16 pb-8 text-white/90">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
                     <div className="col-span-1 lg:col-span-1">
@@ -17,8 +18,8 @@ export function Footer() {
                                 <div className="absolute w-5 h-5 bg-brand-yellow rounded-full top-2 left-2 z-20 shadow-sm border border-white dark:border-transparent"></div>
                             </div>
                             <div className="flex flex-col -space-y-0.5">
-                                <span className="font-sans font-bold text-lg text-gray-900 dark:text-white leading-tight">Hub <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-brand-blue to-brand-yellow">Lab-Div</span></span>
-                                <span className="text-[8px] uppercase tracking-wider text-gray-500 font-medium">Instituto de Física</span>
+                                <span className="font-bukra font-bold text-lg text-gray-900 dark:text-white leading-tight">Hub <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-red to-brand-blue">Lab-Div</span></span>
+                                <span className="text-[8px] uppercase tracking-wider text-gray-500 font-bukra font-medium">Instituto de Física</span>
                             </div>
                         </div>
                         <p className="text-sm text-gray-500 dark:text-gray-400 mb-6 leading-relaxed">
@@ -34,20 +35,20 @@ export function Footer() {
                     <div>
                         <h4 className="font-bold text-gray-900 dark:text-white mb-6 uppercase text-xs tracking-wider border-l-4 border-brand-blue pl-3">Navegação</h4>
                         <ul className="space-y-3">
-                            <li><Link href="/" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors"><span className="material-symbols-outlined text-xs">groups</span> Comunidade</Link></li>
-                            <li><Link href="/explorar" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors"><ColisorIcon size={14} animate={false} /> O Grande Colisor do IF</Link></li>
-                            <li><Link href="/ferramentas" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors"><span className="material-symbols-outlined text-xs">construction</span> Ferramentas acadêmicas</Link></li>
-                            <li><Link href="/perguntas" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors"><span className="material-symbols-outlined text-xs">help_outline</span> Interação (Pergunte/Lab)</Link></li>
-                            <li><Link href="/sobre" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue dark:hover:text-brand-blue transition-colors"><span className="material-symbols-outlined text-xs">info</span> LabDiv</Link></li>
-                            <li><Link href="/admin" className="flex items-center gap-2 text-[10px] text-gray-400/50 dark:text-gray-600/50 hover:text-brand-blue dark:hover:text-brand-blue transition-colors mt-4"><span className="material-symbols-outlined text-[10px]">admin_panel_settings</span> Painel de Controle</Link></li>
+                            <li><Link href="/" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue-accent dark:hover:text-brand-blue-accent transition-colors"><span className="material-symbols-outlined text-xs">groups</span> Comunidade</Link></li>
+                            <li><Link href="/explorar" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue-accent dark:hover:text-brand-blue-accent transition-colors"><ColisorIcon size={14} animate={false} /> O Grande Colisor do IF</Link></li>
+                            <li><Link href="/ferramentas" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue-accent dark:hover:text-brand-blue-accent transition-colors"><span className="material-symbols-outlined text-xs">construction</span> Ferramentas acadêmicas</Link></li>
+                            <li><Link href="/perguntas" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue-accent dark:hover:text-brand-blue-accent transition-colors"><span className="material-symbols-outlined text-xs">help_outline</span> Interação (Pergunte/Lab)</Link></li>
+                            <li><Link href="/sobre" className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-brand-blue-accent dark:hover:text-brand-blue-accent transition-colors"><span className="material-symbols-outlined text-xs">info</span> LabDiv</Link></li>
+                            <li><Link href="/admin" className="flex items-center gap-2 text-[10px] text-gray-400/50 dark:text-gray-600/50 hover:text-brand-blue-accent dark:hover:text-brand-blue-accent transition-colors mt-4"><span className="material-symbols-outlined text-[10px]">admin_panel_settings</span> Painel de Controle</Link></li>
                         </ul>
                     </div>
 
                     <div>
-                        <h4 className="font-bold text-gray-900 dark:text-white mb-6 uppercase text-xs tracking-wider border-l-4 border-brand-yellow pl-3">Responsável pelo site</h4>
+                        <h4 className="font-bold text-gray-900 dark:text-white mb-6 uppercase text-xs tracking-wider border-l-4 border-brand-blue pl-3">Responsável pelo site</h4>
                         <ul className="space-y-3">
                             <li className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
-                                <span className="material-symbols-outlined text-sm mt-0.5 text-brand-blue">person</span>
+                                <span className="material-symbols-outlined text-sm mt-0.5 text-brand-blue-accent">person</span>
                                 <div>
                                     <p className="font-medium text-gray-900 dark:text-gray-200">João Paulo</p>
                                     <button
@@ -57,15 +58,15 @@ export function Footer() {
                                             import('react-hot-toast').then(m => m.toast.success('E-mail copiado!'));
                                             window.location.href = `mailto:${email}`;
                                         }}
-                                        className="hover:text-brand-blue transition-colors text-left"
+                                        className="hover:text-brand-blue-accent transition-colors text-left"
                                     >
                                         joaopaulostangorlini@usp.br
                                     </button>
                                 </div>
                             </li>
                             <li className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
-                                <span className="material-symbols-outlined text-sm mt-0.5 text-brand-blue">phone</span>
-                                <a href="https://wa.me/5511968401823" target="_blank" rel="noopener noreferrer" className="hover:text-brand-blue transition-colors">
+                                <span className="material-symbols-outlined text-sm mt-0.5 text-brand-blue-accent">phone</span>
+                                <a href="https://wa.me/5511968401823" target="_blank" rel="noopener noreferrer" className="hover:text-brand-blue-accent transition-colors">
                                     (11) 96840-1823
                                 </a>
                             </li>
@@ -73,8 +74,8 @@ export function Footer() {
                     </div>
 
                     <div>
-                        <h4 className="font-bold text-gray-900 dark:text-white mb-6 uppercase text-xs tracking-wider border-l-4 border-brand-red pl-3">
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-brand-blue to-brand-yellow">Lab-Div</span>
+                        <h4 className="font-bold text-gray-900 dark:text-white mb-6 uppercase text-xs tracking-wider border-l-4 border-brand-blue pl-3">
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-red to-brand-blue">Lab-Div</span>
                         </h4>
                         <ul className="space-y-4">
                             <li className="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-400">
@@ -103,12 +104,15 @@ export function Footer() {
                     </div>
                 </div>
 
-                <div className="border-t border-gray-100 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-                    <p className="text-xs text-gray-500 dark:text-gray-500">
-                        © {new Date().getFullYear()} Instituto de Física - USP. Todos os direitos reservados.
-                    </p>
+                 <div className="border-t border-gray-100 dark:border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
+                    <div className="flex items-center gap-3">
+                        <USPLogo size={40} className="text-white opacity-80 hover:opacity-100 transition-opacity" />
+                        <p className="text-xs text-gray-500 dark:text-gray-500 font-open-sans">
+                            © {new Date().getFullYear()} Instituto de Física - USP. Todos os direitos reservados.
+                        </p>
+                    </div>
                     <div className="flex items-center gap-6">
-                        <span className="text-[10px] font-bold text-gray-400 dark:text-gray-600 border border-gray-100 dark:border-gray-800 px-2 py-0.5 rounded">v3.1.5</span>
+                        <span className="text-[10px] font-bold text-gray-400 dark:text-gray-600 border border-gray-100 dark:border-gray-800 px-2 py-0.5 rounded font-bukra">v3.1.5</span>
                         <div className="flex gap-4">
                             <div className="w-3 h-3 rounded-sm bg-brand-blue shadow-sm shadow-brand-blue/50"></div>
                             <div className="w-3 h-3 rounded-sm bg-brand-red shadow-sm shadow-brand-red/50"></div>

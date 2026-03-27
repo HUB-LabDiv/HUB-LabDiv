@@ -179,7 +179,7 @@ export const institutoCell = {
     title: 'O Instituto de Física',
     subtitle: 'Estrutura, História e Espaços.',
     icon: <Landmark className="w-8 h-8" />,
-    color: '#17739A',
+    color: 'brand-blue-ifusp',
     href: '/wiki/instituto',
     description: 'Mergulhe na história do IFUSP e entenda como um dos institutos de física mais respeitados do mundo é organizado atualmente.',
     details: [
@@ -304,14 +304,14 @@ export function WikiView() {
                     transition={{ duration: 0.8, delay: 0.5 }}
                     className="relative group w-full mb-12"
                 >
-                    <div className="absolute -inset-0.5 bg-[#17739A]/30 rounded-[32px] blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <div className="absolute -inset-0.5 bg-brand-blue-ifusp/30 rounded-[32px] blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <Link
                         href={institutoCell.href}
-                        className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-gradient-to-r from-[#17739A]/20 to-brand-blue/10 backdrop-blur-2xl border border-white/5 hover:border-[#17739A]/40 transition-all overflow-hidden text-left"
+                        className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-gradient-to-r from-brand-blue-ifusp/20 to-brand-blue/10 backdrop-blur-2xl border border-white/5 hover:border-brand-blue-ifusp/40 transition-all overflow-hidden text-left"
                     >
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#17739A]/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4"></div>
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-blue-ifusp/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4"></div>
                         <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
-                            <div className="size-20 bg-[#17739A]/10 text-[#17739A] rounded-[28px] flex items-center justify-center ring-1 ring-[#17739A]/20 group-hover:scale-110 transition-all duration-700 shadow-2xl shadow-[#17739A]/20">
+                            <div className="size-20 bg-brand-blue-ifusp/10 text-brand-blue-ifusp rounded-[28px] flex items-center justify-center ring-1 ring-brand-blue-ifusp/20 group-hover:scale-110 transition-all duration-700 shadow-2xl shadow-brand-blue-ifusp/20">
                                 {institutoCell.icon}
                             </div>
                             <div className="text-center md:text-left">
@@ -319,7 +319,7 @@ export function WikiView() {
                                     <h3 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter">
                                         {institutoCell.title}
                                     </h3>
-                                    <span className="hidden md:block px-3 py-1 bg-[#17739A]/20 border border-[#17739A]/30 text-[#17739A] text-[10px] font-black uppercase rounded-full italic">Institucional</span>
+                                    <span className="hidden md:block px-3 py-1 bg-brand-blue-ifusp/20 border border-brand-blue-ifusp/30 text-brand-blue-ifusp text-[10px] font-black uppercase rounded-full italic">Institucional</span>
                                 </div>
                                 <p className="text-gray-400 font-medium max-w-md">
                                     {institutoCell.description}
@@ -327,7 +327,7 @@ export function WikiView() {
                             </div>
                         </div>
                         <div className="mt-8 md:mt-0 relative z-10">
-                            <div className="px-12 py-5 bg-[#17739A] text-white font-black rounded-[24px] group-hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-widest flex items-center gap-4 shadow-2xl shadow-[#17739A]/30">
+                            <div className="px-12 py-5 bg-brand-blue-ifusp text-white font-black rounded-[24px] group-hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-widest flex items-center gap-4 shadow-2xl shadow-brand-blue-ifusp/30">
                                 {institutoCell.cta} <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                             </div>
                         </div>
@@ -374,40 +374,6 @@ export function WikiView() {
                 </motion.div>
             </div>
 
-            <style jsx global>{`
-                .bg-brand-blue\/10 { background-color: rgba(0, 150, 255, 0.1); }
-                .bg-brand-yellow\/10 { background-color: rgba(255, 193, 7, 0.1); }
-                .bg-brand-red\/10 { background-color: rgba(255, 59, 48, 0.1); }
-                .text-brand-blue { color: #0096FF; }
-                .text-brand-yellow { color: #FFC107; }
-                .text-brand-red { color: #FF3B30; }
-                .border-brand-blue\/30 { border-color: rgba(0, 150, 255, 0.3); }
-                .border-brand-yellow\/30 { border-color: rgba(255, 193, 7, 0.3); }
-                .border-brand-red\/30 { border-color: rgba(255, 59, 48, 0.3); }
-                .border-brand-blue\/50 { border-color: rgba(0, 150, 255, 0.5); }
-                .border-brand-yellow\/50 { border-color: rgba(255, 193, 7, 0.5); }
-                .border-brand-red\/50 { border-color: rgba(255, 59, 48, 0.5); }
-                .ring-brand-blue\/20 { --tw-ring-color: rgba(0, 150, 255, 0.2); }
-                .ring-brand-yellow\/20 { --tw-ring-color: rgba(255, 193, 7, 0.2); }
-                .ring-brand-red\/20 { --tw-ring-color: rgba(255, 59, 48, 0.2); }
-                .ring-brand-blue\/50 { --tw-ring-color: rgba(0, 150, 255, 0.5); }
-                .ring-brand-yellow\/50 { --tw-ring-color: rgba(255, 193, 7, 0.5); }
-                .ring-brand-red\/50 { --tw-ring-color: rgba(255, 59, 48, 0.5); }
-                .bg-brand-blue { background-color: #0096FF; }
-                .bg-brand-yellow { background-color: #FFC107; }
-                .bg-brand-red { background-color: #FF3B30; }
-                .bg-brand-blue\/40 { background-color: rgba(0, 150, 255, 0.4); }
-                .bg-brand-yellow\/40 { background-color: rgba(255, 193, 7, 0.4); }
-                .bg-brand-red\/40 { background-color: rgba(255, 59, 48, 0.4); }
-                .bg-brand-green\/40 { background-color: rgba(16, 185, 129, 0.4); }
-                .bg-brand-blue\/5 { background-color: rgba(0, 150, 255, 0.05); }
-                .bg-brand-yellow\/5 { background-color: rgba(255, 193, 7, 0.05); }
-                .bg-brand-red\/5 { background-color: rgba(255, 59, 48, 0.05); }
-                .bg-brand-green\/5 { background-color: rgba(16, 185, 129, 0.05); }
-                .text-brand-green { color: #10b981; }
-                .ring-brand-green\/20 { --tw-ring-color: rgba(16, 185, 129, 0.2); }
-                .ring-brand-green\/50 { --tw-ring-color: rgba(16, 185, 129, 0.5); }
-            `}</style>
         </div>
     );
 }

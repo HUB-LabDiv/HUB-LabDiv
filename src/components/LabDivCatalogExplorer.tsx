@@ -121,7 +121,7 @@ export function LabDivCatalogExplorer() {
                     </div>
                 </div>
                 {labDivItems.length > 0 ? (
-                    <FeaturedCarousel items={labDivItems} />
+                    <FeaturedCarousel items={labDivItems} hideTitle={true} />
                 ) : (
                     <div className="px-4 py-12 border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-[40px] flex flex-col items-center justify-center text-center opacity-50">
                         <p className="text-gray-400 font-bold uppercase tracking-widest">Nenhum rastro detectado com #LabDiv</p>
@@ -145,7 +145,7 @@ export function LabDivCatalogExplorer() {
                     </div>
                 </div>
                 {arenaWinners.length > 0 ? (
-                    <FeaturedCarousel items={arenaWinners} />
+                    <FeaturedCarousel items={arenaWinners} hideTitle={true} />
                 ) : (
                     <div className="px-4 py-12 border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-[40px] flex flex-col items-center justify-center text-center opacity-50">
                         <p className="text-gray-400 font-bold uppercase tracking-widest">Nenhum rastro detectado nas competições</p>
@@ -167,7 +167,7 @@ export function LabDivCatalogExplorer() {
                     </div>
                 </div>
                 {mentoredItems.length > 0 ? (
-                    <FeaturedCarousel items={mentoredItems} />
+                    <FeaturedCarousel items={mentoredItems} hideTitle={true} />
                 ) : (
                     <div className="px-4 py-12 border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-[40px] flex flex-col items-center justify-center text-center opacity-50">
                         <p className="text-gray-400 font-bold uppercase tracking-widest">Nenhum rastro detectado com #MentoradosLabdiv</p>

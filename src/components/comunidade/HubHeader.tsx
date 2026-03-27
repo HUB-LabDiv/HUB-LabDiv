@@ -17,14 +17,14 @@ export function HubHeader() {
                     Excelência Científica
                 </div>
 
-                <h1 className="font-display font-black text-5xl md:text-7xl tracking-tighter mb-8 text-gray-900 dark:text-white leading-[0.85] uppercase italic animate-fade-in-up">
+                <h1 className="font-bukra font-black text-5xl md:text-7xl tracking-tighter mb-8 text-gray-900 dark:text-white leading-[0.85] uppercase italic animate-fade-in-up">
                     Hub de Comunicação <br />
                     Científica <br />
                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red">Lab-Div</span>
                 </h1>
 
                 <p className="text-sm md:text-base text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed font-medium animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                    Hub de Comunicação Científica do Lab-Div — Um projeto para melhorar a comunicação do IF-USP e reunir em um <span className="text-brand-blue font-bold">FLUXO</span> interativo o arquivo de material de divulgação do Lab-Div e de toda a comunidade — de dentro e fora do instituto.
+                    Hub de Comunicação Científica do Lab-Div — Um projeto para melhorar a comunicação do IF-USP e reunir em um <span className="text-brand-blue-accent font-bold">FLUXO</span> interativo o arquivo de material de divulgação do Lab-Div e de toda a comunidade — de dentro e fora do instituto.
                 </p>
             </div>
         </section>

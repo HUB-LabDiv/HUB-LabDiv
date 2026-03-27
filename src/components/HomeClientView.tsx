@@ -539,19 +539,19 @@ export const HomeClientView = ({
                         initial={{ opacity: 0, x: 50, scale: 0.9 }}
                         animate={{ opacity: 1, x: 0, scale: 1 }}
                         exit={{ opacity: 0, x: 50, scale: 0.9 }}
-                        className="fixed top-24 right-6 z-[200] bg-black/80 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-4 flex items-center gap-4 shadow-[0_0_30px_rgba(0,163,255,0.15)]"
+                        className="fixed top-24 right-6 z-[200] bg-black/80 backdrop-blur-xl border border-brand-blue-accent/30 rounded-2xl p-4 flex items-center gap-4 shadow-[0_0_30px_rgba(31,159,207,0.15)]"
                     >
                         <div className="relative w-10 h-10 flex items-center justify-center">
                             <motion.div
                                 animate={{ rotate: 360 }}
                                 transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-                                className="absolute inset-0 border border-blue-500/30 rounded-full"
+                                className="absolute inset-0 border border-brand-blue-accent/30 rounded-full"
                             />
                             <div className="relative">
                                 <motion.div
                                     animate={{ scale: [1, 1.2, 1] }}
                                     transition={{ duration: 1, repeat: Infinity }}
-                                    className="w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_10px_#00A3FF]"
+                                    className="w-2 h-2 bg-brand-blue-accent rounded-full shadow-[0_0_10px_#1F9FCF]"
                                 />
                                 <Atom className="absolute -top-3 -left-3 w-8 h-8 text-white/10 animate-pulse" />
                             </div>
@@ -571,7 +571,7 @@ export const HomeClientView = ({
                                 initial={{ width: 0 }}
                                 animate={{ width: "100%" }}
                                 transition={{ duration: 4, ease: "linear" }}
-                                className="h-full bg-blue-500 shadow-[0_0_10px_#3b82f6]"
+                                className="h-full bg-brand-blue-accent shadow-[0_0_10px_#1F9FCF]"
                             />
                         </div>
                     </motion.div>

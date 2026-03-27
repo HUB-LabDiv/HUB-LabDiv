@@ -16,7 +16,7 @@ import {
 // --- ELITE COMPONENTS ---
 
 export const Breadcrumbs = ({ slug, title }: { slug: string, title: React.ReactNode }) => (
-    <nav className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] mb-8 text-gray-500">
+    <nav className="flex items-center gap-2 text-xs font-bold font-bukra uppercase tracking-[0.2em] mb-8 text-gray-500">
         <Link href="/wiki" className="hover:text-brand-blue transition-colors">Wiki Hub</Link>
         <ChevronRight className="w-3 h-3 text-white/20" />
         <span className="text-brand-blue italic">{title}</span>
@@ -31,7 +31,7 @@ export const TechnicalAccordion = ({ title, children }: { title: React.ReactNode
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full px-8 py-6 flex items-center justify-between hover:bg-white/5 transition-colors text-left"
             >
-                <span className="text-sm font-black uppercase tracking-wider text-gray-200">{title}</span>
+                <span className="text-sm font-black font-bukra uppercase tracking-wider text-gray-200">{title}</span>
                 <ChevronRight className={`w-5 h-5 text-brand-blue transition-transform duration-500 ${isOpen ? 'rotate-90' : ''}`} />
             </button>
             <m.div
@@ -53,9 +53,9 @@ export const DataCard = ({ label, value, icon, color = 'brand-blue' }: { label: 
             <div className={`size-10 rounded-2xl bg-${color}/10 text-${color} flex items-center justify-center`}>
                 {icon || <Clock className="w-5 h-5" />}
             </div>
-            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors">{label}</span>
+            <span className="text-[10px] font-black font-bukra uppercase tracking-widest text-gray-500 group-hover:text-gray-300 transition-colors">{label}</span>
         </div>
-        <div className="text-xl font-black text-white italic tracking-tighter">{value}</div>
+        <div className="text-xl font-black font-bukra text-white italic tracking-tighter">{value}</div>
     </div>
 );
 
@@ -69,7 +69,7 @@ export const ActionButton = ({ label, icon, href, variant = 'primary', color = '
             href={href}
             target={isExternal ? "_blank" : undefined}
             rel={isExternal ? "noopener noreferrer" : undefined}
-            className={`flex items-center justify-center gap-3 px-8 py-4 rounded-[24px] font-black text-xs uppercase tracking-wider transition-all active:scale-95 ${variant === 'primary'
+            className={`flex items-center justify-center gap-3 px-8 py-4 rounded-[24px] font-black font-bukra text-xs uppercase tracking-wider transition-all active:scale-95 ${variant === 'primary'
                 ? `${colorClass} text-white shadow-xl ${shadowClass} hover:scale-105`
                 : 'bg-white/5 text-gray-300 border border-white/10 hover:bg-white/10'
                 }`}
@@ -82,7 +82,7 @@ export const ActionButton = ({ label, icon, href, variant = 'primary', color = '
 
 export const ContentSection = ({ title, children, color = 'brand-blue' }: { title: React.ReactNode, children: React.ReactNode, color?: string }) => (
     <section className="mb-16">
-        <h2 className="text-3xl font-black text-white italic uppercase tracking-tighter mb-8 flex items-center gap-4">
+        <h2 className="text-3xl font-black font-bukra text-white italic uppercase tracking-tighter mb-8 flex items-center gap-4">
             <div className={`h-8 w-1.5 ${color.startsWith('#') ? `bg-[${color}]` : `bg-${color}`} rounded-full`} />
             {title}
         </h2>

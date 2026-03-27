@@ -97,7 +97,7 @@ export function PrivateNoteModal({ selection, onClose, onSave }: PrivateNoteModa
                         <button
                             onClick={handleSave}
                             disabled={isSaving || !noteText.trim()}
-                            className="flex-1 px-4 py-2 bg-brand-yellow hover:bg-yellow-600 text-white font-bold rounded-xl transition-all shadow-md disabled:opacity-50"
+                            className="flex-1 px-4 py-2 bg-brand-yellow hover:opacity-90 text-white font-bold rounded-xl transition-all shadow-md disabled:opacity-50"
                         >
                             {isSaving ? 'Salvando...' : 'Salvar Nota'}
                         </button>

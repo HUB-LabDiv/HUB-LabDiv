@@ -300,7 +300,7 @@ export function AdminSubmissionLightbox({
                                 Formato: {item.format || item.mediaType}
                             </span>
                             {item.isFeatured && (
-                                <span className="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-xs font-bold tracking-wide uppercase">
+                                <span className="px-3 py-1 bg-brand-yellow/10 text-brand-yellow rounded-full text-xs font-bold tracking-wide uppercase border border-brand-yellow/20">
                                     Destaque
                                 </span>
                             )}
@@ -410,16 +410,16 @@ export function AdminSubmissionLightbox({
 
                         {/* AI Suggestions Section */}
                         {(item.aiSuggestedTags?.length || item.aiSuggestedAlt) && (
-                            <div className="p-4 bg-[#0055ff]/5 border border-[#0055ff]/20 rounded-2xl space-y-3">
-                                <h3 className="text-[10px] font-black text-[#0055ff] uppercase tracking-[0.2em] flex items-center gap-2">
-                                    <Sparkles className="w-4 h-4 text-[#0055ff]" />
+                            <div className="p-4 bg-brand-blue/5 border border-brand-blue/20 rounded-2xl space-y-3">
+                                <h3 className="text-[10px] font-black text-brand-blue uppercase tracking-[0.2em] flex items-center gap-2">
+                                    <Sparkles className="w-4 h-4 text-brand-blue" />
                                     Sugestões da Inteligência
                                 </h3>
 
                                 {item.aiSuggestedTags && item.aiSuggestedTags.length > 0 && (
                                     <div className="flex flex-wrap gap-1.5">
                                         {item.aiSuggestedTags.map((tag: string) => (
-                                            <span key={tag} className="px-2 py-0.5 bg-[#0055ff]/10 text-[#0055ff] border border-[#0055ff]/20 rounded-md text-[10px] font-medium border-dashed">
+                                        <span key={tag} className="px-2 py-0.5 bg-brand-blue/10 text-brand-blue border border-brand-blue/20 rounded-md text-[10px] font-medium border-dashed">
                                                 {tag}
                                             </span>
                                         ))}
@@ -427,7 +427,7 @@ export function AdminSubmissionLightbox({
                                 )}
 
                                 {item.aiSuggestedAlt && (
-                                    <p className="text-[11px] text-gray-500 italic leading-snug border-l-2 border-[#0055ff]/30 pl-2">
+                                    <p className="text-[11px] text-gray-500 italic leading-snug border-l-2 border-brand-blue/30 pl-2">
                                         Alt sugerido: "{item.aiSuggestedAlt}"
                                     </p>
                                 )}
@@ -441,7 +441,7 @@ export function AdminSubmissionLightbox({
                                         else window.location.reload();
                                         setIsActioning(false);
                                     }}
-                                    className="w-full py-2 bg-[#0055ff] text-white text-[10px] font-bold rounded-lg hover:bg-[#0055ff]/80 transition-all flex items-center justify-center gap-2"
+                                    className="w-full py-2 bg-brand-blue text-white text-[10px] font-bold rounded-lg hover:bg-brand-blue/80 transition-all flex items-center justify-center gap-2"
                                 >
                                     <CheckCircle className="w-4 h-4" />
                                     Aceitar e Mesclar Sugestões
@@ -472,7 +472,7 @@ export function AdminSubmissionLightbox({
                                     href={item.externalLink}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="w-full bg-brand-blue hover:bg-brand-darkBlue text-white font-semibold py-3 flex items-center justify-center gap-2 rounded-xl transition-colors shadow-lg hover:shadow-xl group"
+                                    className="w-full bg-brand-blue hover:bg-brand-blue/90 text-white font-semibold py-3 flex items-center justify-center gap-2 rounded-xl transition-colors shadow-lg hover:shadow-xl group"
                                 >
                                     <ExternalLink className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                                     Acessar PDF Completo

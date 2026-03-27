@@ -14,7 +14,7 @@ type Step = 'auth' | 'review';
 const PRESET_COLORS = [
     '#3B82F6', // Blue
     '#06B6D4', // Cyan/Teal
-    '#EAB308', // Yellow
+    '#FFCC00', // Yellow
     '#F97316', // Orange
     '#EF4444', // Red
 ];
@@ -177,7 +177,7 @@ export function JupiterSyncModal({ isOpen, onClose, onSuccess }: JupiterSyncModa
                                 <button
                                     type="submit"
                                     disabled={isLoading}
-                                    className="w-full group relative flex items-center justify-center gap-3 bg-brand-yellow hover:bg-yellow-600 text-[#121212] font-black uppercase tracking-widest text-[11px] py-5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand-yellow/20 disabled:opacity-50 mt-4"
+                                    className="w-full group relative flex items-center justify-center gap-3 bg-brand-yellow hover:opacity-90 text-[#121212] font-black uppercase tracking-widest text-[11px] py-5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand-yellow/20 disabled:opacity-50 mt-4"
                                 >
                                     {isLoading ? (
                                         <>
@@ -264,7 +264,7 @@ export function JupiterSyncModal({ isOpen, onClose, onSuccess }: JupiterSyncModa
                             <button
                                 onClick={handleFinalConfirm}
                                 disabled={isLoading}
-                                className="w-full group relative flex items-center justify-center gap-3 bg-brand-yellow hover:bg-yellow-600 text-[#121212] font-black uppercase tracking-widest text-[11px] py-5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand-yellow/20 disabled:opacity-50"
+                                className="w-full group relative flex items-center justify-center gap-3 bg-brand-yellow hover:opacity-90 text-[#121212] font-black uppercase tracking-widest text-[11px] py-5 rounded-2xl transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg shadow-brand-yellow/20 disabled:opacity-50"
                             >
                                 {isLoading ? (
                                     <>

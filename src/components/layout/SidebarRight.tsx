@@ -186,7 +186,7 @@ export const SidebarRight = ({ tags: propTags, authors: propAuthors }: SidebarRi
 
                 <button
                     onClick={handleNextPage}
-                    className="mt-4 text-xs font-bold text-yellow-700 dark:text-brand-yellow hover:underline flex items-center gap-1 group"
+                    className="mt-4 text-xs font-bold text-brand-yellow hover:underline flex items-center gap-1 group"
                 >
                     Explorar mais isótopos
                     <ChevronRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />

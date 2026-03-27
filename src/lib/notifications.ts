@@ -83,7 +83,7 @@ export async function sendAdminNotification(data: NotificationData) {
             emailTemplate = `
                 <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Perfil Editado</h2>
                 <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">O usuário <strong>${data.userName}</strong> atualizou suas informações de perfil e aguarda revisão.</p>
-                <div style="background-color: #f8fafc; border-left: 4px solid #FFB300; padding: 16px; margin: 24px 0; border-radius: 4px;">
+                <div style="background-color: #f8fafc; border-left: 4px solid #FFCC00; padding: 16px; margin: 24px 0; border-radius: 4px;">
                     <p style="margin: 0; font-size: 14px;"><strong style="color: #1a1a1a;">Usuário:</strong> <span style="color: #4a5568;">${data.userName}</span></p>
                 </div>`;
             break;
@@ -107,7 +107,7 @@ export async function sendAdminNotification(data: NotificationData) {
             emailTemplate = `
                 <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Nova Proposta de Desafio</h2>
                 <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">O pesquisador <strong>${data.userName}</strong> enviou uma nova proposta para a Arena.</p>
-                <div style="background-color: #f8fafc; border-left: 4px solid #FFD600; padding: 16px; margin: 24px 0; border-radius: 4px;">
+                <div style="background-color: #f8fafc; border-left: 4px solid #FFCC00; padding: 16px; margin: 24px 0; border-radius: 4px;">
                     <p style="margin: 0 0 8px 0; font-size: 14px;"><strong style="color: #1a1a1a;">Título:</strong> <span style="color: #4a5568;">${data.title}</span></p>
                     <p style="margin: 0; font-size: 14px;"><strong style="color: #1a1a1a;">Descrição:</strong> <span style="color: #4a5568;">${data.content}</span></p>
                 </div>`;
@@ -151,14 +151,14 @@ export async function sendAdminNotification(data: NotificationData) {
 
     const finalHtml = `
         <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; border: 1px solid #eaeaea; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
-            <div style="background-color: #004282; padding: 32px 24px; text-align: center;">
+            <div style="background-color: #0F4780; padding: 32px 24px; text-align: center;">
                 <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -0.5px;">LAB-DIV HUB</h1>
                 <p style="color: #8bb8e8; margin: 6px 0 0 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Instituto de Física | USP</p>
             </div>
             <div style="padding: 40px 32px; background-color: #ffffff;">
                 ${emailTemplate}
                 <div style="text-align: center; margin-top: 48px;">
-                    <a href="${dashboardLink}" style="display: inline-block; padding: 14px 32px; background-color: #004282; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; box-shadow: 0 4px 6px rgba(0,66,130,0.2);">
+                    <a href="${dashboardLink}" style="display: inline-block; padding: 14px 32px; background-color: #0F4780; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; box-shadow: 0 4px 6px rgba(0,66,130,0.2);">
                         Acessar Painel Central
                     </a>
                 </div>

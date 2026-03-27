@@ -36,11 +36,11 @@ export const CATEGORY_STYLES: Record<string, {
     },
     'Mentorados Lab-Div': {
         bg: 'bg-brand-yellow',
-        hover: 'hover:bg-yellow-500',
+        hover: 'hover:opacity-90',
         text: 'text-black',
         accent: 'card-accent-yellow',
-        filterActive: 'bg-brand-yellow hover:bg-yellow-500 border-transparent text-black shadow-md',
-        filterInactive: 'bg-white dark:bg-form-dark text-gray-600 dark:text-gray-300 hover:bg-brand-yellow/10 dark:hover:bg-brand-yellow/20 hover:text-brand-yellow-700 dark:hover:text-brand-yellow border-gray-200 dark:border-gray-700 hover:border-brand-yellow',
+        filterActive: 'bg-brand-yellow hover:opacity-90 border-transparent text-black shadow-md',
+        filterInactive: 'bg-white dark:bg-form-dark text-gray-600 dark:text-gray-300 hover:bg-brand-yellow/10 dark:hover:bg-brand-yellow/20 hover:text-yellow-700 dark:hover:text-brand-yellow border-gray-200 dark:border-gray-700 hover:border-brand-yellow',
         cardBadge: 'bg-brand-yellow/90 text-black shadow-brand-yellow/50'
     },
     'Laboratórios': {
@@ -63,11 +63,11 @@ export const CATEGORY_STYLES: Record<string, {
     },
     'Bastidores da Ciência': {
         bg: 'bg-brand-yellow',
-        hover: 'hover:bg-yellow-500',
+        hover: 'hover:opacity-90',
         text: 'text-black',
         accent: 'card-accent-yellow',
-        filterActive: 'bg-brand-yellow hover:bg-yellow-500 border-transparent text-black shadow-md',
-        filterInactive: 'bg-white dark:bg-form-dark text-gray-600 dark:text-gray-300 hover:bg-brand-yellow/10 dark:hover:bg-brand-yellow/20 hover:text-brand-yellow-700 dark:hover:text-brand-yellow border-gray-200 dark:border-gray-700 hover:border-brand-yellow',
+        filterActive: 'bg-brand-yellow hover:opacity-90 border-transparent text-black shadow-md',
+        filterInactive: 'bg-white dark:bg-form-dark text-gray-600 dark:text-gray-300 hover:bg-brand-yellow/10 dark:hover:bg-brand-yellow/20 hover:text-yellow-700 dark:hover:text-brand-yellow border-gray-200 dark:border-gray-700 hover:border-brand-yellow',
         cardBadge: 'bg-brand-yellow/90 text-black shadow-brand-yellow/50'
     },
     'Eventos': {
@@ -90,11 +90,11 @@ export const CATEGORY_STYLES: Record<string, {
     },
     'Uso Didático': {
         bg: 'bg-brand-yellow',
-        hover: 'hover:bg-yellow-500',
+        hover: 'hover:opacity-90',
         text: 'text-black',
         accent: 'card-accent-yellow',
-        filterActive: 'bg-brand-yellow hover:bg-yellow-500 border-transparent text-black shadow-md',
-        filterInactive: 'bg-white dark:bg-form-dark text-gray-600 dark:text-gray-300 hover:bg-brand-yellow/10 dark:hover:bg-brand-yellow/20 hover:text-brand-yellow-700 dark:hover:text-brand-yellow border-gray-200 dark:border-gray-700 hover:border-brand-yellow',
+        filterActive: 'bg-brand-yellow hover:opacity-90 border-transparent text-black shadow-md',
+        filterInactive: 'bg-white dark:bg-form-dark text-gray-600 dark:text-gray-300 hover:bg-brand-yellow/10 dark:hover:bg-brand-yellow/20 hover:text-yellow-700 dark:hover:text-brand-yellow border-gray-200 dark:border-gray-700 hover:border-brand-yellow',
         cardBadge: 'bg-brand-yellow/90 text-black shadow-brand-yellow/50'
     },
     'Convivência': {
@@ -108,11 +108,11 @@ export const CATEGORY_STYLES: Record<string, {
     },
     'Central de Anotações': {
         bg: 'bg-brand-yellow',
-        hover: 'hover:bg-yellow-500',
+        hover: 'hover:opacity-90',
         text: 'text-black',
         accent: 'card-accent-yellow',
-        filterActive: 'bg-brand-yellow hover:bg-yellow-500 border-transparent text-black shadow-md',
-        filterInactive: 'bg-white dark:bg-form-dark text-gray-600 dark:text-gray-300 hover:bg-brand-yellow/10 dark:hover:bg-brand-yellow/20 hover:text-brand-yellow-700 dark:hover:text-brand-yellow border-gray-200 dark:border-gray-700 hover:border-brand-yellow',
+        filterActive: 'bg-brand-yellow hover:opacity-90 border-transparent text-black shadow-md',
+        filterInactive: 'bg-white dark:bg-form-dark text-gray-600 dark:text-gray-300 hover:bg-brand-yellow/10 dark:hover:bg-brand-yellow/20 hover:text-yellow-700 dark:hover:text-brand-yellow border-gray-200 dark:border-gray-700 hover:border-brand-yellow',
         cardBadge: 'bg-brand-yellow/90 text-black shadow-brand-yellow/50'
     },
     'Mural do Deu Ruim': {

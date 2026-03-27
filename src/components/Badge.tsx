@@ -42,11 +42,11 @@ const badgeStyles = {
         gradient: 'from-green-500/20 to-transparent'
     },
     mestre: {
-        color: 'text-yellow-500',
-        bg: 'bg-yellow-500/10',
-        border: 'border-yellow-500/20',
+        color: 'text-brand-yellow',
+        bg: 'bg-brand-yellow/10',
+        border: 'border-brand-yellow/20',
         icon: <Award size={24} />,
-        gradient: 'from-yellow-500/20 to-transparent'
+        gradient: 'from-brand-yellow/20 to-transparent'
     }
 };
 

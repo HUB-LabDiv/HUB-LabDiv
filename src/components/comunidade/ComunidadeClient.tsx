@@ -116,7 +116,7 @@ export function ComunidadeClient({ initialFluxoData }: ComunidadeClientProps) {
                 <div className="flex p-1.5 bg-white/50 dark:bg-black/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl">
                     <button
                         onClick={() => handleTabChange('mural')}
-                        className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                        className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all ${
                             activeTab === 'mural' ? 'text-white' : 'text-gray-500 hover:text-brand-blue'
                         }`}
                     >
@@ -135,7 +135,7 @@ export function ComunidadeClient({ initialFluxoData }: ComunidadeClientProps) {
 
                     <button
                         onClick={() => handleTabChange('updates')}
-                        className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                        className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all ${
                             activeTab === 'updates' ? 'text-white' : 'text-gray-500 hover:text-brand-red'
                         }`}
                     >

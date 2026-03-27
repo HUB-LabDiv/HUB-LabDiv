@@ -28,7 +28,7 @@ export const ContextFeedbackCard = ({
             <div className="flex items-start justify-between gap-3">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center shrink-0">
-                        {icon || <Sparkles className="w-5 h-5 text-brand-yellow" />}
+                        {icon || <Sparkles className="w-5 h-5 text-brand-blue" />}
                     </div>
                     <div>
                         <div className="flex items-center gap-2 mb-1">
@@ -36,7 +36,7 @@ export const ContextFeedbackCard = ({
                                 {title}
                             </h3>
                             {betaTag && (
-                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-brand-yellow/10 text-brand-yellow">
+                                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-brand-blue/10 text-brand-blue">
                                     Versão Beta
                                 </span>
                             )}

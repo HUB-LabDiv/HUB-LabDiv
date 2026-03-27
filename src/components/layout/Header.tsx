@@ -16,6 +16,7 @@ import { Avatar } from '../ui/Avatar';
 import { UserMinimalDTO } from '@/types/navigation';
 import { useAuth } from '@/providers/AuthProvider';
 import { useTelemetry } from '@/hooks/useTelemetry';
+import { IFUSPLogo } from '../icons/IFUSPLogo';
 
 /**
  * V8.0 Header - Fort Knox Edition
@@ -98,7 +99,7 @@ export function Header() {
                     <Link href="/" className="flex items-center gap-3 group shrink-0" onClick={closeAll}>
                         <div className="flex items-center gap-3">
                             <div className="relative w-9 h-9 flex-shrink-0 group-hover:scale-110 transition-transform duration-500">
-                                <div className="absolute -inset-1 bg-gradient-to-r from-brand-red via-brand-blue to-brand-yellow rounded-lg blur opacity-0 group-hover:opacity-40 transition-opacity animate-premium-glow"></div>
+                                <div className="absolute -inset-1 bg-gradient-to-r from-brand-blue via-brand-red to-brand-blue rounded-lg blur opacity-0 group-hover:opacity-40 transition-opacity animate-premium-glow"></div>
                                 <div className="relative w-full h-full">
                                     <div className="absolute w-[60%] h-[75%] bg-brand-blue rounded-[2px] top-0 left-0 z-0 shadow-sm"></div>
                                     <div className="absolute w-[60%] h-[75%] bg-brand-red rounded-[2px] bottom-0 right-0 z-0 translate-y-1 shadow-sm"></div>
@@ -106,12 +107,13 @@ export function Header() {
                                 </div>
                             </div>
                             <div className="flex flex-col -space-y-1">
-                                <div className="text-xl font-sans font-bold tracking-tight flex items-center gap-1.5 leading-tight">
+                                <div className="text-xl font-bukra font-bold tracking-tight flex items-center gap-1.5 leading-tight">
                                     <span className="text-gray-900 dark:text-white">Hub</span>
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-brand-blue to-brand-yellow font-black">Lab-Div</span>
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-red to-brand-blue font-black">Lab-Div</span>
                                 </div>
                                 <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5">
-                                    <span className="text-[7px] sm:text-[9px] font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Instituto de Física</span>
+                                    <IFUSPLogo size={12} className="text-brand-blue dark:text-brand-blue-dark active:animate-pulse" />
+                                    <span className="text-[7px] sm:text-[9px] font-bukra font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Instituto de Física</span>
                                     <span className="text-[7px] sm:text-[8px] font-black px-1 sm:px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10 text-gray-400/80 shrink-0">v3.1.5</span>
                                 </div>
                             </div>
@@ -122,16 +124,17 @@ export function Header() {
                     <div className="flex-1 hidden md:flex items-center justify-center gap-1">
                         {[
                             { label: 'Comunidade', href: '/', color: 'brand-red' },
-                            { label: 'GCI', href: '/explorar', color: 'brand-yellow' },
-                            { label: 'LabDiv', href: '/sobre', color: 'brand-blue' },
+                            { label: 'GCIF', href: '/explorar', color: 'brand-blue-accent' },
+                            { label: 'LabDiv', href: '/sobre', color: 'brand-yellow' },
                             { label: 'Ferramentas', href: '/ferramentas', color: 'brand-red' },
-                            { label: 'Interações', href: '/interacao', color: 'brand-blue' },
+                            { label: 'Interações', href: '/interacao', color: 'brand-blue-accent' },
                         ].map((tab) => {
                             const isActive = pathname === tab.href || (tab.href !== '/' && pathname.startsWith(tab.href));
                             const colorMap: Record<string, { active: string; hover: string }> = {
                                 'brand-red': { active: 'text-brand-red bg-brand-red/10 border border-brand-red/20', hover: 'hover:text-brand-red hover:bg-brand-red/5' },
                                 'brand-yellow': { active: 'text-brand-yellow bg-brand-yellow/10 border border-brand-yellow/20', hover: 'hover:text-brand-yellow hover:bg-brand-yellow/5' },
                                 'brand-blue': { active: 'text-brand-blue bg-brand-blue/10 border border-brand-blue/20', hover: 'hover:text-brand-blue hover:bg-brand-blue/5' },
+                                'brand-blue-accent': { active: 'text-brand-blue-accent bg-brand-blue-accent/10 border border-brand-blue-accent/20', hover: 'hover:text-brand-blue-accent hover:bg-brand-blue-accent/5' },
                             };
                             const styles = colorMap[tab.color];
                             return (

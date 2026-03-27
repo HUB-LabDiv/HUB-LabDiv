@@ -76,14 +76,14 @@ export default function LeaderboardPage() {
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: index < 10 ? index * 0.05 : 0 }}
                     className={`flex items-center gap-4 p-4 rounded-2xl bg-white dark:bg-card-dark border ${isTop3
-                        ? 'border-[#0055ff]/30 shadow-[0_0_15px_rgba(0,85,255,0.1)]'
+                        ? 'border-brand-blue-accent/30 shadow-[0_0_15px_rgba(31,159,207,0.1)]'
                         : 'border-gray-100 dark:border-gray-800'
-                        } hover:border-[#0055ff] transition-all group`}
+                        } hover:border-brand-blue-accent transition-all group`}
                 >
                     {/* Rank */}
                     <div className="w-8 shrink-0 flex justify-center items-center">
                         {item.rank === 1 ? (
-                            <Trophy className="text-yellow-400 w-5 h-5" />
+                            <Trophy className="text-brand-yellow w-5 h-5" />
                         ) : item.rank === 2 ? (
                             <Medal className="text-gray-300 w-5 h-5" />
                         ) : item.rank === 3 ? (
@@ -103,7 +103,7 @@ export default function LeaderboardPage() {
                             </div>
                         )}
                         {isTop3 && (
-                            <div className="absolute -top-1 -right-1 bg-[#0055ff] w-4 h-4 rounded-full flex items-center justify-center border-2 border-white dark:border-card-dark">
+                            <div className="absolute -top-1 -right-1 bg-brand-blue-accent w-4 h-4 rounded-full flex items-center justify-center border-2 border-white dark:border-card-dark">
                                 <Star className="text-white w-2 h-2" fill="currentColor" />
                             </div>
                         )}
@@ -111,7 +111,7 @@ export default function LeaderboardPage() {
 
                     {/* Info */}
                     <div className="flex-1 min-w-0 px-2 lg:px-4">
-                        <h3 className="font-bold text-xs lg:text-sm truncate dark:text-gray-100 group-hover:text-[#0055ff] transition-colors line-clamp-1 overflow-hidden">
+                        <h3 className="font-bold text-xs lg:text-sm truncate dark:text-gray-100 group-hover:text-brand-blue-accent transition-colors line-clamp-1 overflow-hidden">
                             {item.full_name || 'Explorador Anônimo'}
                         </h3>
                         <div className="flex items-center gap-2 mt-0.5">
@@ -120,7 +120,7 @@ export default function LeaderboardPage() {
                             </span>
                             {/* Badges System (V2.7) */}
                             {item.xp > 500 && (
-                                <div className="flex items-center gap-1 text-[10px] font-bold text-yellow-500 uppercase tracking-tight">
+                                <div className="flex items-center gap-1 text-[10px] font-bold text-brand-yellow uppercase tracking-tight">
                                     <Shield size={10} fill="currentColor" />
                                     <span>Pioneiro</span>
                                 </div>
@@ -132,7 +132,7 @@ export default function LeaderboardPage() {
                     <div className="text-right">
                         <div className="flex items-center gap-1 justify-end">
                             <span className="text-lg font-black text-gray-900 dark:text-white">{item.xp}</span>
-                            <span className="text-[10px] font-bold text-[#0055ff]">XP</span>
+                            <span className="text-[10px] font-bold text-brand-blue-accent">XP</span>
                         </div>
                         <div className="flex items-center gap-0.5 justify-end text-[10px] text-green-500 font-bold">
                             <ArrowUp size={10} />
@@ -155,13 +155,13 @@ export default function LeaderboardPage() {
                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="inline-flex items-center gap-2 px-4 py-1.5 bg-[#0055ff]/10 text-[#0055ff] rounded-full text-xs font-bold mb-4 border border-[#0055ff]/20"
+                            className="inline-flex items-center gap-2 px-4 py-1.5 bg-brand-blue-accent/10 text-brand-blue-accent rounded-full text-xs font-bold mb-4 border border-brand-blue-accent/20"
                         >
                             <Trophy size={14} />
                             COMUNIDADE IFUSP
                         </motion.div>
                         <h1 className="text-4xl md:text-5xl font-black mb-4 dark:text-white">
-                            Elite do <span className="text-[#0055ff]">Hub Científico</span>
+                            Elite do <span className="text-brand-blue-accent">Hub Científico</span>
                         </h1>
                         <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-sm leading-relaxed">
                             Os maiores contribuidores do acervo. Cada submissão e interação fortalece o legado científico do Instituto.
@@ -172,7 +172,7 @@ export default function LeaderboardPage() {
                     <div className="bg-white dark:bg-card-dark rounded-3xl border border-gray-100 dark:border-gray-800 overflow-hidden shadow-xl lg:flex h-[600px]">
 
                         {/* Sidebar Stats (Optional/Visual) */}
-                        <div className="hidden lg:flex lg:w-1/3 bg-[#0055ff] p-8 flex-col justify-between relative overflow-hidden">
+                        <div className="hidden lg:flex lg:w-1/3 bg-brand-blue p-8 flex-col justify-between relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl animate-pulse" />
                             <div>
                                 <h2 className="text-2xl font-black text-white mb-2">Seu Ranking</h2>
@@ -192,7 +192,7 @@ export default function LeaderboardPage() {
                             <div className="mt-auto">
                                 <div className="flex -space-x-2">
                                     {entries.slice(0, 5).map((e, i) => (
-                                        <div key={i} className="w-8 h-8 rounded-full border-2 border-[#0055ff] bg-gray-200 overflow-hidden">
+                                        <div key={i} className="w-8 h-8 rounded-full border-2 border-brand-blue bg-gray-200 overflow-hidden">
                                             {e.avatar_url && <img src={e.avatar_url} className="w-full h-full object-cover" />}
                                         </div>
                                     ))}
@@ -220,8 +220,8 @@ export default function LeaderboardPage() {
                                     </List>
                                 ) : entries.length === 0 && !isLoading ? (
                                     <div className="h-full flex flex-col items-center justify-center p-12 text-center">
-                                        <div className="size-20 bg-[#0055ff]/10 rounded-full flex items-center justify-center mb-6 border border-[#0055ff]/20 animate-pulse">
-                                            <Trophy className="text-[#0055ff] size-10" />
+                                        <div className="size-20 bg-brand-blue-accent/10 rounded-full flex items-center justify-center mb-6 border border-brand-blue-accent/20 animate-pulse">
+                                            <Trophy className="text-brand-blue-accent size-10" />
                                         </div>
                                         <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2 uppercase tracking-tighter">
                                             Arena Vazia

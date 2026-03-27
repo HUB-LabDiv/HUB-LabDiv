@@ -1,21 +1,22 @@
 import type { Metadata } from "next";
-import { Inter, Space_Grotesk } from "next/font/google";
+import { Open_Sans, Outfit } from "next/font/google";
 import localFont from "next/font/local";
 import { cookies } from "next/headers";
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
 import Script from "next/script";
 
-const inter = Inter({
-  variable: "--font-inter",
+const openSans = Open_Sans({
+  variable: "--font-open-sans",
   subsets: ["latin"],
   display: 'swap',
 });
 
-const spaceGrotesk = Space_Grotesk({
-  variable: "--font-space-grotesk",
+const bukraFallback = Outfit({
+  variable: "--font-bukra",
   subsets: ["latin"],
   display: 'swap',
+  weight: ['400', '700', '900'],
 });
 
 const materialSymbols = localFont({
@@ -132,7 +133,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${inter.variable} ${spaceGrotesk.variable} ${materialSymbols.variable} font-sans selection:bg-brand-yellow selection:text-brand-blue bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 transition-colors duration-200 antialiased`}
+        className={`${openSans.variable} ${bukraFallback.variable} ${materialSymbols.variable} font-open-sans selection:bg-brand-yellow selection:text-brand-blue bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 transition-colors duration-200 antialiased`}
         suppressHydrationWarning
       >
         <LazyMotion features={domAnimation}>

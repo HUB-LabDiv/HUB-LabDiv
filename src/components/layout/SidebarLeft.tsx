@@ -31,8 +31,8 @@ import { ColisorIcon } from '../icons/ColisorIcon';
 
 const mainLinks = [
     { name: 'Comunidade', href: '/', icon: <span className="material-symbols-outlined text-2xl">groups</span>, color: 'brand-red' },
-    { name: 'O Grande Colisor do IF', href: '/explorar', icon: <ColisorIcon className="w-6 h-6" />, color: 'brand-yellow' },
-    { name: 'LabDiv', href: '/sobre', icon: <span className="material-symbols-outlined text-2xl">info</span>, color: 'brand-blue' },
+    { name: 'GCIF', href: '/explorar', icon: <ColisorIcon className="w-6 h-6" />, color: 'brand-blue' },
+    { name: 'LabDiv', href: '/sobre', icon: <span className="material-symbols-outlined text-2xl">info</span>, color: 'brand-yellow' },
 ];
 
 const categoryLinks = [

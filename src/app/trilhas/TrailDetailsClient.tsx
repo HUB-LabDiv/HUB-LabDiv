@@ -11,7 +11,7 @@ import { toast } from 'react-hot-toast';
 const AXIS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
     bach: { label: 'Bacharelado', color: '#00A3FF', icon: Atom },
     med: { label: 'Física Médica', color: '#FF4B4B', icon: Microscope },
-    lic: { label: 'Licenciatura', color: '#FFD700', icon: Binary },
+    lic: { label: 'Licenciatura', color: '#FFCC00', icon: Binary },
     comum: { label: 'Núcleo Comum', color: '#FFFFFF', icon: Zap },
 };
 
@@ -249,7 +249,7 @@ export default function TrailDetailsClient({
                             <div className="flex items-center gap-3 pt-2">
                                 {isCompletedEquivalent ? (
                                     <div
-                                        className="px-4 py-2 bg-blue-500/20 border border-blue-500/50 text-blue-400 rounded-lg font-black font-mono text-[10px] uppercase transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(59,130,246,0.2)]"
+                                        className="px-4 py-2 bg-brand-blue/20 border border-brand-blue/50 text-brand-blue-accent rounded-lg font-black font-mono text-[10px] uppercase transition-all flex items-center gap-2 shadow-[0_0_20px_rgba(15,71,128,0.2)]"
                                     >
                                         <Link2 size={14} />
                                         [EQUIVALENTE ✔]
@@ -277,8 +277,8 @@ export default function TrailDetailsClient({
                                             disabled={isUpdatingStatus}
                                             onClick={() => toggleStatus('cursando')}
                                             className={`px-4 py-2 border rounded-lg font-black font-mono text-[10px] uppercase transition-all flex items-center gap-2 ${status === 'cursando'
-                                                ? 'bg-[#00A3FF]/20 border-[#00A3FF]/50 text-[#00A3FF] shadow-[0_0_20px_rgba(0,163,255,0.2)]'
-                                                : 'bg-[#1E1E1E] text-gray-400 border border-gray-800 hover:border-[#00A3FF]/50 hover:text-white'
+                                                ? 'bg-brand-blue-accent/20 border-brand-blue-accent/50 text-brand-blue-accent shadow-[0_0_20px_rgba(31,159,207,0.2)]'
+                                                : 'bg-[#1E1E1E] text-gray-400 border border-gray-800 hover:border-brand-blue-accent/50 hover:text-white'
                                                 }`}
                                         >
                                             <Play size={14} fill={status === 'cursando' ? 'currentColor' : 'none'} />
@@ -293,9 +293,9 @@ export default function TrailDetailsClient({
                             </h1>
                             {trail.description && (
                                 <div className="relative group">
-                                    <div className="absolute -inset-1 bg-gradient-to-r from-[#00A3FF]/10 to-transparent rounded-2xl blur opacity-25 group-hover:opacity-50 transition-all"></div>
+                                    <div className="absolute -inset-1 bg-gradient-to-r from-brand-blue-accent/10 to-transparent rounded-2xl blur opacity-25 group-hover:opacity-50 transition-all"></div>
                                     <div className="relative p-6 bg-[#1E1E1E]/50 border border-gray-800 rounded-2xl backdrop-blur-sm">
-                                        <h3 className="font-mono text-[9px] text-[#00A3FF] uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <h3 className="font-mono text-[9px] text-brand-blue-accent uppercase tracking-widest mb-3 flex items-center gap-2">
                                             <Info size={12} /> [EMENTA_DA_DISCIPLINA]
                                         </h3>
                                         <p className="text-gray-300 font-mono text-sm leading-relaxed italic">
@@ -315,10 +315,10 @@ export default function TrailDetailsClient({
                                         <Link
                                             key={eq.id}
                                             href={`/trilhas/${eq.id}`}
-                                            className="px-3 py-1.5 bg-[#1E1E1E] border border-gray-800 rounded-full font-mono text-[10px] text-gray-400 hover:text-[#00A3FF] hover:border-[#00A3FF]/40 transition-all flex items-center gap-2 group/chip"
+                                            className="px-3 py-1.5 bg-[#1E1E1E] border border-gray-800 rounded-full font-mono text-[10px] text-gray-400 hover:text-brand-blue-accent hover:border-brand-blue-accent/40 transition-all flex items-center gap-2 group/chip"
                                         >
                                             <span className="font-bold">{eq.course_code}</span>
-                                            <span className="w-1 h-1 rounded-full bg-gray-700 group-hover/chip:bg-[#00A3FF]"></span>
+                                            <span className="w-1 h-1 rounded-full bg-gray-700 group-hover/chip:bg-brand-blue-accent"></span>
                                             <span className="truncate max-w-[120px]">{eq.title}</span>
                                         </Link>
                                     ))}
@@ -573,7 +573,7 @@ export default function TrailDetailsClient({
                                 </div>
                                 <Link
                                     href="/enviar"
-                                    className="px-6 py-3 bg-[#00A3FF] hover:bg-[#0082CC] text-white font-black font-mono text-[10px] uppercase rounded-xl transition-all shadow-[0_0_20px_rgba(0,163,255,0.3)] hover:scale-105 active:scale-95 text-center"
+                                    className="px-6 py-3 bg-brand-blue-accent hover:bg-brand-blue text-white font-black font-mono text-[10px] uppercase rounded-xl transition-all shadow-[0_0_20px_rgba(31,159,207,0.3)] hover:scale-105 active:scale-95 text-center"
                                 >
                                     Enviar Material
                                 </Link>
@@ -642,7 +642,7 @@ export default function TrailDetailsClient({
                                     </div>
                                     <Link
                                         href="/enviar"
-                                        className="mt-4 flex items-center gap-2 text-[#00A3FF] font-mono text-[10px] font-bold hover:underline"
+                                        className="mt-4 flex items-center gap-2 text-brand-blue-accent font-mono text-[10px] font-bold hover:underline"
                                     >
                                         INICIAR_TRANSMISSÃO_DE_DADOS <Zap size={10} />
                                     </Link>
@@ -664,7 +664,7 @@ export default function TrailDetailsClient({
                                             <span className="text-sm font-bold dark:text-white">
                                                 {loadingMore ? 'Processando...' : 'Carregar Mais Conteúdo'}
                                             </span>
-                                            {!loadingMore && <Play size={14} className="text-[#00A3FF] group-hover:translate-x-1 transition-transform" />}
+                                            {!loadingMore && <Play size={14} className="text-brand-blue-accent group-hover:translate-x-1 transition-transform" />}
                                         </div>
                                     </button>
                                 </div>

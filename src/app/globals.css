@@ -98,15 +98,20 @@ body::before {
 @plugin "@tailwindcss/typography";
 
 @theme {
-  --color-primary: #3B82F6;
-  --color-secondary: #121212;
-  --color-brand-yellow: #FFB300;
-  --color-brand-red: #E63946;
-  --color-brand-blue: #3B82F6;
-  --color-brand-blue-dark: #60A5FA;
-  /* Luminous blue for Dark Mode contrast */
+  --color-primary: #0F4780;
+  --color-secondary: #2C2B2D;
+  --color-brand-yellow: #FFCC00;
+  --color-brand-red: #F14343;
+  --color-brand-blue: #0F4780;
+  --color-brand-blue-dark: #0F4780;
+  --color-brand-blue-ifusp: #0F6688;
+  --color-brand-blue-accent: #1F9FCF;
+  --color-brand-grey: #2C2B2D;
+  
+  --font-bukra: var(--font-bukra);
+  --font-open-sans: var(--font-open-sans);
+  
   --color-card-dark: #1E1E1E;
-  /* Surface elevation */
   --color-background-light: #F8FAFC;
   --color-background-dark: #0a0a0a;
   --color-background-subtle: #F1F5F9;
@@ -155,7 +160,7 @@ body::before {
   }
 
   .card-gradient-border:hover {
-    border-color: var(--color-brand-yellow);
+    border-color: var(--color-brand-blue);
     box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   }
 
@@ -170,7 +175,7 @@ body::before {
 
   /* Premium Glassmorphism V8.0 */
   .glass-surface {
-    @apply bg-white/70 dark:bg-[#0B1E3B]/70 backdrop-blur-xl border border-white/20 dark:border-brand-blue/20 shadow-2xl;
+    @apply bg-white/70 dark:bg-[#0F4780]/80 backdrop-blur-xl border border-white/20 dark:border-brand-blue/20 shadow-2xl;
     isolation: isolate;
   }
 
@@ -276,7 +281,7 @@ body::before {
 
     0%,
     100% {
-      filter: drop-shadow(0 0 5px rgba(255, 179, 0, 0.3));
+      filter: drop-shadow(0 0 5px rgba(255, 204, 0, 0.3));
     }
 
     50% {
@@ -306,11 +311,11 @@ body::before {
 
   .shimmer-text {
     background: linear-gradient(90deg,
-        #FFB300 0%,
-        #E63946 25%,
-        #FFB300 50%,
-        #E63946 75%,
-        #FFB300 100%);
+        #FFCC00 0%,
+        #F14343 25%,
+        #FFCC00 50%,
+        #F14343 75%,
+        #FFCC00 100%);
     background-size: 200% auto;
     -webkit-background-clip: text;
     background-clip: text;
@@ -334,7 +339,7 @@ body::before {
   :root {
     --shimmer-duration: 1.5s;
     --shimmer-base: #1E1E1E;
-    --shimmer-highlight: rgba(255, 179, 0, 0.12);
+    --shimmer-highlight: rgba(255, 204, 0, 0.12);
   }
 
   @keyframes shimmer-labdiv {
@@ -394,11 +399,11 @@ body::before {
 
   /* 🏆 Golden Frame: Padrão Ouro visual identity */
   .golden-frame {
-    border: 2px solid #FFB300 !important;
+    border: 2px solid #0F4780 !important;
     box-shadow:
-      0 0 12px 2px rgba(255, 179, 0, 0.5),
-      0 0 30px 4px rgba(255, 179, 0, 0.2),
-      inset 0 0 8px 0 rgba(255, 179, 0, 0.1);
+      0 0 12px 2px rgba(15, 71, 128, 0.5),
+      0 0 30px 4px rgba(15, 71, 128, 0.2),
+      inset 0 0 8px 0 rgba(15, 71, 128, 0.1);
   }
 
   @media (min-width: 768px) {
@@ -410,15 +415,15 @@ body::before {
   @keyframes golden-pulse {
     0%, 100% {
       box-shadow:
-        0 0 12px 2px rgba(255, 179, 0, 0.5),
-        0 0 30px 4px rgba(255, 179, 0, 0.2),
-        inset 0 0 8px 0 rgba(255, 179, 0, 0.1);
+        0 0 12px 2px rgba(15, 71, 128, 0.5),
+        0 0 30px 4px rgba(15, 71, 128, 0.2),
+        inset 0 0 8px 0 rgba(15, 71, 128, 0.1);
     }
     50% {
       box-shadow:
-        0 0 20px 4px rgba(255, 179, 0, 0.7),
-        0 0 45px 8px rgba(255, 179, 0, 0.3),
-        inset 0 0 12px 0 rgba(255, 179, 0, 0.15);
+        0 0 20px 4px rgba(15, 71, 128, 0.7),
+        0 0 45px 8px rgba(15, 71, 128, 0.3),
+        inset 0 0 12px 0 rgba(15, 71, 128, 0.15);
     }
   }
 

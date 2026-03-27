@@ -8,9 +8,10 @@ import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 interface FeaturedCarouselProps {
     items: MediaCardProps[];
     highlightQuery?: string;
+    hideTitle?: boolean;
 }
 
-export function FeaturedCarousel({ items, highlightQuery = '' }: FeaturedCarouselProps) {
+export function FeaturedCarousel({ items, highlightQuery = '', hideTitle = false }: FeaturedCarouselProps) {
     const scrollRef = useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(true);
@@ -51,36 +52,59 @@ export function FeaturedCarousel({ items, highlightQuery = '' }: FeaturedCarouse
                 <div className="absolute top-0 right-1/4 size-96 bg-brand-red/5 rounded-full blur-[60px] animate-blob-bounce" style={{ animationDelay: '2s' }}></div>
             </div>
 
-            <div className="relative z-10 flex items-center justify-between mb-6 px-2">
-                <div className="flex items-center gap-3">
-                    <div className="relative">
-                        <div className="absolute -inset-1 bg-gradient-to-r from-brand-red to-brand-yellow rounded-full blur opacity-25 animate-premium-glow"></div>
-                        <Star className="relative text-brand-red dark:text-brand-yellow w-6 h-6 animate-pulse fill-current" />
+            {!hideTitle && (
+                <div className="relative z-10 flex items-center justify-between mb-6 px-2">
+                    <div className="flex items-center gap-3">
+                        <div className="relative">
+                            <div className="absolute -inset-1 bg-gradient-to-r from-brand-red to-brand-yellow rounded-full blur opacity-25 animate-premium-glow"></div>
+                            <Star className="relative text-brand-red dark:text-brand-yellow w-6 h-6 animate-pulse fill-current" />
+                        </div>
+                        <h2 className="text-xl font-black uppercase tracking-[0.2em] shimmer-text">
+                            Destacados pelo Lab-Div
+                        </h2>
                     </div>
-                    <h2 className="text-xl font-black uppercase tracking-[0.2em] shimmer-text">
-                        Destacados pelo Lab-Div
-                    </h2>
-                </div>
 
-                <div className="flex gap-2">
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => scroll('left')}
+                            aria-label="Rolar para a esquerda"
+                            disabled={!canScrollLeft}
+                            className="p-2 rounded-full bg-white dark:bg-card-dark border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md hover:border-brand-blue transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-gray-100 dark:disabled:hover:border-gray-800"
+                        >
+                            <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        </button>
+                        <button
+                            onClick={() => scroll('right')}
+                            aria-label="Rolar para a direita"
+                            disabled={!canScrollRight}
+                            className="p-2 rounded-full bg-white dark:bg-card-dark border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md hover:border-brand-blue transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-gray-100 dark:disabled:hover:border-gray-800"
+                        >
+                            <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {hideTitle && (
+                <div className="absolute top-0 right-0 z-20 flex gap-2 -mt-4 mr-2">
                     <button
                         onClick={() => scroll('left')}
                         aria-label="Rolar para a esquerda"
                         disabled={!canScrollLeft}
-                        className="p-2 rounded-full bg-white dark:bg-card-dark border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md hover:border-brand-blue transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-gray-100 dark:disabled:hover:border-gray-800"
+                        className="p-2 rounded-full bg-white/50 dark:bg-white/5 backdrop-blur-md border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md hover:border-brand-blue transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                        <ChevronLeft className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <ChevronLeft className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                     </button>
                     <button
                         onClick={() => scroll('right')}
                         aria-label="Rolar para a direita"
                         disabled={!canScrollRight}
-                        className="p-2 rounded-full bg-white dark:bg-card-dark border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md hover:border-brand-blue transition-all disabled:opacity-30 disabled:cursor-not-allowed disabled:hover:border-gray-100 dark:disabled:hover:border-gray-800"
+                        className="p-2 rounded-full bg-white/50 dark:bg-white/5 backdrop-blur-md border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md hover:border-brand-blue transition-all disabled:opacity-30 disabled:cursor-not-allowed"
                     >
-                        <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                        <ChevronRight className="w-4 h-4 text-gray-600 dark:text-gray-400" />
                     </button>
                 </div>
-            </div>
+            )}
 
             <div
                 ref={scrollRef}

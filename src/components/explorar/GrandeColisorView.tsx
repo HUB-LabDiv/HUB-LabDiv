@@ -49,7 +49,7 @@ const influencers = [
         role: '@a_pleiade',
         bio: 'Astronomia, astrofísica e inspiração científica no Instagram.',
         imagePlaceholder: 'AP',
-        color: 'brand-yellow',
+        color: 'brand-blue',
         platform: 'instagram',
         link: 'https://www.instagram.com/a_pleiade'
     },
@@ -86,10 +86,10 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
 
     const navItems = [
         { id: 'oportunidades', label: 'Oportunidades', href: '#oportunidades', icon: 'campaign', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
-        { id: 'iniciativas', label: 'Iniciativas', href: '#iniciativas', icon: 'groups', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/20', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
-        { id: 'espaços', label: 'Espaços', href: '#espaços', icon: 'map', activeClass: 'text-brand-yellow bg-brand-yellow/10 border-brand-yellow/20', hoverClass: 'hover:text-brand-yellow hover:bg-brand-yellow/5' },
-        { id: 'influenciadores', label: 'Influenciadores', href: '#influenciadores', icon: 'record_voice_over', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
-        { id: 'wiki-hub-section', label: 'Wiki', href: '#wiki-hub-section', icon: 'hub', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/20', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
+        { id: 'iniciativas', label: 'Iniciativas', href: '#iniciativas', icon: 'groups', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
+        { id: 'espaços', label: 'Espaços', href: '#espaços', icon: 'map', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
+        { id: 'influenciadores', label: 'Influenciadores', href: '#influenciadores', icon: 'record_voice_over', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
+        { id: 'wiki-hub-section', label: 'Wiki', href: '#wiki-hub-section', icon: 'hub', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'teste-radiacao', label: 'Teste', href: '#teste-radiacao', icon: 'quiz', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
     ];
 
@@ -134,7 +134,7 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
                     </motion.div>
                     <div>
                         <h1 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter mb-4">
-                            Grande <span className="text-brand-blue">Colisor</span> do IF
+                            Grande <span className="text-brand-blue-accent">Colisor</span> do IF (GCIF)
                         </h1>
                         <p className="text-gray-500 max-w-2xl text-lg font-medium leading-relaxed">
                             O hub unificado de conhecimento, iniciativas e oportunidades da Física USP. Onde a radiação da criatividade encontra a precisão da pesquisa.
@@ -246,19 +246,19 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
                             <div className="size-20 bg-white rounded-3xl p-4 mb-8">
                                 <img src="/labdiv-logo.png" alt="Lab-Div" className="w-full h-full object-contain" />
                             </div>
-                            <h3 className="text-2xl font-black italic uppercase mb-4 text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-brand-blue to-brand-yellow">Lab-Div</h3>
+                            <h3 className="text-2xl font-black italic uppercase mb-4 text-brand-blue">Lab-Div</h3>
                             <p className="text-gray-400 font-medium leading-relaxed mb-8">Comunicação científica inspirada no MIT. Tutoria entre pares, escrita e design.</p>
                             <Link href="/arquivo-labdiv" className="mt-auto px-8 py-4 bg-brand-blue text-white rounded-2xl font-black uppercase tracking-widest text-[10px] text-center group-hover:scale-105 transition-transform">Explorar Acervo</Link>
                         </div>
 
                         {/* Boletim Supernova */}
                         <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-[#1E1E1E] rounded-[40px] p-10 border border-white/5 flex flex-col group">
-                            <div className="size-16 bg-brand-yellow/10 rounded-2xl flex items-center justify-center text-brand-yellow mb-8">
+                            <div className="size-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-8">
                                 <span className="material-symbols-outlined text-4xl">newspaper</span>
                             </div>
                             <h3 className="text-2xl font-black italic uppercase mb-4">Supernova</h3>
                             <p className="text-gray-400 font-medium leading-relaxed mb-8">O boletim crítico e cultural do CEFISMA. A voz ativa da graduação.</p>
-                            <a href="https://cefisma.com.br" target="_blank" className="mt-auto px-8 py-4 border border-brand-yellow/20 text-brand-yellow rounded-2xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-yellow/10 transition-colors">Ler Supernova</a>
+                            <a href="https://cefisma.com.br" target="_blank" className="mt-auto px-8 py-4 border border-brand-blue/20 text-brand-blue rounded-2xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-blue/10 transition-colors">Ler Supernova</a>
                         </div>
 
                         {/* BIFUSP */}
@@ -279,16 +279,16 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
                 <div className="space-y-20">
                     <NetflixFeed 
                         title="Espaços do IF" 
-                        icon={<div className="p-2 bg-brand-yellow/10 rounded-xl text-brand-yellow"><Info className="w-5 h-5" /></div>}
+                        icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><Info className="w-5 h-5" /></div>}
                     >
                         {/* Hackerspace */}
                         <div className="snap-center shrink-0 w-[300px] bg-[#1E1E1E] rounded-[40px] p-8 border border-white/5 flex flex-col group hover:border-brand-yellow/30 transition-all">
-                            <div className="size-16 bg-brand-yellow/10 rounded-2xl flex items-center justify-center text-brand-yellow mb-6 group-hover:scale-110 transition-transform">
+                            <div className="size-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-6 group-hover:scale-110 transition-transform">
                                 <span className="material-symbols-outlined text-4xl">memory</span>
                             </div>
                             <h3 className="text-xl font-black uppercase mb-3 text-gray-200">Hackerspace</h3>
                             <p className="text-sm text-gray-500 leading-relaxed mb-8 font-medium">Cultura maker no IF. Arduinos, 3D e colaboração radical.</p>
-                            <a href="https://hackerspace.if.usp.br" target="_blank" className="mt-auto text-brand-yellow font-black uppercase tracking-tighter flex items-center gap-2 hover:underline">Visitar <ArrowRight className="w-4 h-4" /></a>
+                            <a href="https://hackerspace.if.usp.br" target="_blank" className="mt-auto text-brand-blue font-black uppercase tracking-tighter flex items-center gap-2 hover:underline font-bold">Visitar <ArrowRight className="w-4 h-4" /></a>
                         </div>
 
                         {/* DigitalLab - Espaço no Inova */}

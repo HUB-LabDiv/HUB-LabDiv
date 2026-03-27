@@ -82,9 +82,9 @@ export const Avatar = ({ src, name = 'Usuário', size = 'md', className = '', cu
     const ringStyle = isLabDiv ? {
         background: `conic-gradient(
             from 270deg,
-            #3B82F6 0deg,
-            #FFB300 90deg,
-            #E63946 180deg,
+            #0F4780 0deg,
+            #FFCC00 90deg,
+            #F14343 180deg,
             ${tier?.hex || '#6B7280'} 180deg 360deg
         )`
     } : tier ? {

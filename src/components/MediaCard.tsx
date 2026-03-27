@@ -237,7 +237,7 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                             transition={{ duration: 0.4, type: 'spring', bounce: 0.6 }}
                             className="absolute inset-0 z-[100] flex items-center justify-center pointer-events-none drop-shadow-2xl"
                         >
-                            <Atom className="w-24 h-24 text-white fill-brand-blue/90 animate-pulse-fast drop-shadow-[0_0_15px_rgba(0,119,255,0.8)]" />
+                            <Atom className="w-24 h-24 text-white fill-brand-blue/90 animate-pulse-fast drop-shadow-[0_0_15px_rgba(31,159,207,0.8)]" />
                         </m.div>
                     )}
                 </AnimatePresence>
@@ -315,7 +315,7 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                                 <div key={idx} className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentImageIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/50'}`} />
                             ))}
                         </div>
-                        <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 bg-blue-700 text-white text-[10px] font-black uppercase tracking-wider rounded shadow-lg"><Layers className="w-3 h-3" /> Galeria</div>
+                        <div className="absolute top-3 left-3 flex items-center gap-1 px-2 py-1 bg-brand-blue text-white text-[10px] font-black uppercase tracking-wider rounded shadow-lg"><Layers className="w-3 h-3" /> Galeria</div>
                     </>
                 )}
 
@@ -386,7 +386,7 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                         </span>
                     )}
                     {post.isGoldenStandard && (
-                        <span className="relative overflow-hidden px-2.5 py-1 bg-gradient-to-r from-brand-yellow via-yellow-400 to-brand-yellow text-gray-900 text-[10px] font-black rounded-lg uppercase tracking-wider shadow-[0_0_15px_rgba(234,179,8,0.5)] animate-metallic-shine">
+                        <span className="relative overflow-hidden px-2.5 py-1 bg-gradient-to-r from-brand-yellow via-brand-yellow/80 to-brand-yellow text-gray-900 text-[10px] font-black rounded-lg uppercase tracking-wider shadow-[0_0_15px_rgba(255,204,0,0.5)] animate-metallic-shine">
                             <span className="relative z-10 flex items-center gap-1">
                                 <Star className="w-3 h-3 fill-current" />
                                 Padrão Ouro
@@ -399,7 +399,7 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                         </span>
                     )}
                     {post.isHistorical && (
-                        <span className="relative overflow-hidden px-2.5 py-1 bg-gradient-to-r from-brand-yellow to-yellow-600 text-white text-[10px] font-black rounded-lg uppercase tracking-wider shadow-[0_0_10px_rgba(234,179,8,0.3)] animate-premium-glow">
+                        <span className="relative overflow-hidden px-2.5 py-1 bg-gradient-to-r from-brand-yellow to-brand-yellow/70 text-white text-[10px] font-black rounded-lg uppercase tracking-wider shadow-[0_0_10px_rgba(255,204,0,0.3)] animate-premium-glow">
                             <span className="relative z-10">Marco Histórico</span>
                         </span>
                     )}
@@ -421,11 +421,11 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                             </React.Fragment>
                         );
                     })}
-                    <span className="flex items-center gap-1 px-2 py-0.5 bg-brand-yellow/10 text-yellow-700 dark:text-brand-yellow text-[10px] font-black rounded-md uppercase tracking-wide border border-brand-yellow/20">
+                    <span className="flex items-center gap-1 px-2 py-0.5 bg-brand-yellow/10 text-brand-grey dark:text-brand-yellow text-[10px] font-black rounded-md uppercase tracking-wide border border-brand-yellow/20">
                         <Clock className="w-3 h-3" /> {Math.max(1, post.readingTime || 1)} min
                     </span>
                     {post.views != null && (
-                        <span className="flex items-center gap-1 px-2 py-0.5 bg-brand-blue/10 text-blue-700 dark:text-brand-blue text-[10px] font-black rounded-md uppercase tracking-wide border border-brand-blue/20">
+                        <span className="flex items-center gap-1 px-2 py-0.5 bg-brand-blue/10 text-brand-blue text-[10px] font-black rounded-md uppercase tracking-wide border border-brand-blue/20">
                             <Eye className="w-3 h-3" /> {post.views}
                         </span>
                     )}

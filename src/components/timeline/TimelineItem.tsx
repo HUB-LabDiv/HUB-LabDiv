@@ -30,7 +30,7 @@ export const TimelineItem = ({ submission, isLeft = true }: TimelineItemProps) =
             className={`relative flex w-full my-8 ${isLeft ? 'justify-start' : 'justify-end'}`}
         >
             {/* Central Dot */}
-            <div className="absolute left-1/2 -translate-x-1/2 top-4 size-4 rounded-full bg-brand-blue border-4 border-white dark:border-[#121212] z-10 shadow-[0_0_10px_rgba(0,119,255,0.5)]"></div>
+            <div className="absolute left-1/2 -translate-x-1/2 top-4 size-4 rounded-full bg-brand-blue border-4 border-white dark:border-[#121212] z-10 shadow-[0_0_10px_rgba(15,71,128,0.5)]"></div>
 
             {/* Content Card */}
             <Link
