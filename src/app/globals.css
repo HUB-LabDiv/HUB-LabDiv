@@ -235,6 +235,16 @@ body::before {
     scrollbar-width: none;
   }
 
+  /* Sleek/Invisible Scrollbar for Sidebars */
+  .hidden-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hidden-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+
   @keyframes heart-pop {
     0% {
       transform: scale(0);
