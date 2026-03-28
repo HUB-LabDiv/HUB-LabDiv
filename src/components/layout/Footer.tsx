@@ -37,22 +37,18 @@ export function Footer() {
                         <p className="text-sm text-white/60 mb-6 leading-relaxed">
                             Hub de Comunicação Científica do Lab-Div - Um projeto para melhorar a comunicação do IFUSP e reunir em um FLUXO interativo o arquivo de material de divulgação do Lab-Div e de toda a comunidade — de dentro e fora do instituto.
                         </p>
-                        <div className="flex space-x-4">
-                            <a href="#" className="text-white/50 hover:text-white transition-colors bg-white/10 hover:bg-white/20 w-10 h-10 rounded-full flex items-center justify-center"><span className="material-symbols-outlined text-xl">public</span></a>
-                            <a href="#" className="text-white/50 hover:text-brand-yellow transition-colors bg-white/10 hover:bg-brand-yellow/20 w-10 h-10 rounded-full flex items-center justify-center"><span className="material-symbols-outlined text-xl">camera_alt</span></a>
-                            <a href="#" className="text-white/50 hover:text-brand-red transition-colors bg-white/10 hover:bg-brand-red/20 w-10 h-10 rounded-full flex items-center justify-center"><span className="material-symbols-outlined text-xl">alternate_email</span></a>
-                        </div>
+
                     </div>
 
                     <div>
                         <h4 className="font-bold text-white mb-6 uppercase text-xs tracking-wider border-l-4 border-white/40 pl-3">Navegação</h4>
                         <ul className="space-y-3">
-                            <li><Link href="/" className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-xs">groups</span> Comunidade</Link></li>
-                            <li><Link href="/explorar" className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><ColisorIcon size={14} animate={false} /> O Grande Colisor do IF</Link></li>
-                            <li><Link href="/ferramentas" className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-xs">construction</span> Ferramentas acadêmicas</Link></li>
-                            <li><Link href="/perguntas" className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-xs">help_outline</span> Interação (Pergunte/Lab)</Link></li>
-                            <li><Link href="/sobre" className="flex items-center gap-2 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-xs">info</span> LabDiv</Link></li>
-                            <li><Link href="/admin" className="flex items-center gap-2 text-[10px] text-gray-400/50 dark:text-gray-600/50 hover:text-brand-blue-accent dark:hover:text-brand-blue-accent transition-colors mt-4"><span className="material-symbols-outlined text-[10px]">admin_panel_settings</span> Painel de Controle</Link></li>
+                            <li><Link href="/" className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">groups</span> Comunidade</Link></li>
+                            <li><Link href="/gcif" className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"><ColisorIcon size={20} animate={false} className="w-5 h-5 flex-shrink-0" /> O Grande Colisor do IF</Link></li>
+                            <li><Link href="/ferramentas" className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">construction</span> Ferramentas acadêmicas</Link></li>
+                            <li><Link href="/perguntas" className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">help_outline</span> Interação (Pergunte/Lab)</Link></li>
+
+                            <li><Link href="/admin" className="flex items-center gap-3 text-[10px] text-gray-400/50 dark:text-gray-600/50 hover:text-brand-blue-accent dark:hover:text-brand-blue-accent transition-colors mt-4"><span className="material-symbols-outlined text-[16px] w-5 h-5 flex items-center justify-center flex-shrink-0">admin_panel_settings</span> Painel de Controle</Link></li>
                         </ul>
                     </div>
 
@@ -60,9 +56,9 @@ export function Footer() {
                         <h4 className="font-bold text-white mb-6 uppercase text-xs tracking-wider border-l-4 border-white/40 pl-3">Responsável pelo site</h4>
                         <ul className="space-y-3">
                             <li className="flex items-start gap-3 text-sm text-white/60">
-                                <span className="material-symbols-outlined text-sm mt-0.5 text-brand-blue-accent">person</span>
+                                <span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-brand-blue-accent">person</span>
                                 <div>
-                                    <p className="font-medium text-white">João Paulo</p>
+                                    <p className="font-medium text-white">João Stangorlini</p>
                                     <button
                                         onClick={() => {
                                             const email = "joaopaulostangorlini@usp.br";
@@ -76,12 +72,7 @@ export function Footer() {
                                     </button>
                                 </div>
                             </li>
-                            <li className="flex items-start gap-3 text-sm text-white/60">
-                                <span className="material-symbols-outlined text-sm mt-0.5 text-brand-blue-accent">phone</span>
-                                <a href="https://wa.me/5511968401823" target="_blank" rel="noopener noreferrer" className="hover:text-brand-blue-accent transition-colors">
-                                    (11) 96840-1823
-                                </a>
-                            </li>
+
                         </ul>
                     </div>
 
@@ -91,25 +82,43 @@ export function Footer() {
                         </h4>
                         <ul className="space-y-4">
                             <li className="flex items-start gap-3 text-sm text-white/60">
-                                <span className="material-symbols-outlined text-sm mt-0.5 text-brand-red">email</span>
+                                <span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-brand-red">school</span>
+                                <div>
+                                    <p className="text-[10px] text-white/40 mb-0.5">Docente responsável:</p>
+                                    <p className="font-medium text-white">Prof. Caetano Miranda</p>
+                                    <button
+                                        onClick={() => {
+                                            const email = "cmiranda@if.usp.br";
+                                            navigator.clipboard.writeText(email);
+                                            import('react-hot-toast').then(m => m.toast.success('E-mail copiado!'));
+                                            window.location.href = `mailto:${email}`;
+                                        }}
+                                        className="hover:text-brand-red transition-colors text-left"
+                                    >
+                                        cmiranda@if.usp.br
+                                    </button>
+                                </div>
+                            </li>
+                            <li className="flex items-start gap-3 text-sm text-white/60">
+                                <span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-brand-red">email</span>
                                 <button
                                     onClick={() => {
-                                        const email = "joaopaulostangorlini@usp.br";
+                                        const email = "labdiv@usp.br";
                                         navigator.clipboard.writeText(email);
                                         import('react-hot-toast').then(m => m.toast.success('E-mail copiado!'));
                                         window.location.href = `mailto:${email}`;
                                     }}
                                     className="hover:text-brand-red transition-colors text-left"
                                 >
-                                    joaopaulostangorlini@usp.br
+                                    labdiv@usp.br
                                 </button>
                             </li>
                             <li className="flex items-start gap-3 text-sm text-white/60">
-                                <span className="material-symbols-outlined text-sm mt-0.5 text-brand-red">language</span>
-                                <a href="https://labdiv.notion.site" target="_blank" rel="noopener noreferrer" className="hover:text-brand-red transition-colors">labdiv.notion.site</a>
+                                <svg className="w-5 h-5 mt-0.5 text-brand-red flex-shrink-0" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>
+                                <a href="https://www.instagram.com/labdiv.ifusp/" target="_blank" rel="noopener noreferrer" className="hover:text-brand-red transition-colors">@labdiv.ifusp</a>
                             </li>
                             <li className="flex items-start gap-3 text-sm text-white/60">
-                                <span className="material-symbols-outlined text-sm mt-0.5 text-brand-red">place</span>
+                                <span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-brand-red">place</span>
                                 <span className="leading-tight">Ed. Novo Milênio Instituto de Física, Universidade de São Paulo.<br />Rua do Matão, 1371, São Paulo - SP.</span>
                             </li>
                         </ul>

@@ -478,7 +478,10 @@ export default function EmaranhamentoPage() {
                                         <div className="flex justify-center py-4"><Loader2 className="w-5 h-5 text-brand-blue/30 animate-spin" /></div>
                                     ) : (
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                            {officialGroups.map((group) => {
+                                            {officialGroups
+                                                .filter(g => !g.name.includes('Ã') && !g.name.includes('Â') && !g.name.includes('ï'))
+                                                .filter((v, i, a) => a.findIndex(t => t.id === v.id) === i)
+                                                .map((group) => {
                                                 const matchesUser = userTopInterest && group.focal_isotope && userTopInterest.toLowerCase().includes(group.focal_isotope.toLowerCase());
                                                 const isAlreadyMember = myGroups.some(mg => mg.id === group.id);
                                                 

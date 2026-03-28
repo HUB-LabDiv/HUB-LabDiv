@@ -36,26 +36,41 @@ export function BasicDetailsStep() {
     const isInitialized = useRef(false);
 
     useEffect(() => {
-        const fetchUser = async () => {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session?.user) {
-                const { data: profile } = await supabase
-                    .from('profiles')
-                    .select('full_name')
-                    .eq('id', session.user.id)
-                    .single();
-
-                if (profile?.full_name) {
-                    setRealName(profile.full_name);
-                    if (!isInitialized.current) {
-                        setValue('authors', profile.full_name);
-                        isInitialized.current = true;
+        const initialize = async () => {
+            const [, pseudonyms] = await Promise.all([
+                // Fetch real name
+                (async () => {
+                    const { data: { session } } = await supabase.auth.getSession();
+                    if (session?.user) {
+                        const { data: profile } = await supabase
+                            .from('profiles')
+                            .select('full_name')
+                            .eq('id', session.user.id)
+                            .single();
+                        if (profile?.full_name) {
+                            setRealName(profile.full_name);
+                            return profile.full_name;
+                        }
                     }
+                    return null;
+                })(),
+                // Fetch pseudonyms
+                getUserPseudonyms().catch(() => [])
+            ]);
+
+            setUserPseudonyms(pseudonyms || []);
+
+            if (!isInitialized.current) {
+                if (pseudonyms && pseudonyms.length > 0) {
+                    // User has a nickname — activate it by default
+                    setValue('use_pseudonym', true);
+                    setValue('pseudonym_id', pseudonyms[0].id);
+                    setValue('authors', pseudonyms[0].name);
                 }
+                isInitialized.current = true;
             }
         };
-        fetchUser();
-        getUserPseudonyms().then(p => setUserPseudonyms(p || [])).catch(() => { });
+        initialize();
     }, [setValue]);
 
     useEffect(() => {

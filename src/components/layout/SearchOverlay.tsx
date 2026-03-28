@@ -91,7 +91,7 @@ const wikiEntries = [
 const navRoutes = [
     { label: 'Grade Horária / Cronograma', href: '/ferramentas', icon: 'calendar_month', color: 'text-brand-blue-accent', desc: 'Monte seu cronograma semestral do Júpiter' },
     { label: 'Trilhas de Aprendizado', href: '/trilhas', icon: 'auto_stories', color: 'text-brand-yellow', desc: 'Descubra a ordem ideal de matérias' },
-    { label: 'GCIF (Grande Colisor do IF)', href: '/explorar', icon: 'hub', color: 'text-brand-blue-accent', desc: 'Oportunidades de pesquisa e projetos' },
+    { label: 'GCIF (Grande Colisor do IF)', href: '/gcif', icon: 'hub', color: 'text-brand-blue-accent', desc: 'Oportunidades de pesquisa e projetos' },
     { label: 'Meu Laboratório / Perfil', href: '/lab', icon: 'science', color: 'text-brand-red', desc: 'XP, conquistas e painel pessoal' },
     { label: 'Comunidade & Interações', href: '/', icon: 'forum', color: 'text-brand-red', desc: 'Mural público e networking' },
     { label: 'Submeter ou Editar Wiki', href: '/interacao', icon: 'edit_square', color: 'text-brand-blue-accent', desc: 'Colabore criando novas páginas' },

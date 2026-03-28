@@ -39,7 +39,7 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
         setActiveTab(tab);
         const params = new URLSearchParams(searchParams);
         params.set('tab', tab);
-        router.push(`/sobre?${params.toString()}`, { scroll: false });
+        router.push(`/labdiv?${params.toString()}`, { scroll: false });
         trackEvent('TAB_CHANGE', { tab, hub: 'institucional' });
     };
 

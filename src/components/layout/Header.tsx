@@ -67,14 +67,16 @@ export function Header() {
         setUser(baseUser);
         supabase
             .from('profiles')
-            .select('xp, level, avatar_url, full_name, is_labdiv')
+            .select('xp, level, avatar_url, full_name, username, use_nickname, is_labdiv')
             .eq('id', authUser.id)
             .single()
             .then(({ data: profile }) => {
                 if (profile) {
                     setUser(prev => prev ? {
                         ...prev,
-                        full_name: profile.full_name || prev.full_name,
+                        full_name: (profile.use_nickname && profile.username)
+                            ? profile.username
+                            : (profile.full_name || prev.full_name),
                         avatar_url: profile.avatar_url || prev.avatar_url,
                         xp: profile.xp || 0,
                         level: profile.level || 1,
@@ -117,7 +119,7 @@ export function Header() {
                                 </div>
                                 <span className="text-[7px] sm:text-[9px] font-bukra font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">IFUSP</span>
                             </div>
-                            <div className="hidden sm:flex items-center gap-2.5 ml-1">
+                            <div className="flex items-center gap-2.5 ml-1">
                                 <div className="w-px h-7 bg-gray-200 dark:bg-white/15"></div>
                                 <IFUSPLogo size={42} className="text-brand-blue dark:text-brand-blue opacity-80 group-hover:opacity-100 transition-opacity" />
                             </div>
@@ -129,8 +131,8 @@ export function Header() {
                         <div className="bg-[#0F4780] rounded-b-[24px] px-8 py-3 flex items-center gap-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-x border-b border-white/10 backdrop-blur-xl">
                             {[
                                 { label: 'Comunidade', href: '/', color: '#F14343' },
-                                { label: 'GCIF', href: '/explorar', color: '#1F9FCF' },
-                                { label: 'LabDiv', href: '/sobre', color: '#FFCC00' },
+                                { label: 'GCIF', href: '/gcif', color: '#1F9FCF' },
+                                { label: 'LabDiv', href: '/labdiv', color: '#FFCC00' },
                                 { label: 'Ferramentas', href: '/ferramentas', color: '#F14343' },
                                 { label: 'Interações', href: '/interacao', color: '#1F9FCF' },
                             ].map((tab) => {

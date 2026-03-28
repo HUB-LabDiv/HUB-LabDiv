@@ -35,6 +35,40 @@ export function OptionalDetailsStep({ onSubmit, isLoading }: { onSubmit: (data: 
     const [searchResults, setSearchResults] = useState<any[]>([]);
     const [isSearching, setIsSearching] = useState(false);
 
+    const PREDEFINED_ISOTOPES = [
+        'Astrofísica & Cosmologia',
+        'Educação e Extensão',
+        'Fotografia Científica',
+        'Física Nuclear',
+        'Física aplicada',
+        'Física dos materiais',
+        'Física geral',
+        'Física experimental',
+        'Física matemática',
+        'Laboratório',
+        'História'
+    ];
+
+    // Fetch existing isotopes
+    const [existingIsotopes, setExistingIsotopes] = useState<string[]>(PREDEFINED_ISOTOPES);
+    const [showIsotopeDropdown, setShowIsotopeDropdown] = useState(false);
+
+    useEffect(() => {
+        const fetchIsotopes = async () => {
+            const { data } = await supabase.from('submissions').select('isotopes').not('isotopes', 'is', null);
+            if (data) {
+                const uniqueIsotopes = new Set<string>(PREDEFINED_ISOTOPES);
+                data.forEach((row: any) => {
+                    if (Array.isArray(row.isotopes)) {
+                        row.isotopes.forEach((iso: string) => uniqueIsotopes.add(iso));
+                    }
+                });
+                setExistingIsotopes(Array.from(uniqueIsotopes));
+            }
+        };
+        fetchIsotopes();
+    }, []);
+
     // Debounced search for co-authors (copied from original FormStep)
     useEffect(() => {
         if (searchTerm.length < 2) {
@@ -138,31 +172,81 @@ export function OptionalDetailsStep({ onSubmit, isLoading }: { onSubmit: (data: 
                         # Isótopos
                         <HelpTooltip text="Hashtags que vão para a seção 'Isótopos em Órbita' no Fluxo de Partículas. Use para agrupar conteúdos por tema." />
                     </label>
-                    <div className="flex flex-wrap gap-2 p-3 bg-white dark:bg-form-dark border-2 border-brand-blue/20 dark:border-brand-blue/10 rounded-2xl">
-                        {watchedValues.isotopes?.map((iso: string) => (
-                            <span key={iso} className="flex items-center gap-1.5 px-3 py-1 bg-brand-blue/10 text-brand-blue rounded-xl text-xs font-bold">
-                                #{iso}
-                                <button type="button" onClick={() => {
-                                    setValue('isotopes', (watchedValues.isotopes || []).filter((i: string) => i !== iso));
-                                }}><span className="material-symbols-outlined text-[14px]">close</span></button>
-                            </span>
-                        ))}
-                        <input
-                            value={isotopeInput}
-                            onChange={e => setIsotopeInput(e.target.value)}
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' || e.key === ' ') {
-                                    e.preventDefault();
-                                    const iso = isotopeInput.trim().replace(/^#/, '');
-                                    if (iso && !(watchedValues.isotopes || []).includes(iso)) {
-                                        setValue('isotopes', [...(watchedValues.isotopes || []), iso]);
+                    <div className="relative">
+                        <div className="flex flex-wrap gap-2 p-3 bg-white dark:bg-form-dark border-2 border-brand-blue/20 dark:border-brand-blue/10 rounded-2xl focus-within:border-brand-blue focus-within:ring-2 focus-within:ring-brand-blue/10 transition-all">
+                            {watchedValues.isotopes?.map((iso: string) => (
+                                <span key={iso} className="flex items-center gap-1.5 px-3 py-1 bg-brand-blue/10 text-brand-blue rounded-xl text-xs font-bold">
+                                    #{iso}
+                                    <button type="button" onClick={() => {
+                                        setValue('isotopes', (watchedValues.isotopes || []).filter((i: string) => i !== iso));
+                                    }}><span className="material-symbols-outlined text-[14px]">close</span></button>
+                                </span>
+                            ))}
+                            <input
+                                value={isotopeInput}
+                                onChange={e => {
+                                    setIsotopeInput(e.target.value);
+                                    setShowIsotopeDropdown(true);
+                                }}
+                                onFocus={() => setShowIsotopeDropdown(true)}
+                                onBlur={() => setTimeout(() => setShowIsotopeDropdown(false), 200)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        e.preventDefault();
+                                        const iso = isotopeInput.trim().replace(/^#/, '');
+                                        if (iso && !(watchedValues.isotopes || []).includes(iso)) {
+                                            setValue('isotopes', [...(watchedValues.isotopes || []), iso]);
+                                        }
+                                        setIsotopeInput('');
+                                        setShowIsotopeDropdown(false);
                                     }
-                                    setIsotopeInput('');
-                                }
-                            }}
-                            className="flex-grow bg-transparent outline-none text-sm"
-                            placeholder="Adicionar isótopo (ex: divulgação, pesquisa, quântica)..."
-                        />
+                                }}
+                                className="flex-grow bg-transparent outline-none text-sm placeholder:text-gray-400 min-w-[300px]"
+                                placeholder="Buscar ou adicionar isótopo (ex: divulgação, quântica)..."
+                            />
+                        </div>
+                        
+                        {showIsotopeDropdown && (
+                            <div className="absolute top-full left-0 right-0 mt-2 bg-white dark:bg-[#1E1E1E] border border-gray-100 dark:border-gray-800 rounded-xl shadow-xl z-50 overflow-hidden max-h-[300px] overflow-y-auto w-full">
+                                {existingIsotopes
+                                    .filter(iso => isotopeInput ? iso.toLowerCase().includes(isotopeInput.toLowerCase().replace(/^#/, '')) : true)
+                                    .slice(0, 15)
+                                    .map(iso => (
+                                        <button
+                                            key={iso}
+                                            type="button"
+                                            onClick={() => {
+                                                if (!(watchedValues.isotopes || []).includes(iso)) {
+                                                    setValue('isotopes', [...(watchedValues.isotopes || []), iso]);
+                                                }
+                                                setIsotopeInput('');
+                                                setShowIsotopeDropdown(false);
+                                            }}
+                                            className="w-full text-left px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 text-sm font-medium transition-colors flex items-center justify-between group"
+                                        >
+                                            <span className="text-gray-700 dark:text-gray-300">#{iso}</span>
+                                            <span className="material-symbols-outlined text-[16px] opacity-0 group-hover:opacity-100 text-brand-blue transition-opacity">add</span>
+                                        </button>
+                                    ))}
+                                {isotopeInput && (
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            const iso = isotopeInput.trim().replace(/^#/, '');
+                                            if (iso && !(watchedValues.isotopes || []).includes(iso)) {
+                                                setValue('isotopes', [...(watchedValues.isotopes || []), iso]);
+                                            }
+                                            setIsotopeInput('');
+                                            setShowIsotopeDropdown(false);
+                                        }}
+                                        className="w-full text-left px-4 py-3 bg-brand-blue/5 hover:bg-brand-blue/10 text-brand-blue text-sm font-bold border-t border-gray-100 dark:border-gray-800 transition-colors flex items-center gap-2"
+                                    >
+                                        <span className="material-symbols-outlined text-[16px]">add_circle</span>
+                                        CRIAR NOVO ISÓTOPO "{isotopeInput.trim().replace(/^#/, '')}"
+                                    </button>
+                                )}
+                            </div>
+                        )}
                     </div>
                     <p className="text-[10px] text-gray-500 italic ml-1">Esses isótopos aparecem na seção &quot;Isótopos em Órbita&quot; do Fluxo.</p>
                 </div>

@@ -322,14 +322,14 @@ export const getUsersInOrbit = unstable_cache(
     async (limit = 5) => {
         const { data: profiles } = await supabase
             .from('profiles')
-            .select('id, full_name, email, avatar_url, xp, level, is_labdiv')
+            .select('id, full_name, username, use_nickname, email, avatar_url, xp, level, is_labdiv')
             .eq('review_status', 'approved')
             .eq('is_visible', true)
             .limit(limit);
 
         return profiles?.map(p => ({
             id: p.id,
-            name: p.full_name || 'Usuário',
+            name: (p.use_nickname && p.username) ? p.username : (p.full_name || 'Usuário'),
             handle: p.email ? `@${p.email.split('@')[0]}` : '@usuario',
             avatar: p.avatar_url,
             xp: p.xp,
@@ -337,7 +337,7 @@ export const getUsersInOrbit = unstable_cache(
             is_labdiv: p.is_labdiv
         })) || [];
     },
-    ['users-in-orbit-v2'],
+    ['users-in-orbit-v3'],
     { revalidate: 60 }
 );
 
@@ -346,10 +346,10 @@ export async function searchProfiles(query: string) {
 
     const { data: profiles, error } = await supabase
         .from('profiles')
-        .select('id, full_name, email, avatar_url, xp, level, is_labdiv')
+        .select('id, full_name, username, use_nickname, email, avatar_url, xp, level, is_labdiv')
         .eq('review_status', 'approved')
         .eq('is_visible', true)
-        .or(`full_name.ilike.%${query}%,email.ilike.%${query}%`)
+        .or(`full_name.ilike.%${query}%,email.ilike.%${query}%,username.ilike.%${query}%`)
         .limit(10);
 
     if (error) {
@@ -359,7 +359,7 @@ export async function searchProfiles(query: string) {
 
     return profiles?.map(p => ({
         id: p.id,
-        name: p.full_name || 'Usuário',
+        name: (p.use_nickname && p.username) ? p.username : (p.full_name || 'Usuário'),
         handle: p.email ? `@${p.email.split('@')[0]}` : '@colaborador',
         avatar: p.avatar_url,
         xp: p.xp,

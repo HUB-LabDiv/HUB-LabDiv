@@ -35,9 +35,9 @@ export async function middleware(request: NextRequest) {
     // Performance: Only refresh auth token on routes that need it
     // Public routes skip getUser() to save ~100-200ms TTFB
     const isPublicRoute = pathname === '/' ||
-        pathname.startsWith('/explorar') ||
+        pathname.startsWith('/gcif') ||
         pathname.startsWith('/comunidade') ||
-        pathname.startsWith('/sobre') ||
+        pathname.startsWith('/labdiv') ||
         pathname.startsWith('/fluxo') ||
         pathname.startsWith('/drops') ||
         pathname.startsWith('/api/og');

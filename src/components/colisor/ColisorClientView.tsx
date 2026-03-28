@@ -208,7 +208,7 @@ export function ColisorClientView({ oportunidades }: ColisorClientViewProps) {
                         <p className="text-[10px] md:text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4 md:mb-6">
                             Inspirada no CommLab do MIT, foca na comunicação científica no IFUSP. Oferece tutoria entre pares para escrita científica, apresentações e design.
                         </p>
-                        <Link href="/sobre?tab=labdiv" className="text-brand-blue font-black flex items-center gap-1 md:gap-2 group-hover:underline text-[10px] md:text-sm mt-auto w-fit whitespace-nowrap">
+                        <Link href="/labdiv?tab=labdiv" className="text-brand-blue font-black flex items-center gap-1 md:gap-2 group-hover:underline text-[10px] md:text-sm mt-auto w-fit whitespace-nowrap">
                             Explorar <span className="hidden sm:inline">Acervo</span> <span className="material-symbols-outlined text-sm md:text-base">arrow_forward</span>
                         </Link>
                     </div>
