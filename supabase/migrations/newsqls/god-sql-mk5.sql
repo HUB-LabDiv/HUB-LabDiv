@@ -57,3 +57,8 @@ END;
 $$;
 
 GRANT EXECUTE ON FUNCTION public.reset_selective(text[]) TO postgres;
+
+-- 4. Suporte para Cache de Sincronização do Júpiter
+ALTER TABLE public.profiles 
+ADD COLUMN IF NOT EXISTS jupiter_subjects_cache JSONB DEFAULT '[]'::jsonb,
+ADD COLUMN IF NOT EXISTS last_jupiter_sync TIMESTAMP WITH TIME ZONE;

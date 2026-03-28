@@ -25,22 +25,39 @@ export async function POST(req: NextRequest) {
 
         browser = await puppeteerCore.launch({
             // @ts-ignore
-            args: isLocal ? ['--no-sandbox', '--disable-setuid-sandbox'] : chromium.args,
+            args: isLocal 
+                ? ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage'] 
+                : chromium.args,
             // @ts-ignore
-            defaultViewport: chromium.defaultViewport,
+            defaultViewport: chromium.defaultViewport || { width: 1280, height: 800 },
             executablePath: executablePath,
             // @ts-ignore
-            headless: chromium.headless,
+            headless: isLocal ? true : chromium.headless,
             ignoreHTTPSErrors: true,
         } as any);
         
         const page = await browser.newPage();
+
+        // [TURBO] Intercept and block unnecessary resources to speed up load times
+        await page.setRequestInterception(true);
+        page.on('request', (req) => {
+            const resourceType = req.resourceType();
+            if (['image', 'stylesheet', 'font', 'media'].includes(resourceType)) {
+                req.abort();
+            } else {
+                req.continue();
+            }
+        });
+
         await page.setUserAgent(
             'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/100.0.4896.75 Safari/537.36'
         );
 
         // 1. Go to Login page
-        await page.goto('https://uspdigital.usp.br/jupiterweb/webLogin.jsp', { timeout: 30000 });
+        await page.goto('https://uspdigital.usp.br/jupiterweb/webLogin.jsp', { 
+            waitUntil: 'domcontentloaded', 
+            timeout: 20000 
+        });
 
         // 2. Login
         await page.waitForSelector("input[name='codpes']");
@@ -48,7 +65,7 @@ export async function POST(req: NextRequest) {
         await page.type('input[name="senusu"]', password);
         
         await Promise.all([
-            page.waitForNavigation({ waitUntil: 'networkidle2' }),
+            page.waitForNavigation({ waitUntil: 'domcontentloaded' }),
             page.keyboard.press('Enter')
         ]);
 
@@ -64,7 +81,7 @@ export async function POST(req: NextRequest) {
 
         // 3. User is logged in. Get personal data: Course, Institute, Email, Year
         const userInfoJupiterLink = `https://uspdigital.usp.br/jupiterweb/uspDadosPessoaisMostrar?codmnu=4543`;
-        await page.goto(userInfoJupiterLink, { waitUntil: 'load', timeout: 30000 });
+        await page.goto(userInfoJupiterLink, { waitUntil: 'domcontentloaded', timeout: 15000 });
 
         const userData = await page.evaluate(() => {
             const allFontsTexts = Array.from(document.querySelectorAll('font')).map((el) => el.textContent || '');
@@ -101,7 +118,10 @@ export async function POST(req: NextRequest) {
         const generatedPassword = `${nUsp}LabDiv2024!`; // Fixed deterministic secure string since they use Júpiter to login
 
         // 4. Navigate to Grade Horária to sync schedule
-        await page.goto('https://uspdigital.usp.br/jupiterweb/gradeHoraria?codmnu=4759', { waitUntil: 'load', timeout: 30000 });
+        await page.goto('https://uspdigital.usp.br/jupiterweb/gradeHoraria?codmnu=4759', { 
+            waitUntil: 'domcontentloaded', 
+            timeout: 20000 
+        });
 
         await page.waitForSelector('select').catch(() => null);
         const options = await page.evaluate(() => {
@@ -115,60 +135,60 @@ export async function POST(req: NextRequest) {
             await page.select('select', options[options.length - 1]);
         }
 
-        const navPromise = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 15000 }).catch(() => null);
         const buscarBtn = await page.$('input[type="button"][value="Buscar"]');
-        if (buscarBtn) {
-            await buscarBtn.click();
-            await navPromise;
-        }
 
         async function scrapeGrade() {
             return await page.evaluate(() => {
                 const events: Array<{ code: string, dayOfWeek: number, startTime: string, endTime: string }> = [];
-                let rowIndex = 1;
-                const codeRegex = /([A-Z]{2,4}\d{4})|(\d{7})/; // USP subject code format (MAC0110 or 4300112)
+                const codeRegex = /([A-Z]{2,4}\d{4})|(\d{7})/;
+                const rows = Array.from(document.querySelectorAll('tr'));
                 
-                while (document.getElementById(rowIndex.toString())) {
-                    const row = document.getElementById(rowIndex.toString());
-                    if (!row) break;
-
-                    const startCell = row.querySelector('td:nth-child(1)')?.textContent?.trim() || '08:00';
-                    const endCell = row.querySelector('td:nth-child(2)')?.textContent?.trim() || '10:00';
+                rows.forEach(row => {
+                    const cells = Array.from(row.querySelectorAll('td'));
+                    if (cells.length < 3) return; // Need at least start, end, and one day
                     
-                    for (let i = 3; i <= 8; i++) {
-                        const subjectRaw = row.querySelector(`td:nth-child(${i})`)?.textContent?.trim();
-                        if (subjectRaw) {
-                            const match = subjectRaw.match(codeRegex);
+                    const startText = cells[0].textContent?.trim() || '';
+                    const endText = cells[1].textContent?.trim() || '';
+                    
+                    // Filter for rows that look like schedule times (HH:MM)
+                    if (!/^\d{2}:\d{2}$/.test(startText)) return;
+                    
+                    // Columns 2 to 8 are days of the week (Seg-Dom)
+                    for (let i = 2; i < cells.length; i++) {
+                        const cellText = cells[i].textContent?.trim();
+                        if (cellText) {
+                            const match = cellText.match(codeRegex);
                             if (match) {
                                 events.push({
                                     code: match[0],
-                                    dayOfWeek: i - 2,
-                                    startTime: startCell,
-                                    endTime: endCell
+                                    dayOfWeek: i - 1, // 2 -> 1 (Seg), ..., 8 -> 7 (Dom)
+                                    startTime: startText,
+                                    endTime: endText
                                 });
                             }
                         }
                     }
-                    rowIndex++;
-                }
+                });
                 return events;
             });
         }
 
-        let subjectsScraped = await scrapeGrade();
-
-        // Fallback: If no subjects found in the last option, try the one before (last-1)
-        if (subjectsScraped.length === 0 && options.length > 1) {
-            await page.select('select', options[options.length - 2]);
-            const navPromiseRetry = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 15000 }).catch(() => null);
-            const buscarBtnRetry = await page.$('input[type="button"][value="Buscar"]');
-            if (buscarBtnRetry) {
-                await buscarBtnRetry.click();
-                await navPromiseRetry;
-                await page.waitForSelector("tr[id='1']", { timeout: 10000 }).catch(() => null);
-                subjectsScraped = await scrapeGrade();
+        let allSubjectsScraped: any[] = [];
+        
+        // Iterar por TODOS os complementos disponíveis (Unidades/Matrículas)
+        for (const optValue of options) {
+            await page.select('select', optValue);
+            const navPromise = page.waitForNavigation({ waitUntil: 'domcontentloaded', timeout: 15000 }).catch(() => null);
+            const finalBtn = await page.$('input[type="button"][value="Buscar"]');
+            if (finalBtn) {
+                await finalBtn.click();
+                await navPromise;
+                const subjects = await scrapeGrade();
+                allSubjectsScraped = [...allSubjectsScraped, ...subjects];
             }
         }
+
+        const subjectsScraped = allSubjectsScraped;
 
         await browser.close();
 
@@ -246,6 +266,24 @@ export async function POST(req: NextRequest) {
         }));
 
         const numSynced = subjectsScraped.length > 0 ? scrapedCodes.length : 0;
+
+        // [PERSISTENCE] Save to Cache in Profiles
+        if (numSynced > 0) {
+            try {
+                await supabaseAdmin
+                    .from('profiles')
+                    .update({
+                        jupiter_subjects_cache: {
+                            subjects: subjectsScraped,
+                            courseNames: Object.fromEntries(courseNames)
+                        },
+                        last_jupiter_sync: new Date().toISOString()
+                    })
+                    .eq('id', user.id);
+            } catch (cacheError) {
+                console.error('Failed to save Jupiter cache (schema might be outdated):', cacheError);
+            }
+        }
 
         return NextResponse.json({ 
             success: true, 
