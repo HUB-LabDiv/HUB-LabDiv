@@ -92,7 +92,7 @@ export function PerguntasTabContent() {
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Header / Action */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white/5 p-8 rounded-3xl border border-white/10">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-white/5 p-8 rounded-3xl border border-gray-200 dark:border-white/10 shadow-sm dark:shadow-none">
                 <div className="max-w-xl">
                     <h2 className="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight mb-2">Pergunte a um <span className="text-brand-blue">Cientista</span></h2>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Tem uma dúvida sobre ciência? Envie sua pergunta e nossos pesquisadores do IF-USP responderão!</p>
@@ -119,7 +119,7 @@ export function PerguntasTabContent() {
             ) : (
                 <div className="space-y-6">
                     {perguntas.map((p) => (
-                        <div key={p.id} className="bg-white/5 border border-white/5 hover:border-white/10 rounded-3xl overflow-hidden transition-all group">
+                        <div key={p.id} className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 rounded-3xl overflow-hidden transition-all group shadow-sm dark:shadow-none">
                             {/* Question Container */}
                             <div className="p-8 pb-4">
                                 <div className="flex items-start gap-4">
@@ -131,12 +131,12 @@ export function PerguntasTabContent() {
                                             <span className="text-[10px] font-black uppercase tracking-widest text-brand-blue">{p.nome}</span>
                                             <span className="text-[9px] text-gray-600 font-bold uppercase">perguntou</span>
                                         </div>
-                                        <p className="text-sm text-gray-300 leading-relaxed font-medium italic">"{p.pergunta}"</p>
+                                        <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium italic">"{p.pergunta}"</p>
                                     </div>
                                 </div>
                             </div>
                             {/* Answer Container */}
-                            <div className="bg-brand-blue/5 p-8 border-t border-white/5">
+                            <div className="bg-brand-blue/5 p-8 border-t border-gray-200 dark:border-white/5">
                                 <div className="flex items-start gap-4">
                                     <div className="size-10 rounded-full bg-brand-yellow/10 flex items-center justify-center text-brand-yellow">
                                         <span className="material-symbols-outlined text-xl">science</span>
@@ -146,7 +146,7 @@ export function PerguntasTabContent() {
                                             <span className="text-[10px] font-black uppercase tracking-widest text-brand-yellow">{p.respondido_por || 'Cientista IF-USP'}</span>
                                             <span className="px-2 py-0.5 bg-brand-yellow/10 text-brand-yellow rounded-full text-[8px] font-black uppercase tracking-widest">Resposta</span>
                                         </div>
-                                        <p className="text-sm text-gray-400 leading-relaxed whitespace-pre-line group-hover:text-gray-300 transition-colors">{p.resposta}</p>
+                                        <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed whitespace-pre-line group-hover:text-gray-700 dark:group-hover:text-gray-300 transition-colors">{p.resposta}</p>
                                     </div>
                                 </div>
                             </div>
@@ -158,7 +158,7 @@ export function PerguntasTabContent() {
             {/* Modal */}
             {showModal && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4" onClick={() => !isSubmitting && setShowModal(false)}>
-                    <div className="bg-[#1E1E1E] border border-white/10 rounded-[32px] w-full max-w-lg p-8 space-y-6 animate-in fade-in zoom-in-95 duration-300" onClick={e => e.stopPropagation()}>
+                    <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-[32px] w-full max-w-lg p-8 space-y-6 animate-in fade-in zoom-in-95 duration-300 shadow-2xl" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-between">
                             <h2 className="text-sm font-black uppercase tracking-widest text-brand-blue flex items-center gap-2">
                                 <span className="material-symbols-outlined text-lg">quiz</span> Enviar Pergunta

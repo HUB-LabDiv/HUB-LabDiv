@@ -108,8 +108,10 @@ body::before {
   --color-brand-blue-accent: #1F9FCF;
   --color-brand-grey: #2C2B2D;
   
-  --font-bukra: var(--font-bukra);
+  --font-bukra: "29LT Bukra Semi Wide Bold", var(--font-bukra);
+  --font-display: var(--font-bukra);
   --font-open-sans: var(--font-open-sans);
+  --font-sans: var(--font-open-sans);
   
   --color-card-dark: #1E1E1E;
   --color-background-light: #F8FAFC;
@@ -131,6 +133,10 @@ body::before {
   textarea,
   select {
     font-size: 16px !important;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
   }
 }
 
@@ -180,7 +186,7 @@ body::before {
   }
 
   .glass-card {
-    @apply bg-white/40 dark:bg-card-dark/40 backdrop-blur-3xl border border-white/10 dark:border-white/5;
+    @apply bg-white/40 dark:bg-card-dark/40 backdrop-blur-3xl border border-black/5 dark:border-white/5 shadow-sm dark:shadow-none;
   }
 
   /* Animation for scroll */
@@ -399,11 +405,11 @@ body::before {
 
   /* 🏆 Golden Frame: Padrão Ouro visual identity */
   .golden-frame {
-    border: 2px solid #0F4780 !important;
+    border: 2px solid #FFCC00 !important;
     box-shadow:
-      0 0 12px 2px rgba(15, 71, 128, 0.5),
-      0 0 30px 4px rgba(15, 71, 128, 0.2),
-      inset 0 0 8px 0 rgba(15, 71, 128, 0.1);
+      0 0 12px 2px rgba(255, 204, 0, 0.5),
+      0 0 30px 4px rgba(255, 204, 0, 0.2),
+      inset 0 0 8px 0 rgba(255, 204, 0, 0.1);
   }
 
   @media (min-width: 768px) {
@@ -415,15 +421,15 @@ body::before {
   @keyframes golden-pulse {
     0%, 100% {
       box-shadow:
-        0 0 12px 2px rgba(15, 71, 128, 0.5),
-        0 0 30px 4px rgba(15, 71, 128, 0.2),
-        inset 0 0 8px 0 rgba(15, 71, 128, 0.1);
+        0 0 12px 2px rgba(255, 204, 0, 0.5),
+        0 0 30px 4px rgba(255, 204, 0, 0.2),
+        inset 0 0 8px 0 rgba(255, 204, 0, 0.1);
     }
     50% {
       box-shadow:
-        0 0 20px 4px rgba(15, 71, 128, 0.7),
-        0 0 45px 8px rgba(15, 71, 128, 0.3),
-        inset 0 0 12px 0 rgba(15, 71, 128, 0.15);
+        0 0 20px 4px rgba(255, 204, 0, 0.7),
+        0 0 45px 8px rgba(255, 204, 0, 0.3),
+        inset 0 0 12px 0 rgba(255, 204, 0, 0.15);
     }
   }
 

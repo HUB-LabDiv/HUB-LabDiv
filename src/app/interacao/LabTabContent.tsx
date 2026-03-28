@@ -143,11 +143,11 @@ export function LabTabContent() {
                                 <span className="block text-lg font-black text-gray-900 dark:text-white">{submissions.length}</span>
                                 <span className="text-[10px] uppercase font-bold text-gray-500 tracking-widest">publicações</span>
                             </div>
-                            <div className="text-center md:text-left border-l border-white/10 pl-4">
+                            <div className="text-center md:text-left border-l border-gray-200 dark:border-white/10 pl-4">
                                 <span className="block text-lg font-black text-gray-900 dark:text-white">{followStats.following}</span>
                                 <span className="text-[10px] uppercase font-bold text-gray-500 tracking-widest">seguindo</span>
                             </div>
-                            <div className="text-center md:text-left border-l border-white/10 pl-4">
+                            <div className="text-center md:text-left border-l border-gray-200 dark:border-white/10 pl-4">
                                 <span className="block text-lg font-black text-gray-900 dark:text-white">{followStats.followers}</span>
                                 <span className="text-[10px] uppercase font-bold text-gray-500 tracking-widest">seguidores</span>
                             </div>
@@ -202,7 +202,7 @@ export function LabTabContent() {
                         </div>
                         <div className="p-4 bg-brand-yellow/5 rounded-2xl border border-brand-yellow/10">
                             <span className="text-[8px] font-black text-brand-yellow uppercase mb-2 block">Concluídas</span>
-                            <span className="text-[10px] font-black text-white/50 uppercase">{academicData.completed?.length || 0} Disciplinas Concluídas</span>
+                            <span className="text-[10px] font-black text-gray-500 dark:text-white/50 uppercase">{academicData.completed?.length || 0} Disciplinas Concluídas</span>
                         </div>
                     </div>
                 </div>
@@ -221,7 +221,7 @@ export function LabTabContent() {
                         onClick={() => setActiveSubTab(tab.id)}
                         className={`flex items-center gap-2 px-6 py-4 text-[10px] font-black tracking-widest transition-all ${activeSubTab === tab.id
                             ? 'text-brand-blue border-b-2 border-brand-blue -mb-[1px]'
-                            : 'text-gray-500 hover:text-white'
+                            : 'text-gray-500 hover:text-gray-900 dark:hover:text-white'
                             }`}
                     >
                         {tab.icon}
@@ -244,11 +244,29 @@ export function LabTabContent() {
                                 return (
                                     <a key={sub.post.id} href={`/arquivo/${sub.post.id}`} className="group relative aspect-square bg-gray-100 dark:bg-white/5 rounded-2xl overflow-hidden border border-white/5 hover:border-brand-blue/30 transition-all shadow-sm">
                                         {thumbUrl ? (
-                                            <img src={thumbUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                            <>
+                                                <img 
+                                                    src={thumbUrl} 
+                                                    alt={sub.post.title}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                                                    onError={(e) => {
+                                                        e.currentTarget.style.display = 'none';
+                                                        const parent = e.currentTarget.parentElement;
+                                                        if (parent) {
+                                                            const fallback = parent.querySelector('.fallback-container') as HTMLElement;
+                                                            if (fallback) fallback.style.display = 'flex';
+                                                        }
+                                                    }}
+                                                />
+                                                <div className="fallback-container hidden w-full h-full flex-col items-center justify-center p-4">
+                                                    <FileText className="w-8 h-8 text-gray-400 dark:text-white/10 mb-2" />
+                                                    <span className="text-[8px] font-black uppercase text-center text-gray-500 dark:text-white/40 leading-tight line-clamp-3">{sub.post.title || 'MÍDIA INDISPONÍVEL'}</span>
+                                                </div>
+                                            </>
                                         ) : (
                                             <div className="w-full h-full flex flex-col items-center justify-center p-4">
-                                                <FileText className="w-8 h-8 text-white/10 mb-2" />
-                                                <span className="text-[8px] font-black uppercase text-center opacity-40 leading-tight">{sub.post.title}</span>
+                                                <FileText className="w-8 h-8 text-gray-400 dark:text-white/10 mb-2" />
+                                                <span className="text-[8px] font-black uppercase text-center text-gray-500 dark:text-white/40 leading-tight line-clamp-3">{sub.post.title || 'MÍDIA INDISPONÍVEL'}</span>
                                             </div>
                                         )}
                                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
@@ -263,7 +281,7 @@ export function LabTabContent() {
                                 );
                             })
                         ) : (
-                            <div className="col-span-full py-20 text-center opacity-50 border-2 border-dashed border-white/5 rounded-3xl">
+                            <div className="col-span-full py-20 text-center opacity-50 border-2 border-dashed border-gray-200 dark:border-white/5 rounded-3xl">
                                 <span className="material-symbols-outlined text-4xl mb-2 text-gray-600">add_a_photo</span>
                                 <p className="text-[10px] uppercase font-black tracking-widest text-gray-500">Nada publicado ainda.</p>
                             </div>
@@ -291,11 +309,29 @@ export function LabTabContent() {
                                             <Star className="size-4 text-brand-yellow fill-current" />
                                         </div>
                                         {thumbUrl ? (
-                                            <img src={thumbUrl} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                            <>
+                                                <img 
+                                                    src={thumbUrl} 
+                                                    alt={post.title}
+                                                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                                                    onError={(e) => {
+                                                        e.currentTarget.style.display = 'none';
+                                                        const parent = e.currentTarget.parentElement;
+                                                        if (parent) {
+                                                            const fallback = parent.querySelector('.fallback-container') as HTMLElement;
+                                                            if (fallback) fallback.style.display = 'flex';
+                                                        }
+                                                    }}
+                                                />
+                                                <div className="fallback-container hidden w-full h-full flex flex-col items-center justify-center p-4">
+                                                    <FileText className="w-8 h-8 text-gray-400 dark:text-white/10 mb-2" />
+                                                    <span className="text-[8px] font-black uppercase text-center text-gray-500 dark:text-white/40 leading-tight line-clamp-3">{post.title || 'MÍDIA INDISPONÍVEL'}</span>
+                                                </div>
+                                            </>
                                         ) : (
                                             <div className="w-full h-full flex flex-col items-center justify-center p-4">
-                                                <FileText className="w-8 h-8 text-white/10 mb-2" />
-                                                <span className="text-[8px] font-black uppercase text-center opacity-40 leading-tight">{post.title}</span>
+                                                <FileText className="w-8 h-8 text-gray-400 dark:text-white/10 mb-2" />
+                                                <span className="text-[8px] font-black uppercase text-center text-gray-500 dark:text-white/40 leading-tight line-clamp-3">{post.title || 'MÍDIA INDISPONÍVEL'}</span>
                                             </div>
                                         )}
                                         <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
@@ -307,7 +343,7 @@ export function LabTabContent() {
                                 );
                             })
                         ) : (
-                            <div className="col-span-full py-20 text-center opacity-50 border-2 border-dashed border-white/5 rounded-3xl">
+                            <div className="col-span-full py-20 text-center opacity-50 border-2 border-dashed border-gray-200 dark:border-white/5 rounded-3xl">
                                 <Star className="size-8 mx-auto mb-2 text-gray-600" />
                                 <p className="text-[10px] uppercase font-black tracking-widest text-gray-500">Sua constelação está vazia.</p>
                             </div>

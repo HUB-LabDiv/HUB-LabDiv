@@ -8,6 +8,7 @@ import {
     Camera,
     Send,
     MessageSquare,
+    MessageCircle,
     Mail,
     CheckCircle2,
     Loader2
@@ -175,8 +176,8 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
                                     <div className="flex gap-4 items-center py-4 border-t border-white/5">
                                         <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest">OU MANDE DIRETO:</span>
                                         <div className="flex gap-4">
-                                            <a href="https://wa.me/5511968401823" target="_blank" rel="noopener noreferrer" className="text-brand-green hover:scale-110 transition-transform">
-                                                <MessageSquare size={20} />
+                                            <a href="https://wa.me/5511968401823" target="_blank" rel="noopener noreferrer" className="text-brand-yellow hover:scale-110 transition-transform">
+                                                <MessageCircle size={20} />
                                             </a>
                                             <a href="mailto:contato@labdiv.com" className="text-brand-blue hover:scale-110 transition-transform">
                                                 <Mail size={20} />
@@ -202,8 +203,8 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
                             </form>
                         ) : (
                             <div className="p-12 text-center">
-                                <div className="size-20 bg-brand-green/10 rounded-[32px] flex items-center justify-center mx-auto mb-8">
-                                    <CheckCircle2 className="text-brand-green size-10" />
+                                <div className="size-20 bg-brand-yellow/10 rounded-[32px] flex items-center justify-center mx-auto mb-8">
+                                    <CheckCircle2 className="text-brand-yellow size-10" />
                                 </div>
                                 <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-4">Pulsação Recebida!</h2>
                                 <p className="text-gray-400 font-medium mb-12">Nossa equipe de manutenção já foi notificada sobre esta anomalia.</p>

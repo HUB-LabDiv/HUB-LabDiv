@@ -113,31 +113,33 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
         };
     }, []);
 
+    // Color mapper for consistent UI architecture
+    const colorMap: Record<string, { bg: string; text: string; border: string; hoverBorder: string }> = {
+        'brand-blue': { bg: 'bg-brand-blue/10', text: 'text-brand-blue', border: 'border-l-brand-blue', hoverBorder: 'hover:border-l-brand-blue' },
+        'brand-red': { bg: 'bg-brand-red/10', text: 'text-brand-red', border: 'border-l-brand-red', hoverBorder: 'hover:border-l-brand-red' },
+        'brand-yellow': { bg: 'bg-brand-yellow/10', text: 'text-brand-yellow', border: 'border-l-brand-yellow', hoverBorder: 'hover:border-l-brand-yellow' },
+    };
+
     return (
-        <div className="w-full h-full flex flex-col gap-2 py-6 overflow-x-hidden">
+        <div className="w-full h-full flex flex-col gap-2 py-6 px-4 overflow-x-hidden">
             {/* 
                --- NOTA PARA O DEV (AMIGO DO USUÁRIO) ---
-               O padding lateral ('px-4') fica nesta tag <aside> raiz.
+               O padding lateral ('px-4') foi movido para aqui (container raiz do componente).
                Isso garante que *todos* os botões e itens do menu fiquem desgrudados
-               da beirada esquerda da tela e fiquem "flutuando" lindamente (como na Imagem 1).
+               da beirada esquerda da tela e fiquem "flutuando" lindamente.
             */}
             {/* Primary Navigation */}
             <nav className="flex flex-col gap-1">
-                {/* Main Links */}
+                {/* Main Links - Rendered instantly (SSR Friendly) */}
                 {mainLinks.map((link) => {
                     const isActive = pathname === link.href;
-                    const colorMap: Record<string, { bg: string; text: string; border: string; hoverBorder: string }> = {
-                        'brand-blue': { bg: 'bg-brand-blue/10', text: 'text-brand-blue', border: 'border-l-brand-blue', hoverBorder: 'hover:border-l-brand-blue' },
-                        'brand-red': { bg: 'bg-brand-red/10', text: 'text-brand-red', border: 'border-l-brand-red', hoverBorder: 'hover:border-l-brand-red' },
-                        'brand-yellow': { bg: 'bg-brand-yellow/10', text: 'text-brand-yellow', border: 'border-l-brand-yellow', hoverBorder: 'hover:border-l-brand-yellow' },
-                    };
                     const c = colorMap[link.color] || colorMap['brand-blue'];
                     return (
                         <Link
                             key={link.href}
                             href={link.href}
                             onClick={() => trackEvent('TAB_CHANGE', { tab: link.name, href: link.href })}
-                            className={`flex items-center gap-4 px-6 py-3 transition-all group border-l-[3px] ${isActive
+                            className={`flex items-center gap-4 px-6 py-3 transition-all group border-l-[3px] rounded-r-xl ${isActive
                                 ? `${c.bg} ${c.text} ${c.border}`
                                 : `border-l-transparent ${c.hoverBorder} text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white`
                                 }`}
@@ -152,65 +154,59 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                     );
                 })}
 
-                {/* Category-Specific Links - Enhanced for immediate visibility and skeletons */}
-                {isLoading ? (
-                    // Skeleton State
-                    <div className="flex flex-col gap-1 px-4">
+                {/* Category-Specific Links - Optimistic Rendering for SSR */}
+                {categoryLinks
+                    .filter(l => {
+                        // Always show if it's the active path (prevents layout jump during hydration)
+                        if (pathname.startsWith(l.href)) return true;
+                        // During loading, we don't know the role, so we hide non-active ones to avoid "flashing" incorrect roles
+                        if (isLoading) return false;
+                        // Finally, show if role matches
+                        return l.role === userCategory;
+                    })
+                    .map((link) => {
+                        const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
+                        const isGuest = !isLoggedIn;
+                        const displayName = (isGuest && link.role === 'curioso') ? 'Acesso ao Hub' : link.name;
+                        const displayHref = (isGuest && link.role === 'curioso') ? '/login' : link.href;
+                        const c = colorMap[link.color] || colorMap['brand-blue'];
+
+                        return (
+                            <Link
+                                key={link.href}
+                                href={displayHref}
+                                onClick={() => trackEvent('TAB_CHANGE', { tab: displayName, href: displayHref })}
+                                className={`flex items-center gap-4 px-6 py-3 transition-all group border-l-[3px] rounded-r-xl ${isActive
+                                    ? `${c.bg} ${c.text} ${c.border}`
+                                    : `border-l-transparent ${c.hoverBorder} text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white`
+                                    }`}
+                            >
+                                <span className={`transition-transform group-hover:scale-110 ${isActive ? c.text : ''}`}>
+                                    {link.icon}
+                                </span>
+                                <span className={`font-bold text-base ${isActive ? 'text-gray-900 dark:text-white' : ''}`}>
+                                    {displayName}
+                                </span>
+                            </Link>
+                        );
+                    })}
+
+                {/* Loading Skeleton if profile is still being determined */}
+                {isLoading && (
+                    <div className="flex flex-col gap-1 mt-1 px-4">
                         <div className="h-10 w-full bg-gray-200 dark:bg-white/5 rounded-xl animate-pulse" />
                     </div>
-                ) : (
-                    categoryLinks
-                        .filter(l => l.role === userCategory || pathname.startsWith(l.href))
-                        .map((link) => {
-                            const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
-                            const isGuest = !isLoggedIn;
-                            const displayName = (isGuest && link.role === 'curioso') ? 'Acesso ao Hub' : link.name;
-                            const displayHref = (isGuest && link.role === 'curioso') ? '/login' : link.href;
-
-                            const colorMap: Record<string, { bg: string; text: string; border: string; hoverBorder: string }> = {
-                                'brand-blue': { bg: 'bg-brand-blue/10', text: 'text-brand-blue', border: 'border-l-brand-blue', hoverBorder: 'hover:border-l-brand-blue' },
-                                'brand-red': { bg: 'bg-brand-red/10', text: 'text-brand-red', border: 'border-l-brand-red', hoverBorder: 'hover:border-l-brand-red' },
-                                'brand-yellow': { bg: 'bg-brand-yellow/10', text: 'text-brand-yellow', border: 'border-l-brand-yellow', hoverBorder: 'hover:border-l-brand-yellow' },
-                            };
-                            const c = colorMap[link.color] || colorMap['brand-blue'];
-                            return (
-                                <Link
-                                    key={link.href}
-                                    href={displayHref}
-                                    onClick={() => trackEvent('TAB_CHANGE', { tab: displayName, href: displayHref })}
-                                    className={`flex items-center gap-4 px-6 py-3 transition-all group border-l-[3px] ${isActive
-                                        ? `${c.bg} ${c.text} ${c.border}`
-                                        : `border-l-transparent ${c.hoverBorder} text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white`
-                                        }`}
-                                >
-                                    <span className={`transition-transform group-hover:scale-110 ${isActive ? c.text : ''}`}>
-                                        {link.icon}
-                                    </span>
-                                    <span className={`font-bold text-base ${isActive ? 'text-gray-900 dark:text-white' : ''}`}>
-                                        {displayName}
-                                    </span>
-                                </Link>
-                            );
-                        })
                 )}
 
                 <div className="h-px bg-gray-100 dark:bg-white/5 my-2 mx-4" />
             </nav>
 
-            {/* 
-               --- NOTA PARA O DEV ---
-               [ Central de Interações ] 
-               Para manter tudo alinhado, removemos o "px-4" do container <div> pai.
-               O padding e a margem de recuo (px-4, gap-4) agora estão diretos no <Link>.
-               Isso faz com que o marcador colorido (a borda vermelha/azul de seleção) 
-               fique exatamente na mesma linha vertical que os itens lá de cima ("Comunidade" etc).
-            */}
             {/* Interaction Section */}
             <div className="mt-4 flex flex-col gap-1">
                 <Link
                     href="/interacao?tab=emaranhamento"
                     onClick={() => trackEvent('TAB_CHANGE', { tab: 'Central de Interações', hub: 'sidebar' })}
-                    className={`flex items-center gap-4 px-6 py-3 transition-all group border-l-[3px] ${pathname.startsWith('/interacao') 
+                    className={`flex items-center gap-4 px-6 py-3 transition-all group border-l-[3px] rounded-r-xl ${pathname.startsWith('/interacao') 
                         ? 'bg-brand-blue/10 text-brand-blue border-l-brand-blue' 
                         : 'border-l-transparent hover:border-l-brand-blue text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'}`}
                 >
@@ -226,14 +222,14 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                     <div className="grid grid-cols-2 gap-2">
                         <Link
                             href="/interacao?tab=lab"
-                            className="flex flex-col items-center justify-center p-2 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 hover:border-brand-blue/30 transition-all text-center group"
+                            className="flex flex-col items-center justify-center p-2 rounded-xl bg-white dark:bg-white/5 border border-gray-300 dark:border-white/5 hover:border-brand-blue/30 transition-all text-center group shadow-sm dark:shadow-none"
                         >
                             <span className="material-symbols-outlined text-lg text-brand-blue mb-1">person</span>
                             <span className="text-[9px] font-black uppercase tracking-tighter text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white">Laboratório</span>
                         </Link>
                         <Link
                             href="/interacao?tab=perguntas"
-                            className="flex flex-col items-center justify-center p-2 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-100 dark:border-white/5 hover:border-brand-blue/30 transition-all text-center group"
+                            className="flex flex-col items-center justify-center p-2 rounded-xl bg-white dark:bg-white/5 border border-gray-300 dark:border-white/5 hover:border-brand-blue/30 transition-all text-center group shadow-sm dark:shadow-none"
                         >
                             <span className="material-symbols-outlined text-lg text-brand-blue mb-1">quiz</span>
                             <span className="text-[9px] font-black uppercase tracking-tighter text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white">Pergunte</span>
@@ -245,11 +241,12 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                     <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 px-5">Partículas Emaranhadas</h2>
                     <div className="space-y-1">
                         {isLoading && recentEntanglements.length === 0 ? (
-                            <div className="flex items-center gap-3 px-4 py-2 animate-pulse">
-                                <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-800" />
-                                <div className="flex flex-col gap-1">
-                                    <div className="w-20 h-2 bg-gray-200 dark:bg-gray-800 rounded" />
-                                    <div className="w-12 h-1.5 bg-gray-100 dark:bg-gray-900 rounded" />
+                            // Robust Profile Skeleton as requested by user
+                            <div className="flex items-center gap-3 px-6 py-3 animate-pulse">
+                                <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/5" />
+                                <div className="flex flex-col gap-2 flex-1">
+                                    <div className="h-3 w-3/4 bg-gray-200 dark:bg-white/5 rounded-full" />
+                                    <div className="h-2 w-1/2 bg-gray-100 dark:bg-white/5 rounded-full opacity-60" />
                                 </div>
                             </div>
                         ) : recentEntanglements.length > 0 ? (
@@ -257,7 +254,7 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                                 <Link
                                     key={profile.id}
                                     href={`/emaranhamento?userId=${profile.id}`}
-                                    className={`flex items-center gap-3 px-6 py-2 transition-all group relative border-l-[3px] border-l-transparent hover:border-white/5 ${pathname === '/emaranhamento' && userId === profile.id ? 'bg-white/10' : 'hover:bg-gray-100 dark:hover:bg-white/5'}`}
+                                    className={`flex items-center gap-3 px-6 py-2 transition-all group relative border-l-[3px] border-l-transparent rounded-r-xl hover:border-white/5 ${pathname === '/emaranhamento' && userId === profile.id ? 'bg-white/10' : 'hover:bg-gray-100 dark:hover:bg-white/5'}`}
                                 >
                                     <Avatar
                                         src={profile.avatar}
@@ -284,7 +281,7 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                                 </Link>
                             ))
                         ) : (
-                            <div className="mx-4 flex items-center gap-3 p-2 rounded-xl border border-dashed border-gray-200 dark:border-gray-800 opacity-50">
+                            <div className="mx-6 flex items-center gap-3 p-3 rounded-xl border border-dashed border-gray-300 dark:border-gray-800 opacity-50">
                                 <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
                                     <MessageSquare className="w-5 h-5 text-gray-400" />
                                 </div>
@@ -298,22 +295,15 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                 </div>
             </div>
 
-            {/* 
-               --- NOTA PARA O DEV ---
-               [ Suporte e Dúvidas ]
-               A mesma lógica foi aplicada aqui: "px-4 gap-4" nos links individuais (<a href...>)
-               ao invés de botar padding no pai. O Header (<h2>) de suporte recebe "px-5" 
-               para o texto dar uma emparelhada suave com o início dos ícones. 
-            */}
             {/* Suporte e Dúvidas */}
             <div className="mt-auto mb-2 flex flex-col pt-4">
                 <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 px-5">Suporte do hub</h2>
                 <div className="flex flex-col gap-1">
-                    <a href="https://wa.me/5511968401823" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 px-6 py-3 text-sm text-gray-500 hover:bg-green-500/10 hover:text-green-600 dark:hover:text-green-400 transition-colors group border-l-[3px] border-l-transparent">
+                    <a href="https://wa.me/5511968401823" target="_blank" rel="noopener noreferrer" className="flex items-center gap-4 px-6 py-3 text-sm text-gray-500 hover:bg-brand-yellow/10 hover:text-[#FFCC00] transition-colors group border-l-[3px] border-l-transparent rounded-r-xl">
                         <MessageCircle className="w-5 h-5 opacity-60 group-hover:opacity-100" />
                         <span className="font-bold">WhatsApp Direto</span>
                     </a>
-                    <a href="mailto:joaopaulostangorlini@usp.br" className="flex items-center gap-4 px-6 py-3 text-sm text-gray-500 hover:bg-brand-red/10 hover:text-brand-red transition-colors group border-l-[3px] border-l-transparent">
+                    <a href="mailto:joaopaulostangorlini@usp.br" className="flex items-center gap-4 px-6 py-3 text-sm text-gray-500 hover:bg-brand-red/10 hover:text-brand-red transition-colors group border-l-[3px] border-l-transparent rounded-r-xl">
                         <MessageSquare className="w-5 h-5 opacity-60 group-hover:opacity-100" />
                         <span className="font-bold">Enviar e-mail</span>
                     </a>
@@ -326,7 +316,7 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                     <Link
                         key={link.name}
                         href={link.href}
-                        className="flex items-center gap-4 px-6 py-3 text-sm text-gray-500 hover:text-brand-blue transition-colors group border-l-[3px] border-l-transparent"
+                        className="flex items-center gap-4 px-6 py-3 text-sm text-gray-500 hover:text-brand-blue transition-colors group border-l-[3px] border-l-transparent rounded-r-xl"
                     >
                         <span className="opacity-60 group-hover:opacity-100">
                             {link.icon}

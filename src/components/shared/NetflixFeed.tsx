@@ -38,14 +38,14 @@ export function NetflixFeed({ title, icon, children }: NetflixFeedProps) {
                 <div className="flex items-center gap-2">
                     <button 
                         onClick={() => scroll('left')}
-                        className="p-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:scale-105 active:scale-95 transition-all text-gray-400 hover:text-white shadow-xl"
+                        className="p-2 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-200 dark:hover:bg-white/10 hover:scale-105 active:scale-95 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white shadow-sm"
                         aria-label="Rolar para esquerda"
                     >
                         <ChevronLeft className="w-5 h-5" />
                     </button>
                     <button 
                         onClick={() => scroll('right')}
-                        className="p-2 rounded-full bg-white/5 border border-white/10 hover:bg-white/10 hover:scale-105 active:scale-95 transition-all text-gray-400 hover:text-white shadow-xl"
+                        className="p-2 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-200 dark:hover:bg-white/10 hover:scale-105 active:scale-95 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white shadow-sm"
                         aria-label="Rolar para direita"
                     >
                         <ChevronRight className="w-5 h-5" />
@@ -55,8 +55,8 @@ export function NetflixFeed({ title, icon, children }: NetflixFeedProps) {
 
             <div className="relative group">
                 {/* Gradient Fades */}
-                <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#121212] to-transparent z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#121212] to-transparent z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#FAFAFA] dark:from-[#121212] to-transparent z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#FAFAFA] dark:from-[#121212] to-transparent z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 <div 
                     ref={scrollContainerRef}

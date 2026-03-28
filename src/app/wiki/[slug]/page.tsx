@@ -125,10 +125,10 @@ const pageContent: Record<string, any> = {
                                     <div className="p-2.5 rounded-2xl bg-[#17739A]/20 border border-[#17739A]/30">
                                         <Landmark className="w-6 h-6 text-[#17739A]" />
                                     </div>
-                                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#17739A]">Instituto de Física da USP</span>
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#17739A]">Física USP</span>
                                 </div>
-                                <h5 className="text-white text-lg font-black uppercase italic mb-3">O seu Instituto por Dentro</h5>
-                                <p className="text-xs text-gray-400 leading-relaxed mb-6">
+                                <h5 className="text-gray-900 dark:text-white text-lg font-black uppercase italic mb-3">O seu Instituto por Dentro</h5>
+                                <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
                                     Mergulhe na história do IFUSP e entenda como um dos institutos de física mais respeitados do mundo é organizado atualmente. Descubra o legado, os departamentos e a estrutura de governança do nosso instituto.
                                 </p>
                                 <ActionButton label="Aprender sobre o IFUSP" icon={<Landmark className="w-4 h-4" />} href="/wiki/instituto" variant="primary" />
@@ -182,26 +182,26 @@ const pageContent: Record<string, any> = {
                 fullWidth: true,
                 content: (
                     <div className="space-y-8">
-                        <p className="text-gray-400 text-sm italic">Iniciativas essenciais para alunos de Licenciatura que buscam experiência prática em sala de aula e apoio financeiro.</p>
+                        <p className="text-gray-500 dark:text-gray-400 text-sm italic">Iniciativas essenciais para alunos de Licenciatura que buscam experiência prática em sala de aula e apoio financeiro.</p>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <div className="glass-card p-6 rounded-3xl border-white/5 flex flex-col justify-between hover:border-brand-red/20 transition-colors">
+                            <div className="glass-card p-6 rounded-3xl border-black/5 dark:border-white/5 flex flex-col justify-between hover:border-brand-red/20 transition-colors">
                                 <div>
-                                    <h4 className="text-white font-black uppercase italic mb-2 text-sm text-brand-red">PIBID</h4>
-                                    <p className="text-[11px] text-gray-500 leading-relaxed mb-6">Programa de iniciação à docência focado na introdução do aluno ao cotidiano de escolas públicas desde o início do curso, promovendo a integração entre teoria e prática.</p>
+                                    <h4 className="text-gray-900 dark:text-white font-black uppercase italic mb-2 text-sm text-brand-red">PIBID</h4>
+                                    <p className="text-[11px] text-gray-600 dark:text-gray-500 leading-relaxed mb-6">Programa de iniciação à docência focado na introdução do aluno ao cotidiano de escolas públicas desde o início do curso, promovendo a integração entre teoria e prática.</p>
                                 </div>
                                 <ActionButton label="Edital PIBID" icon={<Download className="w-4 h-4" />} href="https://prg.usp.br/wp-content/uploads/Edital-Bolsas-Pibid-Discentes-complementar-170325.pdf" variant="secondary" />
                             </div>
-                            <div className="glass-card p-6 rounded-3xl border-white/5 flex flex-col justify-between hover:border-brand-red/20 transition-colors">
+                            <div className="glass-card p-6 rounded-3xl border-black/5 dark:border-white/5 flex flex-col justify-between hover:border-brand-red/20 transition-colors">
                                 <div>
-                                    <h4 className="text-white font-black uppercase italic mb-2 text-sm text-brand-red">PROIAD</h4>
-                                    <p className="text-[11px] text-gray-500 leading-relaxed mb-6">Incentivo à monitoria e apoio pedagógico, auxiliando na adaptação e no desempenho acadêmico de outros discentes através de orientação especializada.</p>
+                                    <h4 className="text-gray-900 dark:text-white font-black uppercase italic mb-2 text-sm text-brand-red">PROIAD</h4>
+                                    <p className="text-[11px] text-gray-600 dark:text-gray-500 leading-relaxed mb-6">Incentivo à monitoria e apoio pedagógico, auxiliando na adaptação e no desempenho acadêmico de outros discentes através de orientação especializada.</p>
                                 </div>
                                 <ActionButton label="Edital PROIAD" icon={<Download className="w-4 h-4" />} href="https://prg.usp.br/wp-content/uploads/Edital-PROIAD-2026.pdf" variant="secondary" />
                             </div>
-                            <div className="glass-card p-6 rounded-3xl border-white/5 flex flex-col justify-between hover:border-brand-red/20 transition-colors">
+                            <div className="glass-card p-6 rounded-3xl border-black/5 dark:border-white/5 flex flex-col justify-between hover:border-brand-red/20 transition-colors">
                                 <div>
-                                    <h4 className="text-white font-black uppercase italic mb-2 text-sm text-brand-red">SEDUC</h4>
-                                    <p className="text-[11px] text-gray-500 leading-relaxed mb-6">Atuação direta em escolas da rede estadual, conectando a formação de física com os desafios reais e a estrutura do sistema de ensino de São Paulo.</p>
+                                    <h4 className="text-gray-900 dark:text-white font-black uppercase italic mb-2 text-sm text-brand-red">SEDUC</h4>
+                                    <p className="text-[11px] text-gray-600 dark:text-gray-500 leading-relaxed mb-6">Atuação direta em escolas da rede estadual, conectando a formação de física com os desafios reais e a estrutura do sistema de ensino de São Paulo.</p>
                                 </div>
                                 <ActionButton label="Edital SEDUC" icon={<Download className="w-4 h-4" />} href="https://prg.usp.br/wp-content/uploads/Edital-Bolsa-Seduc-2026.pdf" variant="secondary" />
                             </div>
@@ -215,19 +215,19 @@ const pageContent: Record<string, any> = {
                 content: (
                     <div className="space-y-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="glass-card p-6 rounded-3xl border-white/5 flex flex-col justify-between hover:border-brand-blue/20 transition-colors">
+                            <div className="glass-card p-6 rounded-3xl border-black/5 dark:border-white/5 flex flex-col justify-between hover:border-brand-blue/20 transition-colors">
                                 <div>
-                                    <h4 className="text-white font-black uppercase italic mb-3 text-sm text-brand-blue">PEEG</h4>
-                                    <p className="text-[11px] text-gray-500 leading-relaxed mb-6">
+                                    <h4 className="text-gray-900 dark:text-white font-black uppercase italic mb-3 text-sm text-brand-blue">PEEG</h4>
+                                    <p className="text-[11px] text-gray-600 dark:text-gray-500 leading-relaxed mb-6">
                                         O **Programa de Estímulo ao Ensino de Graduação** é focado no aprimoramento do ensino através da monitoria acadêmica. Como bolsista PEEG, você atuará diretamente com docentes no suporte a disciplinas, auxiliando na preparação de materiais didáticos e no suporte pedagógico aos alunos.
                                     </p>
                                 </div>
                                 <ActionButton label="Edital PEEG" icon={<Download className="w-4 h-4" />} href="https://prg.usp.br/wp-content/uploads/Edital_PEEG_1_sem_2026.pdf" variant="secondary" />
                             </div>
-                            <div className="glass-card p-6 rounded-3xl border-white/5 flex flex-col justify-between hover:border-brand-blue/20 transition-colors">
+                            <div className="glass-card p-6 rounded-3xl border-black/5 dark:border-white/5 flex flex-col justify-between hover:border-brand-blue/20 transition-colors">
                                 <div>
-                                    <h4 className="text-white font-black uppercase italic mb-3 text-sm text-brand-blue">PUB</h4>
-                                    <p className="text-[11px] text-gray-500 leading-relaxed mb-6">
+                                    <h4 className="text-gray-900 dark:text-white font-black uppercase italic mb-3 text-sm text-brand-blue">PUB</h4>
+                                    <p className="text-[11px] text-gray-600 dark:text-gray-500 leading-relaxed mb-6">
                                         O **Programa Unificado de Bolsas** é a principal iniciativa da USP para integrar formação e permanência. Com projetos abrangendo Ensino, Pesquisa, Extensão e Cultura, permite a participação de atividades transversais com suporte financeiro mensal.
                                     </p>
                                 </div>
@@ -245,8 +245,8 @@ const pageContent: Record<string, any> = {
                         <div className="p-8 glass-card border-brand-red/20 rounded-[40px] bg-brand-red/5 group">
                             <div className="flex flex-col md:flex-row md:items-center gap-8">
                                 <div className="flex-1">
-                                    <h5 className="text-white text-xl font-black uppercase italic mb-3">Como começar na IC?</h5>
-                                    <p className="text-xs text-gray-400 leading-relaxed mb-6">
+                                    <h5 className="text-gray-900 dark:text-white text-xl font-black uppercase italic mb-3">Como começar na IC?</h5>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
                                         A jornada na pesquisa científica exige proatividade e planejamento. Antes de buscar uma bolsa, é fundamental entender como escolher orientador, definir um tema e navegar pelos sistemas. Confira nosso guia técnico completo.
                                     </p>
                                     <ActionButton label="Acessar Guia de Sistemas de Pesquisa" icon={<Microscope className="w-4 h-4" />} href="/wiki/pesquisa" variant="primary" />
@@ -258,17 +258,17 @@ const pageContent: Record<string, any> = {
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="glass-card p-6 rounded-3xl border-white/5 flex flex-col justify-between hover:border-brand-red/20 transition-colors">
+                            <div className="glass-card p-6 rounded-3xl border-black/5 dark:border-white/5 flex flex-col justify-between hover:border-brand-red/20 transition-colors">
                                 <div>
-                                    <h4 className="text-white font-black uppercase italic mb-2 text-xs text-brand-red">PIBIC - Pesquisa Acadêmica</h4>
-                                    <p className="text-[10px] text-gray-500 leading-relaxed mb-4">Focado em iniciação científica padrão, o PIBIC visa introduzir o aluno na metodologia científica e no pensamento crítico acadêmico.</p>
+                                    <h4 className="text-gray-900 dark:text-white font-black uppercase italic mb-2 text-xs text-brand-red">PIBIC - Pesquisa Acadêmica</h4>
+                                    <p className="text-[10px] text-gray-600 dark:text-gray-500 leading-relaxed mb-4">Focado em iniciação científica padrão, o PIBIC visa introduzir o aluno na metodologia científica e no pensamento crítico acadêmico.</p>
                                 </div>
                                 <ActionButton label="Edital PIBIC" icon={<Download className="w-4 h-4" />} href="https://prpi.usp.br/wp-content/uploads/sites/1239/2025/05/Edital-PIBIC-2025_2026.pdf" variant="secondary" />
                             </div>
-                            <div className="glass-card p-6 rounded-3xl border-white/5 flex flex-col justify-between hover:border-brand-red/20 transition-colors">
+                            <div className="glass-card p-6 rounded-3xl border-black/5 dark:border-white/5 flex flex-col justify-between hover:border-brand-red/20 transition-colors">
                                 <div>
-                                    <h4 className="text-white font-black uppercase italic mb-2 text-xs text-brand-red">PIBITI - Inovação</h4>
-                                    <p className="text-[10px] text-gray-500 leading-relaxed mb-4">Focado em Desenvolvimento Tecnológico e Inovação, o PIBITI estimula a criação de aplicações práticas e protótipos.</p>
+                                    <h4 className="text-gray-900 dark:text-white font-black uppercase italic mb-2 text-xs text-brand-red">PIBITI - Inovação</h4>
+                                    <p className="text-[10px] text-gray-600 dark:text-gray-500 leading-relaxed mb-4">Focado em Desenvolvimento Tecnológico e Inovação, o PIBITI estimula a criação de aplicações práticas e protótipos.</p>
                                 </div>
                                 <ActionButton label="Edital PIBITI" icon={<Download className="w-4 h-4" />} href="https://prpi.usp.br/wp-content/uploads/sites/1239/2025/05/Edital-PIBITI-2025_2026_PIBITI.pdf" variant="secondary" />
                             </div>
@@ -280,14 +280,14 @@ const pageContent: Record<string, any> = {
                 title: 'Bolsas das Unidades (Pro-Aluno)',
                 fullWidth: true,
                 content: (
-                    <div className="p-6 glass-card border-white/5 rounded-[32px] bg-white/5">
+                    <div className="p-6 glass-card border-black/5 dark:border-white/5 rounded-[32px] bg-white/5">
                         <div className="flex items-center gap-4">
                             <div className="p-3 rounded-2xl bg-brand-blue/10 border border-brand-blue/20">
                                 <Info className="w-6 h-6 text-brand-blue" />
                             </div>
                             <div>
-                                <h5 className="text-white font-black uppercase italic text-sm">Apoios Específicos do Instituto</h5>
-                                <p className="text-[11px] text-gray-400 leading-relaxed">
+                                <h5 className="text-gray-900 dark:text-white font-black uppercase italic text-sm">Apoios Específicos do Instituto</h5>
+                                <p className="text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed">
                                     Cada instituto possui também suas próprias bolsas **Pro-Aluno** e apoios geridos diretamente pela **Seção de Alunos**. Consulte o site oficial ou a secretaria da sua unidade para conhecer as vagas internas de monitoria técnica e administrativa.
                                 </p>
                             </div>
@@ -302,8 +302,8 @@ const pageContent: Record<string, any> = {
                     <div className="p-8 glass-card border-brand-blue/20 rounded-[40px] bg-brand-blue/5 overflow-hidden relative group">
                         <div className="flex flex-col md:flex-row md:items-center gap-8">
                             <div className="flex-1">
-                                <h5 className="text-white text-xl font-black uppercase italic mb-3">Descubra Novas Bolsas e Projetos</h5>
-                                <p className="text-xs text-gray-400 leading-relaxed mb-6">
+                                <h5 className="text-gray-900 dark:text-white text-xl font-black uppercase italic mb-3">Descubra Novas Bolsas e Projetos</h5>
+                                <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
                                     Além das bolsas tradicionais, a USP publica regularmente editais de projetos específicos, eventos e novos auxílios que muitas vezes são pouco divulgados. O portal da **PRIP (Pró-Reitoria de Inclusão e Pertencimento)** centraliza todas essas chamadas abertas. Vale a pena conferir mensalmente!
                                 </p>
                                 <ActionButton label="Ver todos os Editais PRIP" icon={<ExternalLink className="w-4 h-4" />} href="https://prip.usp.br/sobre/legislacao-e-portarias/editais/" variant="primary" />
@@ -426,17 +426,17 @@ const pageContent: Record<string, any> = {
                     <div className="space-y-6">
                         <p>O IFUSP pulsa com coletivos que transformam a vivência acadêmica. Conheça e participe das iniciativas que moldam nossa comunidade:</p>
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <Link href="/colisor#iniciativas-espacos" className="p-4 glass-card rounded-2xl hover:bg-brand-blue/5 transition-all group border border-white/5">
+                            <Link href="/colisor#iniciativas-espacos" className="p-4 glass-card rounded-2xl hover:bg-brand-blue/5 transition-all group border border-black/5 dark:border-white/5">
                                 <h4 className="font-black text-brand-blue uppercase text-xs mb-1">Vaca Esférica</h4>
-                                <p className="text-[10px] text-gray-500 group-hover:text-gray-400 transition-colors">Rádio e divulgação científica feita por alunos.</p>
+                                <p className="text-[10px] text-gray-700 dark:text-gray-500 group-hover:text-gray-900 dark:group-hover:text-gray-400 transition-colors">Rádio e divulgação científica feita por alunos.</p>
                             </Link>
-                            <Link href="/colisor#iniciativas-espacos" className="p-4 glass-card rounded-2xl hover:bg-brand-red/5 transition-all group border border-white/5">
+                            <Link href="/colisor#iniciativas-espacos" className="p-4 glass-card rounded-2xl hover:bg-brand-red/5 transition-all group border border-black/5 dark:border-white/5">
                                 <h4 className="font-black text-brand-red uppercase text-xs mb-1">LabDiv</h4>
-                                <p className="text-[10px] text-gray-500 group-hover:text-gray-400 transition-colors">Laboratório de Design e Comunicação.</p>
+                                <p className="text-[10px] text-gray-700 dark:text-gray-500 group-hover:text-gray-900 dark:group-hover:text-gray-400 transition-colors">Laboratório de Design e Comunicação.</p>
                             </Link>
-                            <Link href="/colisor#iniciativas-espacos" className="p-4 glass-card rounded-2xl hover:bg-brand-yellow/5 transition-all group border border-white/5">
+                            <Link href="/colisor#iniciativas-espacos" className="p-4 glass-card rounded-2xl hover:bg-brand-yellow/5 transition-all group border border-black/5 dark:border-white/5">
                                 <h4 className="font-black text-brand-yellow uppercase text-xs mb-1">Show de Física</h4>
-                                <p className="text-[10px] text-gray-500 group-hover:text-gray-400 transition-colors">Encantos e experimentos para o público escolar.</p>
+                                <p className="text-[10px] text-gray-700 dark:text-gray-500 group-hover:text-gray-900 dark:group-hover:text-gray-400 transition-colors">Encantos e experimentos para o público escolar.</p>
                             </Link>
                         </div>
                     </div>
@@ -452,11 +452,11 @@ const pageContent: Record<string, any> = {
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <Link href="/colisor#iniciativas-espacos" className="p-4 glass-card border-brand-blue/20 rounded-2xl hover:bg-brand-blue/5 transition-all group">
                                 <h4 className="font-black text-brand-blue uppercase text-xs mb-1">Amélia Império</h4>
-                                <p className="text-[10px] text-gray-500 group-hover:text-gray-400 font-bold">Conheça o espaço no Colisor</p>
+                                <p className="text-[10px] text-gray-700 dark:text-gray-400 font-bold group-hover:text-gray-900 dark:group-hover:text-gray-300 transition-colors">Conheça o espaço no Colisor</p>
                             </Link>
                             <Link href="/colisor#iniciativas-espacos" className="p-4 glass-card border-brand-red/20 rounded-2xl hover:bg-brand-red/5 transition-all group">
                                 <h4 className="font-black text-brand-red uppercase text-xs mb-1">HS (Humanidades)</h4>
-                                <p className="text-[10px] text-gray-500 group-hover:text-gray-400 font-bold">Debates éticos no Síncrotron</p>
+                                <p className="text-[10px] text-gray-700 dark:text-gray-400 font-bold group-hover:text-gray-900 dark:group-hover:text-gray-300 transition-colors">Debates éticos no Síncrotron</p>
                             </Link>
                         </div>
                     </div>
@@ -470,12 +470,12 @@ const pageContent: Record<string, any> = {
                         <h4 className="flex items-center gap-2 font-black text-brand-yellow uppercase text-xs mb-3">
                             <Users className="w-4 h-4" /> Comunicação e Pesquisa
                         </h4>
-                        <p className="text-xs text-gray-400 leading-relaxed mb-4">
+                        <p className="text-xs text-gray-700 dark:text-gray-400 leading-relaxed mb-4">
                             Professores são pesquisadores. A melhor forma de conseguir uma Iniciação Científica é a proatividade: mande um email formal, apresente seu interesse e pergunte quando pode ir à sua sala para conversar brevemente.
                         </p>
                         <div className="flex gap-2">
-                            <span className="px-2 py-0.5 bg-white/5 rounded text-[9px] font-bold text-gray-500">#Proatividade</span>
-                            <span className="px-2 py-0.5 bg-white/5 rounded text-[9px] font-bold text-gray-500">#EtiquetaAcademica</span>
+                            <span className="px-2 py-0.5 bg-black/5 dark:bg-white/5 rounded text-[9px] font-bold text-gray-600 dark:text-gray-500">#Proatividade</span>
+                            <span className="px-2 py-0.5 bg-black/5 dark:bg-white/5 rounded text-[9px] font-bold text-gray-600 dark:text-gray-500">#EtiquetaAcademica</span>
                         </div>
                     </div>
                 )
@@ -597,18 +597,38 @@ export default function WikiSubPage() {
     }, [highlightTerm]);
 
     // Helper to render text with highlights
+    // Helper to render text with highlights and branding
     const renderContent = (text: string) => {
-        if (!highlightTerm || !text) return text;
+        if (!text) return text;
+        
+        const renderTextWithIFUSP = (rawText: string) => {
+            if (!rawText) return rawText;
+            // Force strict canonical IFUSP (remove spaces/dashes)
+            const standardized = rawText.replace(/IF-USP|IF USP/gi, 'IFUSP');
+            const parts = standardized.split(/(IFUSP)/gi);
+            return parts.map((part, i) => {
+                if (part.toUpperCase() === 'IFUSP') {
+                    return (
+                        <span key={i} className="inline font-black tracking-tighter">
+                            <span className="text-brand-yellow">IF</span><span className="text-brand-blue">USP</span>
+                        </span>
+                    );
+                }
+                return part;
+            });
+        };
+
+        if (!highlightTerm) return <>{renderTextWithIFUSP(text)}</>;
         
         const parts = text.split(new RegExp(`(${highlightTerm})`, 'gi'));
         return (
             <>
                 {parts.map((part, i) => 
                     part.toLowerCase() === highlightTerm ? (
-                        <mark key={i} className="bg-brand-yellow/30 text-white rounded-sm px-0.5 border-b border-brand-yellow/50">
+                        <mark key={i} className="bg-brand-yellow/30 text-gray-900 dark:text-white rounded-sm px-0.5 border-b border-brand-yellow/50">
                             {part}
                         </mark>
-                    ) : part
+                    ) : <React.Fragment key={i}>{renderTextWithIFUSP(part)}</React.Fragment>
                 )}
             </>
         );
@@ -620,7 +640,7 @@ export default function WikiSubPage() {
                 <div className="min-h-screen bg-transparent pt-24 px-4 flex items-center justify-center">
                     <div className="text-center">
                         <AlertCircle className="w-20 h-20 text-brand-red mx-auto mb-6 opacity-20" />
-                        <h1 className="text-3xl font-black text-white italic uppercase tracking-tighter">Partícula não encontrada</h1>
+                        <h1 className="text-3xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter">Partícula não encontrada</h1>
                         <Link href="/wiki" className="mt-8 inline-block text-brand-blue font-black uppercase tracking-widest hover:underline">
                             Voltar ao Síncrotron
                         </Link>
@@ -640,9 +660,9 @@ export default function WikiSubPage() {
                     className="space-y-8"
                 >
                     {/* Dates/DataCards */}
-                    {content.dates && content.dates.length > 0 && (
+                        {content.dates && content.dates.length > 0 && (
                         <div className="space-y-4">
-                            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600 mb-6">Métricas de Colisão</h4>
+                            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-gray-600 mb-6">Métricas de Colisão</h4>
                             {content.dates.map((date: any, idx: number) => (
                                 <DataCard key={idx} label={date.label} value={date.value} color={content.color} />
                             ))}
@@ -651,7 +671,7 @@ export default function WikiSubPage() {
 
                     {/* Actions/ActionButtons */}
                     <div className="space-y-4">
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600 mb-6">Ações Rápidas</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-gray-600 mb-6">Ações Rápidas</h4>
                         {content.actions?.map((action: any, idx: number) => (
                             <ActionButton key={idx} label={action.label} icon={action.icon} href={action.href} variant={idx === 0 ? 'primary' : 'secondary'} color={content.color} />
                         ))}
@@ -660,8 +680,8 @@ export default function WikiSubPage() {
                     {/* Support Card (Report System) */}
                     <div className="p-8 glass-card border-brand-red/20 rounded-[40px] mt-12 group">
                         <AlertCircle className="w-8 h-8 text-brand-red mb-4 group-hover:scale-110 transition-transform" />
-                        <h5 className="text-sm font-black text-white uppercase italic mb-2">Dúvida Técnica?</h5>
-                        <p className="text-[11px] text-gray-500 font-bold leading-relaxed mb-6">Utilize o canal de Report para informar flutuações de dados ou problemas técnicos.</p>
+                        <h5 className="text-sm font-black text-gray-900 dark:text-white uppercase italic mb-2">Dúvida Técnica?</h5>
+                        <p className="text-[11px] text-gray-600 dark:text-gray-500 font-bold leading-relaxed mb-6">Utilize o canal de Report para informar flutuações de dados ou problemas técnicos.</p>
                         <button onClick={() => setReportModalOpen(true)} className="w-full text-xs font-black text-brand-red uppercase hover:underline border border-brand-red/20 rounded-xl px-4 py-2 hover:bg-brand-red/10 transition-all flex items-center justify-center gap-2">
                             <span className="material-symbols-outlined text-[16px]">report</span>
                             Reportar Problema
@@ -689,7 +709,7 @@ export default function WikiSubPage() {
                                         {content.icon}
                                     </div>
                                     <div>
-                                        <h1 className="text-4xl md:text-5xl font-black text-white italic uppercase tracking-tighter mb-2">
+                                        <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter mb-2">
                                             {renderContent(content.title)}
                                         </h1>
                                         <p className="text-brand-blue text-xs font-black uppercase tracking-[0.3em]">
@@ -716,8 +736,8 @@ export default function WikiSubPage() {
                                                     <div className="absolute -inset-0.5 bg-gradient-to-r from-brand-blue to-brand-red rounded-[40px] opacity-0 group-hover:opacity-10 transition-opacity duration-500 blur-xl" />
 
                                                     {typeof section.content === 'string' ? (
-                                                        <div className="relative text-gray-400 font-medium leading-relaxed glass-card p-8 rounded-[40px] transition-all hover:-translate-y-1 shadow-2xl">
-                                                            <div className={`absolute top-4 right-8 text-[10px] font-black uppercase tracking-[0.2em] text-white/5 group-hover:${content.color.startsWith('#') ? `text-[${content.color}]` : `text-${content.color}`}/20 transition-colors`}>
+                                                        <div className="relative text-gray-700 dark:text-gray-400 font-medium leading-relaxed glass-card p-8 rounded-[40px] transition-all hover:-translate-y-1 shadow-2xl">
+                                                            <div className={`absolute top-4 right-8 text-[10px] font-black uppercase tracking-[0.2em] text-black/5 dark:text-white/5 group-hover:${content.color.startsWith('#') ? `text-[${content.color}]` : `text-${content.color}`}/20 transition-colors`}>
                                                                 SEÇÃO {String(idx + 1).padStart(2, '0')}
                                                             </div>
                                                             {renderContent(section.content)}

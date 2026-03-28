@@ -550,7 +550,19 @@ function LabContent() {
                                                             src={thumbUrl}
                                                             alt={sub.post.title}
                                                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                            onError={(e) => {
+                                                                e.currentTarget.style.display = 'none';
+                                                                const parent = e.currentTarget.parentElement;
+                                                                if (parent) {
+                                                                    const fallback = parent.querySelector('.fallback-container') as HTMLElement;
+                                                                    if (fallback) fallback.style.display = 'flex';
+                                                                }
+                                                            }}
                                                         />
+                                                        <div className="fallback-container hidden w-full h-full flex-col items-center justify-center p-4">
+                                                            <FileText className="w-12 h-12 text-gray-400 dark:text-white/10 mb-2" />
+                                                            <span className="text-[10px] font-black text-gray-500 dark:text-white/40 uppercase tracking-widest leading-tight px-4 line-clamp-3">{sub.post.title || 'MÍDIA INDISPONÍVEL'}</span>
+                                                        </div>
                                                         {isVideo && (
                                                             <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
                                                                 <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30">
@@ -562,12 +574,12 @@ function LabContent() {
                                                 ) : sub.post.mediaType === 'pdf' ? (
                                                     <div className="w-full h-full bg-brand-yellow/5 dark:bg-brand-yellow/10 flex flex-col items-center justify-center p-4 text-center">
                                                         <FileText className="w-12 h-12 text-brand-yellow/50 mb-2" />
-                                                        <span className="text-[10px] font-black text-brand-yellow uppercase tracking-widest leading-tight px-4">{sub.post.title}</span>
+                                                        <span className="text-[10px] font-black text-brand-yellow uppercase tracking-widest leading-tight px-4 line-clamp-3">{sub.post.title || 'MÍDIA INDISPONÍVEL'}</span>
                                                     </div>
                                                 ) : (
                                                     <div className="w-full h-full bg-brand-blue/5 dark:bg-brand-blue/10 flex flex-col items-center justify-center p-4 text-center">
                                                         <FileText className="w-12 h-12 text-brand-blue/50 mb-2" />
-                                                        <span className="text-[10px] font-black text-brand-blue uppercase tracking-widest leading-tight px-4">{sub.post.title}</span>
+                                                        <span className="text-[10px] font-black text-brand-blue uppercase tracking-widest leading-tight px-4 line-clamp-3">{sub.post.title || 'MÍDIA INDISPONÍVEL'}</span>
                                                     </div>
                                                 )}
 
@@ -631,7 +643,23 @@ function LabContent() {
                                             <a key={post.id} href={`/arquivo/${post.id}`} className="group relative aspect-video bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-2xl cursor-pointer border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all">
                                                 {thumbUrl ? (
                                                     <>
-                                                        <img src={thumbUrl} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                                        <img 
+                                                            src={thumbUrl} 
+                                                            alt={post.title} 
+                                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" 
+                                                            onError={(e) => {
+                                                                e.currentTarget.style.display = 'none';
+                                                                const parent = e.currentTarget.parentElement;
+                                                                if (parent) {
+                                                                    const fallback = parent.querySelector('.fallback-container') as HTMLElement;
+                                                                    if (fallback) fallback.style.display = 'flex';
+                                                                }
+                                                            }}
+                                                        />
+                                                        <div className="fallback-container hidden w-full h-full flex-col items-center justify-center p-4">
+                                                            <FileText className="w-12 h-12 text-gray-400 dark:text-white/10 mb-2" />
+                                                            <span className="text-[10px] font-black text-gray-500 dark:text-white/40 uppercase tracking-widest leading-tight px-4 line-clamp-3">{post.title || 'MÍDIA INDISPONÍVEL'}</span>
+                                                        </div>
                                                         {isVideo && (
                                                             <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
                                                                 <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30">
@@ -643,7 +671,7 @@ function LabContent() {
                                                 ) : (
                                                     <div className="w-full h-full bg-brand-yellow/5 dark:bg-brand-yellow/10 flex flex-col items-center justify-center p-4 text-center">
                                                         <FileText className="w-12 h-12 text-brand-yellow/50 mb-2" />
-                                                        <span className="text-[10px] font-black text-brand-yellow uppercase tracking-widest leading-tight px-4">{post.title}</span>
+                                                        <span className="text-[10px] font-black text-brand-yellow uppercase tracking-widest leading-tight px-4 line-clamp-3">{post.title || 'MÍDIA INDISPONÍVEL'}</span>
                                                     </div>
                                                 )}
 

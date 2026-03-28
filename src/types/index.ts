@@ -1,6 +1,6 @@
 /**
  * SINGLE SOURCE OF TRUTH: Centralized Type Definitions
- * Hub Lab-Div IF-USP
+ * Hub Lab-Div IFUSP
  */
 
 export type SubmissionStatus = 'pendente' | 'aprovado' | 'rejeitado';

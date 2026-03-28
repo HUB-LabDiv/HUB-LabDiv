@@ -145,7 +145,7 @@ export const SidebarRight = ({ tags: propTags, authors: propAuthors }: SidebarRi
         <div className="flex flex-col gap-6 mt-6">
 
             {/* ISÓTOPOS EM ÓRBITA */}
-            <div className="bg-gray-50 dark:bg-card-dark rounded-3xl p-5 border border-gray-100 dark:border-gray-800">
+            <div className="bg-white dark:bg-card-dark rounded-3xl p-5 border border-gray-200 dark:border-gray-800 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                     <h2 className="text-sm font-black uppercase tracking-widest text-brand-blue">Isótopos em Órbita</h2>
                     <div className="flex gap-1">
@@ -194,7 +194,7 @@ export const SidebarRight = ({ tags: propTags, authors: propAuthors }: SidebarRi
             </div>
 
             {/* Usuários em Órbita Section */}
-            <div className="bg-gray-50 dark:bg-card-dark rounded-3xl pb-5 border border-gray-100 dark:border-gray-800 flex flex-col overflow-hidden">
+            <div className="bg-white dark:bg-card-dark rounded-3xl pb-5 border border-gray-200 dark:border-gray-800 shadow-sm flex flex-col overflow-hidden">
                 <div className="flex border-b border-gray-100 dark:border-gray-800">
                     <button
                         onClick={() => setActiveTab('trending')}
@@ -221,7 +221,7 @@ export const SidebarRight = ({ tags: propTags, authors: propAuthors }: SidebarRi
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 placeholder="Nome ou @user..."
-                                className="w-full bg-white dark:bg-card-dark border border-gray-200 dark:border-transparent rounded-xl py-2 pl-9 pr-4 text-xs font-medium outline-none focus:border-brand-blue transition-all"
+                                className="w-full bg-gray-50 dark:bg-card-dark border border-gray-200 dark:border-transparent rounded-xl py-2 pl-9 pr-4 text-xs font-medium outline-none focus:border-brand-blue transition-all"
                             />
                             {isSearching && (
                                 <div className="absolute right-3 top-1/2 -translate-y-1/2">

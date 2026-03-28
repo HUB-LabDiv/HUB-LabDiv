@@ -305,12 +305,12 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
                 <div 
                     className={`p-6 rounded-[32px] border transition-all h-full flex flex-col
                         ${isAdopted 
-                            ? 'bg-brand-blue/10 border-brand-blue/30 shadow-lg shadow-brand-blue/10' 
+                            ? 'bg-brand-blue/10 border-brand-blue/40 shadow-lg shadow-brand-blue/10' 
                             : isPendingAdoption
-                                ? 'bg-white/40 dark:bg-white/5 border-gray-100 dark:border-white/5 opacity-55 grayscale-[0.3] cursor-help'
+                                ? 'bg-white/40 dark:bg-white/5 border-gray-300 dark:border-white/5 opacity-55 grayscale-[0.3] cursor-help shadow-sm'
                                 : (isMyHelper && isPending)
-                                    ? 'bg-white/40 dark:bg-white/5 border-gray-100 dark:border-white/5 opacity-55 grayscale-[0.1]'
-                                    : 'bg-white dark:bg-[#1E1E1E] border-gray-100 dark:border-white/5 hover:border-brand-blue/30 hover:shadow-2xl hover:shadow-brand-blue/10'
+                                    ? 'bg-white/40 dark:bg-white/5 border-gray-300 dark:border-white/5 opacity-55 grayscale-[0.1] shadow-sm'
+                                    : 'bg-white dark:bg-[#1E1E1E] border-gray-300 dark:border-white/5 shadow-md dark:shadow-none hover:border-brand-blue/40 hover:shadow-2xl hover:shadow-brand-blue/15 hover:scale-[1.02]'
                         }
                     `}
                 >
@@ -412,14 +412,14 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
 
             {/* ═══════════════ SEÇÃO 1: SISTEMA DE ADOÇÃO ═══════════════ */}
             {(isStudent || isMentor) && (
-                <section className="space-y-8 p-8 rounded-[40px] bg-white/[0.02] border border-white/5">
+                <section className="space-y-8 p-8 rounded-[40px] dark:bg-white/[0.02] bg-white/50 border border-gray-300 dark:border-white/5 shadow-sm">
                     <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                         <div className="space-y-1">
                             <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white uppercase tracking-tight">Sistema de Adoção</h2>
                             <p className="text-xs text-gray-500 font-bold uppercase tracking-widest italic">Adote um bixo e ajude na integração</p>
                         </div>
 
-                        <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-2xl border border-gray-200 dark:border-white/5">
+                        <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-2xl border border-gray-300 dark:border-white/5">
                             <button
                                 onClick={() => setAdoptionSubTab('available')}
                                 className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${adoptionSubTab === 'available'
@@ -458,7 +458,7 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
             )}
 
             {/* ═══════════════ SEÇÃO 2: MATCH ACADÊMICO ═══════════════ */}
-            <section className="space-y-8 p-8 rounded-[40px] bg-white/[0.02] border border-white/5">
+            <section className="space-y-8 p-8 rounded-[40px] dark:bg-white/[0.02] bg-white/50 border border-gray-300 dark:border-white/5 shadow-sm">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                     <div className="space-y-1">
                         <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white uppercase tracking-tight">Match Acadêmico</h2>
@@ -468,7 +468,7 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
                     </div>
 
                     {isResearcher && (
-                        <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-2xl border border-gray-200 dark:border-white/5">
+                        <div className="flex bg-gray-100 dark:bg-white/5 p-1 rounded-2xl border border-gray-300 dark:border-white/5">
                             <button
                                 onClick={() => setIcSubTab('students')}
                                 className={`px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${icSubTab === 'students'
@@ -493,8 +493,8 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
 
                 {isStudent && (
                     myAdoption ? (
-                        <div className={`glass-card p-8 rounded-[32px] border relative overflow-hidden group ${
-                            myAdoption.status === 'approved' ? 'border-brand-blue/30 bg-brand-blue/5' : 'border-brand-yellow/30 bg-brand-yellow/5'
+                        <div className={`glass-card p-8 rounded-[32px] border-2 relative overflow-hidden group ${
+                            myAdoption.status === 'approved' ? 'border-brand-blue/40 bg-brand-blue/5 shadow-xl' : 'border-brand-yellow/40 bg-brand-yellow/5 shadow-xl'
                         }`}>
                             <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:rotate-12 group-hover:scale-110 transition-transform duration-500">
                                 {myAdoption.status === 'approved' ? <Sparkles size={100} className="text-brand-blue" /> : <Loader2 size={100} className="text-brand-yellow animate-spin-slow" />}
@@ -539,7 +539,7 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
                             </div>
                         </div>
                     ) : (
-                        <div className="glass-card p-8 rounded-[32px] border-brand-red/20 bg-brand-red/5 relative overflow-hidden group">
+                        <div className="glass-card p-8 rounded-[32px] border-2 border-brand-red/30 bg-brand-red/5 relative overflow-hidden group shadow-xl">
                             <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:rotate-12 transition-transform duration-500">
                                 <Microscope size={80} />
                             </div>
@@ -593,7 +593,7 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
 
             {/* ═══════════════ SEÇÃO 3: GRUPO DE ESTUDOS ═══════════════ */}
             {isStudent && (
-                <section className="space-y-8 p-8 rounded-[40px] bg-white/[0.02] border border-white/5">
+                <section className="space-y-8 p-8 rounded-[40px] dark:bg-white/[0.02] bg-white/50 border border-gray-300 dark:border-white/5 shadow-sm">
                     <div className="space-y-1">
                         <h2 className="text-2xl font-display font-bold text-gray-900 dark:text-white uppercase tracking-tight">Grupo de Estudos</h2>
                         <p className="text-xs text-gray-500 font-bold uppercase tracking-widest italic">Pessoas nas mesmas turmas que você</p>

@@ -24,7 +24,7 @@ const AXIS_CONFIG: Record<string, { label: string; color: string; icon: any }> =
     bach: { label: 'Bacharelado', color: '#00A3FF', icon: Atom },
     med: { label: 'Física Médica', color: '#FF4B4B', icon: Microscope },
     lic: { label: 'Licenciatura', color: '#FFD700', icon: Binary },
-    comum: { label: 'Ciclo Básico', color: '#FFFFFF', icon: Zap },
+    comum: { label: 'Ciclo Básico', color: '#888888', icon: Zap },
 };
 
 const CATEGORY_CONFIG: Record<string, { label: string; icon: any }> = {
@@ -400,8 +400,8 @@ export default function TrilhasClient({
                             {/* Header mobile ja tem v3.1.2 superior */}
 
                             {userProfile && (
-                                <div className="dark:bg-[#1E1E1E] bg-white border border-gray-800 rounded-2xl p-4 flex items-center gap-4 animate-in fade-in slide-in-from-right-4 duration-700">
-                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00A3FF] to-[#0070FF]/20 flex items-center justify-center border border-white/10 shadow-[0_0_15px_rgba(0,163,255,0.3)]">
+                                <div className="dark:bg-[#1E1E1E] bg-white border border-gray-300 dark:border-gray-800 rounded-2xl p-4 flex items-center gap-4 animate-in fade-in slide-in-from-right-4 duration-700 shadow-sm dark:shadow-none">
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00A3FF] to-[#0070FF]/20 flex items-center justify-center border border-gray-300 dark:border-white/10 shadow-[0_0_15px_rgba(0,163,255,0.3)]">
                                         <User className="text-white w-6 h-6" />
                                     </div>
                                     <div>
@@ -430,7 +430,7 @@ export default function TrilhasClient({
                                 initial={false}
                                 animate={{ height: isDashboardCollapsed ? 160 : 'auto' }}
                                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                className="dark:bg-[#121212]/50 bg-white/50 backdrop-blur-xl border dark:border-white/5 border-gray-200 rounded-[2.5rem] overflow-hidden"
+                                className="dark:bg-[#121212]/50 bg-gray-100 dark:bg-white/50 backdrop-blur-xl border dark:border-white/5 border-gray-300 rounded-[2.5rem] overflow-hidden"
                             >
                                 <div className="p-8 pb-4 flex items-center justify-between">
                                     <div className="flex items-center gap-6">
@@ -447,19 +447,19 @@ export default function TrilhasClient({
                                                     className="drop-shadow-[0_0_10px_rgba(0,163,255,0.6)]"
                                                 />
                                             </svg>
-                                            <span className="absolute text-xl font-black font-mono text-white tracking-widest">{stats.percentage}%</span>
+                                            <span className="absolute text-xl font-black font-mono text-gray-900 dark:text-white tracking-widest">{stats.percentage}%</span>
                                         </div>
                                         <div>
-                                            <h2 className="text-2xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
+                                            <h2 className="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tighter flex items-center gap-3">
                                                 Acompanhar Andamento
                                             </h2>
                                             <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest mt-1">
                                                 {stats.completedMandatoryCount} de {stats.totalMandatory} disciplinas obrigatórias concluídas
                                             </p>
-                                            <div className="flex items-center gap-2 mt-2 py-1 px-3 bg-white/5 rounded-lg border border-white/5 w-fit">
+                                            <div className="flex items-center gap-2 mt-2 py-1 px-3 bg-gray-100 dark:bg-white/5 rounded-lg border border-gray-300 dark:border-white/5 w-fit">
                                                 <Network className="w-3 h-3 text-[#00A3FF]" />
-                                                <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-gray-400">
-                                                    Progresso para: <span className="text-white">{userProfile?.course || 'Geral'}</span>
+                                                <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                                    Progresso para: <span className="text-gray-900 dark:text-white">{userProfile?.course || 'Geral'}</span>
                                                 </span>
                                             </div>
                                         </div>
@@ -481,7 +481,7 @@ export default function TrilhasClient({
                                         </button>
                                         <button
                                             onClick={() => setIsDashboardCollapsed(!isDashboardCollapsed)}
-                                            className="flex items-center gap-2 px-3 py-1.5 bg-white/5 hover:bg-white/10 rounded-xl transition-all text-gray-400 border border-white/10 cursor-pointer text-[10px] font-black uppercase tracking-widest"
+                                            className="flex items-center gap-2 px-3 py-1.5 bg-gray-100 dark:bg-white/5 hover:bg-gray-200/50 dark:bg-white/10 rounded-xl transition-all text-gray-400 border border-gray-300 dark:border-white/10 cursor-pointer text-[10px] font-black uppercase tracking-widest"
                                             title={isDashboardCollapsed ? 'Expandir' : 'Encolher'}
                                         >
                                             <Layers size={14} className={`transition-transform duration-300 ${isDashboardCollapsed ? 'rotate-180' : ''}`} />
@@ -503,24 +503,24 @@ export default function TrilhasClient({
                                         </div>
 
                                         {/* Tabs for Lists */}
-                                        <div className="flex gap-4 border-b border-white/5">
+                                        <div className="flex gap-4 border-b border-gray-300 dark:border-white/5">
                                             <button
                                                 onClick={() => setDashboardTab('faltam')}
-                                                className={`pb-4 text-[10px] font-mono font-black uppercase tracking-widest transition-all relative ${dashboardTab === 'faltam' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                                                className={`pb-4 text-[10px] font-mono font-black uppercase tracking-widest transition-all relative ${dashboardTab === 'faltam' ? 'text-gray-900 dark:text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
                                             >
                                                 A Fazer ({stats.missingMandatory.length})
                                                 {dashboardTab === 'faltam' && <motion.div layoutId="dashTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00A3FF]" />}
                                             </button>
                                             <button
                                                 onClick={() => setDashboardTab('cursando')}
-                                                className={`pb-4 text-[10px] font-mono font-black uppercase tracking-widest transition-all relative ${dashboardTab === 'cursando' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                                                className={`pb-4 text-[10px] font-mono font-black uppercase tracking-widest transition-all relative ${dashboardTab === 'cursando' ? 'text-gray-900 dark:text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
                                             >
                                                 Cursando ({stats.cursandoMandatory.length})
                                                 {dashboardTab === 'cursando' && <motion.div layoutId="dashTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF4B4B]" />}
                                             </button>
                                             <button
                                                 onClick={() => setDashboardTab('concluidas')}
-                                                className={`pb-4 text-[10px] font-mono font-black uppercase tracking-widest transition-all relative ${dashboardTab === 'concluidas' ? 'text-white' : 'text-gray-500 hover:text-gray-300'}`}
+                                                className={`pb-4 text-[10px] font-mono font-black uppercase tracking-widest transition-all relative ${dashboardTab === 'concluidas' ? 'text-gray-900 dark:text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
                                             >
                                                 Concluídas ({stats.completedTotal.length})
                                                 {dashboardTab === 'concluidas' && <motion.div layoutId="dashTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-green-500" />}
@@ -541,13 +541,13 @@ export default function TrilhasClient({
                                                         className="grid grid-cols-1 md:grid-cols-2 gap-3"
                                                     >
                                                         {stats.missingMandatory.length > 0 ? stats.missingMandatory.map(trail => (
-                                                            <div key={trail.id} className="flex items-center gap-4 dark:bg-white/5 bg-gray-100 p-4 rounded-2xl border dark:border-white/5 border-gray-200 group">
-                                                                <div className="w-10 h-10 rounded-xl bg-black/40 flex items-center justify-center font-mono font-black text-xs text-gray-500 border border-gray-800">
+                                                            <div key={trail.id} className="flex items-center gap-4 dark:bg-white/5 bg-gray-100 p-4 rounded-2xl border dark:border-white/5 border-gray-300 group">
+                                                                <div className="w-10 h-10 rounded-xl bg-gray-200 dark:bg-black/40 flex items-center justify-center font-mono font-black text-xs text-gray-500 border border-gray-300 dark:border-gray-800">
                                                                     {trail.excitation_level}º
                                                                 </div>
                                                                 <div className="flex-1 min-w-0">
                                                                     <div className="flex items-center gap-2 mb-1">
-                                                                        <span className="text-[8px] font-mono px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-gray-500 uppercase tracking-tighter">
+                                                                        <span className="text-[8px] font-mono px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-500 uppercase tracking-tighter">
                                                                             {trail.course_code}
                                                                         </span>
                                                                         <span
@@ -561,7 +561,7 @@ export default function TrilhasClient({
                                                                             {AXIS_CONFIG[trail.axis]?.label.substring(0, 3)}
                                                                         </span>
                                                                     </div>
-                                                                    <div className="text-xs font-bold text-gray-200 truncate group-hover:text-white transition-colors">{trail.title}</div>
+                                                                    <div className="text-xs font-bold text-gray-700 dark:text-gray-200 truncate group-hover:text-gray-900 dark:group-hover:text-white transition-colors">{trail.title}</div>
                                                                 </div>
                                                                 <button
                                                                     onClick={(e) => toggleCompletion(e, trail.id)}
@@ -585,13 +585,13 @@ export default function TrilhasClient({
                                                         className="grid grid-cols-1 md:grid-cols-2 gap-3"
                                                     >
                                                         {stats.cursandoMandatory.length > 0 ? stats.cursandoMandatory.map(trail => (
-                                                            <div key={trail.id} className="flex items-center gap-4 dark:bg-[#FF4B4B]/5 bg-gray-100 p-4 rounded-2xl border dark:border-[#FF4B4B]/20 border-gray-200 group">
-                                                                <div className="w-10 h-10 rounded-xl bg-black/40 flex items-center justify-center font-mono font-black text-xs text-[#FF4B4B] border border-[#FF4B4B]/30 animate-pulse">
+                                                            <div key={trail.id} className="flex items-center gap-4 dark:bg-[#FF4B4B]/5 bg-gray-100 p-4 rounded-2xl border dark:border-[#FF4B4B]/20 border-gray-300 group">
+                                                                <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-black/40 flex items-center justify-center font-mono font-black text-xs text-[#FF4B4B] border border-red-200 dark:border-[#FF4B4B]/30 animate-pulse">
                                                                     {trail.excitation_level}º
                                                                 </div>
                                                                 <div className="flex-1 min-w-0 text-left">
                                                                     <div className="flex items-center gap-2 mb-1">
-                                                                        <span className="text-[8px] font-mono px-1.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-gray-500 uppercase tracking-tighter">
+                                                                        <span className="text-[8px] font-mono px-1.5 py-0.5 rounded-md bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 text-gray-500 uppercase tracking-tighter">
                                                                             {trail.course_code}
                                                                         </span>
                                                                         <span
@@ -605,7 +605,7 @@ export default function TrilhasClient({
                                                                             {AXIS_CONFIG[trail.axis]?.label.substring(0, 3)}
                                                                         </span>
                                                                     </div>
-                                                                    <div className="text-xs font-bold text-gray-200 truncate group-hover:text-white transition-colors">{trail.title}</div>
+                                                                    <div className="text-xs font-bold text-gray-700 dark:text-gray-200 truncate group-hover:text-gray-900 dark:group-hover:text-white transition-colors">{trail.title}</div>
                                                                 </div>
                                                                 <button
                                                                     onClick={(e) => toggleCursando(e, trail.id)}
@@ -643,11 +643,11 @@ export default function TrilhasClient({
                                                                 <CheckCircle2 className="text-green-500 shrink-0" size={14} />
                                                                 <div className="min-w-0">
                                                                     <div className="flex items-center gap-2 mb-0.5">
-                                                                        <span className="text-[6px] font-mono px-1 rounded bg-white/5 border border-white/5 text-gray-500 uppercase">
+                                                                        <span className="text-[6px] font-mono px-1 rounded bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/5 text-gray-500 uppercase">
                                                                             {trail.course_code}
                                                                         </span>
                                                                     </div>
-                                                                    <div className="text-[10px] font-bold text-gray-200 truncate">{trail.title}</div>
+                                                                    <div className="text-[10px] font-bold text-gray-700 dark:text-gray-200 truncate">{trail.title}</div>
                                                                 </div>
                                                             </div>
                                                         )) : (
@@ -687,7 +687,7 @@ export default function TrilhasClient({
                         )}
 
                         {/* Control Panel */}
-                        <div className="space-y-6 dark:bg-[#1A1A1A]/70 bg-white/70 backdrop-blur-xl p-6 rounded-2xl dark:border-gray-800/60 border-gray-200/60 border shadow-2xl dark:shadow-none relative overflow-hidden">
+                        <div className="space-y-6 dark:bg-[#1A1A1A]/70 bg-white/70 backdrop-blur-xl p-6 rounded-2xl dark:border-gray-800/60 border-gray-300 border shadow-2xl dark:shadow-none relative overflow-hidden">
                             <div className="absolute top-0 right-0 p-4 opacity-10">
                                 <Layers size={120} />
                             </div>
@@ -700,7 +700,7 @@ export default function TrilhasClient({
                                         onClick={() => setAxisFilter(null)}
                                         className={`px-4 py-2 rounded-lg font-mono text-[10px] font-bold transition-all border ${!axisFilter
                                             ? 'bg-[#00A3FF] text-white border-transparent shadow-lg shadow-[#00A3FF]/20'
-                                            : 'dark:bg-[#121212] bg-gray-100 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-400'
+                                            : 'dark:bg-[#121212] bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
                                             }`}
                                     >
                                         TODOS_OS_CURSOS
@@ -730,7 +730,7 @@ export default function TrilhasClient({
                                         onClick={() => setCategoryFilter(null)}
                                         className={`px-4 py-2 rounded-lg font-mono text-[10px] font-bold transition-all border ${!categoryFilter
                                             ? 'bg-[#00A3FF] text-white border-transparent shadow-lg shadow-[#00A3FF]/20'
-                                            : 'dark:bg-[#121212] bg-gray-100 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-400'
+                                            : 'dark:bg-[#121212] bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
                                             }`}
                                     >
                                         TODAS_AS_CATEGORIAS
@@ -763,7 +763,7 @@ export default function TrilhasClient({
                                         onClick={() => setSemesterFilter(null)}
                                         className={`px-3 py-1.5 rounded-lg font-mono text-[10px] font-bold transition-all border ${!semesterFilter
                                             ? 'bg-[#00A3FF] text-white border-transparent shadow-lg shadow-[#00A3FF]/20'
-                                            : 'dark:bg-[#121212] bg-gray-100 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-400'
+                                            : 'dark:bg-[#121212] bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
                                             }`}
                                     >
                                         TODOS
@@ -795,7 +795,7 @@ export default function TrilhasClient({
                                         onClick={() => setSortOrder('sem-asc')}
                                         className={`px-4 py-2 rounded-lg font-mono text-[10px] font-bold transition-all border flex items-center gap-2 ${sortOrder === 'sem-asc'
                                             ? 'bg-[#00A3FF] text-white border-transparent shadow-lg shadow-[#00A3FF]/20'
-                                            : 'dark:bg-[#121212] bg-gray-100 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-400'
+                                            : 'dark:bg-[#121212] bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
                                             }`}
                                     >
                                         <Timer size={12} />
@@ -805,7 +805,7 @@ export default function TrilhasClient({
                                         onClick={() => setSortOrder('sem-desc')}
                                         className={`px-4 py-2 rounded-lg font-mono text-[10px] font-bold transition-all border flex items-center gap-2 ${sortOrder === 'sem-desc'
                                             ? 'bg-[#0070FF] text-white border-transparent shadow-lg shadow-[#0070FF]/20'
-                                            : 'dark:bg-[#121212] bg-gray-100 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-400'
+                                            : 'dark:bg-[#121212] bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
                                             }`}
                                     >
                                         <GraduationCap size={12} />
@@ -815,7 +815,7 @@ export default function TrilhasClient({
                                         onClick={() => setSortOrder('trending')}
                                         className={`px-4 py-2 rounded-lg font-mono text-[10px] font-bold transition-all border flex items-center gap-2 ${sortOrder === 'trending'
                                             ? 'bg-purple-600 text-white border-transparent shadow-lg shadow-purple-600/20'
-                                            : 'dark:bg-[#121212] bg-gray-100 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-400'
+                                            : 'dark:bg-[#121212] bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
                                             }`}
                                     >
                                         <Zap size={12} />
@@ -834,7 +834,7 @@ export default function TrilhasClient({
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         placeholder="Nome da disciplina ou código (ex: MAT0112)..."
-                                        className="w-full pl-11 pr-4 py-3 rounded-xl font-mono text-sm dark:bg-[#121212] bg-gray-100 dark:text-white text-gray-900 dark:border-gray-800 border-gray-300 border outline-none focus:border-[#00A3FF]/50 focus:shadow-[0_0_15px_rgba(0,163,255,0.15)] transition-all placeholder:text-gray-500"
+                                        className="w-full pl-11 pr-4 py-3 rounded-xl font-mono text-sm dark:bg-[#121212] bg-gray-50 dark:text-white text-gray-900 dark:border-gray-800 border-gray-300 border outline-none focus:border-[#00A3FF]/50 focus:shadow-[0_0_15px_rgba(0,163,255,0.15)] transition-all placeholder:text-gray-500"
                                     />
                                     {searchQuery && (
                                         <button
@@ -875,9 +875,9 @@ export default function TrilhasClient({
                                             >
                                                 <Link href={`/trilhas/${trail.id}`} className="group block h-full">
                                                     <div
-                                                        className="relative rounded-xl p-6 border transition-all h-full flex flex-col dark:bg-[#1E1E1E] bg-white dark:border-gray-800 border-gray-200 dark:group-hover:bg-[#252525] group-hover:bg-gray-50 group-hover:shadow-lg"
+                                                        className="relative rounded-xl p-6 border transition-all h-full flex flex-col dark:bg-[#1E1E1E] bg-white border-gray-300 dark:border-white/10 shadow-md dark:shadow-none hover:border-gray-400 dark:hover:border-white/20 group-hover:bg-gray-50/50 dark:group-hover:bg-[#252525] group-hover:shadow-2xl hover:scale-[1.02]"
                                                         style={{
-                                                            borderColor: axisFilter === trail.axis || !axisFilter ? `${axisCfg.color}30` : undefined,
+                                                            borderColor: (axisFilter === trail.axis || !axisFilter) && trail.axis !== 'comum' ? `${axisCfg.color}60` : undefined,
                                                         }}
                                                     >
                                                         {/* Glow Border Effect on Hover */}
@@ -905,7 +905,7 @@ export default function TrilhasClient({
 
                                                             {isBasicCycleFlag && (
                                                                 <div
-                                                                    className="px-2 py-0.5 rounded text-[9px] font-mono font-bold flex items-center gap-1 uppercase border bg-white/5 dark:text-gray-400 text-gray-500 dark:border-white/10 border-gray-200"
+                                                                    className="px-2 py-0.5 rounded text-[9px] font-mono font-bold flex items-center gap-1 uppercase border bg-gray-100 dark:bg-white/5 dark:text-gray-400 text-gray-500 dark:border-white/10 border-gray-300"
                                                                 >
                                                                     <Zap size={8} fill="currentColor" />
                                                                     CICLO_BÁSICO
@@ -934,7 +934,7 @@ export default function TrilhasClient({
                                                                 <>
                                                                     <button
                                                                         onClick={(e) => toggleCompletion(e, trail.id)}
-                                                                        className="px-2 py-1.5 rounded-lg border dark:bg-white/5 bg-gray-100 border-gray-800 text-gray-500 hover:border-green-500/50 hover:text-green-500 transition-all flex items-center gap-1.5 group/check"
+                                                                        className="px-2 py-1.5 rounded-lg border dark:bg-white/5 bg-gray-100 dark:border-gray-800 border-gray-300 text-gray-500 hover:border-green-500/50 hover:text-green-500 transition-all flex items-center gap-1.5 group/check"
                                                                         disabled={isUpdating === trail.id}
                                                                     >
                                                                         {isUpdating === trail.id ? (
@@ -952,7 +952,7 @@ export default function TrilhasClient({
                                                                         disabled={isUpdating === trail.id}
                                                                         className={`px-2 py-1.5 rounded-lg border transition-all flex items-center gap-1.5 group/radar ${cursandoIds.includes(trail.id)
                                                                             ? 'bg-[#FF4B4B]/20 border-[#FF4B4B]/50 text-[#FF4B4B] shadow-[0_0_10px_rgba(255,75,75,0.2)]'
-                                                                            : 'dark:bg-white/5 bg-gray-100 border-gray-800 text-gray-500 hover:border-[#FF4B4B]/50 hover:text-[#FF4B4B]'
+                                                                            : 'dark:bg-white/5 bg-gray-100 dark:border-gray-800 border-gray-300 text-gray-500 hover:border-[#FF4B4B]/50 hover:text-[#FF4B4B]'
                                                                             }`}
                                                                     >
                                                                         <Clock
@@ -969,16 +969,16 @@ export default function TrilhasClient({
 
                                                 {/* Course Info Row */}
                                                 <div className="flex items-center gap-4 mb-4">
-                                                    <div className="p-2.5 rounded-lg dark:bg-[#121212] bg-gray-100 dark:border-gray-800 border-gray-200 border" style={{ borderColor: `${axisCfg.color}40` }}>
+                                                    <div className="p-2.5 rounded-lg dark:bg-[#121212] bg-gray-100 dark:border-gray-800 border-gray-300 border" style={{ borderColor: `${axisCfg.color}40` }}>
                                                         <Icon size={20} style={{ color: axisCfg.color }} />
                                                     </div>
                                                     <div className="space-y-0.5">
-                                                        <div className="font-mono text-[10px] tracking-widest uppercase dark:text-white/40 text-gray-400 flex items-center gap-2">
+                                                        <div className="font-mono text-[10px] tracking-widest uppercase dark:text-gray-500 dark:text-white/40 text-gray-400 flex items-center gap-2">
                                                             {trail.course_code || 'LABDIV-CORE'}
                                                             {hasPrereqs && (
                                                                 <div className="group/prereq relative flex items-center">
                                                                     <AlertTriangle size={12} style={{ color: `${axisCfg.color}90` }} />
-                                                                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 dark:bg-[#1A1A1A] bg-white dark:border-gray-700 border-gray-200 border rounded-lg text-[9px] font-mono dark:text-gray-300 text-gray-600 opacity-0 group-hover/prereq:opacity-100 transition-opacity pointer-events-none z-[70] shadow-xl">
+                                                                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 dark:bg-[#1A1A1A] bg-white dark:border-gray-700 border-gray-300 border rounded-lg text-[9px] font-mono dark:text-gray-300 text-gray-600 opacity-0 group-hover/prereq:opacity-100 transition-opacity pointer-events-none z-[70] shadow-xl">
                                                                         ⚠ Esta disciplina possui <strong className="dark:text-white text-gray-900">pré-requisitos</strong>.
                                                                     </span>
                                                                 </div>
@@ -986,7 +986,7 @@ export default function TrilhasClient({
                                                             {hasEquiv && (
                                                                 <div className="group/equiv relative flex items-center">
                                                                     <Link2 size={12} style={{ color: `${axisCfg.color}90` }} />
-                                                                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 dark:bg-[#1A1A1A] bg-white dark:border-gray-700 border-gray-200 border rounded-lg text-[9px] font-mono dark:text-gray-300 text-gray-600 opacity-0 group-hover/equiv:opacity-100 transition-opacity pointer-events-none z-[70] shadow-xl">
+                                                                    <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 p-2 dark:bg-[#1A1A1A] bg-white dark:border-gray-700 border-gray-300 border rounded-lg text-[9px] font-mono dark:text-gray-300 text-gray-600 opacity-0 group-hover/equiv:opacity-100 transition-opacity pointer-events-none z-[70] shadow-xl">
                                                                         🔗 Esta disciplina possui <strong className="dark:text-white text-gray-900">equivalentes</strong>.
                                                                     </span>
                                                                 </div>
@@ -1025,7 +1025,7 @@ export default function TrilhasClient({
                                                 </div>
 
                                                 {/* Energy Bars */}
-                                                <div className="mt-8 space-y-2 pt-4 dark:border-gray-800/50 border-gray-200 border-t" style={{ minHeight: '60px' }}>
+                                                <div className="mt-8 space-y-2 pt-4 dark:border-gray-800/50 border-gray-300 border-t" style={{ minHeight: '60px' }}>
                                                     <div className="flex items-center justify-between text-[9px] font-mono dark:text-gray-500 text-gray-400 uppercase" style={{ height: '16px' }}>
                                                         <span>Energia_Créditos</span>
                                                         <span>{trail.credits_aula + trail.credits_trabalho}U</span>
@@ -1080,7 +1080,7 @@ export default function TrilhasClient({
                         <div className="mt-16 flex justify-center">
                             <button
                                 onClick={() => setVisibleCount(prev => prev + 9)}
-                                className="group relative px-8 py-4 bg-white/5 hover:bg-white/10 dark:bg-white/5 dark:hover:bg-white/10 border border-white/10 rounded-2xl transition-all hover:scale-105 active:scale-95 flex flex-col items-center gap-2 overflow-hidden"
+                                className="group relative px-8 py-4 bg-gray-100 dark:bg-white/5 hover:bg-gray-200/50 dark:bg-white/10 dark:bg-white/5 dark:hover:bg-gray-200/50 dark:bg-white/10 border border-gray-300 dark:border-white/10 rounded-2xl transition-all hover:scale-105 active:scale-95 flex flex-col items-center gap-2 overflow-hidden"
                             >
                                 <div className="absolute inset-0 bg-gradient-to-r from-brand-blue/10 via-brand-red/10 to-brand-yellow/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 <span className="font-mono text-[10px] font-black uppercase tracking-[0.3em] dark:text-gray-400 text-gray-500 relative z-10">Expandir_Matriz</span>
@@ -1134,7 +1134,7 @@ export default function TrilhasClient({
                         </div>
 
                         {/* Barra de Carregamento (4s) */}
-                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/5 rounded-b-2xl overflow-hidden">
+                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-100 dark:bg-white/5 rounded-b-2xl overflow-hidden">
                             <motion.div
                                 initial={{ width: 0 }}
                                 animate={{ width: "100%" }}
@@ -1154,16 +1154,16 @@ export default function TrilhasClient({
                             initial={{ opacity: 0, scale: 0.95, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                            className="bg-[#121212]/95 dark:bg-[#121212] w-full max-w-2xl rounded-[48px] shadow-2xl overflow-hidden border border-white/10 flex flex-col max-h-[95vh]"
+                            className="bg-white dark:bg-[#121212] w-full max-w-2xl rounded-[48px] shadow-2xl overflow-hidden border border-gray-300 dark:border-white/10 flex flex-col max-h-[95vh]"
                         >
                             {/* Header Modal */}
-                            <div className="p-6 sm:p-8 border-b border-white/5 flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-white/[0.02]">
+                            <div className="p-6 sm:p-8 border-b border-gray-300 dark:border-white/5 flex flex-col lg:flex-row lg:items-center justify-between gap-6 bg-gray-50 dark:bg-white/[0.02]">
                                 <div className="flex items-center gap-4 sm:gap-6">
                                     <div className="w-12 h-12 sm:w-14 sm:h-14 shrink-0 rounded-[20px] bg-brand-blue/20 flex items-center justify-center border border-brand-blue/30 shadow-lg shadow-brand-blue/10">
                                         <Network className="text-brand-blue w-6 h-6 sm:w-7 sm:h-7" />
                                     </div>
                                     <div>
-                                        <h3 className="text-lg sm:text-xl font-black text-white uppercase tracking-tight flex flex-wrap items-center gap-2 sm:gap-3">
+                                        <h3 className="text-lg sm:text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight flex flex-wrap items-center gap-2 sm:gap-3">
                                             Árvore do Curso
                                         </h3>
                                         <p className="text-[9px] sm:text-[10px] text-gray-500 font-mono uppercase tracking-[0.2em]">Exibindo: <span className="text-brand-blue font-bold">{selectedCourseMap.name}</span></p>
@@ -1173,7 +1173,7 @@ export default function TrilhasClient({
                                 <div className="flex flex-row items-center gap-3 sm:gap-4 ml-auto lg:ml-0">
                                     <div className="relative group">
                                         <select 
-                                            className="appearance-none bg-white/5 border border-white/10 rounded-2xl px-4 sm:px-5 py-2.5 sm:py-3 text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-gray-200 pr-10 sm:pr-12 outline-none focus:border-brand-blue/50 transition-all cursor-pointer hover:bg-white/10"
+                                            className="appearance-none bg-gray-100 dark:bg-white/5 border border-gray-300 dark:border-white/10 rounded-2xl px-4 sm:px-5 py-2.5 sm:py-3 text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-gray-700 dark:text-gray-200 pr-10 sm:pr-12 outline-none focus:border-brand-blue/50 transition-all cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-200/50 dark:bg-white/10"
                                             value={selectedCourseMap.id}
                                             onChange={(e) => {
                                                 const map = COURSE_MAPS.find(m => m.id === e.target.value);
@@ -1181,7 +1181,7 @@ export default function TrilhasClient({
                                             }}
                                         >
                                             {COURSE_MAPS.map(map => (
-                                                <option key={map.id} value={map.id} className="bg-[#1e1e1e]">{map.name.split(' ')[0]}</option>
+                                                <option key={map.id} value={map.id} className="bg-white dark:bg-[#1e1e1e] text-gray-900 dark:text-white">{map.name.split(' ')[0]}</option>
                                             ))}
                                         </select>
                                         <ChevronDown className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 w-3.5 sm:w-4 sm:h-4 text-gray-400 pointer-events-none" />
@@ -1201,12 +1201,12 @@ export default function TrilhasClient({
                             </div>
 
                             {/* Modal Image Content */}
-                            <div className="flex-1 overflow-y-auto hidden-scrollbar p-8 bg-black/40">
+                            <div className="flex-1 overflow-y-auto hidden-scrollbar p-8 bg-gray-50/50 dark:bg-black/40">
                                 <div className="relative group mx-auto max-w-5xl">
                                     <div className="absolute inset-0 bg-gradient-to-tr from-brand-blue/30 via-transparent to-brand-red/30 opacity-20 -z-10 blur-[100px] rounded-full" />
-                                    <div className="rounded-[40px] overflow-hidden border border-white/5 shadow-2xl bg-[#1e1e1e]/50 relative">
+                                    <div className="rounded-[40px] overflow-hidden border border-gray-300 dark:border-white/5 shadow-2xl bg-white dark:bg-[#1e1e1e]/50 relative">
                                         <div className="absolute top-8 left-8 z-10">
-                                            <div className="flex items-center gap-3 px-4 py-2 bg-black/40 border border-white/10 rounded-full backdrop-blur-md">
+                                            <div className="flex items-center gap-3 px-4 py-2 bg-white/80 dark:bg-black/40 border border-gray-300 dark:border-white/10 rounded-full backdrop-blur-md">
                                                 <Sparkles className="text-brand-yellow w-3.5 h-3.5" />
                                                 <span className="text-[9px] font-black text-brand-yellow uppercase tracking-[0.2em]">Arte Curatorial IFUSP</span>
                                             </div>
@@ -1221,11 +1221,11 @@ export default function TrilhasClient({
                                         </div>
 
                                         {/* Overlay Info */}
-                                        <div className="p-8 bg-gradient-to-t from-black/80 to-transparent">
+                                        <div className="p-8 bg-gradient-to-t from-white dark:from-black/80 to-transparent">
                                             <div className="flex items-end justify-between gap-6">
                                                 <div className="space-y-1">
-                                                    <h4 className="text-2xl font-black text-white uppercase tracking-tighter">{selectedCourseMap.name}</h4>
-                                                    <p className="text-[11px] text-gray-400 font-bold uppercase tracking-widest opacity-80">Representação fractal das dependências curriculares v4.0</p>
+                                                    <h4 className="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tighter">{selectedCourseMap.name}</h4>
+                                                    <p className="text-[11px] text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest opacity-80">Representação fractal das dependências curriculares v4.0</p>
                                                 </div>
                                             </div>
                                         </div>
@@ -1234,10 +1234,10 @@ export default function TrilhasClient({
                             </div>
                             
                             {/* Footer Modal */}
-                            <div className="p-6 border-t border-white/5 bg-white/[0.01] flex justify-center">
+                            <div className="p-6 border-t border-gray-300 dark:border-white/5 bg-gray-50 dark:bg-white/[0.01] flex justify-center">
                                 <button 
                                     onClick={() => setIsVisualMapOpen(false)}
-                                    className="px-10 py-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer"
+                                    className="px-10 py-4 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-gray-200/50 dark:bg-white/10 border border-gray-300 dark:border-white/10 text-gray-900 dark:text-white rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all cursor-pointer"
                                 >
                                     Fechar Visualização
                                 </button>

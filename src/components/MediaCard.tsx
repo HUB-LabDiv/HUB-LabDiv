@@ -121,7 +121,7 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
 
     const urls = useMemo(() => parseMediaUrl(post.mediaUrl), [post.mediaUrl]);
     const hasMultipleImages = useMemo(() => post.mediaType === 'image' && urls.length > 1, [post.mediaType, urls.length]);
-    const sizeModifierStyles = useMemo(() => hasMultipleImages ? "md:min-h-[420px] border-2 border-primary/20 shadow-primary/5" : "border-gray-100 dark:border-gray-700", [hasMultipleImages]);
+    const sizeModifierStyles = useMemo(() => hasMultipleImages ? "md:min-h-[420px] shadow-lg" : "", [hasMultipleImages]);
 
     const handleNextImage = useCallback((e: React.MouseEvent) => {
         e.stopPropagation();
@@ -150,10 +150,10 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
     return (
         <div
             onClick={() => router.push(`/arquivo/${post.id}`)}
-            className={`masonry-item group relative flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-card-dark shadow-sm transition-all hover:shadow-xl cursor-pointer gpu-isolate 
+            className={`masonry-item group relative flex flex-col overflow-hidden rounded-2xl bg-white dark:bg-card-dark shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07),0_10px_20px_-2px_rgba(0,0,0,0.04)] dark:shadow-sm transition-all hover:shadow-xl cursor-pointer gpu-isolate 
             ${post.isGoldenStandard ? 'golden-frame z-10' : 
               post.isFeatured ? 'border-2 border-brand-yellow/50 animate-premium-glow z-10' : 
-              'border border-gray-100 dark:border-gray-800'} ${sizeModifierStyles}`}
+              'border border-gray-200 dark:border-gray-800'} ${sizeModifierStyles}`}
         >
             <CardPresenceBadge submissionId={post.id} />
 

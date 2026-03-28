@@ -28,7 +28,7 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = false, f
             {!focusMode ? (
                 <div className="flex-1 w-full max-w-[1920px] mx-auto flex justify-center">
                     {/* Left Sidebar (Desktop) */}
-                    <aside className="hidden xl:block w-[280px] shrink-0 border-r border-gray-200 dark:border-gray-800 bg-transparent sticky top-20 h-[calc(100vh-5rem)] self-start overflow-y-auto hidden-scrollbar">
+                    <aside className="hidden xl:block w-[280px] shrink-0 border-r border-gray-200 dark:border-gray-800 bg-transparent sticky top-20 mt-20 h-[calc(100vh-5rem)] self-start overflow-y-auto hidden-scrollbar">
                         <SidebarLeft userId={userId} />
                     </aside>
 
@@ -38,7 +38,7 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = false, f
                     </main>
 
                     {/* Right Sidebar */}
-                    <aside className="hidden lg:block w-[320px] shrink-0 px-4 pt-4 lg:pt-8 border-l border-gray-200 dark:border-gray-800 bg-transparent sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto hidden-scrollbar self-start">
+                    <aside className="hidden lg:block w-[320px] shrink-0 px-4 pt-4 lg:pt-8 border-l border-gray-200 dark:border-gray-800 bg-transparent sticky top-20 mt-20 h-[calc(100vh-5rem)] overflow-y-auto hidden-scrollbar self-start">
                         <div className="py-8">
                             {rightSidebar}
                         </div>

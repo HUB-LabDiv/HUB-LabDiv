@@ -22,22 +22,22 @@ export function InstitutoHero() {
                     </span>
                 </div>
 
-                <h1 className="text-5xl md:text-7xl font-black text-white italic uppercase tracking-tighter mb-8 leading-[0.9]">
+                <h1 className="text-5xl md:text-7xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter mb-8 leading-[0.9]">
                     O Instituto de <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-blue-dark to-white opacity-90">
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-blue-dark to-gray-400 dark:to-white opacity-90">
                         Física
                     </span> da USP
                 </h1>
 
                 <div className="max-w-3xl">
-                    <p className="text-lg md:text-xl text-gray-300 leading-relaxed font-medium mb-6">
+                    <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 leading-relaxed font-medium mb-6">
                         Referência mundial e pioneiro no ensino, o IFUSP é o maior centro de física do Brasil, onde tradição encontra a vanguarda das fronteiras do conhecimento científico.
                     </p>
                     
-                    <div className="glass-card p-8 rounded-[40px] border-white/5 bg-[#1E1E1E]/50 backdrop-blur-sm">
-                        <h2 className="text-sm font-black text-white uppercase italic mb-4 tracking-wider">Sobre o Instituto</h2>
-                        <p className="text-sm text-gray-400 leading-relaxed">
-                            Fundado em 1934 como parte da Faculdade de Filosofia, Ciências e Letras, o Instituto de Física da USP consolidou-se como uma das instituições de pesquisa mais produtivas do país. Atualmente, abriga centenas de laboratórios de ponta e pesquisadores empenhados em desvendar desde as partículas subatômicas até a vasta estrutura do universo, mantendo um compromisso inabalável com a formação de excelência e a divulgação científica.
+                    <div className="glass-card p-8 rounded-[40px] border-gray-100 dark:border-white/5 bg-white/50 dark:bg-[#1E1E1E]/50 backdrop-blur-sm">
+                        <h2 className="text-sm font-black text-gray-900 dark:text-white uppercase italic mb-4 tracking-wider">Sobre o Instituto</h2>
+                        <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                            Fundado in 1934 como parte da Faculdade de Filosofia, Ciências e Letras, o Instituto de Física da USP consolidou-se como uma das instituições de pesquisa mais produtivas do país. Atualmente, abriga centenas de laboratórios de ponta e pesquisadores empenhados em desvendar desde as partículas subatômicas até a vasta estrutura do universo, mantendo um compromisso inabalável com a formação de excelência e a divulgação científica.
                         </p>
                     </div>
 

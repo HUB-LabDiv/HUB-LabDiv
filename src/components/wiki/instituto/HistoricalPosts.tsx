@@ -115,7 +115,7 @@ export function HistoricalPosts() {
     };
 
     return (
-        <section className="py-20 border-t border-white/5">
+        <section className="py-20 border-t border-gray-100 dark:border-white/5">
             <div className="flex items-center justify-between mb-10">
                 <div className="flex items-center gap-3">
                     <div className="h-[2px] w-8 bg-brand-red"></div>

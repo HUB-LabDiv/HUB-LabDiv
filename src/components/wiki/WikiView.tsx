@@ -188,7 +188,7 @@ export const institutoCell = {
         'Departamentos e Centros de Pesquisa'
     ],
     keywords: ['ifusp', 'instituto', 'física', 'departamento', 'auditório', 'história', 'alimentação', 'convivência', 'mapa'],
-    cta: 'Aprender sobre o IF'
+    cta: 'Aprender sobre o IFUSP'
 };
 
 const quizCell = {
@@ -208,6 +208,23 @@ const quizCell = {
     cta: 'Iniciar Varredura'
 };
 
+
+const renderIFUSP = (text: string) => {
+    if (!text) return text;
+    const standardized = text.replace(/IF-USP|IF USP/gi, 'IFUSP');
+    const parts = standardized.split(/(IFUSP)/gi);
+    return parts.map((part, i) => {
+        if (part.toUpperCase() === 'IFUSP') {
+            return (
+                <span key={i} className="inline font-black tracking-tighter">
+                    <span className="text-brand-yellow">IF</span><span className="text-brand-blue">USP</span>
+                </span>
+            );
+        }
+        return part;
+    });
+};
+
 export function WikiView() {
     return (
         <div className="bg-transparent pb-12 overflow-x-hidden pt-8">
@@ -224,7 +241,7 @@ export function WikiView() {
                                 WIKI <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-brand-blue to-brand-yellow">HUB</span>
                             </h1>
                             <p className="text-gray-400 text-lg max-w-xl font-medium leading-relaxed">
-                                O Síncrotron de Conhecimento do IFUSP. O repositório definitivo para sobrevivência, ética e divulgação científica.
+                                {renderIFUSP('O Síncrotron de Conhecimento do IFUSP. O repositório definitivo para sobrevivência, ética e divulgação científica.')}
                             </p>
                         </motion.div>
 
@@ -266,13 +283,13 @@ export function WikiView() {
                                             </div>
                                         </div>
                                         <h3 className={`text-2xl font-black text-gray-900 dark:text-white mb-1 group-hover:text-${cell.color} transition-colors italic uppercase tracking-tighter`}>
-                                            {cell.title}
+                                            {renderIFUSP(cell.title)}
                                         </h3>
                                         <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">
                                             {cell.subtitle}
                                         </p>
                                         <p className="text-sm text-gray-400 font-medium leading-relaxed mb-6 line-clamp-2">
-                                            {cell.description}
+                                            {renderIFUSP(cell.description)}
                                         </p>
                                         <div className="space-y-2 mb-8">
                                             {cell.details.map((detail: string, dIdx: number) => (
@@ -317,12 +334,12 @@ export function WikiView() {
                             <div className="text-center md:text-left">
                                 <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
                                     <h3 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter">
-                                        {institutoCell.title}
+                                        {renderIFUSP(institutoCell.title)}
                                     </h3>
                                     <span className="hidden md:block px-3 py-1 bg-brand-blue-ifusp/20 border border-brand-blue-ifusp/30 text-brand-blue-ifusp text-[10px] font-black uppercase rounded-full italic">Institucional</span>
                                 </div>
                                 <p className="text-gray-400 font-medium max-w-md">
-                                    {institutoCell.description}
+                                    {renderIFUSP(institutoCell.description)}
                                 </p>
                             </div>
                         </div>

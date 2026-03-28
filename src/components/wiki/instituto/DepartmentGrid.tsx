@@ -75,26 +75,26 @@ export function DepartmentGrid() {
                         className="block group"
                         onClick={() => trackEvent('DEPT_FILTER', { dept_id: dept.id, dept_name: dept.name })}
                     >
-                        <motion.div
+                         <motion.div
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
                             transition={{ delay: idx * 0.1 }}
-                            className="glass-card p-6 rounded-[32px] border-white/5 hover:border-brand-blue/30 bg-[#1E1E1E]/40 hover:bg-[#1E1E1E]/60 transition-all duration-500 cursor-pointer h-full"
+                            className="glass-card p-6 rounded-[32px] border-gray-100 dark:border-white/5 hover:border-brand-blue/30 bg-white/40 dark:bg-[#1E1E1E]/40 hover:bg-gray-100 dark:hover:bg-[#1E1E1E]/60 transition-all duration-500 cursor-pointer h-full"
                         >
                             <div className="flex items-center gap-4 mb-4">
-                                <div className="p-3 rounded-2xl bg-white/5 group-hover:bg-brand-blue/20 transition-colors">
-                                    <span className="text-gray-400 group-hover:text-brand-blue transition-colors">
+                                <div className="p-3 rounded-2xl bg-gray-100 dark:bg-white/5 group-hover:bg-brand-blue/20 transition-colors">
+                                    <span className="text-gray-500 dark:text-gray-400 group-hover:text-brand-blue transition-colors">
                                         {dept.icon}
                                     </span>
                                 </div>
                                 <div>
-                                    <h3 className="text-lg font-bold text-white leading-tight underline-offset-4 group-hover:underline group-hover:text-brand-blue transition-all">{dept.name}</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-tight underline-offset-4 group-hover:underline group-hover:text-brand-blue transition-all">{dept.name}</h3>
                                     <span className="text-[10px] font-black text-brand-blue/60 uppercase tracking-widest">{dept.id}</span>
                                 </div>
                             </div>
 
-                            <p className="text-sm text-gray-400 leading-relaxed mb-6 h-12 overflow-hidden">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-6 h-12 overflow-hidden">
                                 {dept.description}
                             </p>
 

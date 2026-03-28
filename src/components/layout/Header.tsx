@@ -107,28 +107,32 @@ export function Header() {
                                 </div>
                             </div>
                             <div className="flex flex-col -space-y-1">
-                                <div className="text-xl font-bukra font-bold tracking-tight flex items-center gap-1.5 leading-tight">
-                                    <span className="text-gray-900 dark:text-white">Hub</span>
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-red to-brand-blue font-black">Lab-Div</span>
+                                <div className="text-xl font-bukra font-bold tracking-tight flex items-baseline gap-1.5 leading-tight">
+                                    <span className="text-gray-900 dark:text-white uppercase">HUB</span>
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-red to-brand-blue font-black">LabDiv</span>
+                                    <div className="flex flex-col items-center opacity-80">
+                                        <span className="text-[7px] sm:text-[8px] font-black px-1.5 py-0.5 rounded bg-brand-blue/10 dark:bg-white/10 text-brand-blue dark:text-gray-400/80 ml-1">V3.2.0</span>
+                                        <span className="text-[8px] font-black uppercase tracking-tighter ml-1 text-brand-blue dark:text-gray-500">(BETA)</span>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-1.5 sm:gap-2 mt-0.5">
-                                    <IFUSPLogo size={12} className="text-brand-blue dark:text-brand-blue-dark active:animate-pulse" />
-                                    <span className="text-[7px] sm:text-[9px] font-bukra font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">Instituto de Física</span>
-                                    <span className="text-[7px] sm:text-[8px] font-black px-1 sm:px-1.5 py-0.5 rounded bg-gray-100 dark:bg-white/10 text-gray-400/80 shrink-0">v3.1.5</span>
-                                </div>
+                                <span className="text-[7px] sm:text-[9px] font-bukra font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">IFUSP</span>
+                            </div>
+                            <div className="hidden sm:flex items-center gap-2.5 ml-1">
+                                <div className="w-px h-7 bg-gray-200 dark:bg-white/15"></div>
+                                <IFUSPLogo size={42} className="text-brand-blue dark:text-brand-blue opacity-80 group-hover:opacity-100 transition-opacity" />
                             </div>
                         </div>
                     </Link>
 
-                    {/* Middle: Nav Tabs + Search (The Notch) */}
-                    <div className="flex-1 hidden md:flex items-center justify-center self-start">
+                    {/* Middle: Nav Tabs + Search (The Notch) - Hardened V8.1 with Static Centering */}
+                    <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 top-0 z-50">
                         <div className="bg-[#0F4780] rounded-b-[24px] px-8 py-3 flex items-center gap-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-x border-b border-white/10 backdrop-blur-xl">
                             {[
                                 { label: 'Comunidade', href: '/', color: '#F14343' },
-                                { label: 'GCIF', href: '/explorar', color: 'white' },
+                                { label: 'GCIF', href: '/explorar', color: '#1F9FCF' },
                                 { label: 'LabDiv', href: '/sobre', color: '#FFCC00' },
                                 { label: 'Ferramentas', href: '/ferramentas', color: '#F14343' },
-                                { label: 'Interações', href: '/interacao', color: 'white' },
+                                { label: 'Interações', href: '/interacao', color: '#1F9FCF' },
                             ].map((tab) => {
                                 const isActive = pathname === tab.href || (tab.href !== '/' && pathname.startsWith(tab.href));
                                 
@@ -136,15 +140,27 @@ export function Header() {
                                     <Link
                                         key={tab.href}
                                         href={tab.href}
-                                        className={`px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl transition-all whitespace-nowrap relative group/tab ${
+                                        className={`px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl transition-all whitespace-nowrap relative group/tab border border-transparent ${
                                             isActive
-                                                ? `text-white bg-white/10 ring-1 ring-inset ${tab.color === 'white' ? 'ring-white/30' : `ring-[${tab.color}]/50`}`
-                                                : `text-white/60 hover:text-white hover:bg-white/5`
+                                                ? `text-white bg-white/10 border-white/10 ring-1 ring-inset ${tab.color === 'white' ? 'ring-white/30' : `ring-[${tab.color}]/50`}`
+                                                : `text-white/60 hover:bg-white/5`
                                         }`}
-                                        style={isActive ? { color: tab.color } : {}}
+                                        style={{ 
+                                            color: isActive ? tab.color : undefined,
+                                            // Apply color on hover using a CSS variable or direct style if needed, 
+                                            // but React doesn't support hover in inline styles easily without state.
+                                            // However, we can use a clever trick with CSS variables.
+                                            ['--tab-hover-color' as any]: tab.color
+                                        }}
+                                        onMouseEnter={(e) => {
+                                            if (!isActive) e.currentTarget.style.color = tab.color;
+                                        }}
+                                        onMouseLeave={(e) => {
+                                            if (!isActive) e.currentTarget.style.color = '';
+                                        }}
                                     >
                                         {tab.label}
-                                        {isActive && (
+                                        {(isActive) && (
                                             <div 
                                                 className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full animate-premium-glow"
                                                 style={{ backgroundColor: tab.color }}
@@ -157,11 +173,11 @@ export function Header() {
                             {/* Global Search Trigger (Adjusted for Notch) */}
                             <button
                                 onClick={() => setSearchOverlayOpen(true)}
-                                className="ml-4 flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs text-white/50 hover:text-white hover:border-white/30 hover:bg-white/10 transition-all group"
+                                className="ml-4 flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs text-white/50 hover:text-[#FFCC00] hover:border-[#FFCC00]/50 hover:bg-[#FFCC00]/10 transition-all group"
                             >
-                                <span className="material-symbols-outlined text-[18px] group-hover:text-white transition-colors">search</span>
+                                <span className="material-symbols-outlined text-[18px] group-hover:text-[#FFCC00] transition-colors">search</span>
                                 <span className="hidden lg:inline text-[10px] font-bold uppercase tracking-widest">Buscar</span>
-                                <kbd className="hidden lg:flex items-center px-1.5 py-0.5 bg-white/5 rounded text-[9px] font-mono text-white/20">/</kbd>
+                                <kbd className="hidden lg:flex items-center px-1.5 py-0.5 bg-white/5 group-hover:bg-[#FFCC00]/20 rounded text-[9px] font-mono text-white/20 group-hover:text-[#FFCC00]/80 transition-colors">/</kbd>
                             </button>
                         </div>
                     </div>
@@ -184,7 +200,7 @@ export function Header() {
                                 <button
                                     onClick={() => setReportModalOpen(true)}
                                     aria-label="Reportar Erro ou Enviar Feedback"
-                                    className="relative size-10 flex items-center justify-center rounded-xl bg-brand-red/10 text-red-700 dark:text-brand-red hover:bg-brand-red/20 transition-all border border-brand-red/20 group animate-pulse hover:animate-none"
+                                    className="hidden md:flex relative size-10 items-center justify-center rounded-xl bg-brand-red/10 text-red-700 dark:text-brand-red hover:bg-brand-red/20 transition-all border border-brand-red/20 group animate-pulse hover:animate-none"
                                     title="Reportar Erro / Feedback"
                                 >
                                     <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">report</span>
@@ -253,7 +269,7 @@ export function Header() {
                             <button
                                 onClick={toggleTheme}
                                 aria-label="Alternar Tema Claro e Escuro"
-                                className="relative w-10 h-10 flex items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/20 transition-colors"
+                                className="hidden md:flex relative w-10 h-10 items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/20 transition-colors"
                             >
                                 <div className="relative size-full flex items-center justify-center">
                                     <span
@@ -268,6 +284,26 @@ export function Header() {
                     </div>
                 </div>
             </header>
+
+            {/* Mobile Floating Action Buttons (FABs) */}
+            <button
+                onClick={toggleTheme}
+                aria-label="Alternar Tema Claro e Escuro"
+                className="md:hidden fixed top-[76px] left-4 z-[50] size-11 flex items-center justify-center rounded-full bg-white dark:bg-[#282828] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 shadow-md dark:shadow-lg dark:shadow-black/50 transition-colors active:scale-95"
+            >
+                <span className="material-symbols-outlined text-[20px]">
+                    {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+                </span>
+            </button>
+
+            <button
+                onClick={() => setReportModalOpen(true)}
+                aria-label="Reportar Erro ou Enviar Feedback"
+                className="md:hidden fixed top-[76px] right-4 z-[50] size-11 flex items-center justify-center rounded-full bg-brand-red text-white shadow-md shadow-brand-red/30 transition-transform active:scale-95"
+                title="Reportar Erro / Feedback"
+            >
+                <span className="material-symbols-outlined text-[20px]">report</span>
+            </button>
 
             <SearchOverlay
                 isOpen={isSearchOverlayOpen}

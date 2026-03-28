@@ -41,7 +41,7 @@ export default function InteracaoClient() {
                 </header>
 
                 {/* Custom Premium Tabs */}
-                <div className="flex gap-2 p-1 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[20px] mb-12 w-fit overflow-x-auto scrollbar-hide max-w-full">
+                <div className="flex gap-2 p-1 bg-white dark:bg-white/5 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-sm dark:shadow-none rounded-[20px] mb-12 w-fit overflow-x-auto scrollbar-hide max-w-full">
                     {[
                         { id: 'emaranhamento', label: 'Emaranhamento', icon: 'hub' },
                         { id: 'lab', label: 'Laboratório Pessoal', icon: 'science' },
@@ -52,7 +52,7 @@ export default function InteracaoClient() {
                             onClick={() => handleTabChange(tab.id)}
                             className={`flex items-center gap-3 px-6 py-3 rounded-[16px] text-[10px] font-black tracking-[0.15em] transition-all whitespace-nowrap ${activeTab === tab.id
                                 ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20'
-                                : 'text-gray-500 hover:text-white hover:bg-white/5'
+                                : 'text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
                                 }`}
                         >
                             <span className="material-symbols-outlined text-[18px]">{tab.icon}</span>

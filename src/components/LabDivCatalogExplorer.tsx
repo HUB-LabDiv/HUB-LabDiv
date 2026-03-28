@@ -110,14 +110,14 @@ export function LabDivCatalogExplorer() {
             {/* Produzido pelo Lab-Div */}
             <section>
                 <div className="flex items-center gap-3 mb-8 px-4 sm:px-0">
-                    <div className="p-2 bg-brand-blue/10 rounded-xl">
-                        <Star className="w-6 h-6 text-brand-blue fill-current" />
+                    <div className="p-2 bg-brand-yellow/10 rounded-xl border border-brand-yellow/20">
+                        <Star className="w-6 h-6 text-brand-yellow fill-current" />
                     </div>
                     <div>
                         <h2 className="text-2xl font-black uppercase tracking-widest text-gray-900 dark:text-white leading-tight">
-                            Produzido pelo <span className="text-brand-blue">Lab-Div</span>
+                            Catálogo <span className="text-brand-yellow">Padrão Ouro</span>
                         </h2>
-                        <p className="text-xs font-bold text-gray-500 uppercase tracking-tighter">Conteúdo proprietário e oficial</p>
+                        <p className="text-xs font-bold text-gray-500 uppercase tracking-tighter">Produzido pelo Lab-Div: Conteúdo proprietário e oficial</p>
                     </div>
                 </div>
                 {labDivItems.length > 0 ? (

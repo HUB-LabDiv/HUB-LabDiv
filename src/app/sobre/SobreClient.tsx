@@ -71,13 +71,13 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
             <div className="max-w-7xl mx-auto px-4 py-8">
                 {/* Segmented Control for Institucional Hub */}
                 <div className="flex justify-center mb-12 sticky top-16 z-40 py-2">
-                    <div className="bg-[#1e1e1e]/80 backdrop-blur-xl p-1 rounded-2xl border border-white/5 flex gap-1 shadow-lg">
+                    <div className="bg-white/80 dark:bg-[#1e1e1e]/80 backdrop-blur-xl p-1 rounded-2xl border border-gray-200/50 dark:border-white/5 flex gap-1 shadow-lg">
                         <button
                             onClick={() => handleTabChange('labdiv')}
                             className={`flex items-center gap-2 px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
                                 activeTab === 'labdiv'
                                     ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20'
-                                    : 'text-gray-500 hover:text-white hover:bg-white/5'
+                                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
                             }`}
                         >
                             <Library className="w-4 h-4" />
@@ -87,8 +87,8 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
                             onClick={() => handleTabChange('sobre')}
                             className={`flex items-center gap-2 px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
                                 activeTab === 'sobre'
-                                    ? 'bg-white text-black shadow-lg'
-                                    : 'text-gray-500 hover:text-white hover:bg-white/5'
+                                    ? 'bg-gray-900 dark:bg-white text-white dark:text-black shadow-lg'
+                                    : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
                             }`}
                         >
                             <Info className="w-4 h-4" />
@@ -403,7 +403,7 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
                     <div className="size-10 md:size-12 rounded-xl md:rounded-2xl bg-brand-red/10 flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform">
                         <span className="material-symbols-outlined text-brand-red text-xl md:text-2xl">list_alt</span>
                     </div>
-                    <h4 className="text-sm md:text-xl font-black uppercase italic tracking-tight mb-2 md:mb-4">Logs do IF-USP</h4>
+                    <h4 className="text-sm md:text-xl font-black uppercase italic tracking-tight mb-2 md:mb-4">Logs do IFUSP</h4>
                     <p className="text-gray-500 text-[10px] md:text-sm leading-relaxed mb-4 md:mb-6 flex-1">
                         O mural da nossa gente. Um espaço informal para desabafos, avisos rápidos e aquelas fofocas de laboratório que fazem parte do dia a dia, sem o peso do rigor acadêmico ou oficial.
                     </p>
@@ -710,7 +710,7 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
                             <div className="bg-[#11141a] rounded-2xl p-6 border border-white/5 flex flex-col h-full">
                                 <span className="text-[10px] uppercase font-black tracking-widest text-green-400 mb-2 flex items-center gap-2"><div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></div> Status Atual</span>
                                 <h4 className="font-bold text-white mb-2">Wiki do IFUSP</h4>
-                                <p className="text-xs text-slate-500 flex-1">Artigos curtos redigidos colaborativamente descrevendo centros, CAIF, instâncias colegiadas e mapas mentais do Ifusp.</p>
+                                <p className="text-xs text-slate-500 flex-1">Artigos curtos redigidos colaborativamente descrevendo centros, CAIF, instâncias colegiadas e mapas mentais do IFUSP.</p>
                             </div>
                             <div className="bg-brand-yellow/5 rounded-2xl p-6 border border-brand-yellow/10 flex flex-col h-full relative overflow-hidden">
                                 <div className="absolute top-0 right-0 w-24 h-24 bg-brand-yellow/10 blur-2xl rounded-full translate-x-1/2 -translate-y-1/2"></div>

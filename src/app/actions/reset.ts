@@ -143,6 +143,48 @@ export async function executeSpecificUserWipe(targetUid: string, secretKey: stri
 }
 
 /**
+ * 🌪️ WIPE SELETIVO: Deleta tudo, exceto as trilhas e os usuários listados (e-mails).
+ */
+export async function executeSelectiveWipe(formData: FormData) {
+    const check = await verifyAdmin();
+    if (!check.success) return check;
+
+    if (formData.get('secret_key') !== process.env.ADMIN_PASSWORD) {
+        return { success: false, error: 'Chave secreta inválida.' };
+    }
+
+    const preservedEmailsRaw = formData.get('preserved_emails') as string;
+    if (!preservedEmailsRaw || preservedEmailsRaw.trim() === '') {
+        return { success: false, error: 'Lista de e-mails para preservar não pode estar vazia. Use o Wipe Nuclear ou de Perfis se quiser apagar tudo.' };
+    }
+
+    // Process the emails (comma or newline separated)
+    const preservedEmails = preservedEmailsRaw
+        .split(/[\n,]+/)
+        .map(e => e.trim())
+        .filter(e => e.length > 0 && e.includes('@'));
+
+    if (preservedEmails.length === 0) {
+        return { success: false, error: 'Nenhum e-mail válido encontrado para preservar.' };
+    }
+
+    try {
+        await purgeStorageFolder('assets/submissions');
+        await purgeStorageFolder('reproductions');
+
+        const supabase = await createServerSupabase();
+        const { error } = await supabase.rpc('reset_selective', { preserved_emails: preservedEmails });
+
+        if (error) return { success: false, error: error.message };
+
+        revalidatePath('/');
+        return { success: true, message: `Wipe Seletivo concluído. ${preservedEmails.length} perfis e as trilhas foram mantidos.` };
+    } catch (e: any) {
+        return { success: false, error: e.message };
+    }
+}
+
+/**
  * Utility to verify admin permission before critical actions
  */
 async function verifyAdmin() {

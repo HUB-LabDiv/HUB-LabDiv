@@ -15,7 +15,8 @@ import {
     executeProfileWipe, 
     executeContentWipe, 
     executeSpecificUserWipe,
-    executeTrailsWipe
+    executeTrailsWipe,
+    executeSelectiveWipe
 } from '@/app/actions/reset';
 import { DeleteUserModal } from '@/components/admin/DeleteUserModal';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
@@ -49,6 +50,7 @@ export function AdminUnifiedClient() {
     // Danger Zone State
     const [secretKey, setSecretKey] = useState('');
     const [targetUid, setTargetUid] = useState('');
+    const [preservedEmails, setPreservedEmails] = useState('');
     const [isDangerLoading, setIsDangerLoading] = useState(false);
 
     // Modals State
@@ -221,6 +223,26 @@ export function AdminUnifiedClient() {
             toast.success(result.message || 'Wipe de Trilhas Concluído');
         } else {
             toast.error(result.error || 'Erro no Wipe de Trilhas');
+        }
+        setIsDangerLoading(false);
+    };
+
+    const handleSelectiveWipe = async (e: React.FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        if (!secretKey) return toast.error('Insira a chave secreta na seção de ações manuais primeiro.');
+        if (!confirm('VOCÊ TEM CERTEZA? O Wipe Seletivo apagará TODO o conteúdo e os perfis, deixando APENAS as trilhas e as contas dos e-mails digitados.')) return;
+        
+        setIsDangerLoading(true);
+        const formData = new FormData(e.currentTarget);
+        formData.append('secret_key', secretKey);
+        
+        const result = await executeSelectiveWipe(formData) as any;
+        
+        if (result.success) {
+            toast.success(result.message || 'Wipe Seletivo Concluído');
+            setPreservedEmails('');
+        } else {
+            toast.error(result.error || 'Erro no Wipe Seletivo');
         }
         setIsDangerLoading(false);
     };
@@ -499,6 +521,35 @@ export function AdminUnifiedClient() {
                                 APAGAR USUÁRIO
                             </button>
                         </div>
+                    </section>
+                    
+                    <section className="mt-8 p-8 bg-purple-900/10 border border-purple-500/30 rounded-[32px] group">
+                        <h2 className="text-xl font-black text-purple-500 mb-4 flex items-center gap-3">
+                            <span className="material-symbols-outlined text-[24px]">filter_alt_off</span>
+                            Wipe Seletivo
+                        </h2>
+                        <p className="text-xs text-purple-200/50 mb-6 leading-relaxed">
+                            Apaga todo o conteúdo do sistema (posts, logs, feedbacks) e <b>todos os perfis</b> exceto as contas dos e-mails listados abaixo. As <b>Trilhas de Aprendizagem</b> serão mantidas intactas.
+                        </p>
+                        <form onSubmit={handleSelectiveWipe} className="flex flex-col gap-4">
+                            <textarea
+                                name="preserved_emails"
+                                value={preservedEmails}
+                                onChange={(e) => setPreservedEmails(e.target.value)}
+                                placeholder="E-mails para preservar (ex: admin@usp.br, coordenacao@if.usp.br)"
+                                rows={3}
+                                required
+                                className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm placeholder:text-gray-700 focus:outline-none focus:border-purple-500 transition-colors"
+                            />
+                            <button
+                                type="submit"
+                                disabled={isDangerLoading}
+                                className="py-4 bg-purple-600 disabled:bg-neutral-800 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-purple-500 shadow-lg shadow-purple-900/20 active:scale-95 transition-all w-full flex items-center justify-center gap-2"
+                            >
+                                <span className="material-symbols-outlined text-sm">cleaning_services</span>
+                                EXECUTAR WIPE SELETIVO
+                            </button>
+                        </form>
                     </section>
                 </section>
             ) : (

@@ -144,7 +144,7 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
             </section>
 
             {/* NEW: Top Navigation Bar */}
-            <nav id="gcif-top-nav" className="flex flex-wrap items-center justify-center md:justify-start gap-2 sticky top-20 z-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-2 rounded-2xl border border-gray-100 dark:border-white/5 shadow-xl shadow-black/5 -mt-16 mb-8">
+            <nav id="gcif-top-nav" className="flex flex-wrap items-center justify-center md:justify-start gap-2 sticky top-20 z-40 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md p-2 rounded-2xl border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none shadow-xl shadow-black/5 -mt-16 mb-8">
                 {navItems.map((item) => {
                     const isActive = activeSection === item.id;
                     return (
@@ -185,7 +185,7 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
                 ) : (
                     <div className="grid gap-6 md:grid-cols-3">
                         {oportunidades.map((item) => (
-                            <div key={item.id} className="bg-white dark:bg-[#1E1E1E] rounded-[32px] border border-white/5 p-8 flex flex-col gap-4 hover:border-brand-blue/30 transition-all hover:-translate-y-1 group">
+                            <div key={item.id} className="bg-white dark:bg-[#1E1E1E] rounded-[32px] border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none p-8 flex flex-col gap-4 hover:border-brand-blue/30 transition-all hover:-translate-y-1 group">
                                 <div className="flex items-center justify-between">
                                     <span className="px-3 py-1 bg-brand-blue/10 text-brand-blue text-[10px] font-black uppercase rounded-full">{item.tipo}</span>
                                 </div>
@@ -239,35 +239,35 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
                         icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><ColisorIcon size={20} animate={false} /></div>}
                     >
                         {/* Lab-Div Card */}
-                        <div className="snap-center shrink-0 w-[300px] md:w-[400px] bg-[#1E1E1E] rounded-[40px] p-10 border border-white/5 relative overflow-hidden group flex flex-col">
+                        <div className="snap-center shrink-0 w-[300px] md:w-[400px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none relative overflow-hidden group flex flex-col">
                             <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 transition-opacity">
-                                <Landmark className="w-32 h-32" />
+                                <Landmark className="w-32 h-32 text-gray-900 dark:text-white" />
                             </div>
-                            <div className="size-20 bg-white rounded-3xl p-4 mb-8">
+                            <div className="size-20 bg-gray-100 dark:bg-white rounded-3xl p-4 mb-8">
                                 <img src="/labdiv-logo.png" alt="Lab-Div" className="w-full h-full object-contain" />
                             </div>
                             <h3 className="text-2xl font-black italic uppercase mb-4 text-brand-blue">Lab-Div</h3>
-                            <p className="text-gray-400 font-medium leading-relaxed mb-8">Comunicação científica inspirada no MIT. Tutoria entre pares, escrita e design.</p>
+                            <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">Comunicação científica inspirada no MIT. Tutoria entre pares, escrita e design.</p>
                             <Link href="/arquivo-labdiv" className="mt-auto px-8 py-4 bg-brand-blue text-white rounded-2xl font-black uppercase tracking-widest text-[10px] text-center group-hover:scale-105 transition-transform">Explorar Acervo</Link>
                         </div>
 
                         {/* Boletim Supernova */}
-                        <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-[#1E1E1E] rounded-[40px] p-10 border border-white/5 flex flex-col group">
+                        <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group">
                             <div className="size-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-8">
                                 <span className="material-symbols-outlined text-4xl">newspaper</span>
                             </div>
-                            <h3 className="text-2xl font-black italic uppercase mb-4">Supernova</h3>
-                            <p className="text-gray-400 font-medium leading-relaxed mb-8">O boletim crítico e cultural do CEFISMA. A voz ativa da graduação.</p>
+                            <h3 className="text-2xl font-black italic uppercase mb-4 text-gray-900 dark:text-white">Supernova</h3>
+                            <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">O boletim crítico e cultural do CEFISMA. A voz ativa da graduação.</p>
                             <a href="https://cefisma.com.br" target="_blank" className="mt-auto px-8 py-4 border border-brand-blue/20 text-brand-blue rounded-2xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-blue/10 transition-colors">Ler Supernova</a>
                         </div>
 
                         {/* BIFUSP */}
-                        <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-[#1E1E1E] rounded-[40px] p-10 border border-white/5 flex flex-col group">
+                        <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group">
                             <div className="size-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-8">
                                 <span className="material-symbols-outlined text-4xl">library_books</span>
                             </div>
-                            <h3 className="text-2xl font-black italic uppercase mb-4 tracking-tighter">BIFUSP</h3>
-                            <p className="text-gray-400 font-medium leading-relaxed mb-8">A base de dados física. Biblioteca central do Instituto.</p>
+                            <h3 className="text-2xl font-black italic uppercase mb-4 tracking-tighter text-gray-900 dark:text-white">BIFUSP</h3>
+                            <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">A base de dados física. Biblioteca central do Instituto.</p>
                             <a href="https://portal.if.usp.br/biblioteca/" target="_blank" className="mt-auto px-8 py-4 border border-brand-blue/20 text-brand-blue rounded-2xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-blue/10 transition-colors">Consultar</a>
                         </div>
                     </NetflixFeed>
@@ -282,58 +282,58 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
                         icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><Info className="w-5 h-5" /></div>}
                     >
                         {/* Hackerspace */}
-                        <div className="snap-center shrink-0 w-[300px] bg-[#1E1E1E] rounded-[40px] p-8 border border-white/5 flex flex-col group hover:border-brand-yellow/30 transition-all">
+                        <div className="snap-center shrink-0 w-[300px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-8 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group hover:border-brand-yellow/30 transition-all">
                             <div className="size-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-6 group-hover:scale-110 transition-transform">
                                 <span className="material-symbols-outlined text-4xl">memory</span>
                             </div>
-                            <h3 className="text-xl font-black uppercase mb-3 text-gray-200">Hackerspace</h3>
-                            <p className="text-sm text-gray-500 leading-relaxed mb-8 font-medium">Cultura maker no IF. Arduinos, 3D e colaboração radical.</p>
+                            <h3 className="text-xl font-black uppercase mb-3 text-gray-900 dark:text-gray-200">Hackerspace</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-500 leading-relaxed mb-8 font-medium">Cultura maker no IF. Arduinos, 3D e colaboração radical.</p>
                             <a href="https://hackerspace.if.usp.br" target="_blank" className="mt-auto text-brand-blue font-black uppercase tracking-tighter flex items-center gap-2 hover:underline font-bold">Visitar <ArrowRight className="w-4 h-4" /></a>
                         </div>
 
                         {/* DigitalLab - Espaço no Inova */}
-                        <div className="snap-center shrink-0 w-[300px] bg-[#1E1E1E] rounded-[40px] p-8 border border-white/5 flex flex-col group opacity-50 grayscale">
+                        <div className="snap-center shrink-0 w-[300px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-8 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group opacity-50 grayscale">
                             <div className="size-16 bg-brand-red/10 rounded-2xl flex items-center justify-center text-brand-red mb-6">
                                 <span className="material-symbols-outlined text-4xl">desktop_windows</span>
                             </div>
-                            <h3 className="text-xl font-black uppercase mb-3 text-gray-200">DigitalLab</h3>
-                            <p className="text-sm text-gray-500 leading-relaxed mb-8 font-medium italic">Espaço no Inova. Experiências digitais e audiovisual. Em fase de ignição.</p>
+                            <h3 className="text-xl font-black uppercase mb-3 text-gray-900 dark:text-gray-200">DigitalLab</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-500 leading-relaxed mb-8 font-medium italic">Espaço no Inova. Experiências digitais e audiovisual. Em fase de ignição.</p>
                             <div className="mt-auto flex items-center gap-2 text-brand-red text-[10px] font-black uppercase tracking-widest">
                                 Status: Carregando <span className="animate-pulse">...</span>
                             </div>
                         </div>
 
                         {/* CEFISMA - Amélia Império */}
-                        <div className="snap-center shrink-0 w-[300px] bg-[#1E1E1E] rounded-[40px] p-8 border border-white/5 flex flex-col group hover:border-brand-blue/30 transition-all">
+                        <div className="snap-center shrink-0 w-[300px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-8 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group hover:border-brand-blue/30 transition-all">
                             <div className="size-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-6 group-hover:scale-110 transition-transform">
                                 <span className="material-symbols-outlined text-4xl">groups</span>
                             </div>
-                            <h3 className="text-xl font-black uppercase mb-3 text-gray-200">Amélia Império</h3>
-                            <p className="text-sm text-gray-500 leading-relaxed mb-8 font-medium">O Centro Acadêmico da Física (CEFISMA). Representação estudantil e espaço de convivência.</p>
+                            <h3 className="text-xl font-black uppercase mb-3 text-gray-900 dark:text-gray-200">Amélia Império</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-500 leading-relaxed mb-8 font-medium">O Centro Acadêmico da Física (CEFISMA). Representação estudantil e espaço de convivência.</p>
                             <a href="https://cefisma.com.br" target="_blank" className="mt-auto text-brand-blue font-black uppercase tracking-tighter flex items-center gap-2 hover:underline">Conhecer <ArrowRight className="w-4 h-4" /></a>
                         </div>
 
                         {/* Lab Demo */}
-                        <div className="snap-center shrink-0 w-[300px] bg-[#1E1E1E] rounded-[40px] p-8 border border-white/5 flex flex-col group">
+                        <div className="snap-center shrink-0 w-[300px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-8 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group group">
                             <div className="size-16 bg-brand-red/10 rounded-2xl flex items-center justify-center text-brand-red mb-6">
                                 <span className="material-symbols-outlined text-4xl">rocket_launch</span>
                             </div>
-                            <h3 className="text-xl font-black uppercase mb-3 text-gray-200">Lab Demo</h3>
-                            <p className="text-sm text-gray-500 leading-relaxed mb-8 font-medium">Demonstrações lúdicas e experimentos interativos.</p>
+                            <h3 className="text-xl font-black uppercase mb-3 text-gray-900 dark:text-gray-200">Lab Demo</h3>
+                            <p className="text-sm text-gray-600 dark:text-gray-500 leading-relaxed mb-8 font-medium">Demonstrações lúdicas e experimentos interativos.</p>
                             <a href="https://portal.if.usp.br/demonstracoes/" target="_blank" className="mt-auto text-brand-red font-black uppercase tracking-tighter flex items-center gap-2 hover:underline">Ver Fenômenos <ArrowRight className="w-4 h-4" /></a>
                         </div>
 
                         {/* Parque CienTec */}
-                        <div className="snap-center shrink-0 w-[400px] bg-[#1E1E1E] rounded-[40px] p-10 border border-white/5 relative overflow-hidden group">
+                        <div className="snap-center shrink-0 w-[400px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none relative overflow-hidden group">
                             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
-                                <span className="material-symbols-outlined text-9xl">park</span>
+                                <span className="material-symbols-outlined text-9xl text-gray-900 dark:text-white">park</span>
                             </div>
-                            <div className="size-20 bg-white rounded-3xl p-4 mb-8">
+                            <div className="size-20 bg-gray-100 dark:bg-white rounded-3xl p-4 mb-8">
                                 <img src="/cientec-logo.png" alt="CienTec" className="w-full h-full object-contain" />
                             </div>
-                            <h3 className="text-2xl font-black uppercase mb-4">CienTec</h3>
-                            <p className="text-gray-400 font-medium leading-relaxed mb-8">Física a céu aberto. Museus, trilhas e observação estelar.</p>
-                            <a href="https://parquecientec.usp.br" target="_blank" className="px-8 py-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-colors">Acessar Parque</a>
+                            <h3 className="text-2xl font-black uppercase mb-4 text-gray-900 dark:text-white">CienTec</h3>
+                            <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">Física a céu aberto. Museus, trilhas e observação estelar.</p>
+                            <a href="https://parquecientec.usp.br" target="_blank" className="px-8 py-3 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-900 dark:text-white border border-transparent dark:border-white/10 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-colors">Acessar Parque</a>
                         </div>
                     </NetflixFeed>
                 </div>
@@ -346,15 +346,15 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
                 icon={<div className="p-3 bg-brand-red/10 rounded-2xl text-brand-red"><Sparkles className="w-8 h-8" /></div>}
             >
                 {influencers.map((influencer, index) => (
-                    <div key={index} className="flex flex-col items-center text-center group snap-center shrink-0 w-[280px] p-8 bg-[#1E1E1E] rounded-[40px] border border-white/5 hover:border-brand-yellow/30 transition-all">
-                        <div className={`relative w-24 h-24 rounded-full mb-6 flex items-center justify-center text-2xl font-bold text-white bg-${influencer.color} ring-4 ring-black/20 group-hover:scale-105 transition-transform`}>
+                    <div key={index} className="flex flex-col items-center text-center group snap-center shrink-0 w-[280px] p-8 bg-white dark:bg-[#1E1E1E] rounded-[40px] border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none hover:border-brand-yellow/30 transition-all">
+                        <div className={`relative w-24 h-24 rounded-full mb-6 flex items-center justify-center text-2xl font-bold text-white bg-${influencer.color} ring-4 ring-black/5 dark:ring-black/20 group-hover:scale-105 transition-transform`}>
                             {influencer.imagePlaceholder}
                         </div>
-                        <h3 className="text-lg font-black uppercase tracking-tight mb-1">{influencer.name}</h3>
+                        <h3 className="text-lg font-black uppercase tracking-tight mb-1 text-gray-900 dark:text-white">{influencer.name}</h3>
                         <p className={`text-[10px] font-black uppercase tracking-[0.2em] text-${influencer.color} mb-4`}>{influencer.role}</p>
-                        <p className="text-xs text-gray-500 leading-relaxed font-medium line-clamp-3 mb-6">{influencer.bio}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-500 leading-relaxed font-medium line-clamp-3 mb-6">{influencer.bio}</p>
                         <div className="mt-auto">
-                            <a href={influencer.link} target="_blank" rel="noopener noreferrer" className={`size-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:text-white hover:bg-${influencer.color} transition-all`}>
+                            <a href={influencer.link} target="_blank" rel="noopener noreferrer" className={`size-10 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-white dark:hover:text-white hover:bg-${influencer.color} transition-all`}>
                                 {getPlatformIcon(influencer.platform)}
                             </a>
                         </div>
