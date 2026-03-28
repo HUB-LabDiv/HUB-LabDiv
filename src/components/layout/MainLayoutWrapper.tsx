@@ -6,6 +6,7 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { SidebarLeft } from './SidebarLeft';
 import { BottomNavBar } from './BottomNavBar';
+import { useNavigationStore } from '@/store/useNavigationStore';
 
 interface MainLayoutWrapperProps {
     children: React.ReactNode;
@@ -21,6 +22,8 @@ interface MainLayoutWrapperProps {
  * Ensures consistent padding, header, and footer mounting.
  */
 export function MainLayoutWrapper({ children, focusMode = false, wide = false, fullWidth = false, userId, rightSidebar }: MainLayoutWrapperProps) {
+    const { isSidebarCollapsed } = useNavigationStore();
+
     return (
         <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col">
             <Header />
@@ -28,7 +31,7 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = false, f
             {!focusMode ? (
                 <div className="flex-1 w-full max-w-[1920px] mx-auto flex justify-center">
                     {/* Left Sidebar (Desktop) */}
-                    <aside className="hidden xl:block w-[280px] shrink-0 border-r border-gray-200 dark:border-gray-800 bg-transparent sticky top-20 mt-20 h-[calc(100vh-5rem)] self-start overflow-y-auto hidden-scrollbar">
+                    <aside className={`hidden xl:block ${isSidebarCollapsed ? 'w-20' : 'w-[280px]'} shrink-0 border-r border-gray-200 dark:border-gray-800 bg-transparent sticky top-20 mt-20 h-[calc(100vh-5rem)] self-start overflow-y-auto hidden-scrollbar transition-all duration-300`}>
                         <SidebarLeft userId={userId} />
                     </aside>
 
