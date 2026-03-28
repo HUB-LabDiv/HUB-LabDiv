@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Loader2, RefreshCw, Lock, Check, Calendar, BookOpen, Palette } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { syncJupiterData } from '@/app/actions/calendar';
+import { useAuth } from '@/providers/AuthProvider';
 
 interface JupiterSyncModalProps {
     isOpen: boolean;
@@ -9,7 +10,7 @@ interface JupiterSyncModalProps {
     onSuccess: () => void;
 }
 
-type Step = 'auth' | 'review';
+type Step = 'auth' | 'review' | 'cached';
 
 const PRESET_COLORS = [
     '#3B82F6', // Blue
@@ -20,10 +21,28 @@ const PRESET_COLORS = [
 ];
 
 export function JupiterSyncModal({ isOpen, onClose, onSuccess }: JupiterSyncModalProps) {
+    const { user, profile } = useAuth();
     const [step, setStep] = useState<Step>('auth');
     const [nUsp, setNUsp] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    
+    // Auto-fill nUSP from email prefix
+    React.useEffect(() => {
+        if (isOpen && user?.email?.endsWith('@usp.br') && !nUsp) {
+            const prefix = user.email.split('@')[0];
+            if (!isNaN(Number(prefix))) {
+                setNUsp(prefix);
+            }
+        }
+    }, [isOpen, user, nUsp]);
+
+    // [FAST SYNC] Check if cache exists on modal open
+    React.useEffect(() => {
+        if (isOpen && profile?.jupiter_subjects_cache?.subjects && step === 'auth') {
+            setStep('cached');
+        }
+    }, [isOpen, profile, step]);
     
     // Scraped Data
     const [scrapedSubjects, setScrapedSubjects] = useState<any[]>([]);
@@ -133,13 +152,45 @@ export function JupiterSyncModal({ isOpen, onClose, onSuccess }: JupiterSyncModa
                                 <RefreshCw className={`w-5 h-5 text-brand-yellow ${isLoading ? 'animate-spin' : ''}`} />
                             </div>
                             <h2 className="text-xl font-black uppercase tracking-tighter text-white">
-                                {step === 'auth' ? 'Sincronização Júpiter' : 'Revisar Disciplinas'}
+                                {step === 'auth' ? 'Sincronização Júpiter' : 
+                                 step === 'review' ? 'Revisar Disciplinas' : 
+                                 'Última Sincronização'}
                             </h2>
                         </div>
                         <button onClick={onClose} className="p-2 hover:bg-white/5 rounded-full text-gray-400 transition-colors">
                             <X size={20} />
                         </button>
                     </div>
+
+                    {step === 'cached' && (
+                        <div className="space-y-6">
+                             <div className="p-5 bg-white/5 border border-white/10 rounded-3xl space-y-3">
+                                <div className="flex items-center gap-3 text-emerald-500">
+                                    <Check className="w-5 h-5" />
+                                    <span className="text-sm font-bold uppercase tracking-tight">Sincronização Ativa</span>
+                                </div>
+                                <p className="text-xs text-gray-400 leading-relaxed">
+                                    Você já possui {profile.jupiter_subjects_cache.subjects.length} disciplinas sincronizadas em {new Date(profile.last_jupiter_sync).toLocaleDateString('pt-BR')}.
+                                </p>
+                             </div>
+
+                             <div className="flex flex-col gap-3">
+                                <button
+                                    onClick={onClose}
+                                    className="w-full bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest text-[11px] py-4 rounded-2xl transition-all"
+                                >
+                                    Manter Grade Atual
+                                </button>
+                                <button
+                                    onClick={() => setStep('auth')}
+                                    className="w-full flex items-center justify-center gap-2 text-[10px] text-gray-500 hover:text-brand-yellow font-black uppercase tracking-widest py-2 transition-all"
+                                >
+                                    <RefreshCw className="w-3 h-3" />
+                                    Refazer Sincronização Completa
+                                </button>
+                             </div>
+                        </div>
+                    )}
 
                     {step === 'auth' ? (
                         <>
