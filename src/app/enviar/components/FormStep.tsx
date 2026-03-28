@@ -69,7 +69,7 @@ export function FormStep() {
 
         if (!res.ok) {
             const errData = await res.json();
-            console.error("Cloudinary upload error:", errData);
+            if (process.env.NODE_ENV === 'development') console.error("Cloudinary upload error:", errData);
             throw new Error("Falha no upload (Erro Cloudinary)");
         }
 
@@ -127,14 +127,14 @@ export function FormStep() {
                 selected_research_lines: storeState.selectedResearchLines,
             };
 
-            console.log("Calling createSubmission with payload:", JSON.stringify({
+            if (process.env.NODE_ENV === 'development') console.log("Calling createSubmission with payload:", JSON.stringify({
                 ...payloadFields,
                 media_url: mediaType === 'video' ? payloadFields.media_url : 'FILE_DATA_JSON',
             }, null, 2));
 
             const result = await createSubmission(payloadFields as any);
 
-            console.log("createSubmission server response:", JSON.stringify(result, null, 2));
+            if (process.env.NODE_ENV === 'development') console.log("createSubmission server response:", JSON.stringify(result, null, 2));
 
             if (result.error) {
                 const err = result.error as any;
@@ -152,7 +152,7 @@ export function FormStep() {
                 const validationFields = err.validation ? Object.keys(err.validation).join(', ') : '';
 
                 toast.error(`${message} ${validationFields ? `(Campos inválidos: ${validationFields})` : ''}`);
-                console.error("Submission Error Details:", result.error);
+                if (process.env.NODE_ENV === 'development') console.error("Submission Error Details:", result.error);
             } else {
                 clearAutoSave();
                 setIsSubmitted(true);

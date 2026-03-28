@@ -13,11 +13,11 @@ cloudinary.config({
  */
 export async function purgeStorageFolder(folderPath: string = 'assets/submissions') {
     try {
-        console.log(`[V3.1.0] Iniciando expurgo de storage: ${folderPath}`);
+        if (process.env.NODE_ENV === 'development') console.log(`[V3.1.0] Iniciando expurgo de storage: ${folderPath}`);
         const result = await cloudinary.api.delete_folder(folderPath);
         return { success: true, result };
     } catch (error: any) {
-        console.error('[V3.1.0] Erro ao limpar storage:', error);
+        if (process.env.NODE_ENV === 'development') console.error('[V3.1.0] Erro ao limpar storage:', error);
         return { success: false, error: error.message };
     }
 }

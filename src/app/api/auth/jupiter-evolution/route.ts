@@ -15,7 +15,9 @@ export async function POST(req: NextRequest) {
         }
 
         const log = (msg: string) => {
-            console.log(msg);
+            if (process.env.NODE_ENV === 'development' || req.headers.get('x-debug-puppeteer') === 'true') {
+                console.log(msg);
+            }
         };
 
         const isLocal = !process.env.VERCEL_ENV && process.env.NODE_ENV === 'development';
@@ -83,17 +85,17 @@ export async function POST(req: NextRequest) {
                 await enviarBtn.click();
                 
                 log('[Puppeteer Sync] Waiting for evolution grid (#grade_curricular) to populate (8s)...');
-                // Wait for the specific data attributes now used by Júpiter
-                await page.waitForSelector('#grade_curricular [data-background-color]', { timeout: 30000 }).catch(() => {
-                    log('[Puppeteer Sync] Warning: Timeout waiting for #grade_curricular [data-background-color].');
+                // Wait for the specific data attributes or bgcolor now used by Júpiter
+                await page.waitForSelector('#grade_curricular [data-background-color], #grade_curricular [bgcolor]', { timeout: 30000 }).catch(() => {
+                    log('[Puppeteer Sync] Warning: Timeout waiting for #grade_curricular elements.');
                 });
             } else {
                 log('[Puppeteer Sync] Warning: #enviar button not found despite detection.');
             }
         } else {
             log('[Puppeteer Sync] Selection fields not found. Checking for direct grid...');
-            await page.waitForSelector('[data-background-color]', { timeout: 10000 }).catch(() => {
-                log('[Puppeteer Sync] No direct grid found with [data-background-color].');
+            await page.waitForSelector('[data-background-color], [bgcolor]', { timeout: 10000 }).catch(() => {
+                log('[Puppeteer Sync] No direct grid found with [data-background-color] or [bgcolor].');
             });
         }
 
@@ -107,10 +109,14 @@ export async function POST(req: NextRequest) {
             return await frame.evaluate(() => {
                 const results = { concluidas: [] as string[], cursando: [] as string[] };
                 const codeRegex = /\b([A-Z]{3,4}\d{4}|\d{7})\b/i;
-                const cells = document.querySelectorAll('[data-background-color]');
+                // Júpiter uses both data-background-color (modern) and bgcolor (legacy)
+                const cells = document.querySelectorAll('[data-background-color], [bgcolor]');
                 
                 cells.forEach(el => {
-                    const bgcolor = el.getAttribute('data-background-color')?.toUpperCase().trim() || '';
+                    const bgcolorAttr = el.getAttribute('bgcolor') || '';
+                    const dataBgAttr = el.getAttribute('data-background-color') || '';
+                    const bgcolor = (bgcolorAttr || dataBgAttr).toUpperCase().trim();
+                    
                     const text = el.textContent?.trim() || '';
                     const match = text.match(codeRegex);
                     if (match) {

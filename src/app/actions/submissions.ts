@@ -84,7 +84,7 @@ export async function fetchSubmissions({ page, limit, query, categories, mediaTy
 
     const { data: submissions, error, count } = await queryBuilder;
     if (error) {
-        console.error("fetchSubmissions SQL Error:", error);
+        if (process.env.NODE_ENV === 'development') console.error("fetchSubmissions SQL Error:", error);
         return { items: [], hasMore: false };
     }
     if (!submissions) return { items: [], hasMore: false };
@@ -210,12 +210,12 @@ export async function deleteSubmissionAdmin(id: string) {
                             const resourceType = ['image', 'pdf'].includes(sub.media_type) ? 'image' : 'raw';
 
                             await cloudinary.uploader.destroy(publicId, { invalidate: true, resource_type: resourceType });
-                            console.log(`Cloudinary Delete Log: Deleted ${publicId} (${resourceType})`);
+                            if (process.env.NODE_ENV === 'development') console.log(`Cloudinary Delete Log: Deleted ${publicId} (${resourceType})`);
                         }
                     }
                 }
             } catch (mediaErr) {
-                console.warn("Erro ao tentar deletar mídia do Cloudinary:", mediaErr);
+                if (process.env.NODE_ENV === 'development') console.warn("Erro ao tentar deletar mídia do Cloudinary:", mediaErr);
                 // Não bloqueia a deleção do banco se falhar a mídia
             }
         }
@@ -224,7 +224,7 @@ export async function deleteSubmissionAdmin(id: string) {
         const { error } = await supabaseServer.from('submissions').delete().eq('id', id);
 
         if (error) {
-            console.error("Erro ao deletar submissão do banco:", error);
+            if (process.env.NODE_ENV === 'development') console.error("Erro ao deletar submissão do banco:", error);
             return { error: error.message };
         }
 
@@ -232,7 +232,7 @@ export async function deleteSubmissionAdmin(id: string) {
         return { success: true };
 
     } catch (err: any) {
-        console.error("Erro inesperado em deleteSubmissionAdmin:", err);
+        if (process.env.NODE_ENV === 'development') console.error("Erro inesperado em deleteSubmissionAdmin:", err);
         return { error: err.message || "Erro interno do servidor." };
     }
 }
@@ -353,7 +353,7 @@ export async function searchProfiles(query: string) {
         .limit(10);
 
     if (error) {
-        console.error("Action searchProfiles error:", error);
+        if (process.env.NODE_ENV === 'development') console.error("Action searchProfiles error:", error);
         return [];
     }
 
@@ -464,7 +464,7 @@ export async function sendMessage(recipientId: string, content: string, attachme
         }]);
 
     if (error) {
-        console.error("Message send error:", error);
+        if (process.env.NODE_ENV === 'development') console.error("Message send error:", error);
         return { success: false, error: error.message };
     }
 
@@ -491,11 +491,11 @@ export async function fetchMessages(recipientId: string) {
 }
 
 export async function createSubmission(formData: z.infer<typeof SubmissionSchema>) {
-    console.log("Server Action: createSubmission received payload:", JSON.stringify(formData, null, 2));
+    if (process.env.NODE_ENV === 'development') console.log("Server Action: createSubmission received payload:", JSON.stringify(formData, null, 2));
     const validated = SubmissionSchema.safeParse(formData);
     if (!validated.success) {
         const fieldErrors = validated.error.flatten().fieldErrors;
-        console.error("Server Action: Validation Failed!", fieldErrors);
+        if (process.env.NODE_ENV === 'development') console.error("Server Action: Validation Failed!", fieldErrors);
         return {
             error: {
                 validation: fieldErrors,
@@ -560,12 +560,12 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
         is_golden_standard
     };
 
-    console.log("Server Action: Attempting Insert with:", JSON.stringify(insertPayload, null, 2));
+    if (process.env.NODE_ENV === 'development') console.log("Server Action: Attempting Insert with:", JSON.stringify(insertPayload, null, 2));
 
     const { data: newSub, error } = await serverSupabase.from('submissions').insert([insertPayload]).select().single();
 
     if (error) {
-        console.error("Server Action: DB Insert Failed!", {
+        if (process.env.NODE_ENV === 'development') console.error("Server Action: DB Insert Failed!", {
             message: error.message,
             code: error.code,
             details: error.details,
@@ -713,11 +713,13 @@ import { join } from 'path';
 export async function fetchRecentEntanglements() {
     const logFile = join(process.cwd(), 'entanglements_debug.log');
     const log = (msg: string) => {
-        const timestamp = new Date().toISOString();
-        try {
-            appendFileSync(logFile, `[${timestamp}] ${msg}\n`);
-        } catch (e) { }
-        console.log(`DEBUG: ${msg}`);
+        if (process.env.NODE_ENV === 'development') {
+            const timestamp = new Date().toISOString();
+            try {
+                appendFileSync(logFile, `[${timestamp}] ${msg}\n`);
+            } catch (e) { }
+            console.log(`DEBUG: ${msg}`);
+        }
     };
 
     log("Starting fetchRecentEntanglements (HARDCODED USER MODE)");

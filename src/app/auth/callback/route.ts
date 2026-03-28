@@ -41,7 +41,9 @@ export async function GET(request: NextRequest) {
             const isUspDomain = email.endsWith('@usp.br') || email.endsWith('@alumni.usp.br') || email.endsWith('@if.usp.br');
 
             if (track === 'usp' && !isUspDomain) {
-                console.warn(`Auth Conflict: Non-USP email attempted USP login: ${email}`);
+                if (process.env.NODE_ENV === 'development') {
+                    console.warn(`Auth Conflict: Non-USP email attempted USP login: ${email}`);
+                }
                 const conflictUrl = new URL('/login', publicOrigin);
                 conflictUrl.searchParams.set('conflict', 'true');
                 conflictUrl.searchParams.set('email', email);
@@ -59,15 +61,18 @@ export async function GET(request: NextRequest) {
                 .update(profileUpdate)
                 .eq('id', session.user.id);
 
-            console.log(`Auth Success: Redirecting to ${next} via ${publicOrigin}`);
+            if (process.env.NODE_ENV === 'development') {
+                console.log(`Auth Success: Redirecting to ${next} via ${publicOrigin}`);
+            }
             const redirectUrl = new URL(next, publicOrigin);
             return NextResponse.redirect(redirectUrl.toString());
         }
-        console.error('Auth callback: Code exchange failed or no session', error);
+        if (process.env.NODE_ENV === 'development') {
+            console.error('Auth callback: Code exchange failed or no session', error);
+        }
     }
 
     const errorUrl = new URL('/login', publicOrigin);
     errorUrl.searchParams.set('error', 'auth-code-error');
     return NextResponse.redirect(errorUrl.toString());
 }
-
