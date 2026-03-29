@@ -13,6 +13,8 @@ interface NavigationState {
     isSuggestionsVisible: boolean;
     isReportModalOpen: boolean;
     reportType: string;
+    isSidebarCollapsed: boolean;
+    setSidebarCollapsed: (collapsed: boolean) => void;
     setDrawerOpen: (open: boolean) => void;
     setProfileMenuOpen: (open: boolean) => void;
     setSuggestionsVisible: (visible: boolean) => void;
@@ -26,6 +28,8 @@ export const useNavigationStore = create<NavigationState>((set) => ({
     isSuggestionsVisible: false,
     isReportModalOpen: false,
     reportType: 'bug',
+    isSidebarCollapsed: false,
+    setSidebarCollapsed: (collapsed) => set({ isSidebarCollapsed: collapsed }),
     setDrawerOpen: (open) => set({ isDrawerOpen: open }),
     setProfileMenuOpen: (open) => set({ isProfileMenuOpen: open }),
     setSuggestionsVisible: (visible) => set({ isSuggestionsVisible: visible }),
