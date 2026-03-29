@@ -150,7 +150,7 @@ export async function POST(req: Request) {
 
       if (!isAdult && guardianEmail) {
         const token = crypto.randomUUID();
-        const { error: tokenError } = await supabase.from('parental_consent_tokens').insert({
+        const { error: tokenError } = await supabaseAdmin.from('parental_consent_tokens').insert({
           child_id: user.id,
           guardian_email: guardianEmail,
           token: token,
