@@ -75,20 +75,14 @@ CREATE EXTENSION IF NOT EXISTS "pg_cron";
 -- =========================================================================================
 
 -- 2. CRIAÇÃO DE TABELAS DE DOMÍNIO DE SEGURANÇA E AUTH
-CREATE TABLE IF NOT EXISTS public.users (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    email TEXT UNIQUE NOT NULL,
-    password_hash TEXT NOT NULL,
-    role TEXT DEFAULT 'user' NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
-);
+DROP TABLE IF EXISTS public.parent_child_links CASCADE;
 
 CREATE TABLE IF NOT EXISTS public.parent_child_links (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     parent_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     child_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
     status_consentimento TEXT NOT NULL CHECK (status_consentimento IN ('pendente', 'aprovado', 'revogado')),
-    consent_ip_encrypted BYTEA,
+    consent_ip_encrypted TEXT,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     UNIQUE(parent_id, child_id)
 );
@@ -175,16 +169,16 @@ INSERT INTO public.users (id, email, password_hash)
 VALUES ('00000000-0000-0000-0000-000000000000', 'anonimo@labdiv.com.br', 'N/A')
 ON CONFLICT (id) DO NOTHING;
 
--- 2. CRIAÇÃO DO PERFIL FANTASMA (PESQUISADOR ANÔNIMO)
--- Este perfil receberá a autoria de conteúdos de usuários que excluírem suas contas.
+-- 2. CRIAÇÃO DO PERFIL FANTASMA (AUDITORIA / PESQUISADOR ANÔNIMO)
+-- Este perfil receberá a autoria de conteúdos orfãos e servirá de vínculo para pais anônimos.
 INSERT INTO public.profiles (
     id, email, full_name, username, use_nickname, user_category, 
-    is_visible, is_public, review_status, role, is_labdiv
+    is_visible, is_public, review_status, role, is_adult
 )
 VALUES (
     '00000000-0000-0000-0000-000000000000',
-    'anonimo@labdiv.com.br',
-    'Pesquisador Anônimo',
+    'audit@hub-labdiv.if.usp.br',
+    'Auditoria Parental (Anônimo)',
     'anonimo',
     true,
     'curioso',
@@ -192,9 +186,12 @@ VALUES (
     true,
     'approved',
     'user',
-    false
+    true
 )
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET 
+    email = EXCLUDED.email,
+    full_name = EXCLUDED.full_name,
+    is_adult = true;
 
 -- 2. FUNÇÃO DE SOFT DELETE HÍBRIDO (ANONIMIZAÇÃO + PURGE)
 CREATE OR REPLACE FUNCTION public.soft_delete_user(target_user_id UUID)
@@ -246,3 +243,74 @@ $$;
 
 GRANT EXECUTE ON FUNCTION public.soft_delete_user(UUID) TO postgres;
 GRANT EXECUTE ON FUNCTION public.soft_delete_user(UUID) TO service_role;
+
+-- [2026-03-29] Sprint Segurança: Verificação de CPF & Maioridade
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS birthdate DATE;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS guardian_email TEXT DEFAULT NULL;
+
+-- 2. TABELA DE TOKENS PARA CONSENTIMENTO PARENTAL (MAGIC LINKS)
+CREATE TABLE IF NOT EXISTS public.parental_consent_tokens (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    child_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    guardian_email TEXT NOT NULL,
+    token TEXT UNIQUE NOT NULL,
+    status TEXT DEFAULT 'pending' NOT NULL CHECK (status IN ('pending', 'used', 'expired')),
+    expires_at TIMESTAMP WITH TIME ZONE DEFAULT (now() + interval '48 hours') NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- RLS para parental_consent_tokens
+ALTER TABLE public.parental_consent_tokens ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "Sistema pode gerenciar tokens" ON public.parental_consent_tokens;
+CREATE POLICY "Sistema pode gerenciar tokens" ON public.parental_consent_tokens FOR ALL USING (true);
+
+-- =========================================================================================
+-- LOGS DE AUDITORIA DE MIGRAÇÕES & RESET DE TOKENS (POST-FLUXO)
+-- =========================================================================================
+
+-- Data Fix: Resetar o token de teste para permitir novo teste do portal
+UPDATE public.parental_consent_tokens
+SET status = 'pending'
+WHERE token = 'feac119e-4c8d-4833-ae4d-be28cc8bd2c0';
+
+-- Registro de Versão/Snapshot
+INSERT INTO public.telemetry_events (event_type, metadata)
+VALUES ('database_migration', '{"version": "god-sql-mk5.1", "description": "Consolidated Parental Schema Fix (IP Audit + Ghost Profile + Token Reset)"}');
+
+-- =========================================================================================
+-- [2026-03-29] HOTFIX: handle_new_user trigger SECURITY DEFINER
+-- =========================================================================================
+-- CAUSA RAIZ: A RLS de profiles exige auth.uid() = id para INSERT,
+-- mas o trigger roda NO CONTEXTO DO BANCO (não possui auth.uid()),
+-- então a criação de perfil falhava silenciosamente para novos usuários.
+
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public
+AS $$
+BEGIN
+    INSERT INTO public.profiles (id, email, full_name, avatar_url)
+    VALUES (
+        NEW.id, 
+        NEW.email, 
+        NEW.raw_user_meta_data->>'full_name', 
+        NEW.raw_user_meta_data->>'avatar_url'
+    )
+    ON CONFLICT (id) DO NOTHING;
+    RETURN NEW;
+END;
+$$;
+
+-- Rescue: Criar perfis para quaisquer auth.users órfãos (sem profile)
+INSERT INTO public.profiles (id, email, full_name, avatar_url)
+SELECT 
+    u.id, 
+    u.email, 
+    u.raw_user_meta_data->>'full_name',
+    u.raw_user_meta_data->>'avatar_url'
+FROM auth.users u
+LEFT JOIN public.profiles p ON p.id = u.id
+WHERE p.id IS NULL
+ON CONFLICT (id) DO NOTHING;

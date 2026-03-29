@@ -24,7 +24,7 @@ import {
     Settings
 } from 'lucide-react';
 import { AppRoutes } from '@/types/navigation';
-import { fetchRecentEntanglements } from '@/app/actions/submissions';
+import { fetchRecentEntanglements } from '@/app/actions/entanglements';
 import { Avatar } from '../ui/Avatar';
 import { supabase } from '@/lib/supabase';
 import { useTelemetry } from '@/hooks/useTelemetry';

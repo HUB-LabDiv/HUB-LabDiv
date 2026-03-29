@@ -710,17 +710,11 @@ export async function getCurrentUserId() {
     return user?.id || null;
 }
 
-import { appendFileSync } from 'fs';
-import { join } from 'path';
 
-export async function fetchRecentEntanglements() {
-    const logFile = join(process.cwd(), 'entanglements_debug.log');
+
+export async function deprecated_fetchRecentEntanglements() {
     const log = (msg: string) => {
         if (process.env.NODE_ENV === 'development') {
-            const timestamp = new Date().toISOString();
-            try {
-                appendFileSync(logFile, `[${timestamp}] ${msg}\n`);
-            } catch (e) { }
             console.log(`DEBUG: ${msg}`);
         }
     };
@@ -728,9 +722,16 @@ export async function fetchRecentEntanglements() {
     log("Starting fetchRecentEntanglements (HARDCODED USER MODE)");
     const supabaseServer = await createServerSupabase();
 
-    const { data: { user } } = await supabaseServer.auth.getUser();
+    let user = (await supabaseServer.auth.getUser()).data.user;
+    
+    // DEV FALLBACK: If no user is logged in locally, use a valid test ID
+    if (!user && process.env.NODE_ENV === 'development') {
+        log("No authenticated user found - Using DEV FALLBACK ID");
+        user = { id: '8a3e4272-010d-4479-94cb-26178d544ea2' } as any;
+    }
+
     if (!user) {
-        log("No authenticated user found in fetchRecentEntanglements");
+        log("No authenticated user and no fallback found");
         return [];
     }
     log(`Fetching for User ID: ${user.id}`);
