@@ -21,7 +21,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
   },
-  serverExternalPackages: ['puppeteer-core', '@sparticuz/chromium'],
+  serverExternalPackages: ['puppeteer-core', '@sparticuz/chromium', 'nodemailer'],
   outputFileTracingIncludes: {
     '/api/**/*': ['./node_modules/@sparticuz/chromium/bin/**/*'],
   },

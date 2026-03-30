@@ -3,28 +3,10 @@
 import { createServerSupabase } from '@/lib/supabase/server';
 
 export async function fetchRecentEntanglements() {
-    const log = (msg: string) => {
-        if (process.env.NODE_ENV === 'development') {
-            console.log(`[ENTANGLEMENTS] ${msg}`);
-        }
-    };
-
-    log("Starting fetchRecentEntanglements");
     const supabaseServer = await createServerSupabase();
+    const { data: { user } } = await supabaseServer.auth.getUser();
 
-    let user = (await supabaseServer.auth.getUser()).data.user;
-
-    // DEV FALLBACK: If no user is logged in locally, use a valid test ID
-    if (!user && process.env.NODE_ENV === 'development') {
-        log("No authenticated user found - Using DEV FALLBACK ID");
-        user = { id: '8a3e4272-010d-4479-94cb-26178d544ea2' } as any;
-    }
-
-    if (!user) {
-        log("No authenticated user and no fallback found");
-        return [];
-    }
-    log(`Fetching for User ID: ${user.id}`);
+    if (!user) return [];
 
     // 1. Busca mensagens para identificar conversas ativas
     const { data: messages, error: mError } = await supabaseServer
@@ -33,9 +15,7 @@ export async function fetchRecentEntanglements() {
         .or(`sender_id.eq.${user.id},recipient_id.eq.${user.id}`)
         .order('created_at', { ascending: false });
 
-    if (mError) {
-        console.error("Fetch messages error:", mError);
-    }
+    if (mError) return [];
 
     // 2. Busca usuários que o usuário atual segue
     const { data: follows, error: fError } = await supabaseServer
@@ -43,9 +23,7 @@ export async function fetchRecentEntanglements() {
         .select('following_id')
         .eq('follower_id', user.id);
 
-    if (fError) {
-        console.error("Fetch follows error:", fError);
-    }
+    if (fError) return [];
 
     // Agrupa por usuário para pegar a ÚLTIMA mensagem de cada conversa
     const conversationMap = new Map();
@@ -76,10 +54,7 @@ export async function fetchRecentEntanglements() {
         .select('id, full_name, username, use_nickname, email, avatar_url, xp, level, is_labdiv')
         .in('id', allPeerIds);
 
-    if (pError || !profiles) {
-        console.error("Fetch profiles error:", pError);
-        return [];
-    }
+    if (pError || !profiles) return [];
 
     // 4. Mapeia para o formato esperado pela UI
     return profiles.map(p => {

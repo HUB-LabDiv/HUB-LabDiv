@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { argon2id } from 'hash-wasm';
@@ -13,6 +14,31 @@ const RequestSchema = z.object({
   }, { message: "Data de nascimento não pode ser no futuro." }),
   guardianEmail: z.string().email().optional(),
 });
+
+/**
+ * Validação de Checksum do CPF (Algoritmo Módulo 11)
+ * Usado como fallback caso a BrasilAPI esteja instável ou retorne falso 404.
+ */
+function validateCPFChecksum(cpf: string): boolean {
+  if (cpf.length !== 11 || /^(\d)\1{10}$/.test(cpf)) return false;
+  
+  const digits = cpf.split('').map(Number);
+  
+  const calcDigit = (slice: number[]) => {
+    const factor = slice.length + 1;
+    let sum = 0;
+    for (let i = 0; i < slice.length; i++) {
+      sum += slice[i] * (factor - i);
+    }
+    const remainder = (sum * 10) % 11;
+    return remainder === 10 ? 0 : remainder;
+  };
+
+  const digit1 = calcDigit(digits.slice(0, 9));
+  const digit2 = calcDigit(digits.slice(0, 10));
+
+  return digit1 === digits[9] && digit2 === digits[10];
+}
 
 export async function POST(req: Request) {
   let cpfPlainText: string | null = null;
@@ -31,46 +57,47 @@ export async function POST(req: Request) {
     birthdate = validated.birthdate;
     const guardianEmail = validated.guardianEmail;
 
-    // 1. Blindagem de Memória: Conexão Real ou Sandbox Mode
-    const isDev = process.env.NODE_ENV === 'development';
-    const isTestCpf = cpfPlainText === '00000000000' || cpfPlainText === '12345678910' || cpfPlainText === '00000000018';
-
-    // Em desenvolvimento, permitimos bypass se a BrasilAPI falhar ou se for CPF de teste
+    // 1. Validação via BrasilAPI com Fallback de Algoritmo
     let verificationSuccess = true;
     let verificationError = null;
+    let isAuditMode = false;
 
-    if (!(isDev && isTestCpf)) {
-      console.log(`[CPF-API] Consultando BrasilAPI para: ${cpfPlainText.slice(0, 3)}***`);
-      
-      try {
-        const brasilApiRes = await fetch(`https://brasilapi.com.br/api/cpf/v1/${cpfPlainText}`, {
-          method: 'GET',
-          headers: { 
-            'Content-Type': 'application/json',
-            'User-Agent': 'HUB-LabDiv-IFUSP (contato: hublabdiv@gmail.com)'
-          },
-          cache: 'no-store'
-        });
+    try {
+      const brasilApiRes = await fetch(`https://brasilapi.com.br/api/cpf/v1/${cpfPlainText}`, {
+        method: 'GET',
+        headers: { 
+          'Content-Type': 'application/json',
+          'User-Agent': 'HUB-LabDiv-IFUSP (contato: hublabdiv@gmail.com)'
+        },
+        cache: 'no-store'
+      });
 
-        if (!brasilApiRes.ok) {
-            if (isDev) {
-              console.warn(`[CPF-API] BrasilAPI falhou (Status ${brasilApiRes.status}), mas permitindo acesso em DEV.`);
-            } else {
-              verificationSuccess = false;
-              verificationError = brasilApiRes.status === 404 ? 'CPF não encontrado.' : 'Instabilidade na base governamental.';
-            }
-        }
-      } catch (e) {
-        if (isDev) {
-          console.warn(`[CPF-API] Erro de rede na BrasilAPI, permitindo acesso em DEV.`);
+      if (!brasilApiRes.ok) {
+        // Se a API falhou (404 ou 5xx), tentamos validar pelo algoritmo local
+        const isValidChecksum = validateCPFChecksum(cpfPlainText);
+        
+        if (isValidChecksum) {
+          isAuditMode = true;
+          verificationSuccess = true;
         } else {
           verificationSuccess = false;
-          verificationError = 'Erro de conexão com a base de CPFs.';
+          verificationError = brasilApiRes.status === 404 
+            ? 'CPF não encontrado na base da Receita Federal e falhou na validação algorítmica.' 
+            : 'Instabilidade na base governamental. Tente novamente em instantes.';
         }
+      }
+    } catch (e) {
+      // Falha de rede: usa o checksum como última linha de defesa
+      if (validateCPFChecksum(cpfPlainText)) {
+        isAuditMode = true;
+        verificationSuccess = true;
+      } else {
+        verificationSuccess = false;
+        verificationError = 'Erro de conexão com a base de CPFs e falha na validação local.';
       }
     }
 
-    if (!verificationSuccess && !isDev) {
+    if (!verificationSuccess) {
       return NextResponse.json({ error: verificationError }, { status: 502 });
     }
 
@@ -138,6 +165,7 @@ export async function POST(req: Request) {
         cpf_hash: cpfHash,
         birthdate: birthdate,
         guardian_email: !isAdult ? guardianEmail : null,
+        is_audit_mode: isAuditMode,
         accepted_terms_version: 'v2.0',
         accepted_at: new Date().toISOString()
       }).eq('id', user.id);
@@ -146,7 +174,6 @@ export async function POST(req: Request) {
         console.error('[CPF-API] Profile update failed:', updateError);
         return NextResponse.json({ error: 'Falha ao salvar dados no perfil.' }, { status: 500 });
       }
-      console.log(`[CPF-API] Profile updated for user ${user.id}: is_adult=${isAdult}, terms=v2.0`);
 
       if (!isAdult && guardianEmail) {
         const token = crypto.randomUUID();
@@ -159,7 +186,6 @@ export async function POST(req: Request) {
         });
 
         if (!tokenError) {
-          console.log(`[PARENTAIL-LOG] Enviando Magic Link para: ${guardianEmail}`);
           try {
             const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hub-lab-div.vercel.app';
             const magicLink = `${baseUrl}/auth/parental-consent/${token}`;
@@ -185,7 +211,7 @@ export async function POST(req: Request) {
               </div>`
             });
           } catch (e) {
-            console.error('[PARENTAL-EMAIL] Falha:', e);
+            // Silently fail email
           }
         }
       }
@@ -193,11 +219,17 @@ export async function POST(req: Request) {
 
     // Limpeza de segurança
     cpfPlainText = null;
+    cookieStore.delete('admin_impersonating_id');
+
+    // Force revalidation of global stats and user profile
+    revalidatePath('/');
+    revalidatePath('/re-accept-terms');
 
     return NextResponse.json({
       success: true,
       is_adult: isAdult,
       cpfHash: cpfHash, // Necessário para o fluxo parental anônimo
+      mode: isAuditMode ? 'audit' : 'official',
       message: 'Verificação concluída.'
     });
 

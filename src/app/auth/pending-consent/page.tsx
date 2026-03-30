@@ -7,9 +7,7 @@ import { toast } from 'react-hot-toast';
 
 export default function PendingConsentPage() {
     const router = useRouter();
-    const [devLink, setDevLink] = useState<string | null>(null);
     const [guardianEmail, setGuardianEmail] = useState<string | null>(null);
-    const [isDev, setIsDev] = useState(false);
 
     const supabase = createBrowserClient(
         process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -17,36 +15,10 @@ export default function PendingConsentPage() {
     );
 
     useEffect(() => {
-        setIsDev(process.env.NODE_ENV === 'development');
-        if (process.env.NODE_ENV === 'development') {
-            fetchLatestToken();
-        }
         fetchGuardianEmail();
     }, [supabase]);
 
-    const fetchLatestToken = async () => {
-        try {
-            const { data: { user } } = await supabase.auth.getUser();
-            if (!user) return;
 
-            const { data, error } = await supabase
-                .from('parental_consent_tokens')
-                .select('token')
-                .eq('child_id', user.id)
-                .order('created_at', { ascending: false })
-                .limit(1)
-                .maybeSingle();
-
-            if (error) throw error;
-            if (data) {
-                const url = `${window.location.origin}/auth/parental-consent/${data.token}`;
-                console.log('[DEBUG] Magic Link:', url);
-                setDevLink(url);
-            }
-        } catch (err) {
-            console.error('[DEBUG] Erro ao buscar token:', err);
-        }
-    };
 
     const fetchGuardianEmail = async () => {
         const { data: { user } } = await supabase.auth.getUser();
@@ -88,28 +60,7 @@ export default function PendingConsentPage() {
                     </ul>
                 </div>
 
-                {/* Bloco de desenvolvedor para ignorar o e-mail durante testes */}
-                {isDev && (
-                    <div className="mb-0 p-4 bg-[#0F4780]/5 border border-dashed border-[#0F4780]/30 rounded-lg animate-pulse-subtle">
-                        <p className="text-[10px] uppercase font-bold text-[#0F4780] mb-2">DEBUG: Modo Desenvolvedor</p>
-                        {devLink ? (
-                            <button
-                                onClick={() => {
-                                    navigator.clipboard.writeText(devLink);
-                                    toast.success('Link de teste copiado!');
-                                }}
-                                className="text-xs text-[#0F4780] underline font-medium break-all hover:text-blue-600"
-                            >
-                                Clique aqui para Copiar o Magic Link
-                            </button>
-                        ) : (
-                            <p className="text-[10px] text-gray-400">Buscando token no banco...</p>
-                        )}
-                        <p className="mt-2 text-[9px] text-gray-400 italic font-medium">
-                            * Use este link para testar o fluxo parental sem precisar abrir o e-mail.
-                        </p>
-                    </div>
-                )}
+
 
                 <div className="flex flex-col gap-4 mt-8">
                     <button

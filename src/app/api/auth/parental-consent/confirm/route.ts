@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     // CRÍTICO: Usamos o SERVICE ROLE KEY para bypassar RLS em uma ação de sistema (verificação de anonimato)
     const supabaseAdmin = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_KEY!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY!,
       {
         auth: {
           autoRefreshToken: false,
