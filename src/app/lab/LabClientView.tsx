@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { PostDTO } from '@/dtos/media';
@@ -17,6 +17,11 @@ import { ArtesHobbiesTab } from '@/components/profile/ArtesHobbiesTab';
 import { Profile } from '@/types';
 import { Avatar } from '@/components/ui/Avatar';
 import { User } from '@supabase/supabase-js';
+import { EditSubmissionModal } from '@/components/profile/EditSubmissionModal';
+import { NetworkModal } from '@/components/profile/NetworkModal';
+import { requestPostModeration } from '@/app/actions/submissions';
+import toast from 'react-hot-toast';
+import { Edit, Trash2 } from 'lucide-react';
 
 interface LabClientViewProps {
     currentUser: User;
@@ -46,6 +51,10 @@ export function LabClientView({
     const router = useRouter();
     const searchParams = useSearchParams();
 
+    // Network Modal State
+    const [isNetworkModalOpen, setIsNetworkModalOpen] = useState(false);
+    const [networkModalType, setNetworkModalType] = useState<'followers' | 'following'>('followers');
+
     // Local state for fast updates
     const [viewedProfile, setViewedProfile] = useState<Profile | null>(initialViewedProfile);
     const [currentUserProfile, setCurrentUserProfile] = useState<Profile | null>(initialCurrentUserProfile);
@@ -58,6 +67,27 @@ export function LabClientView({
     );
     
     const [activeTab, setActiveTab] = useState(initialTab);
+
+    // Moderation state
+    const [selectedPostToEdit, setSelectedPostToEdit] = useState<PostDTO | null>(null);
+    const [isEditPostModalOpen, setIsEditPostModalOpen] = useState(false);
+
+    useEffect(() => {
+        setViewedProfile(initialViewedProfile);
+        setCurrentUserProfile(initialCurrentUserProfile);
+        setAdoptionStatus(initialAdoptionStatus);
+    }, [initialViewedProfile, initialCurrentUserProfile, initialAdoptionStatus]);
+
+    const handleDeleteRequest = async (postId: string) => {
+        if (!confirm('Deseja realmente solicitar a anonimização deste post? Ele será desvinculado do seu perfil mas continuará no HUB.')) return;
+        
+        const res = await requestPostModeration(postId, 'delete');
+        if (res.success) {
+            toast.success('Solicitação de anonimização enviada!');
+        } else {
+            toast.error(res.error || 'Erro ao solicitar');
+        }
+    };
 
     const handleShare = async () => {
         const origin = typeof window !== 'undefined' ? window.location.origin : '';
@@ -131,11 +161,19 @@ export function LabClientView({
                                     <span className="block text-lg font-bold text-gray-900 dark:text-white">{viewedProfile?.level || 1}</span>
                                     <span className="text-sm text-gray-500 dark:text-gray-400">nível</span>
                                 </div>
-                                <div className="text-center sm:text-left cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl px-2 -mx-2">
+                                <div 
+                                    className="text-center sm:text-left cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl px-2 -mx-2"
+                                    onClick={() => { setNetworkModalType('following'); setIsNetworkModalOpen(true); }}
+                                    title="Ver pessoas que você segue"
+                                >
                                     <span className="block text-lg font-bold text-gray-900 dark:text-white">{followStats.following}</span>
                                     <span className="text-sm text-gray-500 dark:text-gray-400">seguindo</span>
                                 </div>
-                                <div className="text-center sm:text-left cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl px-2 -mx-2">
+                                <div 
+                                    className="text-center sm:text-left cursor-pointer transition-colors hover:bg-gray-50 dark:hover:bg-white/5 rounded-xl px-2 -mx-2"
+                                    onClick={() => { setNetworkModalType('followers'); setIsNetworkModalOpen(true); }}
+                                    title="Ver seus seguidores"
+                                >
                                     <span className="block text-lg font-bold text-gray-900 dark:text-white">{followStats.followers}</span>
                                     <span className="text-sm text-gray-500 dark:text-gray-400">seguidores</span>
                                 </div>
@@ -480,6 +518,37 @@ export function LabClientView({
                                                         {sub.post.status === 'pendente' ? 'Análise' : sub.post.status}
                                                     </div>
                                                 )}
+
+                                                {/* Moderation Actions (Owner Only) */}
+                                                {isViewingOwn && (
+                                                    <div className="absolute top-2 left-2 flex gap-2">
+                                                        <button 
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                setSelectedPostToEdit(sub.post);
+                                                                setIsEditPostModalOpen(true);
+                                                            }}
+                                                            className="p-2 bg-white/20 backdrop-blur-md hover:bg-brand-blue/80 text-white rounded-lg transition-all border border-white/20 shadow-lg group/btn"
+                                                            title="Solicitar Edição"
+                                                        >
+                                                            <Edit className="w-4 h-4" />
+                                                            <span className="absolute left-10 top-1/2 -translate-y-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">Editar</span>
+                                                        </button>
+                                                        <button 
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                handleDeleteRequest(sub.post.id);
+                                                            }}
+                                                            className="p-2 bg-white/20 backdrop-blur-md hover:bg-brand-red text-white rounded-lg transition-all border border-white/20 shadow-lg group/btn"
+                                                            title="Solicitar Anonimização"
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                            <span className="absolute left-10 top-1/2 -translate-y-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">Anonimizar</span>
+                                                        </button>
+                                                    </div>
+                                                )}
                                             </a>
                                         );
                                     })}
@@ -599,6 +668,23 @@ export function LabClientView({
                     // Refetch data optimally instead of manual client-side override: Next.js revalidation
                     router.refresh();
                 }}
+            />
+
+            <EditSubmissionModal 
+                isOpen={isEditPostModalOpen}
+                onClose={() => {
+                    setIsEditPostModalOpen(false);
+                    setSelectedPostToEdit(null);
+                }}
+                post={selectedPostToEdit}
+            />
+
+            <NetworkModal
+                isOpen={isNetworkModalOpen}
+                onClose={() => setIsNetworkModalOpen(false)}
+                userId={viewedProfile?.id || ''}
+                isViewingOwn={isViewingOwn}
+                initialTab={networkModalType}
             />
         </MainLayoutWrapper >
     );

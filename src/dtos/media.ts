@@ -55,6 +55,7 @@ export interface AdminPostDTO extends PostDTO {
     pseudonym?: string;
     eventYear?: number;
     format?: string; // media_type
+    moderationRequest?: any; // New field for governance requests
 }
 
 /**
@@ -127,5 +128,6 @@ export function mapToAdminPostDTO(submission: any, counts?: { likes?: number, sa
         pseudonym: submission.pseudonym,
         eventYear: submission.event_year,
         format: submission.media_type,
+        moderationRequest: submission.moderation_request,
     };
 }

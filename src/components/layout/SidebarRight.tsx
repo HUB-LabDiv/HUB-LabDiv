@@ -237,7 +237,7 @@ export const SidebarRight = ({ tags: propTags, authors: propAuthors }: SidebarRi
                                 const isFollowing = followingIds.has(user.id);
                                 return (
                                     <div key={`${activeTab}-${user.id}`} className="flex items-center justify-between gap-3 animate-in fade-in duration-300">
-                                        <div className="flex items-center gap-3 overflow-hidden">
+                                        <Link href={`/lab?user=${user.id}`} className="flex items-center gap-3 overflow-hidden cursor-pointer hover:opacity-80 transition-opacity flex-1">
                                             <Avatar
                                                 src={user.avatar}
                                                 name={user.name}
@@ -251,7 +251,7 @@ export const SidebarRight = ({ tags: propTags, authors: propAuthors }: SidebarRi
                                                 <span className="text-xs font-bold text-gray-900 dark:text-white truncate max-w-[100px]" title={user.name}>{user.name}</span>
                                                 <span className="text-[10px] text-gray-500 truncate max-w-[100px]">{user.handle}</span>
                                             </div>
-                                        </div>
+                                        </Link>
 
                                         <div className="flex gap-1 shrink-0">
                                             <button

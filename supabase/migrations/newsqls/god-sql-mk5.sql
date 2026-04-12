@@ -511,3 +511,113 @@ ALTER TABLE public.profiles ADD CONSTRAINT profiles_id_fkey
 ALTER TABLE public.profiles DROP CONSTRAINT IF EXISTS profiles_id_fkey;
 ALTER TABLE public.profiles ADD CONSTRAINT profiles_id_fkey
   FOREIGN KEY (id) REFERENCES auth.users(id) ON DELETE CASCADE;
+-- Adiciona suporte para solicitações de governança (edição e anonimização)
+ALTER TABLE public.submissions ADD COLUMN IF NOT EXISTS moderation_request JSONB DEFAULT NULL;
+-- ==========================================================
+-- SECURITY HARDENING: RLS & SEARCH PATH (2026-04-12)
+-- Resolve avisos críticos de RLS e vulnerabilidades de Search Path
+-- ==========================================================
+
+-- 1. ATIVAÇÃO DE RLS PARA TABELAS ÓRFÃS
+-- Protege tabelas que foram criadas sem Row Level Security ativado.
+
+ALTER TABLE IF EXISTS public.kudos_quota_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.map_interactions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.notification_queue ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.profile_badges ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.profiles_xp_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.badges ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.reading_history ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.analytics_plays ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.wiki_citations ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.learning_trails ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.trail_submissions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.collections ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.collection_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.quiz_questions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.quiz_attempts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.micro_articles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.research_adoptions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.departments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.laboratories ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.researchers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.research_lines ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.telemetry_events ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.knowledge_suggestions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.arena_suggestions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.researcher_challenges ENABLE ROW LEVEL SECURITY;
+ALTER TABLE IF EXISTS public.challenge_submissions ENABLE ROW LEVEL SECURITY;
+
+-- 2. POLÍTICAS DE ACESSO (POLICIES)
+-- Define quem pode ver/escrever em cada tabela.
+
+-- Histórico de XP e Logs (Privado para o usuário ou Admin)
+DROP POLICY IF EXISTS "Usuários podem ver o próprio histórico de XP" ON public.profiles_xp_history;
+CREATE POLICY "Usuários podem ver o próprio histórico de XP" ON public.profiles_xp_history 
+FOR SELECT USING (auth.uid() = profile_id OR is_admin());
+
+-- Interações no Mapa (Leitura pública, Escrita do próprio usuário)
+DROP POLICY IF EXISTS "Interações no mapa são públicas" ON public.map_interactions;
+CREATE POLICY "Interações no mapa são públicas" ON public.map_interactions FOR SELECT USING (true);
+DROP POLICY IF EXISTS "Usuários podem logar interações" ON public.map_interactions;
+CREATE POLICY "Usuários podem logar interações" ON public.map_interactions FOR INSERT WITH CHECK (auth.uid() = user_id);
+
+-- Badges e Perfil de Badges (Leitura pública, escrita Admin/Sistema)
+DROP POLICY IF EXISTS "Badges são públicas" ON public.badges;
+CREATE POLICY "Badges são públicas" ON public.badges FOR SELECT USING (true);
+
+DROP POLICY IF EXISTS "Perfil de badges é público" ON public.profile_badges;
+CREATE POLICY "Perfil de badges é público" ON public.profile_badges FOR SELECT USING (true);
+
+-- Conteúdo Educacional (Trails, Collections - Leitura pública)
+ALTER TABLE IF EXISTS public.learning_trails ADD COLUMN IF NOT EXISTS is_public BOOLEAN DEFAULT true;
+ALTER TABLE IF EXISTS public.collections ADD COLUMN IF NOT EXISTS is_public BOOLEAN DEFAULT false;
+
+DROP POLICY IF EXISTS "Trilhas são públicas" ON public.learning_trails;
+CREATE POLICY "Trilhas são públicas" ON public.learning_trails FOR SELECT USING (is_public = true OR auth.uid() = creator_id);
+
+-- Telemetria e Logs Internos (Apenas Admin)
+DROP POLICY IF EXISTS "Apenas admins acessam telemetria" ON public.telemetry_events;
+CREATE POLICY "Apenas admins acessam telemetria" ON public.telemetry_events FOR ALL TO authenticated USING (is_admin());
+
+DROP POLICY IF EXISTS "Apenas admins acessam logs de quota" ON public.kudos_quota_logs;
+CREATE POLICY "Apenas admins acessam logs de quota" ON public.kudos_quota_logs FOR ALL TO authenticated USING (is_admin());
+
+-- 3. FIXAÇÃO DE SEARCH PATH EM FUNÇÕES (Prevenção de Hijacking)
+-- Garante que as funções sempre operem no schema public, evitando que um invasor 
+-- mude o contexto da query.
+
+ALTER FUNCTION public.is_admin() SET search_path = public;
+ALTER FUNCTION public.check_pseudonym_limit() SET search_path = public;
+ALTER FUNCTION public.update_submission_like_count() SET search_path = public;
+ALTER FUNCTION public.get_radiation_tier(integer) SET search_path = public;
+ALTER FUNCTION public.add_radiation_xp(uuid, integer) SET search_path = public;
+ALTER FUNCTION public.calculate_profile_xp() SET search_path = public;
+ALTER FUNCTION public.xp_on_comment() SET search_path = public;
+ALTER FUNCTION public.xp_on_save() SET search_path = public;
+ALTER FUNCTION public.xp_on_curtida() SET search_path = public;
+ALTER FUNCTION public.xp_on_follow() SET search_path = public;
+ALTER FUNCTION public.reset_selective(text[]) SET search_path = public;
+ALTER FUNCTION public.soft_delete_user(uuid) SET search_path = public;
+
+-- Adicionais se existirem
+DO $$ 
+DECLARE 
+    func_sig text;
+BEGIN
+    -- Busca dinamicamente os argumentos da função (seja ela qual for) e aplica o search_path
+    FOR func_sig IN 
+        SELECT pg_catalog.pg_get_function_identity_arguments(p.oid)
+        FROM pg_catalog.pg_proc p
+        JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+        WHERE n.nspname = 'public' AND p.proname = 'adjust_micro_article_reactions'
+    LOOP
+        EXECUTE format('ALTER FUNCTION public.adjust_micro_article_reactions(%s) SET search_path = public', func_sig);
+    END LOOP;
+END $$;
+
+-- 4. SEGURANÇA DE EXTENSÕES
+-- Recomenda-se que extensões fiquem num esquema separado, mas forçamos o uso seguro aqui.
+-- NOTA: pg_trgm e uuid-ossp são extensões comuns no Supabase.
+-- Por padrão, o Supabase as instala no schema extensions ou public.
+-- Aqui garantimos que elas não sejam abusadas via Search Path fixo acima.

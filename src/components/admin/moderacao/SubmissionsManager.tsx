@@ -14,8 +14,10 @@ import { AdminPostDTO, mapToAdminPostDTO } from '@/dtos/media';
 import {
     Search, Inbox, ChevronLeft,
     ChevronRight, Bookmark, Check, X, RotateCcw,
-    FileEdit, Save, AlertTriangle, Loader2
+    FileEdit, Save, AlertTriangle, Loader2,
+    ShieldAlert, UserX, History, Sparkles, CheckCircle2
 } from 'lucide-react';
+import { resolvePostModeration } from '@/app/actions/submissions';
 
 const submissionSchema = z.object({
     title: z.string().min(1, 'Título é obrigatório'),
@@ -194,8 +196,9 @@ export function SubmissionsManager() {
     }, [debouncedSearch, fetchAll]);
 
     const pendentes = useMemo(() => allSubmissions.filter(s => s.status === 'pendente'), [allSubmissions]);
-    const aprovados = useMemo(() => allSubmissions.filter(s => s.status === 'aprovado'), [allSubmissions]);
+    const aprovados = useMemo(() => allSubmissions.filter(s => s.status === 'aprovado' && !s.moderationRequest), [allSubmissions]);
     const rejeitados = useMemo(() => allSubmissions.filter(s => s.status === 'rejeitado'), [allSubmissions]);
+    const governanca = useMemo(() => allSubmissions.filter(s => s.moderationRequest && s.moderationRequest.status === 'pending'), [allSubmissions]);
 
     const handleApprove = async (id: string, feedback?: string) => {
         const { data: result } = await notify.promise(updateSubmissionAdmin(id, {
@@ -251,6 +254,19 @@ export function SubmissionsManager() {
         if (!error && data) {
             const updated = mapToAdminPostDTO(data);
             setAllSubmissions(prev => prev.map(s => s.id === id ? updated : s));
+        }
+    };
+
+    const handleResolveModeration = async (id: string, action: 'approve' | 'reject') => {
+        const { data, error } = await notify.promise(resolvePostModeration(id, action), {
+            loading: action === 'approve' ? 'Aprovando solicitação...' : 'Rejeitando solicitação...',
+            success: action === 'approve' ? 'Solicitação aplicada com sucesso!' : 'Solicitação rejeitada.',
+            error: 'Erro ao processar solicitação'
+        });
+
+        if (!error && data) {
+            // Refetch current status from API to be sure about the state
+            fetchAll(debouncedSearch);
         }
     };
 
@@ -337,6 +353,44 @@ export function SubmissionsManager() {
                 </div>
             ) : (
                 <>
+                    <CarouselSection
+                        title="Governança de Posts"
+                        icon={ShieldAlert}
+                        iconColor="bg-brand-red/10 text-brand-red"
+                        items={governanca}
+                        maxRows={1}
+                        onCardClick={openCard}
+                        emptyMessage="Nenhuma solicitação de edição ou anonimização pendente."
+                        actions={(item) => (
+                            <div className="flex flex-col gap-2 w-full p-2 bg-gray-50 dark:bg-white/5 rounded-xl border border-gray-100 dark:border-gray-800">
+                                <div className="flex items-center gap-2 mb-1">
+                                    {item.moderationRequest.type === 'edit' ? (
+                                        <History className="w-3.5 h-3.5 text-brand-blue" />
+                                    ) : (
+                                        <UserX className="w-3.5 h-3.5 text-brand-red" />
+                                    )}
+                                    <span className="text-[10px] font-black uppercase tracking-tight text-gray-500">
+                                        Solicitação de {item.moderationRequest.type === 'edit' ? 'Edição' : 'Anonimização'}
+                                    </span>
+                                </div>
+                                <div className="flex gap-2">
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); handleResolveModeration(item.id, 'approve'); }} 
+                                        className="flex-1 px-2 py-1.5 bg-green-500 text-white hover:bg-green-600 rounded-lg text-[10px] font-bold transition-colors flex items-center justify-center gap-1 shadow-sm"
+                                    >
+                                        <CheckCircle2 className="w-3.5 h-3.5" /> Aplicar
+                                    </button>
+                                    <button 
+                                        onClick={(e) => { e.stopPropagation(); handleResolveModeration(item.id, 'reject'); }} 
+                                        className="flex-1 px-2 py-1.5 bg-gray-200 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-brand-red hover:text-white rounded-lg text-[10px] font-bold transition-colors flex items-center justify-center gap-1"
+                                    >
+                                        <X className="w-3.5 h-3.5" /> Negar
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+                    />
+
                     <CarouselSection
                         title="Submissões Pendentes"
                         icon={RotateCcw}

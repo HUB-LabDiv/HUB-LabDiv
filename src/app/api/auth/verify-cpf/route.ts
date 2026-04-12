@@ -187,7 +187,8 @@ export async function POST(req: Request) {
 
         if (!tokenError) {
           try {
-            const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hub-lab-div.vercel.app';
+            const rawBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hub-lab-div.vercel.app';
+            const baseUrl = rawBaseUrl.split(' ')[0];
             const magicLink = `${baseUrl}/auth/parental-consent/${token}`;
             const transporter = nodemailer.createTransport({
               service: 'gmail',

@@ -41,7 +41,8 @@ export async function sendAdminNotification(data: NotificationData) {
 
     // Os cases permanecem iguais para manter a estrutura dos templates, 
     // mas vamos garantir que o link do dashboard aponte para a produção/correta se possível.
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hub-lab-div.vercel.app';
+    const rawBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hub-lab-div.vercel.app';
+    const baseUrl = rawBaseUrl.split(' ')[0];
 
     switch (data.type) {
         case 'submission':

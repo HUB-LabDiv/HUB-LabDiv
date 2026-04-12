@@ -6,7 +6,7 @@ import { getUserInterest } from '@/app/actions/recommendations';
 import { fetchUserAcademicdata } from '@/app/actions/disciplines';
 
 interface LabPageProps {
-    searchParams: { [key: string]: string | string[] | undefined };
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function LabPage({ searchParams }: LabPageProps) {
@@ -20,9 +20,10 @@ export default async function LabPage({ searchParams }: LabPageProps) {
     const currentUser = session.user;
     
     // Parse search parameters
-    const queryUserId = typeof searchParams.user === 'string' ? searchParams.user : undefined;
+    const params = await searchParams;
+    const queryUserId = typeof params.user === 'string' ? params.user : undefined;
     const targetUserId = queryUserId || currentUser.id;
-    const initialTab = typeof searchParams.tab === 'string' ? searchParams.tab : 'publicacoes';
+    const initialTab = typeof params.tab === 'string' ? params.tab : 'publicacoes';
 
     // 1. Fetch primary profiles (Wait concurrently)
     const [

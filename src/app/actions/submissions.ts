@@ -434,6 +434,70 @@ export async function getFollowStats(userId: string) {
     };
 }
 
+export async function fetchFollowersList(userId: string) {
+    const supabaseServer = await createServerSupabase();
+    
+    // Pega IDs de quem segue o userId
+    const { data: follows } = await supabaseServer
+        .from('follows')
+        .select('follower_id')
+        .eq('following_id', userId);
+
+    if (!follows || follows.length === 0) return [];
+
+    const followerIds = follows.map(f => f.follower_id);
+
+    // Pega os perfis desses IDs
+    const { data: profiles } = await supabaseServer
+        .from('profiles')
+        .select('id, full_name, username, avatar_url, use_nickname, review_status, role')
+        .in('id', followerIds)
+        .eq('is_visible', true);
+
+    return profiles || [];
+}
+
+export async function fetchFollowingList(userId: string) {
+    const supabaseServer = await createServerSupabase();
+    
+    // Pega IDs de quem o userId está seguindo
+    const { data: follows } = await supabaseServer
+        .from('follows')
+        .select('following_id')
+        .eq('follower_id', userId);
+
+    if (!follows || follows.length === 0) return [];
+
+    const followingIds = follows.map(f => f.following_id);
+
+    // Pega os perfis desses IDs
+    const { data: profiles } = await supabaseServer
+        .from('profiles')
+        .select('id, full_name, username, avatar_url, use_nickname, review_status, role')
+        .in('id', followingIds)
+        .eq('is_visible', true);
+
+    return profiles || [];
+}
+
+export async function removeFollower(followerId: string) {
+    // Current user that is being followed wants to remove someone from their followers list
+    const supabaseServer = await createServerSupabase();
+    const { data: { user } } = await supabaseServer.auth.getUser();
+    if (!user) return { success: false, error: 'Não autorizado' };
+
+    const { error } = await supabaseServer
+        .from('follows')
+        .delete()
+        .match({ follower_id: followerId, following_id: user.id });
+
+    if (error) return { success: false, error: error.message };
+    
+    revalidatePath('/lab');
+    revalidatePath('/');
+    return { success: true };
+}
+
 export async function getProfileById(id: string) {
     const supabaseServer = await createServerSupabase();
     const { data } = await supabaseServer
@@ -690,7 +754,7 @@ export async function fetchAdminSubmissions(status: string) {
         .order('created_at', { ascending: false });
 
     if (error || !submissions) return [];
-    return submissions.map(sub => mapToPostDTO(sub));
+    return submissions.map(sub => mapToAdminPostDTO(sub));
 }
 
 export async function fetchParticlePreview(id: string) {
@@ -716,3 +780,107 @@ export async function getCurrentUserId() {
     return user?.id || null;
 }
 // deprecated_fetchRecentEntanglements REMOVED
+
+export async function requestPostModeration(postId: string, type: 'edit' | 'delete', payload?: any) {
+    const serverSupabase = await createServerSupabase();
+    const { data: { user } } = await serverSupabase.auth.getUser();
+    if (!user) return { error: 'Não autorizado' };
+
+    // Validar se o post pertence ao usuário
+    const { data: post, error: fetchError } = await serverSupabase
+        .from('submissions')
+        .select('user_id, status')
+        .eq('id', postId)
+        .single();
+
+    if (fetchError || !post) return { error: 'Post não encontrado' };
+    if (post.user_id !== user.id) return { error: 'Você não tem permissão para editar este post' };
+
+    const moderation_request = {
+        type,
+        payload,
+        status: 'pending',
+        requested_at: new Date().toISOString()
+    };
+
+    const { error: updateError } = await serverSupabase
+        .from('submissions')
+        .update({ moderation_request })
+        .eq('id', postId);
+
+    if (updateError) return { error: updateError.message };
+
+    revalidatePath('/lab');
+    revalidatePath('/admin');
+    
+    // Notificar Admin
+    try {
+        const { sendAdminNotification } = await import('@/lib/notifications.server');
+        await sendAdminNotification({
+            type: 'report', // Reusing report type for governance
+            title: `Solicitação de ${type === 'edit' ? 'Edição' : 'Anonimização'}`,
+            authors: user.email || 'Usuário',
+            category: 'Governança'
+        });
+    } catch (e) {}
+
+    return { success: true };
+}
+
+export async function resolvePostModeration(postId: string, action: 'approve' | 'reject') {
+    const serverSupabase = await createServerSupabase();
+    const { data: { user } } = await serverSupabase.auth.getUser();
+    if (!user) return { error: 'Não autorizado' };
+
+    // Strict Admin Check
+    const { data: profile } = await serverSupabase.from('profiles').select('role').eq('id', user.id).single();
+    if (!['admin', 'labdiv adm', 'moderador'].includes(profile?.role || '')) return { error: 'Acesso negado' };
+
+    const { data: post, error: fetchError } = await serverSupabase
+        .from('submissions')
+        .select('*, moderation_request')
+        .eq('id', postId)
+        .single();
+
+    if (fetchError || !post || !post.moderation_request) return { error: 'Solicitação não encontrada' };
+
+    const request = post.moderation_request as any;
+
+    if (action === 'reject') {
+        const { error } = await serverSupabase
+            .from('submissions')
+            .update({ moderation_request: null })
+            .eq('id', postId);
+        
+        if (error) return { error: error.message };
+        
+        revalidatePath('/admin');
+        return { success: true, message: 'Solicitação rejeitada' };
+    }
+
+    // Approve
+    let updates: any = { moderation_request: null };
+
+    if (request.type === 'delete') {
+        // Anonimização solicitada
+        updates.user_id = null;
+        updates.authors = 'Anônimo';
+    } else if (request.type === 'edit' && request.payload) {
+        // Aplica os campos do payload
+        updates = { ...updates, ...request.payload };
+    }
+
+    const { error: updateError } = await serverSupabase
+        .from('submissions')
+        .update(updates)
+        .eq('id', postId);
+
+    if (updateError) return { error: updateError.message };
+
+    revalidatePath('/');
+    revalidatePath('/lab');
+    revalidatePath('/admin');
+    revalidatePath(`/arquivo/${postId}`);
+
+    return { success: true, message: 'Solicitação aprovada e aplicada!' };
+}

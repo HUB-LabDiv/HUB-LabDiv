@@ -40,7 +40,8 @@ export async function sendAdminNotification(data: NotificationData) {
     let emailTemplate = '';
     let dashboardLink = 'https://hub-lab-div.vercel.app/admin';
 
-    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hub-lab-div.vercel.app';
+    const rawBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hub-lab-div.vercel.app';
+    const baseUrl = rawBaseUrl.split(' ')[0];
 
     switch (data.type) {
         case 'submission':
