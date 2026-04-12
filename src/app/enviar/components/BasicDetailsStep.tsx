@@ -10,6 +10,7 @@ import { SubmissionFormData } from '../schema';
 import { getUserPseudonyms, createPseudonym } from '@/app/actions/submissions';
 import { HelpTooltip } from './HelpTooltip';
 import { SelectedIndicators } from './SelectedIndicators';
+import { FreireIACopilot } from '@/components/ia/FreireIACopilot';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -316,13 +317,14 @@ export function BasicDetailsStep() {
             )}
 
             {/* Descrição */}
-            <div className="space-y-3">
+            <div className="space-y-3 relative z-40">
                 <label className="text-sm font-black uppercase tracking-widest flex items-center justify-between text-brand-yellow">
                     <div className="flex items-center gap-2">
                         <span className="material-symbols-outlined text-xl">{isTextMode ? 'article' : 'description'}</span>
                         {isTextMode ? 'Seu Texto (Markdown & LaTeX) *' : 'Descrição e Contexto (Suporte a LaTeX) *'}
                         <HelpTooltip text="Explique o contexto técnico e humano. Use Markdown para formatar e LaTeX para fórmulas. Isso ajuda quem não é da área a entender o valor do seu trabalho." />
                     </div>
+                    <FreireIACopilot />
                 </label>
 
                 {/* Markdown Toolkit & Textarea Container */}

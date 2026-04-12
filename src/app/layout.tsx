@@ -72,6 +72,8 @@ export const viewport = {
   ],
 }
 
+import { DivAIAWidget } from "@/components/ia/DivAIAWidget";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -169,6 +171,7 @@ export default async function RootLayout({
                 <CookieBanner />
                 <RouteFocusManager />
                 <VLibrasWidget />
+                <DivAIAWidget />
               </SearchProvider>
             </ReadingExperienceProvider>
           </AuthProvider>

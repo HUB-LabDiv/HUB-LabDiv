@@ -18,6 +18,7 @@ import {
     ShieldAlert, UserX, History, Sparkles, CheckCircle2
 } from 'lucide-react';
 import { resolvePostModeration } from '@/app/actions/submissions';
+import { AdminAIToggle } from '@/components/admin/ia/AdminAIToggle';
 
 const submissionSchema = z.object({
     title: z.string().min(1, 'Título é obrigatório'),
@@ -328,6 +329,7 @@ export function SubmissionsManager() {
 
     return (
         <div className="space-y-10">
+            <AdminAIToggle />
             <div className="flex justify-end">
                 <div className="w-full md:w-96 relative group">
                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-brand-blue w-5 h-5 transition-colors" />
