@@ -329,6 +329,7 @@ export const getUsersInOrbit = unstable_cache(
             .select('id, full_name, username, use_nickname, email, avatar_url, xp, level, is_labdiv')
             .eq('review_status', 'approved')
             .eq('is_visible', true)
+            .not('email', 'ilike', 'bento.teste%') // Esconde o perfil de teste
             .limit(limit);
 
         return profiles?.map(p => ({
