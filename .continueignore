@@ -1,0 +1,19 @@
+# Ignorar dependências e compilações
+node_modules/
+.next/
+dist/
+build/
+.git/
+
+# Ignorar binários e mídias visuais
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.ico
+*.mp4
+*.pdf
+
+# Ignorar logs e arquivos de cache
+*.log
+.DS_Store
