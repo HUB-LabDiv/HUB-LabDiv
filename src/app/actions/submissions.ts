@@ -817,7 +817,7 @@ export async function requestPostModeration(postId: string, type: 'edit' | 'dele
     try {
         const { sendAdminNotification } = await import('@/lib/notifications.server');
         await sendAdminNotification({
-            type: 'report', // Reusing report type for governance
+            type: 'bug_report', // Reusing report type for governance
             title: `Solicitação de ${type === 'edit' ? 'Edição' : 'Anonimização'}`,
             authors: user.email || 'Usuário',
             category: 'Governança'
