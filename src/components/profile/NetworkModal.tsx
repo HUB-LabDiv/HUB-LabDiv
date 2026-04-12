@@ -147,7 +147,7 @@ export function NetworkModal({ isOpen, onClose, userId, isViewingOwn, initialTab
                                 <div id={`profile-card-${profile.id}`} key={profile.id} className="flex items-center justify-between p-3 transition-colors hover:bg-gray-50 dark:hover:bg-white/5 rounded-2xl">
                                     <Link href={`/lab?user=${profile.id}`} onClick={onClose} className="flex items-center gap-3 flex-1 min-w-0">
                                         <div className="relative">
-                                            <Avatar src={profile.avatar_url} alt={displayName} size="md" />
+                                            <Avatar src={profile.avatar_url} name={displayName} size="md" />
                                         </div>
                                         <div className="min-w-0 flex-1">
                                             <p className="text-sm font-bold text-gray-900 dark:text-white truncate">
