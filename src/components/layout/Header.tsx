@@ -127,7 +127,7 @@ export function Header() {
                     </Link>
 
                     {/* Middle: Nav Tabs + Search (The Notch) - Hardened V8.1 with Static Centering */}
-                    <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 top-0 z-50">
+                    <div className="hidden xl:flex absolute left-1/2 -translate-x-1/2 top-0 z-50">
                         <div className="bg-[#0F4780] rounded-b-[24px] px-8 py-3 flex items-center gap-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-x border-b border-white/10 backdrop-blur-xl">
                             {[
                                 { label: 'Comunidade', href: '/', color: '#F14343' },
@@ -189,7 +189,7 @@ export function Header() {
                         {/* Mobile Search Toggle */}
                         <button
                             onClick={() => setSearchOverlayOpen(true)}
-                            className="md:hidden size-10 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/5 text-gray-500 hover:text-brand-yellow transition-all border border-gray-200 dark:border-white/10"
+                            className="xl:hidden flex-shrink-0 size-10 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/5 text-gray-500 hover:text-brand-yellow transition-all border border-gray-200 dark:border-white/10"
                             aria-label="Abrir Busca"
                         >
                             <span className="material-symbols-outlined text-[22px]">search</span>

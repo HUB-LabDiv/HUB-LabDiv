@@ -10,7 +10,6 @@ import { SubmissionFormData } from '../schema';
 import { getUserPseudonyms, createPseudonym } from '@/app/actions/submissions';
 import { HelpTooltip } from './HelpTooltip';
 import { SelectedIndicators } from './SelectedIndicators';
-import { FreireIACopilot } from '@/components/ia/FreireIACopilot';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
@@ -324,13 +323,13 @@ export function BasicDetailsStep() {
                         {isTextMode ? 'Seu Texto (Markdown & LaTeX) *' : 'Descrição e Contexto (Suporte a LaTeX) *'}
                         <HelpTooltip text="Explique o contexto técnico e humano. Use Markdown para formatar e LaTeX para fórmulas. Isso ajuda quem não é da área a entender o valor do seu trabalho." />
                     </div>
-                    <FreireIACopilot />
                 </label>
 
                 {/* Markdown Toolkit & Textarea Container */}
                 <div className={`flex flex-col border-2 rounded-2xl overflow-hidden transition-all focus-within:ring-4 ${errors.description ? 'border-red-500 focus-within:ring-red-500/10' : 'border-gray-100 dark:border-gray-800 focus-within:border-brand-yellow focus-within:ring-brand-yellow/10'}`}>
                     {/* Toolbar */}
-                    <div className="flex flex-wrap gap-2 p-2 bg-gray-50/50 dark:bg-gray-800/20 border-b border-gray-100 dark:border-gray-800">
+                    <div className="flex items-center justify-between p-2 bg-gray-50/50 dark:bg-gray-800/20 border-b border-gray-100 dark:border-gray-800">
+                        <div className="flex flex-wrap gap-2">
                         {[
                             { icon: 'format_bold', label: 'Negrito', snippet: '**texto**', tooltip: 'Negrito (**text**)' },
                             { icon: 'format_italic', label: 'Itálico', snippet: '*texto*', tooltip: 'Itálico (*text*)' },
@@ -365,6 +364,11 @@ export function BasicDetailsStep() {
                                 <span className="text-[10px] font-bold uppercase tracking-wider">{tool.label}</span>
                             </button>
                         ))}
+                        </div>
+                        {/* Contador de Caracteres Live */}
+                        <div className="pr-4 text-[10px] font-bold text-gray-400 uppercase tracking-widest transition-colors">
+                            {(watchedValues.description || '').length} caracteres
+                        </div>
                     </div>
 
                     <textarea
@@ -374,6 +378,36 @@ export function BasicDetailsStep() {
                         placeholder={isTextMode ? 'Utilize Markdown e LaTeX (ex: $E=mc^2$)...' : 'Explique do que se trata esse material, use LaTeX se necessário...'}
                     />
                 </div>
+                
+                {/* Indicador de Visão no Feed */}
+                {watchedValues.description && watchedValues.description.length > 0 && (
+                    <div className="bg-brand-blue/5 border border-brand-blue/10 rounded-xl p-4 mt-2">
+                        <div className="flex items-center justify-between mb-2">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-brand-blue flex items-center gap-1">
+                                <span className="material-symbols-outlined text-[14px]">visibility</span>
+                                Como aparecerá no Feed
+                            </span>
+                            <span className="text-[10px] font-bold text-brand-red">
+                                Limite visível: ~200 caracteres / 3 Linhas
+                            </span>
+                        </div>
+                        <div className="relative">
+                            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-3 leading-relaxed">
+                                {watchedValues.description}
+                            </p>
+                            {/* Efeito de Gradiente para indicar corte visual */}
+                            {watchedValues.description.length > 200 && (
+                                <div className="absolute bottom-0 left-0 w-full h-6 bg-gradient-to-t from-white dark:from-card-dark to-transparent opacity-80" />
+                            )}
+                        </div>
+                        {watchedValues.description.length > 200 && (
+                            <div className="mt-2 pt-2 border-t border-brand-blue/10 text-[10px] font-bold text-gray-500 dark:text-gray-400 flex items-center gap-1">
+                                <span className="material-symbols-outlined text-[12px] text-brand-red">info</span>
+                                O conteúdo oculto ficará protegido e os usuários precisarão clicar para expandir a página completa.
+                            </div>
+                        )}
+                    </div>
+                )}
                 {errors.description && <p className="text-red-500 text-xs font-bold">{errors.description.message}</p>}
             </div>
 

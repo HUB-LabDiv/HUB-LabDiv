@@ -648,10 +648,11 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
             });
 
             if (initialStatus === 'pendente') {
+                const waitTimeMsg = await getEstimatedAdminWaitTime();
                 await sendAutomaticNotification({
                     userId: user.id,
                     title: 'Conteúdo em Análise ⏳',
-                    message: `Seu envio para o [${newSub.category || 'Fluxo/Logs'}] foi recebido pelo Painel Administrativo e aguarda moderação. Avisaremos assim que for aprovado!`,
+                    message: `Seu envio para o [${newSub.category || 'Fluxo/Logs'}] foi recebido pelo Painel Administrativo e aguarda moderação. Tempo médio de aprovação atual: ${waitTimeMsg}. Avisaremos assim que for aprovado!`,
                     type: 'submission'
                 });
             }
@@ -825,6 +826,46 @@ export async function requestPostModeration(postId: string, type: 'edit' | 'dele
     } catch (e) {}
 
     return { success: true };
+}
+
+export async function getEstimatedAdminWaitTime() {
+    try {
+        const supabaseServer = await createServerSupabase();
+        // Fetch last 5 approved submissions to estimate average moderation time
+        const { data } = await supabaseServer
+            .from('submissions')
+            .select('created_at, updated_at')
+            .eq('status', 'aprovado')
+            .not('updated_at', 'is', null) // Avoid nulls
+            .order('updated_at', { ascending: false })
+            .limit(5);
+
+        if (!data || data.length === 0) return 'alguns minutos';
+        
+        let totalTime = 0;
+        let count = 0;
+        data.forEach(item => {
+            if (item.updated_at && item.created_at) {
+                const up = new Date(item.updated_at).getTime();
+                const cr = new Date(item.created_at).getTime();
+                // Validar dados sãos (máximo 72h para não bagunçar a média com lixo)
+                if (up > cr && (up - cr) < (72 * 60 * 60 * 1000)) {
+                    totalTime += (up - cr);
+                    count++;
+                }
+            }
+        });
+        
+        if (count === 0) return 'alguns minutos';
+        const avgMs = totalTime / count;
+        const minutes = Math.round(avgMs / (1000 * 60));
+        
+        if (minutes < 1) return 'menos de 1 minuto';
+        if (minutes === 1) return '1 minuto';
+        return `${minutes} minutos`;
+    } catch {
+        return 'alguns minutos';
+    }
 }
 
 export async function resolvePostModeration(postId: string, action: 'approve' | 'reject') {

@@ -144,6 +144,13 @@ export function CommentsSection({ submissionId, submissionTitle, initialComments
                 )}
 
                 <div className="space-y-4">
+                    <div className="bg-brand-blue/10 border border-brand-blue/20 rounded-xl p-4 flex items-start gap-3 mb-2">
+                        <span className="material-symbols-outlined text-brand-blue mt-0.5">psychology</span>
+                        <div>
+                            <p className="text-sm font-bold text-brand-blue mb-1 uppercase tracking-widest">Impacto</p>
+                            <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Como esse conhecimento impactou ou transformou a sua visão de mundo? Comente abaixo ou envie uma DM (Privado) para o autor!</p>
+                        </div>
+                    </div>
                     <div>
                         <label htmlFor="name" className="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-1">Seu Nome</label>
                         <input
@@ -165,7 +172,7 @@ export function CommentsSection({ submissionId, submissionTitle, initialComments
                             value={content}
                             onChange={(e) => setContent(e.target.value)}
                             className="w-full bg-white dark:bg-form-dark border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-brand-blue outline-none resize-none"
-                            placeholder="Deixe uma reflexão, dúvida ou contribuição sobre esta publicação..."
+                            placeholder="Deixe uma reflexão sobre como este conteúdo transformou sua visão de mundo..."
                         />
                     </div>
                     <div className="flex flex-col gap-4">

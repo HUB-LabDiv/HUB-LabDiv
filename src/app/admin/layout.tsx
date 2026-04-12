@@ -40,7 +40,6 @@ export default function AdminLayout({
 
     const navLinks = [
         { name: 'Torre de Controle', href: '/admin', icon: 'security' },
-        { name: 'Auto-Moderador (IAMAI)', href: '/admin/ia', icon: 'smart_toy', adminOnly: true },
         { name: 'Central de Notificações', href: '/admin/notificacoes', icon: 'notifications' },
         { name: 'Moderação do Fluxo', href: '/admin/moderacao', icon: 'verified_user' },
         { name: 'Arena de Desafios', href: '/admin/desafios', icon: 'emoji_events' },

@@ -8,7 +8,6 @@ import { HistoricalPosts } from '@/components/wiki/instituto/HistoricalPosts';
 import { WikiFeedbackCard } from '@/app/wiki/WikiFeedbackCard';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
-import { WikiOracle } from '@/components/ia/WikiOracle';
 
 export default function WikiInstitutoPage() {
     return (
@@ -24,8 +23,6 @@ export default function WikiInstitutoPage() {
                     <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
                     Voltar para a Wiki
                 </Link>
-
-                <WikiOracle />
 
                 <InstitutoHero />
                 

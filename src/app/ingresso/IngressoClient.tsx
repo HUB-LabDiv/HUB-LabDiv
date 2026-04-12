@@ -53,21 +53,21 @@ export default function IngressoClient({ profile }: { profile: any }) {
                         title="Graduação"
                         icon={<BookOpen className="w-8 h-8 text-brand-blue" />}
                         description="Para quem está começando a carreira científica."
-                        items={["Fuvest (Vestibular)", "ENEM-USP", "Provão Paulista", "Transferência Interna"]}
+                        items={["FUVEST (Vestibular)", "ENEM-USP", "Provão Paulista", "Olimpíadas Científicas", "Transferência Interna/Externa"]}
                         color="bg-brand-blue/10"
                     />
                     <IngressOption 
                         title="Pós-Graduação"
                         icon={<GraduationCap className="w-8 h-8 text-brand-yellow" />}
                         description="Para quem busca o mestrado ou doutorado."
-                        items={["CEx (Física Experimental)", "CEx (Física Teórica)", "Pós em Ensino de Física", "Fluxo Contínuo"]}
+                        items={["EUF (Exame Unificado de Física)", "Mestrado e Doutorado (Física)", "PIEC (Ensino de Ciências)", "Mestrado Profissional (MNPEF)"]}
                         color="bg-brand-yellow/10"
                     />
                     <IngressOption 
-                        title="Intercâmbio"
+                        title="Outros / Visitas"
                         icon={<Globe className="w-8 h-8 text-green-500" />}
-                        description="Oportunidades internacionais para visitantes."
-                        items={["Mobilidade Acadêmica", "Summer Programs", "Parcerias CERN/DESY", "Pesquisa Visitante"]}
+                        description="Oportunidades internacionais e complementares."
+                        items={["Mobilidade Internacional", "Pré-Iniciação Científica (EM)", "Pesquisador Visitante", "Aluno Especial"]}
                         color="bg-green-500/10"
                     />
                 </div>
