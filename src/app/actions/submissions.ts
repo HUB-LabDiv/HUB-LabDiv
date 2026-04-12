@@ -1,7 +1,7 @@
 'use server';
 
 import { createServerSupabase, createSupabaseStatic } from '@/lib/supabase/server';
-import { PostDTO, mapToPostDTO } from '@/dtos/media';
+import { PostDTO, mapToPostDTO, mapToAdminPostDTO } from '@/dtos/media';
 import { unstable_cache, revalidatePath } from 'next/cache';
 import { SubmissionSchema } from '@/lib/validations';
 import { z } from 'zod';
