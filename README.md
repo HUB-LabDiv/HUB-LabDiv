@@ -35,3 +35,13 @@ O Hub foi pensado para te dar o controle e a descoberta:
 
 3. **Submissão Colaborativa (O Futuro)**
    Nós construímos estradas, mas são vocês que trazem a carga. Seja você um monitor da Pós, um pesquisador titular, ou um aluno da graduação com uma bela foto do Acelerador Linear (Pelletron) ao pôr do sol, **você pode lançar os seus achados à órbita.** A Moderação garante o rigor científico, mas a autoria é 100% sua, acumulando *Pontos de Reputação (XP)* na plataforma.
+
+---
+
+## 📜 Licença
+
+Este projeto é licenciado sob a **GNU Affero General Public License v3.0 (AGPLv3)**.
+
+Você é livre para usar, modificar e distribuir este software. No entanto, qualquer versão modificada (mesmo que seja oferecida apenas como um serviço na rede) deve disponibilizar o código-fonte sob a mesma licença.
+
+Para mais detalhes, consulte o arquivo [LICENSE](./LICENSE) fornecido com este repositório.

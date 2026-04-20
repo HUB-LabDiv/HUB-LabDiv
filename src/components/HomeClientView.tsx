@@ -1,5 +1,17 @@
 'use client';
 
+/*!
+ * Hub de Comunicação Científica Lab-Div V3.0
+ * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
+ * * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
+ * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
+ * publicada pela Free Software Foundation.
+ * * Este programa é distribuído na esperança de que seja útil, mas SEM
+ * QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
+ * ou ADEQUAÇÃO A UM DETERMINADO FIM.
+ */
+
+
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { MediaCard, MediaCardProps } from './MediaCard';
@@ -258,12 +270,7 @@ export const HomeClientView = ({
                 </div>
 
                 <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">
-                    <div
-                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 border border-brand-blue/20 text-brand-blue text-[10px] font-black uppercase tracking-widest mb-6 animate-fade-in-up"
-                    >
-                        <span className="w-1.5 h-1.5 rounded-full bg-brand-blue animate-pulse"></span>
-                        Excelência Científica
-                    </div>
+
 
                     <h1
                         className="font-display font-black text-4xl md:text-6xl tracking-tighter mb-6 text-gray-900 dark:text-white leading-[0.9] uppercase italic animate-fade-in-up"
