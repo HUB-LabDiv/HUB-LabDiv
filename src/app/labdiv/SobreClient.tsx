@@ -120,8 +120,19 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
 
                 {/* Mobile Feedback Card - Pós H1 */}
                 <SobreFeedbackCard className="block lg:hidden mb-12 max-w-2xl mx-auto" />
-                <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
+                <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed mb-10">
                 </p>
+                <div className="flex justify-center">
+                    <Link href="/apresentacao" className="bg-gradient-to-r from-brand-blue to-brand-red p-[2px] rounded-3xl hover:scale-105 transition-transform shadow-2xl shadow-brand-blue/20">
+                        <div className="bg-[#121212] rounded-[22px] px-8 py-4 flex items-center gap-3 h-full">
+                            <BookOpen className="w-6 h-6 text-brand-yellow" />
+                            <span className="font-black uppercase tracking-widest text-white text-sm md:text-base">
+                                Apresentação do HUB
+                            </span>
+                            <ArrowRight className="w-5 h-5 text-white" />
+                        </div>
+                    </Link>
+                </div>
             </div>
 
             {/* Dynamic Role-Based Section (Sprint V3.2.0) */}
