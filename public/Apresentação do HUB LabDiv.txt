@@ -1,0 +1,262 @@
+﻿HUB LabDiv 
+  
+
+Projeto de João Stangorlini - Licenciatura em física 
+desenvolvido pelo Laboratório de Divulgação do IFUSP. 
+Orientado por Caetano miranda (coordenador do LabDiv)
+O projeto em poucas palavras 
+O HUB é uma plataforma digital, um aplicativo que roda direto no navegador, construído por João Stangorlini (aluno do IFUSP) sob a orientação do Prof. Caetano Miranda para melhorar a comunicação do instituto. O projeto segue a filosofia de software livre (open source) e foi projetado para ser replicado facilmente em outras instituições, com todo o código-fonte disponível no repositório do GitHub (JoaoStangorlini/HUB-LabDiv). 
+Guia de leitura 
+● Para usuários (alunos, pesquisadores e curiosos): Recomendamos a leitura dos capítulos 2, 6, 8 e 10. 
+● Para membros do LabDiv: Recomendamos a leitura dos capítulos 4, 8 (especialmente as seções 8.6 e 8.7) e 9. 
+● Para candidatos ao LabDiv: Recomendamos a leitura dos capítulos 4, 5, 6 e 8. ● Para programadores, desenvolvedores e entusiastas de tecnologia: Recomendamos a leitura dos capítulos 3, 7, 12 e 14. 
+● Para artistas e criativos: Recomendamos a leitura dos capítulos 6 (especialmente a seção 6.7 sobre expressão individual), 7 e 8. 
+● Para interessados em divulgação científica: Recomendamos a leitura dos capítulos 6, 9 e 11. 
+● Para interessados no aspecto jurídico da plataforma: Recomendamos a leitura dos capítulos 6 (especialmente a seção 6.13) e 15. 
+● Para interessados no aspecto de pesquisa acadêmica: Recomendamos a leitura dos capítulos 6, 9 e 13. 
+● Para interessados no aspecto educacional: Recomendamos a leitura dos capítulos 6, 8 e 9.
+Sumário 
+O projeto em poucas palavras 2 Guia de leitura 2 Sumário 3 1. Introdução 5 2. O que é 5 3. Equipe 5 4. História 6 5. Abrangência 6 6. Objetivos e Como 7 
+6.1. Criar um espaço digital para reunir obras de comunicação científica: 7 6.2. Fornecer educação continuada em divulgação científica: 7 6.3. Prover uma Wiki institucional centralizada: 7 6.4. Elaborar um mapa interativo do instituto: 7 6.5. Preservar a história do instituto: 7 6.6. Fornecer ferramentas de apoio ao estudo e à pesquisa: 7 6.7. Permitir a expressão individual e a adaptação de signos linguísticos: 8 6.8. Humanizar a figura do cientista: 8 6.9. Promover a inclusão de pessoas neuro divergentes: 8 6.10. Fornecer uma compreensão sistêmica do fazer científico: 8 6.11. Diminuir a distância Pesquisador-Aluno e Instituto-Sociedade: 8 6.12. Introduzir as frentes de pesquisa do instituto: 9 6.13. Respeitar as boas práticas no ambiente digital: 9 6.14. Estruturar o desenvolvimento com base teórica sólida: 9 6.15. Manter moderação rigorosa: 9 6.16. Centralizar oportunidades, eventos, iniciativas e projetos de extensão: 9 6.17. Espaços e Vivência: 9 6.18. Influenciadores Científicos: 9 6.19. Página Oficial do LabDiv: 10 
+7. Estrutura de Abas 10 7.1. Comunidade 10 7.1.1. Fluxo 10 7.1.2. Logs 10 7.2. CGIF 10 7.2.1. Oportunidades 10 7.2.2. Iniciativas 10 7.2.3. Espaços 10 7.2.4. Influenciadores 11 7.2.5. Wiki 11 7.2.6. Teste de radiação 11 7.3. Formulário de envio 11
+7.4 Ferramentas 11 7.4.1. Grade horária 11 7.4.2. Trilhas 11 7.4.3. Match acadêmico 11 7.4.4. Como ingressar 12 7.4.5. Observatório do pesquisador 12 
+7.5. Central de Interação 12 7.5.1. Emaranhamento 12 7.5.2. Laboratório pessoal 12 7.5.3. Configurações 12 7.5.4. Pergunte a um cientista 12 
+7.6. LabDiv 12 7.6.1. Sobre o HUB 12 7.7. Admin 13 7.7.1. Moderadores 13 7.7.2. Administradores 13 8. Organização e Layout da Plataforma 13 9. Base Teórica e Estudos de Caso 14 9.1 Tabela com features novas pensadas com base em bases teóricas 14 9.2 Tabela com features antigas repensadas com base em bases teóricas 15 10. Visão do HUB por Perfil 16 11. Por que o HUB é necessário? 16 12. Replicabilidade 17 13. Resultados e Impactos Esperados 17 14. Parte Técnica 18 15. Jurídico 18 16. Conclusão 19
+1. Introdução 
+O HUB de comunicação científica LabDiv é uma das frentes do Laboratório de Divulgação do IFUSP. Seu objetivo é transformar a forma como a comunicação científica é realizada, tanto internamente (na relação aluno-professor/pesquisador) quanto na relação entre o instituto e a sociedade, buscando romper os muros acadêmicos da Universidade de São Paulo. 
+2. O que é 
+O HUB LabDiv é uma plataforma digital do tipo WebApp (um site que funciona e se comporta como um aplicativo nativo). Essa arquitetura permite que o HUB concentre diversas funções. Ele não se limita a ser uma rede social guiada por métricas de vaidade (curtidas e visualizações) ou por dinâmicas de grupo... Trata-se de uma plataforma que não só estenda o laboratório para o usuário, mas que haja uma comunicação entre quem divulga e quem consome a divulgação sendo ambos incentivados pela plataforma a rever os seus conceitos sobre o objeto de divulgação, promovendo o entendimento do processo científico em si e promovendo um entendimento da ciência como um processo e não só do conteúdo do post em si. 
+A plataforma oferece ferramentas específicas para a comunidade acadêmica: acompanhamento de disciplinas, do andamento do curso, elaboração de cronogramas e facilitação de reuniões entre pesquisadores e alunos (através do "Quero uma IC"). Além disso, reúne guias para calouros, manuais do curso e um mapa interativo. Em resumo, atua como um "Super App" (similar a WeChat, 99, Inter), centralizando múltiplas utilidades em um único link acessível via navegador, sem a necessidade de instalação, tornando a ciência mais acessível. 
+3. Equipe 
+A governança da plataforma é conduzida pela equipe do LabDiv, estruturada nas seguintes frentes: 
+● Moderação e Curadoria: A equipe atua como moderadora do HUB, garantindo a qualidade e o rigor do conteúdo submetido. 
+● Orientação Acadêmica: Sob a coordenação do Professor Caetano Miranda, o laboratório define as diretrizes estratégicas para viabilizar e expandir o projeto. ● Produção de Conteúdo: A equipe também atua na linha de frente da comunicação científica, produzindo materiais multiformatos distribuídos através do HUB e de redes externas integradas (Instagram, YouTube, TikTok).
+4. História 
+● O projeto começou como uma iniciativa pessoal focada na produção fotográfica de material de divulgação. 
+● Evoluiu para a elaboração de um acervo digital para hospedar esse material e, posteriormente, passou a englobar produções já feitas por pesquisadores,e do próprio instituto. 
+● A expansão continuou com a aceitação de novos formatos (textos, objetos 3D, vídeos de realidade virtual) e a abertura para contribuições de alunos. ● A partir dessa evolução conceitual, iniciou-se uma reflexão sobre como transcender o modelo tradicional de divulgação onde a pessoa que a recebe não assume um papel ativo 
+● Com isso em mente evoluiu para uma espécie de rede social com foco em divulgação e por fim surgiu a concepção de um Super App: uma plataforma que, além de rede social com obras de divulgação científicas, reúne também uma Wiki, fornece ferramentas acadêmicas, mapas e um espaço seguro (logs) para que os alunos possam conectar experiências, desabafar e trocar informações. 
+5. Abrangência 
+O HUB é uma iniciativa nativa do LabDiv. Embora o laboratório de divulgação possua vínculo com o Instituto de Física da USP (IFUSP), é fundamental destacar que a plataforma digital em si é independente e não possui vínculo institucional direto com a universidade. Essa arquitetura descentralizada é intencional. O objetivo é quebrar os muros da universidade e permitir que a plataforma seja escalada e adotada por outros institutos e universidades. Essa expansão foi estruturada para ocorrer através de duas vias principais: ● Integração Colaborativa: 
+Estudantes, desenvolvedores e pesquisadores de outras instituições podem entrar em contato e se integrar diretamente à equipe do LabDiv (seja de forma voluntária ou mediante editais de bolsas). 
+● Replicação e Licenciamento Aberto: 
+A base de código e a propriedade intelectual da plataforma operam sob uma licença aberta permissiva (com exigência de atribuição, modelo Open Source). Isso permite que qualquer pessoa ou instituição utilize, modifique e implemente sua própria instância do HUB livremente, sendo legalmente exigido apenas que os devidos créditos de autoria sejam dados ao criador original da arquitetura.
+6. Objetivos e Como 
+6.1. Criar um espaço digital para reunir obras de comunicação científica: 
+Através de formulários de envio estruturados e moderação da equipe do LabDiv, o material deixa de ser uma via de mão única. O HUB traz ferramentas que incentivam tanto o criador quanto o espectador a refletirem sobre a ciência de forma crítica, considerando seu contexto histórico, cultural e social, indo além do simples domínio do conteúdo. 
+6.2. Fornecer educação continuada em divulgação científica: 
+A plataforma disponibilizará conteúdos sobre como produzir divulgação em múltiplos formatos durante o processo de submissão e também sobre quais são as bases teóricas na área para ele estruturar sua ideia com base nelas. O usuário receberá feedback qualitativo após a publicação, focado em como o material impactou a reflexão do público, ajudando-o a aprimorar suas habilidades de comunicação contextualizada. 
+6.3. Prover uma Wiki institucional centralizada: 
+Na aba CGIF, o usuário acessa manuais, Projetos Político-Pedagógicos (PPPs), editais, protocolos e informações de vivência de forma interativa. É possível navegar pela estrutura do instituto, explorando departamentos, pesquisadores e linhas de pesquisa, criando uma rede de conhecimento conectada e referenciável através dos posts. 
+6.4. Elaborar um mapa interativo do instituto: 
+O mapa conectará o HUB ao espaço físico do IFUSP. Ao escanear um QR code em um laboratório, o usuário é direcionado à página correspondente no HUB para obter mais informações, auxiliando também na localização espacial dentro do campus. 
+6.5. Preservar a história do instituto: 
+Em parceria com o acervo histórico, o HUB promoverá publicações focadas na trajetória do IFUSP, transformando o acervo de divulgação em um ambiente imersivo para o aprendizado do patrimônio histórico da instituição. 
+6.6. Fornecer ferramentas de apoio ao estudo e à pesquisa: 
+O sistema permitirá a sincronização com o Número USP (NUSP) e senha única. O aluno poderá visualizar disciplinas cursadas, pendências e pré-requisitos, gerando blocos de
+estudo automáticos (ex: 1h de aula = 1h de estudo). Inclui também a ferramenta "Match Acadêmico", conectando alunos para grupos de estudo e aproximando interessados em Iniciação Científica de pesquisadores. Também há a central de anotações que visa ser um ambiente para o compartilhamento de anotações entre os alunos. Para o público externo, haverá guias de ingresso e outras ferramentas para auxiliar os vestibulandos. Para os pesquisadores, o "Observatório" permitirá a proposição de desafios acadêmicos, divulgar suas iniciativas e buscar ajudantes. 
+6.7. Permitir a expressão individual e a adaptação de signos linguísticos: 
+O projeto utiliza "constelações de mundos" (Artes, Computação, Linguagem Acadêmica, Geek) para catalogar analogias e jargões. Isso permite que a comunicação científica seja adaptada à bagagem cultural do usuário, facilitando a compreensão. Além disso, o perfil do usuário (seu "laboratório pessoal") será altamente customizável com bio, currículo, hobbies, links, portfólio e qual constelação ele se identifica. 
+6.8. Humanizar a figura do cientista: 
+A seção de logs visa capturar e reunir reflexões diárias, desabafos e humor, demonstrando que o ambiente acadêmico é composto por pessoas reais com interesses cotidianos. 
+6.9. Promover a inclusão de pessoas neuro divergentes: 
+O HUB trabalhará em contato com as CIPs (Comissões de Inclusão e Pertencimento) e alunos neuroatípicos para centralizar materiais de apoio, políticas de inclusão e formas de acesso, além de mapear queixas não cobertas pelas estruturas de suporte atuais e fazer o possível para que esse público saiba de seus direitos e se sinta incluído no instituto. 
+6.10. Fornecer uma compreensão sistêmica do fazer científico: 
+O objetivo é educar o usuário sobre o que é a ciência e seu método, proporcionando uma formação científica real, visando o entendimento da ciência em seu contexto social, cultural, histórico da mesma e não apenas a transmissão passiva de curiosidades. 
+6.11. Diminuir a distância Pesquisador-Aluno e Instituto-Sociedade: 
+Através do "Match Acadêmico", a plataforma mitiga o problema crônico de comunicação no IFUSP, onde alunos pouco se comunicam entre si e se comunicam menos ainda com pesquisadores.
+6.12. Introduzir as frentes de pesquisa do instituto: 
+Fornecer o básico de cada linha de pesquisa e a possibilidade de avanço nelas visando facilitar a escolha de caminhos acadêmicos, fornecendo clareza para alunos que buscam ICs, Mestrados ou Doutorados. 
+6.13. Respeitar as boas práticas no ambiente digital: 
+O HUB possui termos de uso e políticas de cookies em linguagem clara e acessível (sem jargões jurídicos complexos ou "dark patterns"). Garante a anonimização completa e criptografia de dados sensíveis. 
+6.14. Estruturar o desenvolvimento com base teórica sólida: 
+O desenvolvimento contínuo de novas funcionalidades (features) será fundamentada em teorias e com possibilidade de realização de estudos de caso através de pesquisas (qualitativas, quantitativas e aplicadas) em divulgação científica. 
+6.15. Manter moderação rigorosa: 
+Todos os envios passarão por moderação para garantir conformidade legal e ética. Contando também com um sistema global de denúncias (report) e derrubada automática, em casos de reports envolvendo crimes, para o improvável caso de algo acabar passando. 
+6.16. Centralizar oportunidades, eventos, iniciativas e projetos de extensão: 
+Atualização constante de cards informativos sobre iniciações científicas, PUB(s), estágios, simpósios, defesas, iniciativas, projetos de extensão, colóquios e etc com possibilidade de submissão comunitária. Facilitando o envolvimento da comunidade do instituto com os mesmos. 
+6.17. Espaços e Vivência: 
+Catalogação de todos os centros e espaços de vivência do IFUSP, assim como o seu funcionamento. Visando um aumento no uso dos espaços e o conhecimento deles por parte dos pesquisadores/alunos. 
+6.18. Influenciadores Científicos: 
+Divulgação de criadores de conteúdo (YouTube, Instagram, Blogs) vinculados ao IFUSP. Sejam ex alunos, alunos, sejam eles parte da equipe ou os influenciadores em si.
+6.19. Página Oficial do LabDiv: 
+Área dedicada à marcação de uso do espaço do DigitalLab, instruções do KitDiv e agendamento de mentorias. Para além de ter as informações da iniciativa, os seus projetos e funcionamento. 
+7. Estrutura de Abas 
+7.1. Comunidade 
+Reúne as funções de rede social do webapp 
+ 7.1.1. Fluxo 
+Organiza os posts em um fluxo (similar ao Instagram) possibilitando uma interação maior ao abrir a página completa, tendo balões de reflexão, quizzes, seção de comentários, ver como apresentação de slides, modo foco, narração e muitas outras ferramentas que visam uma compreensão real não só do conteúdo mas de seu contexto. 
+ 7.1.2. Logs 
+Organiza aquelas interações/reflexões/informações que não são facilmente adequadas em um post completo reunindo elas em uma interface simples e amigável com um sistema de emendas nos fios que vão energizando a conversa e possibilitando interações entre a comunidade visando melhorar o convívio 
+7.2. CGIF 
+Reúne todas as funções de acesso a informação do webapp 
+ 7.2.1. Oportunidades 
+Reúne as oportunidades do instituto, deixando também um espaço para o envio de mais oportunidades 
+ 7.2.2. Iniciativas 
+Reúne as iniciativas do instituto, deixando também um espaço para o envio de mais iniciativas 
+ 7.2.3. Espaços 
+Reúne os espaços do instituto, deixando também um espaço para o envio de mais espaços
+ 7.2.4. Influenciadores 
+Reúne os influenciadores do instituto, deixando também um espaço para o envio de mais influenciadores. 
+ 7.2.5. Wiki 
+Reúne as informações do instituto em uma Wiki, onde o usuário pode buscar por tudo, desde como os cursos funcionam, rotas de circulares, informações importantes para a matrícula… 
+ 7.2.6. Teste de radiação 
+Um quiz para testar os conhecimentos adquiridos na Wiki . 
+7.3. Formulário de envio 
+Dividido em 5 seções onde o usuário escolhe a categoria, formato, cria tags e quizzes, elabora um título e uma descrição com suporte a LaTeX e markdown. É o local onde o usuário pode criar ou anexar o material de divulgação e ter formas de o transformar em uma comunicação. 
+7.4 Ferramentas 
+Uma aba utilitária que contém ferramentas úteis para o usuário seja ele aluno/pesquisador/curioso. 
+ 7.4.1. Grade horária 
+Local para o aluno planejar a seu semestre e adequar o seu tempo de estudos seguindo a proporção de 1h aula -1h estudos 
+ 7.4.2. Trilhas 
+Onde o aluno pode acompanhar o andamento do curso, qual a porcentagem concluídas, quais matérias obrigatórias faltam, quais está fazendo, já fez e com sincronização com o júpiter para que o aluno não tenha que marcar disciplina a disciplina como concluída ou em andamento. Também é possível ver todas as matérias do IF com filtros por curso, categoria (obrigatória, eletiva, livre), semestre e ao ver o card da disciplina aparece seus pré requisitos/equivalencias e anotações lançadas pelos alunos 
+ 7.4.3. Match acadêmico 
+Nesta seção é possível manifestar o interesse em uma IC com uma carta de interesse, registrando o laboratório, linha de pesquisa, departamento de interesse, currículo e para o pesquisador isso tudo e as matérias em curso e concluídas também. É lá onde tem também
+o sistema de adoção onde um veterano pode adotar um calouro. E também marcar grupos de estudos com quem está fazendo as mesmas matérias que você. 
+ 7.4.4. Como ingressar 
+Aqui o usuário curioso que ainda não faz parte do IFUSP pode ver as formas de ingresso do instituto e dicas de como se preparar, de como é o processo de seleção. Todo o tipo de dicas e informações úteis para quem decidir se dedicar a entrar no IFUSP 
+ 7.4.5. Observatório do pesquisador 
+Reúne a seção do match acadêmico e a arena dos pesquisadores onde vai ocorrer competição entre departamentos e pesquisadores de quem faz a melhor foto, quem faz a obra mais comunicativa 
+7.5. Central de Interação 
+Aqui é onde se reúne às funções que visam conectar a comunidade 
+ 7.5.1. Emaranhamento 
+Onde se pode mandar mensagens privadas a outro usuário, onde se pode criar grupos ou entrar em grupos pré criados com pessoas que demonstram os mesmos interesses, e claro compartilhar posts nos grupos ou para outro usuário em específico 
+ 7.5.2. Laboratório pessoal 
+Onde o usuário pode manifestar sua individualidade, colocar uma biografia, ter os seus distintivos, editar seus posts, ter um espaço como uma vitrine para suas artes, ver seu nível de XP na plataforma, deixar links para as suas redes seu site/blog e até currículo 
+ 7.5.3. Configurações 
+Aba onde se pode ver, editar, configurar e até excluir os seus dados na plataforma 
+ 7.5.4. Pergunte a um cientista 
+Aba onde o usuário pode mandar uma mensagem e os moderadores do LabDiv irão correr atrás de pesquisadores parceiros para responder ela 
+7.6. LabDiv 
+Página oficial do LabDiv onde o usuário pode ver o kitdiv, marcar mentorias, agendar o uso do DigitalLab, ver as atividades e projetos do LabDiv e saber tudo sobre o laboratório de divulgação 
+ 7.6.1. Sobre o HUB 
+Aqui o usuário que tiver alguma dúvida quanto ao HUB pode ter um resumo sobre a plataforma e também ver o impacto da mesma
+7.7. Admin 
+O painel admin é uma seção não acessível para quem não é da equipe do LabDiv. É nele que podemos gerenciar o HUB 
+ 7.7.1. Moderadores 
+Seção dos moderadores, a equipe do LabDiv que tem como pelo painel: Aprovar ou não todo conteúdo enviado pelo usuário, mandar notificações, ver e responder perguntas no pergunte a um cientista, validar matchs, lançar oportunidades, aprovar ou não mudanças de perfil. Eles gerenciam quase tudo 
+ 7.7.2. Administradores 
+Ficando com os administradores a seção do painel que pode deletar conteúdos e gerenciar os papéis de usuários. 
+8. Organização e Layout da Plataforma 
+A interface segue a Identidade Visual (IDV) do LabDiv. Em telas grandes (monitores/tablets), opera em um grid de 3 colunas e 3 linhas: 
+Centro: Conteúdo principal da página (Aba ativa). 
+● Topo: Barra de navegação com buscador global, perfil, notificações, tema, logo e botão de report. 
+● Rodapé (Footer): Informações técnicas e institucionais. 
+● Coluna Esquerda: Menu de navegação. 
+● Coluna Direita: Cards para ações contextuais da aba atual. 
+Em dispositivos móveis (smartphones), o layout é responsivo (coluna única), e a navegação principal é realocada para uma barra inferior ergonômica (bottom navigation bar).
+9. Base Teórica e Estudos de Caso 
+9.1 Tabela com features novas pensadas com base em bases teóricas
+Base Teórica 
+	Função na 
+Plataforma
+	Objetivo 
+	Estudo de Caso (Telemetria e Questionários)
+	Extensão ou comunicação, Freire
+	Balões de 
+reflexão e 
+aplicação
+	Proporcionar uma 
+abordagem ativa, 
+estimulando a revisão e reflexão da visão prévia do usuário sobre o objeto da comunicação, além de oferecer um espaço para que ele vincule esse 
+conhecimento científico a aplicações práticas em sua realidade. O feedback gerado também serve para que o autor do post 
+repense sua própria 
+abordagem.
+	Telemetria: Taxa de interação com os balões, tempo médio de leitura/escrita, análise de 
+sentimento dos textos inseridos, volume de links de exemplos submetidos e taxa de cliques em aplicações sugeridas. 
+Questionário: Escalas Likert (via notificação) avaliando o grau de mudança de perspectiva e 
+perguntas abertas sobre o uso prático da informação.
+	Extensão ou comunicação, Freire
+	Constelações 
+de mundos e 
+glossário
+	Construção de um 
+glossário que reúne signos linguísticos de diversas culturas de massas (geek, artistas, desenvolvedores, tribos urbanas, 
+acadêmicos), suas 
+analogias e referências. Permite que conteúdos acadêmicos sejam 
+assimilados e adaptados à "constelação" de 
+preferência do usuário.
+	Telemetria: Taxa de alternância (toggle) entre as visões de 
+"constelações" e métricas de retenção comparadas entre a versão original e a adaptada. 
+Questionário: Testes A/B nativos questionando "Qual explicação foi mais clara para você?" para validar a eficácia dos signos.
+	
+
+
+
+Circulação de 
+conhecimentos e a produção de fatos científicos, Setlik
+	Contextos do 
+conteúdo
+	Garantir que o fato 
+científico seja 
+compreendido em seu contexto. Cada post 
+conterá links estruturais para o departamento, linha de pesquisa e história, apresentando o conteúdo como parte de um 
+processo histórico, social e ético, e não como um dado isolado.
+	Telemetria: Taxa de cliques (CTR) nos links de contexto e 
+profundidade de navegação na Wikia partir de um post. 
+Questionário: Formulário curto sobre a percepção do usuário em relação ao trabalho do 
+departamento antes e depois de ler o contexto.
+	Circulação de 
+conhecimentos e a produção de fatos científicos, Setlik
+	Gráficos de 
+públicos-alvo no envio
+	Levar o autor a considerar ativamente as 
+características do 
+público-alvo do HUB 
+durante a elaboração do material no formulário de envio, evitando a 
+comunicação para um "indivíduo genérico" e refinando a precisão da divulgação.
+	Telemetria: Tempo gasto na etapa de definição de público e taxa de abandono do formulário de envio. 
+Questionário: Feedback direto dos autores sobre o quanto a 
+ferramenta gráfica os forçou a reestruturar o texto submetido.
+	
+
+
+
+9.2 Tabela com features antigas repensadas com base em bases 
+teóricas
+10. Visão do HUB por Perfil 
+A arquitetura do HUB foi projetada para resolver dores específicas de três personas fundamentais do ecossistema acadêmico: 
+● Para o pesquisador: O HUB atua como uma vitrine para suas linhas de pesquisa e uma ferramenta de captação de talentos (via Match Acadêmico). Permite gerenciar iniciativas de extensão e divulgar anotações ou desafios acadêmicos, 
+aproximando-o da comunidade discente de forma estruturada. 
+● Para o Aluno: Centraliza a burocracia e o planejamento da vida acadêmica. Oferece sincronização de grade horária, acesso organizado aos editais e informações dos cursos/institutos (Wiki CGIF), grupos de estudo e um ambiente seguro e humanizado (Logs) para compartilhar as vivências do curso. 
+● Para o Curioso/Sociedade: Funciona como uma porta de entrada desmistificada para a universidade. Adapta a linguagem acadêmica através das "Constelações de Mundos", permitindo que o conhecimento científico seja consumido com base na bagagem cultural do visitante. E caso ele queira fazer parte do mesmo também oferece guias e informações para o ajudar a entrar nas universidades com ênfase no IFUSP 
+11. Por que o HUB é necessário? 
+Uma justificativa crítica: a divulgação científica já ocorre, mas os métodos atuais precisam de evolução estrutural e interativa para gerar uma comunicação real em vez de apenas uma transmissão de dados. Além desse aspecto técnico, o HUB responde a três necessidades urgentes do instituto: 
+● Mitigação do Afastamento Geracional: As crescentes diferenças geracionais estão tornando a comunicação entre alunos e professores cada vez mais desafiadora. O HUB atua como uma ponte digital projetada para restaurar e facilitar esse diálogo intra-institucional. 
+● Produtividade Acadêmica e Retenção Discente: O instituto necessita dessa troca contínua para manter sua produtividade, haja vista que a formação de novos pesquisadores depende diretamente de os alunos conseguirem Iniciações Científicas (ICs) e entenderem claramente o que é feito no IFUSP. O HUB organiza essas oportunidades e promove o senso de comunidade, sendo uma ferramenta ativa para incentivar a permanência dos alunos na faculdade e combater a evasão. 
+● Combate ao Discurso Anticiência: Frente ao avanço de visões negativas sobre o papel das universidades públicas e da proliferação de discursos anticientíficos na sociedade, é extremamente necessário estabelecer uma plataforma robusta, acessível e engajadora para reverter esse cenário e reconectar a população à ciência.
+12. Replicabilidade 
+A arquitetura de software e a estrutura conceitual do projeto foram desenvolvidas visando a fácil replicação por outros institutos e universidades, fomentando um ecossistema padronizado de comunicação acadêmica. Para garantir essa escalabilidade institucional, o HUB apoia-se nos seguintes pilares técnicos: 
+● Código Aberto (Open Source): O código-fonte integral está hospedado em um repositório público no GitHub, permitindo livre acesso, auditoria e colaboração por desenvolvedores de outras instituições. 
+● Licenciamento AGPL: A distribuição sob a licença AGPL (Affero General Public License) assegura que a plataforma permaneça livre e que qualquer modificação ou melhoria implementada por terceiros seja obrigatoriamente devolvida à comunidade com o mesmo código aberto. 
+● Arquitetura Descentralizada: Por não possuir dependência estrutural de um servidor central único gerido pelo IFUSP, o sistema pode ser facilmente instanciado, customizado e mantido de forma autônoma por qualquer outra universidade ou laboratório que deseje adotar o HUB. 
+13. Resultados e Impactos Esperados Impactos Acadêmicos e Institucionais: 
+● Redução da evasão acadêmica (através do apoio das ferramentas de grade, trilhas, logs, wiki). 
+● Aumento quantitativo e qualitativo no número de Iniciações Científicas (via Match Acadêmico). 
+● Melhor compreensão sistêmica sobre a estrutura, burocracia e funcionamento do universo universitário. 
+● Preservação digital e ativa do patrimônio histórico do IFUSP, integrando o acervo ao fluxo diário dos estudantes. 
+● Geração contínua de dados primários (telemetria e questionários) para embasar futuras pesquisas acadêmicas na área de Ensino de Física e Comunicação Científica. 
+Impactos Sociais e de Comunidade: 
+● Aumento da socialização inter e intradepartamental, rompendo bolhas acadêmicas. ● Maior engajamento da comunidade discente em eventos, simpósios e defesas. ● Acolhimento e suporte centralizado para a comunidade neurodivergente, diminuindo barreiras invisíveis de acessibilidade e permanência. 
+● Desmistificação da figura intocável do pesquisador (humanização da ciência) e melhora geral no bem-estar psicológico através das redes de apoio e "Logs".
+● Democratização e tradução cultural do conhecimento produzido no IFUSP para a sociedade civil, utilizando signos linguísticos adaptados ("Constelações de mundos") para combater a desinformação e o discurso anticiência. 
+14. Parte Técnica 
+A arquitetura do HUB LabDiv foi projetada com rigor técnico, focando em alta performance, estabilidade e escalabilidade institucional. Todo o código-fonte da aplicação tem versionamento aberto e está disponível publicamente no GitHub 
+(JoaoStangorlini/HUB-LabDiv), garantindo transparência técnica e facilitando a colaboração contínua. 
+O ecossistema do software apoia-se no seguinte stack tecnológico: 
+● Linguagem Base (TypeScript): O código é estritamente tipado, garantindo segurança na alocação de dados, estruturação lógica rigorosa e a prevenção de erros críticos em tempo de compilação. 
+● Frontend e Estilização: A interface gráfica foi arquitetada para não depender de folhas de estilo (CSS) externas e pesadas. A estilização é implementada em escopo local e embutida diretamente na estrutura HTML dos componentes. Isso previne o vazamento de estilos entre páginas e otimiza radicalmente o tempo de renderização do WebApp. Como framework utiliza-se o (Next.js/React) 
+● Backend e Banco de Dados (Supabase): Toda a infraestrutura de dados, sistema de autenticação e rotas de backend são gerenciadas através da plataforma Supabase, fornecendo uma base de dados relacional robusta, segura e de fácil escalabilidade. 
+● Processamento de Mídia (Cloudinary): Para suportar a alta demanda de um acervo visual (fotos, gráficos, materiais 3D), o sistema integra o Cloudinary para realizar a compressão automática, o redimensionamento inteligente e a entrega otimizada de imagens, economizando banda e garantindo um carregamento rápido em redes móveis. 
+● Infraestrutura e CI/CD (Vercel): O pipeline de Integração e Entrega Contínuas (CI/CD), bem como a hospedagem do ambiente de produção, são gerenciados pela plataforma Vercel. Essa escolha assegura deploys automatizados a cada atualização no GitHub e tempos de resposta ultrarrápidos através de sua infraestrutura de ponta (Edge Network). 
+15. Jurídico 
+Conformidade Digital e Filosofia Aberta O hub-Lab-Div foi arquitetado sob rigorosos padrões de segurança, inclusão e transparência, garantindo um ambiente acadêmico seguro para todos os usuários:
+● Privacidade e Direitos: Conformidade integral com a Lei Geral de Proteção de Dados (LGPD) e o Marco Civil da Internet (MCI). 
+● Proteção de Menores: Adequação estrita ao ECA Digital e aplicação das Boas Práticas do UNICEF para ambientes digitais seguros. 
+● Acessibilidade Plena: Infraestrutura desenvolvida para atender aos rigorosos critérios da Lei Brasileira de Inclusão (LBI) e diretrizes 
+e-MAG/WCAG 2.1. 
+● Ciência Aberta (Acervo): Todo o conteúdo público e propriedade intelectual são distribuídos gratuitamente sob a licença Creative 
+Commons (CC BY 4.0). 
+● Código Aberto (Software): O código-fonte da plataforma é software livre, licenciado e protegido pela GNU AGPLv3. 
+16. Conclusão 
+Diante do exposto, conclui-se que o hub-Lab-Div representa um marco transformador na percepção pública da ciência e na relação estabelecida entre o IFUSP, sua comunidade acadêmica e a sociedade. Ao transcender a função de mero acervo para atuar como uma plataforma interativa (PWA), o projeto consolida a infraestrutura digital necessária para uma divulgação científica verdadeiramente acessível, inclusiva, tecnicamente robusta e replicável.
