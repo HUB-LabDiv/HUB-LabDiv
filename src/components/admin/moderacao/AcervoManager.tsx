@@ -14,8 +14,8 @@
 
 import { useEffect, useState, useMemo, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
-import { MediaCard } from '@/components/MediaCard';
-import { AdminSubmissionLightbox } from '@/components/AdminSubmissionLightbox';
+import { MediaCard } from "@/components/media/MediaCard";
+import { AdminSubmissionLightbox } from "@/components/admin/AdminSubmissionLightbox";
 import { CATEGORIES } from '@/app/enviar/constants';
 import { updateSubmissionAdmin } from '@/app/actions/submissions';
 import { AdminPostDTO, mapToAdminPostDTO } from '@/dtos/media';

@@ -37,7 +37,7 @@ import {
 } from 'lucide-react';
 import { AppRoutes } from '@/types/navigation';
 import { fetchRecentEntanglements } from '@/app/actions/entanglements';
-import { Avatar } from '../ui/Avatar';
+import { Avatar } from "@/components/ui/Avatar";
 import { supabase } from '@/lib/supabase';
 import { useTelemetry } from '@/hooks/useTelemetry';
 import { ColisorIcon } from '../icons/ColisorIcon';

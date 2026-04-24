@@ -14,7 +14,7 @@
 
 import React, { useState, useRef } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { MediaCardProps } from '../MediaCard';
+import { MediaCardProps } from "@/components/media/MediaCard";
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { withEliteBoundary } from '../shared/EliteErrorBoundary';

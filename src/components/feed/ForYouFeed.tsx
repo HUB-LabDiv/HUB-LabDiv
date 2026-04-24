@@ -14,7 +14,7 @@
 
 import React from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { MediaCard, MediaCardProps } from '../MediaCard';
+import { MediaCard, MediaCardProps } from "@/components/media/MediaCard";
 import { Sparkles } from 'lucide-react';
 
 interface ForYouFeedProps {

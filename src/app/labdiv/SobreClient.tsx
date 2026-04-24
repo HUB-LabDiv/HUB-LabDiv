@@ -16,7 +16,7 @@ import React from 'react';
 import Link from "next/link";
 import Image from "next/image";
 import { MainLayoutWrapper } from "@/components/layout/MainLayoutWrapper";
-import { MediaCard, MediaCardProps } from "@/components/MediaCard";
+import { MediaCard, MediaCardProps } from "@/components/media/MediaCard";
 import { Megaphone, ArrowRight, UserPlus, Award, Star, ExternalLink, BookOpen, Route, Rocket, Smartphone, Gamepad2, Database, Users, Mic, Shield, Map, Layout, MessageSquare, Book, Calculator, Settings, Link2, Globe, Video, Briefcase, Accessibility, Building, ScrollText, FileText, Network, ChevronLeft, ChevronRight, GraduationCap, Microscope, HelpCircle, Sparkles, Trophy, Calendar, Info, Library } from 'lucide-react';
 import { SobreFeedbackCard } from './SobreFeedbackCard';
 import { Profile } from '@/types';

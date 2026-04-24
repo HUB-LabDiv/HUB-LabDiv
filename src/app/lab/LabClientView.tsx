@@ -27,7 +27,7 @@ import { EditProfileModal } from '@/components/profile/EditProfileModal';
 import { RadiationTab } from '@/components/gamification/RadiationTab';
 import { ArtesHobbiesTab } from '@/components/profile/ArtesHobbiesTab';
 import { Profile } from '@/types';
-import { Avatar } from '@/components/ui/Avatar';
+import { Avatar } from "@/components/ui/Avatar";
 import { User } from '@supabase/supabase-js';
 import { EditSubmissionModal } from '@/components/profile/EditSubmissionModal';
 import { NetworkModal } from '@/components/profile/NetworkModal';

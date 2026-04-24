@@ -33,7 +33,7 @@ import {
     CheckCircle2,
     Atom
 } from 'lucide-react';
-import { Avatar } from '@/components/ui/Avatar';
+import { Avatar } from "@/components/ui/Avatar";
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 

@@ -34,23 +34,23 @@ import {
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
-const ScientificContent = dynamic(() => import('./ScientificContent'), {
+const ScientificContent = dynamic(() => import( "@/components/shared/ScientificContent"), {
     loading: () => <div className="h-20 w-full animate-pulse bg-gray-100 dark:bg-gray-800 rounded-lg" />
 });
 
-import { Avatar } from './ui/Avatar';
+import { Avatar } from "@/components/ui/Avatar";
 
 import { parseMediaUrl, getYoutubeThumbnail, getOptimizedUrl } from '@/lib/media-utils';
-const ShareMenu = dynamic(() => import('./ShareMenu').then(mod => mod.ShareMenu));
+const ShareMenu = dynamic(() => import( "@/components/shared/ShareMenu").then(mod => mod.ShareMenu));
 import { m, AnimatePresence } from 'framer-motion';
 import { stripMarkdownAndLatex, highlightMatch } from '@/lib/utils';
 import { useInView } from 'react-intersection-observer';
-import { CardPresenceBadge } from './CardPresenceBadge';
+import { CardPresenceBadge } from "@/components/ui/CardPresenceBadge";
 import { supabase } from '@/lib/supabase';
 import { useNavigationStore } from '@/store/useNavigationStore';
-const CollectionManager = dynamic(() => import('./engagement/CollectionManager').then(mod => mod.CollectionManager));
-const DownloadModal = dynamic(() => import('./DownloadModal').then(mod => mod.DownloadModal));
-import { MediaReaction } from './engagement/MediaReaction';
+const CollectionManager = dynamic(() => import( "@/components/engagement/CollectionManager").then(mod => mod.CollectionManager));
+const DownloadModal = dynamic(() => import( "@/components/modals/DownloadModal").then(mod => mod.DownloadModal));
+import { MediaReaction } from "@/components/engagement/MediaReaction";
 import { PostDTO } from '@/dtos/media';
 import { useMediaInteraction } from '@/hooks/useMediaInteraction';
 import { useAuth } from '@/providers/AuthProvider';

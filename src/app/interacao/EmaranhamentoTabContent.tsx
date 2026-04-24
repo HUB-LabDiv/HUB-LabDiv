@@ -20,7 +20,7 @@ import { searchUsersByName } from '@/app/actions/profiles';
 import { createEntangledGroup, fetchMyGroups, fetchGroupMessages, sendGroupMessage, fetchRecommendedGroups, joinGroup } from '@/app/actions/groups';
 import { getUserInterest } from '@/app/actions/recommendations';
 import { ParticleEntanglement } from '@/components/engagement/ParticleEntanglement';
-import { Avatar } from '@/components/ui/Avatar';
+import { Avatar } from "@/components/ui/Avatar";
 import { User, Loader2, Search, X, Users, Plus, Send, ShieldCheck, MessageSquare, Star } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';

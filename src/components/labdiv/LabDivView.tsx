@@ -13,7 +13,7 @@
 
 
 import React from 'react';
-import { LabDivCatalogExplorer } from "@/components/LabDivCatalogExplorer";
+import { LabDivCatalogExplorer } from "@/components/labdiv/LabDivCatalogExplorer";
 import { LabDivTeam } from "@/components/labdiv/LabDivTeam";
 import Link from "next/link";
 import { LabDivFeedbackCard } from "@/app/arquivo-labdiv/LabDivFeedbackCard";

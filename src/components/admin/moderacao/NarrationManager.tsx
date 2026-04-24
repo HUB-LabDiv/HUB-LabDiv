@@ -16,7 +16,7 @@ import { useEffect, useState, useMemo, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { PostDTO, mapToPostDTO } from '@/dtos/media';
 import { toast } from 'react-hot-toast';
-import { MediaCard } from '@/components/MediaCard';
+import { MediaCard } from "@/components/media/MediaCard";
 import { 
     Mic, RefreshCw, AlertCircle, 
     Loader2, Search, Check, 

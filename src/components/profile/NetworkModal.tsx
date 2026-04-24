@@ -15,7 +15,7 @@
 import { useState, useEffect } from 'react';
 import { X, UserMinus, ShieldAlert } from 'lucide-react';
 import { fetchFollowersList, fetchFollowingList, removeFollower, unfollowUser } from '@/app/actions/submissions';
-import { Avatar } from '@/components/ui/Avatar';
+import { Avatar } from "@/components/ui/Avatar";
 import toast from 'react-hot-toast';
 import Link from 'next/link';
 

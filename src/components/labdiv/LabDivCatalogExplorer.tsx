@@ -14,9 +14,9 @@
 
 import React, { useEffect, useState, useMemo } from 'react';
 import { fetchSubmissions } from '@/app/actions/submissions';
-import { MediaCardProps } from './MediaCard';
-import { FeaturedCarousel } from './FeaturedCarousel';
-import { SkeletonCard } from './ui/SkeletonCard';
+import { MediaCardProps } from "@/components/media/MediaCard";
+import { FeaturedCarousel } from "@/components/shared/FeaturedCarousel";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { Star, Users, Trophy } from 'lucide-react';
 import { institutoData } from '@/data/institutoData';
 import { PostDTO } from '@/dtos/media';

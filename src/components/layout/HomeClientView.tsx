@@ -14,12 +14,12 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
-import { MediaCard, MediaCardProps } from './MediaCard';
-import { SkeletonCard } from './ui/SkeletonCard';
+import { MediaCard, MediaCardProps } from "@/components/media/MediaCard";
+import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { fetchSubmissions } from '@/app/actions/submissions';
 import { checkUserLikes, checkUserSaves } from '@/app/actions/media';
 import { useAuth } from '@/providers/AuthProvider';
-import { FeaturedCarousel } from './FeaturedCarousel';
+import { FeaturedCarousel } from "@/components/shared/FeaturedCarousel";
 import {
     Sparkles,
     ChevronLeft,
@@ -40,7 +40,7 @@ import {
     Atom
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FluxoFeedbackCard } from '@/app/fluxo/FluxoFeedbackCard';
+import { FluxoFeedbackCard } from "@/components/feedback/FluxoFeedbackCard";
 
 import { useSearch } from '@/providers/SearchProvider';
 import { CATEGORIES as CATEGORY_LIST, CATEGORY_STYLES, DEFAULT_STYLE } from '@/lib/constants';

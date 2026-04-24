@@ -26,7 +26,7 @@ import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeSanitize from 'rehype-sanitize';
 import { MarkdownImage } from '@/components/reading/MarkdownImageLightbox';
-import { ViewTracker } from '@/components/ViewTracker';
+import { ViewTracker } from "@/components/telemetry/ViewTracker";
 import { ReadingExperienceProvider } from '@/components/reading/ReadingExperienceProvider';
 import { ReadingViewManager } from '@/components/reading/ReadingViewManager';
 import { ReadingHistoryTracker } from '@/components/history/ReadingHistoryTracker';

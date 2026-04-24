@@ -13,7 +13,7 @@
 
 
 import React from 'react';
-import { ViewTracker } from '@/components/ViewTracker';
+import { ViewTracker } from "@/components/telemetry/ViewTracker";
 import { ReadingHistoryTracker } from '@/components/history/ReadingHistoryTracker';
 
 interface EngagementHistoryHubProps {

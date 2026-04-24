@@ -26,7 +26,7 @@ import {
 } from '@/app/actions/profiles';
 import { fetchClassmates } from '@/app/actions/match';
 import * as CalendarActions from '@/app/actions/calendar';
-import { Avatar } from '@/components/ui/Avatar';
+import { Avatar } from "@/components/ui/Avatar";
 import { 
     GraduationCap, 
     ArrowRight, 
@@ -57,7 +57,7 @@ import { toast } from 'react-hot-toast';
 import { Profile } from '@/types';
 import { ICInterestModal } from './ICInterestModal';
 import { useTelemetry } from '@/hooks/useTelemetry';
-import ScientificContent from '@/components/ScientificContent';
+import ScientificContent from "@/components/shared/ScientificContent";
 
 interface MatchAcademicoTabProps {
     profile: Profile;

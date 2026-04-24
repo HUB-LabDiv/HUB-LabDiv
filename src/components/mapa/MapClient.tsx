@@ -14,7 +14,7 @@
 
 import { useState } from 'react';
 import dynamic from 'next/dynamic';
-import { MediaCardProps } from '@/components/MediaCard';
+import { MediaCardProps } from "@/components/media/MediaCard";
 import { HelpCircle } from 'lucide-react';
 import { MapaFeedbackCard } from '@/app/mapa/MapaFeedbackCard';
 

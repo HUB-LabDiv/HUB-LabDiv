@@ -19,7 +19,7 @@ import { Image, MessageSquare, Zap } from 'lucide-react';
 import { useTelemetry } from '@/hooks/useTelemetry';
 import { FluxoView } from './FluxoView';
 import { LogsView } from './LogsView';
-import { MediaCardProps } from '@/components/MediaCard';
+import { MediaCardProps } from "@/components/media/MediaCard";
 import { HubHeader } from './HubHeader';
 
 interface ComunidadeClientProps {

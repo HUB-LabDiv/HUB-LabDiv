@@ -15,8 +15,8 @@
 import { useEffect, useState, useRef, useMemo, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
-import { MediaCard } from '@/components/MediaCard';
-import { AdminSubmissionLightbox } from '@/components/AdminSubmissionLightbox';
+import { MediaCard } from "@/components/media/MediaCard";
+import { AdminSubmissionLightbox } from "@/components/admin/AdminSubmissionLightbox";
 import { CATEGORIES, FORMATS } from '@/app/enviar/constants';
 import toast from 'react-hot-toast';
 import { useNotify } from '@/hooks/useNotify';

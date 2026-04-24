@@ -13,7 +13,7 @@
 
 
 import React, { useRef, useState, useEffect } from 'react';
-import { MediaCard, MediaCardProps } from './MediaCard';
+import { MediaCard, MediaCardProps } from "@/components/media/MediaCard";
 import { m } from 'framer-motion';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 

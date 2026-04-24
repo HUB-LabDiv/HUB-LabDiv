@@ -15,7 +15,7 @@
 import React, { useState, useEffect } from 'react';
 import { fetchChallenges, submitToChallenge, voteSubmission, proposeChallenge, fetchArenaSuggestions } from '@/app/actions/arena';
 import { submitHubSuggestion } from '@/app/actions/feedback';
-import { Avatar } from '@/components/ui/Avatar';
+import { Avatar } from "@/components/ui/Avatar";
 import { Loader2, Trophy, MessageSquare, ThumbsUp, Plus, Calendar, AlertCircle, Microscope, UserPlus, Settings, Lightbulb, ClipboardList } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { format } from 'date-fns';

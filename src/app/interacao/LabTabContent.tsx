@@ -20,7 +20,7 @@ import { getUserInterest } from '@/app/actions/recommendations';
 import { PostDTO } from '@/dtos/media';
 import { parseMediaUrl, getYoutubeThumbnail, getOptimizedUrl } from '@/lib/media-utils';
 import { User, Grid, Medal, Star, Image as ImageIcon, PlayCircle, FileText, Heart, MessageSquare, Info, Camera, Share2, Play, GraduationCap, ShieldCheck, Linkedin, Github, Youtube, Instagram, Globe } from 'lucide-react';
-import { Avatar } from '@/components/ui/Avatar';
+import { Avatar } from "@/components/ui/Avatar";
 import { RadiationBadge } from '@/components/gamification/RadiationBadge';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
 import { RadiationTab } from '@/components/gamification/RadiationTab';

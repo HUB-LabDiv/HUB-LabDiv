@@ -11,7 +11,7 @@
 
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { SidebarRight } from '@/components/layout/SidebarRight';
-import { FluxoFeedbackCard } from '@/app/FluxoFeedbackCard';
+import { FluxoFeedbackCard } from "@/components/feedback/FluxoFeedbackCard";
 import { 
     fetchSubmissions, 
     fetchTrendingSubmissions, 

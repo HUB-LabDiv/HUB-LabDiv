@@ -24,7 +24,7 @@ import { ReportModal } from '../feedback/ReportModal';
 import { SearchOverlay } from './SearchOverlay';
 import { useTheme } from '@/hooks/useTheme';
 import { useNavigationStore } from '@/store/useNavigationStore';
-import { Avatar } from '../ui/Avatar';
+import { Avatar } from "@/components/ui/Avatar";
 import { UserMinimalDTO } from '@/types/navigation';
 import { useAuth } from '@/providers/AuthProvider';
 import { useTelemetry } from '@/hooks/useTelemetry';

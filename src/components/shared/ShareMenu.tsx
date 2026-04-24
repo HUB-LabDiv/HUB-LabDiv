@@ -15,7 +15,7 @@
 import React, { useState, useEffect } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
-import { Avatar } from './ui/Avatar';
+import { Avatar } from "@/components/ui/Avatar";
 import { useAuth } from '@/providers/AuthProvider';
 import { toast } from 'react-hot-toast';
 import { sendMessage } from '@/app/actions/submissions';

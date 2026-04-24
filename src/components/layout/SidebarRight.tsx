@@ -16,7 +16,7 @@ import React from 'react';
 import Link from 'next/link';
 import { m, AnimatePresence } from 'framer-motion';
 import { Search, ChevronRight, User } from 'lucide-react';
-import { Avatar } from '../ui/Avatar';
+import { Avatar } from "@/components/ui/Avatar";
 import { searchProfiles, followUser, unfollowUser, checkIsFollowing, getSidebarTags, getUsersInOrbit } from '@/app/actions/submissions';
 import { toast } from 'react-hot-toast';
 

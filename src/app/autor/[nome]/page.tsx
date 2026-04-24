@@ -10,7 +10,7 @@
  */
 
 import { supabase } from '@/lib/supabase';
-import { MediaCard } from '@/components/MediaCard';
+import { MediaCard } from "@/components/media/MediaCard";
 import Link from 'next/link';
 import { mapToPostDTO } from '@/dtos/media';
 import { ArrowLeft, School, SearchX } from 'lucide-react';

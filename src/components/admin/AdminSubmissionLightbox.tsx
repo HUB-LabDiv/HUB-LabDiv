@@ -26,7 +26,7 @@ import {
 } from 'lucide-react';
 import { fetchAllTrails, fetchSubmissionTrails, linkSubmissionToTrail, unlinkSubmissionFromTrail } from '@/app/actions/admin';
 import { toast } from 'react-hot-toast';
-import { AdminQuizEditor } from './AdminQuizEditor';
+import { AdminQuizEditor } from "@/components/admin/AdminQuizEditor";
 
 
 
