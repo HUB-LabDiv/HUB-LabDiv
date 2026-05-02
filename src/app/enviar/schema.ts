@@ -51,7 +51,7 @@ export const submissionSchema = z.object({
         historico: z.string().optional().default(''),
         social: z.string().optional().default(''),
         economico: z.string().optional().default(''),
-    }).optional().default({}),
+    }).default({ historico: '', social: '', economico: '' }),
     reflexoes: z.array(z.object({
         ancora_paragrafo: z.string(),
         tipo_reflexao: z.enum(['fechada', 'aberta']),

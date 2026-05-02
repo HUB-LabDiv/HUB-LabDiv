@@ -387,8 +387,9 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                                 let match: RegExpExecArray | null;
                                                                 
                                                                 while ((match = pattern.exec(content)) !== null) {
-                                                                    parts.push(content.substring(lastIndex, match.index));
-                                                                    const word = sortedWords.find(w => w.termo.toLowerCase() === match[0].toLowerCase());
+                                                                    const currentMatch = match; // Local copy for better type inference
+                                                                    parts.push(content.substring(lastIndex, currentMatch.index));
+                                                                    const word = sortedWords.find(w => w.termo.toLowerCase() === currentMatch[0].toLowerCase());
                                                                     if (word) {
                                                                         parts.push(
                                                                             <TranslationalTooltip 
@@ -397,11 +398,11 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                                                 academicDefinition={word.codificacao_academica}
                                                                                 constellations={word.signos_constelacoes as any}
                                                                             >
-                                                                                {match[0]}
+                                                                                {currentMatch[0]}
                                                                             </TranslationalTooltip>
                                                                         );
                                                                     } else {
-                                                                        parts.push(match[0]);
+                                                                        parts.push(currentMatch[0]);
                                                                     }
                                                                     lastIndex = pattern.lastIndex;
                                                                 }
@@ -410,9 +411,10 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                             }
                                                             
                                                             if (React.isValidElement(content)) {
-                                                                return React.cloneElement(content, {
-                                                                    children: React.Children.map(content.props.children, renderWithTooltips)
-                                                                } as any);
+                                                                const element = content as React.ReactElement<any>;
+                                                                return React.cloneElement(element, {
+                                                                    children: React.Children.map(element.props.children, renderWithTooltips)
+                                                                });
                                                             }
                                                             
                                                             if (Array.isArray(content)) {
