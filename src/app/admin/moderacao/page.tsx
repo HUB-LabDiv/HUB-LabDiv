@@ -1,10 +1,10 @@
-import { SubmissionsManager } from "@/components/admin/moderacao/SubmissionsManager";
+import { SubmissionsManager } from "../../../components/admin/moderacao/SubmissionsManager";
 import { Suspense } from "react";
-import Skeleton from "@/components/ui/Skeleton";
+import Skeleton from "../../../components/ui/Skeleton";
 
 export const dynamic = "force-dynamic";
 
-import { MainLayoutWrapper } from "@/components/layout/MainLayoutWrapper";
+import { MainLayoutWrapper } from "../../../components/layout/MainLayoutWrapper";
 
 export default async function ModeracaoPage() {
   return (

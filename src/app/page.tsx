@@ -2,7 +2,7 @@ import { Header } from "@/components/layout/Header";
 import { SidebarLeft } from "@/components/layout/SidebarLeft";
 import { SidebarRight } from "@/components/layout/SidebarRight";
 import { HomeClientView } from "@/components/layout/HomeClientView";
-import { getInitialData } from "@/lib/data-fetching";
+import { getInitialData } from "../lib/data-fetching";
 
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { FluxoFeedbackCard } from "@/components/feedback/FluxoFeedbackCard";
