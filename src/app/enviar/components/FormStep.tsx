@@ -168,7 +168,14 @@ export function FormStep() {
                 const validationFields = err.validation ? Object.keys(err.validation).join(', ') : '';
 
                 toast.error(`${message} ${validationFields ? `(Campos inválidos: ${validationFields})` : ''}`);
-                if (process.env.NODE_ENV === 'development') console.error("Submission Error Details:", result.error);
+                
+                if (process.env.NODE_ENV === 'development') {
+                    if (err.validation) {
+                        console.warn("Submission Validation Details:", JSON.stringify(err.validation, null, 2));
+                    } else {
+                        console.error("Submission Error Details:", err);
+                    }
+                }
             } else {
                 clearAutoSave();
                 setIsSubmitted(true);

@@ -22,6 +22,7 @@ import { toast } from 'react-hot-toast';
 import { HelpTooltip } from './HelpTooltip';
 import { SelectedIndicators } from './SelectedIndicators';
 import { useAuth } from '@/providers/AuthProvider';
+import { InteractivePreviewEditor } from './InteractivePreviewEditor';
 
 export function OptionalDetailsStep({ onSubmit, isLoading, loadingMessage }: { onSubmit: (data: any) => void, isLoading: boolean, loadingMessage?: string }) {
     const { profile } = useAuth();
@@ -321,6 +322,9 @@ export function OptionalDetailsStep({ onSubmit, isLoading, loadingMessage }: { o
                 </h3>
                 <textarea rows={4} {...register('testimonial')} className="w-full bg-gray-50 dark:bg-form-dark/50 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-3xl px-6 py-4 outline-none italic" placeholder="O Hub de comunicação científica do LabDiv me ajudou a..." />
             </div>
+
+            {/* MOTOR DE PREVIEW INTERATIVO V4.0 */}
+            <InteractivePreviewEditor />
 
             {/* Mini Quiz Section */}
             <div className="bg-white dark:bg-card-dark rounded-[40px] p-8 border border-gray-100 dark:border-gray-800 space-y-6">

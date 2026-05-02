@@ -45,6 +45,20 @@ export const submissionSchema = z.object({
     selected_laboratories: z.array(z.string()).optional().default([]),
     selected_researchers: z.array(z.string()).optional().default([]),
     selected_research_lines: z.array(z.string()).optional().default([]),
+    
+    // Interactive Posts V4.0
+    contexto_hsec: z.object({
+        historico: z.string().optional().default(''),
+        social: z.string().optional().default(''),
+        economico: z.string().optional().default(''),
+    }).optional().default({}),
+    reflexoes: z.array(z.object({
+        ancora_paragrafo: z.string(),
+        tipo_reflexao: z.enum(['fechada', 'aberta']),
+        pergunta_provocadora: z.string().min(5, 'Pergunta muito curta'),
+        resposta_esperada_ou_gabarito: z.string().optional().default(''),
+        opcoes: z.array(z.string()).optional().default([]),
+    })).optional().default([]),
 });
 
 export type SubmissionFormData = z.infer<typeof submissionSchema>;

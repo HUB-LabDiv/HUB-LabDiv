@@ -33,7 +33,8 @@ export function ReadingToolbar({
         isFocusMode, setFocusMode,
         isPresentationMode, setPresentationMode,
         isAudioPlaying, setAudioPlaying,
-        setAudioLanguage
+        setAudioLanguage,
+        isRulerEnabled, setRulerEnabled
     } = useReadingExperience();
 
     const [isVisible, setIsVisible] = useState(true);
@@ -55,6 +56,15 @@ export function ReadingToolbar({
                     active={isFocusMode}
                     onClick={() => setFocusMode(!isFocusMode)}
                     color="brand-blue"
+                />
+
+                {/* Reading Ruler Toggle */}
+                <ToolbarButton
+                    icon="straighten"
+                    label="Régua"
+                    active={isRulerEnabled}
+                    onClick={() => setRulerEnabled(!isRulerEnabled)}
+                    color="brand-yellow"
                 />
 
                 {/* Presentation Mode Toggle */}

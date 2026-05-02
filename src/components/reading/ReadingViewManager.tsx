@@ -22,6 +22,7 @@ const SpeechPlayer = dynamic(() => import('./SpeechPlayer').then(mod => mod.Spee
 const PresenceIndicator = dynamic(() => import('./PresenceIndicator').then(mod => mod.PresenceIndicator), { ssr: false });
 const TableOfContents = dynamic(() => import('./TableOfContents').then(mod => mod.TableOfContents), { ssr: false });
 const ReadingProgressBar = dynamic(() => import('./ReadingProgressBar').then(mod => mod.ReadingProgressBar), { ssr: false });
+const ReadingRuler = dynamic(() => import('./ReadingRuler').then(mod => mod.ReadingRuler), { ssr: false });
 
 import { useScrollTracker } from '@/hooks/useScrollTracker';
 import { useTimeOnPage } from '@/hooks/useTimeOnPage';
@@ -112,6 +113,7 @@ export function ReadingViewManager({ submission, children }: ReadingViewManagerP
             <PresenceIndicator submissionId={submission.id} />
             <SpeechPlayer content={submission.description} description={submission.description} />
             <TableOfContents />
+            <ReadingRuler />
 
             {/* Contextual Interactions */}
             {!isPresentationMode && (

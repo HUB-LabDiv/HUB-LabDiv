@@ -20,7 +20,7 @@ export const SubmissionSchema = z.object({
     media_url: z.string().optional(),
     external_link: z.string().url().optional().or(z.literal('')),
     tags: z.array(z.string()).optional(),
-    event_year: z.number().optional().nullable(),
+    event_year: z.union([z.number(), z.string()]).optional().nullable(),
     pseudonym_id: z.string().optional().nullable(),
     new_pseudonym: z.string().optional().nullable(),
     quiz: z.any().optional(),
@@ -33,4 +33,6 @@ export const SubmissionSchema = z.object({
     selected_laboratories: z.array(z.string()).optional(),
     selected_researchers: z.array(z.string()).optional(),
     selected_research_lines: z.array(z.string()).optional(),
+    contexto_hsec: z.any().optional(),
+    reflexoes: z.any().optional(),
 });

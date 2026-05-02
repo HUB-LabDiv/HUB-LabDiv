@@ -596,6 +596,8 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
         selected_laboratories,
         selected_researchers,
         selected_research_lines,
+        contexto_hsec,
+        reflexoes,
         ...insertData
     } = validated.data as any;
 
@@ -611,9 +613,6 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
     let db_media_type = insertData.media_type;
     if (db_media_type as string === 'text' && (insertData.media_url?.startsWith('http') || insertData.external_link)) {
         // Only switch to 'link' if it's actually a link
-        // Actually, the DB enum has 'text' AND 'link'. 
-        // Let's check the schema again. DB: image, video, pdf, text, link, zip, sdocx.
-        // If it's a social post link, it should probably be 'link'.
     }
 
     // Determinar status inicial: Lab-Div aprovado automaticamente se for do time
@@ -627,6 +626,7 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
         event_date,
         pseudonym_id,
         quiz,
+        contexto_hsec,
         user_id: user.id,
         status: initialStatus,
         is_historical,
@@ -644,6 +644,18 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
 
     // Attempting Side Effects in Parallel (Optimizing performance)
     const sideEffects = [];
+
+    // [Interactive V4.0] Insert Reflections
+    if (reflexoes && Array.isArray(reflexoes) && reflexoes.length > 0) {
+        sideEffects.push(
+            serverSupabase.from('reflexoes_inline').insert(reflexoes.map(r => ({
+                ...r,
+                post_id: newSub.id
+            }))).then(({ error }) => {
+                if (error) console.error("Error inserting reflexoes_inline:", error);
+            })
+        );
+    }
 
     // Revalidations
     sideEffects.push(Promise.resolve().then(() => revalidatePath('/')));

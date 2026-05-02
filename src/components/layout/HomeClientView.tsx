@@ -270,7 +270,8 @@ export const HomeClientView = ({
                 </div>
 
                 <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">
-
+                    {/* Feedback Card - Agora acima do título */}
+                    <FluxoFeedbackCard className="mb-12" />
 
                     <h1
                         className="font-display font-black text-4xl md:text-6xl tracking-tighter mb-6 text-gray-900 dark:text-white leading-[0.9] uppercase italic animate-fade-in-up"
@@ -280,8 +281,6 @@ export const HomeClientView = ({
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red">Lab-Div</span>
                     </h1>
 
-                    {/* Mobile Feedback Card - Pós H1 */}
-                    <FluxoFeedbackCard className="block lg:hidden mb-8" />
 
                     <p
                         className="text-base md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed font-medium animate-fade-in-up"

@@ -62,6 +62,7 @@ export default function AdminLayout({
         { name: 'Trilhas de Aprendizagem', href: '/admin/trilhas', icon: 'route', adminOnly: true },
         { name: 'Oportunidades', href: '/admin/oportunidades', icon: 'event' },
         { name: 'Logs do IFUSP', href: '/admin/drops', icon: 'forum' },
+        { name: 'Glossário Translacional', href: '/admin/glossario', icon: 'menu_book', adminOnly: true },
         { name: 'Configurações Admin', href: '/admin/config', icon: 'admin_panel_settings', adminOnly: true },
     ];
 

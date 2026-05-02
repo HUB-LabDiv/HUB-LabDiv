@@ -23,6 +23,8 @@ interface ReadingExperienceContextType {
     setAudioPlaying: (val: boolean) => void;
     audioLanguage: 'pt-BR' | 'en-US';
     setAudioLanguage: (val: 'pt-BR' | 'en-US') => void;
+    isRulerEnabled: boolean;
+    setRulerEnabled: (val: boolean) => void;
 }
 
 const ReadingExperienceContext = createContext<ReadingExperienceContextType | undefined>(undefined);
@@ -32,6 +34,7 @@ export function ReadingExperienceProvider({ children }: { children: React.ReactN
     const [isPresentationMode, setPresentationMode] = useState(false);
     const [isAudioPlaying, setAudioPlaying] = useState(false);
     const [audioLanguage, setAudioLanguage] = useState<'pt-BR' | 'en-US'>('pt-BR');
+    const [isRulerEnabled, setRulerEnabled] = useState(false);
 
     // Sync focus mode with body classes to hide global Header/Footer
     useEffect(() => {
@@ -48,11 +51,12 @@ export function ReadingExperienceProvider({ children }: { children: React.ReactN
             if (e.key === 'Escape') {
                 if (isPresentationMode) setPresentationMode(false);
                 else if (isFocusMode) setFocusMode(false);
+                else if (isRulerEnabled) setRulerEnabled(false);
             }
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isFocusMode, isPresentationMode]);
+    }, [isFocusMode, isPresentationMode, isRulerEnabled]);
 
     return (
         <ReadingExperienceContext.Provider
@@ -60,7 +64,8 @@ export function ReadingExperienceProvider({ children }: { children: React.ReactN
                 isFocusMode, setFocusMode,
                 isPresentationMode, setPresentationMode,
                 isAudioPlaying, setAudioPlaying,
-                audioLanguage, setAudioLanguage
+                audioLanguage, setAudioLanguage,
+                isRulerEnabled, setRulerEnabled
             }}
         >
             {children}

@@ -156,6 +156,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 import { Breadcrumbs } from '@/components/ui/Breadcrumbs';
 
+import { ContextPanel } from '@/components/reading/ContextPanel';
+import { BalloonReflexao } from '@/components/reading/BalloonReflexao';
+import { TranslationalTooltip } from '@/components/reading/TranslationalTooltip';
+
 export default async function ArquivoItemPage({ params }: PageProps) {
     const { id } = await params;
     const submission = await getSubmission(id);
@@ -166,6 +170,25 @@ export default async function ArquivoItemPage({ params }: PageProps) {
 
     const urls = parseMediaUrl(submission.media_url);
     const relatedSubmissions = await getRelatedSubmissions(submission.category, submission.id);
+
+    // Fetch reflections for this post
+    const { data: reflections } = await supabase
+        .from('reflexoes_inline')
+        .select('*')
+        .eq('post_id', submission.id);
+
+    // Fetch all words for tooltip replacement
+    const { data: palavrasGeradoras } = await supabase
+        .from('palavras_geradoras')
+        .select(`
+            id,
+            termo,
+            codificacao_academica,
+            signos_constelacoes (
+                constelacao,
+                descodificacao
+            )
+        `);
 
     // Fetch likes for related submissions
     let likeMap: Record<string, number> = {};
@@ -292,15 +315,13 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                         </Link>
                                     ))}
                                     {submission.tags?.map((tag: string, idx: number) => (
-                                        <div key={idx} className="flex items-center gap-2">
-                                            <Link
-                                                href={`/?tag=${tag.replace('#', '')}`}
-                                                className="px-3 py-1 bg-gray-50 dark:bg-gray-800 text-gray-500 hover:text-brand-blue border border-gray-100 dark:border-gray-700 rounded-full text-xs font-bold transition-all"
-                                            >
-                                                #{tag.replace('#', '')}
-                                            </Link>
-                                            <FollowTagButton tagName={tag.replace('#', '')} userId={user?.id} />
-                                        </div>
+                                        <Link
+                                            key={idx}
+                                            href={`/?tag=${tag.replace('#', '')}`}
+                                            className="px-3 py-1 bg-gray-50 dark:bg-gray-800 text-gray-500 hover:text-brand-blue border border-gray-100 dark:border-gray-700 rounded-full text-xs font-bold transition-all"
+                                        >
+                                            #{tag.replace('#', '')}
+                                        </Link>
                                     ))}
                                 </div>
 
@@ -339,15 +360,85 @@ export default async function ArquivoItemPage({ params }: PageProps) {
 
                                 {submission.description && (
                                     <div id="submission-content" className="mt-8">
+                                        {/* Componente A: Contexto HSEC */}
+                                        <ContextPanel context={submission.contexto_hsec} />
+
                                         <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-2 uppercase tracking-wide">Descrição</h2>
                                         <div className="text-gray-600 dark:text-gray-400 leading-relaxed prose prose-lg dark:prose-invert max-w-none prose-headings:text-gray-800 dark:prose-headings:text-gray-200 prose-a:text-brand-blue prose-img:rounded-xl overflow-x-auto">
                                             <ReactMarkdown
                                                 remarkPlugins={[remarkMath]}
                                                 rehypePlugins={[rehypeSanitize, rehypeKatex]}
                                                 components={{
-                                                    p: ({ node, ...props }) => {
-                                                        const id = `p-${node?.position?.start.line}`;
-                                                        return <p data-block-id={id} {...props} />;
+                                                    p: ({ node, children, ...props }) => {
+                                                        const line = node?.position?.start.line;
+                                                        const id = `p-${line}`;
+                                                        const reflection = reflections?.find(r => r.ancora_paragrafo === id);
+
+                                                        // Recursive function to find and replace words in text nodes
+                                                        const renderWithTooltips = (content: any): any => {
+                                                            if (typeof content === 'string') {
+                                                                if (!palavrasGeradoras || palavrasGeradoras.length === 0) return content;
+                                                                
+                                                                const sortedWords = [...palavrasGeradoras].sort((a, b) => b.termo.length - a.termo.length);
+                                                                const pattern = new RegExp(`\\b(${sortedWords.map(w => w.termo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`, 'gi');
+                                                                
+                                                                const parts = [];
+                                                                let lastIndex = 0;
+                                                                let match;
+                                                                
+                                                                while ((match = pattern.exec(content)) !== null) {
+                                                                    parts.push(content.substring(lastIndex, match.index));
+                                                                    const word = sortedWords.find(w => w.termo.toLowerCase() === match[0].toLowerCase());
+                                                                    if (word) {
+                                                                        parts.push(
+                                                                            <TranslationalTooltip 
+                                                                                key={`${word.id}-${match.index}`}
+                                                                                term={word.termo}
+                                                                                academicDefinition={word.codificacao_academica}
+                                                                                constellations={word.signos_constelacoes as any}
+                                                                            >
+                                                                                {match[0]}
+                                                                            </TranslationalTooltip>
+                                                                        );
+                                                                    } else {
+                                                                        parts.push(match[0]);
+                                                                    }
+                                                                    lastIndex = pattern.lastIndex;
+                                                                }
+                                                                parts.push(content.substring(lastIndex));
+                                                                return parts;
+                                                            }
+                                                            
+                                                            if (React.isValidElement(content)) {
+                                                                return React.cloneElement(content, {
+                                                                    children: React.Children.map(content.props.children, renderWithTooltips)
+                                                                } as any);
+                                                            }
+                                                            
+                                                            if (Array.isArray(content)) {
+                                                                return content.map((child, i) => <React.Fragment key={i}>{renderWithTooltips(child)}</React.Fragment>);
+                                                            }
+                                                            
+                                                            return content;
+                                                        };
+
+                                                        return (
+                                                            <div className="relative group/para">
+                                                                <p data-block-id={id} {...props}>
+                                                                    {renderWithTooltips(children)}
+                                                                </p>
+                                                                {reflection && (
+                                                                    <BalloonReflexao 
+                                                                        reflexaoId={reflection.id}
+                                                                        ancoraId={`reflexao-${id}`}
+                                                                        pergunta={reflection.pergunta_provocadora}
+                                                                        tipo={reflection.tipo_reflexao}
+                                                                        feedback={reflection.resposta_esperada_ou_gabarito}
+                                                                        opcoes={reflection.opcoes || []}
+                                                                    />
+                                                                )}
+                                                            </div>
+                                                        );
                                                     },
                                                     h1: ({ node, ...props }) => <h1 data-block-id={`h1-${node?.position?.start.line}`} {...props} />,
                                                     h2: ({ node, ...props }) => <h2 data-block-id={`h2-${node?.position?.start.line}`} {...props} />,
