@@ -384,7 +384,7 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                                 
                                                                 const parts = [];
                                                                 let lastIndex = 0;
-                                                                let match;
+                                                                let match: RegExpExecArray | null;
                                                                 
                                                                 while ((match = pattern.exec(content)) !== null) {
                                                                     parts.push(content.substring(lastIndex, match.index));
