@@ -32,7 +32,7 @@ export function InlineAddMenu({ insertAfterId }: InlineAddMenuProps) {
             </button>
 
             {isOpen && (
-                <div className="absolute top-10 z-50 flex gap-4 p-4 rounded-2xl bg-gray-900/90 backdrop-blur-xl border border-gray-700 shadow-2xl">
+                <div className="absolute top-10 left-1/2 -translate-x-1/2 w-max z-50 flex gap-4 p-4 rounded-2xl bg-gray-900/90 backdrop-blur-xl border border-gray-700 shadow-2xl">
                     <div className="flex flex-col gap-2">
                         <span className="text-xs font-bold text-brand-blue uppercase tracking-wider mb-1">Mídia</span>
                         <div className="grid grid-cols-2 gap-2">

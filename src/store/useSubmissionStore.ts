@@ -20,6 +20,7 @@ const initialState = {
     category: '',
     title: 'Exemplo de Contribuição: A Dinâmica dos Buracos Negros',
     authors: '',
+    year: new Date().getFullYear().toString(),
     description: '',
     whatsapp: '',
     blocks: [
@@ -63,6 +64,7 @@ interface SubmissionState {
     // Metadados básicos
     title: string;
     authors: string;
+    year: string;
     description: string;
     whatsapp: string;
 
@@ -90,6 +92,7 @@ interface SubmissionState {
 
     setTitle: (title: string) => void;
     setAuthors: (authors: string) => void;
+    setYear: (year: string) => void;
     setDescription: (description: string) => void;
     setWhatsapp: (whatsapp: string) => void;
 
@@ -124,6 +127,7 @@ export const useSubmissionStore = create<SubmissionState>()(
             category: initialState.category,
             title: initialState.title,
             authors: initialState.authors,
+            year: initialState.year,
             description: initialState.description,
             whatsapp: initialState.whatsapp,
             blocks: initialState.blocks,
@@ -147,6 +151,7 @@ export const useSubmissionStore = create<SubmissionState>()(
 
             setTitle: (title) => set({ title }),
             setAuthors: (authors) => set({ authors }),
+            setYear: (year) => set({ year }),
             setDescription: (description) => set({ description }),
             setWhatsapp: (whatsapp) => set({ whatsapp }),
 
@@ -209,8 +214,9 @@ export const useSubmissionStore = create<SubmissionState>()(
             reset: () => set({
                 currentStep: 'diagrammer',
                 category: '',
-                title: '',
+                title: 'Exemplo de Contribuição: A Dinâmica dos Buracos Negros',
                 authors: '',
+                year: new Date().getFullYear().toString(),
                 description: '',
                 whatsapp: '',
                 blocks: [],

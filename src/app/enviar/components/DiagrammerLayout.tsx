@@ -4,12 +4,39 @@ import { BlockRenderer } from './BlockRenderer';
 import { BlockType } from '@/app/enviar/schema';
 import { InlineAddMenu } from './InlineAddMenu';
 import { useAuth } from '@/providers/AuthProvider';
+import { MediaCard } from '@/components/media/MediaCard';
+import { PostDTO } from '@/dtos/media';
+import { CATEGORIES } from '@/lib/constants';
+import { getProfileWithPseudonyms } from '@/app/actions/profiles';
 
 export function DiagrammerLayout() {
     const { 
         blocks, addBlock, setActiveBlock, activeBlockId, title, setTitle,
-        readGuide, setReadGuide, acceptedCc, setAcceptedCc, previewMode
+        authors, setAuthors, year, setYear,
+        readGuide, setReadGuide, acceptedCc, setAcceptedCc, previewMode,
+        category, setCategory, isHistorical, isGoldenStandard
     } = useSubmissionStore();
+
+    const [pseudonyms, setPseudonyms] = React.useState<{id: string; name: string}[]>([]);
+    const [mainName, setMainName] = React.useState<string>('');
+    const fetchedRef = React.useRef(false);
+
+    React.useEffect(() => {
+        if (fetchedRef.current) return;
+        fetchedRef.current = true;
+        const fetchAliases = async () => {
+            const res = await getProfileWithPseudonyms();
+            if (!('error' in res)) {
+                setPseudonyms(res.pseudonyms || []);
+                const name = res.profile.username || res.profile.full_name || '';
+                setMainName(name);
+                if (useSubmissionStore.getState().authors === '' && res.profile.use_nickname && name) {
+                    setAuthors(name);
+                }
+            }
+        };
+        fetchAliases();
+    }, [setAuthors]);
     
     const { user } = useAuth();
 
@@ -55,40 +82,31 @@ export function DiagrammerLayout() {
                 {previewMode === 'preview' && (
                     <div className="flex flex-col gap-16 w-full items-center animate-fade-in-up">
                         
-                        {/* Miniatura do Feed (Card) */}
-                        <div className="w-full max-w-sm rounded-[32px] overflow-hidden bg-gray-900 border-[3px] border-brand-yellow shadow-[0_0_40px_rgba(255,204,0,0.2)] flex flex-col group relative shrink-0">
-                            <div className="p-4 flex items-center justify-between border-b border-gray-800">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-brand-yellow/20 flex items-center justify-center overflow-hidden">
-                                        <span className="material-symbols-outlined text-brand-yellow text-sm">person</span>
-                                    </div>
-                                    <span className="text-sm font-bold text-white">{user?.user_metadata?.full_name || user?.user_metadata?.name || 'Autor(a)'}</span>
-                                </div>
-                                <div className="px-3 py-1 rounded-full bg-brand-blue/20 text-brand-blue text-[10px] font-bold uppercase tracking-wider">
-                                    Página Completa
-                                </div>
-                            </div>
-                            
-                            <div className="p-6 pb-4 flex flex-col gap-4">
-                                <h3 className="text-xl font-black text-white leading-tight">{title || 'Sem Título'}</h3>
-                                <p className="text-gray-400 text-sm line-clamp-3">A verdadeira Entropia do conhecimento diminui apenas quando a ciência não termina quando o experimento é concluído ou quando o paper é publicado. Ela termina quando é compreendida...</p>
-                            </div>
-
-                            <div className="px-6 py-3 flex items-center justify-between border-t border-gray-800 text-gray-500">
-                                <div className="flex gap-4">
-                                    <span className="flex items-center gap-1 text-xs"><span className="material-symbols-outlined text-[16px]">science</span> 0</span>
-                                    <span className="flex items-center gap-1 text-xs"><span className="material-symbols-outlined text-[16px]">edit</span> 0</span>
-                                </div>
-                                <div className="flex gap-2">
-                                    <span className="material-symbols-outlined text-[16px]">flag</span>
-                                    <span className="material-symbols-outlined text-[16px]">star</span>
-                                </div>
-                            </div>
-                            
-                            <div className="px-6 pb-6 pt-2 flex flex-wrap gap-2">
-                                <span className="px-2 py-1 bg-brand-blue/20 text-brand-blue text-[10px] font-bold rounded">LAB-DIV</span>
-                                <span className="px-2 py-1 bg-gray-800 text-brand-yellow text-[10px] font-bold rounded flex items-center gap-1"><span className="material-symbols-outlined text-[12px]">star</span> PADRÃO OURO</span>
-                            </div>
+                        {/* Miniatura do Feed (Card Real Renderizado com Mock) */}
+                        <div className="w-full max-w-sm mx-auto shrink-0 pointer-events-none">
+                            <MediaCard 
+                                post={{
+                                    id: 'preview-id',
+                                    title: title || 'Exemplo de Contribuição',
+                                    authors: user?.user_metadata?.full_name || user?.user_metadata?.name || 'Autor(a)',
+                                    description: blocks.find((b: any) => b.type === 'text')?.content?.text || 'A verdadeira Entropia do conhecimento diminui apenas quando a ciência não termina quando o experimento é concluído ou quando o paper é publicado.',
+                                    category: category || 'Outros',
+                                    mediaType: 'text',
+                                    mediaUrl: '',
+                                    createdAt: new Date().toISOString(),
+                                    userId: user?.id || 'mock',
+                                    likeCount: 0,
+                                    saveCount: 0,
+                                    commentCount: 0,
+                                    views: 0,
+                                    isFeatured: false,
+                                    isHistorical: isHistorical,
+                                    isGoldenStandard: isGoldenStandard,
+                                    readingTime: 3,
+                                    tags: [],
+                                    avatarUrl: user?.user_metadata?.avatar_url
+                                } as PostDTO} 
+                            />
                         </div>
 
                         {/* Divisor Visual */}
@@ -99,12 +117,47 @@ export function DiagrammerLayout() {
                         </div>
 
                         {/* Corpo do Artigo Fictício (Post Completo) */}
-                        <div className="w-full bg-gray-900/40 rounded-[32px] p-8 lg:p-12 border border-gray-800">
-                            <h1 className="mb-12 text-4xl lg:text-5xl font-black text-white tracking-tight">{title || 'Sem Título'}</h1>
-                            <div className="flex flex-col gap-8">
-                                {blocks.map((block) => (
-                                    <BlockRenderer key={block.id} block={block} />
-                                ))}
+                        <div className="w-full max-w-5xl mx-auto bg-[#1E1E1E] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-gray-800 pointer-events-none mt-8">
+                            <div className="p-6 md:p-10 space-y-6">
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <span className="px-3 py-1 bg-gray-800 text-gray-300 rounded-full text-xs font-bold tracking-wide uppercase">
+                                        {category || 'Todos'}
+                                    </span>
+                                    {isGoldenStandard && (
+                                        <span className="px-3 py-1 bg-gradient-to-r from-brand-yellow via-brand-yellow/80 to-brand-yellow text-gray-900 rounded-full text-xs font-black tracking-wide uppercase">
+                                            Padrão Ouro
+                                        </span>
+                                    )}
+                                </div>
+
+                                <h1 className="text-3xl md:text-4xl font-display font-bold text-white leading-tight">
+                                    {title || 'Sem Título'}
+                                </h1>
+
+                                <div className="flex flex-col py-4 border-y border-gray-800">
+                                    <div className="flex items-center justify-between gap-4">
+                                        <div className="flex items-center gap-3">
+                                            <div className="size-10 rounded-full bg-brand-blue/20 flex items-center justify-center text-blue-400 font-bold text-xs uppercase shrink-0">
+                                                {(authors || user?.user_metadata?.full_name || 'A').substring(0, 2)}
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Autore(s)</span>
+                                                <span className="text-sm font-bold text-white">{authors || user?.user_metadata?.full_name || 'Autor(a)'}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div className="mt-8">
+                                    <h2 className="text-sm font-bold text-white mb-2 uppercase tracking-wide">Descrição</h2>
+                                    <div className="text-gray-400 leading-relaxed prose prose-lg prose-invert max-w-none">
+                                        <div className="flex flex-col gap-8">
+                                            {blocks.map((block) => (
+                                                <BlockRenderer key={block.id} block={block} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -146,14 +199,87 @@ export function DiagrammerLayout() {
 
                         {/* Editor Principal */}
                         <div className="bg-gray-900/60 border-brand-blue/30 shadow-[0_0_50px_rgba(15,71,128,0.2)] border rounded-[32px] p-6 lg:p-12 relative min-h-[500px]">
-                            <div className="mb-12 border-b border-brand-blue/30 pb-6">
+                            <div className="mb-12 border-b border-brand-blue/30 pb-6 flex flex-col gap-6">
                                 <input
                                     type="text"
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
                                     placeholder="Título da sua Contribuição Científica..."
-                                    className="w-full text-4xl lg:text-5xl font-black bg-transparent outline-none text-white placeholder-gray-400 tracking-tight"
+                                    className="w-full text-4xl lg:text-5xl font-black bg-transparent outline-none text-white placeholder-gray-500 tracking-tight"
                                 />
+                                <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
+                                    <div className="flex items-center gap-3 flex-1 w-full">
+                                        <div className="size-10 rounded-full bg-brand-blue/20 flex items-center justify-center text-brand-blue font-bold text-xs uppercase shrink-0">
+                                            <span className="material-symbols-outlined text-[20px]">person_edit</span>
+                                        </div>
+                                        <div className="flex flex-col flex-1 max-w-sm">
+                                            <div className="flex justify-between items-center mb-1">
+                                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Como você quer ser chamado(a)?</span>
+                                                <span className={`text-[10px] font-bold ${authors.length > 60 ? 'text-brand-red' : 'text-gray-600'}`}>{authors.length}/60</span>
+                                            </div>
+                                            <input
+                                                type="text"
+                                                value={authors}
+                                                maxLength={60}
+                                                onChange={(e) => setAuthors(e.target.value)}
+                                                placeholder={user?.user_metadata?.full_name || 'Seu Nome ou Pseudônimo'}
+                                                className="w-full bg-transparent border-b border-gray-700/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium placeholder-gray-600 transition-colors py-1"
+                                            />
+                                            {(mainName || pseudonyms.length > 0) && (
+                                                <div className="flex flex-wrap items-center gap-2 mt-2">
+                                                    {mainName && (
+                                                        <button 
+                                                            type="button"
+                                                            onClick={() => setAuthors(mainName)}
+                                                            className={`px-2 py-1 text-[9px] font-black uppercase rounded-md transition-colors border ${authors === mainName ? 'bg-brand-blue text-white border-brand-blue' : 'text-gray-500 border-gray-800 hover:border-brand-blue/50 hover:text-brand-blue'}`}
+                                                        >
+                                                            {mainName}
+                                                        </button>
+                                                    )}
+                                                    {pseudonyms.map(p => (
+                                                        <button 
+                                                            key={p.id}
+                                                            type="button"
+                                                            onClick={() => setAuthors(p.name)}
+                                                            className={`px-2 py-1 text-[9px] font-black uppercase rounded-md transition-colors border ${authors === p.name ? 'bg-brand-blue text-white border-brand-blue' : 'text-gray-500 border-gray-800 hover:border-brand-blue/50 hover:text-brand-blue'}`}
+                                                        >
+                                                            {p.name}
+                                                        </button>
+                                                    ))}
+                                                    <span className="text-[8px] text-gray-600 uppercase tracking-widest ml-1 hidden sm:inline">(Gerenciar apelidos no perfil)</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-6 w-full md:w-auto">
+                                        <div className="flex flex-col max-w-[200px] w-full">
+                                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Categoria</span>
+                                            <select 
+                                                value={category} 
+                                                onChange={(e) => setCategory(e.target.value)}
+                                                className="w-full bg-transparent border-b border-gray-700/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
+                                            >
+                                                <option value="" disabled className="bg-gray-900 text-gray-500">Selecione...</option>
+                                                {CATEGORIES.map(cat => (
+                                                    <option key={cat} value={cat} className="bg-gray-900 text-white">{cat}</option>
+                                                ))}
+                                            </select>
+                                        </div>
+
+                                        <div className="flex flex-col max-w-[120px] w-full">
+                                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Ano</span>
+                                            <input
+                                                type="number"
+                                                value={year}
+                                                onChange={(e) => setYear(e.target.value)}
+                                                min="1934"
+                                                max={new Date().getFullYear()}
+                                                className="w-full bg-transparent border-b border-gray-700/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             {/* Área de Inserção Inicial */}
