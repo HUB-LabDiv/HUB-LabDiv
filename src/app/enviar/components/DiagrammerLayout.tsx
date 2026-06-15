@@ -329,6 +329,63 @@ export function DiagrammerLayout() {
                         </div>
                     </div>
                 )}
+
+                    {/* Seção de Aceites e Lançamento (Fim da Página) */}
+                    <div className="flex flex-col gap-4 items-center w-full max-w-3xl mx-auto mt-24 mb-16">
+                        <div className="flex flex-col gap-4 bg-gray-900/40 backdrop-blur-md p-6 rounded-2xl border border-brand-blue/30 shadow-2xl w-full">
+                            
+                            {/* Guia de Boas Práticas */}
+                            <div className="flex flex-col gap-2">
+                                <span className="text-brand-blue text-[10px] font-bold uppercase tracking-wider">Documentação Legal</span>
+                                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3 max-h-32 overflow-y-auto text-[11px] text-gray-400 leading-relaxed custom-scrollbar">
+                                    <strong className="text-gray-200 block mb-1">Guia de Boas Práticas da Comunidade LabDiv</strong>
+                                    1. Respeito Mútuo: Mantenha um ambiente acolhedor e construtivo.<br/>
+                                    2. Rigor Científico: Todo conteúdo deve ser embasado e referenciado.<br/>
+                                    3. Acessibilidade: Evite jargões desnecessários; seja claro e didático.<br/>
+                                    4. Originalidade: O plágio não é tolerado. Dê crédito às fontes.<br/>
+                                    5. Responsabilidade: Você é responsável pelas afirmações que publica.
+                                </div>
+                                <label className="flex items-center gap-3 cursor-pointer group mt-2">
+                                    <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${readGuide ? 'bg-brand-blue border-brand-blue' : 'bg-gray-800 border-brand-blue/60 group-hover:border-brand-blue'}`}>
+                                        {readGuide && <span className="material-symbols-outlined text-white text-sm font-bold">check</span>}
+                                    </div>
+                                    <input type="checkbox" className="hidden" checked={readGuide} onChange={(e) => setReadGuide(e.target.checked)} />
+                                    <span className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">Li e concordo com o Guia</span>
+                                </label>
+                            </div>
+
+                            <div className="h-px w-full bg-gray-800 my-2"></div>
+
+                            {/* Licença CC-BY */}
+                            <div className="flex flex-col gap-2">
+                                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3 max-h-32 overflow-y-auto text-[11px] text-gray-400 leading-relaxed custom-scrollbar">
+                                    <strong className="text-gray-200 block mb-1">Licença Creative Commons Atribuição 4.0 Internacional (CC BY 4.0)</strong>
+                                    Ao licenciar sua contribuição sob a licença CC BY, você permite que outras pessoas distribuam, remixem, adaptem e criem a partir do seu trabalho, mesmo para fins comerciais, desde que lhe atribuam o devido crédito pela criação original.<br/><br/>
+                                    Você é livre para:<br/>
+                                    - Compartilhar: copiar e redistribuir o material em qualquer suporte ou formato.<br/>
+                                    - Adaptar: remixar, transformar e criar a partir do material para qualquer fim.<br/>
+                                    Sob os seguintes termos:<br/>
+                                    - Atribuição: Você deve dar o crédito apropriado, prover um link para a licença e indicar se mudanças foram feitas.
+                                </div>
+                                <label className="flex items-center gap-3 cursor-pointer group mt-2">
+                                    <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${acceptedCc ? 'bg-brand-red border-brand-red' : 'bg-gray-800 border-brand-red/60 group-hover:border-brand-red'}`}>
+                                        {acceptedCc && <span className="material-symbols-outlined text-white text-sm font-bold">check</span>}
+                                    </div>
+                                    <input type="checkbox" className="hidden" checked={acceptedCc} onChange={(e) => setAcceptedCc(e.target.checked)} />
+                                    <span className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">Aceito os termos da Licença CC-BY</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <button
+                            className="w-full flex items-center justify-center gap-2 px-8 py-5 mt-4 rounded-xl bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red text-white font-bold text-xl hover:opacity-90 transition-all shadow-[0_0_30px_rgba(255,204,0,0.3)] hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                            disabled={!readGuide || !acceptedCc}
+                            title={(!readGuide || !acceptedCc) ? "Você precisa aceitar os termos acima para continuar" : ""}
+                        >
+                            Lançar Conteúdo 🚀
+                        </button>
+                    </div>
+
             </main>
 
             {/* Coluna Direita: Pedagógico (Fixo) */}
@@ -346,62 +403,6 @@ export function DiagrammerLayout() {
                     </div>
                 </aside>
             )}
-
-            {/* Seção de Aceites e Lançamento (Fixa no Canto Inferior Direito) */}
-            <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-4 items-end pointer-events-none w-80 lg:w-96">
-                <div className="flex flex-col gap-4 bg-gray-900/95 backdrop-blur-xl p-5 rounded-2xl border border-gray-700 shadow-2xl pointer-events-auto w-full">
-                    
-                    {/* Guia de Boas Práticas */}
-                    <div className="flex flex-col gap-2">
-                        <span className="text-brand-blue text-[10px] font-bold uppercase tracking-wider">Documentação Legal</span>
-                        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3 max-h-24 overflow-y-auto text-[10px] text-gray-400 leading-relaxed custom-scrollbar">
-                            <strong className="text-gray-200 block mb-1">Guia de Boas Práticas da Comunidade LabDiv</strong>
-                            1. Respeito Mútuo: Mantenha um ambiente acolhedor e construtivo.<br/>
-                            2. Rigor Científico: Todo conteúdo deve ser embasado e referenciado.<br/>
-                            3. Acessibilidade: Evite jargões desnecessários; seja claro e didático.<br/>
-                            4. Originalidade: O plágio não é tolerado. Dê crédito às fontes.<br/>
-                            5. Responsabilidade: Você é responsável pelas afirmações que publica.
-                        </div>
-                        <label className="flex items-center gap-3 cursor-pointer group mt-1">
-                            <div className={`w-5 h-5 shrink-0 rounded flex items-center justify-center transition-colors border ${readGuide ? 'bg-brand-blue border-brand-blue' : 'bg-gray-800 border-brand-blue/60 group-hover:border-brand-blue'}`}>
-                                {readGuide && <span className="material-symbols-outlined text-white text-xs font-bold">check</span>}
-                            </div>
-                            <input type="checkbox" className="hidden" checked={readGuide} onChange={(e) => setReadGuide(e.target.checked)} />
-                            <span className="text-gray-200 text-xs font-medium group-hover:text-white transition-colors">Li e concordo com o Guia</span>
-                        </label>
-                    </div>
-
-                    <div className="h-px w-full bg-gray-800"></div>
-
-                    {/* Licença CC-BY */}
-                    <div className="flex flex-col gap-2">
-                        <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3 max-h-24 overflow-y-auto text-[10px] text-gray-400 leading-relaxed custom-scrollbar">
-                            <strong className="text-gray-200 block mb-1">Licença Creative Commons Atribuição 4.0 Internacional (CC BY 4.0)</strong>
-                            Ao licenciar sua contribuição sob a licença CC BY, você permite que outras pessoas distribuam, remixem, adaptem e criem a partir do seu trabalho, mesmo para fins comerciais, desde que lhe atribuam o devido crédito pela criação original.<br/><br/>
-                            Você é livre para:<br/>
-                            - Compartilhar: copiar e redistribuir o material em qualquer suporte ou formato.<br/>
-                            - Adaptar: remixar, transformar e criar a partir do material para qualquer fim.<br/>
-                            Sob os seguintes termos:<br/>
-                            - Atribuição: Você deve dar o crédito apropriado, prover um link para a licença e indicar se mudanças foram feitas.
-                        </div>
-                        <label className="flex items-center gap-3 cursor-pointer group mt-1">
-                            <div className={`w-5 h-5 shrink-0 rounded flex items-center justify-center transition-colors border ${acceptedCc ? 'bg-brand-red border-brand-red' : 'bg-gray-800 border-brand-red/60 group-hover:border-brand-red'}`}>
-                                {acceptedCc && <span className="material-symbols-outlined text-white text-xs font-bold">check</span>}
-                            </div>
-                            <input type="checkbox" className="hidden" checked={acceptedCc} onChange={(e) => setAcceptedCc(e.target.checked)} />
-                            <span className="text-gray-200 text-xs font-medium group-hover:text-white transition-colors">Aceito os termos da Licença CC-BY</span>
-                        </label>
-                    </div>
-                </div>
-
-                <button
-                    className="w-full flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red text-white font-bold text-lg hover:opacity-90 transition-all shadow-[0_0_30px_rgba(255,204,0,0.3)] hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed pointer-events-auto"
-                    disabled={!readGuide || !acceptedCc}
-                    title={(!readGuide || !acceptedCc) ? "Você precisa aceitar os termos acima para continuar" : ""}
-                >
-                    Lançar Conteúdo 🚀
-                </button>
-            </div>
 
         </div>
     );
