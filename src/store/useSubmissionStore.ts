@@ -11,25 +11,68 @@
 
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { Block, BlockType } from '@/app/enviar/schema';
 
-export type SubmissionStep = 'category' | 'format' | 'basic' | 'optional' | 'curator';
+export type SubmissionStep = 'category' | 'format' | 'basic' | 'optional' | 'curator' | 'diagrammer';
+
+const initialState = {
+    step: 'category' as SubmissionStep,
+    category: '',
+    title: 'Exemplo de Contribuição: A Dinâmica dos Buracos Negros',
+    authors: '',
+    description: '',
+    whatsapp: '',
+    blocks: [
+        {
+            id: 'mock-text-1',
+            type: 'text' as BlockType,
+            content: { text: 'Este é um exemplo de parágrafo introdutório. A divulgação científica é essencial para traduzir conceitos complexos para o público geral. Use blocos como este para narrar sua ideia.' }
+        },
+        {
+            id: 'mock-image-1',
+            type: 'image' as BlockType,
+            content: { url: '/labdiv-logo.png', caption: 'Figura 1: Exemplo de imagem (Logo do LabDiv).' }
+        },
+        {
+            id: 'mock-reflection-1',
+            type: 'reflection' as BlockType,
+            content: { question: 'Como esse conceito se aplica no seu dia a dia?' }
+        }
+    ],
+    activeBlockId: null,
+    previewMode: 'edit' as const,
+    
+    // Agreements
+    readGuide: false,
+    acceptedCc: false,
+
+    // Curator fields
+    isHistorical: false,
+    isGoldenStandard: false,
+    selectedDepartments: [],
+    selectedLaboratories: [],
+    selectedResearchers: [],
+    selectedResearchLines: [],
+    watchedValues: {}
+};
 
 interface SubmissionState {
     currentStep: SubmissionStep;
     category: string;
-    mediaType: 'image' | 'video' | 'pdf' | 'zip' | 'sdocx' | 'text' | 'audio' | '';
 
-    // Form fields
+    // Metadados básicos
     title: string;
     authors: string;
     description: string;
     whatsapp: string;
-    videoUrl: string;
-    externalLink: string;
-    technicalDetails: string;
-    altText: string;
-    testimonial: string;
-    selectedFiles: File[];
+
+    blocks: Block[];
+    activeBlockId: string | null;
+    previewMode: 'edit' | 'preview';
+
+    // Agreemenets
+    readGuide: boolean;
+    acceptedCc: boolean;
 
     // Curator fields
     isHistorical: boolean;
@@ -44,18 +87,23 @@ interface SubmissionState {
     setWatchedValues: (values: any) => void;
     setStep: (step: SubmissionStep) => void;
     setCategory: (category: string) => void;
-    setMediaType: (type: 'image' | 'video' | 'pdf' | 'zip' | 'sdocx' | 'text' | 'audio' | '') => void;
 
     setTitle: (title: string) => void;
     setAuthors: (authors: string) => void;
     setDescription: (description: string) => void;
     setWhatsapp: (whatsapp: string) => void;
-    setVideoUrl: (url: string) => void;
-    setExternalLink: (link: string) => void;
-    setTechnicalDetails: (details: string) => void;
-    setAltText: (text: string) => void;
-    setTestimonial: (text: string) => void;
-    setSelectedFiles: (files: File[]) => void;
+
+    // Block Setters
+    addBlock: (type: BlockType, content?: any, insertAfterId?: string) => void;
+    updateBlock: (id: string, content: any) => void;
+    removeBlock: (id: string) => void;
+    moveBlock: (id: string, direction: 'up' | 'down') => void;
+    setActiveBlock: (id: string | null) => void;
+    setPreviewMode: (mode: 'edit' | 'preview') => void;
+
+    // Agreements Setters
+    setReadGuide: (val: boolean) => void;
+    setAcceptedCc: (val: boolean) => void;
 
     // Curator Setters
     setIsHistorical: (val: boolean) => void;
@@ -72,24 +120,22 @@ interface SubmissionState {
 export const useSubmissionStore = create<SubmissionState>()(
     persist(
         (set) => ({
-            currentStep: 'category',
-            category: '',
-            mediaType: '',
+            currentStep: 'diagrammer',
+            category: initialState.category,
+            title: initialState.title,
+            authors: initialState.authors,
+            description: initialState.description,
+            whatsapp: initialState.whatsapp,
+            blocks: initialState.blocks,
+            activeBlockId: initialState.activeBlockId,
+            previewMode: initialState.previewMode,
 
-            title: '',
-            authors: '',
-            description: '',
-            whatsapp: '',
-            videoUrl: '',
-            externalLink: '',
-            technicalDetails: '',
-            altText: '',
-            testimonial: '',
-            selectedFiles: [],
+            readGuide: initialState.readGuide,
+            acceptedCc: initialState.acceptedCc,
 
-            isHistorical: false,
-            isGoldenStandard: false,
-            selectedDepartments: [],
+            isHistorical: initialState.isHistorical,
+            isGoldenStandard: initialState.isGoldenStandard,
+            selectedDepartments: initialState.selectedDepartments,
             selectedLaboratories: [],
             selectedResearchers: [],
             selectedResearchLines: [],
@@ -98,18 +144,60 @@ export const useSubmissionStore = create<SubmissionState>()(
             setWatchedValues: (values) => set({ watchedValues: values }),
             setStep: (step) => set({ currentStep: step }),
             setCategory: (category) => set({ category }),
-            setMediaType: (mediaType) => set({ mediaType }),
 
             setTitle: (title) => set({ title }),
             setAuthors: (authors) => set({ authors }),
             setDescription: (description) => set({ description }),
             setWhatsapp: (whatsapp) => set({ whatsapp }),
-            setVideoUrl: (videoUrl) => set({ videoUrl }),
-            setExternalLink: (externalLink) => set({ externalLink }),
-            setTechnicalDetails: (technicalDetails) => set({ technicalDetails }),
-            setAltText: (altText) => set({ altText }),
-            setTestimonial: (testimonial) => set({ testimonial }),
-            setSelectedFiles: (selectedFiles) => set({ selectedFiles }),
+
+            addBlock: (type, content = {}, insertAfterId) => set((state) => {
+                const newBlock: Block = {
+                    id: crypto.randomUUID(),
+                    type,
+                    content
+                };
+                
+                if (insertAfterId) {
+                    const index = state.blocks.findIndex(b => b.id === insertAfterId);
+                    if (index >= 0) {
+                        const newBlocks = [...state.blocks];
+                        newBlocks.splice(index + 1, 0, newBlock);
+                        return {
+                            blocks: newBlocks,
+                            activeBlockId: newBlock.id
+                        };
+                    }
+                }
+                
+                return {
+                    blocks: [...state.blocks, newBlock],
+                    activeBlockId: newBlock.id
+                };
+            }),
+            updateBlock: (id, content) => set((state) => ({
+                blocks: state.blocks.map(b => b.id === id ? { ...b, content: { ...b.content, ...content } } : b)
+            })),
+            removeBlock: (id) => set((state) => ({
+                blocks: state.blocks.filter(b => b.id !== id),
+                activeBlockId: state.activeBlockId === id ? null : state.activeBlockId
+            })),
+            moveBlock: (id, direction) => set((state) => {
+                const index = state.blocks.findIndex(b => b.id === id);
+                if (index < 0) return state;
+                if (direction === 'up' && index === 0) return state;
+                if (direction === 'down' && index === state.blocks.length - 1) return state;
+
+                const newBlocks = [...state.blocks];
+                const swapIndex = direction === 'up' ? index - 1 : index + 1;
+                [newBlocks[index], newBlocks[swapIndex]] = [newBlocks[swapIndex], newBlocks[index]];
+                
+                return { blocks: newBlocks };
+            }),
+            setActiveBlock: (id) => set({ activeBlockId: id }),
+            setPreviewMode: (mode) => set({ previewMode: mode }),
+
+            setReadGuide: (readGuide) => set({ readGuide }),
+            setAcceptedCc: (acceptedCc) => set({ acceptedCc }),
 
             setIsHistorical: (isHistorical) => set({ isHistorical }),
             setIsGoldenStandard: (isGoldenStandard) => set({ isGoldenStandard }),
@@ -119,19 +207,16 @@ export const useSubmissionStore = create<SubmissionState>()(
             setSelectedResearchLines: (selectedResearchLines) => set({ selectedResearchLines }),
 
             reset: () => set({
-                currentStep: 'category',
+                currentStep: 'diagrammer',
                 category: '',
-                mediaType: '',
                 title: '',
                 authors: '',
                 description: '',
                 whatsapp: '',
-                videoUrl: '',
-                externalLink: '',
-                technicalDetails: '',
-                altText: '',
-                testimonial: '',
-                selectedFiles: [],
+                blocks: [],
+                activeBlockId: null,
+                readGuide: false,
+                acceptedCc: false,
                 isHistorical: false,
                 isGoldenStandard: false,
                 selectedDepartments: [],
@@ -145,7 +230,10 @@ export const useSubmissionStore = create<SubmissionState>()(
             partialize: (state) => ({
                 currentStep: state.currentStep,
                 category: state.category,
-                mediaType: state.mediaType,
+                blocks: state.blocks,
+                title: state.title,
+                readGuide: state.readGuide,
+                acceptedCc: state.acceptedCc,
             }),
         }
     )

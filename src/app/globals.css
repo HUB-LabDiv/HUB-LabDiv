@@ -323,9 +323,14 @@ body::before {
     }
   }
 
-
-
-  @keyframes metallic-shine {
+  @keyframes marquee {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }  @keyframes metallic-shine {
     0% {
       background-position: -200% center;
     }
