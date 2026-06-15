@@ -31,13 +31,14 @@ interface MainLayoutWrapperProps {
     fullWidth?: boolean; // New prop for edge-to-edge fluid layouts
     userId?: string;
     rightSidebar?: React.ReactNode;
+    hideHeader?: boolean;
 }
 
 /**
  * Standardized structure for V4.0 Golden Master pages.
  * Ensures consistent padding, header, and footer mounting.
  */
-export function MainLayoutWrapper({ children, focusMode = false, wide = false, fullWidth = false, userId, rightSidebar }: MainLayoutWrapperProps) {
+export function MainLayoutWrapper({ children, focusMode = false, wide = false, fullWidth = false, userId, rightSidebar, hideHeader = false }: MainLayoutWrapperProps) {
     const { 
         isSidebarCollapsed, 
         isRightSidebarCollapsed, 
@@ -49,7 +50,7 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = false, f
 
     return (
         <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col">
-            <Header />
+            {!hideHeader && <Header />}
 
             {!focusMode ? (
                 <div className="flex-1 w-full max-w-[1920px] mx-auto flex justify-center">
