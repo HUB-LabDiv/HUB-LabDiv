@@ -29,7 +29,7 @@ export default function AudioBlock({ block, isActive }: { block: Block; isActive
 
                     <input 
                         type="url" 
-                        placeholder="Cole o link direto para o arquivo de áudio..."
+                        placeholder="Cole o link direto do Áudio, ou link de pasta do Drive (se arquivo > 10MB)..."
                         className="mt-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-brand-blue text-white text-sm w-3/4 text-center transition-colors hover:border-brand-blue/50"
                         value={audioUrl}
                         onChange={(e) => updateBlock(block.id, { url: e.target.value })}
@@ -38,12 +38,22 @@ export default function AudioBlock({ block, isActive }: { block: Block; isActive
                 </div>
             ) : (
                 <div className="relative group rounded-xl overflow-hidden bg-gray-900 border border-gray-800 p-6 flex flex-col items-center">
-                    <span className="material-symbols-outlined text-4xl text-brand-blue mb-4">graphic_eq</span>
-                    <audio 
-                        src={audioUrl} 
-                        controls 
-                        className="w-full max-w-md"
-                    />
+                    {audioUrl.includes('drive.google') ? (
+                        <div className="w-full h-32 flex flex-col items-center justify-center text-gray-400 bg-gray-800/30 rounded-lg">
+                            <span className="material-symbols-outlined text-4xl mb-2 text-blue-400">folder_zip</span>
+                            <span className="text-sm font-bold uppercase tracking-widest text-blue-400 mb-2">Pasta do Google Drive</span>
+                            <a href={audioUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-blue-400 underline-offset-4">Acessar Materiais (Upload &gt; 10MB)</a>
+                        </div>
+                    ) : (
+                        <>
+                            <span className="material-symbols-outlined text-4xl text-brand-blue mb-4">graphic_eq</span>
+                            <audio 
+                                src={audioUrl} 
+                                controls 
+                                className="w-full max-w-md"
+                            />
+                        </>
+                    )}
                     
                     {isActive && (
                         <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">

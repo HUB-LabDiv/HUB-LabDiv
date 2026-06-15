@@ -29,7 +29,7 @@ export default function PdfBlock({ block, isActive }: { block: Block; isActive: 
 
                     <input 
                         type="url" 
-                        placeholder="Cole o link direto para o arquivo .pdf..."
+                        placeholder="Cole o link do PDF, ou link de pasta do Drive (se arquivo > 10MB)..."
                         className="mt-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-red-500 text-white text-sm w-3/4 text-center transition-colors hover:border-red-500/50"
                         value={pdfUrl}
                         onChange={(e) => updateBlock(block.id, { url: e.target.value })}
@@ -37,12 +37,20 @@ export default function PdfBlock({ block, isActive }: { block: Block; isActive: 
                     />
                 </div>
             ) : (
-                <div className="relative group rounded-xl overflow-hidden bg-gray-900 border border-gray-800">
-                    <iframe 
-                        src={`${pdfUrl}#toolbar=0`} 
-                        className="w-full h-[500px]"
-                        title="PDF Viewer"
-                    />
+                <div className="relative group rounded-xl overflow-hidden bg-gray-900 border border-gray-800 h-[500px]">
+                    {pdfUrl.includes('drive.google') ? (
+                        <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 bg-gray-800/30">
+                            <span className="material-symbols-outlined text-4xl mb-2 text-red-500">folder_zip</span>
+                            <span className="text-sm font-bold uppercase tracking-widest text-red-500 mb-2">Pasta do Google Drive</span>
+                            <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-red-500 underline-offset-4">Acessar Materiais (Upload &gt; 10MB)</a>
+                        </div>
+                    ) : (
+                        <iframe 
+                            src={`${pdfUrl}#toolbar=0`} 
+                            className="w-full h-full"
+                            title="PDF Viewer"
+                        />
+                    )}
                     
                     {isActive && (
                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

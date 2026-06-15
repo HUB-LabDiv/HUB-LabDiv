@@ -43,6 +43,7 @@ export function InlineAddMenu({ insertAfterId }: InlineAddMenuProps) {
                             <MenuBtn icon="view_in_ar" label="Modelo 3D" onClick={() => handleAdd('3d_object')} />
                             <MenuBtn icon="language" label="Web Page" onClick={() => handleAdd('web_page')} />
                             <MenuBtn icon="picture_as_pdf" label="PDF" onClick={() => handleAdd('pdf')} />
+                            <MenuBtn icon="folder_zip" label="Drive" onClick={() => handleAdd('drive')} />
                             <MenuBtn icon="format_quote" label="Referências" onClick={() => handleAdd('reference')} />
                             <MenuBtn icon="shield_person" label="Comentários" onClick={() => handleAdd('notes')} />
                         </div>

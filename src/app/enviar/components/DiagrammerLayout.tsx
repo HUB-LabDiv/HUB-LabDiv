@@ -13,7 +13,7 @@ export function DiagrammerLayout() {
     const { 
         blocks, addBlock, setActiveBlock, activeBlockId, title, setTitle,
         authors, setAuthors, year, setYear,
-        readGuide, setReadGuide, acceptedCc, setAcceptedCc, previewMode,
+        readGuide, setReadGuide, acceptedCc, setAcceptedCc, previewMode, setPreviewMode,
         category, setCategory, isHistorical, isGoldenStandard
     } = useSubmissionStore();
 
@@ -62,6 +62,7 @@ export function DiagrammerLayout() {
                             <ToolboxButton icon="smart_display" label="Vídeo" onClick={() => addBlock('video')} colorClass="hover:bg-pink-500/20 hover:text-pink-400 hover:border-pink-500/30 text-gray-300" />
                             <ToolboxButton icon="language" label="Web Page" onClick={() => addBlock('web_page')} colorClass="hover:bg-teal-500/20 hover:text-teal-400 hover:border-teal-500/30 text-gray-300" />
                             <ToolboxButton icon="picture_as_pdf" label="PDF" onClick={() => addBlock('pdf')} colorClass="hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 text-gray-300" />
+                            <ToolboxButton icon="folder_zip" label="Pasta do Drive" onClick={() => addBlock('drive')} colorClass="hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/30 text-gray-300" />
                             <ToolboxButton icon="format_quote" label="Referências" onClick={() => addBlock('reference')} colorClass="hover:bg-gray-500/20 hover:text-gray-400 hover:border-gray-500/30 text-gray-300" />
                             <ToolboxButton icon="shield_person" label="Comentários Autoria" onClick={() => addBlock('notes')} colorClass="hover:bg-yellow-500/20 hover:text-yellow-400 hover:border-yellow-500/30 text-gray-300" />
                         </div>
@@ -71,10 +72,33 @@ export function DiagrammerLayout() {
 
             {/* Coluna Central: Canvas & Preview */}
             <main 
-                className={`w-full transition-all duration-500 mt-16 lg:mt-24 ${previewMode === 'edit' ? 'max-w-4xl' : 'max-w-3xl'} flex flex-col gap-12`}
+                className={`w-full transition-all duration-500 mt-0 ${previewMode === 'edit' ? 'max-w-4xl' : 'max-w-3xl'} flex flex-col gap-8`}
                 onClick={handleCanvasClick}
             >
-                
+                {/* Título Global da Ferramenta & Toggle de Modos */}
+                <div className="flex flex-col items-center justify-center text-center gap-6 animate-fade-in-up mt-8">
+                    <div className="flex flex-col gap-2">
+                        <h2 className="text-3xl font-black text-white uppercase tracking-tight">Plataforma de Lançamento</h2>
+                        <p className="text-sm text-gray-400">Aqui você pode diagramar seu post.</p>
+                    </div>
+
+                    {/* Seletor de Preview */}
+                    <div className="flex bg-gray-900/80 p-1.5 rounded-xl border border-gray-800 shadow-xl backdrop-blur-md">
+                        <button 
+                            onClick={() => setPreviewMode('edit')}
+                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all ${previewMode === 'edit' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                        >
+                            Edição
+                        </button>
+                        <button 
+                            onClick={() => setPreviewMode('preview')}
+                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all ${previewMode === 'preview' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                        >
+                            Preview
+                        </button>
+                    </div>
+                </div>
+
                 {/* 
                   ========== MODO PREVIEW ==========
                   Mostra Miniatura no topo + Página Completa logo abaixo 
@@ -104,7 +128,8 @@ export function DiagrammerLayout() {
                                     isGoldenStandard: isGoldenStandard,
                                     readingTime: 3,
                                     tags: [],
-                                    avatarUrl: user?.user_metadata?.avatar_url
+                                    avatarUrl: user?.user_metadata?.avatar_url,
+                                    status: 'published'
                                 } as PostDTO} 
                             />
                         </div>
@@ -170,10 +195,7 @@ export function DiagrammerLayout() {
                     <div className="flex flex-col w-full animate-fade-in-up">
                         
                         {/* Título de Cabeçalho na Coluna Central */}
-                        <div className="flex flex-col items-center justify-center text-center mb-8 gap-2">
-                            <h2 className="text-2xl font-black text-white uppercase tracking-tight">Plataforma de Lançamento</h2>
-                            <p className="text-sm text-gray-400">Aqui você pode diagramar seu post.</p>
-                        </div>
+                        {/* (Movido para o topo global) */}
 
                         {/* Card Horizontal de Dicas (V3) */}
                         <div className="w-full bg-gray-900/60 backdrop-blur-md border border-brand-yellow/30 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 mb-8 shadow-[0_0_30px_rgba(255,204,0,0.1)]">

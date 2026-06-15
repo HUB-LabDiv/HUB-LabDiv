@@ -29,7 +29,7 @@ export default function VideoBlock({ block, isActive }: { block: Block; isActive
 
                     <input 
                         type="url" 
-                        placeholder="Cole um link do YouTube ou arquivo MP4..."
+                        placeholder="Cole um link de Vídeo, ou link de pasta do Drive (se arquivo > 10MB)..."
                         className="mt-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-purple-500 text-white text-sm w-3/4 text-center transition-colors hover:border-purple-500/50"
                         value={videoUrl}
                         onChange={(e) => updateBlock(block.id, { url: e.target.value })}
@@ -38,7 +38,13 @@ export default function VideoBlock({ block, isActive }: { block: Block; isActive
                 </div>
             ) : (
                 <div className="relative group rounded-xl overflow-hidden bg-black border border-gray-800">
-                    {videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be') ? (
+                    {videoUrl.includes('drive.google') ? (
+                        <div className="w-full h-48 flex flex-col items-center justify-center text-gray-400 bg-gray-800/30">
+                            <span className="material-symbols-outlined text-4xl mb-2 text-purple-500">folder_zip</span>
+                            <span className="text-sm font-bold uppercase tracking-widest text-purple-500 mb-2">Pasta do Google Drive</span>
+                            <a href={videoUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-purple-500 underline-offset-4">Acessar Materiais (Upload &gt; 10MB)</a>
+                        </div>
+                    ) : videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be') ? (
                         <iframe 
                             className="w-full aspect-video"
                             src={videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/')}

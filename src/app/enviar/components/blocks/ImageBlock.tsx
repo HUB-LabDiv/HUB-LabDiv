@@ -35,7 +35,7 @@ export default function ImageBlock({ block, isActive }: ImageBlockProps) {
 
                     <input 
                         type="url" 
-                        placeholder="Cole a URL de uma imagem da internet..."
+                        placeholder="Cole a URL, ou link de pasta do Drive (se arquivo > 10MB)..."
                         className="mt-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-brand-yellow text-white text-sm w-3/4 text-center transition-colors hover:border-brand-blue/50"
                         value={imageUrl}
                         onChange={(e) => updateBlock(block.id, { url: e.target.value })}
@@ -43,9 +43,17 @@ export default function ImageBlock({ block, isActive }: ImageBlockProps) {
                     />
                 </div>
             ) : (
-                <div className="relative group rounded-xl overflow-hidden bg-gray-900">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={imageUrl} alt={altText} className="w-full h-auto max-h-[400px] object-contain" />
+                <div className="relative group rounded-xl overflow-hidden bg-gray-900 border border-gray-800">
+                    {imageUrl.includes('drive.google') ? (
+                        <div className="w-full h-48 flex flex-col items-center justify-center text-gray-400 bg-gray-800/30">
+                            <span className="material-symbols-outlined text-4xl mb-2 text-brand-blue">folder_zip</span>
+                            <span className="text-sm font-bold uppercase tracking-widest text-brand-blue mb-2">Pasta do Google Drive</span>
+                            <a href={imageUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-brand-blue underline-offset-4">Acessar Materiais (Upload &gt; 10MB)</a>
+                        </div>
+                    ) : (
+                        /* eslint-disable-next-line @next/next/no-img-element */
+                        <img src={imageUrl} alt={altText} className="w-full h-auto max-h-[400px] object-contain" />
+                    )}
                     
                     {isActive && (
                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">

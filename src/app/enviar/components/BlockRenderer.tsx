@@ -14,6 +14,7 @@ import PdfBlock from './blocks/PdfBlock';
 import NotesBlock from './blocks/NotesBlock';
 import ContextBlock from './blocks/ContextBlock';
 import ReferenceBlock from './blocks/ReferenceBlock';
+import DriveBlock from './blocks/DriveBlock';
 
 interface BlockRendererProps {
     block: Block;
@@ -45,6 +46,7 @@ export function BlockRenderer({ block }: BlockRendererProps) {
             case 'pdf': return <PdfBlock block={block} isActive={isActive} />;
             case 'notes': return <NotesBlock block={block} isActive={isActive} />;
             case 'reference': return <ReferenceBlock block={block} isActive={isActive} />;
+            case 'drive': return <DriveBlock block={block} isActive={isActive} />;
             case 'context_history': 
             case 'context_social': 
             case 'context_political': return <ContextBlock block={block} isActive={isActive} />;
