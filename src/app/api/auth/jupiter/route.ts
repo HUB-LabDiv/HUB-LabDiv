@@ -276,6 +276,10 @@ export async function POST(req: NextRequest) {
             }
         }
 
+        if (!user) {
+            throw new Error('Falha ao obter dados do usuário na sessão.');
+        }
+
         // 7. Process scraped subjects and fetch names
         const scrapedCodes = Array.from(new Set(subjectsScraped.map(s => s.code)));
         const courseNames = new Map<string, string>();
