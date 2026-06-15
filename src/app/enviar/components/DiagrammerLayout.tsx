@@ -62,7 +62,7 @@ export function DiagrammerLayout() {
                                     <div className="w-8 h-8 rounded-full bg-brand-yellow/20 flex items-center justify-center overflow-hidden">
                                         <span className="material-symbols-outlined text-brand-yellow text-sm">person</span>
                                     </div>
-                                    <span className="text-sm font-bold text-white">{user?.displayName || 'Autor(a)'}</span>
+                                    <span className="text-sm font-bold text-white">{user?.user_metadata?.full_name || user?.user_metadata?.name || 'Autor(a)'}</span>
                                 </div>
                                 <div className="px-3 py-1 rounded-full bg-brand-blue/20 text-brand-blue text-[10px] font-bold uppercase tracking-wider">
                                     Página Completa
