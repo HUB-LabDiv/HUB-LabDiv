@@ -54,11 +54,11 @@ const nextConfig: NextConfig = {
       font-src 'self' data: https://fonts.gstatic.com;
       connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.vercel.app https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms https://*.bing.com https://*.visualstudio.com;
       media-src 'self' https://*.supabase.co https://res.cloudinary.com https://*.youtube.com;
-      frame-src 'self' https://*.youtube.com https://*.youtube-nocookie.com;
+      frame-src * data: blob: 'unsafe-inline';
       object-src 'none';
       base-uri 'self';
       form-action 'self';
-      frame-ancestors 'none';
+      frame-ancestors 'self';
       block-all-mixed-content;
       upgrade-insecure-requests;
     `.replace(/\s{2,}/g, ' ').trim();
@@ -77,7 +77,7 @@ const nextConfig: NextConfig = {
           },
           {
             key: 'X-Frame-Options',
-            value: 'DENY',
+            value: 'SAMEORIGIN',
           },
           {
             key: 'X-Content-Type-Options',

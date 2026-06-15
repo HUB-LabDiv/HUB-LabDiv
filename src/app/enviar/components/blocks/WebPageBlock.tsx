@@ -31,7 +31,7 @@ export default function WebPageBlock({ block, isActive }: WebPageBlockProps) {
             {isActive && (
                 <div className="flex flex-col gap-4 p-4 bg-gray-900/40 rounded-xl border border-gray-800">
                     <div className="flex flex-col gap-1">
-                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">URL da Página ou Link do Drive</label>
+                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">URL da Página ou Link do Drive com os arquivos</label>
                         <input
                             type="text"
                             value={url}

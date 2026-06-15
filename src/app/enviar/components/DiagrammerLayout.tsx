@@ -60,7 +60,6 @@ export function DiagrammerLayout() {
                             <ToolboxButton icon="view_in_ar" label="Modelo 3D" onClick={() => addBlock('3d_object')} colorClass="hover:bg-brand-yellow/20 hover:text-brand-yellow hover:border-brand-yellow/30 text-gray-300" />
                             <ToolboxButton icon="mic" label="Áudio" onClick={() => addBlock('audio')} colorClass="hover:bg-purple-500/20 hover:text-purple-400 hover:border-purple-500/30 text-gray-300" />
                             <ToolboxButton icon="smart_display" label="Vídeo" onClick={() => addBlock('video')} colorClass="hover:bg-pink-500/20 hover:text-pink-400 hover:border-pink-500/30 text-gray-300" />
-                            <ToolboxButton icon="sports_esports" label="Jogo Web" onClick={() => addBlock('web_game')} colorClass="hover:bg-green-500/20 hover:text-green-400 hover:border-green-500/30 text-gray-300" />
                             <ToolboxButton icon="language" label="Web Page" onClick={() => addBlock('web_page')} colorClass="hover:bg-teal-500/20 hover:text-teal-400 hover:border-teal-500/30 text-gray-300" />
                             <ToolboxButton icon="picture_as_pdf" label="PDF" onClick={() => addBlock('pdf')} colorClass="hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 text-gray-300" />
                             <ToolboxButton icon="edit_note" label="Anotações" onClick={() => addBlock('notes')} colorClass="hover:bg-yellow-500/20 hover:text-yellow-400 hover:border-yellow-500/30 text-gray-300" />

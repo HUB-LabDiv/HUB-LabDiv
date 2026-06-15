@@ -1,12 +1,12 @@
 /*!
- * Hub de Comunicação Científica Lab-Div V3.0
- * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
- * * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
- * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
- * publicada pela Free Software Foundation.
+ * Hub de Comunicação Científica Lab - Div V3.0
+    * Copyright(C) 2026 João Paulo Stangorlini de Carvalho
+        * * Este programa é software livre: você pode redistribuí - lo e / ou modificá - lo
+            * sob os termos da Licença Pública Geral Affero GNU(AGPLv3) conforme
+                * publicada pela Free Software Foundation.
  * * Este programa é distribuído na esperança de que seja útil, mas SEM
- * QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
- * ou ADEQUAÇÃO A UM DETERMINADO FIM.
+    * QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
+        * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
 import { supabase } from '@/lib/supabase';
@@ -44,7 +44,7 @@ import { institutoData } from '@/data/institutoData';
 async function getSubmission(id: string) {
     // 1. Try Supabase if ID is UUID-like
     const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
-    
+
     if (isUUID) {
         const { data, error } = await supabase
             .from('submissions')
@@ -245,7 +245,7 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                     <main id="main-content" className="flex-1 max-w-5xl mx-auto w-full py-8 sm:py-12 px-4 outline-none">
                         <ViewTracker submissionId={submission.id} />
                         {user?.id && <ReadingHistoryTracker submissionId={submission.id} userId={user.id} />}
-                        
+
                         <Breadcrumbs items={breadcrumbItems} />
 
                         {/* ─── Card de Introdução ao Índice (Hierarquia: 2º após Fogo) ─── */}
@@ -378,21 +378,21 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                         const renderWithTooltips = (content: any): any => {
                                                             if (typeof content === 'string') {
                                                                 if (!palavrasGeradoras || palavrasGeradoras.length === 0) return content;
-                                                                
+
                                                                 const sortedWords = [...palavrasGeradoras].sort((a, b) => b.termo.length - a.termo.length);
                                                                 const pattern = new RegExp(`\\b(${sortedWords.map(w => w.termo.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\b`, 'gi');
-                                                                
+
                                                                 const parts = [];
                                                                 let lastIndex = 0;
                                                                 let match: RegExpExecArray | null;
-                                                                
+
                                                                 while ((match = pattern.exec(content)) !== null) {
                                                                     const currentMatch = match; // Local copy for better type inference
                                                                     parts.push(content.substring(lastIndex, currentMatch.index));
                                                                     const word = sortedWords.find(w => w.termo.toLowerCase() === currentMatch[0].toLowerCase());
                                                                     if (word) {
                                                                         parts.push(
-                                                                            <TranslationalTooltip 
+                                                                            <TranslationalTooltip
                                                                                 key={`${word.id}-${match.index}`}
                                                                                 term={word.termo}
                                                                                 academicDefinition={word.codificacao_academica}
@@ -409,18 +409,18 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                                 parts.push(content.substring(lastIndex));
                                                                 return parts;
                                                             }
-                                                            
+
                                                             if (React.isValidElement(content)) {
                                                                 const element = content as React.ReactElement<any>;
                                                                 return React.cloneElement(element, {
                                                                     children: React.Children.map(element.props.children, renderWithTooltips)
                                                                 });
                                                             }
-                                                            
+
                                                             if (Array.isArray(content)) {
                                                                 return content.map((child, i) => <React.Fragment key={i}>{renderWithTooltips(child)}</React.Fragment>);
                                                             }
-                                                            
+
                                                             return content;
                                                         };
 
@@ -430,7 +430,7 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                                     {renderWithTooltips(children)}
                                                                 </p>
                                                                 {reflection && (
-                                                                    <BalloonReflexao 
+                                                                    <BalloonReflexao
                                                                         reflexaoId={reflection.id}
                                                                         ancoraId={`reflexao-${id}`}
                                                                         pergunta={reflection.pergunta_provocadora}
@@ -492,9 +492,9 @@ export default async function ArquivoItemPage({ params }: PageProps) {
 
                         {/* Content Rating */}
                         <div className="mt-8 mb-12 w-full">
-                            <ContentRating 
-                                postId={submission.id} 
-                                contentFormat={submission.content_format || (submission.media_type === 'video' ? 'video' : submission.media_type === 'image' ? 'image' : 'text')} 
+                            <ContentRating
+                                postId={submission.id}
+                                contentFormat={submission.content_format || (submission.media_type === 'video' ? 'video' : submission.media_type === 'image' ? 'image' : 'text')}
                             />
                         </div>
 

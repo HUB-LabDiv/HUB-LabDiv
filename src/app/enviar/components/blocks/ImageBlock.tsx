@@ -1,6 +1,7 @@
 import React from 'react';
 import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
+import { CloudinaryUploader } from './CloudinaryUploader';
 
 interface ImageBlockProps {
     block: Block;
@@ -15,13 +16,27 @@ export default function ImageBlock({ block, isActive }: ImageBlockProps) {
     return (
         <div className="flex flex-col gap-4">
             {!imageUrl ? (
-                <div className="w-full h-48 border-2 border-dashed border-gray-700/50 rounded-xl flex flex-col items-center justify-center text-gray-500 hover:text-brand-blue hover:border-brand-blue/50 transition-colors cursor-pointer bg-gray-900/50">
+                <div className="w-full min-h-[12rem] border-2 border-dashed border-gray-700/50 rounded-xl flex flex-col items-center justify-center text-gray-500 transition-colors bg-gray-900/50 p-6">
                     <span className="material-symbols-outlined text-4xl mb-2">add_photo_alternate</span>
-                    <span className="text-sm font-medium">Clique para Adicionar Imagem</span>
+                    <span className="text-sm font-medium mb-4">Adicione uma Imagem</span>
+                    
+                    <CloudinaryUploader 
+                        accept="image/*"
+                        label="Upload de Imagem"
+                        icon="add_photo_alternate"
+                        onUploadSuccess={(url) => updateBlock(block.id, { url })}
+                    />
+                    
+                    <div className="flex items-center gap-4 w-3/4 mt-4 opacity-50">
+                        <div className="flex-1 h-px bg-gray-600"></div>
+                        <span className="text-xs uppercase tracking-widest font-bold">OU</span>
+                        <div className="flex-1 h-px bg-gray-600"></div>
+                    </div>
+
                     <input 
                         type="url" 
-                        placeholder="Ou cole a URL da imagem aqui..."
-                        className="mt-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-brand-yellow text-white text-sm w-3/4 text-center"
+                        placeholder="Cole a URL de uma imagem da internet..."
+                        className="mt-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-brand-yellow text-white text-sm w-3/4 text-center transition-colors hover:border-brand-blue/50"
                         value={imageUrl}
                         onChange={(e) => updateBlock(block.id, { url: e.target.value })}
                         onClick={(e) => e.stopPropagation()}

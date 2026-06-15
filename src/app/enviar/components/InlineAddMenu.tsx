@@ -41,7 +41,6 @@ export function InlineAddMenu({ insertAfterId }: InlineAddMenuProps) {
                             <MenuBtn icon="smart_display" label="Vídeo" onClick={() => handleAdd('video')} />
                             <MenuBtn icon="mic" label="Áudio" onClick={() => handleAdd('audio')} />
                             <MenuBtn icon="view_in_ar" label="Modelo 3D" onClick={() => handleAdd('3d_object')} />
-                            <MenuBtn icon="sports_esports" label="Jogo Web" onClick={() => handleAdd('web_game')} />
                             <MenuBtn icon="language" label="Web Page" onClick={() => handleAdd('web_page')} />
                             <MenuBtn icon="picture_as_pdf" label="PDF" onClick={() => handleAdd('pdf')} />
                             <MenuBtn icon="edit_note" label="Anotações" onClick={() => handleAdd('notes')} />
