@@ -255,9 +255,9 @@ export function JupiterSyncModal({ isOpen, onClose, onSuccess }: JupiterSyncModa
                                 </button>
                             </form>
 
-                            <div className="mt-8 pt-6 border-t border-white/5 flex items-start gap-3 opacity-60">
-                                <Lock className="w-4 h-4 text-gray-500 shrink-0 mt-0.5" />
-                                <p className="text-[10px] text-gray-500 leading-tight">
+                            <div className="mt-8 pt-6 border-t border-white/5 flex items-start gap-3">
+                                <Lock className="w-4 h-4 text-brand-yellow shrink-0 mt-0.5" />
+                                <p className="text-xs sm:text-sm text-gray-400 leading-relaxed">
                                     Sua senha não é armazenada. O sistema a utiliza apenas nesta sessão para comunicação segura com os servidores da USP.
                                 </p>
                             </div>

@@ -204,55 +204,77 @@ export async function POST(req: NextRequest) {
         await browser.close();
 
         // 5. Create or Authenticate User via Supabase Admin
-        // Check if user exists first to decide whether to create
-        const { data: existingUserObj, error: existingError } = await supabaseAdmin.auth.admin.listUsers();
-        let userAuthInfo = existingUserObj?.users.find(u => u.email === emailToUse);
-
-        if (!userAuthInfo) {
-            const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
-                email: emailToUse,
-                password: generatedPassword,
-                email_confirm: true,
-                user_metadata: {
-                    nUsp: nUsp,
-                    name: userData.name,
-                    course: userData.jupiterWebCourse,
-                    institute: userData.jupiterWebInstitute,
-                    full_name: userData.name,
-                    is_usp: true
-                }
-            });
-
-            if (createError && !createError.message.includes('already exists')) {
-                throw createError;
-            }
-            userAuthInfo = newUser?.user || undefined;
-        } else {
-            // User exists (maybe from Google OAuth). We must set their password so signInWithPassword works.
-            await supabaseAdmin.auth.admin.updateUserById(userAuthInfo.id, {
-                password: generatedPassword,
-                user_metadata: {
-                    ...userAuthInfo.user_metadata,
-                    nUsp: nUsp,
-                    course: userData.jupiterWebCourse,
-                    institute: userData.jupiterWebInstitute,
-                    is_usp: true
-                }
-            });
-        }
-
-        // 6. Sign In the user directly (This generates Next.js cookies containing their session)
         const supabase = await createServerSupabase();
-        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-            email: emailToUse,
-            password: generatedPassword,
-        });
+        const { data: { user: currentUser } } = await supabase.auth.getUser();
+        let user = currentUser;
 
-        if (authError) {
-            throw new Error(`Erro ao gerar sessão local: ${authError.message}`);
+        if (currentUser) {
+            // Update metadata for existing logged in user
+            await supabaseAdmin.auth.admin.updateUserById(currentUser.id, {
+                user_metadata: {
+                    ...currentUser.user_metadata,
+                    nUsp: nUsp,
+                    course: userData.jupiterWebCourse,
+                    institute: userData.jupiterWebInstitute,
+                    is_usp: true
+                }
+            });
+        } else {
+            // User not logged in, search in profiles table
+            const { data: existingProfile } = await supabaseAdmin
+                .from('profiles')
+                .select('id')
+                .eq('email', emailToUse)
+                .maybeSingle();
+
+            let userAuthInfo;
+            if (existingProfile) {
+                userAuthInfo = { id: existingProfile.id, email: emailToUse } as any;
+                // Update their metadata and password
+                await supabaseAdmin.auth.admin.updateUserById(existingProfile.id, {
+                    password: generatedPassword,
+                    user_metadata: {
+                        nUsp: nUsp,
+                        course: userData.jupiterWebCourse,
+                        institute: userData.jupiterWebInstitute,
+                        is_usp: true
+                    }
+                });
+            } else {
+                // Create user
+                const { data: newUser, error: createError } = await supabaseAdmin.auth.admin.createUser({
+                    email: emailToUse,
+                    password: generatedPassword,
+                    email_confirm: true,
+                    user_metadata: {
+                        nUsp: nUsp,
+                        name: userData.name,
+                        course: userData.jupiterWebCourse,
+                        institute: userData.jupiterWebInstitute,
+                        full_name: userData.name,
+                        is_usp: true
+                    }
+                });
+
+                if (createError) {
+                    throw createError;
+                }
+                userAuthInfo = newUser?.user || undefined;
+            }
+
+            // Sign in to create local session cookies
+            if (userAuthInfo) {
+                const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
+                    email: emailToUse,
+                    password: generatedPassword,
+                });
+
+                if (authError) {
+                    throw new Error(`Erro ao gerar sessão local: ${authError.message}`);
+                }
+                user = authData.user;
+            }
         }
-
-        const user = authData.user;
 
         // 7. Process scraped subjects and fetch names
         const scrapedCodes = Array.from(new Set(subjectsScraped.map(s => s.code)));
