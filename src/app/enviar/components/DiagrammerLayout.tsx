@@ -62,7 +62,8 @@ export function DiagrammerLayout() {
                             <ToolboxButton icon="smart_display" label="Vídeo" onClick={() => addBlock('video')} colorClass="hover:bg-pink-500/20 hover:text-pink-400 hover:border-pink-500/30 text-gray-300" />
                             <ToolboxButton icon="language" label="Web Page" onClick={() => addBlock('web_page')} colorClass="hover:bg-teal-500/20 hover:text-teal-400 hover:border-teal-500/30 text-gray-300" />
                             <ToolboxButton icon="picture_as_pdf" label="PDF" onClick={() => addBlock('pdf')} colorClass="hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 text-gray-300" />
-                            <ToolboxButton icon="edit_note" label="Anotações" onClick={() => addBlock('notes')} colorClass="hover:bg-yellow-500/20 hover:text-yellow-400 hover:border-yellow-500/30 text-gray-300" />
+                            <ToolboxButton icon="format_quote" label="Referências" onClick={() => addBlock('reference')} colorClass="hover:bg-gray-500/20 hover:text-gray-400 hover:border-gray-500/30 text-gray-300" />
+                            <ToolboxButton icon="shield_person" label="Comentários Autoria" onClick={() => addBlock('notes')} colorClass="hover:bg-yellow-500/20 hover:text-yellow-400 hover:border-yellow-500/30 text-gray-300" />
                         </div>
                     </div>
                 </aside>

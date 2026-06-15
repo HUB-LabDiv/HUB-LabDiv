@@ -13,6 +13,7 @@ import WebPageBlock from './blocks/WebPageBlock';
 import PdfBlock from './blocks/PdfBlock';
 import NotesBlock from './blocks/NotesBlock';
 import ContextBlock from './blocks/ContextBlock';
+import ReferenceBlock from './blocks/ReferenceBlock';
 
 interface BlockRendererProps {
     block: Block;
@@ -43,6 +44,7 @@ export function BlockRenderer({ block }: BlockRendererProps) {
             case 'web_page': return <WebPageBlock block={block} isActive={isActive} />;
             case 'pdf': return <PdfBlock block={block} isActive={isActive} />;
             case 'notes': return <NotesBlock block={block} isActive={isActive} />;
+            case 'reference': return <ReferenceBlock block={block} isActive={isActive} />;
             case 'context_history': 
             case 'context_social': 
             case 'context_political': return <ContextBlock block={block} isActive={isActive} />;
