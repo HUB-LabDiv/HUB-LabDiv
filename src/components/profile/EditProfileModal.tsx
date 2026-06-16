@@ -18,7 +18,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'react-hot-toast';
-import { Loader2, X, User, FileText, Globe, Link as LinkIcon, Building2, ShieldCheck, Star, Mail, Phone, FileUp, Info, Users, Microscope, Briefcase, Zap, Github, Linkedin, Youtube, Instagram } from 'lucide-react';
+import { Loader2, X, User, FileText, Globe, Link as LinkIcon, Building2, ShieldCheck, Star, Mail, Phone, FileUp, Info, Users, Microscope, Briefcase, Zap, Github, Linkedin, Youtube, Instagram, MessageSquare } from 'lucide-react';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { updateProfile, getProfileWithPseudonyms, uploadEnrollmentProof, updateProfileAsAdmin } from '@/app/actions/profiles';
 import { getUserPseudonyms, createPseudonym } from '@/app/actions/submissions';
@@ -59,6 +59,7 @@ const profileSchema = z.object({
     user_category: z.enum(['curioso', 'licenciatura', 'bacharelado', 'pos_graduacao', 'docente_pesquisador', 'aluno_usp', 'pesquisador']).default('curioso'),
     seeking_assistant: z.boolean().default(false),
     interest_area: z.string().max(100).optional(),
+    cultural_language: z.enum(['nerd_geek', 'artistica', 'jovem', 'academica']).default('jovem'),
 }).superRefine((data, ctx) => {
     const isUsp = data.email?.endsWith('@usp.br') || data.email?.endsWith('@if.usp.br');
     if (isUsp) {
@@ -247,6 +248,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
             setValue('is_labdiv', profile.is_labdiv || false);
             setValue('is_visible', profile.is_visible ?? true);
             setValue('user_category', profile.user_category || 'curioso');
+            setValue('cultural_language', profile.cultural_language || 'jovem');
             setValue('seeking_assistant', profile.seeking_assistant || false);
             setValue('research_line', profile.research_line || '');
             setValue('office_room', profile.office_room || '');
@@ -444,6 +446,24 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                         <div className="space-y-4">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 flex items-center gap-2">
+                                    <MessageSquare className="w-3 h-3" /> Qual a sua linguagem?
+                                </label>
+                                <select
+                                    {...register('cultural_language')}
+                                    className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all cursor-pointer font-bold text-gray-900 dark:text-white uppercase tracking-tight"
+                                >
+                                    <option value="jovem">Jovem</option>
+                                    <option value="nerd_geek">Nerd/Geek</option>
+                                    <option value="artistica">Artística</option>
+                                    <option value="academica">Acadêmica</option>
+                                </select>
+                                <p className="text-[13px] text-gray-300 dark:text-white/90 font-medium ml-1 leading-tight mt-1">
+                                    A plataforma traduz termos complexos para a sua linguagem, para que todos entendam a língua da ciência!
+                                </p>
+                            </div>
+
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 flex items-center gap-2">
                                     <Users className="w-3 h-3" /> Sua Categoria
                                 </label>
                                 {adminMode ? (
@@ -572,12 +592,12 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">
                                     Redes Sociais
                                 </label>
-                                
+
                                 {activeNetworks.map(netId => {
                                     const network = SOCIAL_NETWORKS.find(n => n.id === netId)!;
                                     const Icon = network.icon;
                                     const errorMsg = (errors as any)[netId]?.message;
-                                    
+
                                     return (
                                         <div key={netId} className="flex flex-col gap-1 animate-in fade-in slide-in-from-top-2">
                                             <div className="flex items-center gap-2">
@@ -754,7 +774,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                     <h3 className="text-[10px] font-black text-brand-blue uppercase tracking-[0.2em] flex items-center gap-2">
                                         <Zap className="w-3 h-3" /> Protocolos USP
                                     </h3>
-                                    
+
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="space-y-2">
                                             <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Instituto</label>
@@ -766,26 +786,26 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                                 {institutes.map(inst => <option key={inst} value={inst}>{inst}</option>)}
                                             </select>
                                         </div>
-                                    <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Curso</label>
-                                        {selectedInstitute === 'IF-USP' ? (
-                                            <select
-                                                {...register('course')}
-                                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all appearance-none cursor-pointer font-bold"
-                                            >
-                                                <option value="" disabled>Selecione seu curso</option>
-                                                <option value="Bacharelado em Física">Bacharelado em Física</option>
-                                                <option value="Licenciatura em Física">Licenciatura em Física</option>
-                                                <option value="Física Médica">Física Médica</option>
-                                            </select>
-                                        ) : (
-                                            <input
-                                                {...register('course')}
-                                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all font-bold"
-                                                placeholder="Ex: Bacharelado em Matemática"
-                                            />
-                                        )}
-                                    </div>
+                                        <div className="space-y-2">
+                                            <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Curso</label>
+                                            {selectedInstitute === 'IF-USP' ? (
+                                                <select
+                                                    {...register('course')}
+                                                    className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all appearance-none cursor-pointer font-bold"
+                                                >
+                                                    <option value="" disabled>Selecione seu curso</option>
+                                                    <option value="Bacharelado em Física">Bacharelado em Física</option>
+                                                    <option value="Licenciatura em Física">Licenciatura em Física</option>
+                                                    <option value="Física Médica">Física Médica</option>
+                                                </select>
+                                            ) : (
+                                                <input
+                                                    {...register('course')}
+                                                    className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all font-bold"
+                                                    placeholder="Ex: Bacharelado em Matemática"
+                                                />
+                                            )}
+                                        </div>
                                     </div>
 
                                     <div className="space-y-2">
@@ -813,13 +833,12 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                                     type="button"
                                                     disabled={!canMentor}
                                                     onClick={() => { if (canMentor) { setValue('available_to_mentor', !isMentor); if (!isMentor) setValue('seeking_mentor', false); } }}
-                                                    className={`relative overflow-hidden p-4 rounded-2xl border-2 transition-all text-left ${
-                                                        !canMentor
-                                                            ? 'opacity-40 cursor-not-allowed border-gray-700 bg-gray-900/30'
-                                                            : isMentor
-                                                                ? 'border-brand-blue bg-brand-blue/10 shadow-lg shadow-brand-blue/20 scale-[1.02]'
-                                                                : 'border-gray-700 hover:border-brand-blue/50 bg-white/[0.02] hover:bg-brand-blue/5 cursor-pointer'
-                                                    }`}
+                                                    className={`relative overflow-hidden p-4 rounded-2xl border-2 transition-all text-left ${!canMentor
+                                                        ? 'opacity-40 cursor-not-allowed border-gray-700 bg-gray-900/30'
+                                                        : isMentor
+                                                            ? 'border-brand-blue bg-brand-blue/10 shadow-lg shadow-brand-blue/20 scale-[1.02]'
+                                                            : 'border-gray-700 hover:border-brand-blue/50 bg-white/[0.02] hover:bg-brand-blue/5 cursor-pointer'
+                                                        }`}
                                                 >
                                                     {isMentor && <div className="absolute inset-0 bg-gradient-to-br from-brand-blue/20 to-transparent pointer-events-none" />}
                                                     <div className="relative z-10 space-y-2">
@@ -837,11 +856,10 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                                 <button
                                                     type="button"
                                                     onClick={() => { setValue('seeking_mentor', !isBixo); if (!isBixo) setValue('available_to_mentor', false); }}
-                                                    className={`relative overflow-hidden p-4 rounded-2xl border-2 transition-all text-left ${
-                                                        isBixo
-                                                            ? 'border-brand-red bg-brand-red/10 shadow-lg shadow-brand-red/20 scale-[1.02]'
-                                                            : 'border-gray-700 hover:border-brand-red/50 bg-white/[0.02] hover:bg-brand-red/5 cursor-pointer'
-                                                    }`}
+                                                    className={`relative overflow-hidden p-4 rounded-2xl border-2 transition-all text-left ${isBixo
+                                                        ? 'border-brand-red bg-brand-red/10 shadow-lg shadow-brand-red/20 scale-[1.02]'
+                                                        : 'border-gray-700 hover:border-brand-red/50 bg-white/[0.02] hover:bg-brand-red/5 cursor-pointer'
+                                                        }`}
                                                 >
                                                     {isBixo && <div className="absolute inset-0 bg-gradient-to-br from-brand-red/20 to-transparent pointer-events-none" />}
                                                     <div className="relative z-10 space-y-2">
@@ -886,7 +904,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                     <h3 className="text-[10px] font-black text-brand-yellow uppercase tracking-[0.2em] flex items-center gap-2">
                                         <Microscope className="w-3 h-3" /> Configuração de Laboratório
                                     </h3>
-                                    
+
                                     <div className="p-4 bg-brand-yellow/5 border border-brand-yellow/10 rounded-2xl flex items-center justify-between">
                                         <div className="flex flex-col gap-0.5">
                                             <span className="text-xs font-black uppercase tracking-tight text-gray-900 dark:text-white">Buscando Ajudantes / ICs</span>
