@@ -12,6 +12,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import puppeteerCore from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
+import { getLocalExecutablePath } from '@/lib/puppeteer-utils';
 
 export const maxDuration = 60;
 import { createServerSupabase } from '@/lib/supabase/server';
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
 
         const isLocal = !process.env.VERCEL_ENV && process.env.NODE_ENV === 'development';
         const executablePath = isLocal
-            ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+            ? getLocalExecutablePath()
             : await chromium.executablePath();
 
         browser = await puppeteerCore.launch({

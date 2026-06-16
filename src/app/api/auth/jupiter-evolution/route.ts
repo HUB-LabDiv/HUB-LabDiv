@@ -12,6 +12,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import puppeteerCore from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
+import { getLocalExecutablePath } from '@/lib/puppeteer-utils';
 
 export const maxDuration = 60; // Evita Timeout 504 na Vercel
 
@@ -36,7 +37,7 @@ export async function POST(req: NextRequest) {
 
         // 1. Setup Puppeteer securely without 'puppeteer' standard library
         const executablePath = isLocal
-            ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+            ? getLocalExecutablePath()
             : await chromium.executablePath();
 
         browser = await puppeteerCore.launch({
