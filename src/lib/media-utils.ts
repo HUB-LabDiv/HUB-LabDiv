@@ -13,10 +13,22 @@ export const parseMediaUrl = (mediaUrl: string | string[]): string[] => {
     let parsedUrls: string[] = [];
     try {
         if (Array.isArray(mediaUrl)) {
-            parsedUrls = mediaUrl;
+            parsedUrls = mediaUrl.filter(item => typeof item === 'string');
         } else if (typeof mediaUrl === 'string') {
             if (mediaUrl.startsWith('[') && mediaUrl.endsWith(']')) {
-                parsedUrls = JSON.parse(mediaUrl);
+                const parsed = JSON.parse(mediaUrl);
+                if (Array.isArray(parsed)) {
+                    parsedUrls = parsed.reduce((acc: string[], item: any) => {
+                        if (typeof item === 'string') {
+                            acc.push(item);
+                        } else if (item && typeof item === 'object' && (item.type === 'image' || item.type === 'video') && item.content?.url) {
+                            acc.push(item.content.url);
+                        }
+                        return acc;
+                    }, []);
+                } else {
+                    parsedUrls = [mediaUrl];
+                }
             } else {
                 parsedUrls = [mediaUrl];
             }
@@ -70,7 +82,7 @@ export const getDownloadUrl = (url: string) => {
 };
 
 export const getPdfViewerUrl = (url: string) => {
-    if (!url) return '';
+    if (!url || typeof url !== 'string') return '';
     let viewerUrl = url;
 
     if (viewerUrl.includes('/upload/')) {
@@ -83,7 +95,7 @@ export const getPdfViewerUrl = (url: string) => {
     return viewerUrl;
 };
 export const getOptimizedUrl = (url: string, width = 800, quality = 70, category?: string, type?: string) => {
-    if (!url) return '';
+    if (!url || typeof url !== 'string') return '';
 
     // Regra Sênior: Documentos, Textos e Scans (mesmo JPG) exigem q=85 para legibilidade
     let finalQuality = quality;

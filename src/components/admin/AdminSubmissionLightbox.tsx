@@ -16,6 +16,7 @@ import React, { useState } from 'react';
 import { parseMediaUrl, formatYoutubeUrl, getDownloadUrl, getPdfViewerUrl } from '@/lib/media-utils';
 import dynamic from 'next/dynamic';
 import ReactMarkdown from 'react-markdown';
+import { SdocxViewer } from '@/components/media/SdocxViewer';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import { AdminPostDTO } from '@/dtos/media';
@@ -251,6 +252,16 @@ export function AdminSubmissionLightbox({
                                         <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{item.description || ''}</ReactMarkdown>
                                     </div>
                                 </div>
+                            </div>
+                        ) : item.mediaType === 'sdocx' ? (
+                            <div className="w-full h-full min-h-[60vh] md:min-h-full bg-white dark:bg-gray-900 rounded-l-2xl md:rounded-l-3xl overflow-auto p-8 md:p-12">
+                                <h2 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-6">{item.title}</h2>
+                                <SdocxViewer 
+                                    blocks={(() => {
+                                        try { return JSON.parse(item.mediaUrl as string); }
+                                        catch { return []; }
+                                    })()}
+                                />
                             </div>
                         ) : (
                             (() => {

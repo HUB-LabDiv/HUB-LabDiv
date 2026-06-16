@@ -18,26 +18,56 @@ export type SubmissionStep = 'category' | 'format' | 'basic' | 'optional' | 'cur
 const initialState = {
     step: 'category' as SubmissionStep,
     category: '',
-    title: 'Exemplo de Contribuição: A Dinâmica dos Buracos Negros',
+    title: 'Exemplo de Título',
     authors: '',
     year: new Date().getFullYear().toString(),
     description: '',
     whatsapp: '',
     blocks: [
         {
-            id: 'mock-text-1',
-            type: 'text' as BlockType,
-            content: { text: 'Este é um exemplo de parágrafo introdutório. A divulgação científica é essencial para traduzir conceitos complexos para o público geral. Use blocos como este para narrar sua ideia.' }
-        },
-        {
             id: 'mock-image-1',
             type: 'image' as BlockType,
-            content: { url: '/labdiv-logo.png', caption: 'Figura 1: Exemplo de imagem (Logo do LabDiv).' }
+            content: { url: '/labdiv-logo.png', caption: 'Logo do HUB LabDiv' }
+        },
+        {
+            id: 'mock-text-1',
+            type: 'text' as BlockType,
+            content: { text: 'Exemplo de descrição, esse texto vai aparecer até x caracteres no post em miniatura e para ler mais o usuario deve ir para a pagina completa' }
         },
         {
             id: 'mock-reflection-1',
             type: 'reflection' as BlockType,
-            content: { question: 'Como esse conceito se aplica no seu dia a dia?' }
+            content: { question: 'Exemplo de reflexão do usuario após a introdução, esse balão o faz pensar em que visão ele tinha antes e sobre a sua nova visão que irá se desenvolver ainda mais ao decorrer do post' }
+        },
+        {
+            id: 'mock-text-2',
+            type: 'text' as BlockType,
+            content: { text: 'Este é um bloco de texto adicional para continuar o desenvolvimento da sua ideia.' }
+        },
+        {
+            id: 'mock-reference-1',
+            type: 'reference' as BlockType,
+            content: { citation: 'Exemplo de Referência Bibliográfica' }
+        },
+        {
+            id: 'mock-context-history-1',
+            type: 'context_history' as BlockType,
+            content: { text: 'Neste bloco você pode adicionar contexto histórico sobre o assunto.' }
+        },
+        {
+            id: 'mock-context-social-1',
+            type: 'context_social' as BlockType,
+            content: { text: 'Neste bloco você pode adicionar o contexto social.' }
+        },
+        {
+            id: 'mock-context-political-1',
+            type: 'context_political' as BlockType,
+            content: { text: 'Neste bloco você pode adicionar o contexto político.' }
+        },
+        {
+            id: 'mock-quiz-1',
+            type: 'quiz' as BlockType,
+            content: { question: 'Exemplo de Pergunta', options: ['Opção 1', 'Opção 2'], correctAnswer: 0 }
         }
     ],
     activeBlockId: null,
@@ -213,19 +243,19 @@ export const useSubmissionStore = create<SubmissionState>()(
 
             reset: () => set({
                 currentStep: 'diagrammer',
-                category: '',
-                title: 'Exemplo de Contribuição: A Dinâmica dos Buracos Negros',
-                authors: '',
-                year: new Date().getFullYear().toString(),
-                description: '',
-                whatsapp: '',
-                blocks: [],
-                activeBlockId: null,
-                readGuide: false,
-                acceptedCc: false,
-                isHistorical: false,
-                isGoldenStandard: false,
-                selectedDepartments: [],
+                category: initialState.category,
+                title: initialState.title,
+                authors: initialState.authors,
+                year: initialState.year,
+                description: initialState.description,
+                whatsapp: initialState.whatsapp,
+                blocks: initialState.blocks,
+                activeBlockId: initialState.activeBlockId,
+                readGuide: initialState.readGuide,
+                acceptedCc: initialState.acceptedCc,
+                isHistorical: initialState.isHistorical,
+                isGoldenStandard: initialState.isGoldenStandard,
+                selectedDepartments: initialState.selectedDepartments,
                 selectedLaboratories: [],
                 selectedResearchers: [],
                 selectedResearchLines: []

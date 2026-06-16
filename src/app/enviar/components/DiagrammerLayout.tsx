@@ -8,6 +8,9 @@ import { MediaCard } from '@/components/media/MediaCard';
 import { PostDTO } from '@/dtos/media';
 import { CATEGORIES } from '@/lib/constants';
 import { getProfileWithPseudonyms } from '@/app/actions/profiles';
+import { createSubmission } from '@/app/actions/submissions';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
 
 export function DiagrammerLayout() {
     const { 
@@ -19,6 +22,8 @@ export function DiagrammerLayout() {
 
     const [pseudonyms, setPseudonyms] = React.useState<{id: string; name: string}[]>([]);
     const [mainName, setMainName] = React.useState<string>('');
+    const [isGuideModalOpen, setIsGuideModalOpen] = React.useState(false);
+    const [isLicenseModalOpen, setIsLicenseModalOpen] = React.useState(false);
     const fetchedRef = React.useRef(false);
 
     React.useEffect(() => {
@@ -39,6 +44,83 @@ export function DiagrammerLayout() {
     }, [setAuthors]);
     
     const { user } = useAuth();
+    const router = useRouter();
+    const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+    const handlePublish = async () => {
+        if (!title.trim()) {
+            toast.error('O título é obrigatório.');
+            return;
+        }
+        if (!authors.trim()) {
+            toast.error('O nome de autor/apelido é obrigatório.');
+            return;
+        }
+        if (!category) {
+            toast.error('A categoria é obrigatória.');
+            return;
+        }
+        if (!year) {
+            toast.error('O ano é obrigatório.');
+            return;
+        }
+        const hasText = blocks.some(b => b.type === 'text' && b.content?.text?.trim());
+        if (!hasText) {
+            toast.error('É obrigatório adicionar pelo menos um bloco de texto (Descrição/Conteúdo).');
+            return;
+        }
+
+        if (!readGuide || !acceptedCc) {
+            toast.error('Por favor, aceite os termos legais antes de publicar.');
+            return;
+        }
+        
+        setIsSubmitting(true);
+        const toastId = toast.loading('Enviando para moderação...');
+
+        try {
+            const reflexoesBlocks = blocks.filter(b => b.type === 'reflection');
+            const reflexoes = reflexoesBlocks.map(b => ({
+                ancora_paragrafo: b.id,
+                pergunta_provocadora: b.content.question || 'Reflexão',
+                tipo_reflexao: 'aberta'
+            }));
+
+            const quizBlock = blocks.find(b => b.type === 'quiz');
+            
+            const payload = {
+                title,
+                authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
+                category: category || 'Outros',
+                description: blocks.find(b => b.type === 'text')?.content?.text || 'Contribuição construída no Diagramador.',
+                media_type: 'sdocx',
+                media_url: JSON.stringify(blocks), 
+                event_year: year ? parseInt(year) : new Date().getFullYear(),
+                is_historical: isHistorical,
+                is_golden_standard: isGoldenStandard,
+                read_guide: readGuide,
+                accepted_cc: acceptedCc,
+                reflexoes: reflexoes.length > 0 ? reflexoes : undefined,
+                quiz: quizBlock ? [quizBlock.content] : undefined,
+            };
+
+            const res = await createSubmission(payload as any);
+
+            if (res.error) {
+                console.error(res.error);
+                toast.error('Erro ao lançar conteúdo: Verifique os campos.', { id: toastId });
+            } else {
+                toast.success('Conteúdo enviado com sucesso! Está no painel para análise.', { id: toastId });
+                useSubmissionStore.getState().reset();
+                router.push('/');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Erro inesperado ao lançar conteúdo.', { id: toastId });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
 
     const handleCanvasClick = () => {
         if (activeBlockId !== null) {
@@ -197,24 +279,66 @@ export function DiagrammerLayout() {
                         {/* Título de Cabeçalho na Coluna Central */}
                         {/* (Movido para o topo global) */}
 
-                        {/* Card Horizontal de Dicas (V3) */}
-                        <div className="w-full bg-gray-900/60 backdrop-blur-md border border-brand-yellow/30 rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 mb-8 shadow-[0_0_30px_rgba(255,204,0,0.1)]">
-                            <div className="flex items-center gap-4 text-brand-yellow">
-                                <span className="material-symbols-outlined text-3xl">lightbulb</span>
-                                <div className="flex flex-col">
-                                    <span className="text-xs font-bold uppercase tracking-wider text-brand-yellow/70">Dica de Redação</span>
-                                    <span className="text-sm font-medium">Use analogias simples para explicar conceitos complexos.</span>
+                        {/* Grid de Cards de Dicas */}
+                        <div className="w-full flex flex-col gap-4 mb-8">
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                {/* Card 1: Comunicadores */}
+                                <div className="bg-gray-900/60 backdrop-blur-md border border-brand-yellow/30 rounded-2xl p-5 flex flex-col gap-4 shadow-[0_0_20px_rgba(255,204,0,0.05)]">
+                                    <div className="flex items-center gap-3 text-brand-yellow">
+                                        <span className="material-symbols-outlined text-2xl">campaign</span>
+                                        <span className="text-xs font-black uppercase tracking-wider">Dicas de Comunicadores</span>
+                                    </div>
+                                    <p className="text-sm text-gray-300 flex-1 leading-relaxed">
+                                        "Uma boa analogia é como uma ponte entre o desconhecido e o familiar. Use exemplos do cotidiano."
+                                    </p>
+                                    <button className="w-full py-2 bg-brand-yellow/10 hover:bg-brand-yellow/20 text-brand-yellow text-xs font-bold uppercase rounded-lg transition-colors border border-brand-yellow/30">
+                                        Ver Todas as Dicas
+                                    </button>
+                                </div>
+
+                                {/* Card 2: Bases Teóricas */}
+                                <div className="bg-gray-900/60 backdrop-blur-md border border-brand-blue/30 rounded-2xl p-5 flex flex-col gap-4 shadow-[0_0_20px_rgba(15,71,128,0.05)]">
+                                    <div className="flex items-center gap-3 text-brand-blue">
+                                        <span className="material-symbols-outlined text-2xl">menu_book</span>
+                                        <span className="text-xs font-black uppercase tracking-wider">Bases Teóricas</span>
+                                    </div>
+                                    <p className="text-sm text-gray-300 flex-1 leading-relaxed">
+                                        <strong>Aprendizagem Significativa:</strong> Ancora o novo conhecimento naquilo que o público já sabe.
+                                    </p>
+                                    <button className="w-full py-2 bg-brand-blue/10 hover:bg-brand-blue/20 text-brand-blue text-xs font-bold uppercase rounded-lg transition-colors border border-brand-blue/30">
+                                        Ver Bases Teóricas
+                                    </button>
+                                </div>
+
+                                {/* Card 3: Instruções Práticas */}
+                                <div className="bg-gray-900/60 backdrop-blur-md border border-brand-red/30 rounded-2xl p-5 flex flex-col gap-4 shadow-[0_0_20px_rgba(241,67,67,0.05)]">
+                                    <div className="flex items-center gap-3 text-brand-red">
+                                        <span className="material-symbols-outlined text-2xl">build</span>
+                                        <span className="text-xs font-black uppercase tracking-wider">Instruções Práticas</span>
+                                    </div>
+                                    <p className="text-sm text-gray-300 flex-1 leading-relaxed">
+                                        Crie títulos magnéticos. Evite parágrafos muito longos; quebre o texto visualmente para facilitar a leitura.
+                                    </p>
+                                    <button className="w-full py-2 bg-brand-red/10 hover:bg-brand-red/20 text-brand-red text-xs font-bold uppercase rounded-lg transition-colors border border-brand-red/30">
+                                        Ver Instruções
+                                    </button>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                                <button className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-bold uppercase rounded-lg transition-colors border border-gray-700">
-                                    Base Teórica
-                                </button>
-                                <button className="px-4 py-2 bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs font-bold uppercase rounded-lg transition-colors border border-gray-700">
-                                    Instruções
-                                </button>
-                                <button className="px-4 py-2 bg-brand-yellow/20 hover:bg-brand-yellow/30 text-brand-yellow text-xs font-bold uppercase rounded-lg transition-colors border border-brand-yellow/30">
-                                    Ver Todas
+
+                            {/* Card Horizontal: Emissão de Luz */}
+                            <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 backdrop-blur-md border border-gray-700 hover:border-gray-500 transition-colors rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 cursor-pointer group shadow-lg">
+                                <div className="flex items-center gap-4">
+                                    <div className="size-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-white/30 group-hover:scale-105 transition-all">
+                                        <span className="material-symbols-outlined text-2xl text-white">tips_and_updates</span>
+                                    </div>
+                                    <div className="flex flex-col">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Portal de Conhecimento</span>
+                                        <span className="text-base font-bold text-white">Acesse a aba Emissão de Luz do CGIF</span>
+                                        <span className="text-xs text-gray-500">Tudo que você precisa para aperfeiçoar sua comunicação.</span>
+                                    </div>
+                                </div>
+                                <button className="px-6 py-2.5 bg-white text-gray-900 hover:bg-gray-200 text-xs font-black uppercase rounded-lg transition-colors shadow-md">
+                                    Acessar Portal
                                 </button>
                             </div>
                         </div>
@@ -222,13 +346,16 @@ export function DiagrammerLayout() {
                         {/* Editor Principal */}
                         <div className="bg-gray-900/60 border-brand-blue/30 shadow-[0_0_50px_rgba(15,71,128,0.2)] border rounded-[32px] p-6 lg:p-12 relative min-h-[500px]">
                             <div className="mb-12 border-b border-brand-blue/30 pb-6 flex flex-col gap-6">
-                                <input
-                                    type="text"
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
-                                    placeholder="Título da sua Contribuição Científica..."
-                                    className="w-full text-4xl lg:text-5xl font-black bg-transparent outline-none text-white placeholder-gray-500 tracking-tight"
-                                />
+                                <div className="flex flex-col gap-1">
+                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest pl-1">Título da Contribuição <span className="text-brand-red">*</span></span>
+                                    <input
+                                        type="text"
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        placeholder="Digite aqui o título..."
+                                        className="w-full text-4xl lg:text-5xl font-black bg-transparent outline-none text-white placeholder-gray-600 tracking-tight"
+                                    />
+                                </div>
                                 <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                                     <div className="flex items-center gap-3 flex-1 w-full">
                                         <div className="size-10 rounded-full bg-brand-blue/20 flex items-center justify-center text-brand-blue font-bold text-xs uppercase shrink-0">
@@ -236,7 +363,7 @@ export function DiagrammerLayout() {
                                         </div>
                                         <div className="flex flex-col flex-1 max-w-sm">
                                             <div className="flex justify-between items-center mb-1">
-                                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Como você quer ser chamado(a)?</span>
+                                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Autor/Apelido <span className="text-brand-red">*</span></span>
                                                 <span className={`text-[10px] font-bold ${authors.length > 60 ? 'text-brand-red' : 'text-gray-600'}`}>{authors.length}/60</span>
                                             </div>
                                             <input
@@ -276,7 +403,7 @@ export function DiagrammerLayout() {
 
                                     <div className="flex items-center gap-6 w-full md:w-auto">
                                         <div className="flex flex-col max-w-[200px] w-full">
-                                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Categoria</span>
+                                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Categoria <span className="text-brand-red">*</span></span>
                                             <select 
                                                 value={category} 
                                                 onChange={(e) => setCategory(e.target.value)}
@@ -290,7 +417,7 @@ export function DiagrammerLayout() {
                                         </div>
 
                                         <div className="flex flex-col max-w-[120px] w-full">
-                                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Ano</span>
+                                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Ano <span className="text-brand-red">*</span></span>
                                             <input
                                                 type="number"
                                                 value={year}
@@ -337,13 +464,24 @@ export function DiagrammerLayout() {
                             {/* Guia de Boas Práticas */}
                             <div className="flex flex-col gap-2">
                                 <span className="text-brand-blue text-[10px] font-bold uppercase tracking-wider">Documentação Legal</span>
-                                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3 max-h-32 overflow-y-auto text-[11px] text-gray-400 leading-relaxed custom-scrollbar">
-                                    <strong className="text-gray-200 block mb-1">Guia de Boas Práticas da Comunidade LabDiv</strong>
-                                    1. Respeito Mútuo: Mantenha um ambiente acolhedor e construtivo.<br/>
-                                    2. Rigor Científico: Todo conteúdo deve ser embasado e referenciado.<br/>
-                                    3. Acessibilidade: Evite jargões desnecessários; seja claro e didático.<br/>
-                                    4. Originalidade: O plágio não é tolerado. Dê crédito às fontes.<br/>
-                                    5. Responsabilidade: Você é responsável pelas afirmações que publica.
+                                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <strong className="text-gray-200 text-xs">Guia de Boas Práticas da Comunidade LabDiv</strong>
+                                        <button 
+                                            onClick={() => setIsGuideModalOpen(true)}
+                                            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
+                                        >
+                                            <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                                            Ler em Popup
+                                        </button>
+                                    </div>
+                                    <div className="max-h-24 overflow-y-auto text-[11px] text-gray-400 leading-relaxed custom-scrollbar pr-2">
+                                        1. Respeito Mútuo: Mantenha um ambiente acolhedor e construtivo.<br/>
+                                        2. Rigor Científico: Todo conteúdo deve ser embasado e referenciado.<br/>
+                                        3. Acessibilidade: Evite jargões desnecessários; seja claro e didático.<br/>
+                                        4. Originalidade: O plágio não é tolerado. Dê crédito às fontes.<br/>
+                                        5. Responsabilidade: Você é responsável pelas afirmações que publica.
+                                    </div>
                                 </div>
                                 <label className="flex items-center gap-3 cursor-pointer group mt-2">
                                     <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${readGuide ? 'bg-brand-blue border-brand-blue' : 'bg-gray-800 border-brand-blue/60 group-hover:border-brand-blue'}`}>
@@ -358,14 +496,25 @@ export function DiagrammerLayout() {
 
                             {/* Licença CC-BY */}
                             <div className="flex flex-col gap-2">
-                                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3 max-h-32 overflow-y-auto text-[11px] text-gray-400 leading-relaxed custom-scrollbar">
-                                    <strong className="text-gray-200 block mb-1">Licença Creative Commons Atribuição 4.0 Internacional (CC BY 4.0)</strong>
-                                    Ao licenciar sua contribuição sob a licença CC BY, você permite que outras pessoas distribuam, remixem, adaptem e criem a partir do seu trabalho, mesmo para fins comerciais, desde que lhe atribuam o devido crédito pela criação original.<br/><br/>
-                                    Você é livre para:<br/>
-                                    - Compartilhar: copiar e redistribuir o material em qualquer suporte ou formato.<br/>
-                                    - Adaptar: remixar, transformar e criar a partir do material para qualquer fim.<br/>
-                                    Sob os seguintes termos:<br/>
-                                    - Atribuição: Você deve dar o crédito apropriado, prover um link para a licença e indicar se mudanças foram feitas.
+                                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <strong className="text-gray-200 text-xs">Licença Creative Commons (CC BY 4.0)</strong>
+                                        <button 
+                                            onClick={() => setIsLicenseModalOpen(true)}
+                                            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
+                                        >
+                                            <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                                            Ler em Popup
+                                        </button>
+                                    </div>
+                                    <div className="max-h-24 overflow-y-auto text-[11px] text-gray-400 leading-relaxed custom-scrollbar pr-2">
+                                        Ao licenciar sua contribuição sob a licença CC BY, você permite que outras pessoas distribuam, remixem, adaptem e criem a partir do seu trabalho, mesmo para fins comerciais, desde que lhe atribuam o devido crédito pela criação original.<br/><br/>
+                                        Você é livre para:<br/>
+                                        - Compartilhar: copiar e redistribuir o material em qualquer suporte ou formato.<br/>
+                                        - Adaptar: remixar, transformar e criar a partir do material para qualquer fim.<br/>
+                                        Sob os seguintes termos:<br/>
+                                        - Atribuição: Você deve dar o crédito apropriado, prover um link para a licença e indicar se mudanças foram feitas.
+                                    </div>
                                 </div>
                                 <label className="flex items-center gap-3 cursor-pointer group mt-2">
                                     <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${acceptedCc ? 'bg-brand-red border-brand-red' : 'bg-gray-800 border-brand-red/60 group-hover:border-brand-red'}`}>
@@ -378,11 +527,12 @@ export function DiagrammerLayout() {
                         </div>
 
                         <button
+                            onClick={handlePublish}
                             className="w-full flex items-center justify-center gap-2 px-8 py-5 mt-4 rounded-xl bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red text-white font-bold text-xl hover:opacity-90 transition-all shadow-[0_0_30px_rgba(255,204,0,0.3)] hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
-                            disabled={!readGuide || !acceptedCc}
+                            disabled={!readGuide || !acceptedCc || isSubmitting}
                             title={(!readGuide || !acceptedCc) ? "Você precisa aceitar os termos acima para continuar" : ""}
                         >
-                            Lançar Conteúdo 🚀
+                            {isSubmitting ? 'Lançando...' : 'Lançar Conteúdo 🚀'}
                         </button>
                     </div>
 
@@ -404,6 +554,86 @@ export function DiagrammerLayout() {
                 </aside>
             )}
 
+            {/* Modal Guia de Boas Práticas */}
+            {isGuideModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-gray-900 border border-brand-blue/30 rounded-2xl w-full max-w-lg shadow-[0_0_50px_rgba(15,71,128,0.2)] flex flex-col overflow-hidden animate-slide-up">
+                        <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-800/50">
+                            <h3 className="text-lg font-bold text-white">Guia de Boas Práticas</h3>
+                            <button onClick={() => setIsGuideModalOpen(false)} className="text-gray-400 hover:text-white transition-colors">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div className="p-6 text-sm text-gray-300 leading-relaxed overflow-y-auto max-h-[60vh] custom-scrollbar">
+                            <strong className="text-white block mb-4">Guia de Boas Práticas da Comunidade LabDiv</strong>
+                            <ol className="list-decimal list-inside space-y-3">
+                                <li><strong>Respeito Mútuo:</strong> Mantenha um ambiente acolhedor e construtivo.</li>
+                                <li><strong>Rigor Científico:</strong> Todo conteúdo deve ser embasado e referenciado.</li>
+                                <li><strong>Acessibilidade:</strong> Evite jargões desnecessários; seja claro e didático.</li>
+                                <li><strong>Originalidade:</strong> O plágio não é tolerado. Dê crédito às fontes.</li>
+                                <li><strong>Responsabilidade:</strong> Você é responsável pelas afirmações que publica.</li>
+                            </ol>
+                        </div>
+                        <div className="p-4 border-t border-gray-800 bg-gray-800/30 flex justify-end gap-3">
+                            <button 
+                                onClick={() => setIsGuideModalOpen(false)}
+                                className="px-6 py-2 text-gray-400 hover:text-white text-xs font-bold uppercase rounded-lg transition-colors"
+                            >
+                                Fechar
+                            </button>
+                            <button 
+                                onClick={() => { setIsGuideModalOpen(false); setReadGuide(true); }}
+                                className="px-6 py-2 bg-brand-blue hover:bg-blue-600 text-white text-xs font-bold uppercase rounded-lg transition-colors shadow-lg"
+                            >
+                                Li e Concordo
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal Licença CC-BY */}
+            {isLicenseModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-gray-900 border border-brand-red/30 rounded-2xl w-full max-w-lg shadow-[0_0_50px_rgba(241,67,67,0.2)] flex flex-col overflow-hidden animate-slide-up">
+                        <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-800/50">
+                            <h3 className="text-lg font-bold text-white">Licença CC BY 4.0</h3>
+                            <button onClick={() => setIsLicenseModalOpen(false)} className="text-gray-400 hover:text-white transition-colors">
+                                <span className="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div className="p-6 text-sm text-gray-300 leading-relaxed overflow-y-auto max-h-[60vh] custom-scrollbar">
+                            <strong className="text-white block mb-4">Licença Creative Commons Atribuição 4.0 Internacional (CC BY 4.0)</strong>
+                            <p className="mb-4">
+                                Ao licenciar sua contribuição sob a licença CC BY, você permite que outras pessoas distribuam, remixem, adaptem e criem a partir do seu trabalho, mesmo para fins comerciais, desde que lhe atribuam o devido crédito pela criação original.
+                            </p>
+                            <strong className="text-white block mb-2">Você é livre para:</strong>
+                            <ul className="list-disc list-inside space-y-2 mb-4">
+                                <li><strong>Compartilhar:</strong> copiar e redistribuir o material em qualquer suporte ou formato.</li>
+                                <li><strong>Adaptar:</strong> remixar, transformar e criar a partir do material para qualquer fim.</li>
+                            </ul>
+                            <strong className="text-white block mb-2">Sob os seguintes termos:</strong>
+                            <ul className="list-disc list-inside space-y-2">
+                                <li><strong>Atribuição:</strong> Você deve dar o crédito apropriado, prover um link para a licença e indicar se mudanças foram feitas.</li>
+                            </ul>
+                        </div>
+                        <div className="p-4 border-t border-gray-800 bg-gray-800/30 flex justify-end gap-3">
+                            <button 
+                                onClick={() => setIsLicenseModalOpen(false)}
+                                className="px-6 py-2 text-gray-400 hover:text-white text-xs font-bold uppercase rounded-lg transition-colors"
+                            >
+                                Fechar
+                            </button>
+                            <button 
+                                onClick={() => { setIsLicenseModalOpen(false); setAcceptedCc(true); }}
+                                className="px-6 py-2 bg-brand-red hover:bg-red-600 text-white text-xs font-bold uppercase rounded-lg transition-colors shadow-lg"
+                            >
+                                Aceito os Termos
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

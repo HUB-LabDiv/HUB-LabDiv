@@ -268,11 +268,10 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                         fetchPriority={priority ? "high" : "auto"}
                         loading={priority ? "eager" : "lazy"}
                     />
-                ) : post.mediaType === 'text' || post.mediaType === 'zip' || post.mediaType === 'sdocx' ? (
+                ) : (post.mediaType === 'text' || post.mediaType === 'zip' || post.mediaType === 'sdocx') && !displayUrl ? (
                     <div className="h-full w-full flex flex-col items-center justify-center p-8 text-center bg-slate-100 dark:bg-slate-800">
                         <div className="text-sm font-medium leading-relaxed max-w-full text-slate-700 dark:text-slate-200 relative overflow-hidden h-[9rem] prose prose-sm dark:prose-invert max-w-none">
                             {post.mediaType === 'zip' ? <p className="mt-8">Conteúdo Compactado (.ZIP)</p> :
-                                post.mediaType === 'sdocx' ? <p className="mt-8">Notas do Samsung Notes (.SDOCX)</p> :
                                     <div ref={contentRef}>
                                         {inView ? (
                                             <ScientificContent content={post.description || 'Texto completo'} />

@@ -673,11 +673,10 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
             });
 
             if (initialStatus === 'pendente') {
-                const waitTimeMsg = await getEstimatedAdminWaitTime();
                 await sendAutomaticNotification({
                     userId: user.id,
                     title: 'Conteúdo em Análise ⏳',
-                    message: `Seu envio para o [${newSub.category || 'Fluxo/Logs'}] foi recebido pelo Painel Administrativo e aguarda moderação. Tempo médio de aprovação atual: ${waitTimeMsg}. Avisaremos assim que for aprovado!`,
+                    message: `Seu envio para a categoria [${newSub.category || 'Geral'}] foi recebido pelo Painel Administrativo e aguarda moderação. Avisaremos assim que for aprovado!`,
                     type: 'submission'
                 });
             }
