@@ -20,7 +20,7 @@ import { ShareButtons } from './ShareButtons';
 import { ExportPDFButton } from './ExportPDFButton';
 import { CommentsSection, Comment } from './CommentsSection';
 import { ImageCarouselClient } from './ImageCarouselClient';
-import { getDownloadUrl, parseMediaUrl, formatYoutubeUrl } from '@/lib/media-utils';
+import { getDownloadUrl, parseMediaUrl, formatYoutubeUrl, getPdfViewerUrl } from '@/lib/media-utils';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
