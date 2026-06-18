@@ -134,19 +134,19 @@ export function DiagrammerLayout() {
             {/* Coluna Esquerda: Mídia (Fixo) */}
             {previewMode === 'edit' && (
                 <aside className="hidden xl:flex fixed left-8 top-32 w-64 flex-col z-10">
-                    <div className="bg-gray-900/60 backdrop-blur-md border border-brand-blue/30 rounded-2xl p-4 flex flex-col gap-4 shadow-[0_0_30px_rgba(15,71,128,0.3)]">
+                    <div className="bg-[#1E1E1E]/80 backdrop-blur-md border border-brand-blue/30 rounded-2xl p-4 flex flex-col gap-4 shadow-[0_0_30px_rgba(15,71,128,0.3)]">
                         <h3 className="text-white font-bold text-sm tracking-wider uppercase mb-2">Mídia / Conteúdo</h3>
                         <div className="grid grid-cols-1 gap-2">
-                            <ToolboxButton icon="notes" label="Texto" onClick={() => addBlock('text')} colorClass="hover:bg-white/10 hover:text-white text-gray-300" />
+                            <ToolboxButton icon="notes" label="Texto" onClick={() => addBlock('text')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-300" />
                             <ToolboxButton icon="image" label="Imagem" onClick={() => addBlock('image')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-300" />
                             <ToolboxButton icon="view_in_ar" label="Modelo 3D" onClick={() => addBlock('3d_object')} colorClass="hover:bg-brand-yellow/20 hover:text-brand-yellow hover:border-brand-yellow/30 text-gray-300" />
-                            <ToolboxButton icon="mic" label="Áudio" onClick={() => addBlock('audio')} colorClass="hover:bg-purple-500/20 hover:text-purple-400 hover:border-purple-500/30 text-gray-300" />
-                            <ToolboxButton icon="smart_display" label="Vídeo" onClick={() => addBlock('video')} colorClass="hover:bg-pink-500/20 hover:text-pink-400 hover:border-pink-500/30 text-gray-300" />
-                            <ToolboxButton icon="language" label="Web Page" onClick={() => addBlock('web_page')} colorClass="hover:bg-teal-500/20 hover:text-teal-400 hover:border-teal-500/30 text-gray-300" />
-                            <ToolboxButton icon="picture_as_pdf" label="PDF" onClick={() => addBlock('pdf')} colorClass="hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 text-gray-300" />
-                            <ToolboxButton icon="folder_zip" label="Pasta do Drive" onClick={() => addBlock('drive')} colorClass="hover:bg-emerald-500/20 hover:text-emerald-400 hover:border-emerald-500/30 text-gray-300" />
-                            <ToolboxButton icon="format_quote" label="Referências" onClick={() => addBlock('reference')} colorClass="hover:bg-gray-500/20 hover:text-gray-400 hover:border-gray-500/30 text-gray-300" />
-                            <ToolboxButton icon="shield_person" label="Comentários Autoria" onClick={() => addBlock('notes')} colorClass="hover:bg-yellow-500/20 hover:text-yellow-400 hover:border-yellow-500/30 text-gray-300" />
+                            <ToolboxButton icon="mic" label="Áudio" onClick={() => addBlock('audio')} colorClass="hover:bg-brand-red/20 hover:text-brand-red hover:border-brand-red/30 text-gray-300" />
+                            <ToolboxButton icon="smart_display" label="Vídeo" onClick={() => addBlock('video')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-300" />
+                            <ToolboxButton icon="language" label="Web Page" onClick={() => addBlock('web_page')} colorClass="hover:bg-brand-yellow/20 hover:text-brand-yellow hover:border-brand-yellow/30 text-gray-300" />
+                            <ToolboxButton icon="picture_as_pdf" label="PDF" onClick={() => addBlock('pdf')} colorClass="hover:bg-brand-red/20 hover:text-brand-red hover:border-brand-red/30 text-gray-300" />
+                            <ToolboxButton icon="folder_zip" label="Pasta do Drive" onClick={() => addBlock('drive')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-300" />
+                            <ToolboxButton icon="format_quote" label="Referências" onClick={() => addBlock('reference')} colorClass="hover:bg-brand-yellow/20 hover:text-brand-yellow hover:border-brand-yellow/30 text-gray-300" />
+                            <ToolboxButton icon="shield_person" label="Comentários Autoria" onClick={() => addBlock('notes')} colorClass="hover:bg-brand-red/20 hover:text-brand-red hover:border-brand-red/30 text-gray-300" />
                         </div>
                     </div>
                 </aside>
@@ -165,7 +165,7 @@ export function DiagrammerLayout() {
                     </div>
 
                     {/* Seletor de Preview */}
-                    <div className="flex bg-gray-900/80 p-1.5 rounded-xl border border-gray-800 shadow-xl backdrop-blur-md">
+                    <div className="flex bg-[#1E1E1E]/90 p-1.5 rounded-xl border border-white/5 shadow-xl backdrop-blur-md">
                         <button 
                             onClick={() => setPreviewMode('edit')}
                             className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all ${previewMode === 'edit' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
@@ -218,16 +218,16 @@ export function DiagrammerLayout() {
 
                         {/* Divisor Visual */}
                         <div className="flex items-center gap-4 w-full opacity-50">
-                            <div className="h-px bg-gray-700 flex-1"></div>
+                            <div className="h-px bg-white/5 flex-1"></div>
                             <span className="text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">Layout do Artigo</span>
-                            <div className="h-px bg-gray-700 flex-1"></div>
+                            <div className="h-px bg-white/5 flex-1"></div>
                         </div>
 
                         {/* Corpo do Artigo Fictício (Post Completo) */}
-                        <div className="w-full max-w-5xl mx-auto bg-[#1E1E1E] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-gray-800 pointer-events-none mt-8">
+                        <div className="w-full max-w-5xl mx-auto bg-[#1E1E1E] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-white/5 pointer-events-none mt-8">
                             <div className="p-6 md:p-10 space-y-6">
                                 <div className="flex flex-wrap items-center gap-2">
-                                    <span className="px-3 py-1 bg-gray-800 text-gray-300 rounded-full text-xs font-bold tracking-wide uppercase">
+                                    <span className="px-3 py-1 bg-white/5 border border-white/10 text-gray-300 rounded-full text-xs font-bold tracking-wide uppercase">
                                         {category || 'Todos'}
                                     </span>
                                     {isGoldenStandard && (
@@ -241,7 +241,7 @@ export function DiagrammerLayout() {
                                     {title || 'Sem Título'}
                                 </h1>
 
-                                <div className="flex flex-col py-4 border-y border-gray-800">
+                                <div className="flex flex-col py-4 border-y border-white/5">
                                     <div className="flex items-center justify-between gap-4">
                                         <div className="flex items-center gap-3">
                                             <div className="size-10 rounded-full bg-brand-blue/20 flex items-center justify-center text-blue-400 font-bold text-xs uppercase shrink-0">
@@ -283,7 +283,7 @@ export function DiagrammerLayout() {
                         <div className="w-full flex flex-col gap-4 mb-8">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 {/* Card 1: Comunicadores */}
-                                <div className="bg-gray-900/60 backdrop-blur-md border border-brand-yellow/30 rounded-2xl p-5 flex flex-col gap-4 shadow-[0_0_20px_rgba(255,204,0,0.05)]">
+                                <div className="bg-[#121212]/60 backdrop-blur-md border border-brand-yellow/30 rounded-2xl p-5 flex flex-col gap-4 shadow-[0_0_20px_rgba(255,204,0,0.05)]">
                                     <div className="flex items-center gap-3 text-brand-yellow">
                                         <span className="material-symbols-outlined text-2xl">campaign</span>
                                         <span className="text-xs font-black uppercase tracking-wider">Dicas de Comunicadores</span>
@@ -297,7 +297,7 @@ export function DiagrammerLayout() {
                                 </div>
 
                                 {/* Card 2: Bases Teóricas */}
-                                <div className="bg-gray-900/60 backdrop-blur-md border border-brand-blue/30 rounded-2xl p-5 flex flex-col gap-4 shadow-[0_0_20px_rgba(15,71,128,0.05)]">
+                                <div className="bg-[#121212]/60 backdrop-blur-md border border-brand-blue/30 rounded-2xl p-5 flex flex-col gap-4 shadow-[0_0_20px_rgba(15,71,128,0.05)]">
                                     <div className="flex items-center gap-3 text-brand-blue">
                                         <span className="material-symbols-outlined text-2xl">menu_book</span>
                                         <span className="text-xs font-black uppercase tracking-wider">Bases Teóricas</span>
@@ -311,7 +311,7 @@ export function DiagrammerLayout() {
                                 </div>
 
                                 {/* Card 3: Instruções Práticas */}
-                                <div className="bg-gray-900/60 backdrop-blur-md border border-brand-red/30 rounded-2xl p-5 flex flex-col gap-4 shadow-[0_0_20px_rgba(241,67,67,0.05)]">
+                                <div className="bg-[#121212]/60 backdrop-blur-md border border-brand-red/30 rounded-2xl p-5 flex flex-col gap-4 shadow-[0_0_20px_rgba(241,67,67,0.05)]">
                                     <div className="flex items-center gap-3 text-brand-red">
                                         <span className="material-symbols-outlined text-2xl">build</span>
                                         <span className="text-xs font-black uppercase tracking-wider">Instruções Práticas</span>
@@ -326,7 +326,7 @@ export function DiagrammerLayout() {
                             </div>
 
                             {/* Card Horizontal: Emissão de Luz */}
-                            <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 backdrop-blur-md border border-gray-700 hover:border-gray-500 transition-colors rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 cursor-pointer group shadow-lg">
+                            <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 backdrop-blur-md border border-white/5 hover:border-gray-500 transition-colors rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 cursor-pointer group shadow-lg">
                                 <div className="flex items-center gap-4">
                                     <div className="size-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-white/30 group-hover:scale-105 transition-all">
                                         <span className="material-symbols-outlined text-2xl text-white">tips_and_updates</span>
@@ -344,7 +344,7 @@ export function DiagrammerLayout() {
                         </div>
 
                         {/* Editor Principal */}
-                        <div className="bg-gray-900/60 border-brand-blue/30 shadow-[0_0_50px_rgba(15,71,128,0.2)] border rounded-[32px] p-6 lg:p-12 relative min-h-[500px]">
+                        <div className="bg-[#121212]/60 border-brand-blue/30 shadow-[0_0_50px_rgba(15,71,128,0.2)] border rounded-[32px] p-6 lg:p-12 relative min-h-[500px]">
                             <div className="mb-12 border-b border-brand-blue/30 pb-6 flex flex-col gap-6">
                                 <div className="flex flex-col gap-1">
                                     <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest pl-1">Título da Contribuição <span className="text-brand-red">*</span></span>
@@ -372,7 +372,7 @@ export function DiagrammerLayout() {
                                                 maxLength={60}
                                                 onChange={(e) => setAuthors(e.target.value)}
                                                 placeholder={user?.user_metadata?.full_name || 'Seu Nome ou Pseudônimo'}
-                                                className="w-full bg-transparent border-b border-gray-700/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium placeholder-gray-600 transition-colors py-1"
+                                                className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium placeholder-gray-600 transition-colors py-1"
                                             />
                                             {(mainName || pseudonyms.length > 0) && (
                                                 <div className="flex flex-wrap items-center gap-2 mt-2">
@@ -380,7 +380,7 @@ export function DiagrammerLayout() {
                                                         <button 
                                                             type="button"
                                                             onClick={() => setAuthors(mainName)}
-                                                            className={`px-2 py-1 text-[9px] font-black uppercase rounded-md transition-colors border ${authors === mainName ? 'bg-brand-blue text-white border-brand-blue' : 'text-gray-500 border-gray-800 hover:border-brand-blue/50 hover:text-brand-blue'}`}
+                                                            className={`px-2 py-1 text-[9px] font-black uppercase rounded-md transition-colors border ${authors === mainName ? 'bg-brand-blue text-white border-brand-blue' : 'text-gray-500 border-white/5 hover:border-brand-blue/50 hover:text-brand-blue'}`}
                                                         >
                                                             {mainName}
                                                         </button>
@@ -390,7 +390,7 @@ export function DiagrammerLayout() {
                                                             key={p.id}
                                                             type="button"
                                                             onClick={() => setAuthors(p.name)}
-                                                            className={`px-2 py-1 text-[9px] font-black uppercase rounded-md transition-colors border ${authors === p.name ? 'bg-brand-blue text-white border-brand-blue' : 'text-gray-500 border-gray-800 hover:border-brand-blue/50 hover:text-brand-blue'}`}
+                                                            className={`px-2 py-1 text-[9px] font-black uppercase rounded-md transition-colors border ${authors === p.name ? 'bg-brand-blue text-white border-brand-blue' : 'text-gray-500 border-white/5 hover:border-brand-blue/50 hover:text-brand-blue'}`}
                                                         >
                                                             {p.name}
                                                         </button>
@@ -407,11 +407,11 @@ export function DiagrammerLayout() {
                                             <select 
                                                 value={category} 
                                                 onChange={(e) => setCategory(e.target.value)}
-                                                className="w-full bg-transparent border-b border-gray-700/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
+                                                className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
                                             >
-                                                <option value="" disabled className="bg-gray-900 text-gray-500">Selecione...</option>
+                                                <option value="" disabled className="bg-[#121212] text-gray-500">Selecione...</option>
                                                 {CATEGORIES.map(cat => (
-                                                    <option key={cat} value={cat} className="bg-gray-900 text-white">{cat}</option>
+                                                    <option key={cat} value={cat} className="bg-[#121212] text-white">{cat}</option>
                                                 ))}
                                             </select>
                                         </div>
@@ -424,7 +424,7 @@ export function DiagrammerLayout() {
                                                 onChange={(e) => setYear(e.target.value)}
                                                 min="1934"
                                                 max={new Date().getFullYear()}
-                                                className="w-full bg-transparent border-b border-gray-700/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1"
+                                                className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1"
                                             />
                                         </div>
                                     </div>
@@ -433,7 +433,7 @@ export function DiagrammerLayout() {
 
                             {/* Área de Inserção Inicial */}
                             {blocks.length === 0 ? (
-                                <div className="w-full h-48 flex flex-col items-center justify-center text-gray-400 border-2 border-dashed border-brand-blue/40 bg-gray-800/40 rounded-2xl mb-4">
+                                <div className="w-full h-48 flex flex-col items-center justify-center text-gray-400 border-2 border-dashed border-brand-blue/40 bg-[#1E1E1E]/40 rounded-2xl mb-4">
                                     <span className="material-symbols-outlined text-4xl mb-3 opacity-60 text-brand-blue">note_add</span>
                                     <p className="font-medium text-gray-300">Seu canvas está vazio.</p>
                                     <p className="text-sm mt-1 mb-4">Clique no botão + abaixo ou nas barras laterais para começar.</p>
@@ -459,17 +459,17 @@ export function DiagrammerLayout() {
 
                     {/* Seção de Aceites e Lançamento (Fim da Página) */}
                     <div className="flex flex-col gap-4 items-center w-full max-w-3xl mx-auto mt-24 mb-16">
-                        <div className="flex flex-col gap-4 bg-gray-900/40 backdrop-blur-md p-6 rounded-2xl border border-brand-blue/30 shadow-2xl w-full">
+                        <div className="flex flex-col gap-4 bg-[#121212]/40 backdrop-blur-md p-6 rounded-2xl border border-brand-blue/30 shadow-2xl w-full">
                             
                             {/* Guia de Boas Práticas */}
                             <div className="flex flex-col gap-2">
                                 <span className="text-brand-blue text-[10px] font-bold uppercase tracking-wider">Documentação Legal</span>
-                                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
+                                <div className="bg-[#1E1E1E]/50 border border-white/5 rounded-lg p-3">
                                     <div className="flex items-center justify-between mb-2">
                                         <strong className="text-gray-200 text-xs">Guia de Boas Práticas da Comunidade LabDiv</strong>
                                         <button 
                                             onClick={() => setIsGuideModalOpen(true)}
-                                            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
+                                            className="px-3 py-1 bg-white/5 hover:bg-gray-600 text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
                                         >
                                             <span className="material-symbols-outlined text-[14px]">open_in_new</span>
                                             Ler em Popup
@@ -484,7 +484,7 @@ export function DiagrammerLayout() {
                                     </div>
                                 </div>
                                 <label className="flex items-center gap-3 cursor-pointer group mt-2">
-                                    <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${readGuide ? 'bg-brand-blue border-brand-blue' : 'bg-gray-800 border-brand-blue/60 group-hover:border-brand-blue'}`}>
+                                    <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${readGuide ? 'bg-brand-blue border-brand-blue' : 'bg-[#1E1E1E] border-brand-blue/60 group-hover:border-brand-blue'}`}>
                                         {readGuide && <span className="material-symbols-outlined text-white text-sm font-bold">check</span>}
                                     </div>
                                     <input type="checkbox" className="hidden" checked={readGuide} onChange={(e) => setReadGuide(e.target.checked)} />
@@ -492,16 +492,16 @@ export function DiagrammerLayout() {
                                 </label>
                             </div>
 
-                            <div className="h-px w-full bg-gray-800 my-2"></div>
+                            <div className="h-px w-full bg-[#1E1E1E] my-2"></div>
 
                             {/* Licença CC-BY */}
                             <div className="flex flex-col gap-2">
-                                <div className="bg-gray-800/50 border border-gray-700 rounded-lg p-3">
+                                <div className="bg-[#1E1E1E]/50 border border-white/5 rounded-lg p-3">
                                     <div className="flex items-center justify-between mb-2">
                                         <strong className="text-gray-200 text-xs">Licença Creative Commons (CC BY 4.0)</strong>
                                         <button 
                                             onClick={() => setIsLicenseModalOpen(true)}
-                                            className="px-3 py-1 bg-gray-700 hover:bg-gray-600 text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
+                                            className="px-3 py-1 bg-white/5 hover:bg-gray-600 text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
                                         >
                                             <span className="material-symbols-outlined text-[14px]">open_in_new</span>
                                             Ler em Popup
@@ -517,7 +517,7 @@ export function DiagrammerLayout() {
                                     </div>
                                 </div>
                                 <label className="flex items-center gap-3 cursor-pointer group mt-2">
-                                    <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${acceptedCc ? 'bg-brand-red border-brand-red' : 'bg-gray-800 border-brand-red/60 group-hover:border-brand-red'}`}>
+                                    <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${acceptedCc ? 'bg-brand-red border-brand-red' : 'bg-[#1E1E1E] border-brand-red/60 group-hover:border-brand-red'}`}>
                                         {acceptedCc && <span className="material-symbols-outlined text-white text-sm font-bold">check</span>}
                                     </div>
                                     <input type="checkbox" className="hidden" checked={acceptedCc} onChange={(e) => setAcceptedCc(e.target.checked)} />
@@ -541,14 +541,14 @@ export function DiagrammerLayout() {
             {/* Coluna Direita: Pedagógico (Fixo) */}
             {previewMode === 'edit' && (
                 <aside className="hidden xl:flex fixed right-8 top-32 w-64 flex-col z-10">
-                    <div className="bg-gray-900/60 backdrop-blur-md border border-brand-yellow/30 rounded-2xl p-4 flex flex-col gap-4 shadow-[0_0_30px_rgba(255,204,0,0.15)]">
+                    <div className="bg-[#121212]/60 backdrop-blur-md border border-brand-yellow/30 rounded-2xl p-4 flex flex-col gap-4 shadow-[0_0_30px_rgba(255,204,0,0.15)]">
                         <h3 className="text-white font-bold text-sm tracking-wider uppercase mb-2">Conexões Pedagógicas</h3>
                         <div className="grid grid-cols-1 gap-2">
-                            <ToolboxButton icon="psychology" label="Reflexão" onClick={() => addBlock('reflection')} colorClass="hover:bg-blue-500/20 hover:text-blue-400 hover:border-blue-500/30 text-gray-300" />
+                            <ToolboxButton icon="psychology" label="Reflexão" onClick={() => addBlock('reflection')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-300" />
                             <ToolboxButton icon="quiz" label="Quiz" onClick={() => addBlock('quiz')} colorClass="hover:bg-brand-red/20 hover:text-brand-red hover:border-brand-red/30 text-gray-300" />
                             <ToolboxButton icon="history_edu" label="Contexto Histórico" onClick={() => addBlock('context_history')} colorClass="hover:bg-brand-yellow/20 hover:text-brand-yellow hover:border-brand-yellow/30 text-gray-300" />
                             <ToolboxButton icon="groups" label="Contexto Social" onClick={() => addBlock('context_social')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-300" />
-                            <ToolboxButton icon="gavel" label="Contexto Político" onClick={() => addBlock('context_political')} colorClass="hover:bg-red-500/20 hover:text-red-400 hover:border-red-500/30 text-gray-300" />
+                            <ToolboxButton icon="gavel" label="Contexto Político" onClick={() => addBlock('context_political')} colorClass="hover:bg-brand-red/20 hover:text-brand-red hover:border-brand-red/30 text-gray-300" />
                         </div>
                     </div>
                 </aside>
@@ -557,8 +557,8 @@ export function DiagrammerLayout() {
             {/* Modal Guia de Boas Práticas */}
             {isGuideModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-gray-900 border border-brand-blue/30 rounded-2xl w-full max-w-lg shadow-[0_0_50px_rgba(15,71,128,0.2)] flex flex-col overflow-hidden animate-slide-up">
-                        <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-800/50">
+                    <div className="bg-[#121212] border border-brand-blue/30 rounded-2xl w-full max-w-lg shadow-[0_0_50px_rgba(15,71,128,0.2)] flex flex-col overflow-hidden animate-slide-up">
+                        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#1E1E1E]/50">
                             <h3 className="text-lg font-bold text-white">Guia de Boas Práticas</h3>
                             <button onClick={() => setIsGuideModalOpen(false)} className="text-gray-400 hover:text-white transition-colors">
                                 <span className="material-symbols-outlined">close</span>
@@ -574,7 +574,7 @@ export function DiagrammerLayout() {
                                 <li><strong>Responsabilidade:</strong> Você é responsável pelas afirmações que publica.</li>
                             </ol>
                         </div>
-                        <div className="p-4 border-t border-gray-800 bg-gray-800/30 flex justify-end gap-3">
+                        <div className="p-4 border-t border-white/5 bg-[#1E1E1E]/30 flex justify-end gap-3">
                             <button 
                                 onClick={() => setIsGuideModalOpen(false)}
                                 className="px-6 py-2 text-gray-400 hover:text-white text-xs font-bold uppercase rounded-lg transition-colors"
@@ -595,8 +595,8 @@ export function DiagrammerLayout() {
             {/* Modal Licença CC-BY */}
             {isLicenseModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-gray-900 border border-brand-red/30 rounded-2xl w-full max-w-lg shadow-[0_0_50px_rgba(241,67,67,0.2)] flex flex-col overflow-hidden animate-slide-up">
-                        <div className="p-6 border-b border-gray-800 flex justify-between items-center bg-gray-800/50">
+                    <div className="bg-[#121212] border border-brand-red/30 rounded-2xl w-full max-w-lg shadow-[0_0_50px_rgba(241,67,67,0.2)] flex flex-col overflow-hidden animate-slide-up">
+                        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#1E1E1E]/50">
                             <h3 className="text-lg font-bold text-white">Licença CC BY 4.0</h3>
                             <button onClick={() => setIsLicenseModalOpen(false)} className="text-gray-400 hover:text-white transition-colors">
                                 <span className="material-symbols-outlined">close</span>
@@ -617,7 +617,7 @@ export function DiagrammerLayout() {
                                 <li><strong>Atribuição:</strong> Você deve dar o crédito apropriado, prover um link para a licença e indicar se mudanças foram feitas.</li>
                             </ul>
                         </div>
-                        <div className="p-4 border-t border-gray-800 bg-gray-800/30 flex justify-end gap-3">
+                        <div className="p-4 border-t border-white/5 bg-[#1E1E1E]/30 flex justify-end gap-3">
                             <button 
                                 onClick={() => setIsLicenseModalOpen(false)}
                                 className="px-6 py-2 text-gray-400 hover:text-white text-xs font-bold uppercase rounded-lg transition-colors"
@@ -642,7 +642,7 @@ function ToolboxButton({ icon, label, onClick, colorClass }: { icon: string, lab
     return (
         <button 
             onClick={onClick}
-            className={`flex items-center gap-3 w-full p-3 rounded-xl border border-transparent transition-all bg-gray-800/30 ${colorClass}`}
+            className={`flex items-center gap-3 w-full p-3 rounded-xl border border-transparent transition-all bg-[#1E1E1E]/30 ${colorClass}`}
         >
             <span className="material-symbols-outlined text-xl">{icon}</span>
             <span className="font-semibold text-sm">{label}</span>

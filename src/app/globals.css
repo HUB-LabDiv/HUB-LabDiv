@@ -86,7 +86,7 @@
 }
 
 .dark {
-  --background: #0a0a0a;
+  --background: #121212;
   /* Neutral Dark for Lab-Div Identity */
 }
 
@@ -168,7 +168,7 @@ body::before {
   
   --color-card-dark: #1E1E1E;
   --color-background-light: #F8FAFC;
-  --color-background-dark: #0a0a0a;
+  --color-background-dark: #121212;
   --color-background-subtle: #F1F5F9;
   --color-form-dark: #1E1E1E;
 }
