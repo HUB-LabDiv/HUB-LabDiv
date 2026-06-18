@@ -104,36 +104,87 @@ export async function POST(req: NextRequest) {
 
         // 5. Extract Grid Data
         // Wait up to 15 seconds for the grid to appear, as JupiterWeb can be slow
-        async function scrapeGrade() {
-            return await page.evaluate(() => {
+        async function scrapeGradeFromFrame(frame: any) {
+            return await frame.evaluate(() => {
                 const events: Array<{ code: string, dayOfWeek: number, startTime: string, endTime: string }> = [];
-                let rowIndex = 1;
-                while (document.getElementById(rowIndex.toString())) {
-                    const row = document.getElementById(rowIndex.toString());
-                    if (!row) break;
-
-                    const startCell = row.querySelector('td:nth-child(1)')?.textContent?.trim() || '08:00';
-                    const endCell = row.querySelector('td:nth-child(2)')?.textContent?.trim() || '10:00';
-                    
-                    for (let i = 3; i <= 8; i++) {
-                        const subjectRaw = row.querySelector(`td:nth-child(${i})`)?.textContent?.trim();
-                        if (subjectRaw && subjectRaw.includes('-')) {
-                            const code = subjectRaw.split('-')[0].trim();
-                            events.push({
-                                code,
-                                dayOfWeek: i - 2, // 1 = Monday, ..., 6 = Saturday
-                                startTime: startCell,
-                                endTime: endCell
-                            });
+                // Look for rows that have at least 7 columns
+                const rows = Array.from(document.querySelectorAll('tr'));
+                let inGrid = false;
+                for (const row of rows) {
+                    const text = row.textContent || '';
+                    if (text.includes('Seg') && text.includes('Ter') && text.includes('Qua') && text.includes('Qui')) {
+                        inGrid = true;
+                        continue;
+                    }
+                    if (inGrid) {
+                        const tds = Array.from(row.querySelectorAll('td'));
+                        if (text.includes('Créditos') || text.includes('Legenda:')) {
+                            inGrid = false;
+                            continue;
+                        }
+                        if (tds.length >= 7) {
+                            const startTime = tds[0]?.textContent?.trim() || '';
+                            const endTime = tds[1]?.textContent?.trim() || '';
+                            if (!startTime.includes(':')) continue;
+                            for (let i = 2; i < tds.length; i++) {
+                                const subjectRaw = tds[i]?.textContent?.trim();
+                                if (subjectRaw && subjectRaw.includes('-')) {
+                                    const code = subjectRaw.split('-')[0].trim();
+                                    if (code.match(/^[A-Z]{3,4}\d{4}|\d{7}$/i) || code.length > 3) {
+                                        events.push({
+                                            code,
+                                            dayOfWeek: i - 1,
+                                            startTime,
+                                            endTime
+                                        });
+                                    }
+                                }
+                            }
                         }
                     }
-                    rowIndex++;
+                }
+                
+                // Fallback for strict ID logic if headers weren't found
+                if (events.length === 0) {
+                    let rowIndex = 1;
+                    while (document.getElementById(rowIndex.toString())) {
+                        const row = document.getElementById(rowIndex.toString());
+                        if (!row) break;
+                        const startCell = row.querySelector('td:nth-child(1)')?.textContent?.trim() || '08:00';
+                        const endCell = row.querySelector('td:nth-child(2)')?.textContent?.trim() || '10:00';
+                        for (let i = 3; i <= 8; i++) {
+                            const subjectRaw = row.querySelector(`td:nth-child(${i})`)?.textContent?.trim();
+                            if (subjectRaw && subjectRaw.includes('-')) {
+                                const code = subjectRaw.split('-')[0].trim();
+                                events.push({
+                                    code,
+                                    dayOfWeek: i - 2,
+                                    startTime: startCell,
+                                    endTime: endCell
+                                });
+                            }
+                        }
+                        rowIndex++;
+                    }
                 }
                 return events;
             });
         }
 
-        let subjectsScraped = await scrapeGrade();
+        async function scrapeGradeAllFrames() {
+            let allEvents: any[] = [];
+            for (const frame of page.frames()) {
+                try {
+                    const evts = await scrapeGradeFromFrame(frame);
+                    if (evts && evts.length > 0) {
+                        allEvents = allEvents.concat(evts);
+                    }
+                } catch(e) {}
+            }
+            return allEvents;
+        }
+
+        let subjectsScraped = await scrapeGradeAllFrames();
 
         // Fallback: If no subjects found in the last option, try the one before (last-1)
         if (subjectsScraped.length === 0 && options.length > 1) {
@@ -143,8 +194,9 @@ export async function POST(req: NextRequest) {
             if (buscarBtnRetry) {
                 await buscarBtnRetry.click();
                 await navPromiseRetry;
-                await page.waitForSelector("tr[id='1']", { timeout: 10000 }).catch(() => null);
-                subjectsScraped = await scrapeGrade();
+                // Wait briefly for frames to load
+                await new Promise(r => setTimeout(r, 2000));
+                subjectsScraped = await scrapeGradeAllFrames();
             }
         }
 

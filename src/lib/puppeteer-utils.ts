@@ -14,9 +14,6 @@ export function getLocalExecutablePath(): string {
         '/usr/bin/chromium-browser',
         '/usr/bin/microsoft-edge-stable',
         '/usr/bin/microsoft-edge',
-        // Linux Flatpak (Opera GX fallback, might require extra args to run in puppeteer but we map it just in case)
-        '/var/lib/flatpak/app/com.opera.opera-gx/current/active/files/bin/opera-gx',
-        '/var/lib/flatpak/app/com.opera.opera-gx/current/active/export/bin/com.opera.opera-gx',
         // MacOS
         '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
         '/Applications/Microsoft Edge.app/Contents/MacOS/Microsoft Edge'
@@ -28,11 +25,7 @@ export function getLocalExecutablePath(): string {
         }
     }
     
-    // Attempt dynamic lookup for flatpak opera gx
-    try {
-        const flatpakOpera = '/var/lib/flatpak/app/com.opera.opera-gx/x86_64/stable/active/files/bin/opera-gx';
-        if (fs.existsSync(flatpakOpera)) return flatpakOpera;
-    } catch(e) {}
+
 
     throw new Error('Nenhum navegador compatível (Chrome/Edge/Chromium) encontrado localmente. Instale o Google Chrome para testar a sincronização local.');
 }
