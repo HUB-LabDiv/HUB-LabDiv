@@ -15,7 +15,7 @@ export const blockTypeSchema = z.enum([
     // Media
     'text', 'image', 'audio', '3d_object', 'video', 'web_game', 'web_page', 'pdf', 'notes', 'reference', 'drive',
     // Pedagogical
-    'quiz', 'reflection', 'context_history', 'context_social', 'context_political'
+    'quiz', 'reflection', 'context_history', 'context_social', 'context_political', 'glossary'
 ]);
 
 export const blockSchema = z.object({
@@ -47,6 +47,9 @@ export const submissionSchema = z.object({
     new_pseudonym: z.string().max(30, 'Apelido muito longo').optional(),
     co_authors: z.array(z.any()).default([]),
     
+    language_register: z.enum(['nerd_geek', 'artistica', 'jovem', 'academica']).default('jovem'),
+    needs_moderation_help: z.boolean().default(false),
+
     // Curator Fields
     is_historical: z.boolean().optional().default(false),
     is_golden_standard: z.boolean().optional().default(false),

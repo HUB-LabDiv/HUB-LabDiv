@@ -84,7 +84,10 @@ const initialState = {
     selectedLaboratories: [],
     selectedResearchers: [],
     selectedResearchLines: [],
-    watchedValues: {}
+    watchedValues: {},
+    
+    languageRegister: 'academica',
+    needsModerationHelp: false
 };
 
 interface SubmissionState {
@@ -106,13 +109,16 @@ interface SubmissionState {
     readGuide: boolean;
     acceptedCc: boolean;
 
-    // Curator fields
+    // Curadoria e Outros
     isHistorical: boolean;
     isGoldenStandard: boolean;
     selectedDepartments: string[];
     selectedLaboratories: string[];
     selectedResearchers: string[];
     selectedResearchLines: string[];
+    
+    languageRegister: string;
+    needsModerationHelp: boolean;
 
     // Setters
     watchedValues: any;
@@ -125,6 +131,9 @@ interface SubmissionState {
     setYear: (year: string) => void;
     setDescription: (description: string) => void;
     setWhatsapp: (whatsapp: string) => void;
+    
+    setLanguageRegister: (val: string) => void;
+    setNeedsModerationHelp: (val: boolean) => void;
 
     // Block Setters
     addBlock: (type: BlockType, content?: any, insertAfterId?: string) => void;
@@ -173,6 +182,9 @@ export const useSubmissionStore = create<SubmissionState>()(
             selectedLaboratories: [],
             selectedResearchers: [],
             selectedResearchLines: [],
+            
+            languageRegister: initialState.languageRegister,
+            needsModerationHelp: initialState.needsModerationHelp,
 
             watchedValues: {},
             setWatchedValues: (values) => set({ watchedValues: values }),
@@ -184,6 +196,9 @@ export const useSubmissionStore = create<SubmissionState>()(
             setYear: (year) => set({ year }),
             setDescription: (description) => set({ description }),
             setWhatsapp: (whatsapp) => set({ whatsapp }),
+            
+            setLanguageRegister: (languageRegister) => set({ languageRegister }),
+            setNeedsModerationHelp: (needsModerationHelp) => set({ needsModerationHelp }),
 
             addBlock: (type, content = {}, insertAfterId) => set((state) => {
                 const newBlock: Block = {
@@ -258,7 +273,9 @@ export const useSubmissionStore = create<SubmissionState>()(
                 selectedDepartments: initialState.selectedDepartments,
                 selectedLaboratories: [],
                 selectedResearchers: [],
-                selectedResearchLines: []
+                selectedResearchLines: [],
+                languageRegister: initialState.languageRegister,
+                needsModerationHelp: initialState.needsModerationHelp,
             }),
         }),
         {

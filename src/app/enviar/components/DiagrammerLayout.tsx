@@ -11,19 +11,22 @@ import { getProfileWithPseudonyms } from '@/app/actions/profiles';
 import { createSubmission } from '@/app/actions/submissions';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import { TargetProfileModal } from './TargetProfileModal';
 
 export function DiagrammerLayout() {
-    const { 
+    const {
         blocks, addBlock, setActiveBlock, activeBlockId, title, setTitle,
         authors, setAuthors, year, setYear,
         readGuide, setReadGuide, acceptedCc, setAcceptedCc, previewMode, setPreviewMode,
-        category, setCategory, isHistorical, isGoldenStandard
+        category, setCategory, isHistorical, isGoldenStandard,
+        languageRegister, setLanguageRegister, needsModerationHelp, setNeedsModerationHelp
     } = useSubmissionStore();
 
-    const [pseudonyms, setPseudonyms] = React.useState<{id: string; name: string}[]>([]);
+    const [pseudonyms, setPseudonyms] = React.useState<{ id: string; name: string }[]>([]);
     const [mainName, setMainName] = React.useState<string>('');
     const [isGuideModalOpen, setIsGuideModalOpen] = React.useState(false);
     const [isLicenseModalOpen, setIsLicenseModalOpen] = React.useState(false);
+    const [isProfileModalOpen, setIsProfileModalOpen] = React.useState(false);
     const fetchedRef = React.useRef(false);
 
     React.useEffect(() => {
@@ -42,7 +45,7 @@ export function DiagrammerLayout() {
         };
         fetchAliases();
     }, [setAuthors]);
-    
+
     const { user } = useAuth();
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = React.useState(false);
@@ -74,7 +77,7 @@ export function DiagrammerLayout() {
             toast.error('Por favor, aceite os termos legais antes de publicar.');
             return;
         }
-        
+
         setIsSubmitting(true);
         const toastId = toast.loading('Enviando para moderação...');
 
@@ -87,19 +90,20 @@ export function DiagrammerLayout() {
             }));
 
             const quizBlock = blocks.find(b => b.type === 'quiz');
-            
+
             const payload = {
                 title,
                 authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
                 category: category || 'Outros',
                 description: blocks.find(b => b.type === 'text')?.content?.text || 'Contribuição construída no Diagramador.',
                 media_type: 'sdocx',
-                media_url: JSON.stringify(blocks), 
+                media_url: JSON.stringify(blocks),
                 event_year: year ? parseInt(year) : new Date().getFullYear(),
                 is_historical: isHistorical,
                 is_golden_standard: isGoldenStandard,
-                read_guide: readGuide,
                 accepted_cc: acceptedCc,
+                language_register: languageRegister,
+                needs_moderation_help: needsModerationHelp,
                 reflexoes: reflexoes.length > 0 ? reflexoes : undefined,
                 quiz: quizBlock ? [quizBlock.content] : undefined,
             };
@@ -130,7 +134,7 @@ export function DiagrammerLayout() {
 
     return (
         <div className="flex w-full min-h-[70vh] px-4 py-8 lg:px-8 max-w-[1920px] mx-auto justify-center relative">
-            
+
             {/* Coluna Esquerda: Mídia (Fixo) */}
             {previewMode === 'edit' && (
                 <aside className="hidden xl:flex fixed left-8 top-32 w-64 flex-col z-10">
@@ -153,7 +157,7 @@ export function DiagrammerLayout() {
             )}
 
             {/* Coluna Central: Canvas & Preview */}
-            <main 
+            <main
                 className={`w-full transition-all duration-500 mt-0 ${previewMode === 'edit' ? 'max-w-4xl' : 'max-w-3xl'} flex flex-col gap-8`}
                 onClick={handleCanvasClick}
             >
@@ -166,13 +170,13 @@ export function DiagrammerLayout() {
 
                     {/* Seletor de Preview */}
                     <div className="flex bg-[#1E1E1E]/90 p-1.5 rounded-xl border border-white/5 shadow-xl backdrop-blur-md">
-                        <button 
+                        <button
                             onClick={() => setPreviewMode('edit')}
                             className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all ${previewMode === 'edit' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
                         >
                             Edição
                         </button>
-                        <button 
+                        <button
                             onClick={() => setPreviewMode('preview')}
                             className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all ${previewMode === 'preview' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
                         >
@@ -187,10 +191,10 @@ export function DiagrammerLayout() {
                 */}
                 {previewMode === 'preview' && (
                     <div className="flex flex-col gap-16 w-full items-center animate-fade-in-up">
-                        
+
                         {/* Miniatura do Feed (Card Real Renderizado com Mock) */}
                         <div className="w-full max-w-sm mx-auto shrink-0 pointer-events-none">
-                            <MediaCard 
+                            <MediaCard
                                 post={{
                                     id: 'preview-id',
                                     title: title || 'Exemplo de Contribuição',
@@ -212,7 +216,7 @@ export function DiagrammerLayout() {
                                     tags: [],
                                     avatarUrl: user?.user_metadata?.avatar_url,
                                     status: 'published'
-                                } as PostDTO} 
+                                } as PostDTO}
                             />
                         </div>
 
@@ -275,7 +279,7 @@ export function DiagrammerLayout() {
                 */}
                 {previewMode === 'edit' && (
                     <div className="flex flex-col w-full animate-fade-in-up">
-                        
+
                         {/* Título de Cabeçalho na Coluna Central */}
                         {/* (Movido para o topo global) */}
 
@@ -326,20 +330,35 @@ export function DiagrammerLayout() {
                             </div>
 
                             {/* Card Horizontal: Emissão de Luz */}
-                            <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 backdrop-blur-md border border-white/5 hover:border-gray-500 transition-colors rounded-2xl p-4 flex flex-col md:flex-row items-center justify-between gap-4 cursor-pointer group shadow-lg">
-                                <div className="flex items-center gap-4">
-                                    <div className="size-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-white/30 group-hover:scale-105 transition-all">
-                                        <span className="material-symbols-outlined text-2xl text-white">tips_and_updates</span>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 backdrop-blur-md border border-white/5 hover:border-gray-500 transition-colors rounded-2xl p-4 flex flex-col items-start justify-between gap-4 cursor-pointer group shadow-lg">
+                                    <div className="flex items-center gap-4">
+                                        <div className="size-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-white/30 group-hover:scale-105 transition-all">
+                                            <span className="material-symbols-outlined text-2xl text-white">tips_and_updates</span>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Portal de Conhecimento</span>
+                                            <span className="text-sm font-bold text-white">Acesse a aba Emissão de Luz do CGIF</span>
+                                        </div>
                                     </div>
-                                    <div className="flex flex-col">
-                                        <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Portal de Conhecimento</span>
-                                        <span className="text-base font-bold text-white">Acesse a aba Emissão de Luz do CGIF</span>
-                                        <span className="text-xs text-gray-500">Tudo que você precisa para aperfeiçoar sua comunicação.</span>
-                                    </div>
+                                    <button className="w-full py-2.5 bg-white text-gray-900 hover:bg-gray-200 text-xs font-black uppercase rounded-lg transition-colors shadow-md">
+                                        Acessar Portal
+                                    </button>
                                 </div>
-                                <button className="px-6 py-2.5 bg-white text-gray-900 hover:bg-gray-200 text-xs font-black uppercase rounded-lg transition-colors shadow-md">
-                                    Acessar Portal
-                                </button>
+                                <div className="bg-gradient-to-r from-[#0F4780] via-[#0F4780]/80 to-[#121212] backdrop-blur-md border border-brand-blue/30 hover:border-brand-blue transition-colors rounded-2xl p-4 flex flex-col items-start justify-between gap-4 cursor-pointer group shadow-lg">
+                                    <div className="flex items-center gap-4">
+                                        <div className="size-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20 group-hover:border-white/40 group-hover:scale-105 transition-all">
+                                            <span className="material-symbols-outlined text-2xl text-white">query_stats</span>
+                                        </div>
+                                        <div className="flex flex-col">
+                                            <span className="text-xs font-bold uppercase tracking-wider text-brand-yellow">Público Alvo</span>
+                                            <span className="text-sm font-bold text-white">Estatísticas do Público do HUB</span>
+                                        </div>
+                                    </div>
+                                    <button onClick={() => setIsProfileModalOpen(true)} className="w-full py-2.5 bg-brand-yellow text-gray-900 hover:bg-yellow-500 text-xs font-black uppercase rounded-lg transition-colors shadow-md">
+                                        Ver Estatísticas
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -377,7 +396,7 @@ export function DiagrammerLayout() {
                                             {(mainName || pseudonyms.length > 0) && (
                                                 <div className="flex flex-wrap items-center gap-2 mt-2">
                                                     {mainName && (
-                                                        <button 
+                                                        <button
                                                             type="button"
                                                             onClick={() => setAuthors(mainName)}
                                                             className={`px-2 py-1 text-[9px] font-black uppercase rounded-md transition-colors border ${authors === mainName ? 'bg-brand-blue text-white border-brand-blue' : 'text-gray-500 border-white/5 hover:border-brand-blue/50 hover:text-brand-blue'}`}
@@ -386,7 +405,7 @@ export function DiagrammerLayout() {
                                                         </button>
                                                     )}
                                                     {pseudonyms.map(p => (
-                                                        <button 
+                                                        <button
                                                             key={p.id}
                                                             type="button"
                                                             onClick={() => setAuthors(p.name)}
@@ -402,10 +421,10 @@ export function DiagrammerLayout() {
                                     </div>
 
                                     <div className="flex items-center gap-6 w-full md:w-auto">
-                                        <div className="flex flex-col max-w-[200px] w-full">
+                                        <div className="flex flex-col max-w-[150px] w-full">
                                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Categoria <span className="text-brand-red">*</span></span>
-                                            <select 
-                                                value={category} 
+                                            <select
+                                                value={category}
                                                 onChange={(e) => setCategory(e.target.value)}
                                                 className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
                                             >
@@ -416,7 +435,21 @@ export function DiagrammerLayout() {
                                             </select>
                                         </div>
 
-                                        <div className="flex flex-col max-w-[120px] w-full">
+                                        <div className="flex flex-col max-w-[150px] w-full">
+                                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Linguagem <span className="text-brand-red">*</span></span>
+                                            <select
+                                                value={languageRegister}
+                                                onChange={(e) => setLanguageRegister(e.target.value)}
+                                                className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-yellow/50 focus:border-brand-yellow outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
+                                            >
+                                                <option value="jovem" className="bg-[#121212] text-white">Jovem</option>
+                                                <option value="nerd_geek" className="bg-[#121212] text-white">Nerd/Geek</option>
+                                                <option value="artistica" className="bg-[#121212] text-white">Artística</option>
+                                                <option value="academica" className="bg-[#121212] text-white">Acadêmica</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="flex flex-col max-w-[100px] w-full">
                                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Ano <span className="text-brand-red">*</span></span>
                                             <input
                                                 type="number"
@@ -444,97 +477,126 @@ export function DiagrammerLayout() {
                             {/* Renderização dos Blocos em Edição */}
                             <div className="flex flex-col gap-2 max-w-full mx-auto">
                                 {blocks.length > 0 && <InlineAddMenu />}
-                                {blocks.map((block) => (
-                                    <React.Fragment key={block.id}>
-                                        <div className="w-full">
-                                            <BlockRenderer block={block} />
-                                        </div>
-                                        <InlineAddMenu insertAfterId={block.id} />
-                                    </React.Fragment>
-                                ))}
+                                {blocks.map((block, index) => {
+                                    const pedagogicalTypes = ['quiz', 'reflection', 'context_history', 'context_social', 'context_political', 'glossary'];
+                                    const isNonPedagogical = !pedagogicalTypes.includes(block.type);
+                                    const nextBlock = blocks[index + 1];
+                                    const nextIsPedagogical = nextBlock && pedagogicalTypes.includes(nextBlock.type);
+                                    const showTip = isNonPedagogical && !nextIsPedagogical;
+
+                                    return (
+                                        <React.Fragment key={block.id}>
+                                            <div className="w-full">
+                                                <BlockRenderer block={block} showPedagogicalTip={showTip} />
+                                            </div>
+                                            <InlineAddMenu insertAfterId={block.id} />
+                                        </React.Fragment>
+                                    );
+                                })}
                             </div>
                         </div>
                     </div>
                 )}
 
-                    {/* Seção de Aceites e Lançamento (Fim da Página) */}
-                    <div className="flex flex-col gap-4 items-center w-full max-w-3xl mx-auto mt-24 mb-16">
-                        <div className="flex flex-col gap-4 bg-[#121212]/40 backdrop-blur-md p-6 rounded-2xl border border-brand-blue/30 shadow-2xl w-full">
-                            
-                            {/* Guia de Boas Práticas */}
-                            <div className="flex flex-col gap-2">
-                                <span className="text-brand-blue text-[10px] font-bold uppercase tracking-wider">Documentação Legal</span>
-                                <div className="bg-[#1E1E1E]/50 border border-white/5 rounded-lg p-3">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <strong className="text-gray-200 text-xs">Guia de Boas Práticas da Comunidade LabDiv</strong>
-                                        <button 
-                                            onClick={() => setIsGuideModalOpen(true)}
-                                            className="px-3 py-1 bg-white/5 hover:bg-gray-600 text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
-                                        >
-                                            <span className="material-symbols-outlined text-[14px]">open_in_new</span>
-                                            Ler em Popup
-                                        </button>
-                                    </div>
-                                    <div className="max-h-24 overflow-y-auto text-[11px] text-gray-400 leading-relaxed custom-scrollbar pr-2">
-                                        1. Respeito Mútuo: Mantenha um ambiente acolhedor e construtivo.<br/>
-                                        2. Rigor Científico: Todo conteúdo deve ser embasado e referenciado.<br/>
-                                        3. Acessibilidade: Evite jargões desnecessários; seja claro e didático.<br/>
-                                        4. Originalidade: O plágio não é tolerado. Dê crédito às fontes.<br/>
-                                        5. Responsabilidade: Você é responsável pelas afirmações que publica.
-                                    </div>
-                                </div>
-                                <label className="flex items-center gap-3 cursor-pointer group mt-2">
-                                    <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${readGuide ? 'bg-brand-blue border-brand-blue' : 'bg-[#1E1E1E] border-brand-blue/60 group-hover:border-brand-blue'}`}>
-                                        {readGuide && <span className="material-symbols-outlined text-white text-sm font-bold">check</span>}
-                                    </div>
-                                    <input type="checkbox" className="hidden" checked={readGuide} onChange={(e) => setReadGuide(e.target.checked)} />
-                                    <span className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">Li e concordo com o Guia</span>
-                                </label>
-                            </div>
+                {/* Seção de Aceites e Lançamento (Fim da Página) */}
+                <div className="flex flex-col gap-4 items-center w-full max-w-3xl mx-auto mt-24 mb-16">
+                    <div className="flex flex-col gap-4 bg-[#121212]/40 backdrop-blur-md p-6 rounded-2xl border border-brand-blue/30 shadow-2xl w-full">
 
-                            <div className="h-px w-full bg-[#1E1E1E] my-2"></div>
-
-                            {/* Licença CC-BY */}
-                            <div className="flex flex-col gap-2">
-                                <div className="bg-[#1E1E1E]/50 border border-white/5 rounded-lg p-3">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <strong className="text-gray-200 text-xs">Licença Creative Commons (CC BY 4.0)</strong>
-                                        <button 
-                                            onClick={() => setIsLicenseModalOpen(true)}
-                                            className="px-3 py-1 bg-white/5 hover:bg-gray-600 text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
-                                        >
-                                            <span className="material-symbols-outlined text-[14px]">open_in_new</span>
-                                            Ler em Popup
-                                        </button>
-                                    </div>
-                                    <div className="max-h-24 overflow-y-auto text-[11px] text-gray-400 leading-relaxed custom-scrollbar pr-2">
-                                        Ao licenciar sua contribuição sob a licença CC BY, você permite que outras pessoas distribuam, remixem, adaptem e criem a partir do seu trabalho, mesmo para fins comerciais, desde que lhe atribuam o devido crédito pela criação original.<br/><br/>
-                                        Você é livre para:<br/>
-                                        - Compartilhar: copiar e redistribuir o material em qualquer suporte ou formato.<br/>
-                                        - Adaptar: remixar, transformar e criar a partir do material para qualquer fim.<br/>
-                                        Sob os seguintes termos:<br/>
-                                        - Atribuição: Você deve dar o crédito apropriado, prover um link para a licença e indicar se mudanças foram feitas.
-                                    </div>
+                        {/* Guia de Boas Práticas */}
+                        <div className="flex flex-col gap-2">
+                            <span className="text-brand-blue text-[10px] font-bold uppercase tracking-wider">Documentação Legal</span>
+                            <div className="bg-[#1E1E1E]/50 border border-white/5 rounded-lg p-3">
+                                <div className="flex items-center justify-between mb-2">
+                                    <strong className="text-gray-200 text-xs">Guia de Boas Práticas da Comunidade LabDiv</strong>
+                                    <button
+                                        onClick={() => setIsGuideModalOpen(true)}
+                                        className="px-3 py-1 bg-white/5 hover:bg-gray-600 text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
+                                    >
+                                        <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                                        Ler em Popup
+                                    </button>
                                 </div>
-                                <label className="flex items-center gap-3 cursor-pointer group mt-2">
-                                    <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${acceptedCc ? 'bg-brand-red border-brand-red' : 'bg-[#1E1E1E] border-brand-red/60 group-hover:border-brand-red'}`}>
-                                        {acceptedCc && <span className="material-symbols-outlined text-white text-sm font-bold">check</span>}
-                                    </div>
-                                    <input type="checkbox" className="hidden" checked={acceptedCc} onChange={(e) => setAcceptedCc(e.target.checked)} />
-                                    <span className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">Aceito os termos da Licença CC-BY</span>
-                                </label>
+                                <div className="max-h-24 overflow-y-auto text-[11px] text-gray-400 leading-relaxed custom-scrollbar pr-2">
+                                    1. Respeito Mútuo: Mantenha um ambiente acolhedor e construtivo.<br />
+                                    2. Rigor Científico: Todo conteúdo deve ser embasado e referenciado.<br />
+                                    3. Acessibilidade: Evite jargões desnecessários; seja claro e didático.<br />
+                                    4. Originalidade: O plágio não é tolerado. Dê crédito às fontes.<br />
+                                    5. Responsabilidade: Você é responsável pelas afirmações que publica.
+                                </div>
                             </div>
+                            <label className="flex items-center gap-3 cursor-pointer group mt-2">
+                                <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${readGuide ? 'bg-brand-blue border-brand-blue' : 'bg-[#1E1E1E] border-brand-blue/60 group-hover:border-brand-blue'}`}>
+                                    {readGuide && <span className="material-symbols-outlined text-white text-sm font-bold">check</span>}
+                                </div>
+                                <input type="checkbox" className="hidden" checked={readGuide} onChange={(e) => setReadGuide(e.target.checked)} />
+                                <span className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">Li e concordo com o Guia</span>
+                            </label>
                         </div>
 
-                        <button
-                            onClick={handlePublish}
-                            className="w-full flex items-center justify-center gap-2 px-8 py-5 mt-4 rounded-xl bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red text-white font-bold text-xl hover:opacity-90 transition-all shadow-[0_0_30px_rgba(255,204,0,0.3)] hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
-                            disabled={!readGuide || !acceptedCc || isSubmitting}
-                            title={(!readGuide || !acceptedCc) ? "Você precisa aceitar os termos acima para continuar" : ""}
-                        >
-                            {isSubmitting ? 'Lançando...' : 'Lançar Conteúdo 🚀'}
-                        </button>
+                        <div className="h-px w-full bg-[#1E1E1E] my-2"></div>
+
+                        {/* Licença CC-BY */}
+                        <div className="flex flex-col gap-2">
+                            <div className="bg-[#1E1E1E]/50 border border-white/5 rounded-lg p-3">
+                                <div className="flex items-center justify-between mb-2">
+                                    <strong className="text-gray-200 text-xs">Licença Creative Commons (CC BY 4.0)</strong>
+                                    <button
+                                        onClick={() => setIsLicenseModalOpen(true)}
+                                        className="px-3 py-1 bg-white/5 hover:bg-gray-600 text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
+                                    >
+                                        <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                                        Ler em Popup
+                                    </button>
+                                </div>
+                                <div className="max-h-24 overflow-y-auto text-[11px] text-gray-400 leading-relaxed custom-scrollbar pr-2">
+                                    Ao licenciar sua contribuição sob a licença CC BY, você permite que outras pessoas distribuam, remixem, adaptem e criem a partir do seu trabalho, mesmo para fins comerciais, desde que lhe atribuam o devido crédito pela criação original.<br /><br />
+                                    Você é livre para:<br />
+                                    - Compartilhar: copiar e redistribuir o material em qualquer suporte ou formato.<br />
+                                    - Adaptar: remixar, transformar e criar a partir do material para qualquer fim.<br />
+                                    Sob os seguintes termos:<br />
+                                    - Atribuição: Você deve dar o crédito apropriado, prover um link para a licença e indicar se mudanças foram feitas.
+                                </div>
+                            </div>
+                            <label className="flex items-center gap-3 cursor-pointer group mt-2">
+                                <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${acceptedCc ? 'bg-brand-red border-brand-red' : 'bg-[#1E1E1E] border-brand-red/60 group-hover:border-brand-red'}`}>
+                                    {acceptedCc && <span className="material-symbols-outlined text-white text-sm font-bold">check</span>}
+                                </div>
+                                <input type="checkbox" className="hidden" checked={acceptedCc} onChange={(e) => setAcceptedCc(e.target.checked)} />
+                                <span className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">Aceito os termos da Licença CC-BY</span>
+                            </label>
+                        </div>
+
+                        <div className="h-px w-full bg-[#1E1E1E] my-2"></div>
+
+                        {/* Rascunho para Moderação */}
+                        <div className="flex flex-col gap-2">
+                            <label className="flex items-center gap-3 cursor-pointer group p-3 bg-brand-yellow/5 border border-brand-yellow/20 rounded-lg hover:border-brand-yellow/40 transition-colors">
+                                <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${needsModerationHelp ? 'bg-brand-yellow border-brand-yellow text-gray-900' : 'bg-[#1E1E1E] border-brand-yellow/60 group-hover:border-brand-yellow'}`}>
+                                    {needsModerationHelp && <span className="material-symbols-outlined text-sm font-bold">check</span>}
+                                </div>
+                                <input type="checkbox" className="hidden" checked={needsModerationHelp} onChange={(e) => setNeedsModerationHelp(e.target.checked)} />
+                                <div className="flex flex-col">
+                                    <span className={`text-sm font-bold transition-colors ${needsModerationHelp ? 'text-brand-yellow' : 'text-gray-300 group-hover:text-white'}`}>
+                                        Marcar como Rascunho para Elaboração da Moderação
+                                    </span>
+                                    <span className="text-xs text-gray-400 mt-1 leading-relaxed">
+                                        Se ativado, este envio não será publicado imediatamente (após analise). A equipe de moderação fará melhorias didáticas e de comunicação científica com base no seu esqueleto.
+                                    </span>
+                                </div>
+                            </label>
+                        </div>
+
                     </div>
+
+                    <button
+                        onClick={handlePublish}
+                        className="w-full flex items-center justify-center gap-2 px-8 py-5 mt-4 rounded-xl bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red text-white font-bold text-xl hover:opacity-90 transition-all shadow-[0_0_30px_rgba(255,204,0,0.3)] hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                        disabled={!readGuide || !acceptedCc || isSubmitting}
+                        title={(!readGuide || !acceptedCc) ? "Você precisa aceitar os termos acima para continuar" : ""}
+                    >
+                        {isSubmitting ? 'Lançando...' : 'Lançar Conteúdo 🚀'}
+                    </button>
+                </div>
 
             </main>
 
@@ -549,6 +611,7 @@ export function DiagrammerLayout() {
                             <ToolboxButton icon="history_edu" label="Contexto Histórico" onClick={() => addBlock('context_history')} colorClass="hover:bg-brand-yellow/20 hover:text-brand-yellow hover:border-brand-yellow/30 text-gray-300" />
                             <ToolboxButton icon="groups" label="Contexto Social" onClick={() => addBlock('context_social')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-300" />
                             <ToolboxButton icon="gavel" label="Contexto Político" onClick={() => addBlock('context_political')} colorClass="hover:bg-brand-red/20 hover:text-brand-red hover:border-brand-red/30 text-gray-300" />
+                            <ToolboxButton icon="menu_book" label="Glossário" onClick={() => addBlock('glossary')} colorClass="hover:bg-brand-yellow/20 hover:text-brand-yellow hover:border-brand-yellow/30 text-gray-300" />
                         </div>
                     </div>
                 </aside>
@@ -575,13 +638,13 @@ export function DiagrammerLayout() {
                             </ol>
                         </div>
                         <div className="p-4 border-t border-white/5 bg-[#1E1E1E]/30 flex justify-end gap-3">
-                            <button 
+                            <button
                                 onClick={() => setIsGuideModalOpen(false)}
                                 className="px-6 py-2 text-gray-400 hover:text-white text-xs font-bold uppercase rounded-lg transition-colors"
                             >
                                 Fechar
                             </button>
-                            <button 
+                            <button
                                 onClick={() => { setIsGuideModalOpen(false); setReadGuide(true); }}
                                 className="px-6 py-2 bg-brand-blue hover:bg-blue-600 text-white text-xs font-bold uppercase rounded-lg transition-colors shadow-lg"
                             >
@@ -618,13 +681,13 @@ export function DiagrammerLayout() {
                             </ul>
                         </div>
                         <div className="p-4 border-t border-white/5 bg-[#1E1E1E]/30 flex justify-end gap-3">
-                            <button 
+                            <button
                                 onClick={() => setIsLicenseModalOpen(false)}
                                 className="px-6 py-2 text-gray-400 hover:text-white text-xs font-bold uppercase rounded-lg transition-colors"
                             >
                                 Fechar
                             </button>
-                            <button 
+                            <button
                                 onClick={() => { setIsLicenseModalOpen(false); setAcceptedCc(true); }}
                                 className="px-6 py-2 bg-brand-red hover:bg-red-600 text-white text-xs font-bold uppercase rounded-lg transition-colors shadow-lg"
                             >
@@ -634,13 +697,16 @@ export function DiagrammerLayout() {
                     </div>
                 </div>
             )}
+
+            {/* Modais */}
+            <TargetProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)} />
         </div>
     );
 }
 
 function ToolboxButton({ icon, label, onClick, colorClass }: { icon: string, label: string, onClick: () => void, colorClass: string }) {
     return (
-        <button 
+        <button
             onClick={onClick}
             className={`flex items-center gap-3 w-full p-3 rounded-xl border border-transparent transition-all bg-[#1E1E1E]/30 ${colorClass}`}
         >

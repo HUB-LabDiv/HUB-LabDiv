@@ -15,12 +15,14 @@ import NotesBlock from './blocks/NotesBlock';
 import ContextBlock from './blocks/ContextBlock';
 import ReferenceBlock from './blocks/ReferenceBlock';
 import DriveBlock from './blocks/DriveBlock';
+import GlossaryBlock from './blocks/GlossaryBlock';
 
 interface BlockRendererProps {
     block: Block;
+    showPedagogicalTip?: boolean;
 }
 
-export function BlockRenderer({ block }: BlockRendererProps) {
+export function BlockRenderer({ block, showPedagogicalTip }: BlockRendererProps) {
     const { activeBlockId, setActiveBlock, removeBlock, moveBlock, previewMode } = useSubmissionStore();
     const isActive = activeBlockId === block.id;
 
@@ -50,6 +52,7 @@ export function BlockRenderer({ block }: BlockRendererProps) {
             case 'context_history': 
             case 'context_social': 
             case 'context_political': return <ContextBlock block={block} isActive={isActive} />;
+            case 'glossary': return <GlossaryBlock block={block} isActive={isActive} />;
             default: return <div className="text-gray-400">Bloco não suportado: {block.type}</div>;
         }
     };
@@ -66,6 +69,17 @@ export function BlockRenderer({ block }: BlockRendererProps) {
             <div className="w-full h-full bg-background-dark/50 backdrop-blur-md rounded-xl p-4 border border-gray-800/50">
                 {renderBlockContent()}
             </div>
+
+            {/* Lembrete Pedagógico */}
+            {previewMode === 'edit' && showPedagogicalTip && (
+                <div className="mt-3 mx-2 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg flex items-start gap-3">
+                    <span className="material-symbols-outlined text-blue-400 shrink-0 mt-0.5">tips_and_updates</span>
+                    <p className="text-xs text-blue-300 font-medium leading-relaxed">
+                        <strong className="text-blue-400 uppercase tracking-wider block mb-1">Dica de Comunicação Científica:</strong>
+                        É recomendado adicionar um balão de <strong>Reflexão</strong>, <strong>Contexto</strong> ou <strong>Glossário</strong> logo após esta mídia para aumentar a interação e contextualização da leitura, instigando o raciocínio do público.
+                    </p>
+                </div>
+            )}
 
             {/* Menu Contextual flutuante para reordenar/excluir (visível apenas quando ativo) */}
             {isActive && (

@@ -8,7 +8,7 @@ interface TextBlockProps {
 }
 
 export default function TextBlock({ block, isActive }: TextBlockProps) {
-    const { updateBlock } = useSubmissionStore();
+    const { updateBlock, addBlock } = useSubmissionStore();
     const textContent = block.content.text || '';
     const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -30,6 +30,17 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
         }, 0);
     };
 
+    const sendToGlossary = () => {
+        const textarea = textareaRef.current;
+        if (!textarea) return;
+
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selectedText = textContent.substring(start, end);
+        
+        addBlock('glossary', { word: selectedText.trim(), meaning: '' }, block.id);
+    };
+
     return (
         <div className="flex flex-col gap-2">
             {isActive && (
@@ -41,6 +52,8 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
                         <button onClick={() => insertText('`', '`')} className="px-2 py-1 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors uppercase tracking-widest"><span className="material-symbols-outlined text-[14px]">code</span> Código</button>
                         <button onClick={() => insertText('$', '$')} className="px-2 py-1 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors uppercase tracking-widest"><span className="material-symbols-outlined text-[14px]">functions</span> LaTeX</button>
                         <button onClick={() => insertText('- ', '')} className="px-2 py-1 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors uppercase tracking-widest"><span className="material-symbols-outlined text-[14px]">format_list_bulleted</span> Lista</button>
+                        <div className="w-px h-4 bg-gray-700/50 mx-1"></div>
+                        <button onClick={sendToGlossary} className="px-2 py-1 flex items-center gap-1 text-[10px] font-bold text-brand-yellow hover:text-yellow-400 hover:bg-brand-yellow/10 rounded transition-colors uppercase tracking-widest"><span className="material-symbols-outlined text-[14px]">menu_book</span> Glossário</button>
                     </div>
                     <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap">
                         {textContent.length} Caracteres

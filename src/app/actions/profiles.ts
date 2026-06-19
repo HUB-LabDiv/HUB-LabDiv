@@ -951,3 +951,52 @@ export async function fetchMyResearchAdoptionStatus() {
 
     return { success: true, data };
 }
+
+export async function fetchTargetProfileStats() {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: 'Não autorizado' };
+
+    // Fetch all approved profiles
+    const { data: profiles, error } = await supabase
+        .from('profiles')
+        .select('cultural_language, education_level, course')
+        .in('review_status', ['approved', 'pending']);
+
+    if (error) {
+        console.error('Error fetching profiles for stats:', error);
+        return { error: 'Erro ao buscar estatísticas do público alvo' };
+    }
+
+    const languageStats: Record<string, number> = {};
+    const educationStats: Record<string, number> = {};
+    const courseStats: Record<string, number> = {};
+
+    profiles?.forEach(p => {
+        if (p.cultural_language) {
+            languageStats[p.cultural_language] = (languageStats[p.cultural_language] || 0) + 1;
+        }
+        if (p.education_level) {
+            educationStats[p.education_level] = (educationStats[p.education_level] || 0) + 1;
+        }
+        if (p.course) {
+            courseStats[p.course] = (courseStats[p.course] || 0) + 1;
+        }
+    });
+
+    const formatData = (stats: Record<string, number>) => {
+        return Object.entries(stats)
+            .map(([name, value]) => ({ name, value }))
+            .sort((a, b) => b.value - a.value); // sort descending by value
+    };
+
+    return {
+        success: true,
+        data: {
+            language: formatData(languageStats),
+            education: formatData(educationStats),
+            course: formatData(courseStats)
+        }
+    };
+}

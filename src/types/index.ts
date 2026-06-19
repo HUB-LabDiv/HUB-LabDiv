@@ -61,6 +61,7 @@ export interface Profile {
     is_visible: boolean;
     is_public: boolean;
     review_status: 'pending' | 'approved' | 'rejected';
+    cultural_language?: string;
     bio_draft?: string;
     completion_year?: number;
     major?: string;
