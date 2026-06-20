@@ -9,6 +9,21 @@ interface InlineAddMenuProps {
 export function InlineAddMenu({ insertAfterId }: InlineAddMenuProps) {
     const [isOpen, setIsOpen] = useState(false);
     const { addBlock, previewMode } = useSubmissionStore();
+    const menuRef = React.useRef<HTMLDivElement>(null);
+
+    React.useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        }
+        if (isOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isOpen]);
 
     if (previewMode !== 'edit') return null;
 
@@ -18,7 +33,7 @@ export function InlineAddMenu({ insertAfterId }: InlineAddMenuProps) {
     };
 
     return (
-        <div className="relative flex justify-center py-2 group">
+        <div className="relative flex justify-center py-2 group" ref={menuRef}>
             {/* Linha horizontal visível apenas em hover */}
             <div className="absolute top-1/2 left-0 w-full h-px bg-brand-blue/30 opacity-0 group-hover:opacity-100 transition-opacity -z-10"></div>
             

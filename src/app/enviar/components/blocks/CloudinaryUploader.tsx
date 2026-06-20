@@ -70,7 +70,7 @@ export function CloudinaryUploader({ onUploadSuccess, accept, label, icon }: Clo
             <span className="text-[10px] text-gray-500 font-medium uppercase tracking-widest text-center mt-1">
                 Anexar arquivos de até 10MB
             </span>
-            {error && <span className="text-brand-red text-xs font-bold text-center mt-1">{error}</span>}
+            {error && <span className="text-gray-200 text-xs font-bold text-center mt-1">{error}</span>}
         </div>
     );
 }

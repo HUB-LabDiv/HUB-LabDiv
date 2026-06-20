@@ -31,10 +31,12 @@ import Link from 'next/link';
 import { NetflixFeed } from '@/components/shared/NetflixFeed';
 import { WikiView } from '@/components/wiki/WikiView';
 import { InstitutoView } from '@/components/wiki/instituto/InstitutoView';
+import { ConstelacoesLinguisticas } from './ConstelacoesLinguisticas';
 
 interface GrandeColisorViewProps {
     oportunidades: any[] | null;
     mapItems: any[];
+    glossario?: any[];
 }
 
 const influencers = [
@@ -92,7 +94,7 @@ const getPlatformIcon = (platform: string) => {
     return <span className="material-symbols-outlined text-[18px]">open_in_new</span>;
 };
 
-export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorViewProps) {
+export function GrandeColisorView({ oportunidades, mapItems, glossario }: GrandeColisorViewProps) {
     const wikiRef = React.useRef<HTMLDivElement>(null);
     const [activeSection, setActiveSection] = React.useState<string>('');
 
@@ -100,6 +102,7 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
         { id: 'oportunidades', label: 'Oportunidades', href: '#oportunidades', icon: 'campaign', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
         { id: 'iniciativas', label: 'Iniciativas', href: '#iniciativas', icon: 'groups', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'espaços', label: 'Espaços', href: '#espaços', icon: 'map', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
+        { id: 'constelacoes', label: 'Glossário', href: '#constelacoes', icon: 'menu_book', activeClass: 'text-brand-yellow bg-brand-yellow/10 border-brand-yellow/30', hoverClass: 'hover:text-brand-yellow hover:bg-brand-yellow/5' },
         { id: 'influenciadores', label: 'Influenciadores', href: '#influenciadores', icon: 'record_voice_over', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'wiki-hub-section', label: 'Wiki', href: '#wiki-hub-section', icon: 'hub', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'teste-radiacao', label: 'Teste', href: '#teste-radiacao', icon: 'quiz', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
@@ -349,6 +352,26 @@ export function GrandeColisorView({ oportunidades, mapItems }: GrandeColisorView
                         </div>
                     </NetflixFeed>
                 </div>
+            </section>
+
+            {/* NEW: Constelações Linguísticas Section */}
+            <section id="constelacoes" className="space-y-12">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-brand-yellow/10 rounded-2xl text-brand-yellow">
+                        <span className="material-symbols-outlined text-3xl">menu_book</span>
+                    </div>
+                    <div>
+                        <h2 className="text-3xl font-black italic uppercase tracking-tighter">Glossário Translacional</h2>
+                        <p className="text-gray-500 font-medium">As constelações linguísticas construídas pela comunidade.</p>
+                    </div>
+                </div>
+                {glossario && glossario.length > 0 ? (
+                    <ConstelacoesLinguisticas glossario={glossario} />
+                ) : (
+                    <div className="p-12 text-center text-gray-400 bg-white/5 border border-white/5 rounded-[40px] italic">
+                        Nenhuma constelação formada ainda no ecossistema do IF.
+                    </div>
+                )}
             </section>
 
             {/* 5. Influenciadores Feed */}

@@ -21,9 +21,10 @@ import { ColisorFeedbackCard } from '@/app/colisor/ColisorFeedbackCard';
 interface ExplorarClientProps {
     mapItems: any[];
     oportunidades: any[];
+    glossario: any[];
 }
 
-export function ExplorarClient({ mapItems, oportunidades }: ExplorarClientProps) {
+export function ExplorarClient({ mapItems, oportunidades, glossario }: ExplorarClientProps) {
     return (
         <MainLayoutWrapper 
             rightSidebar={<ColisorFeedbackCard />}
@@ -38,6 +39,7 @@ export function ExplorarClient({ mapItems, oportunidades }: ExplorarClientProps)
                     <GrandeColisorView 
                         oportunidades={oportunidades} 
                         mapItems={mapItems} 
+                        glossario={glossario}
                     />
                 </motion.div>
             </div>

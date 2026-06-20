@@ -37,5 +37,9 @@ export default async function ExplorarPage() {
         .order('created_at', { ascending: false })
         .limit(3);
 
-    return <ExplorarClient mapItems={mapItems || []} oportunidades={oportunidades || []} />;
+    // Fetch Glossary using the RPC to include edges and positions
+    const { getGlossary } = await import('@/app/enviar/actions/glossaryActions');
+    const { data: palavras_geradoras } = await getGlossary();
+
+    return <ExplorarClient mapItems={mapItems || []} oportunidades={oportunidades || []} glossario={palavras_geradoras || []} />;
 }

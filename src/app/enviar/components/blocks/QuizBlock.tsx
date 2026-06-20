@@ -8,7 +8,7 @@ export default function QuizBlock({ block, isActive }: { block: Block; isActive:
 
     return (
         <div className="flex flex-col p-4 border-2 border-dashed border-brand-red/30 bg-brand-red/5 rounded-xl focus-within:border-brand-red transition-colors">
-            <div className="flex items-center gap-2 mb-4 opacity-70 text-brand-red">
+            <div className="flex items-center gap-2 mb-4 opacity-70 text-gray-200">
                 <span className="material-symbols-outlined text-2xl">quiz</span>
                 <span className="text-sm font-bold uppercase tracking-wider">Bloco de Quiz</span>
             </div>

@@ -1,6 +1,8 @@
 import React, { useRef } from 'react';
 import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
+import { GlossaryParser } from '@/components/GlossaryParser';
+import { GlossaryModal } from '../GlossaryModal';
 
 interface TextBlockProps {
     block: Block;
@@ -8,9 +10,12 @@ interface TextBlockProps {
 }
 
 export default function TextBlock({ block, isActive }: TextBlockProps) {
-    const { updateBlock, addBlock } = useSubmissionStore();
+    const { updateBlock } = useSubmissionStore();
     const textContent = block.content.text || '';
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const [showGlossaryModal, setShowGlossaryModal] = React.useState(false);
+    const [glossarySearchTerm, setGlossarySearchTerm] = React.useState('');
+    const [localPreview, setLocalPreview] = React.useState(false);
 
     const insertText = (prefix: string, suffix: string) => {
         const textarea = textareaRef.current;
@@ -38,30 +43,28 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
         const end = textarea.selectionEnd;
         const selectedText = textContent.substring(start, end);
         
-        addBlock('glossary', { word: selectedText.trim(), meaning: '' }, block.id);
+        setGlossarySearchTerm(selectedText.trim());
+        setShowGlossaryModal(true);
     };
 
     return (
         <div className="flex flex-col gap-2">
             {isActive && (
                 <div className="flex items-center justify-between border-b border-gray-800/50 pb-2 mb-2">
-                    <div className="flex items-center gap-1 overflow-x-auto no-scrollbar">
+                    <div className="flex items-center gap-1 flex-wrap w-full">
                         <button onClick={() => insertText('**', '**')} className="px-2 py-1 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors uppercase tracking-widest"><span className="material-symbols-outlined text-[14px]">format_bold</span> Negrito</button>
                         <button onClick={() => insertText('*', '*')} className="px-2 py-1 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors uppercase tracking-widest"><span className="material-symbols-outlined text-[14px]">format_italic</span> Itálico</button>
                         <button onClick={() => insertText('[', '](url)')} className="px-2 py-1 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors uppercase tracking-widest"><span className="material-symbols-outlined text-[14px]">link</span> Link</button>
                         <button onClick={() => insertText('`', '`')} className="px-2 py-1 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors uppercase tracking-widest"><span className="material-symbols-outlined text-[14px]">code</span> Código</button>
                         <button onClick={() => insertText('$', '$')} className="px-2 py-1 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors uppercase tracking-widest"><span className="material-symbols-outlined text-[14px]">functions</span> LaTeX</button>
                         <button onClick={() => insertText('- ', '')} className="px-2 py-1 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors uppercase tracking-widest"><span className="material-symbols-outlined text-[14px]">format_list_bulleted</span> Lista</button>
-                        <div className="w-px h-4 bg-gray-700/50 mx-1"></div>
-                        <button onClick={sendToGlossary} className="px-2 py-1 flex items-center gap-1 text-[10px] font-bold text-brand-yellow hover:text-yellow-400 hover:bg-brand-yellow/10 rounded transition-colors uppercase tracking-widest"><span className="material-symbols-outlined text-[14px]">menu_book</span> Glossário</button>
-                    </div>
-                    <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap">
-                        {textContent.length} Caracteres
+                        <div className="w-px h-4 bg-gray-700/50 mx-1 shrink-0"></div>
+                        <button onClick={sendToGlossary} className="px-2 py-1 flex items-center gap-1 text-[10px] font-bold text-gray-400 hover:text-white hover:bg-gray-800 rounded transition-colors uppercase tracking-widest"><span className="material-symbols-outlined text-[14px]">menu_book</span> Glossário</button>
                     </div>
                 </div>
             )}
             
-            {isActive ? (
+            {isActive && !localPreview ? (
                 <textarea
                     ref={textareaRef}
                     autoFocus
@@ -72,15 +75,37 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
                 />
             ) : (
                 <div className={`w-full min-h-[50px] font-sans leading-relaxed ${textContent ? 'text-gray-200' : 'text-gray-600'}`}>
-                    {textContent || 'Bloco de texto vazio. Clique para editar.'}
+                    {textContent ? <GlossaryParser text={textContent} /> : 'Bloco de texto vazio. Clique em Editar.'}
                 </div>
             )}
             
             {isActive && (
-                <div className="flex items-center gap-4 text-xs font-mono text-gray-500 mt-2 border-t border-gray-800/50 pt-2">
-                    <span>Apoio a Markdown</span>
-                    <span>LaTeX: $E=mc^2$</span>
+                <div className="flex items-center justify-between mt-2 border-t border-gray-800/50 pt-2">
+                    <div className="flex items-center gap-4 text-xs font-mono text-gray-500">
+                        <span>Apoio a Markdown</span>
+                        <span>LaTeX: $E=mc^2$</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <div className="text-[10px] font-bold text-gray-500 uppercase tracking-widest whitespace-nowrap">
+                            {textContent.length} Caracteres
+                        </div>
+                        <button 
+                            onClick={() => setLocalPreview(!localPreview)} 
+                            className={`px-3 py-1.5 flex items-center gap-1.5 text-[10px] font-bold rounded-lg border transition-all uppercase tracking-widest ${localPreview ? 'text-brand-yellow border-brand-yellow/50 bg-brand-yellow/10 shadow-[0_0_15px_rgba(255,204,0,0.1)]' : 'text-gray-400 border-gray-700 hover:text-white hover:bg-gray-800'}`}
+                        >
+                            <span className="material-symbols-outlined text-[16px]">{localPreview ? 'edit' : 'visibility'}</span> 
+                            {localPreview ? 'Editar Texto' : 'Ver Preview Final'}
+                        </button>
+                    </div>
                 </div>
+            )}
+            
+            {showGlossaryModal && (
+                <GlossaryModal 
+                    isOpen={showGlossaryModal} 
+                    onClose={() => setShowGlossaryModal(false)} 
+                    initialSearchTerm={glossarySearchTerm} 
+                />
             )}
         </div>
     );

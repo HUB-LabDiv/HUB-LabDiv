@@ -10,7 +10,7 @@ export default function Model3DBlock({ block, isActive }: { block: Block; isActi
     return (
         <div className="flex flex-col gap-4 w-full">
             {!modelUrl ? (
-                <div className="w-full min-h-[16rem] border-2 border-dashed border-brand-yellow/30 rounded-xl flex flex-col items-center justify-center text-brand-yellow/70 transition-colors bg-brand-yellow/5 p-6">
+                <div className="w-full min-h-[16rem] border-2 border-dashed border-brand-yellow/30 rounded-xl flex flex-col items-center justify-center text-gray-300 transition-colors bg-brand-yellow/5 p-6">
                     <span className="material-symbols-outlined text-4xl mb-2">view_in_ar</span>
                     <span className="text-sm font-medium mb-4">Adicione um Modelo 3D</span>
                     
@@ -53,8 +53,8 @@ export default function Model3DBlock({ block, isActive }: { block: Block; isActi
 
                     {modelUrl.includes('drive.google') ? (
                         <div className="w-full h-[400px] flex flex-col items-center justify-center text-gray-400 bg-gray-800/30 rounded-lg">
-                            <span className="material-symbols-outlined text-4xl mb-2 text-brand-yellow">folder_zip</span>
-                            <span className="text-sm font-bold uppercase tracking-widest text-brand-yellow mb-2">Pasta do Google Drive</span>
+                            <span className="material-symbols-outlined text-4xl mb-2 text-gray-200">folder_zip</span>
+                            <span className="text-sm font-bold uppercase tracking-widest text-gray-200 mb-2">Pasta do Google Drive</span>
                             <a href={modelUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-brand-yellow underline-offset-4">Acessar Materiais (Upload &gt; 10MB)</a>
                         </div>
                     ) : modelUrl.includes('sketchfab.com') ? (

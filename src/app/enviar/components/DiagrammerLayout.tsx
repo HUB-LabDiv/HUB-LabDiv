@@ -248,7 +248,7 @@ export function DiagrammerLayout() {
                                 <div className="flex flex-col py-4 border-y border-white/5">
                                     <div className="flex items-center justify-between gap-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="size-10 rounded-full bg-brand-blue/20 flex items-center justify-center text-blue-400 font-bold text-xs uppercase shrink-0">
+                                            <div className="size-10 rounded-full bg-brand-blue/20 flex items-center justify-center text-brand-blue font-bold text-xs uppercase shrink-0">
                                                 {(authors || user?.user_metadata?.full_name || 'A').substring(0, 2)}
                                             </div>
                                             <div className="flex flex-col">
@@ -355,7 +355,7 @@ export function DiagrammerLayout() {
                                             <span className="text-sm font-bold text-white">Estatísticas do Público do HUB</span>
                                         </div>
                                     </div>
-                                    <button onClick={() => setIsProfileModalOpen(true)} className="w-full py-2.5 bg-brand-yellow text-gray-900 hover:bg-yellow-500 text-xs font-black uppercase rounded-lg transition-colors shadow-md">
+                                    <button onClick={() => setIsProfileModalOpen(true)} className="w-full py-2.5 bg-brand-yellow text-gray-900 hover:bg-[#E5B800] text-xs font-black uppercase rounded-lg transition-colors shadow-md">
                                         Ver Estatísticas
                                     </button>
                                 </div>
@@ -363,7 +363,7 @@ export function DiagrammerLayout() {
                         </div>
 
                         {/* Editor Principal */}
-                        <div className="bg-[#121212]/60 border-brand-blue/30 shadow-[0_0_50px_rgba(15,71,128,0.2)] border rounded-[32px] p-6 lg:p-12 relative min-h-[500px]">
+                        <div className="bg-[#121212]/60 border-brand-blue/30 shadow-[0_0_50px_rgba(15,71,128,0.2)] border rounded-[32px] p-6 lg:p-12 pb-64 relative min-h-[500px] z-20">
                             <div className="mb-12 border-b border-brand-blue/30 pb-6 flex flex-col gap-6">
                                 <div className="flex flex-col gap-1">
                                     <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest pl-1">Título da Contribuição <span className="text-brand-red">*</span></span>
@@ -611,7 +611,6 @@ export function DiagrammerLayout() {
                             <ToolboxButton icon="history_edu" label="Contexto Histórico" onClick={() => addBlock('context_history')} colorClass="hover:bg-brand-yellow/20 hover:text-brand-yellow hover:border-brand-yellow/30 text-gray-300" />
                             <ToolboxButton icon="groups" label="Contexto Social" onClick={() => addBlock('context_social')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-300" />
                             <ToolboxButton icon="gavel" label="Contexto Político" onClick={() => addBlock('context_political')} colorClass="hover:bg-brand-red/20 hover:text-brand-red hover:border-brand-red/30 text-gray-300" />
-                            <ToolboxButton icon="menu_book" label="Glossário" onClick={() => addBlock('glossary')} colorClass="hover:bg-brand-yellow/20 hover:text-brand-yellow hover:border-brand-yellow/30 text-gray-300" />
                         </div>
                     </div>
                 </aside>
@@ -646,7 +645,7 @@ export function DiagrammerLayout() {
                             </button>
                             <button
                                 onClick={() => { setIsGuideModalOpen(false); setReadGuide(true); }}
-                                className="px-6 py-2 bg-brand-blue hover:bg-blue-600 text-white text-xs font-bold uppercase rounded-lg transition-colors shadow-lg"
+                                className="px-6 py-2 bg-brand-blue hover:bg-[#0D3B6B] text-white text-xs font-bold uppercase rounded-lg transition-colors shadow-lg"
                             >
                                 Li e Concordo
                             </button>
@@ -689,7 +688,7 @@ export function DiagrammerLayout() {
                             </button>
                             <button
                                 onClick={() => { setIsLicenseModalOpen(false); setAcceptedCc(true); }}
-                                className="px-6 py-2 bg-brand-red hover:bg-red-600 text-white text-xs font-bold uppercase rounded-lg transition-colors shadow-lg"
+                                className="px-6 py-2 bg-brand-red hover:bg-[#D93B3B] text-white text-xs font-bold uppercase rounded-lg transition-colors shadow-lg"
                             >
                                 Aceito os Termos
                             </button>

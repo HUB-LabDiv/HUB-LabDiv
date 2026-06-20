@@ -1,5 +1,7 @@
 import { createServerSupabase } from '@/lib/supabase/server';
 import React from 'react';
+import { AdminGlossaryCard } from './AdminGlossaryCard';
+import Link from 'next/link';
 
 export const metadata = {
     title: 'Admin - Glossário Translacional | HUB Lab-Div',
@@ -12,7 +14,8 @@ export default async function AdminGlossarioPage() {
         .from('palavras_geradoras')
         .select(`
             *,
-            signos_constelacoes (*)
+            signos_constelacoes (*),
+            palavras_geradas (*)
         `)
         .order('termo', { ascending: true });
 
@@ -32,10 +35,16 @@ export default async function AdminGlossarioPage() {
                         Gerencie as Palavras Geradoras (método de alfabetização científica de Paulo Freire) e suas constelações de significado. Estas palavras geram Tooltips automáticos quando detectadas nos textos.
                     </p>
                 </div>
-                <button className="px-4 py-2 bg-[#0055ff] hover:bg-[#0044cc] text-white rounded-lg font-medium transition-colors flex items-center gap-2 self-start md:self-auto cursor-not-allowed opacity-50" title="Em breve">
-                    <span className="material-symbols-outlined text-sm">add</span>
-                    Nova Palavra Geradora
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3 self-start md:self-auto">
+                    <Link href="/admin/glossario/mapa" className="px-4 py-2 bg-brand-yellow/10 hover:bg-brand-yellow/20 text-brand-yellow border border-brand-yellow/30 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+                        <span className="material-symbols-outlined text-sm">hub</span>
+                        Montar Mapa de Constelações
+                    </Link>
+                    <button className="px-4 py-2 bg-[#0055ff] hover:bg-[#0044cc] text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 cursor-not-allowed opacity-50" title="Em breve">
+                        <span className="material-symbols-outlined text-sm">add</span>
+                        Nova Palavra Geradora
+                    </button>
+                </div>
             </div>
 
             <div className="grid gap-6">
@@ -47,58 +56,19 @@ export default async function AdminGlossarioPage() {
                     </div>
                 )}
 
-                {palavras?.map((palavra: any) => (
-                    <div key={palavra.id} className="bg-neutral-900 border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
-                        <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#0055ff] to-brand-yellow opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                        
-                        <div className="flex flex-col md:flex-row gap-6">
-                            {/* Academic Core */}
-                            <div className="md:w-1/3 flex flex-col gap-2 border-b md:border-b-0 md:border-r border-gray-800 pb-4 md:pb-0 md:pr-6">
-                                <div className="flex items-center gap-2 justify-between">
-                                    <h2 className="text-xl font-bold text-white">{palavra.termo}</h2>
-                                    <div className="flex gap-2">
-                                        <button className="p-1.5 text-gray-500 hover:text-[#0055ff] hover:bg-gray-800 rounded-lg transition-colors cursor-not-allowed opacity-50" title="Em breve">
-                                            <span className="material-symbols-outlined text-[18px]">edit</span>
-                                        </button>
-                                        <button className="p-1.5 text-gray-500 hover:text-brand-red hover:bg-gray-800 rounded-lg transition-colors cursor-not-allowed opacity-50" title="Em breve">
-                                            <span className="material-symbols-outlined text-[18px]">delete</span>
-                                        </button>
-                                    </div>
-                                </div>
-                                <span className="text-xs font-semibold uppercase tracking-wider text-[#0055ff]">Codificação Acadêmica</span>
-                                <p className="text-sm text-gray-300 leading-relaxed mt-1">
-                                    {palavra.codificacao_academica}
-                                </p>
-                            </div>
+                {palavras?.map((palavra: any) => {
+                    const dynamicConstellations = palavras.flatMap((p: any) => p.signos_constelacoes?.map((c: any) => c.constelacao) || []);
+                    const predefinedConstellations = ['NERD', 'IFUSPIANA', 'ARTÍSTICA', 'JOVEM', 'COTIDIANA'];
+                    const allConstellations = Array.from(new Set([...predefinedConstellations, ...dynamicConstellations])).filter(Boolean) as string[];
 
-                            {/* Constellations */}
-                            <div className="md:w-2/3">
-                                <div className="flex items-center gap-2 mb-4">
-                                    <span className="material-symbols-outlined text-brand-yellow text-sm">stars</span>
-                                    <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-400">Constelações de Significado</h3>
-                                </div>
-                                
-                                <div className="grid sm:grid-cols-2 gap-4">
-                                    {palavra.signos_constelacoes?.map((constelacao: any) => (
-                                        <div key={constelacao.id} className="bg-neutral-800/50 p-4 rounded-xl border border-gray-700/50 flex flex-col gap-2">
-                                            <span className="inline-flex px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-widest bg-gray-800 text-gray-300 w-fit">
-                                                {constelacao.constelacao}
-                                            </span>
-                                            <p className="text-sm text-gray-400 italic">
-                                                "{constelacao.descodificacao}"
-                                            </p>
-                                        </div>
-                                    ))}
-                                    {(!palavra.signos_constelacoes || palavra.signos_constelacoes.length === 0) && (
-                                        <div className="col-span-2 text-sm text-gray-500 italic py-2">
-                                            Nenhuma constelação cadastrada. Apenas o sentido acadêmico será exibido.
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                    return (
+                        <AdminGlossaryCard 
+                            key={palavra.id} 
+                            palavra={palavra} 
+                            allConstellations={allConstellations}
+                        />
+                    );
+                })}
             </div>
         </div>
     );

@@ -8,14 +8,13 @@ import QuizBlock from './blocks/QuizBlock';
 import AudioBlock from './blocks/AudioBlock';
 import ReflectionBlock from './blocks/ReflectionBlock';
 import VideoBlock from './blocks/VideoBlock';
-import WebGameBlock from './blocks/WebGameBlock';
-import WebPageBlock from './blocks/WebPageBlock';
 import PdfBlock from './blocks/PdfBlock';
 import NotesBlock from './blocks/NotesBlock';
+import DriveBlock from './blocks/DriveBlock';
 import ContextBlock from './blocks/ContextBlock';
 import ReferenceBlock from './blocks/ReferenceBlock';
-import DriveBlock from './blocks/DriveBlock';
-import GlossaryBlock from './blocks/GlossaryBlock';
+import WebGameBlock from './blocks/WebGameBlock';
+import WebPageBlock from './blocks/WebPageBlock';
 
 interface BlockRendererProps {
     block: Block;
@@ -52,7 +51,7 @@ export function BlockRenderer({ block, showPedagogicalTip }: BlockRendererProps)
             case 'context_history': 
             case 'context_social': 
             case 'context_political': return <ContextBlock block={block} isActive={isActive} />;
-            case 'glossary': return <GlossaryBlock block={block} isActive={isActive} />;
+            case 'glossary': return null; // Deprecated as a standalone block, now a Modal tool
             default: return <div className="text-gray-400">Bloco não suportado: {block.type}</div>;
         }
     };
@@ -72,10 +71,10 @@ export function BlockRenderer({ block, showPedagogicalTip }: BlockRendererProps)
 
             {/* Lembrete Pedagógico */}
             {previewMode === 'edit' && showPedagogicalTip && (
-                <div className="mt-3 mx-2 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg flex items-start gap-3">
-                    <span className="material-symbols-outlined text-blue-400 shrink-0 mt-0.5">tips_and_updates</span>
-                    <p className="text-xs text-blue-300 font-medium leading-relaxed">
-                        <strong className="text-blue-400 uppercase tracking-wider block mb-1">Dica de Comunicação Científica:</strong>
+                <div className="mt-3 mx-2 p-3 bg-brand-blue/10 border border-brand-blue/30 rounded-lg flex items-start gap-3">
+                    <span className="material-symbols-outlined text-brand-blue shrink-0 mt-0.5">tips_and_updates</span>
+                    <p className="text-xs text-gray-300 font-medium leading-relaxed">
+                        <strong className="text-white uppercase tracking-wider block mb-1">Dica de Comunicação Científica:</strong>
                         É recomendado adicionar um balão de <strong>Reflexão</strong>, <strong>Contexto</strong> ou <strong>Glossário</strong> logo após esta mídia para aumentar a interação e contextualização da leitura, instigando o raciocínio do público.
                     </p>
                 </div>
@@ -83,7 +82,7 @@ export function BlockRenderer({ block, showPedagogicalTip }: BlockRendererProps)
 
             {/* Menu Contextual flutuante para reordenar/excluir (visível apenas quando ativo) */}
             {isActive && (
-                <div className="absolute -right-4 -top-4 flex items-center gap-1 bg-gray-900 border border-gray-700/50 rounded-lg p-1.5 shadow-xl z-20">
+                <div className="absolute -right-2 -top-10 flex items-center gap-1 bg-gray-900 border border-gray-700/50 rounded-lg p-1.5 shadow-xl z-20">
                     <button 
                         onClick={(e) => { e.stopPropagation(); moveBlock(block.id, 'up'); }}
                         className="p-1 hover:bg-gray-800 rounded-md text-gray-400 hover:text-white transition-colors"

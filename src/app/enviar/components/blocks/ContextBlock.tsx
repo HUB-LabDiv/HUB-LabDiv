@@ -8,16 +8,16 @@ export default function ContextBlock({ block, isActive }: { block: Block; isActi
 
     let icon = 'history_edu';
     let label = 'Contexto Histórico';
-    let colorClass = 'text-brand-yellow border-brand-yellow/30 bg-brand-yellow/5 focus-within:border-brand-yellow';
+    let colorClass = 'text-gray-200 border-brand-yellow/30 bg-brand-yellow/5 focus-within:border-brand-yellow';
 
     if (block.type === 'context_social') {
         icon = 'groups';
         label = 'Contexto Social';
-        colorClass = 'text-brand-blue border-brand-blue/30 bg-brand-blue/5 focus-within:border-brand-blue';
+        colorClass = 'text-gray-200 border-brand-blue/30 bg-brand-blue/5 focus-within:border-brand-blue';
     } else if (block.type === 'context_political') {
         icon = 'gavel';
         label = 'Contexto Político';
-        colorClass = 'text-brand-red border-brand-red/30 bg-brand-red/5 focus-within:border-brand-red';
+        colorClass = 'text-gray-200 border-brand-red/30 bg-brand-red/5 focus-within:border-brand-red';
     }
 
     return (

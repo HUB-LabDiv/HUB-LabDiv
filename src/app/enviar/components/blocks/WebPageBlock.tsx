@@ -37,13 +37,13 @@ export default function WebPageBlock({ block, isActive }: WebPageBlockProps) {
                             value={url}
                             onChange={(e) => updateBlock(block.id, { url: e.target.value, height })}
                             placeholder="https://..."
-                            className="w-full bg-black/40 border border-gray-700/50 rounded-xl px-4 py-3 text-sm outline-none focus:border-teal-500/50 text-white placeholder-gray-600 transition-colors"
+                            className="w-full bg-black/40 border border-gray-700/50 rounded-xl px-4 py-3 text-sm outline-none focus:border-brand-blue/50 text-white placeholder-gray-600 transition-colors"
                         />
                     </div>
                     <div className="flex flex-col gap-1">
                         <div className="flex justify-between items-center">
                             <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Altura do iFrame</label>
-                            <span className="text-[10px] font-bold text-teal-500">{height}px</span>
+                            <span className="text-[10px] font-bold text-gray-200">{height}px</span>
                         </div>
                         <input
                             type="range"
@@ -52,7 +52,7 @@ export default function WebPageBlock({ block, isActive }: WebPageBlockProps) {
                             step="50"
                             value={height}
                             onChange={(e) => updateBlock(block.id, { url, height: parseInt(e.target.value) })}
-                            className="w-full accent-teal-500"
+                            className="w-full accent-brand-blue"
                         />
                     </div>
                 </div>
@@ -68,9 +68,9 @@ export default function WebPageBlock({ block, isActive }: WebPageBlockProps) {
                     />
                 </div>
             ) : (
-                <div className="flex flex-col items-center justify-center h-32 text-gray-400 border-2 border-dashed border-teal-500/30 bg-teal-500/5 rounded-xl transition-all">
-                    <span className="material-symbols-outlined text-3xl mb-1 text-teal-400">language</span>
-                    <span className="text-sm font-bold text-teal-400">Web Page Vazia</span>
+                <div className="flex flex-col items-center justify-center h-32 text-gray-400 border-2 border-dashed border-brand-blue/30 bg-brand-blue/5 rounded-xl transition-all">
+                    <span className="material-symbols-outlined text-3xl mb-1 text-gray-200">language</span>
+                    <span className="text-sm font-bold text-gray-200">Web Page Vazia</span>
                     <p className="text-xs mt-1 text-gray-500">Insira a URL para incorporar.</p>
                 </div>
             )}

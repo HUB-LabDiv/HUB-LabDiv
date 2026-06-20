@@ -46,8 +46,8 @@ export default function ImageBlock({ block, isActive }: ImageBlockProps) {
                 <div className="relative group rounded-xl overflow-hidden bg-gray-900 border border-gray-800">
                     {imageUrl.includes('drive.google') ? (
                         <div className="w-full h-48 flex flex-col items-center justify-center text-gray-400 bg-gray-800/30">
-                            <span className="material-symbols-outlined text-4xl mb-2 text-brand-blue">folder_zip</span>
-                            <span className="text-sm font-bold uppercase tracking-widest text-brand-blue mb-2">Pasta do Google Drive</span>
+                            <span className="material-symbols-outlined text-4xl mb-2 text-gray-200">folder_zip</span>
+                            <span className="text-sm font-bold uppercase tracking-widest text-gray-200 mb-2">Pasta do Google Drive</span>
                             <a href={imageUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-brand-blue underline-offset-4">Acessar Materiais (Upload &gt; 10MB)</a>
                         </div>
                     ) : (
@@ -59,7 +59,7 @@ export default function ImageBlock({ block, isActive }: ImageBlockProps) {
                         <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                             <button 
                                 onClick={() => updateBlock(block.id, { url: '' })}
-                                className="px-4 py-2 bg-brand-red text-white rounded-lg font-medium shadow-lg hover:bg-red-600 transition-colors"
+                                className="px-4 py-2 bg-brand-red text-white rounded-lg font-medium shadow-lg hover:bg-brand-red transition-colors"
                             >
                                 Substituir Imagem
                             </button>
