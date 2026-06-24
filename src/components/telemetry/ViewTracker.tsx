@@ -12,8 +12,9 @@
  */
 
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
+import { registerPostAnalytics } from '@/app/actions/analytics';
 
 interface ViewTrackerProps {
     submissionId: string;
@@ -21,26 +22,55 @@ interface ViewTrackerProps {
 
 export function ViewTracker({ submissionId }: ViewTrackerProps) {
     const hasTracked = useRef(false);
+    const timeSpent = useRef(0);
+    const maxScroll = useRef(0);
+    const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
     useEffect(() => {
-        if (hasTracked.current) return;
+        // Track time spent
+        intervalRef.current = setInterval(() => {
+            timeSpent.current += 1;
+        }, 1000);
 
-        async function incrementView() {
-            try {
-                // Call the RPC function to increment views
-                const { error } = await supabase.rpc('increment_view_count', {
-                    submission_id: submissionId
-                });
-
-                if (!error) {
-                    hasTracked.current = true;
+        // Track scroll depth
+        const handleScroll = () => {
+            const windowHeight = window.innerHeight;
+            const documentHeight = document.documentElement.scrollHeight - windowHeight;
+            const scrollTop = window.scrollY;
+            
+            if (documentHeight > 0) {
+                const depth = Math.min(100, Math.round((scrollTop / documentHeight) * 100));
+                if (depth > maxScroll.current) {
+                    maxScroll.current = depth;
                 }
-            } catch (err) {
-                console.error('Failed to increment view count:', err);
             }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        if (!hasTracked.current) {
+            async function incrementView() {
+                try {
+                    const { error } = await supabase.rpc('increment_view_count', {
+                        submission_id: submissionId
+                    });
+                    if (!error) hasTracked.current = true;
+                } catch (err) {
+                    console.error('Failed to increment view count:', err);
+                }
+            }
+            incrementView();
         }
 
-        incrementView();
+        // Send analytics on unmount
+        return () => {
+            if (intervalRef.current) clearInterval(intervalRef.current);
+            window.removeEventListener('scroll', handleScroll);
+            
+            // Register analytics (runs asynchronously)
+            registerPostAnalytics(submissionId, maxScroll.current, timeSpent.current)
+                .catch(err => console.error('Failed to register analytics:', err));
+        };
     }, [submissionId]);
 
     // This component renders nothing

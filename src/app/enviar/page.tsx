@@ -12,8 +12,8 @@
  */
 
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { Suspense, useEffect, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
@@ -26,13 +26,58 @@ import { useNavigationStore } from '@/store/useNavigationStore';
 import Link from 'next/link';
 
 import { useAuth } from '@/providers/AuthProvider';
+import { supabase } from '@/lib/supabase';
+import toast from 'react-hot-toast';
 
-export default function SubmitPage() {
+function SubmitPageContent() {
     const router = useRouter();
+    const searchParams = useSearchParams();
     const { user, loading: authLoading } = useAuth();
-    const { currentStep, reset, previewMode, setPreviewMode } = useSubmissionStore();
+    const { currentStep, reset, previewMode, setPreviewMode, setField, setCategory, updateBlocks } = useSubmissionStore();
     const { isReportModalOpen, setReportModalOpen } = useNavigationStore();
     const [isInitializing, setIsInitializing] = useState(true);
+
+    useEffect(() => {
+        const loadEditPost = async () => {
+            const editId = searchParams.get('editId');
+            if (editId) {
+                try {
+                    const { data, error } = await supabase
+                        .from('submissions')
+                        .select('*')
+                        .eq('id', editId)
+                        .single();
+                        
+                    if (data && !error) {
+                        setField('title', data.title);
+                        setField('authors', data.authors);
+                        setField('description', data.description);
+                        setCategory(data.category);
+                        
+                        // Populate diagrammer blocks if sdocx
+                        if (data.media_type === 'sdocx' && data.media_url) {
+                            try {
+                                const blocks = JSON.parse(data.media_url);
+                                if (Array.isArray(blocks)) {
+                                    updateBlocks(blocks);
+                                }
+                            } catch (e) {
+                                console.error('Error parsing blocks', e);
+                            }
+                        }
+                        
+                        toast.success('Projeto carregado para edição!');
+                    }
+                } catch (e) {
+                    console.error('Error loading edit post:', e);
+                }
+            }
+        };
+
+        if (user && !authLoading) {
+            loadEditPost();
+        }
+    }, [searchParams, user, authLoading, setField, setCategory, updateBlocks]);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -82,7 +127,7 @@ export default function SubmitPage() {
                                 exit={{ opacity: 0, y: -20 }}
                                 transition={{ duration: 0.4 }}
                             >
-                                <DiagrammerLayout />
+                                <DiagrammerLayout editId={searchParams.get('editId')} />
                             </motion.div>
                         </AnimatePresence>
                     </div>
@@ -93,6 +138,14 @@ export default function SubmitPage() {
                 onClose={() => setReportModalOpen(false)}
             />
         </MainLayoutWrapper>
+    );
+}
+
+export default function SubmitPage() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center">Carregando...</div>}>
+            <SubmitPageContent />
+        </Suspense>
     );
 }
 

@@ -12,8 +12,13 @@ import { createSubmission } from '@/app/actions/submissions';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { TargetProfileModal } from './TargetProfileModal';
+import { updateSubmission } from '@/app/actions/submissions';
 
-export function DiagrammerLayout() {
+interface DiagrammerLayoutProps {
+    editId?: string | null;
+}
+
+export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
     const {
         blocks, addBlock, setActiveBlock, activeBlockId, title, setTitle,
         authors, setAuthors, year, setYear,
@@ -121,6 +126,65 @@ export function DiagrammerLayout() {
         } catch (error) {
             console.error(error);
             toast.error('Erro inesperado ao lançar conteúdo.', { id: toastId });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleUpdate = async () => {
+        if (!editId) return;
+        if (!title.trim()) {
+            toast.error('O título é obrigatório.');
+            return;
+        }
+        if (!authors.trim()) {
+            toast.error('O nome de autor/apelido é obrigatório.');
+            return;
+        }
+
+        setIsSubmitting(true);
+        const toastId = toast.loading('Atualizando postagem...');
+
+        try {
+            const reflexoesBlocks = blocks.filter(b => b.type === 'reflection');
+            const reflexoes = reflexoesBlocks.map(b => ({
+                ancora_paragrafo: b.id,
+                pergunta_provocadora: b.content.question || 'Reflexão',
+                tipo_reflexao: 'aberta'
+            }));
+
+            const quizBlock = blocks.find(b => b.type === 'quiz');
+
+            const payload = {
+                title,
+                authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
+                category: category || 'Outros',
+                description: blocks.find(b => b.type === 'text')?.content?.text || 'Contribuição construída no Diagramador.',
+                media_type: 'sdocx',
+                media_url: JSON.stringify(blocks),
+                event_year: year ? parseInt(year) : new Date().getFullYear(),
+                is_historical: isHistorical,
+                is_golden_standard: isGoldenStandard,
+                accepted_cc: acceptedCc,
+                language_register: languageRegister,
+                needs_moderation_help: needsModerationHelp,
+                reflexoes: reflexoes.length > 0 ? reflexoes : undefined,
+                quiz: quizBlock ? [quizBlock.content] : undefined,
+            };
+
+            const res = await updateSubmission(editId, payload);
+
+            if (res.error) {
+                console.error(res.error);
+                toast.error('Erro ao atualizar conteúdo.', { id: toastId });
+            } else {
+                toast.success('Conteúdo atualizado com sucesso!', { id: toastId });
+                useSubmissionStore.getState().reset();
+                router.push(`/arquivo/${editId}`);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Erro inesperado ao atualizar conteúdo.', { id: toastId });
         } finally {
             setIsSubmitting(false);
         }
@@ -588,14 +652,28 @@ export function DiagrammerLayout() {
 
                     </div>
 
-                    <button
-                        onClick={handlePublish}
-                        className="w-full flex items-center justify-center gap-2 px-8 py-5 mt-4 rounded-xl bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red text-white font-bold text-xl hover:opacity-90 transition-all shadow-[0_0_30px_rgba(255,204,0,0.3)] hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
-                        disabled={!readGuide || !acceptedCc || isSubmitting}
-                        title={(!readGuide || !acceptedCc) ? "Você precisa aceitar os termos acima para continuar" : ""}
-                    >
-                        {isSubmitting ? 'Lançando...' : 'Lançar Conteúdo 🚀'}
-                    </button>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row items-center gap-4 w-full mt-4">
+                        {editId && (
+                            <button
+                                onClick={handleUpdate}
+                                className="w-full flex items-center justify-center gap-2 px-8 py-5 rounded-xl bg-[#1E1E1E] border border-brand-blue/50 text-brand-blue font-bold text-xl hover:bg-brand-blue/10 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                                disabled={!readGuide || !acceptedCc || isSubmitting}
+                                title={(!readGuide || !acceptedCc) ? "Você precisa aceitar os termos acima para continuar" : ""}
+                            >
+                                {isSubmitting ? 'Atualizando...' : 'Atualizar Original 🔄'}
+                            </button>
+                        )}
+                        <button
+                            onClick={handlePublish}
+                            className="w-full flex items-center justify-center gap-2 px-8 py-5 rounded-xl bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red text-white font-bold text-xl hover:opacity-90 transition-all shadow-[0_0_30px_rgba(255,204,0,0.3)] hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                            disabled={!readGuide || !acceptedCc || isSubmitting}
+                            title={(!readGuide || !acceptedCc) ? "Você precisa aceitar os termos acima para continuar" : ""}
+                        >
+                            {isSubmitting ? 'Lançando...' : (editId ? 'Lançar como Novo Post 🚀' : 'Lançar Conteúdo 🚀')}
+                        </button>
+                    </div>
                 </div>
 
             </main>

@@ -59,6 +59,8 @@ export default function AdminLayout({
         { name: 'Validação do Match', href: '/admin/adocoes', icon: 'favorite' },
         { name: 'Pergunte a um Cientista', href: '/admin/perguntas', icon: 'quiz' },
         { name: 'Central de Anomalias', href: '/admin/reports', icon: 'bug_report' },
+        { name: 'Central SAC', href: '/admin/sac', icon: 'support_agent' },
+        { name: 'Sábios do Síncrotron', href: '/admin/dicas', icon: 'record_voice_over' },
         { name: 'Trilhas de Aprendizagem', href: '/admin/trilhas', icon: 'route', adminOnly: true },
         { name: 'Oportunidades', href: '/admin/oportunidades', icon: 'event' },
         { name: 'Logs do IFUSP', href: '/admin/drops', icon: 'forum' },

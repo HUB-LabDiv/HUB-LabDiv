@@ -14,6 +14,8 @@ import { Pause, Send, CheckCircle2, MessageSquareQuote } from 'lucide-react';
 import { useReadingExperience } from './ReadingExperienceProvider';
 import { useAuth } from '@/providers/AuthProvider';
 import { toast } from 'react-hot-toast';
+import { useParams } from 'next/navigation';
+import { registerBlockInteraction } from '@/app/actions/analytics';
 
 interface BalloonReflexaoProps {
     reflexaoId: string;
@@ -39,6 +41,8 @@ export function BalloonReflexao({
     const [isSubmitted, setIsSubmitted] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
+    const params = useParams<{ id: string }>();
+    const submissionId = params?.id;
 
     // Monitoring Reading Ruler (Fixed at 40vh)
     useEffect(() => {
@@ -72,10 +76,11 @@ export function BalloonReflexao({
         
         setIsSubmitting(true);
         try {
-            // Mocking server action call for now
-            // await saveReflexaoResponse({ reflexaoId, userId: user.id, response });
+            if (submissionId) {
+                await registerBlockInteraction(submissionId, reflexaoId, tipo, response);
+            }
             
-            await new Promise(resolve => setTimeout(resolve, 800)); // Simulate lag
+            // await new Promise(resolve => setTimeout(resolve, 800)); // Simulate lag
             setIsSubmitted(true);
             toast.success('Ressignificação capturada com sucesso!');
         } catch (err) {

@@ -162,3 +162,114 @@ BEGIN
     ORDER BY pg.termo ASC;
 END;
 $$;
+
+-- 5. CRIAR TABELA PARA SAC/FAQ
+CREATE TABLE IF NOT EXISTS public.sac_faq (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    pergunta TEXT NOT NULL,
+    resposta TEXT,
+    status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+    nome TEXT,
+    num_usp TEXT,
+    email TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- RLS para sac_faq
+ALTER TABLE public.sac_faq ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Qualquer um pode ler FAQs aprovados" ON public.sac_faq;
+CREATE POLICY "Qualquer um pode ler FAQs aprovados"
+    ON public.sac_faq FOR SELECT
+    USING (status = 'approved');
+
+DROP POLICY IF EXISTS "Autenticados podem inserir FAQs" ON public.sac_faq;
+CREATE POLICY "Autenticados podem inserir FAQs"
+    ON public.sac_faq FOR INSERT
+    WITH CHECK (status = 'pending');
+
+DROP POLICY IF EXISTS "Admin tem acesso total ao SAC" ON public.sac_faq;
+CREATE POLICY "Admin tem acesso total ao SAC"
+    ON public.sac_faq FOR ALL
+    USING (true)
+    WITH CHECK (true);
+-- Migration for Dicas de Veteranos (Sábios do Síncrotron)
+
+CREATE TABLE IF NOT EXISTS public.dicas_veteranos (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    titulo TEXT NOT NULL,
+    conteudo TEXT NOT NULL,
+    categoria TEXT NOT NULL,
+    autor_nome TEXT NOT NULL,
+    autor_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    upvotes INTEGER DEFAULT 0,
+    status TEXT NOT NULL DEFAULT 'pending', -- 'pending', 'approved', 'rejected'
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- RLS Policies
+ALTER TABLE public.dicas_veteranos ENABLE ROW LEVEL SECURITY;
+
+-- Select (Leitura Pública apenas para dicas aprovadas)
+DROP POLICY IF EXISTS "Dicas aprovadas são públicas" ON public.dicas_veteranos;
+CREATE POLICY "Dicas aprovadas são públicas"
+    ON public.dicas_veteranos FOR SELECT
+    USING (status = 'approved');
+
+-- Insert (Qualquer usuário autenticado pode enviar)
+DROP POLICY IF EXISTS "Usuários autenticados podem enviar dicas" ON public.dicas_veteranos;
+CREATE POLICY "Usuários autenticados podem enviar dicas"
+    ON public.dicas_veteranos FOR INSERT
+    WITH CHECK (auth.uid() IS NOT NULL);
+
+-- Admin tem acesso total (Leitura de pendentes, Update, Delete)
+DROP POLICY IF EXISTS "Admin acesso total dicas" ON public.dicas_veteranos;
+CREATE POLICY "Admin acesso total dicas"
+    ON public.dicas_veteranos FOR ALL
+    USING (true)
+    WITH CHECK (true);
+
+-- Upvotes: Permitir que qualquer usuário faça o UPDATE apenas do campo upvotes
+-- Para simplificar por enquanto, deixaremos o update de upvotes liberado se a dica for aprovada
+-- e se o auth.uid() não for nulo (ou seja, logado)
+DROP POLICY IF EXISTS "Usuários logados podem curtir dicas aprovadas" ON public.dicas_veteranos;
+CREATE POLICY "Usuários logados podem curtir dicas aprovadas"
+    ON public.dicas_veteranos FOR UPDATE
+    USING (status = 'approved' AND auth.uid() IS NOT NULL);
+
+-- ==============================================================================
+-- HUB LAB-DIV: SUPABASE SQL MIGRATION (GOD-SQL-MK8 - PEDAGOGICAL ANALYTICS)
+-- ==============================================================================
+
+-- 1. ADD NEW PEDAGOGICAL FIELDS TO SUBMISSIONS
+ALTER TABLE public.submissions
+ADD COLUMN IF NOT EXISTS complexity_level TEXT,
+ADD COLUMN IF NOT EXISTS biggest_learning TEXT;
+
+-- 2. CREATE POST ANALYTICS TABLE
+CREATE TABLE IF NOT EXISTS public.post_analytics (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    submission_id UUID NOT NULL REFERENCES public.submissions(id) ON DELETE CASCADE,
+    scroll_depth_avg NUMERIC DEFAULT 0,
+    time_spent_avg NUMERIC DEFAULT 0,
+    total_reads INTEGER DEFAULT 0,
+    block_interactions JSONB DEFAULT '{}'::jsonb,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(submission_id)
+);
+
+-- RLS FOR POST ANALYTICS
+ALTER TABLE public.post_analytics ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public can view analytics" ON public.post_analytics;
+CREATE POLICY "Public can view analytics"
+    ON public.post_analytics FOR SELECT
+    USING (true);
+
+DROP POLICY IF EXISTS "System can update analytics" ON public.post_analytics;
+CREATE POLICY "System can update analytics"
+    ON public.post_analytics FOR ALL
+    USING (true)
+    WITH CHECK (true);
+

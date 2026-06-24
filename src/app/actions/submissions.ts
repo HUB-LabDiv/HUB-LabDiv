@@ -708,6 +708,80 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
     return { success: true, data: newSub };
 }
 
+export async function updateSubmission(id: string, formData: any) {
+    const serverSupabase = await createServerSupabase();
+    const { data: { user } } = await serverSupabase.auth.getUser();
+    if (!user) return { error: { auth: ["Unauthorized"] } };
+
+    // Validar se o usuário é o dono do post ou se é admin
+    const { data: existingPost } = await serverSupabase
+        .from('submissions')
+        .select('user_id')
+        .eq('id', id)
+        .single();
+        
+    if (!existingPost) return { error: { message: "Post não encontrado" } };
+    
+    if (existingPost.user_id !== user.id) {
+        const { data: profile } = await serverSupabase.from('profiles').select('role').eq('id', user.id).single();
+        if (profile?.role !== 'admin') {
+            return { error: { message: "Você só pode editar seus próprios posts." } };
+        }
+    }
+
+    const {
+        title, authors, category, description, media_type, media_url,
+        event_year, is_historical, is_golden_standard, accepted_cc,
+        language_register, needs_moderation_help, reflexoes, quiz
+    } = formData;
+
+    const event_date = event_year ? `${event_year}-01-01T12:00:00Z` : null;
+
+    const updatePayload = {
+        title,
+        authors,
+        category,
+        description,
+        media_type,
+        media_url,
+        event_date,
+        is_historical,
+        is_golden_standard,
+        language_register,
+        needs_moderation_help,
+        quiz
+    };
+
+    const { data: updatedSub, error } = await serverSupabase
+        .from('submissions')
+        .update(updatePayload)
+        .eq('id', id)
+        .select()
+        .single();
+
+    if (error) {
+        return { error: { database: [`Erro DB (${error.code}): ${error.message}`] } };
+    }
+
+    // Update Reflexoes
+    if (reflexoes && Array.isArray(reflexoes)) {
+        // Simple strategy: delete old and insert new
+        await serverSupabase.from('reflexoes_inline').delete().eq('post_id', id);
+        if (reflexoes.length > 0) {
+            await serverSupabase.from('reflexoes_inline').insert(reflexoes.map(r => ({
+                ...r,
+                post_id: id
+            })));
+        }
+    }
+
+    revalidatePath('/');
+    revalidatePath(`/arquivo/${id}`);
+    revalidatePath('/lab');
+
+    return { success: true, data: updatedSub };
+}
+
 export async function fetchUserSubmissions(userId: string): Promise<{ post: PostDTO }[]> {
     const supabaseServer = await createServerSupabase();
     const { data: submissions, error } = await supabaseServer

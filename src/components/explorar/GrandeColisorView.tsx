@@ -106,6 +106,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
         { id: 'influenciadores', label: 'Influenciadores', href: '#influenciadores', icon: 'record_voice_over', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'wiki-hub-section', label: 'Wiki', href: '#wiki-hub-section', icon: 'hub', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'teste-radiacao', label: 'Teste', href: '#teste-radiacao', icon: 'quiz', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
+        { id: 'sac-section', label: 'SAC', href: '#sac-section', icon: 'support_agent', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
     ];
 
     React.useEffect(() => {

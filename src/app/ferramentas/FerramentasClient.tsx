@@ -17,7 +17,7 @@ import { fetchUserAcademicdata } from '@/app/actions/disciplines';
 import { 
     X, Eye, Edit3, ChevronLeft, ChevronRight, Search, Plus, Trash2, Info, Loader2, BookOpen, 
     GraduationCap, CalendarDays, FileText, Table, Calendar, MessageSquareCode, Share2,
-    RefreshCw, Undo2, Settings
+    RefreshCw, Undo2, Settings, ChevronDown
 } from 'lucide-react';
 import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -1683,6 +1683,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     </div>
                 </div>
             )}
+
             <JupiterSyncModal 
                 isOpen={isJupiterModalOpen} 
                 onClose={() => setIsJupiterModalOpen(false)}

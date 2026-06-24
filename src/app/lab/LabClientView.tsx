@@ -33,7 +33,8 @@ import { EditSubmissionModal } from '@/components/profile/EditSubmissionModal';
 import { NetworkModal } from '@/components/profile/NetworkModal';
 import { requestPostModeration } from '@/app/actions/submissions';
 import toast from 'react-hot-toast';
-import { Edit, Trash2 } from 'lucide-react';
+import { Edit, Trash2, BarChart2 } from 'lucide-react';
+import { MetricsModal } from './components/MetricsModal';
 
 interface LabClientViewProps {
     currentUser: User;
@@ -83,6 +84,10 @@ export function LabClientView({
     // Moderation state
     const [selectedPostToEdit, setSelectedPostToEdit] = useState<PostDTO | null>(null);
     const [isEditPostModalOpen, setIsEditPostModalOpen] = useState(false);
+    
+    // Metrics state
+    const [selectedPostForMetrics, setSelectedPostForMetrics] = useState<PostDTO | null>(null);
+    const [isMetricsModalOpen, setIsMetricsModalOpen] = useState(false);
 
     useEffect(() => {
         setViewedProfile(initialViewedProfile);
@@ -538,14 +543,26 @@ export function LabClientView({
                                                             onClick={(e) => {
                                                                 e.preventDefault();
                                                                 e.stopPropagation();
-                                                                setSelectedPostToEdit(sub.post);
-                                                                setIsEditPostModalOpen(true);
+                                                                router.push(`/enviar?editId=${sub.post.id}`);
                                                             }}
                                                             className="p-2 bg-white/20 backdrop-blur-md hover:bg-brand-blue/80 text-white rounded-lg transition-all border border-white/20 shadow-lg group/btn"
                                                             title="Solicitar Edição"
                                                         >
                                                             <Edit className="w-4 h-4" />
                                                             <span className="absolute left-10 top-1/2 -translate-y-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">Editar</span>
+                                                        </button>
+                                                        <button 
+                                                            onClick={(e) => {
+                                                                e.preventDefault();
+                                                                e.stopPropagation();
+                                                                setSelectedPostForMetrics(sub.post);
+                                                                setIsMetricsModalOpen(true);
+                                                            }}
+                                                            className="p-2 bg-white/20 backdrop-blur-md hover:bg-brand-yellow text-white rounded-lg transition-all border border-white/20 shadow-lg group/btn"
+                                                            title="Ver Estatísticas Pedagógicas"
+                                                        >
+                                                            <BarChart2 className="w-4 h-4" />
+                                                            <span className="absolute left-10 top-1/2 -translate-y-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">Estatísticas</span>
                                                         </button>
                                                         <button 
                                                             onClick={(e) => {
@@ -676,11 +693,17 @@ export function LabClientView({
             <EditProfileModal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
-                onSuccess={() => {
-                    // Refetch data optimally instead of manual client-side override: Next.js revalidation
-                    router.refresh();
-                }}
+                profile={viewedProfile}
             />
+
+            {/* Modal de Estatísticas Pedagógicas */}
+            {selectedPostForMetrics && (
+                <MetricsModal
+                    isOpen={isMetricsModalOpen}
+                    onClose={() => setIsMetricsModalOpen(false)}
+                    post={selectedPostForMetrics}
+                />
+            )}
 
             <EditSubmissionModal 
                 isOpen={isEditPostModalOpen}
