@@ -119,7 +119,7 @@ export default function VeteranosPage() {
                         <button
                             key={cat.id}
                             onClick={() => setActiveFilter(cat.id)}
-                            className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-colors border ${activeFilter === cat.id ? \`bg-\${cat.color} text-white border-\${cat.color}\` : 'bg-transparent text-gray-400 border-gray-800 hover:border-gray-600'}`}
+                            className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-colors border ${activeFilter === cat.id ? `bg-${cat.color} text-white border-${cat.color}` : 'bg-transparent text-gray-400 border-gray-800 hover:border-gray-600'}`}
                         >
                             {cat.label}
                         </button>
@@ -151,11 +151,11 @@ export default function VeteranosPage() {
                                     className="bg-[#111] border border-white/10 rounded-3xl p-6 flex flex-col hover:border-white/30 transition-colors"
                                 >
                                     <div className="flex items-center justify-between mb-4">
-                                        <span className={\`text-[10px] font-black uppercase tracking-widest text-\${cat.color} bg-\${cat.color}/10 px-3 py-1 rounded-full\`}>
+                                        <span className={`text-[10px] font-black uppercase tracking-widest text-${cat.color} bg-${cat.color}/10 px-3 py-1 rounded-full`}>
                                             {cat.label}
                                         </span>
                                         <div className="flex items-center gap-1.5 text-gray-500 text-xs font-bold">
-                                            <ThumbsUp className={\`w-4 h-4 \${isUpvoted ? 'text-brand-blue fill-brand-blue' : ''}\`} />
+                                            <ThumbsUp className={`w-4 h-4 ${isUpvoted ? 'text-brand-blue fill-brand-blue' : ''}`} />
                                             <span className={isUpvoted ? 'text-brand-blue' : ''}>{tip.upvotes}</span>
                                         </div>
                                     </div>
@@ -167,9 +167,9 @@ export default function VeteranosPage() {
                                         <button 
                                             onClick={() => handleUpvote(tip.id)}
                                             disabled={isUpvoted}
-                                            className={\`p-2 rounded-full transition-colors \${isUpvoted ? 'bg-brand-blue/20 text-brand-blue cursor-default' : 'bg-white/5 text-white hover:bg-white/20'}\`}
+                                            className={`p-2 rounded-full transition-colors ${isUpvoted ? 'bg-brand-blue/20 text-brand-blue cursor-default' : 'bg-white/5 text-white hover:bg-white/20'}`}
                                         >
-                                            <ThumbsUp className={\`w-4 h-4 \${isUpvoted ? 'fill-current' : ''}\`} />
+                                            <ThumbsUp className={`w-4 h-4 ${isUpvoted ? 'fill-current' : ''}`} />
                                         </button>
                                     </div>
                                 </motion.div>

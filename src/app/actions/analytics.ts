@@ -8,7 +8,7 @@ export async function registerPostAnalytics(data: {
     timeSpentSeconds: number;
 }) {
     try {
-        const supabase = createServerSupabase();
+        const supabase = await createServerSupabase();
         
         // 1. Ver se já existe analytics para este post
         const { data: existing, error: fetchError } = await supabase
@@ -65,7 +65,7 @@ export async function registerBlockInteraction(data: {
     interactionData: any;
 }) {
     try {
-        const supabase = createServerSupabase();
+        const supabase = await createServerSupabase();
         
         const { data: existing, error: fetchError } = await supabase
             .from('post_analytics')
@@ -118,7 +118,7 @@ export async function registerBlockInteraction(data: {
 
 export async function getPostAnalytics(submissionId: string) {
     try {
-        const supabase = createServerSupabase();
+        const supabase = await createServerSupabase();
         const { data, error } = await supabase
             .from('post_analytics')
             .select('*')

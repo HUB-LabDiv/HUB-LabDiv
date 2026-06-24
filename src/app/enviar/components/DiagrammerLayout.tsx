@@ -652,8 +652,6 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
 
                     </div>
 
-                    </div>
-
                     <div className="flex flex-col sm:flex-row items-center gap-4 w-full mt-4">
                         {editId && (
                             <button
