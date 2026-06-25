@@ -29,8 +29,13 @@ export function MetricsModal({ isOpen, onClose, post }: MetricsModalProps) {
         if (isOpen) {
             setLoading(true);
             getPostAnalytics(post.id)
-                .then(data => {
-                    setAnalytics(data);
+                .then(res => {
+                    if (res.success && res.data) {
+                        setAnalytics(res.data);
+                    } else {
+                        console.error('Failed to get analytics:', res.error);
+                        setAnalytics(null);
+                    }
                 })
                 .catch(err => {
                     console.error('Error loading analytics:', err);
