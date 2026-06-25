@@ -29,7 +29,7 @@ export default async function ArenaPage() {
         .eq('id', user.id)
         .single();
 
-    if (!profile || profile.user_category !== 'pesquisador') {
+    if (!profile || (profile.user_category !== 'pesquisador' && profile.user_category !== 'docente_pesquisador')) {
         // Only researchers have access to the Arena
         redirect('/lab');
     }

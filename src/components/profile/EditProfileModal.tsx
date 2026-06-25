@@ -62,6 +62,12 @@ const profileSchema = z.object({
     cultural_language: z.enum(['nerd_geek', 'artistica', 'jovem', 'academica']).default('jovem'),
 }).superRefine((data, ctx) => {
     const isUsp = data.email?.endsWith('@usp.br') || data.email?.endsWith('@if.usp.br');
+    const isResearcher = data.user_category === 'pesquisador' || data.user_category === 'docente_pesquisador';
+
+    if (isResearcher) {
+        return; // specific validations for researcher can be added here if needed
+    }
+
     if (isUsp) {
         if (!data.institute || data.institute.trim() === '') {
             ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Selecione um instituto", path: ["institute"] });
@@ -729,7 +735,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
 
                         {/* 4. SEÇÕES CONDICIONAIS POR CATEGORIA */}
                         <div className="space-y-6 pt-6 border-t border-gray-100 dark:border-white/5">
-                            {watch('user_category') === 'curioso' && (
+                            {!isUspUser && watch('user_category') !== 'pesquisador' && watch('user_category') !== 'docente_pesquisador' && (
                                 <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
                                     <h3 className="text-[10px] font-black text-brand-blue uppercase tracking-[0.2em] flex items-center gap-2">
                                         <Briefcase className="w-3 h-3" /> Formação Acadêmica
@@ -769,7 +775,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                 </div>
                             )}
 
-                            {watch('user_category') === 'aluno_usp' && (
+                            {isUspUser && watch('user_category') !== 'pesquisador' && watch('user_category') !== 'docente_pesquisador' && (
                                 <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
                                     <h3 className="text-[10px] font-black text-brand-blue uppercase tracking-[0.2em] flex items-center gap-2">
                                         <Zap className="w-3 h-3" /> Protocolos USP
@@ -899,7 +905,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                 </div>
                             )}
 
-                            {watch('user_category') === 'pesquisador' && (
+                            {(watch('user_category') === 'pesquisador' || watch('user_category') === 'docente_pesquisador') && (
                                 <div className="space-y-4 animate-in fade-in slide-in-from-top-4 duration-500">
                                     <h3 className="text-[10px] font-black text-brand-yellow uppercase tracking-[0.2em] flex items-center gap-2">
                                         <Microscope className="w-3 h-3" /> Configuração de Laboratório

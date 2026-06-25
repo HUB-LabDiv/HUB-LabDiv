@@ -73,7 +73,7 @@ export const BottomNavBar = () => {
     const dynamicNavItems = [
         { name: 'Comunidade', href: '/', icon: 'groups', color: 'brand-red' },
         { name: 'GCIF', href: '/gcif', icon: 'colisor', color: 'brand-blue' },
-        ...(isAdult ? [{ name: 'Lançar à Órbita', href: AppRoutes.ENVAR, icon: 'rocket_launch', isAction: true, color: 'brand-blue' }] : []),
+        ...( (isAdult || userCategory === 'pesquisador' || userCategory === 'docente_pesquisador') ? [{ name: 'Lançar à Órbita', href: AppRoutes.ENVAR, icon: 'rocket_launch', isAction: true, color: 'brand-blue' }] : []),
         ...(userCategory === 'pesquisador' 
             ? [{ name: 'Pesquisa', href: '/arena', icon: 'visibility', color: 'brand-red' }]
             : userCategory === 'aluno_usp'

@@ -73,10 +73,23 @@ export function LabClientView({
     const [currentUserProfile, setCurrentUserProfile] = useState<Profile | null>(initialCurrentUserProfile);
     const [adoptionStatus, setAdoptionStatus] = useState<'pending' | 'approved' | null>(initialAdoptionStatus);
     
-    // Auto-open Edit Profile Modal if critical info is missing (first visit essentially)
+    // Auto-open Edit Profile Modal if critical info is missing
     const isViewingOwn = currentUser.id === viewedProfile?.id;
+    
+    const isUspMember = viewedProfile?.email?.endsWith('@usp.br') || viewedProfile?.email?.endsWith('@if.usp.br');
+    const isResearcher = viewedProfile?.user_category === 'pesquisador' || viewedProfile?.user_category === 'docente_pesquisador';
+    
+    let isProfileIncomplete = false;
+    if (viewedProfile && !isResearcher) {
+        if (isUspMember) {
+            isProfileIncomplete = !viewedProfile.institute || !viewedProfile.course;
+        } else {
+            isProfileIncomplete = !viewedProfile.education_level || !viewedProfile.external_institution;
+        }
+    }
+
     const [isEditModalOpen, setIsEditModalOpen] = useState(
-        isViewingOwn && viewedProfile && !viewedProfile.institute && !viewedProfile.course && !viewedProfile.bio ? true : false
+        isViewingOwn && isProfileIncomplete
     );
     
     const [activeTab, setActiveTab] = useState(initialTab);

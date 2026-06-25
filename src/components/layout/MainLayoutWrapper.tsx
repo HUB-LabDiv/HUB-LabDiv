@@ -96,7 +96,7 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = false, f
             <BottomNavBar />
 
             {/* Nova Submissão FAB (Desktop Only — xl+) */}
-            {!focusMode && profile?.is_adult === true && (
+            {!focusMode && (profile?.is_adult === true || profile?.user_category === 'pesquisador' || profile?.user_category === 'docente_pesquisador') && (
                 <Link
                     href="/enviar"
                     className="hidden xl:flex fixed bottom-8 right-8 z-[60] bg-brand-blue text-white px-6 h-14 rounded-full shadow-2xl items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all group border border-white/10"

@@ -273,3 +273,10 @@ CREATE POLICY "System can update analytics"
     USING (true)
     WITH CHECK (true);
 
+-- ==============================================================================
+-- ADD NEW VALUES TO user_category ENUM
+-- ==============================================================================
+ALTER TYPE public.user_category ADD VALUE IF NOT EXISTS 'licenciatura';
+ALTER TYPE public.user_category ADD VALUE IF NOT EXISTS 'bacharelado';
+ALTER TYPE public.user_category ADD VALUE IF NOT EXISTS 'pos_graduacao';
+ALTER TYPE public.user_category ADD VALUE IF NOT EXISTS 'docente_pesquisador';
