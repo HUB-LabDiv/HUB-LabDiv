@@ -142,6 +142,7 @@ interface SubmissionState {
     moveBlock: (id: string, direction: 'up' | 'down') => void;
     setActiveBlock: (id: string | null) => void;
     setPreviewMode: (mode: 'edit' | 'preview') => void;
+    setBlocks: (blocks: Block[]) => void;
 
     // Agreements Setters
     setReadGuide: (val: boolean) => void;
@@ -245,6 +246,7 @@ export const useSubmissionStore = create<SubmissionState>()(
             }),
             setActiveBlock: (id) => set({ activeBlockId: id }),
             setPreviewMode: (mode) => set({ previewMode: mode }),
+            setBlocks: (blocks) => set({ blocks }),
 
             setReadGuide: (readGuide) => set({ readGuide }),
             setAcceptedCc: (acceptedCc) => set({ acceptedCc }),

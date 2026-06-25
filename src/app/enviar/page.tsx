@@ -33,7 +33,7 @@ function SubmitPageContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { user, loading: authLoading } = useAuth();
-    const { currentStep, reset, previewMode, setPreviewMode, setField, setCategory, updateBlocks } = useSubmissionStore();
+    const { currentStep, reset, previewMode, setPreviewMode, setCategory, setTitle, setAuthors, setDescription, setBlocks } = useSubmissionStore();
     const { isReportModalOpen, setReportModalOpen } = useNavigationStore();
     const [isInitializing, setIsInitializing] = useState(true);
 
@@ -49,9 +49,9 @@ function SubmitPageContent() {
                         .single();
                         
                     if (data && !error) {
-                        setField('title', data.title);
-                        setField('authors', data.authors);
-                        setField('description', data.description);
+                        setTitle(data.title);
+                        setAuthors(data.authors);
+                        setDescription(data.description);
                         setCategory(data.category);
                         
                         // Populate diagrammer blocks if sdocx
@@ -59,7 +59,8 @@ function SubmitPageContent() {
                             try {
                                 const blocks = JSON.parse(data.media_url);
                                 if (Array.isArray(blocks)) {
-                                    updateBlocks(blocks);
+                                    // There's no updateBlocks in SubmissionState. We can overwrite by clearing and adding or by adding a setBlocks method. Let's add setBlocks.
+                                    setBlocks(blocks);
                                 }
                             } catch (e) {
                                 console.error('Error parsing blocks', e);
@@ -77,7 +78,7 @@ function SubmitPageContent() {
         if (user && !authLoading) {
             loadEditPost();
         }
-    }, [searchParams, user, authLoading, setField, setCategory, updateBlocks]);
+    }, [searchParams, user, authLoading, setTitle, setAuthors, setDescription, setCategory, setBlocks]);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
