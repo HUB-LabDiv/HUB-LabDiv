@@ -77,7 +77,11 @@ export function BalloonReflexao({
         setIsSubmitting(true);
         try {
             if (submissionId) {
-                await registerBlockInteraction(submissionId, reflexaoId, tipo, response);
+                await registerBlockInteraction({
+                    submissionId,
+                    blockId: reflexaoId,
+                    interactionData: { type: tipo, response }
+                });
             }
             
             // await new Promise(resolve => setTimeout(resolve, 800)); // Simulate lag
