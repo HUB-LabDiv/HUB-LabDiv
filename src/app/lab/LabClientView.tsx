@@ -693,7 +693,6 @@ export function LabClientView({
             <EditProfileModal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
-                profile={viewedProfile}
             />
 
             {/* Modal de Estatísticas Pedagógicas */}
