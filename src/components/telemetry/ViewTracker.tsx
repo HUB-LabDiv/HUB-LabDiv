@@ -68,7 +68,11 @@ export function ViewTracker({ submissionId }: ViewTrackerProps) {
             window.removeEventListener('scroll', handleScroll);
             
             // Register analytics (runs asynchronously)
-            registerPostAnalytics(submissionId, maxScroll.current, timeSpent.current)
+            registerPostAnalytics({
+                submissionId,
+                scrollDepth: maxScroll.current,
+                timeSpentSeconds: timeSpent.current
+            })
                 .catch(err => console.error('Failed to register analytics:', err));
         };
     }, [submissionId]);
