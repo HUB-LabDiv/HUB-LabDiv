@@ -693,6 +693,7 @@ export function LabClientView({
             <EditProfileModal
                 isOpen={isEditModalOpen}
                 onClose={() => setIsEditModalOpen(false)}
+                onSuccess={() => router.refresh()}
             />
 
             {/* Modal de Estatísticas Pedagógicas */}
