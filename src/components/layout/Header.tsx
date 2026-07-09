@@ -106,7 +106,8 @@ export function Header() {
     return (
         <>
             <header
-                className="fixed top-[env(safe-area-inset-top)] left-0 right-0 h-16 bg-transparent z-50 transition-colors"
+                className="fixed left-0 right-0 h-16 bg-transparent z-50 transition-colors"
+                style={{ top: 'env(safe-area-inset-top, 0px)' }}
             >
                 <div className="max-w-[1800px] mx-auto h-full px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-4">
                     {/* Left: Branding */}
@@ -311,7 +312,8 @@ export function Header() {
             <button
                 onClick={toggleTheme}
                 aria-label="Alternar Tema Claro e Escuro"
-                className="md:hidden fixed top-[calc(76px+env(safe-area-inset-top))] left-4 z-[50] size-11 flex items-center justify-center rounded-full bg-white dark:bg-[#282828] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 shadow-md dark:shadow-lg dark:shadow-black/50 transition-colors active:scale-95"
+                className="md:hidden fixed left-4 z-[50] size-11 flex items-center justify-center rounded-full bg-white dark:bg-[#282828] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 shadow-md dark:shadow-lg dark:shadow-black/50 transition-colors active:scale-95"
+                style={{ top: 'calc(76px + env(safe-area-inset-top, 0px))' }}
             >
                 <span className="material-symbols-outlined text-[20px]">
                     {theme === 'dark' ? 'light_mode' : 'dark_mode'}
@@ -321,8 +323,9 @@ export function Header() {
             <button
                 onClick={() => setReportModalOpen(true)}
                 aria-label="Reportar Erro ou Enviar Feedback"
-                className="md:hidden fixed top-[calc(76px+env(safe-area-inset-top))] right-4 z-[50] size-11 flex items-center justify-center rounded-full bg-brand-red text-white shadow-md shadow-brand-red/30 transition-transform active:scale-95"
+                className="md:hidden fixed right-4 z-[50] size-11 flex items-center justify-center rounded-full bg-brand-red text-white shadow-md shadow-brand-red/30 transition-transform active:scale-95"
                 title="Reportar Erro / Feedback"
+                style={{ top: 'calc(76px + env(safe-area-inset-top, 0px))' }}
             >
                 <span className="material-symbols-outlined text-[20px]">report</span>
             </button>

@@ -36,6 +36,44 @@ O Hub foi pensado para te dar o controle e a descoberta:
 3. **Submissão Colaborativa (O Futuro)**
    Nós construímos estradas, mas são vocês que trazem a carga. Seja você um monitor da Pós, um pesquisador titular, ou um aluno da graduação com uma bela foto do Acelerador Linear (Pelletron) ao pôr do sol, **você pode lançar os seus achados à órbita.** A Moderação garante o rigor científico, mas a autoria é 100% sua, acumulando *Pontos de Reputação (XP)* na plataforma.
 
+## 🚀 Arquitetura Técnica (Monorepo)
+
+O Hub Lab-Div foi construído utilizando tecnologias modernas visando performance, facilidade de manutenção e integração fluida entre as plataformas Web e Mobile.
+
+**Stack Principal:**
+- **Framework:** Next.js 14+ (App Router, Server Components).
+- **Estilização:** Tailwind CSS v4.0.
+- **Banco de Dados & Autenticação:** Supabase (PostgreSQL com Row Level Security - RLS).
+- **Mobile:** Capacitor v6 (Wrapper nativo).
+
+### Como o App Mobile Funciona
+Atualmente, o projeto utiliza uma arquitetura híbrida (Thin Client). O aplicativo Android (na pasta `android/`) é uma "casca" gerada pelo **Capacitor**, que aponta diretamente para o domínio hospedado na Vercel (via `capacitor.config.ts`).
+Isso significa que:
+1. Nenhuma alteração no código Web (React/Next.js) precisa ser recompilada no Android Studio para refletir no aplicativo.
+2. Basta enviar o código para o GitHub (Push), a Vercel atualiza, e o aplicativo no celular é atualizado em tempo real.
+
+---
+
+## 🛠️ Como Executar o Projeto
+
+### 1. Rodando a Aplicação Web (Localmente)
+Para rodar o ambiente de desenvolvimento Next.js no seu computador:
+```bash
+# Instale as dependências
+npm install
+
+# Rode o servidor de desenvolvimento
+npm run dev
+```
+O projeto estará disponível em `http://localhost:3000`.
+
+### 2. Rodando o Aplicativo Android
+Se você precisar alterar ícones, configurações nativas ou gerar um novo APK:
+1. Abra a pasta `android/` no **Android Studio**.
+2. Sincronize o Gradle.
+3. Clique no botão "Play" verde para emular ou construir o APK.
+*(Nota: O APK final será gerado na pasta `android/app/build/outputs/apk/debug/HUB-LabDiv-debug.apk`)*
+
 ---
 
 ## 📜 Licença
