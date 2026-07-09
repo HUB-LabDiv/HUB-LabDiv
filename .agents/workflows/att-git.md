@@ -3,4 +3,4 @@ description:
 ---
 
 atualize os seguintes repositorios:
-https://github.com/HUB-LabDiv/HUB-LabDiv-TESTES-, https://github.com/HUB-LabDiv/HUB-LabDiv, https://github.com/JoaoStangorlini/HUB-LabDiv e https://github.com/HUB-LabDiv/HUB-LabDiv-app
+https://github.com/HUB-LabDiv/HUB-LabDiv-TESTES- e https://github.com/HUB-LabDiv/HUB-LabDiv
