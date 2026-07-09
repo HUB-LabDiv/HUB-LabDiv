@@ -99,6 +99,11 @@ body {
   background-color: var(--background);
   scrollbar-color: auto var(--background);
   scroll-behavior: smooth;
+  /* Capacitor / Android 15 Edge-to-Edge padding */
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 /* Scientific background pattern - moved to pseudo-element for visibility control */
