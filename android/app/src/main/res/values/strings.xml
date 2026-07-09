@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">HUB LabDiv</string>
+    <string name="title_activity_main">HUB LabDiv</string>
+    <string name="package_name">br.usp.ifusp.hublabdiv</string>
+    <string name="custom_url_scheme">br.usp.ifusp.hublabdiv</string>
+</resources>

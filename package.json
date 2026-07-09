@@ -23,6 +23,7 @@
     "not IE 11"
   ],
   "dependencies": {
+    "@capacitor/core": "^8.4.1",
     "@fullcalendar/core": "^6.1.20",
     "@fullcalendar/daygrid": "^6.1.20",
     "@fullcalendar/interaction": "^6.1.20",
@@ -83,6 +84,9 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@capacitor/android": "^8.4.1",
+    "@capacitor/assets": "^3.0.5",
+    "@capacitor/cli": "^8.4.1",
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
