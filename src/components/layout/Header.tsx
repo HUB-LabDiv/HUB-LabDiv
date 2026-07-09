@@ -110,9 +110,9 @@ export function Header() {
             >
                 <div className="max-w-[1800px] mx-auto h-full px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-4">
                     {/* Left: Branding */}
-                    <Link href="/" className="flex items-center gap-3 group shrink-0" onClick={closeAll}>
-                        <div className="flex items-center gap-3">
-                            <div className="relative w-9 h-9 flex-shrink-0 group-hover:scale-110 transition-transform duration-500">
+                    <Link href="/" className="flex items-center gap-1.5 sm:gap-3 group shrink-0" onClick={closeAll}>
+                        <div className="flex items-center gap-1.5 sm:gap-3">
+                            <div className="relative w-7 h-7 sm:w-9 sm:h-9 flex-shrink-0 group-hover:scale-110 transition-transform duration-500">
                                 <div className="absolute -inset-1 bg-gradient-to-r from-brand-blue via-brand-red to-brand-blue rounded-lg blur opacity-0 group-hover:opacity-40 transition-opacity animate-premium-glow"></div>
                                 <div className="relative w-full h-full">
                                     <div className="absolute w-[60%] h-[75%] bg-brand-blue rounded-[2px] top-0 left-0 z-0 shadow-sm"></div>
@@ -121,18 +121,18 @@ export function Header() {
                                 </div>
                             </div>
                             <div className="flex flex-col -space-y-1">
-                                <div className="text-xl font-bukra font-bold tracking-tight flex items-baseline gap-1.5 leading-tight">
+                                <div className="text-base sm:text-xl font-bukra font-bold tracking-tight flex items-baseline gap-1 sm:gap-1.5 leading-tight">
                                     <span className="text-gray-900 dark:text-white uppercase">HUB</span>
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-red to-brand-blue font-black">LabDiv</span>
                                     <div className="flex flex-col items-center opacity-80">
-                                        <span className="text-[7px] sm:text-[8px] font-black px-1.5 py-0.5 rounded bg-brand-blue/10 dark:bg-white/10 text-brand-blue dark:text-gray-400/80 ml-1">V3.2.0</span>
-                                        <span className="text-[8px] font-black uppercase tracking-tighter ml-1 text-brand-blue dark:text-gray-500">(BETA)</span>
+                                        <span className="text-[6px] sm:text-[8px] font-black px-1 sm:px-1.5 py-0.5 rounded bg-brand-blue/10 dark:bg-white/10 text-brand-blue dark:text-gray-400/80 ml-1">V3.2.0</span>
+                                        <span className="text-[6px] sm:text-[8px] font-black uppercase tracking-tighter ml-1 text-brand-blue dark:text-gray-500">(BETA)</span>
                                     </div>
                                 </div>
-                                <span className="text-[7px] sm:text-[9px] font-bukra font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">IFUSP</span>
+                                <span className="text-[6px] sm:text-[9px] font-bukra font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">IFUSP</span>
                             </div>
-                            <div className="flex items-center gap-2.5 ml-1">
-                                <div className="w-px h-7 bg-gray-200 dark:bg-white/15"></div>
+                            <div className="flex items-center gap-1.5 sm:gap-2.5 ml-0 sm:ml-1 scale-75 sm:scale-100 origin-left">
+                                <div className="w-px h-5 sm:h-7 bg-gray-200 dark:bg-white/15"></div>
                                 <IFUSPLogo size={42} className="text-brand-blue dark:text-brand-blue opacity-80 group-hover:opacity-100 transition-opacity" />
                             </div>
                         </div>
