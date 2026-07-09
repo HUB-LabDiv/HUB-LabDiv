@@ -47,33 +47,52 @@ function LoginContent() {
         }
     };
 
+    const triggerOAuthLogin = async (track: 'usp' | 'external', category?: 'aluno_usp' | 'pesquisador') => {
+        const next = searchParams.get('next') || '/';
+        let redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}&track=${track}`;
+        
+        if (category) {
+            redirectTo += `&category=${category}`;
+        }
+
+        const options: any = {
+            redirectTo,
+            queryParams: {
+                prompt: 'select_account',
+            },
+        };
+
+        if (track === 'usp' && category === 'aluno_usp') {
+            options.queryParams.hd = 'usp.br';
+        }
+
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options,
+        });
+        if (error) throw error;
+    };
+
     const handleLogin = async (track: 'usp' | 'external', category?: 'aluno_usp' | 'pesquisador') => {
         setIsLoading(true);
         try {
-            const next = searchParams.get('next') || '/';
-            let redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}&track=${track}`;
-            
-            if (category) {
-                redirectTo += `&category=${category}`;
+            if (typeof window !== 'undefined' && (window as any).google) {
+                (window as any).google.accounts.id.prompt((notification: any) => {
+                    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                        console.log("One Tap not displayed, falling back to OAuth...");
+                        triggerOAuthLogin(track, category).catch((err) => {
+                            console.error('Error in fallback:', err.message);
+                            setIsLoading(false);
+                        });
+                    }
+                });
+                
+                // If the prompt shows, it stays on screen. The loading state can be reset after a timeout
+                // or we just keep it loading while they interact with the popup.
+                setTimeout(() => setIsLoading(false), 5000);
+            } else {
+                await triggerOAuthLogin(track, category);
             }
-
-            const options: any = {
-                redirectTo,
-                queryParams: {
-                    prompt: 'select_account',
-                },
-            };
-
-            // Hard-Lock Domain Hint for Aluno USP track
-            if (track === 'usp' && category === 'aluno_usp') {
-                options.queryParams.hd = 'usp.br';
-            }
-
-            const { error } = await supabase.auth.signInWithOAuth({
-                provider: 'google',
-                options,
-            });
-            if (error) throw error;
         } catch (error: any) {
             console.error('Error logging in:', error.message);
             setIsLoading(false);
