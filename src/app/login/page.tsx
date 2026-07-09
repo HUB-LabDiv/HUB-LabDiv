@@ -62,7 +62,7 @@ function LoginContent() {
             },
         };
 
-        if (track === 'usp' && category === 'aluno_usp') {
+        if (track === 'usp') {
             options.queryParams.hd = 'usp.br';
         }
 

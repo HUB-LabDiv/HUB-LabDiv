@@ -93,6 +93,8 @@
 
 html {
   scroll-behavior: smooth;
+  overscroll-behavior: none !important;
+  overscroll-behavior-y: none !important;
 }
 
 body {
