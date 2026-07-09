@@ -37,7 +37,11 @@ const initialState = {
         {
             id: 'mock-reflection-1',
             type: 'reflection' as BlockType,
-            content: { question: 'Exemplo de reflexão do usuario após a introdução, esse balão o faz pensar em que visão ele tinha antes e sobre a sua nova visão que irá se desenvolver ainda mais ao decorrer do post' }
+            content: { 
+                questionType: 'discursive',
+                question: 'Exemplo de reflexão do usuario após a introdução, esse balão o faz pensar em que visão ele tinha antes e sobre a sua nova visão que irá se desenvolver ainda mais ao decorrer do post',
+                options: []
+            }
         },
         {
             id: 'mock-text-2',
@@ -67,7 +71,12 @@ const initialState = {
         {
             id: 'mock-quiz-1',
             type: 'quiz' as BlockType,
-            content: { question: 'Exemplo de Pergunta', options: ['Opção 1', 'Opção 2'], correctAnswer: 0 }
+            content: { 
+                questionType: 'multiple_choice',
+                question: 'Exemplo de Pergunta', 
+                options: ['Opção 1', 'Opção 2'], 
+                correctAnswer: 0 
+            }
         }
     ],
     activeBlockId: null,
