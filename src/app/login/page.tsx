@@ -20,12 +20,32 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Trophy } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { HubLogo } from '@/components/shared/HubLogo';
+import Script from 'next/script';
 
 
 function LoginContent() {
     const [isLoading, setIsLoading] = useState(false);
     const searchParams = useSearchParams();
     const router = useRouter();
+
+    const handleOneTapResponse = async (response: any) => {
+        setIsLoading(true);
+        try {
+            const { error } = await supabase.auth.signInWithIdToken({
+                provider: 'google',
+                token: response.credential,
+            });
+            if (error) throw error;
+            
+            const next = searchParams.get('next') || '/';
+            router.push(next);
+            toast.success("Login automático realizado com sucesso!");
+        } catch (error: any) {
+            console.error('One Tap Error:', error.message);
+            toast.error("Erro no login automático.");
+            setIsLoading(false);
+        }
+    };
 
     const handleLogin = async (track: 'usp' | 'external', category?: 'aluno_usp' | 'pesquisador') => {
         setIsLoading(true);
@@ -83,10 +103,40 @@ function LoginContent() {
         } catch (error) {
             console.error('Failed to clear local storage:', error);
         }
+
+        const tryInitGoogle = () => {
+            if (typeof window !== 'undefined' && (window as any).google && process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
+                try {
+                    (window as any).google.accounts.id.initialize({
+                        client_id: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
+                        callback: handleOneTapResponse,
+                        auto_select: false,
+                        cancel_on_tap_outside: true,
+                    });
+                    (window as any).google.accounts.id.prompt();
+                } catch (e) {
+                    console.error("Error initializing Google One Tap", e);
+                }
+            }
+        };
+
+        let attempts = 0;
+        const interval = setInterval(() => {
+            attempts++;
+            if (typeof window !== 'undefined' && (window as any).google) {
+                tryInitGoogle();
+                clearInterval(interval);
+            }
+            if (attempts > 10) clearInterval(interval); // give up after 5s
+        }, 500);
+
+        return () => clearInterval(interval);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
         <main className="min-h-[80vh] flex items-center justify-center p-4 bg-gray-50 dark:bg-background-dark/30">
+            <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" />
             <div className="max-w-md w-full bg-white dark:bg-card-dark rounded-3xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 <div className="p-8 sm:p-12 relative">
                     <Link
