@@ -133,7 +133,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
 
     // Final fallback to brand logo
-    const finalImage = previewImage || 'https://if-usp-ciencia.vercel.app/arquivo-logo.png';
+    const finalImage = previewImage || 'https://hub-lab-div.vercel.app/arquivo-logo.png';
 
     const cleanDescription = submission.description
         ? submission.description.replace(/[#*`$]/g, '').substring(0, 160).trim() + '...'
@@ -143,7 +143,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
         title: `${submission.title} — Hub Lab-Div`,
         description: cleanDescription,
         alternates: {
-            canonical: `https://if-usp-ciencia.vercel.app/arquivo/${id}`,
+            canonical: `https://hub-lab-div.vercel.app/arquivo/${id}`,
         },
         openGraph: {
             title: submission.title,

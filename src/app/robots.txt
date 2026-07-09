@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://if-usp-ciencia.vercel.app/sitemap.xml
+Sitemap: https://hub-lab-div.vercel.app/sitemap.xml
