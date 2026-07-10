@@ -102,7 +102,8 @@ export function formatDate(dateStr: string | null | undefined): string {
 /**
  * Highlight a query match in a string, escaping special characters for React.
  */
-export function highlightMatch(text: string, query: string): string | ReactNode {
+export function highlightMatch(text: string | null | undefined, query: string): string | ReactNode {
+    if (!text) return '';
     if (!query || !query.trim() || query.length < 2) return text;
     const cleanQuery = query.startsWith('#') ? query.slice(1) : query;
     const regex = new RegExp(`(${cleanQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
