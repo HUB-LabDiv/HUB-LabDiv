@@ -21,6 +21,9 @@ import { Trophy } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { HubLogo } from '@/components/shared/HubLogo';
 import Script from 'next/script';
+import { Capacitor } from '@capacitor/core';
+import { App as CapacitorApp } from '@capacitor/app';
+import { Browser } from '@capacitor/browser';
 
 
 function LoginContent() {
@@ -48,8 +51,12 @@ function LoginContent() {
     };
 
     const triggerOAuthLogin = async (track: 'usp' | 'external', category?: 'aluno_usp' | 'pesquisador') => {
+        const isNative = typeof window !== 'undefined' && Capacitor.isNativePlatform();
         const next = searchParams.get('next') || '/';
-        let redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}&track=${track}`;
+        
+        let redirectTo = isNative
+            ? `hublabdiv://auth/callback?next=${encodeURIComponent(next)}&track=${track}`
+            : `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}&track=${track}`;
         
         if (category) {
             redirectTo += `&category=${category}`;
@@ -62,15 +69,24 @@ function LoginContent() {
             },
         };
 
+        if (isNative) {
+            options.skipBrowserRedirect = true;
+        }
+
         if (track === 'usp') {
             options.queryParams.hd = 'usp.br';
         }
 
-        const { error } = await supabase.auth.signInWithOAuth({
+        const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options,
         });
+        
         if (error) throw error;
+
+        if (isNative && data?.url) {
+            await Browser.open({ url: data.url });
+        }
     };
 
     const handleLogin = async (track: 'usp' | 'external', category?: 'aluno_usp' | 'pesquisador') => {
@@ -152,6 +168,26 @@ function LoginContent() {
         return () => clearInterval(interval);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined' && Capacitor.isNativePlatform()) {
+            const listener = CapacitorApp.addListener('appUrlOpen', async (data: any) => {
+                if (data.url.startsWith('hublabdiv://')) {
+                    try {
+                        await Browser.close();
+                    } catch (e) {
+                        console.error('Failed to close browser', e);
+                    }
+                    
+                    const path = data.url.replace('hublabdiv://', '/');
+                    router.push(path);
+                }
+            });
+            return () => {
+                listener.then(l => l.remove());
+            };
+        }
+    }, [router]);
 
     return (
         <main className="min-h-[80vh] flex items-center justify-center p-4 bg-gray-50 dark:bg-background-dark/30">
