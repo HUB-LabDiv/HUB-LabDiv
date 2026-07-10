@@ -5,7 +5,7 @@ const config: CapacitorConfig = {
   appName: 'HUB LabDiv',
   webDir: 'out',
   server: {
-    url: 'https://hub-lab-div.vercel.app',
+    url: 'https://hub-lab-div.vercel.app/',
     cleartext: true
   }
 };
