@@ -84,3 +84,10 @@ hub.lab-div-main/
 *.keystore
 *.jks
 
+
+# Android Build Outputs
+android/app/release/
+android/app/build/
+*.apk
+*.aab
+
