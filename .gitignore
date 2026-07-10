@@ -79,3 +79,8 @@ hub.lab-div-main/
 # local tmp folder & downloaded binaries
 /tmp/
 *.tar.xz
+
+# Keystores
+*.keystore
+*.jks
+
