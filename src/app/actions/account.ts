@@ -94,3 +94,58 @@ export async function requestAccountDeletion() {
   // A UI chamará a API Route /api/account/delete com o token da sessão
   return { success: true };
 }
+
+/**
+ * TAREFA 4: Exclusão Seletiva de Dados
+ * Apaga categorias específicas de dados sem excluir a conta principal.
+ */
+export async function deleteSpecificUserData(categories: string[]) {
+  const supabase = await createServerSupabase();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: 'Usuário não autenticado' };
+  }
+
+  const userId = user.id;
+  const userEmail = user.email;
+
+  try {
+    for (const category of categories) {
+      switch (category) {
+        case 'submissions':
+          await supabase.from('submissions').delete().eq('user_id', userId);
+          // Opcional: apagar da tabela de votos, se aplicável, porém a cascade costuma cuidar disso.
+          break;
+        case 'comments':
+          await supabase.from('comments').delete().eq('user_id', userId);
+          break;
+        case 'articles':
+          await supabase.from('micro_articles').delete().eq('author_id', userId);
+          break;
+        case 'questions':
+          if (userEmail) {
+            await supabase.from('perguntas').delete().eq('email', userEmail);
+          }
+          break;
+        case 'interactions':
+          await Promise.all([
+            supabase.from('curtidas').delete().eq('user_id', userId),
+            supabase.from('saved_posts').delete().eq('user_id', userId),
+            supabase.from('follows').delete().eq('follower_id', userId)
+          ]);
+          break;
+        default:
+          console.warn('Categoria desconhecida para exclusão:', category);
+      }
+    }
+
+    revalidatePath('/conta');
+    revalidatePath('/lab');
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Erro ao excluir dados específicos:', error);
+    return { success: false, error: 'Erro ao processar exclusão no banco de dados.' };
+  }
+}

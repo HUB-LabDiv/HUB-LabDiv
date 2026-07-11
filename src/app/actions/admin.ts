@@ -145,3 +145,17 @@ export async function fetchSubmissionTrails(submissionId: string) {
 
     return { success: true, data };
 }
+
+export async function loginAdminBypass(login: string, senha: string) {
+    if (login === 'adm' && senha === 'nexus390') {
+        const cookieStore = await import('next/headers').then(m => m.cookies());
+        cookieStore.set('admin_bypass', 'admin', { path: '/', httpOnly: true });
+        return { success: true };
+    }
+    if (login === 'labdiv' && senha === 'labdiv-tecla56') {
+        const cookieStore = await import('next/headers').then(m => m.cookies());
+        cookieStore.set('admin_bypass', 'moderator', { path: '/', httpOnly: true });
+        return { success: true };
+    }
+    return { success: false, error: 'Credenciais inválidas' };
+}

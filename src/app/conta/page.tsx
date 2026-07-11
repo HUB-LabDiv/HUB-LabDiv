@@ -15,6 +15,7 @@
 import { useState } from 'react';
 import { exportUserData } from '@/app/actions/account';
 import { DeleteAccountModal } from '@/components/modals/DeleteAccountModal';
+import { DeleteSpecificDataModal } from '@/components/modals/DeleteSpecificDataModal';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
 import { toast } from 'react-hot-toast';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
@@ -26,6 +27,7 @@ export default function ContaPage() {
     const { user, profile, loading } = useAuth();
     const router = useRouter();
     const [isDeleting, setIsDeleting] = useState(false);
+    const [isDeletingData, setIsDeletingData] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
@@ -173,14 +175,24 @@ export default function ContaPage() {
                                 Excluir sua conta é definitivo. Dados de identificação serão apagados; contribuições científicas serão anonimizadas.
                             </p>
                         </div>
-                        <button
-                            onClick={() => setIsDeleting(true)}
-                            className="px-6 py-3 border border-red-500/20 text-red-500 font-bold rounded-xl hover:bg-red-500/10 transition-all active:scale-95 flex items-center gap-2 text-xs uppercase tracking-widest"
-                            id="btn-delete-account"
-                        >
-                            <Trash2 size={16} />
-                            Excluir Conta
-                        </button>
+                        <div className="flex flex-col sm:flex-row gap-3">
+                            <button
+                                onClick={() => setIsDeletingData(true)}
+                                className="px-6 py-3 border border-orange-500/20 text-orange-500 font-bold rounded-xl hover:bg-orange-500/10 transition-all active:scale-95 flex items-center justify-center gap-2 text-xs uppercase tracking-widest whitespace-nowrap"
+                                id="btn-delete-specific-data"
+                            >
+                                <span className="material-symbols-outlined text-sm">delete_sweep</span>
+                                Excluir Dados Específicos
+                            </button>
+                            <button
+                                onClick={() => setIsDeleting(true)}
+                                className="px-6 py-3 border border-red-500/20 text-red-500 font-bold rounded-xl hover:bg-red-500/10 transition-all active:scale-95 flex items-center justify-center gap-2 text-xs uppercase tracking-widest whitespace-nowrap"
+                                id="btn-delete-account"
+                            >
+                                <Trash2 size={16} />
+                                Excluir Conta
+                            </button>
+                        </div>
                     </div>
 
                     <div className="mt-8 pt-6 border-t border-red-500/10 flex gap-4 text-xs text-red-400/60 leading-relaxed italic">
@@ -194,6 +206,11 @@ export default function ContaPage() {
                 <DeleteAccountModal
                     isOpen={isDeleting}
                     onClose={() => setIsDeleting(false)}
+                />
+
+                <DeleteSpecificDataModal
+                    isOpen={isDeletingData}
+                    onClose={() => setIsDeletingData(false)}
                 />
 
                 <EditProfileModal
