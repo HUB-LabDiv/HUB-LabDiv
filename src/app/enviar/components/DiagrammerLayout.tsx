@@ -24,6 +24,8 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { TargetProfileModal } from './TargetProfileModal';
 import { updateSubmission } from '@/app/actions/submissions';
+import { DraftsMenu } from './DraftsMenu';
+import { useDraftsStore } from '@/store/useDraftsStore';
 
 interface DiagrammerLayoutProps {
     editId?: string | null;
@@ -35,8 +37,9 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         authors, setAuthors, year, setYear,
         readGuide, setReadGuide, acceptedCc, setAcceptedCc, previewMode, setPreviewMode,
         category, setCategory, isHistorical, isGoldenStandard,
-        languageRegister, setLanguageRegister, needsModerationHelp, setNeedsModerationHelp
+        languageRegister, setLanguageRegister, needsModerationHelp, setNeedsModerationHelp, activeDraftId, setActiveDraftId
     } = useSubmissionStore();
+    const { saveDraft } = useDraftsStore();
 
     const [pseudonyms, setPseudonyms] = React.useState<{ id: string; name: string }[]>([]);
     const [mainName, setMainName] = React.useState<string>('');
@@ -204,6 +207,23 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
     const handleCanvasClick = () => {
         if (activeBlockId !== null) {
             setActiveBlock(null);
+        }
+    };
+
+    const handleSaveDraft = () => {
+        const state = useSubmissionStore.getState();
+        const resultId = saveDraft(state);
+        if (resultId) {
+            setActiveDraftId(resultId);
+            toast.success('Rascunho salvo com sucesso!');
+        } else {
+            if (window.confirm('Você já possui 3 rascunhos salvos. Salvar este novo irá substituir o rascunho mais antigo. Deseja continuar?')) {
+                const forcedResultId = saveDraft(state, undefined, true);
+                if (forcedResultId) {
+                    setActiveDraftId(forcedResultId);
+                    toast.success('Rascunho salvo com sucesso! O mais antigo foi substituído.');
+                }
+            }
         }
     };
 
@@ -435,6 +455,8 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                     </button>
                                 </div>
                             </div>
+
+                            <DraftsMenu />
                         </div>
 
                         {/* Editor Principal */}
@@ -664,6 +686,20 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-center gap-4 w-full mt-4">
+                        {!editId && (
+                            <button
+                                onClick={handleSaveDraft}
+                                className="w-full sm:w-auto flex flex-col items-center justify-center px-8 py-3 rounded-xl bg-[#1E1E1E]/80 backdrop-blur-md border border-dashed border-gray-500/50 hover:border-brand-blue/50 hover:bg-white/5 text-gray-300 font-bold transition-all hover:scale-[1.02] active:scale-95 group shadow-lg"
+                            >
+                                <div className="flex items-center gap-2 text-xl text-white group-hover:text-brand-blue transition-colors">
+                                    <span className="material-symbols-outlined text-[24px]">save</span>
+                                    <span>Salvar Rascunho Local</span>
+                                </div>
+                                <span className="text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1 group-hover:text-gray-400 transition-colors">
+                                    Salvo em Cache (Máx. 3)
+                                </span>
+                            </button>
+                        )}
                         {editId && (
                             <button
                                 onClick={handleUpdate}

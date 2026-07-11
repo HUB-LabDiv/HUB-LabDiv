@@ -35,6 +35,7 @@ export async function markNotificationAsRead(notificationId: string) {
         .update({ is_read: true })
         .eq('id', notificationId);
 
+    revalidatePath('/');
     return { success: !error };
 }
 

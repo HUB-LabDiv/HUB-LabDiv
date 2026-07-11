@@ -70,9 +70,16 @@ export const NotificationBell = ({ userId }: { userId: string | undefined }) => 
 
     const handleMarkAsRead = async (id: string) => {
         if (!userId) return;
-        await markNotificationAsRead(id);
+        
+        const notif = notifications.find(n => n.id === id);
+        if (notif && notif.is_read) return;
+
+        // Optimistic update to prevent delays
         setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
         setUnreadCount(prev => Math.max(0, prev - 1));
+
+        // Fire Server Action
+        await markNotificationAsRead(id);
     };
 
     const handleMarkAllAsRead = async () => {

@@ -442,7 +442,7 @@ export default function TrilhasClient({
                                 initial={false}
                                 animate={{ height: isDashboardCollapsed ? 160 : 'auto' }}
                                 transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                                className="dark:bg-[#121212]/50 bg-gray-100 dark:bg-white/50 backdrop-blur-xl border dark:border-white/5 border-gray-300 rounded-[2.5rem] overflow-hidden"
+                                className="bg-gray-100 dark:bg-[#1E1E1E] backdrop-blur-xl border dark:border-white/5 border-gray-300 rounded-[2.5rem] overflow-hidden"
                             >
                                 <div className="p-8 pb-4 flex items-center justify-between">
                                     <div className="flex items-center gap-6">

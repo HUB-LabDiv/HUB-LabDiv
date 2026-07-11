@@ -96,7 +96,8 @@ const initialState = {
     watchedValues: {},
     
     languageRegister: 'academica',
-    needsModerationHelp: false
+    needsModerationHelp: false,
+    activeDraftId: null as string | null
 };
 
 interface SubmissionState {
@@ -112,6 +113,7 @@ interface SubmissionState {
 
     blocks: Block[];
     activeBlockId: string | null;
+    activeDraftId: string | null;
     previewMode: 'edit' | 'preview';
 
     // Agreemenets
@@ -165,6 +167,10 @@ interface SubmissionState {
     setSelectedResearchers: (val: string[]) => void;
     setSelectedResearchLines: (val: string[]) => void;
 
+    // Setters especiais
+    setActiveDraftId: (id: string | null) => void;
+    loadState: (stateSnapshot: Partial<SubmissionState>) => void;
+
     // reset
     reset: () => void;
 }
@@ -181,6 +187,7 @@ export const useSubmissionStore = create<SubmissionState>()(
             whatsapp: initialState.whatsapp,
             blocks: initialState.blocks,
             activeBlockId: initialState.activeBlockId,
+            activeDraftId: initialState.activeDraftId,
             previewMode: initialState.previewMode,
 
             readGuide: initialState.readGuide,
@@ -267,6 +274,9 @@ export const useSubmissionStore = create<SubmissionState>()(
             setSelectedResearchers: (selectedResearchers) => set({ selectedResearchers }),
             setSelectedResearchLines: (selectedResearchLines) => set({ selectedResearchLines }),
 
+            setActiveDraftId: (id) => set({ activeDraftId: id }),
+            loadState: (snapshot) => set({ ...snapshot }),
+
             reset: () => set({
                 currentStep: 'diagrammer',
                 category: initialState.category,
@@ -277,6 +287,7 @@ export const useSubmissionStore = create<SubmissionState>()(
                 whatsapp: initialState.whatsapp,
                 blocks: initialState.blocks,
                 activeBlockId: initialState.activeBlockId,
+                activeDraftId: initialState.activeDraftId,
                 readGuide: initialState.readGuide,
                 acceptedCc: initialState.acceptedCc,
                 isHistorical: initialState.isHistorical,
@@ -298,6 +309,7 @@ export const useSubmissionStore = create<SubmissionState>()(
                 title: state.title,
                 readGuide: state.readGuide,
                 acceptedCc: state.acceptedCc,
+                activeDraftId: state.activeDraftId,
             }),
         }
     )
