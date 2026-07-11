@@ -66,9 +66,6 @@ export function NetflixFeed({ title, icon, children }: NetflixFeedProps) {
             </div>
 
             <div className="relative group">
-                {/* Gradient Fades */}
-                <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#FAFAFA] dark:from-[#121212] to-transparent z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#FAFAFA] dark:from-[#121212] to-transparent z-10 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                 <div 
                     ref={scrollContainerRef}

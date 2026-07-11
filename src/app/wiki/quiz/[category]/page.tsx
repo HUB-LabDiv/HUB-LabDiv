@@ -144,7 +144,7 @@ export default function RadiationQuizPage({ params }: { params: Promise<{ catego
 
                             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                                 <Link
-                                    href="/wiki"
+                                    href="/gcif"
                                     className="w-full sm:w-auto inline-flex items-center justify-center gap-3 bg-white/5 border border-white/10 text-white px-8 py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-white/10 transition-all font-display"
                                 >
                                     Voltar à Wiki

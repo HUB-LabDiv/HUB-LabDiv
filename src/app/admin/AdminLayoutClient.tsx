@@ -34,20 +34,16 @@ export default function AdminLayoutClient({
 
     const navLinks = [
         { name: 'Torre de Controle', href: '/admin', icon: 'security' },
+        { name: 'Moderação da Comunidade', href: '/admin/moderacao', icon: 'verified_user' },
+        { name: 'Moderação do CGIF', href: '/admin/cgif', icon: 'admin_panel_settings' },
         { name: 'Central de Notificações', href: '/admin/notificacoes', icon: 'notifications' },
-        { name: 'Moderação do Fluxo', href: '/admin/moderacao', icon: 'verified_user' },
         { name: 'Arena de Desafios', href: '/admin/desafios', icon: 'emoji_events' },
         { name: 'Aprovação de Perfis', href: '/admin/profiles', icon: 'manage_accounts', adminOnly: true },
         { name: 'Validação do Match', href: '/admin/adocoes', icon: 'favorite' },
         { name: 'Pergunte a um Cientista', href: '/admin/perguntas', icon: 'quiz' },
         { name: 'Central de Anomalias', href: '/admin/reports', icon: 'bug_report' },
-        { name: 'Central SAC', href: '/admin/sac', icon: 'support_agent' },
-        { name: 'Sábios do Síncrotron', href: '/admin/dicas', icon: 'record_voice_over' },
         { name: 'Trilhas de Aprendizagem', href: '/admin/trilhas', icon: 'route', adminOnly: true },
-        { name: 'Oportunidades', href: '/admin/oportunidades', icon: 'event' },
-        { name: 'Logs do IFUSP', href: '/admin/drops', icon: 'forum' },
-        { name: 'Glossário Translacional', href: '/admin/glossario', icon: 'menu_book', adminOnly: true },
-        { name: 'Configurações Admin', href: '/admin/config', icon: 'admin_panel_settings', adminOnly: true },
+        { name: 'Configurações Admin', href: '/admin/config', icon: 'settings', adminOnly: true },
     ];
 
     const filteredLinks = navLinks.filter(link => !link.adminOnly || role === 'admin');

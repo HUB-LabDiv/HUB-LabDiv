@@ -653,7 +653,7 @@ export default function WikiSubPage() {
                     <div className="text-center">
                         <AlertCircle className="w-20 h-20 text-brand-red mx-auto mb-6 opacity-20" />
                         <h1 className="text-3xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter">Partícula não encontrada</h1>
-                        <Link href="/wiki" className="mt-8 inline-block text-brand-blue font-black uppercase tracking-widest hover:underline">
+                        <Link href="/gcif" className="mt-8 inline-block text-brand-blue font-black uppercase tracking-widest hover:underline">
                             Voltar ao Síncrotron
                         </Link>
                     </div>

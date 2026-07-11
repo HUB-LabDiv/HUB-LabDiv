@@ -33,49 +33,47 @@ export function SacSection() {
     }, []);
 
     return (
-        <div id="sac-section" className="mt-16 scroll-mt-32">
-            <div className="bg-white dark:bg-[#1e1e1e] p-8 rounded-[40px] border border-gray-100 dark:border-white/5 print:hidden">
-                <div className="flex flex-col md:flex-row gap-8 items-start justify-between mb-8">
-                    <div>
-                        <h2 className="text-3xl font-display font-black text-gray-900 dark:text-white uppercase tracking-tighter flex items-center gap-3">
-                            <MessageSquareCode className="w-8 h-8 text-brand-blue" />
-                            SAC <span className="text-brand-red">LabDiv</span>
-                        </h2>
-                        <p className="text-gray-500 font-medium mt-2">Dúvidas frequentes sobre o HUB e a Secão de Alunos.</p>
-                    </div>
-                    <button
-                        onClick={() => setIsSacModalOpen(true)}
-                        className="flex items-center gap-2 px-6 py-3 bg-brand-blue/10 text-brand-blue rounded-2xl font-black text-xs uppercase tracking-widest hover:bg-brand-blue hover:text-white transition-all shrink-0 border border-brand-blue/20"
-                    >
-                        <Plus className="w-4 h-4" />
-                        Não achei minha dúvida
-                    </button>
+        <div id="sac-section" className="mt-24 mb-16 scroll-mt-32 w-full">
+            <div className="flex flex-col md:flex-row gap-8 items-start justify-between mb-8">
+                <div>
+                    <h2 className="text-4xl font-black italic text-gray-900 dark:text-white uppercase tracking-tighter flex items-center gap-3">
+                        <MessageSquareCode className="w-10 h-10 text-brand-blue" />
+                        SAC <span className="text-brand-red">LabDiv</span>
+                    </h2>
+                    <p className="text-gray-500 text-lg font-medium mt-2">Dúvidas frequentes sobre o HUB e a Secão de Alunos.</p>
                 </div>
+                <button
+                    onClick={() => setIsSacModalOpen(true)}
+                    className="flex items-center gap-2 px-6 py-4 bg-white/5 text-brand-red rounded-full font-black text-xs uppercase tracking-widest hover:bg-brand-red hover:text-white transition-all shrink-0 border border-brand-red/20"
+                >
+                    <Plus className="w-4 h-4" />
+                    Não achei minha dúvida
+                </button>
+            </div>
 
-                <div className="space-y-4">
-                    {sacFaqs.length > 0 ? (
-                        sacFaqs.map(faq => (
-                            <div key={faq.id} className="border border-gray-100 dark:border-white/5 rounded-2xl overflow-hidden bg-gray-50 dark:bg-white/5">
-                                <button
-                                    onClick={() => setOpenFaqId(openFaqId === faq.id ? null : faq.id)}
-                                    className="w-full flex items-center justify-between p-5 text-left hover:bg-black/5 transition-colors focus:outline-none"
-                                >
-                                    <span className="font-bold text-gray-800 dark:text-gray-200 text-sm uppercase tracking-tight">{faq.pergunta}</span>
-                                    <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${openFaqId === faq.id ? 'rotate-180' : ''}`} />
-                                </button>
-                                <div className={`px-5 overflow-hidden transition-all duration-300 ${openFaqId === faq.id ? 'max-h-[500px] pb-5 opacity-100' : 'max-h-0 opacity-0'}`}>
-                                    <div className="pt-4 border-t border-gray-200 dark:border-white/10 text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap">
-                                        {faq.resposta || 'Resposta pendente...'}
-                                    </div>
+            <div className="space-y-4">
+                {sacFaqs.length > 0 ? (
+                    sacFaqs.map(faq => (
+                        <div key={faq.id} className="border border-gray-100 dark:border-white/5 rounded-3xl overflow-hidden bg-gray-50 dark:bg-white/5">
+                            <button
+                                onClick={() => setOpenFaqId(openFaqId === faq.id ? null : faq.id)}
+                                className="w-full flex items-center justify-between p-6 text-left hover:bg-black/5 dark:hover:bg-white/5 transition-colors focus:outline-none"
+                            >
+                                <span className="font-bold text-gray-800 dark:text-gray-200 text-sm uppercase tracking-widest">{faq.pergunta}</span>
+                                <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${openFaqId === faq.id ? 'rotate-180' : ''}`} />
+                            </button>
+                            <div className={`px-6 overflow-hidden transition-all duration-300 ${openFaqId === faq.id ? 'max-h-[500px] pb-6 opacity-100' : 'max-h-0 opacity-0'}`}>
+                                <div className="pt-4 border-t border-gray-200 dark:border-white/10 text-sm text-gray-600 dark:text-gray-400 leading-relaxed whitespace-pre-wrap">
+                                    {faq.resposta || 'Resposta pendente...'}
                                 </div>
                             </div>
-                        ))
-                    ) : (
-                        <div className="text-center p-8 text-gray-500 text-sm uppercase tracking-widest font-bold">
-                            Ainda não há dúvidas cadastradas.
                         </div>
-                    )}
-                </div>
+                    ))
+                ) : (
+                    <div className="text-center p-12 text-gray-500 text-sm uppercase tracking-widest font-bold bg-white/5 rounded-3xl border border-white/5">
+                        Ainda não há dúvidas cadastradas.
+                    </div>
+                )}
             </div>
 
             <SacModal isOpen={isSacModalOpen} onClose={() => setIsSacModalOpen(false)} />

@@ -55,7 +55,7 @@ export default function AdminDicasPage() {
             <div className="mb-8">
                 <h1 className="text-3xl font-black italic uppercase text-gray-900 dark:text-white flex items-center gap-3">
                     <MessageSquare className="w-8 h-8 text-brand-blue" />
-                    Moderação Sábios do Síncrotron
+                    Moderação IFUSP 101
                 </h1>
                 <p className="text-gray-500 mt-2">Aprove, rejeite e gerencie as dicas enviadas pelos veteranos.</p>
             </div>

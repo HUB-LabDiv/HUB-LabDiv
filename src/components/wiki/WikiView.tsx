@@ -224,14 +224,14 @@ const quizCell = {
     cta: 'Iniciar Varredura'
 };
 
-const veteranosCell = {
-    id: 'veteranos',
-    title: 'Sábios do Síncrotron',
-    subtitle: 'Dicas, Conselhos e Informações de Veteranos',
-    icon: <MessageSquare className="w-8 h-8" />,
+const acessoRapidoCell = {
+    id: 'acesso-rapido',
+    title: 'Acesso Rápido & IFUSP 101',
+    subtitle: 'Links Úteis e Conselhos de Veteranos',
+    icon: <Search className="w-8 h-8" />,
     href: '/wiki/veteranos',
-    description: 'Um mural vivo onde veteranos compartilham suas experiências e conselhos para sobreviver e prosperar no IFUSP.',
-    cta: 'Consultar os Sábios'
+    description: 'Não achou sua resposta? Acesse links diretos para Scholar, Sci-Hub e Portal do IF, além de dicas essenciais enviadas por veteranos.',
+    cta: 'Conferir o IFUSP 101'
 };
 
 const ferramentasAcademicasCell = {
@@ -360,108 +360,47 @@ export function WikiView() {
                     </AnimatePresence>
                 </div>
 
+
+
                 {/* --- Novos Banners Inferiores --- */}
                 <div className="grid grid-cols-1 gap-6 mb-12">
-                    {/* Banner Veteranos (Degradê 3 cores) */}
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.5 }}
                         className="relative group w-full"
                     >
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red rounded-[32px] blur opacity-50 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <Link
-                            href={veteranosCell.href}
-                            className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-[#1a1a1a] dark:bg-black/80 backdrop-blur-2xl border border-white/10 hover:border-white/20 transition-all overflow-hidden text-left"
+                        <div className="absolute -inset-0.5 bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red rounded-[32px] blur opacity-50 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0"></div>
+                        <a
+                            href={acessoRapidoCell.href}
+                            onClick={(e) => {
+                                // Fallback hard redirect
+                                window.location.href = acessoRapidoCell.href;
+                            }}
+                            className="relative z-10 flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-[#1a1a1a] dark:bg-black/80 backdrop-blur-2xl border border-white/10 hover:border-white/20 transition-all overflow-hidden text-left cursor-pointer block pointer-events-auto"
                         >
-                            <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
+                            <div className="flex flex-col md:flex-row items-center gap-8 relative z-10 pointer-events-none">
                                 <div className="size-20 bg-gradient-to-br from-brand-blue via-brand-yellow to-brand-red text-white rounded-[28px] flex items-center justify-center group-hover:scale-110 transition-all duration-700 shadow-2xl">
-                                    {veteranosCell.icon}
+                                    {acessoRapidoCell.icon}
                                 </div>
                                 <div className="text-center md:text-left">
                                     <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
                                         <h3 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red italic uppercase tracking-tighter">
-                                            {veteranosCell.title}
+                                            {acessoRapidoCell.title}
                                         </h3>
-                                        <span className="hidden md:block px-3 py-1 bg-white/10 border border-white/20 text-white text-[10px] font-black uppercase rounded-full italic">Comunidade</span>
+                                        <span className="hidden md:block px-3 py-1 bg-white/10 border border-white/20 text-white text-[10px] font-black uppercase rounded-full italic">Central</span>
                                     </div>
                                     <p className="text-gray-400 font-medium max-w-md">
-                                        {veteranosCell.description}
+                                        {acessoRapidoCell.description}
                                     </p>
                                 </div>
                             </div>
-                            <div className="mt-8 md:mt-0 relative z-10">
-                                <div className="px-12 py-5 bg-white/10 text-white font-black rounded-[24px] hover:bg-white hover:text-black active:scale-95 transition-all text-sm uppercase tracking-widest flex items-center gap-4 border border-white/20">
-                                    {veteranosCell.cta} <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                            <div className="mt-8 md:mt-0 relative z-10 pointer-events-none">
+                                <div className="px-8 py-4 bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red text-white font-black rounded-full transition-all text-xs uppercase tracking-widest flex items-center gap-3 overflow-hidden">
+                                    {acessoRapidoCell.cta} <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                 </div>
                             </div>
-                        </Link>
-                    </motion.div>
-
-                    {/* Banner Ferramentas Academicas */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.6 }}
-                        className="relative group w-full"
-                    >
-                        <div className="absolute -inset-0.5 bg-brand-blue/30 rounded-[32px] blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <Link
-                            href={ferramentasAcademicasCell.href}
-                            className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-gradient-to-r from-brand-blue/20 to-black backdrop-blur-2xl border border-white/5 hover:border-brand-blue/40 transition-all overflow-hidden text-left"
-                        >
-                            <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
-                                <div className="size-20 bg-brand-blue/10 text-brand-blue rounded-[28px] flex items-center justify-center ring-1 ring-brand-blue/20 group-hover:scale-110 transition-all duration-700">
-                                    {ferramentasAcademicasCell.icon}
-                                </div>
-                                <div className="text-center md:text-left">
-                                    <h3 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter mb-2">
-                                        {ferramentasAcademicasCell.title}
-                                    </h3>
-                                    <p className="text-gray-400 font-medium max-w-md">
-                                        {ferramentasAcademicasCell.description}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="mt-8 md:mt-0 relative z-10">
-                                <div className="px-12 py-5 bg-brand-blue text-white font-black rounded-[24px] group-hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-widest flex items-center gap-4">
-                                    {ferramentasAcademicasCell.cta} <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                </div>
-                            </div>
-                        </Link>
-                    </motion.div>
-
-                    {/* Banner Metodologia */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.7 }}
-                        className="relative group w-full"
-                    >
-                        <div className="absolute -inset-0.5 bg-brand-red/30 rounded-[32px] blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <Link
-                            href={metodologiaCell.href}
-                            className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-gradient-to-r from-brand-red/20 to-black backdrop-blur-2xl border border-white/5 hover:border-brand-red/40 transition-all overflow-hidden text-left"
-                        >
-                            <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
-                                <div className="size-20 bg-brand-red/10 text-brand-red rounded-[28px] flex items-center justify-center ring-1 ring-brand-red/20 group-hover:scale-110 transition-all duration-700">
-                                    {metodologiaCell.icon}
-                                </div>
-                                <div className="text-center md:text-left">
-                                    <h3 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter mb-2">
-                                        {metodologiaCell.title}
-                                    </h3>
-                                    <p className="text-gray-400 font-medium max-w-md">
-                                        {metodologiaCell.description}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="mt-8 md:mt-0 relative z-10">
-                                <div className="px-12 py-5 bg-brand-red text-white font-black rounded-[24px] group-hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-widest flex items-center gap-4">
-                                    {metodologiaCell.cta} <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                                </div>
-                            </div>
-                        </Link>
+                        </a>
                     </motion.div>
                 </div>
 

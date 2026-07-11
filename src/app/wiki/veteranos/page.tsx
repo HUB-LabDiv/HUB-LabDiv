@@ -14,10 +14,11 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MessageSquare, ThumbsUp, Send, Loader2, X, AlertCircle } from 'lucide-react';
+import { ArrowLeft, MessageSquare, ThumbsUp, Send, Loader2, X, AlertCircle, Search, Compass, BookOpen } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import { getApprovedTips, submitTip, upvoteTip } from '@/app/actions/veterans';
+import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 
 const CATEGORIAS = [
     { id: 'comunicacao', label: 'Comunicação', color: 'brand-blue' },
@@ -85,45 +86,66 @@ export default function VeteranosPage() {
         : tips.filter(t => t.categoria === activeFilter);
 
     return (
-        <div className="min-h-screen bg-black text-white selection:bg-brand-blue selection:text-white pb-20">
-            {/* Header */}
-            <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur-xl border-b border-white/10">
-                <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
+        <MainLayoutWrapper>
+            <div className="min-h-screen bg-transparent text-white selection:bg-brand-blue selection:text-white pb-20">
+                {/* Header Substituto (abaixo da Navbar Global) */}
+                <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between mb-8 mt-4">
                     <div className="flex items-center gap-4">
-                        <Link href="/wiki" className="p-2 hover:bg-white/10 rounded-full transition-colors">
-                            <ArrowLeft className="w-6 h-6 text-gray-400" />
+                        <Link href="/gcif" className="flex items-center gap-2 hover:bg-white/10 rounded-full transition-colors px-4 py-2 border border-white/10 bg-white/5">
+                            <ArrowLeft className="w-5 h-5 text-gray-400" />
+                            <span className="text-xs font-black uppercase tracking-widest text-brand-blue">CGIF</span>
                         </Link>
-                        <h1 className="text-xl font-bold uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red flex items-center gap-2">
+                        <h1 className="text-xl font-bold uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red flex items-center gap-2 hidden md:flex">
                             <MessageSquare className="w-5 h-5 text-white" />
-                            Sábios do Síncrotron
+                            IFUSP 101
                         </h1>
                     </div>
-                    <button
+                    <button 
                         onClick={() => setIsModalOpen(true)}
-                        className="px-6 py-2 bg-white text-black font-bold uppercase text-xs tracking-widest rounded-full hover:bg-gray-200 transition-colors flex items-center gap-2"
+                        className="px-4 py-2 md:px-6 md:py-3 bg-white text-black font-black uppercase tracking-widest text-xs rounded-full hover:bg-gray-200 transition-colors flex items-center gap-2"
                     >
                         <Send className="w-4 h-4" />
-                        Transmitir Conselho
+                        <span className="hidden md:block">Transmitir Conselho</span>
+                        <span className="md:hidden">Enviar</span>
                     </button>
                 </div>
-            </header>
 
-            {/* Content */}
-            <main className="max-w-6xl mx-auto px-6 pt-32">
-                <div className="mb-12">
-                    <h2 className="text-5xl font-black italic uppercase tracking-tighter mb-4">
-                        Conhecimento<br />Transgeracional
-                    </h2>
-                    <p className="text-gray-400 max-w-xl text-lg">
-                        Dicas testadas e validadas por veteranos para você sobreviver e prosperar no IFUSP.
-                    </p>
+                {/* Main Content */}
+                <main className="max-w-6xl mx-auto px-6">
+                    <div className="text-center md:text-left mb-16">
+                        <h2 className="text-4xl md:text-6xl font-black italic uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-500 mb-6">
+                            Acesso Rápido & <br className="hidden md:block" />Conhecimento Transgeracional
+                        </h2>
+                        <p className="text-gray-400 text-lg max-w-2xl font-medium">
+                            Não encontrou o que procurava? Use os links rápidos ou explore as dicas testadas e validadas por veteranos para sobreviver e prosperar no IFUSP.
+                        </p>
+                    </div>
+
+                {/* Quick Links Grid */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+                    <a href="https://scholar.google.com.br" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 hover:border-white/20 transition-all text-center group">
+                        <Search className="w-8 h-8 text-brand-blue mb-3 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm font-bold uppercase tracking-widest text-white">Google Scholar</span>
+                    </a>
+                    <a href="https://portal.if.usp.br" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 hover:border-white/20 transition-all text-center group">
+                        <Compass className="w-8 h-8 text-brand-blue-ifusp mb-3 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm font-bold uppercase tracking-widest text-white">Portal do IFUSP</span>
+                    </a>
+                    <a href="https://sci-hub.se" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 hover:border-white/20 transition-all text-center group">
+                        <BookOpen className="w-8 h-8 text-brand-red mb-3 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm font-bold uppercase tracking-widest text-white">Sci-Hub</span>
+                    </a>
+                    <a href="mailto:salunosif@usp.br?subject=Dúvida&body=Olá, saudações espero que esteja bem%0D%0A%0D%0ASou aluno do IFUSP meu curso é [] e eu tenho uma duvida%0D%0A%0D%0A[seu nome] [seu NUSP]" className="flex flex-col items-center justify-center p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 hover:border-white/20 transition-all text-center group">
+                        <MessageSquare className="w-8 h-8 text-brand-yellow mb-3 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm font-bold uppercase tracking-widest text-white">Seção de Alunos</span>
+                    </a>
                 </div>
 
                 {/* Filters */}
-                <div className="flex flex-wrap gap-3 mb-10">
-                    <button
+                <div className="flex flex-wrap gap-2 mb-12 border-b border-white/10 pb-6">
+                    <button 
                         onClick={() => setActiveFilter('todas')}
-                        className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-colors border ${activeFilter === 'todas' ? 'bg-white text-black border-white' : 'bg-transparent text-gray-400 border-gray-800 hover:border-gray-600'}`}
+                        className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all ${activeFilter === 'todas' ? 'bg-white text-black' : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
                     >
                         Todas
                     </button>
@@ -131,40 +153,38 @@ export default function VeteranosPage() {
                         <button
                             key={cat.id}
                             onClick={() => setActiveFilter(cat.id)}
-                            className={`px-5 py-2 rounded-full text-xs font-bold uppercase tracking-widest transition-colors border ${activeFilter === cat.id ? `bg-${cat.color} text-white border-${cat.color}` : 'bg-transparent text-gray-400 border-gray-800 hover:border-gray-600'}`}
+                            className={`px-6 py-2 rounded-full text-xs font-black uppercase tracking-widest transition-all ${activeFilter === cat.id ? `bg-${cat.color} text-white` : 'bg-white/5 text-gray-400 hover:bg-white/10'}`}
                         >
                             {cat.label}
                         </button>
                     ))}
                 </div>
 
-                {/* Feed */}
+                {/* Grid de Dicas */}
                 {isLoading ? (
-                    <div className="flex justify-center py-20">
-                        <Loader2 className="w-8 h-8 animate-spin text-brand-blue" />
+                    <div className="flex justify-center items-center py-32">
+                        <Loader2 className="w-8 h-8 text-brand-blue animate-spin" />
                     </div>
-                ) : filteredTips.length === 0 ? (
-                    <div className="text-center py-20 border border-white/5 rounded-3xl bg-white/5">
-                        <AlertCircle className="w-12 h-12 text-gray-500 mx-auto mb-4 opacity-50" />
-                        <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Nenhum conselho encontrado nesta categoria.</p>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                ) : filteredTips.length > 0 ? (
+                    <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
                         {filteredTips.map((tip, idx) => {
-                            const cat = CATEGORIAS.find(c => c.id === tip.categoria) || CATEGORIAS[0];
                             const isUpvoted = upvotedTips.includes(tip.id);
-
+                            const categoryColor = CATEGORIAS.find(c => c.id === tip.categoria)?.color || 'brand-blue';
+                            
                             return (
-                                <motion.div
+                                <motion.div 
                                     key={tip.id}
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: idx * 0.05 }}
-                                    className="bg-[#111] border border-white/10 rounded-3xl p-6 flex flex-col hover:border-white/30 transition-colors"
+                                    transition={{ delay: idx * 0.1 }}
+                                    className="break-inside-avoid p-8 rounded-[32px] bg-[#1a1a1a] border border-white/5 hover:border-white/10 transition-colors relative group"
                                 >
+                                    <div className="absolute top-8 right-8">
+                                        <div className={`size-2 rounded-full bg-${categoryColor} shadow-[0_0_10px_currentColor]`} />
+                                    </div>
                                     <div className="flex items-center justify-between mb-4">
-                                        <span className={`text-[10px] font-black uppercase tracking-widest text-${cat.color} bg-${cat.color}/10 px-3 py-1 rounded-full`}>
-                                            {cat.label}
+                                        <span className={`text-[10px] font-black uppercase tracking-widest text-${categoryColor} bg-${categoryColor}/10 px-3 py-1 rounded-full`}>
+                                            {tip.categoria}
                                         </span>
                                         <div className="flex items-center gap-1.5 text-gray-500 text-xs font-bold">
                                             <ThumbsUp className={`w-4 h-4 ${isUpvoted ? 'text-brand-blue fill-brand-blue' : ''}`} />
@@ -187,6 +207,11 @@ export default function VeteranosPage() {
                                 </motion.div>
                             );
                         })}
+                    </div>
+                ) : (
+                    <div className="py-32 text-center bg-white/5 rounded-[40px] border border-white/5">
+                        <AlertCircle className="w-12 h-12 text-gray-600 mx-auto mb-4" />
+                        <p className="text-gray-400 font-bold uppercase tracking-widest text-sm">Nenhum conselho encontrado nesta categoria.</p>
                     </div>
                 )}
             </main>
@@ -262,6 +287,7 @@ export default function VeteranosPage() {
                     </motion.div>
                 </div>
             )}
-        </div>
+            </div>
+        </MainLayoutWrapper>
     );
 }

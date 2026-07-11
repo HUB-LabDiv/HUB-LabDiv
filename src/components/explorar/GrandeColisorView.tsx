@@ -67,15 +67,6 @@ const influencers = [
         link: 'https://www.tiktok.com/@saficadafisica'
     },
     {
-        name: 'Ana Pleiade',
-        role: '@a_pleiade',
-        bio: 'Astronomia, astrofísica e inspiração científica no Instagram.',
-        imagePlaceholder: 'AP',
-        color: 'brand-blue',
-        platform: 'instagram',
-        link: 'https://www.instagram.com/a_pleiade'
-    },
-    {
         name: 'Gustavo Alves',
         role: 'Física e Vida Acadêmica',
         bio: 'Rotina de estudos, dicas de graduação e vida acadêmica na física.',
@@ -92,6 +83,24 @@ const influencers = [
         color: 'brand-red',
         platform: 'youtube',
         link: 'https://www.youtube.com/@Alexandria21'
+    },
+    {
+        name: 'Ana Pleiade',
+        role: '@a_pleiade',
+        bio: 'Astronomia, astrofísica e inspiração científica no Instagram.',
+        imagePlaceholder: 'AP',
+        color: 'brand-blue',
+        platform: 'instagram',
+        link: 'https://www.instagram.com/a_pleiade'
+    },
+    {
+        name: 'Levitang',
+        role: '@levitang',
+        bio: 'Física e divulgação científica no TikTok.',
+        imagePlaceholder: 'LV',
+        color: 'brand-blue',
+        platform: 'tiktok',
+        link: 'https://www.tiktok.com/@levitang'
     },
 ];
 
@@ -295,26 +304,20 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                             <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">A base de dados física. Biblioteca central do Instituto.</p>
                             <a href="https://portal.if.usp.br/biblioteca/" target="_blank" className="mt-auto px-8 py-4 border border-brand-blue/20 text-brand-blue rounded-2xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-blue/10 transition-colors">Consultar</a>
                         </div>
+                        {/* Grupo Noether */}
+                        <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group">
+                            <div className="size-16 bg-brand-yellow/10 rounded-2xl flex items-center justify-center text-brand-yellow mb-8">
+                                <span className="material-symbols-outlined text-4xl">group</span>
+                            </div>
+                            <h3 className="text-2xl font-black italic uppercase mb-4 text-gray-900 dark:text-white">Grupo Noether</h3>
+                            <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">Mulheres na Física. Apoio, visibilidade e debates para as alunas do IFUSP.</p>
+                            <a href="https://www.instagram.com/gnoether_/" target="_blank" className="mt-auto px-8 py-4 border border-brand-yellow/20 text-brand-yellow rounded-2xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-yellow/10 transition-colors">Acessar Instagram</a>
+                        </div>
                     </NetflixFeed>
                 </div>
             </section>
 
-            {/* NEW: Mapa Interativo Section */}
-            <section id="mapa" className="space-y-12">
-                <div className="flex items-center gap-4">
-                    <div className="p-3 bg-brand-blue/10 rounded-2xl text-brand-blue">
-                        <span className="material-symbols-outlined text-3xl">map</span>
-                    </div>
-                    <div>
-                        <h2 className="text-3xl font-black italic uppercase tracking-tighter">Campus Interativo</h2>
-                        <p className="text-gray-500 font-medium">Navegue pelas descobertas e registros através da geografia do Instituto.</p>
-                    </div>
-                </div>
 
-                <div className="w-full max-w-4xl mx-auto aspect-square rounded-3xl overflow-hidden relative shadow-2xl border border-gray-100 dark:border-gray-800 bg-[#D5ED9E]/20 dark:bg-[#1B2B1B]/40">
-                    <CampusMap items={mapItems} />
-                </div>
-            </section>
 
             {/* 4. Espaços Section */}
             <section id="espaços" className="space-y-16">
@@ -403,6 +406,23 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                     </div>
                 ))}
                 </NetflixFeed>
+            </section>
+
+            {/* NEW: Mapa Interativo Section */}
+            <section id="mapa" className="space-y-12 mb-32">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-brand-blue/10 rounded-2xl text-brand-blue">
+                        <span className="material-symbols-outlined text-3xl">map</span>
+                    </div>
+                    <div>
+                        <h2 className="text-3xl font-black italic uppercase tracking-tighter">Campus Interativo</h2>
+                        <p className="text-gray-500 font-medium">Navegue pelas descobertas e registros através da geografia do Instituto.</p>
+                    </div>
+                </div>
+
+                <div className="w-full max-w-4xl mx-auto aspect-square rounded-3xl overflow-hidden relative shadow-2xl border border-gray-100 dark:border-gray-800 bg-[#D5ED9E]/20 dark:bg-[#1B2B1B]/40">
+                    <CampusMap items={mapItems} />
+                </div>
             </section>
 
             {/* 6. Wiki Hub Section */}

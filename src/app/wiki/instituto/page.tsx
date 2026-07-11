@@ -28,7 +28,7 @@ export default function WikiInstitutoPage() {
             <div className="flex flex-col gap-4 w-full overflow-x-hidden pb-12">
                 {/* Breadcrumbs / Back Link */}
                 <Link
-                    href="/wiki"
+                    href="/gcif"
                     className="flex items-center gap-2 text-sm font-bold text-gray-500 hover:text-brand-blue transition-colors w-fit mb-4 group"
                 >
                     <ChevronLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
