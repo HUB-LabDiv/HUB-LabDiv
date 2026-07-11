@@ -32,6 +32,14 @@ import { NetflixFeed } from '@/components/shared/NetflixFeed';
 import { WikiView } from '@/components/wiki/WikiView';
 import { InstitutoView } from '@/components/wiki/instituto/InstitutoView';
 import { ConstelacoesLinguisticas } from './ConstelacoesLinguisticas';
+import dynamic from 'next/dynamic';
+
+const CampusMap = dynamic(() => import('@/components/map/CampusMap').then(mod => mod.CampusMap), {
+    ssr: false,
+    loading: () => (
+        <div className="w-full aspect-square rounded-3xl overflow-hidden animate-pulse bg-gray-200 dark:bg-gray-800" />
+    )
+});
 
 interface GrandeColisorViewProps {
     oportunidades: any[] | null;
@@ -101,10 +109,11 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
     const navItems = [
         { id: 'oportunidades', label: 'Oportunidades', href: '#oportunidades', icon: 'campaign', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
         { id: 'iniciativas', label: 'Iniciativas', href: '#iniciativas', icon: 'groups', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
-        { id: 'espaços', label: 'Espaços', href: '#espaços', icon: 'map', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
-        { id: 'constelacoes', label: 'Glossário', href: '#constelacoes', icon: 'menu_book', activeClass: 'text-brand-yellow bg-brand-yellow/10 border-brand-yellow/30', hoverClass: 'hover:text-brand-yellow hover:bg-brand-yellow/5' },
+        { id: 'mapa', label: 'Mapa', href: '#mapa', icon: 'map', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
+        { id: 'espaços', label: 'Espaços', href: '#espaços', icon: 'location_city', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'influenciadores', label: 'Influenciadores', href: '#influenciadores', icon: 'record_voice_over', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'wiki-hub-section', label: 'Wiki', href: '#wiki-hub-section', icon: 'hub', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
+        { id: 'constelacoes', label: 'Glossário', href: '#constelacoes', icon: 'menu_book', activeClass: 'text-brand-yellow bg-brand-yellow/10 border-brand-yellow/30', hoverClass: 'hover:text-brand-yellow hover:bg-brand-yellow/5' },
         { id: 'teste-radiacao', label: 'Teste', href: '#teste-radiacao', icon: 'quiz', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
         { id: 'sac-section', label: 'SAC', href: '#sac-section', icon: 'support_agent', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
     ];
@@ -160,7 +169,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
             </section>
 
             {/* NEW: Top Navigation Bar */}
-            <nav id="gcif-top-nav" className="flex flex-wrap items-center justify-center md:justify-start gap-2 sticky top-20 z-40 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md p-2 rounded-2xl border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none shadow-xl shadow-black/5 -mt-16 mb-8">
+            <nav id="gcif-top-nav" className="flex flex-wrap items-center justify-center md:justify-start gap-2 relative z-40 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md p-2 rounded-2xl border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none shadow-xl shadow-black/5 -mt-16 mb-8">
                 {navItems.map((item) => {
                     const isActive = activeSection === item.id;
                     return (
@@ -290,6 +299,23 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                 </div>
             </section>
 
+            {/* NEW: Mapa Interativo Section */}
+            <section id="mapa" className="space-y-12">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-brand-blue/10 rounded-2xl text-brand-blue">
+                        <span className="material-symbols-outlined text-3xl">map</span>
+                    </div>
+                    <div>
+                        <h2 className="text-3xl font-black italic uppercase tracking-tighter">Campus Interativo</h2>
+                        <p className="text-gray-500 font-medium">Navegue pelas descobertas e registros através da geografia do Instituto.</p>
+                    </div>
+                </div>
+
+                <div className="w-full max-w-4xl mx-auto aspect-square rounded-3xl overflow-hidden relative shadow-2xl border border-gray-100 dark:border-gray-800 bg-[#D5ED9E]/20 dark:bg-[#1B2B1B]/40">
+                    <CampusMap items={mapItems} />
+                </div>
+            </section>
+
             {/* 4. Espaços Section */}
             <section id="espaços" className="space-y-16">
                 <div className="space-y-20">
@@ -355,26 +381,6 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                 </div>
             </section>
 
-            {/* NEW: Constelações Linguísticas Section */}
-            <section id="constelacoes" className="space-y-12">
-                <div className="flex items-center gap-4">
-                    <div className="p-3 bg-brand-yellow/10 rounded-2xl text-brand-yellow">
-                        <span className="material-symbols-outlined text-3xl">menu_book</span>
-                    </div>
-                    <div>
-                        <h2 className="text-3xl font-black italic uppercase tracking-tighter">Glossário Translacional</h2>
-                        <p className="text-gray-500 font-medium">As constelações linguísticas construídas pela comunidade.</p>
-                    </div>
-                </div>
-                {glossario && glossario.length > 0 ? (
-                    <ConstelacoesLinguisticas glossario={glossario} />
-                ) : (
-                    <div className="p-12 text-center text-gray-400 bg-white/5 border border-white/5 rounded-[40px] italic">
-                        Nenhuma constelação formada ainda no ecossistema do IF.
-                    </div>
-                )}
-            </section>
-
             {/* 5. Influenciadores Feed */}
             <section id="influenciadores">
                 <NetflixFeed 
@@ -403,6 +409,26 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
             <div id="wiki-hub-section" ref={wikiRef} className="scroll-mt-32">
                 <WikiView />
             </div>
+
+            {/* NEW: Constelações Linguísticas Section */}
+            <section id="constelacoes" className="space-y-12">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-brand-yellow/10 rounded-2xl text-brand-yellow">
+                        <span className="material-symbols-outlined text-3xl">menu_book</span>
+                    </div>
+                    <div>
+                        <h2 className="text-3xl font-black italic uppercase tracking-tighter">Glossário Translacional</h2>
+                        <p className="text-gray-500 font-medium">As constelações linguísticas construídas pela comunidade.</p>
+                    </div>
+                </div>
+                {glossario && glossario.length > 0 ? (
+                    <ConstelacoesLinguisticas glossario={glossario} />
+                ) : (
+                    <div className="p-12 text-center text-gray-400 bg-white/5 border border-white/5 rounded-[40px] italic">
+                        Nenhuma constelação formada ainda no ecossistema do IF.
+                    </div>
+                )}
+            </section>
         </div>
     );
 }

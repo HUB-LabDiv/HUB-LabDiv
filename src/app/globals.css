@@ -600,3 +600,15 @@ body::before {
     break-after: avoid;
   }
 }
+
+/* ========================================
+   Module 4: PWA / Standalone App Fixes
+   ======================================== */
+@media (display-mode: standalone) {
+  /* Corrige o bug do Android/iOS onde rolar a tela recorta a navbar */
+  .pwa-header {
+    top: 0 !important;
+    padding-top: env(safe-area-inset-top, 0px) !important;
+    height: calc(4rem + env(safe-area-inset-top, 0px)) !important;
+  }
+}

@@ -41,13 +41,28 @@ export function CardPresenceBadge({ submissionId }: { submissionId: string }) {
             config: { presence: { key: 'user' } },
         });
 
-        channel
-            .on('presence', { event: 'sync' }, () => {
-                setCount(Object.keys(channel.presenceState()).length);
-            })
-            .subscribe();
+        // Supabase throws an error if we call .on() after .subscribe() has been called by another component.
+        // We check the channel state. If it's 'closed', we are the first to create/configure it.
+        if (channel.state === 'closed') {
+            channel
+                .on('presence', { event: 'sync' }, () => {
+                    setCount(Object.keys(channel.presenceState()).length);
+                })
+                .subscribe();
 
-        return () => { supabase.removeChannel(channel); };
+            return () => { supabase.removeChannel(channel); };
+        } else {
+            // Channel is already joining/joined by a duplicate card (e.g. Destaques vs Feed)
+            // We can safely read the presence state directly without adding a new listener
+            setCount(Object.keys(channel.presenceState()).length);
+            
+            // Poll the local state occasionally to keep the badge updated
+            const interval = setInterval(() => {
+                setCount(Object.keys(channel.presenceState()).length);
+            }, 2000);
+            
+            return () => clearInterval(interval);
+        }
     }, [submissionId, isVisible]);
 
     return (

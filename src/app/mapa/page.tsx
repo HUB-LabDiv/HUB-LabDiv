@@ -9,8 +9,16 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import { redirect } from 'next/navigation';
+import { MapClient } from "@/components/mapa/MapClient";
+import { getInitialData } from "@/lib/data-fetching";
+import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
+import { SidebarRight } from "@/components/layout/SidebarRight";
 
-export default function MapaRedirect() {
-    redirect('/explorar?tab=mapa');
+export default async function MapaPage() {
+    const data = await getInitialData();
+    return (
+        <MainLayoutWrapper rightSidebar={<SidebarRight />}>
+            <MapClient initialItems={data.initialItems} />
+        </MainLayoutWrapper>
+    );
 }

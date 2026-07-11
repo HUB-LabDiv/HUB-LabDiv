@@ -23,6 +23,30 @@ interface ConstelacoesProps {
 export function ConstelacoesLinguisticas({ glossario }: ConstelacoesProps) {
     const [viewMode, setViewMode] = useState<'palavras' | 'constelacoes'>('palavras');
 
+    const cardThemes = [
+        {
+            borderHover: 'hover:border-brand-yellow/30',
+            gradientStart: 'from-brand-yellow',
+            gradientEnd: 'to-[#FFAA00]',
+            shadow: 'shadow-[0_0_30px_rgba(255,204,0,0.2)]',
+            textGradient: 'from-brand-yellow to-white'
+        },
+        {
+            borderHover: 'hover:border-brand-blue/30',
+            gradientStart: 'from-brand-blue',
+            gradientEnd: 'to-[#1E60A4]',
+            shadow: 'shadow-[0_0_30px_rgba(15,71,128,0.2)]',
+            textGradient: 'from-brand-blue to-white'
+        },
+        {
+            borderHover: 'hover:border-brand-red/30',
+            gradientStart: 'from-brand-red',
+            gradientEnd: 'to-[#FF6B6B]',
+            shadow: 'shadow-[0_0_30px_rgba(241,67,67,0.2)]',
+            textGradient: 'from-brand-red to-white'
+        }
+    ];
+
     if (!glossario || glossario.length === 0) return null;
 
     // Apenas mostrar as aprovadas
@@ -64,17 +88,19 @@ export function ConstelacoesLinguisticas({ glossario }: ConstelacoesProps) {
                 /* MODO PALAVRAS: Carrossel Horizontal Infinito */
                 <div className="w-full overflow-x-auto no-scrollbar snap-x snap-mandatory py-4">
                     <div className="flex gap-8 w-max px-4">
-                        {approvedWords.map((palavra, i) => (
+                        {approvedWords.map((palavra, i) => {
+                            const theme = cardThemes[i % cardThemes.length];
+                            return (
                             <motion.div 
                                 initial={{ opacity: 0, x: 50 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.5, delay: i * 0.1 }}
                                 key={palavra.id} 
-                                className="relative bg-[#1E1E1E] rounded-3xl border border-white/10 p-8 shadow-2xl flex flex-col items-center text-center w-[350px] md:w-[450px] shrink-0 snap-center hover:border-brand-yellow/30 transition-colors group"
+                                className={`relative bg-[#1E1E1E] rounded-3xl border border-white/10 p-8 shadow-2xl flex flex-col items-center text-center w-[350px] md:w-[450px] shrink-0 snap-center ${theme.borderHover} transition-colors group`}
                             >
-                                <div className="z-10 bg-gradient-to-br from-brand-yellow to-[#FFAA00] p-[2px] rounded-2xl shadow-[0_0_30px_rgba(255,204,0,0.2)] mb-8 transform group-hover:scale-105 transition-transform">
+                                <div className={`z-10 bg-gradient-to-br ${theme.gradientStart} ${theme.gradientEnd} p-[2px] rounded-2xl ${theme.shadow} mb-8 transform group-hover:scale-105 transition-transform`}>
                                     <div className="bg-[#121212] px-8 py-4 rounded-[14px]">
-                                        <h3 className="text-2xl font-black uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow to-white">
+                                        <h3 className={`text-2xl font-black uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r ${theme.textGradient}`}>
                                             {palavra.termo}
                                         </h3>
                                         <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] mt-1 font-bold">Núcleo Acadêmico</p>
@@ -105,7 +131,7 @@ export function ConstelacoesLinguisticas({ glossario }: ConstelacoesProps) {
                                     </div>
                                 )}
                             </motion.div>
-                        ))}
+                        )})}
                     </div>
                 </div>
             ) : (

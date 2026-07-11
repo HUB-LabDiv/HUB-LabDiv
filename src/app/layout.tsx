@@ -149,7 +149,7 @@ export default async function RootLayout({
         />
       </head>
       <body
-        className={`${openSans.variable} ${bukraFallback.variable} ${materialSymbols.variable} font-open-sans selection:bg-brand-yellow selection:text-brand-blue bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 transition-colors duration-200 antialiased`}
+        className={`${openSans.variable} ${bukraFallback.variable} ${materialSymbols.variable} font-open-sans selection:bg-brand-yellow selection:text-brand-blue bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 transition-colors duration-200 antialiased overflow-x-hidden`}
         suppressHydrationWarning
       >
         <LazyMotion features={domAnimation}>

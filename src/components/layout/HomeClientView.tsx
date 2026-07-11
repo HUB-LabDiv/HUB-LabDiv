@@ -13,7 +13,7 @@
 
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import { MediaCard, MediaCardProps } from "@/components/media/MediaCard";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { fetchSubmissions } from '@/app/actions/submissions';
@@ -37,10 +37,12 @@ import {
     Minus,
     Flame,
     Satellite,
-    Atom
+    Atom,
+    MessageSquare
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FluxoFeedbackCard } from "@/components/feedback/FluxoFeedbackCard";
+import { LogsView } from '@/components/comunidade/LogsView';
 
 import { useSearch } from '@/providers/SearchProvider';
 import { CATEGORIES as CATEGORY_LIST, CATEGORY_STYLES, DEFAULT_STYLE } from '@/lib/constants';
@@ -68,8 +70,20 @@ export const HomeClientView = ({
     initialSavedIds = []
 }: HomeClientViewProps) => {
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const pathname = usePathname();
     const { query: searchQuery, setQuery: setSearchQuery } = useSearch();
     const { trackEvent } = useTelemetry();
+
+    const tabParam = searchParams.get('tab');
+    const [activeTab, setActiveTab] = useState<'fluxo' | 'logs'>(tabParam === 'logs' ? 'logs' : 'fluxo');
+
+    const handleTabChange = (newTab: 'fluxo' | 'logs') => {
+        setActiveTab(newTab);
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('tab', newTab);
+        router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    };
 
     const [items, setItems] = useState<MediaCardProps[]>(initialItems);
     const [page, setPage] = useState(1);
@@ -260,6 +274,68 @@ export const HomeClientView = ({
 
     return (
         <div className="space-y-4">
+            {/* Tab Navigation */}
+            <div className="sticky top-16 z-50 flex justify-center pb-4 pt-1">
+                <div className="flex p-1.5 bg-white/50 dark:bg-black/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl">
+                    <button
+                        onClick={() => handleTabChange('fluxo')}
+                        className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all ${
+                            activeTab === 'fluxo' ? 'text-white' : 'text-gray-500 hover:text-brand-blue'
+                        }`}
+                    >
+                        {activeTab === 'fluxo' && (
+                            <motion.div
+                                layoutId="activeTabHome"
+                                className="absolute inset-0 bg-brand-blue rounded-xl shadow-lg shadow-brand-blue/20"
+                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                            />
+                        )}
+                        <span className="relative z-10 flex items-center gap-2">
+                            <Zap className={`w-4 h-4 ${activeTab === 'fluxo' ? 'animate-pulse' : ''}`} />
+                            Fluxo
+                        </span>
+                    </button>
+
+                    <button
+                        onClick={() => handleTabChange('logs')}
+                        className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all ${
+                            activeTab === 'logs' ? 'text-white' : 'text-gray-500 hover:text-brand-red'
+                        }`}
+                    >
+                        {activeTab === 'logs' && (
+                            <motion.div
+                                layoutId="activeTabHome"
+                                className="absolute inset-0 bg-brand-red rounded-xl shadow-lg shadow-brand-red/20"
+                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                            />
+                        )}
+                        <span className="relative z-10 flex items-center gap-2">
+                            <MessageSquare className={`w-4 h-4 ${activeTab === 'logs' ? 'animate-bounce' : ''}`} />
+                            Logs
+                        </span>
+                    </button>
+                </div>
+            </div>
+
+            <AnimatePresence mode="wait">
+                {activeTab === 'logs' ? (
+                    <motion.div
+                        key="logs"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.4 }}
+                    >
+                        <LogsView />
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key="fluxo"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.4 }}
+                    >
             {/* HERÓI / INTRODUÇÃO */}
             <header className="relative pt-12 pb-24 flex-shrink-0 overflow-hidden rounded-[40px]">
                 {/* Degradê sutil nas cores da marca */}
@@ -580,6 +656,9 @@ export const HomeClientView = ({
                                 className="h-full bg-brand-blue-accent shadow-[0_0_10px_#1F9FCF]"
                             />
                         </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
                     </motion.div>
                 )}
             </AnimatePresence>
