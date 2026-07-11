@@ -34,11 +34,8 @@ export function InstitutoHero() {
                     </span>
                 </div>
 
-                <h1 className="text-5xl md:text-7xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter mb-8 leading-[0.9]">
-                    O Instituto de <br />
-                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-blue-dark to-gray-400 dark:to-white opacity-90">
-                        Física
-                    </span> da USP
+                <h1 className="text-5xl md:text-7xl font-black tracking-tighter text-gray-900 dark:text-white mb-8">
+                    Instituto de<br />Física da USP
                 </h1>
 
                 <div className="max-w-3xl">

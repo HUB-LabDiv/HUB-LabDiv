@@ -259,18 +259,7 @@ const metodologiaCell = {
 
 const renderIFUSP = (text: string) => {
     if (!text) return text;
-    const standardized = text.replace(/IF-USP|IF USP/gi, 'IFUSP');
-    const parts = standardized.split(/(IFUSP)/gi);
-    return parts.map((part, i) => {
-        if (part.toUpperCase() === 'IFUSP') {
-            return (
-                <span key={i} className="inline font-black tracking-tighter">
-                    <span className="text-brand-yellow">IF</span><span className="text-brand-blue">USP</span>
-                </span>
-            );
-        }
-        return part;
-    });
+    return text.replace(/IF-USP|IF USP/gi, 'IFUSP');
 };
 
 export function WikiView() {
