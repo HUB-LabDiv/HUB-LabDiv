@@ -38,11 +38,12 @@ export default function AdminLayoutClient({
         { name: 'Moderação do CGIF', href: '/admin/cgif', icon: 'admin_panel_settings' },
         { name: 'Central de Notificações', href: '/admin/notificacoes', icon: 'notifications' },
         { name: 'Arena de Desafios', href: '/admin/desafios', icon: 'emoji_events' },
-        { name: 'Aprovação de Perfis', href: '/admin/profiles', icon: 'manage_accounts', adminOnly: true },
+        { name: 'Aprovação de Perfis', href: '/admin/profiles', icon: 'manage_accounts' },
         { name: 'Validação do Match', href: '/admin/adocoes', icon: 'favorite' },
         { name: 'Pergunte a um Cientista', href: '/admin/perguntas', icon: 'quiz' },
         { name: 'Central de Anomalias', href: '/admin/reports', icon: 'bug_report' },
-        { name: 'Trilhas de Aprendizagem', href: '/admin/trilhas', icon: 'route', adminOnly: true },
+        { name: 'Trilhas de Aprendizagem', href: '/admin/trilhas', icon: 'route' },
+        { name: 'Telemetria do Sistema', href: '/admin/telemetria', icon: 'query_stats' },
         { name: 'Configurações Admin', href: '/admin/config', icon: 'settings', adminOnly: true },
     ];
 
