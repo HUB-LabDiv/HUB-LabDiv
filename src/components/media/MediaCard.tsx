@@ -316,7 +316,7 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                             />
                         </m.div>
                     )
-                ) : post.mediaType === 'placeholder' ? (
+                ) : (post.mediaType as string) === 'placeholder' ? (
                     <div className="h-full w-full bg-brand-yellow/5 border-2 border-dashed border-brand-yellow/30 flex flex-col items-center justify-center p-8 text-center">
                         <span className="material-symbols-outlined text-brand-yellow text-4xl mb-4 opacity-50">image</span>
                         <span className="text-brand-yellow font-bold uppercase tracking-widest text-xs">Aqui fica o seu objeto principal</span>
