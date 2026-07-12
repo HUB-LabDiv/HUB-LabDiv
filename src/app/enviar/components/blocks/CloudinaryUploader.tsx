@@ -37,11 +37,19 @@ export function CloudinaryUploader({ onUploadSuccess, accept, label, icon }: Clo
 
         try {
             const signatureData = await generateCloudinarySignature();
+            if (!signatureData) {
+                throw new Error("Server action falhou em retornar dados.");
+            }
             if ('error' in signatureData) {
-                throw new Error(signatureData.error);
+                throw new Error("Erro do Servidor: " + signatureData.error);
             }
 
             const { signature, timestamp, cloudName, apiKey, folder } = signatureData;
+            
+            if (!cloudName) {
+                throw new Error("Cloud Name não está configurado no servidor.");
+            }
+
             const formData = new FormData();
             formData.append('file', file);
             formData.append('api_key', apiKey!);
@@ -49,14 +57,19 @@ export function CloudinaryUploader({ onUploadSuccess, accept, label, icon }: Clo
             formData.append('signature', signature);
             formData.append('folder', folder);
 
-            const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
-                method: 'POST',
-                body: formData,
-            });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error?.message || 'Erro no upload');
-            
-            onUploadSuccess(data.secure_url);
+            try {
+                const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.error?.message || 'Erro no upload do Cloudinary');
+                
+                onUploadSuccess(data.secure_url);
+            } catch (fetchErr: any) {
+                console.error("Cloudinary fetch error:", fetchErr);
+                throw new Error("Erro de rede com Cloudinary: " + fetchErr.message + " (Pode ser seu AdBlocker)");
+            }
         } catch (err: any) {
             console.error('Upload failed:', err);
             setError(err.message || 'Falha no upload do arquivo.');

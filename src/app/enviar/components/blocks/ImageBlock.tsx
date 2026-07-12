@@ -13,6 +13,7 @@ import React from 'react';
 import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
 import { CloudinaryUploader } from './CloudinaryUploader';
+import Image from 'next/image';
 
 interface ImageBlockProps {
     block: Block;
@@ -62,8 +63,15 @@ export default function ImageBlock({ block, isActive }: ImageBlockProps) {
                             <a href={imageUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-brand-blue underline-offset-4">Acessar Materiais (Upload &gt; 10MB)</a>
                         </div>
                     ) : (
-                        /* eslint-disable-next-line @next/next/no-img-element */
-                        <img src={imageUrl} alt={altText} className="w-full h-auto max-h-[400px] object-contain" />
+                        <div className="relative w-full h-[400px] min-h-[200px] bg-gray-900/50 flex items-center justify-center">
+                            <Image 
+                                src={imageUrl} 
+                                alt={altText || 'Imagem'} 
+                                fill 
+                                className="object-contain"
+                                unoptimized={imageUrl.includes('drive.google')}
+                            />
+                        </div>
                     )}
                     
                     {isActive && (

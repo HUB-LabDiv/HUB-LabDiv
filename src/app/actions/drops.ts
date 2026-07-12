@@ -196,3 +196,32 @@ export async function reactToDrop(dropId: string, reactionType: 'up' | 'down') {
     revalidatePath('/drops');
     return { success: true };
 }
+
+export async function fetchUserDrops(userId: string) {
+    const supabase = await createServerSupabase();
+    
+    const { data, error } = await supabase
+        .from('micro_articles')
+        .select(`
+            *,
+            profiles:author_id (
+                id,
+                username,
+                full_name,
+                avatar_url,
+                level,
+                title,
+                user_category
+            ),
+            replies:micro_articles!parent_id (count)
+        `)
+        .eq('author_id', userId)
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching user drops:', error);
+        return [];
+    }
+
+    return data || [];
+}

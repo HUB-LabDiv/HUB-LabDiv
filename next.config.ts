@@ -52,7 +52,7 @@ const nextConfig: NextConfig = {
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://vlibras.gov.br;
       img-src 'self' blob: data: https://*.supabase.co https://res.cloudinary.com https://*.ytimg.com https://img.youtube.com https://images.unsplash.com https://lh3.googleusercontent.com https://upload.wikimedia.org https://portal.if.usp.br https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms;
       font-src 'self' data: https://fonts.gstatic.com;
-      connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.vercel.app https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms https://*.bing.com https://*.visualstudio.com;
+      connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.vercel.app https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms https://*.bing.com https://*.visualstudio.com https://api.cloudinary.com;
       media-src 'self' https://*.supabase.co https://res.cloudinary.com https://*.youtube.com;
       frame-src * data: blob: 'unsafe-inline';
       object-src 'none';

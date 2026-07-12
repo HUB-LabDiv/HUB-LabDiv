@@ -49,15 +49,28 @@ export async function updateProfile(updates: Partial<Profile>) {
         .eq('id', user.id)
         .single();
 
-    // ALL changes by users (non-admins) go to pending_edits for review.
-    // The main columns always hold the last approved version.
-    const updatePayload = {
-        pending_edits: {
-            ...(currentProfile?.pending_edits || {}),
-            ...updates
-        },
-        review_status: 'pending'
-    };
+    // Check for auto-approve flag
+    const { data: settings } = await supabase.from('system_settings').select('auto_approve_profiles_until').eq('id', 'default').single();
+    const isAutoApproveActive = settings?.auto_approve_profiles_until && new Date() < new Date(settings.auto_approve_profiles_until);
+
+    let updatePayload: any = {};
+    
+    if (isAutoApproveActive) {
+        updatePayload = {
+            ...updates,
+            pending_edits: null,
+            review_status: 'approved'
+        };
+    } else {
+        // ALL changes by users (non-admins) go to pending_edits for review.
+        updatePayload = {
+            pending_edits: {
+                ...(currentProfile?.pending_edits || {}),
+                ...updates
+            },
+            review_status: 'pending'
+        };
+    }
 
     // Special case: username/use_nickname should probably be live if they are just toggles?
     // Actually, user wants "ao editar deve ser aprovado pelo adm". So everything goes to pending.
@@ -142,6 +155,102 @@ export async function approveProfile(profileId: string) {
     revalidatePath('/lab');
     revalidatePath('/admin/profiles');
     revalidatePath('/orbit'); // Revalidate orbit view too
+    return { success: true };
+}
+
+export async function enableAutoApprove(hours: number, pass: string) {
+    if (pass !== 'nexus390' && pass !== 'labdiv-tecla56') {
+        return { error: 'Senha de administrador incorreta' };
+    }
+
+    const supabase = await createServerSupabase();
+    const { data: { user: adminUser } } = await supabase.auth.getUser();
+
+    if (!adminUser) return { error: 'Não autorizado' };
+
+    const { data: adminProfile } = await supabase.from('profiles').select('role').eq('id', adminUser.id).single();
+    if (adminProfile?.role !== 'admin') return { error: 'Acesso negado' };
+
+    const expireDate = new Date();
+    expireDate.setHours(expireDate.getHours() + hours);
+
+    const { error } = await supabase
+        .from('system_settings')
+        .upsert({ id: 'default', auto_approve_profiles_until: expireDate.toISOString() });
+
+    if (error) return { error: error.message };
+
+    // Approve all currently pending profiles
+    const { data: pendingProfiles } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('review_status', 'pending');
+
+    if (pendingProfiles && pendingProfiles.length > 0) {
+        for (const p of pendingProfiles) {
+            await approveProfile(p.id); // Re-uses the existing function for consistency
+        }
+    }
+
+    revalidatePath('/admin/profiles');
+    return { success: true, expiresAt: expireDate.toISOString() };
+}
+
+export async function disableAutoApprove() {
+    const supabase = await createServerSupabase();
+    const { data: { user: adminUser } } = await supabase.auth.getUser();
+
+    if (!adminUser) return { error: 'Não autorizado' };
+
+    const { data: adminProfile } = await supabase.from('profiles').select('role').eq('id', adminUser.id).single();
+    if (adminProfile?.role !== 'admin') return { error: 'Acesso negado' };
+
+    const { error } = await supabase
+        .from('system_settings')
+        .upsert({ id: 'default', auto_approve_profiles_until: null });
+
+    if (error) return { error: error.message };
+
+    revalidatePath('/admin/profiles');
+    return { success: true };
+}
+
+export async function getAutoApproveStatus() {
+    const supabase = await createServerSupabase();
+    const { data } = await supabase
+        .from('system_settings')
+        .select('auto_approve_profiles_until')
+        .eq('id', 'default')
+        .single();
+    
+    if (data?.auto_approve_profiles_until) {
+        if (new Date() < new Date(data.auto_approve_profiles_until)) {
+            return { active: true, expiresAt: data.auto_approve_profiles_until };
+        }
+    }
+    return { active: false };
+}
+
+export async function updateProfileCategory(profileId: string, category: string) {
+    if (!await checkIsAdmin()) return { error: 'Não autorizado' };
+
+    const supabase = await createServerSupabase();
+    
+    const validCategories = ['curioso', 'licenciatura', 'bacharelado', 'pos_graduacao', 'docente_pesquisador', 'aluno_usp', 'pesquisador', 'fisica_medica', 'outro_instituto'];
+    if (!validCategories.includes(category)) return { error: 'Categoria inválida' };
+
+    const { error } = await supabase
+        .from('profiles')
+        .update({ user_category: category })
+        .eq('id', profileId);
+
+    if (error) {
+        console.error('Error updating category:', error);
+        return { error: error.message };
+    }
+
+    revalidatePath('/admin/profiles');
+    revalidatePath('/lab');
     return { success: true };
 }
 
@@ -906,6 +1015,7 @@ export async function searchUsersByName(query: string) {
     const { data, error } = await supabase
         .from('profiles')
         .select('id, full_name, username, use_nickname, avatar_url, course, institute, user_category')
+        .eq('is_visible', true)
         .in('review_status', ['approved', 'pending'])
         .not('full_name', 'is', null) // Only find users who finished profile setup
         .neq('id', user.id)

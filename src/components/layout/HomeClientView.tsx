@@ -14,6 +14,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
+import Link from 'next/link';
 import { MediaCard, MediaCardProps } from "@/components/media/MediaCard";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { fetchSubmissions } from '@/app/actions/submissions';
@@ -38,7 +39,8 @@ import {
     Flame,
     Satellite,
     Atom,
-    MessageSquare
+    MessageSquare,
+    Palette
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FluxoFeedbackCard } from "@/components/feedback/FluxoFeedbackCard";
@@ -76,9 +78,11 @@ export const HomeClientView = ({
     const { trackEvent } = useTelemetry();
 
     const tabParam = searchParams.get('tab');
-    const [activeTab, setActiveTab] = useState<'fluxo' | 'logs'>(tabParam === 'logs' ? 'logs' : 'fluxo');
+    const [activeTab, setActiveTab] = useState<'fluxo' | 'logs' | 'arte'>(
+        tabParam === 'logs' ? 'logs' : tabParam === 'arte' ? 'arte' : 'fluxo'
+    );
 
-    const handleTabChange = (newTab: 'fluxo' | 'logs') => {
+    const handleTabChange = (newTab: 'fluxo' | 'logs' | 'arte') => {
         setActiveTab(newTab);
         const params = new URLSearchParams(searchParams.toString());
         params.set('tab', newTab);
@@ -314,6 +318,25 @@ export const HomeClientView = ({
                             Logs
                         </span>
                     </button>
+
+                    <button
+                        onClick={() => handleTabChange('arte')}
+                        className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all ${
+                            activeTab === 'arte' ? 'text-white' : 'text-gray-500 hover:text-brand-yellow'
+                        }`}
+                    >
+                        {activeTab === 'arte' && (
+                            <motion.div
+                                layoutId="activeTabHome"
+                                className="absolute inset-0 bg-brand-yellow rounded-xl shadow-lg shadow-brand-yellow/20"
+                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                            />
+                        )}
+                        <span className="relative z-10 flex items-center gap-2">
+                            <Palette className={`w-4 h-4 ${activeTab === 'arte' ? 'animate-pulse' : ''}`} />
+                            Arte
+                        </span>
+                    </button>
                 </div>
             </div>
 
@@ -327,6 +350,30 @@ export const HomeClientView = ({
                         transition={{ duration: 0.4 }}
                     >
                         <LogsView />
+                    </motion.div>
+                ) : activeTab === 'arte' ? (
+                    <motion.div
+                        key="arte"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.4 }}
+                        className="py-32 flex flex-col items-center justify-center text-center px-4"
+                    >
+                        <div className="w-24 h-24 mb-6 rounded-full bg-brand-yellow/10 flex items-center justify-center border border-brand-yellow/20">
+                            <Palette className="w-12 h-12 text-brand-yellow" />
+                        </div>
+                        <h2 className="text-3xl font-black font-bukra text-white mb-4 uppercase tracking-tighter">Galeria de Arte em Breve</h2>
+                        <p className="text-gray-400 max-w-md mx-auto mb-8">
+                            Um espaço dedicado à expressão artística e criatividade da nossa comunidade está sendo desenvolvido.
+                        </p>
+                        <Link 
+                            href="/enviar"
+                            className="flex items-center gap-2 px-6 py-3 bg-brand-yellow text-gray-900 font-bold rounded-xl hover:bg-brand-yellow/90 transition-colors"
+                        >
+                            <Palette className="w-5 h-5" />
+                            Envie sua Arte
+                        </Link>
                     </motion.div>
                 ) : (
                     <motion.div

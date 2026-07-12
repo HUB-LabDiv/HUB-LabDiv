@@ -280,3 +280,26 @@ ALTER TYPE public.user_category ADD VALUE IF NOT EXISTS 'licenciatura';
 ALTER TYPE public.user_category ADD VALUE IF NOT EXISTS 'bacharelado';
 ALTER TYPE public.user_category ADD VALUE IF NOT EXISTS 'pos_graduacao';
 ALTER TYPE public.user_category ADD VALUE IF NOT EXISTS 'docente_pesquisador';
+
+-- ==============================================================================
+-- SYSTEM SETTINGS FOR AUTO APPROVAL
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.system_settings (
+    id TEXT PRIMARY KEY DEFAULT 'default',
+    auto_approve_profiles_until TIMESTAMP WITH TIME ZONE
+);
+
+INSERT INTO public.system_settings (id) VALUES ('default') ON CONFLICT (id) DO NOTHING;
+
+ALTER TABLE public.system_settings ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Public can view settings" ON public.system_settings;
+CREATE POLICY "Public can view settings"
+    ON public.system_settings FOR SELECT
+    USING (true);
+
+DROP POLICY IF EXISTS "System can update settings" ON public.system_settings;
+CREATE POLICY "System can update settings"
+    ON public.system_settings FOR ALL
+    USING (true)
+    WITH CHECK (true);

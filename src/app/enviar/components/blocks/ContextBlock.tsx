@@ -29,6 +29,14 @@ export default function ContextBlock({ block, isActive }: { block: Block; isActi
         icon = 'gavel';
         label = 'Contexto Político';
         colorClass = 'text-gray-200 border-brand-red/30 bg-brand-red/5 focus-within:border-brand-red';
+    } else if (block.type === 'context_world_object') {
+        icon = 'travel_explore';
+        label = 'Mundo -> Objeto';
+        colorClass = 'text-gray-200 border-brand-yellow/30 bg-brand-yellow/5 focus-within:border-brand-yellow';
+    } else if (block.type === 'context_object_world') {
+        icon = 'public';
+        label = 'Objeto -> Mundo';
+        colorClass = 'text-gray-200 border-brand-yellow/30 bg-brand-yellow/5 focus-within:border-brand-yellow';
     }
 
     return (

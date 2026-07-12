@@ -113,7 +113,7 @@ function SubmitPageContent() {
 
     return (
         <MainLayoutWrapper focusMode={true}>
-            <div className="relative min-h-screen font-sans text-gray-900 dark:text-gray-100 overflow-x-hidden">
+            <div className="relative min-h-screen font-sans text-gray-900 dark:text-gray-100 overflow-x-clip">
                 {/* Background Decorative Elements */}
                 <div className="fixed inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] [background-size:32px_32px] opacity-30 -z-20"></div>
 

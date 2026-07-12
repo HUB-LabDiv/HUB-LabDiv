@@ -13,6 +13,7 @@ import { createServerSupabase } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { LabClientView } from './LabClientView';
 import { fetchUserSubmissions, getFollowStats } from '@/app/actions/submissions';
+import { fetchUserDrops } from '@/app/actions/drops';
 import { getUserInterest } from '@/app/actions/recommendations';
 import { fetchUserAcademicdata } from '@/app/actions/disciplines';
 
@@ -49,11 +50,13 @@ export default async function LabPage({ searchParams }: LabPageProps) {
     const [
         userSubs,
         stats,
+        userLogs,
         savesRes,
         interest
     ] = await Promise.all([
         fetchUserSubmissions(targetUserId),
         getFollowStats(targetUserId),
+        fetchUserDrops(targetUserId),
         supabase.from('saves').select('submission_id').eq('user_id', currentUser.id),
         getUserInterest(targetUserId)
     ]);
@@ -135,6 +138,7 @@ export default async function LabPage({ searchParams }: LabPageProps) {
             submissions={userSubs || []}
             savedPosts={savedPosts}
             followStats={stats}
+            userLogs={userLogs || []}
             initialAdoptionStatus={adoptionStatus}
             academicData={academicData}
             topInterest={interest}

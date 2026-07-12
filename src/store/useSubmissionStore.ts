@@ -80,7 +80,7 @@ const initialState = {
         }
     ],
     activeBlockId: null,
-    previewMode: 'edit' as const,
+    previewMode: 'fluxo' as 'fluxo' | 'arte' | 'preview',
     
     // Agreements
     readGuide: false,
@@ -112,9 +112,11 @@ interface SubmissionState {
     whatsapp: string;
 
     blocks: Block[];
+    fluxoBlocks: Block[];
+    arteBlocks: Block[];
     activeBlockId: string | null;
     activeDraftId: string | null;
-    previewMode: 'edit' | 'preview';
+    previewMode: 'fluxo' | 'arte' | 'preview';
 
     // Agreemenets
     readGuide: boolean;
@@ -152,8 +154,9 @@ interface SubmissionState {
     removeBlock: (id: string) => void;
     moveBlock: (id: string, direction: 'up' | 'down') => void;
     setActiveBlock: (id: string | null) => void;
-    setPreviewMode: (mode: 'edit' | 'preview') => void;
+    setPreviewMode: (mode: 'fluxo' | 'arte' | 'preview') => void;
     setBlocks: (blocks: Block[]) => void;
+    restoreMockBlocks: () => void;
 
     // Agreements Setters
     setReadGuide: (val: boolean) => void;
@@ -186,6 +189,8 @@ export const useSubmissionStore = create<SubmissionState>()(
             description: initialState.description,
             whatsapp: initialState.whatsapp,
             blocks: initialState.blocks,
+            fluxoBlocks: initialState.blocks,
+            arteBlocks: [],
             activeBlockId: initialState.activeBlockId,
             activeDraftId: initialState.activeDraftId,
             previewMode: initialState.previewMode,
@@ -261,8 +266,31 @@ export const useSubmissionStore = create<SubmissionState>()(
                 return { blocks: newBlocks };
             }),
             setActiveBlock: (id) => set({ activeBlockId: id }),
-            setPreviewMode: (mode) => set({ previewMode: mode }),
+            setPreviewMode: (mode) => set((state) => {
+                const updates: Partial<SubmissionState> = { previewMode: mode };
+                
+                // Salvar o canvas atual antes de trocar de aba ou ir para o preview
+                if (state.previewMode === 'fluxo') updates.fluxoBlocks = state.blocks;
+                if (state.previewMode === 'arte') updates.arteBlocks = state.blocks;
+                
+                if (mode === 'preview') {
+                    return updates;
+                }
+                
+                // Carregar o canvas novo se voltando para os editores
+                if (mode === 'fluxo') {
+                    updates.blocks = state.fluxoBlocks;
+                    updates.category = state.category === 'Arte' ? '' : state.category;
+                }
+                if (mode === 'arte') {
+                    updates.blocks = state.arteBlocks;
+                    updates.category = 'Arte';
+                }
+                
+                return updates;
+            }),
             setBlocks: (blocks) => set({ blocks }),
+            restoreMockBlocks: () => set({ blocks: initialState.blocks }),
 
             setReadGuide: (readGuide) => set({ readGuide }),
             setAcceptedCc: (acceptedCc) => set({ acceptedCc }),
@@ -286,6 +314,8 @@ export const useSubmissionStore = create<SubmissionState>()(
                 description: initialState.description,
                 whatsapp: initialState.whatsapp,
                 blocks: initialState.blocks,
+                fluxoBlocks: initialState.blocks,
+                arteBlocks: [],
                 activeBlockId: initialState.activeBlockId,
                 activeDraftId: initialState.activeDraftId,
                 readGuide: initialState.readGuide,

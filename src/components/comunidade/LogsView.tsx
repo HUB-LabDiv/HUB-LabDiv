@@ -21,7 +21,7 @@ import { toast } from 'react-hot-toast';
 import { LogsFeedbackCard } from '@/app/drops/LogsFeedbackCard';
 import { fetchThreads, createDrop, reactToDrop } from '@/app/actions/drops';
 
-interface Drop {
+export interface Drop {
     id: string;
     author_id: string;
     content: string;
@@ -259,7 +259,7 @@ function FeedSection({ title, icon, color, children }: { title: string, icon: Re
     );
 }
 
-function ThreadNode({ drop, level = 0, onRefresh, setIsSyncing }: { drop: Drop, level?: number, onRefresh?: () => void, setIsSyncing?: (val: boolean) => void }) {
+export function ThreadNode({ drop, level = 0, onRefresh, setIsSyncing }: { drop: Drop, level?: number, onRefresh?: () => void, setIsSyncing?: (val: boolean) => void }) {
     const [isExpanded, setIsExpanded] = useState(false);
     const [threads, setThreads] = useState<Drop[]>([]);
     const [isLoadingThreads, setIsLoadingThreads] = useState(false);

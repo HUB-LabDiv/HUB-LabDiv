@@ -33,13 +33,45 @@ interface DiagrammerLayoutProps {
 
 export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
     const {
-        blocks, addBlock, setActiveBlock, activeBlockId, title, setTitle,
+        blocks, addBlock, setActiveBlock, activeBlockId, title, setTitle, setBlocks,
         authors, setAuthors, year, setYear,
         readGuide, setReadGuide, acceptedCc, setAcceptedCc, previewMode, setPreviewMode,
         category, setCategory, isHistorical, isGoldenStandard,
-        languageRegister, setLanguageRegister, needsModerationHelp, setNeedsModerationHelp, activeDraftId, setActiveDraftId
+        languageRegister, setLanguageRegister, needsModerationHelp, setNeedsModerationHelp, activeDraftId, setActiveDraftId, restoreMockBlocks, fluxoBlocks, arteBlocks
     } = useSubmissionStore();
-    const { saveDraft } = useDraftsStore();
+    const { saveDraft, drafts } = useDraftsStore();
+    const [selectedPreviewId, setSelectedPreviewId] = React.useState<string>(previewMode === 'arte' ? 'arte' : 'fluxo');
+
+    const previewData = React.useMemo(() => {
+        if (selectedPreviewId === 'fluxo') {
+            const fb = previewMode === 'fluxo' ? blocks : fluxoBlocks;
+            return {
+                title,
+                category: category === 'Arte' ? 'Outros' : category, // Fallback
+                description: fb.find((b: any) => b.type === 'text')?.content?.text,
+                blocks: fb
+            };
+        }
+        if (selectedPreviewId === 'arte') {
+            const ab = previewMode === 'arte' ? blocks : arteBlocks;
+            return {
+                title,
+                category: 'Arte',
+                description: ab.find((b: any) => b.type === 'text')?.content?.text,
+                blocks: ab
+            };
+        }
+        
+        const draft = drafts.find(d => d.id === selectedPreviewId);
+        if (!draft) return { title, category, description: blocks.find((b: any) => b.type === 'text')?.content?.text, blocks };
+        
+        return {
+            title: draft.title,
+            category: draft.stateSnapshot?.category,
+            description: draft.stateSnapshot?.blocks?.find((b: any) => b.type === 'text')?.content?.text,
+            blocks: draft.stateSnapshot?.blocks || []
+        };
+    }, [selectedPreviewId, title, category, blocks, fluxoBlocks, arteBlocks, drafts, previewMode]);
 
     const [pseudonyms, setPseudonyms] = React.useState<{ id: string; name: string }[]>([]);
     const [mainName, setMainName] = React.useState<string>('');
@@ -78,11 +110,11 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             toast.error('O nome de autor/apelido é obrigatório.');
             return;
         }
-        if (!category) {
+        if (previewMode !== 'arte' && !category) {
             toast.error('A categoria é obrigatória.');
             return;
         }
-        if (!year) {
+        if (previewMode !== 'arte' && !year) {
             toast.error('O ano é obrigatório.');
             return;
         }
@@ -92,7 +124,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             return;
         }
 
-        if (!readGuide || !acceptedCc) {
+        if (!readGuide || (previewMode !== 'arte' && !acceptedCc)) {
             toast.error('Por favor, aceite os termos legais antes de publicar.');
             return;
         }
@@ -113,15 +145,15 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             const payload = {
                 title,
                 authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
-                category: category || 'Outros',
+                category: previewMode === 'arte' ? 'Arte' : (category || 'Outros'),
                 description: blocks.find(b => b.type === 'text')?.content?.text || 'Contribuição construída no Diagramador.',
                 media_type: 'sdocx',
                 media_url: JSON.stringify(blocks),
-                event_year: year ? parseInt(year) : new Date().getFullYear(),
+                event_year: previewMode === 'arte' ? new Date().getFullYear() : (year ? parseInt(year) : new Date().getFullYear()),
                 is_historical: isHistorical,
                 is_golden_standard: isGoldenStandard,
                 accepted_cc: acceptedCc,
-                language_register: languageRegister,
+                language_register: previewMode === 'arte' ? 'artistica' : languageRegister,
                 needs_moderation_help: needsModerationHelp,
                 reflexoes: reflexoes.length > 0 ? reflexoes : undefined,
                 quiz: quizBlock ? [quizBlock.content] : undefined,
@@ -172,7 +204,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             const payload = {
                 title,
                 authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
-                category: category || 'Outros',
+                category: previewData.category || 'Outros',
                 description: blocks.find(b => b.type === 'text')?.content?.text || 'Contribuição construída no Diagramador.',
                 media_type: 'sdocx',
                 media_url: JSON.stringify(blocks),
@@ -227,11 +259,20 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         }
     };
 
+    const elaboracaoTypes = ['text', 'drive', 'reference', 'notes'];
+    const objetoTypes = ['image', 'video', 'audio', '3d_object', 'web_page', 'pdf'];
+    const pedagogicoTypes = ['quiz', 'reflection', 'context_history', 'context_social', 'context_political'];
+
+    const hasElaboracao = blocks.some(b => elaboracaoTypes.includes(b.type));
+    const hasObjeto = blocks.some(b => objetoTypes.includes(b.type));
+    const hasPedagogico = blocks.some(b => pedagogicoTypes.includes(b.type));
+    const showSugerida = !hasElaboracao || !hasObjeto || !hasPedagogico;
+
     return (
         <div className="flex w-full min-h-[70vh] px-4 py-8 lg:px-8 max-w-[1920px] mx-auto justify-center relative">
 
             {/* Coluna Esquerda: Mídia (Fixo) */}
-            {previewMode === 'edit' && (
+            {previewMode === 'fluxo' && (
                 <aside className="hidden xl:flex fixed left-8 top-32 w-64 flex-col z-10">
                     <div className="bg-[#1E1E1E]/80 backdrop-blur-md border border-brand-blue/30 rounded-2xl p-4 flex flex-col gap-4 shadow-[0_0_30px_rgba(15,71,128,0.3)]">
                         <h3 className="text-white font-bold text-sm tracking-wider uppercase mb-2">Mídia / Conteúdo</h3>
@@ -253,27 +294,36 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
 
             {/* Coluna Central: Canvas & Preview */}
             <main
-                className={`w-full transition-all duration-500 mt-0 ${previewMode === 'edit' ? 'max-w-4xl' : 'max-w-3xl'} flex flex-col gap-8`}
+                className={`w-full transition-all duration-500 mt-0 flex flex-col gap-8`}
                 onClick={handleCanvasClick}
             >
-                {/* Título Global da Ferramenta & Toggle de Modos */}
-                <div className="flex flex-col items-center justify-center text-center gap-6 animate-fade-in-up mt-8">
-                    <div className="flex flex-col gap-2">
-                        <h2 className="text-3xl font-black text-white uppercase tracking-tight">Plataforma de Lançamento</h2>
-                        <p className="text-sm text-gray-400">Aqui você pode diagramar seu post.</p>
-                    </div>
+                {/* Título Global da Ferramenta */}
+                <div className="flex flex-col items-center justify-center text-center gap-2 animate-fade-in-up mt-8">
+                    <h2 className="text-3xl font-black text-white uppercase tracking-tight">Plataforma de Lançamento</h2>
+                    <p className="text-sm text-gray-400">Aqui você pode diagramar seu post.</p>
+                </div>
 
-                    {/* Seletor de Preview */}
-                    <div className="flex bg-[#1E1E1E]/90 p-1.5 rounded-xl border border-white/5 shadow-xl backdrop-blur-md">
+                {/* Tabs de Modo: Fluxo, Arte, Preview */}
+                <div className="w-full flex justify-center sticky top-24 z-40 px-4">
+                    <div className="bg-[#121212]/80 backdrop-blur-md p-2 rounded-2xl border border-white/5 flex items-center justify-center gap-2 shadow-lg w-fit mx-auto">
                         <button
-                            onClick={() => setPreviewMode('edit')}
-                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all ${previewMode === 'edit' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                            onClick={() => setPreviewMode('fluxo')}
+                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all ${previewMode === 'fluxo' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
                         >
-                            Edição
+                            Fluxo
                         </button>
                         <button
-                            onClick={() => setPreviewMode('preview')}
-                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all ${previewMode === 'preview' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                            onClick={() => setPreviewMode('arte')}
+                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all ${previewMode === 'arte' ? 'bg-brand-yellow text-gray-900 shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                        >
+                            Arte
+                        </button>
+                        <button
+                            onClick={() => {
+                                setSelectedPreviewId(previewMode === 'arte' ? 'arte' : 'fluxo');
+                                setPreviewMode('preview');
+                            }}
+                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all ${previewMode === 'preview' ? 'bg-brand-red text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
                         >
                             Preview
                         </button>
@@ -284,18 +334,43 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                   ========== MODO PREVIEW ==========
                   Mostra Miniatura no topo + Página Completa logo abaixo 
                 */}
-                {previewMode === 'preview' && (
-                    <div className="flex flex-col gap-16 w-full items-center animate-fade-in-up">
+                    {/* Preview Content */}
+                    <div className={`flex-col gap-16 w-full max-w-4xl mx-auto items-center animate-fade-in-up ${previewMode === 'preview' ? 'flex' : 'hidden'} overflow-y-auto custom-scrollbar pb-32`}>
+                        {/* Seletor de Preview */}
+                        <div className="w-fit flex items-center justify-center gap-2 mb-4 bg-[#121212]/80 backdrop-blur-md p-2 rounded-2xl border border-white/5 mx-auto shadow-lg">
+                            
+                            <button
+                                onClick={() => setSelectedPreviewId('fluxo')}
+                                className={`px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all ${selectedPreviewId === 'fluxo' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                            >
+                                Fluxo Atual
+                            </button>
+                            <button
+                                onClick={() => setSelectedPreviewId('arte')}
+                                className={`px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all ${selectedPreviewId === 'arte' ? 'bg-brand-yellow text-gray-900 shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                            >
+                                Arte Atual
+                            </button>
+                            {drafts.length > 0 && drafts.map(d => (
+                                <button
+                                    key={d.id}
+                                    onClick={() => setSelectedPreviewId(d.id)}
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all ${selectedPreviewId === d.id ? 'bg-brand-red text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                                >
+                                    Rascunho: {d.title.slice(0, 15)}...
+                                </button>
+                            ))}
+                        </div>
 
                         {/* Miniatura do Feed (Card Real Renderizado com Mock) */}
                         <div className="w-full max-w-sm mx-auto shrink-0 pointer-events-none">
                             <MediaCard
                                 post={{
                                     id: 'preview-id',
-                                    title: title || 'Exemplo de Contribuição',
+                                    title: previewData.title || 'Exemplo de Contribuição',
                                     authors: user?.user_metadata?.full_name || user?.user_metadata?.name || 'Autor(a)',
-                                    description: blocks.find((b: any) => b.type === 'text')?.content?.text || 'A verdadeira Entropia do conhecimento diminui apenas quando a ciência não termina quando o experimento é concluído ou quando o paper é publicado.',
-                                    category: category || 'Outros',
+                                    description: previewData.description || 'A verdadeira Entropia do conhecimento diminui apenas quando a ciência não termina quando o experimento é concluído ou quando o paper é publicado.',
+                                    category: previewData.category || 'Outros',
                                     mediaType: 'text',
                                     mediaUrl: '',
                                     createdAt: new Date().toISOString(),
@@ -327,7 +402,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                             <div className="p-6 md:p-10 space-y-6">
                                 <div className="flex flex-wrap items-center gap-2">
                                     <span className="px-3 py-1 bg-white/5 border border-white/10 text-gray-300 rounded-full text-xs font-bold tracking-wide uppercase">
-                                        {category || 'Todos'}
+                                        {previewData.category || 'Todos'}
                                     </span>
                                     {isGoldenStandard && (
                                         <span className="px-3 py-1 bg-gradient-to-r from-brand-yellow via-brand-yellow/80 to-brand-yellow text-gray-900 rounded-full text-xs font-black tracking-wide uppercase">
@@ -337,7 +412,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                 </div>
 
                                 <h1 className="text-3xl md:text-4xl font-display font-bold text-white leading-tight">
-                                    {title || 'Sem Título'}
+                                    {previewData.title || 'Sem Título'}
                                 </h1>
 
                                 <div className="flex flex-col py-4 border-y border-white/5">
@@ -358,8 +433,8 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                     <h2 className="text-sm font-bold text-white mb-2 uppercase tracking-wide">Descrição</h2>
                                     <div className="text-gray-400 leading-relaxed prose prose-lg prose-invert max-w-none">
                                         <div className="flex flex-col gap-8">
-                                            {blocks.map((block) => (
-                                                <BlockRenderer key={block.id} block={block} />
+                                            {previewData.blocks.map((block: any) => (
+                                                <BlockRenderer key={block.id} block={block} forcePreview={true} />
                                             ))}
                                         </div>
                                     </div>
@@ -367,96 +442,52 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                             </div>
                         </div>
                     </div>
-                )}
-
                 {/* 
                   ========== MODO EDIÇÃO ==========
                 */}
-                {previewMode === 'edit' && (
-                    <div className="flex flex-col w-full animate-fade-in-up">
+                <div className="flex flex-col gap-8 w-full items-start">
+                    {/* Editor Content */}
+                    <div className={`flex-col w-full max-w-4xl mx-auto animate-fade-in-up ${previewMode !== 'preview' ? 'flex' : 'hidden'}`}>
 
                         {/* Título de Cabeçalho na Coluna Central */}
                         {/* (Movido para o topo global) */}
 
-                        {/* Grid de Cards de Dicas */}
                         <div className="w-full flex flex-col gap-4 mb-8">
-                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                {/* Card 1: Comunicadores */}
-                                <div className="bg-[#121212]/60 backdrop-blur-md border border-brand-yellow/30 rounded-2xl p-5 flex flex-col gap-4 shadow-[0_0_20px_rgba(255,204,0,0.05)]">
-                                    <div className="flex items-center gap-3 text-brand-yellow">
-                                        <span className="material-symbols-outlined text-2xl">campaign</span>
-                                        <span className="text-xs font-black uppercase tracking-wider">Dicas de Comunicadores</span>
-                                    </div>
-                                    <p className="text-sm text-gray-300 flex-1 leading-relaxed">
-                                        "Uma boa analogia é como uma ponte entre o desconhecido e o familiar. Use exemplos do cotidiano."
-                                    </p>
-                                    <button className="w-full py-2 bg-brand-yellow/10 hover:bg-brand-yellow/20 text-brand-yellow text-xs font-bold uppercase rounded-lg transition-colors border border-brand-yellow/30">
-                                        Ver Todas as Dicas
-                                    </button>
-                                </div>
-
-                                {/* Card 2: Bases Teóricas */}
-                                <div className="bg-[#121212]/60 backdrop-blur-md border border-brand-blue/30 rounded-2xl p-5 flex flex-col gap-4 shadow-[0_0_20px_rgba(15,71,128,0.05)]">
-                                    <div className="flex items-center gap-3 text-brand-blue">
-                                        <span className="material-symbols-outlined text-2xl">menu_book</span>
-                                        <span className="text-xs font-black uppercase tracking-wider">Bases Teóricas</span>
-                                    </div>
-                                    <p className="text-sm text-gray-300 flex-1 leading-relaxed">
-                                        <strong>Aprendizagem Significativa:</strong> Ancora o novo conhecimento naquilo que o público já sabe.
-                                    </p>
-                                    <button className="w-full py-2 bg-brand-blue/10 hover:bg-brand-blue/20 text-brand-blue text-xs font-bold uppercase rounded-lg transition-colors border border-brand-blue/30">
-                                        Ver Bases Teóricas
-                                    </button>
-                                </div>
-
-                                {/* Card 3: Instruções Práticas */}
-                                <div className="bg-[#121212]/60 backdrop-blur-md border border-brand-red/30 rounded-2xl p-5 flex flex-col gap-4 shadow-[0_0_20px_rgba(241,67,67,0.05)]">
-                                    <div className="flex items-center gap-3 text-brand-red">
-                                        <span className="material-symbols-outlined text-2xl">build</span>
-                                        <span className="text-xs font-black uppercase tracking-wider">Instruções Práticas</span>
-                                    </div>
-                                    <p className="text-sm text-gray-300 flex-1 leading-relaxed">
-                                        Crie títulos magnéticos. Evite parágrafos muito longos; quebre o texto visualmente para facilitar a leitura.
-                                    </p>
-                                    <button className="w-full py-2 bg-brand-red/10 hover:bg-brand-red/20 text-brand-red text-xs font-bold uppercase rounded-lg transition-colors border border-brand-red/30">
-                                        Ver Instruções
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Card Horizontal: Emissão de Luz */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div className="bg-gradient-to-r from-gray-900 via-gray-800 to-gray-900 backdrop-blur-md border border-white/5 hover:border-gray-500 transition-colors rounded-2xl p-4 flex flex-col items-start justify-between gap-4 cursor-pointer group shadow-lg">
-                                    <div className="flex items-center gap-4">
-                                        <div className="size-12 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:border-white/30 group-hover:scale-105 transition-all">
-                                            <span className="material-symbols-outlined text-2xl text-white">tips_and_updates</span>
+                            {/* Card Horizontal: Emissão de Luz (Oculto na Arte) */}
+                            {previewMode !== 'arte' && (
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <a href="/wiki/divulgacao" target="_blank" rel="noopener noreferrer" className="bg-[#1E1E1E]/90 backdrop-blur-md border border-brand-yellow/30 hover:border-brand-yellow/60 hover:shadow-[0_0_20px_rgba(255,204,0,0.25)] transition-all duration-300 rounded-2xl p-4 flex flex-col items-start justify-between gap-4 cursor-pointer group shadow-lg">
+                                        <div className="flex items-center gap-4">
+                                            <div className="size-12 rounded-full bg-brand-yellow/10 flex items-center justify-center border border-brand-yellow/20 group-hover:border-brand-yellow/40 group-hover:scale-105 transition-all">
+                                                <span className="material-symbols-outlined text-2xl text-brand-yellow">tips_and_updates</span>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-xs font-bold uppercase tracking-wider text-white">Emissão de Luz</span>
+                                                <span className="text-xs font-medium text-gray-300 mt-1">Acesse nosso guia com instruções, dicas e bases teóricas sobre comunicação</span>
+                                            </div>
                                         </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-xs font-bold uppercase tracking-wider text-gray-400">Portal de Conhecimento</span>
-                                            <span className="text-sm font-bold text-white">Acesse a aba Emissão de Luz do CGIF</span>
+                                        <button className="w-full py-2.5 bg-brand-yellow hover:bg-[#E5B800] text-gray-900 text-xs font-black uppercase rounded-lg transition-colors shadow-md pointer-events-none">
+                                            Ver o Guia
+                                        </button>
+                                    </a>
+                                    <div onClick={() => setIsProfileModalOpen(true)} className="bg-[#1E1E1E]/90 backdrop-blur-md border border-brand-red/30 hover:border-brand-red/60 hover:shadow-[0_0_20px_rgba(241,67,67,0.35)] transition-all duration-300 rounded-2xl p-4 flex flex-col items-start justify-between gap-4 cursor-pointer group shadow-lg">
+                                        <div className="flex items-center gap-4">
+                                            <div className="size-12 rounded-full bg-brand-red/10 flex items-center justify-center border border-brand-red/20 group-hover:border-brand-red/40 group-hover:scale-105 transition-all">
+                                                <span className="material-symbols-outlined text-2xl text-brand-red">query_stats</span>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-xs font-bold uppercase tracking-wider text-white">Público Alvo</span>
+                                                <span className="text-xs font-medium text-gray-300 mt-1">Estatísticas do Público do HUB</span>
+                                            </div>
                                         </div>
+                                        <button className="w-full py-2.5 bg-brand-red hover:bg-[#D93030] text-white text-xs font-black uppercase rounded-lg transition-colors shadow-md pointer-events-none">
+                                            Ver Estatísticas
+                                        </button>
                                     </div>
-                                    <button className="w-full py-2.5 bg-white text-gray-900 hover:bg-gray-200 text-xs font-black uppercase rounded-lg transition-colors shadow-md">
-                                        Acessar Portal
-                                    </button>
                                 </div>
-                                <div className="bg-gradient-to-r from-[#0F4780] via-[#0F4780]/80 to-[#121212] backdrop-blur-md border border-brand-blue/30 hover:border-brand-blue transition-colors rounded-2xl p-4 flex flex-col items-start justify-between gap-4 cursor-pointer group shadow-lg">
-                                    <div className="flex items-center gap-4">
-                                        <div className="size-12 rounded-full bg-white/10 flex items-center justify-center border border-white/20 group-hover:border-white/40 group-hover:scale-105 transition-all">
-                                            <span className="material-symbols-outlined text-2xl text-white">query_stats</span>
-                                        </div>
-                                        <div className="flex flex-col">
-                                            <span className="text-xs font-bold uppercase tracking-wider text-brand-yellow">Público Alvo</span>
-                                            <span className="text-sm font-bold text-white">Estatísticas do Público do HUB</span>
-                                        </div>
-                                    </div>
-                                    <button onClick={() => setIsProfileModalOpen(true)} className="w-full py-2.5 bg-brand-yellow text-gray-900 hover:bg-[#E5B800] text-xs font-black uppercase rounded-lg transition-colors shadow-md">
-                                        Ver Estatísticas
-                                    </button>
-                                </div>
-                            </div>
+                            )}
 
-                            <DraftsMenu />
+                            {previewMode !== 'arte' && <DraftsMenu />}
                         </div>
 
                         {/* Editor Principal */}
@@ -518,33 +549,37 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                     </div>
 
                                     <div className="flex items-center gap-6 w-full md:w-auto">
-                                        <div className="flex flex-col max-w-[150px] w-full">
-                                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Categoria <span className="text-brand-red">*</span></span>
-                                            <select
-                                                value={category}
-                                                onChange={(e) => setCategory(e.target.value)}
-                                                className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
-                                            >
-                                                <option value="" disabled className="bg-[#121212] text-gray-500">Selecione...</option>
-                                                {CATEGORIES.map(cat => (
-                                                    <option key={cat} value={cat} className="bg-[#121212] text-white">{cat}</option>
-                                                ))}
-                                            </select>
-                                        </div>
+                                        {previewMode !== 'arte' && (
+                                            <>
+                                                <div className="flex flex-col max-w-[150px] w-full">
+                                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Categoria <span className="text-brand-red">*</span></span>
+                                                    <select
+                                                        value={category}
+                                                        onChange={(e) => setCategory(e.target.value)}
+                                                        className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
+                                                    >
+                                                        <option value="" disabled className="bg-[#121212] text-gray-500">Selecione...</option>
+                                                        {CATEGORIES.map(cat => (
+                                                            <option key={cat} value={cat} className="bg-[#121212] text-white">{cat}</option>
+                                                        ))}
+                                                    </select>
+                                                </div>
 
-                                        <div className="flex flex-col max-w-[150px] w-full">
-                                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Linguagem <span className="text-brand-red">*</span></span>
-                                            <select
-                                                value={languageRegister}
-                                                onChange={(e) => setLanguageRegister(e.target.value)}
-                                                className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-yellow/50 focus:border-brand-yellow outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
-                                            >
-                                                <option value="jovem" className="bg-[#121212] text-white">Jovem</option>
-                                                <option value="nerd_geek" className="bg-[#121212] text-white">Nerd/Geek</option>
-                                                <option value="artistica" className="bg-[#121212] text-white">Artística</option>
-                                                <option value="academica" className="bg-[#121212] text-white">Acadêmica</option>
-                                            </select>
-                                        </div>
+                                                <div className="flex flex-col max-w-[150px] w-full">
+                                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Linguagem <span className="text-brand-red">*</span></span>
+                                                    <select
+                                                        value={languageRegister}
+                                                        onChange={(e) => setLanguageRegister(e.target.value)}
+                                                        className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-yellow/50 focus:border-brand-yellow outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
+                                                    >
+                                                        <option value="jovem" className="bg-[#121212] text-white">Jovem</option>
+                                                        <option value="nerd_geek" className="bg-[#121212] text-white">Nerd/Geek</option>
+                                                        <option value="artistica" className="bg-[#121212] text-white">Artística</option>
+                                                        <option value="academica" className="bg-[#121212] text-white">Acadêmica</option>
+                                                    </select>
+                                                </div>
+                                            </>
+                                        )}
 
                                         <div className="flex flex-col max-w-[100px] w-full">
                                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Ano <span className="text-brand-red">*</span></span>
@@ -561,39 +596,123 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                 </div>
                             </div>
 
-                            {/* Área de Inserção Inicial */}
-                            {blocks.length === 0 ? (
-                                <div className="w-full h-48 flex flex-col items-center justify-center text-gray-400 border-2 border-dashed border-brand-blue/40 bg-[#1E1E1E]/40 rounded-2xl mb-4">
-                                    <span className="material-symbols-outlined text-4xl mb-3 opacity-60 text-brand-blue">note_add</span>
-                                    <p className="font-medium text-gray-300">Seu canvas está vazio.</p>
-                                    <p className="text-sm mt-1 mb-4">Clique no botão + abaixo ou nas barras laterais para começar.</p>
-                                    <InlineAddMenu />
+                            {blocks.length === 0 && (
+                                <div className="mt-8 mb-4 w-full flex flex-col items-center gap-6">
+                                    {previewMode !== 'arte' && (
+                                        <button
+                                            onClick={() => restoreMockBlocks()}
+                                            className="px-4 py-2 bg-brand-yellow text-gray-900 font-black text-xs uppercase tracking-widest rounded-lg hover:bg-[#E5B800] transition-colors shadow-lg"
+                                        >
+                                            Voltar ao Post Pré-Montado
+                                        </button>
+                                    )}
+                                    <p className="font-medium text-gray-500 text-sm tracking-tight uppercase text-center">Seu canvas está vazio.</p>
+                                </div>
+                            )}
+
+                            {/* Warning for Mock Template */}
+                            {previewMode !== 'arte' && blocks.some(b => String(b.id).startsWith('mock-')) && (
+                                <div className="w-full bg-brand-yellow/10 border border-brand-yellow/30 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+                                    <div className="flex items-start gap-3">
+                                        <span className="material-symbols-outlined text-[20px] text-brand-yellow shrink-0 mt-0.5">warning</span>
+                                        <p className="text-sm text-gray-300">
+                                            <strong className="text-brand-yellow">Exemplo Didático:</strong> Você está visualizando um <strong>post pré-montado</strong> para entender como o diagrama funciona. Você pode editá-lo ou começar do zero.
+                                        </p>
+                                    </div>
+                                    <button
+                                        onClick={() => setBlocks([])}
+                                        className="shrink-0 px-4 py-2 bg-[#121212] border border-white/10 hover:border-brand-red hover:text-brand-red rounded-lg text-xs font-bold uppercase transition-colors"
+                                    >
+                                        Limpar Canvas
+                                    </button>
+                                </div>
+                            )}
+
+                    {/* Área de Inserção Inicial / Blocos Obrigatórios */}
+                            {(showSugerida && previewMode !== 'arte') ? (
+                                <div className="w-full relative z-50 flex flex-col gap-4 mt-8">
+                                    {blocks.length === 0 ? (
+                                        <p className="text-[10px] text-gray-500 text-center uppercase tracking-widest font-black mb-2 opacity-50">Estrutura Sugerida</p>
+                                    ) : (
+                                        <p className="text-[10px] text-brand-yellow text-center uppercase tracking-widest font-black mb-2 opacity-80 mt-8">Eixos Obrigatórios Pendentes</p>
+                                    )}
+                                    
+                                    {!hasObjeto && (
+                                        <div className="w-full border-2 border-dashed border-brand-yellow/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-[#121212]/30 hover:bg-brand-yellow/5 transition-colors group text-center">
+                                            <div className="w-10 h-10 rounded-full bg-brand-yellow/10 flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-brand-yellow">category</span>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-brand-yellow font-black uppercase tracking-widest text-[10px]">1. Seu Objeto Principal *</span>
+                                                <span className="text-gray-500 text-xs mt-1">Insira imagens, modelos 3D, áudio ou vídeo</span>
+                                            </div>
+                                            <div className="scale-90 group-hover:scale-100 transition-transform mt-2 relative z-10">
+                                                <InlineAddMenu variant="yellow" />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {!hasElaboracao && (
+                                        <div className="w-full border-2 border-dashed border-brand-blue/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-[#121212]/30 hover:bg-brand-blue/5 transition-colors group text-center">
+                                            <div className="w-10 h-10 rounded-full bg-brand-blue/10 flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-brand-blue">notes</span>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-brand-blue font-black uppercase tracking-widest text-[10px]">2. Elaboração / Conceituação *</span>
+                                                <span className="text-gray-500 text-xs mt-1">Insira textos de apoio, anotações ou referências</span>
+                                            </div>
+                                            <div className="scale-90 group-hover:scale-100 transition-transform mt-2 relative z-10">
+                                                <InlineAddMenu variant="blue" />
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {!hasPedagogico && (
+                                        <div className="w-full border-2 border-dashed border-brand-red/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-[#121212]/30 hover:bg-brand-red/5 transition-colors group text-center">
+                                            <div className="w-10 h-10 rounded-full bg-brand-red/10 flex items-center justify-center">
+                                                <span className="material-symbols-outlined text-brand-red">psychology</span>
+                                            </div>
+                                            <div className="flex flex-col">
+                                                <span className="text-brand-red font-black uppercase tracking-widest text-[10px]">3. Reflexão Pedagógica *</span>
+                                                <span className="text-gray-500 text-xs mt-1">Adicione quizzes ou contexto histórico/social</span>
+                                            </div>
+                                            <div className="scale-90 group-hover:scale-100 transition-transform mt-2 relative z-10">
+                                                <InlineAddMenu variant="red" />
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             ) : null}
 
+                            {/* Empty State Arte */}
+                            {previewMode === 'arte' && blocks.length === 0 && (
+                                <div className="w-full mt-12 flex flex-col items-center justify-center gap-6">
+                                    <div className="scale-125">
+                                        <InlineAddMenu />
+                                    </div>
+                                    <p className="text-gray-500 text-sm font-medium">Comece a adicionar blocos à sua arte.</p>
+                                </div>
+                            )}
+
                             {/* Renderização dos Blocos em Edição */}
-                            <div className="flex flex-col gap-2 max-w-full mx-auto">
-                                {blocks.length > 0 && <InlineAddMenu />}
+                            <div className="flex flex-col gap-8 max-w-full mx-auto">
+                                {blocks.length > 0 && !(objetoTypes.includes(blocks[0].type)) && <InlineAddMenu />}
                                 {blocks.map((block, index) => {
-                                    const pedagogicalTypes = ['quiz', 'reflection', 'context_history', 'context_social', 'context_political', 'glossary'];
-                                    const isNonPedagogical = !pedagogicalTypes.includes(block.type);
-                                    const nextBlock = blocks[index + 1];
-                                    const nextIsPedagogical = nextBlock && pedagogicalTypes.includes(nextBlock.type);
-                                    const showTip = isNonPedagogical && !nextIsPedagogical;
+                                    const isLinkBlock = block.type === 'link';
 
                                     return (
                                         <React.Fragment key={block.id}>
                                             <div className="w-full">
-                                                <BlockRenderer block={block} showPedagogicalTip={showTip} />
+                                                <BlockRenderer block={block} />
                                             </div>
-                                            <InlineAddMenu insertAfterId={block.id} />
+                                            {!isLinkBlock && <InlineAddMenu insertAfterId={block.id} />}
                                         </React.Fragment>
                                     );
                                 })}
                             </div>
                         </div>
                     </div>
-                )}
+                </div>
 
                 {/* Seção de Aceites e Lançamento (Fim da Página) */}
                 <div className="flex flex-col gap-4 items-center w-full max-w-3xl mx-auto mt-24 mb-16">
@@ -604,7 +723,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                             <span className="text-brand-blue text-[10px] font-bold uppercase tracking-wider">Documentação Legal</span>
                             <div className="bg-[#1E1E1E]/50 border border-white/5 rounded-lg p-3">
                                 <div className="flex items-center justify-between mb-2">
-                                    <strong className="text-gray-200 text-xs">Guia de Boas Práticas da Comunidade LabDiv</strong>
+                                    <strong className="text-gray-200 text-xs">Guia de Boas Práticas da Comunidade LabDiv *</strong>
                                     <button
                                         onClick={() => setIsGuideModalOpen(true)}
                                         className="px-3 py-1 bg-white/5 hover:bg-gray-600 text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
@@ -636,7 +755,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                         <div className="flex flex-col gap-2">
                             <div className="bg-[#1E1E1E]/50 border border-white/5 rounded-lg p-3">
                                 <div className="flex items-center justify-between mb-2">
-                                    <strong className="text-gray-200 text-xs">Licença Creative Commons (CC BY 4.0)</strong>
+                                    <strong className="text-gray-200 text-xs">Licença Creative Commons (CC BY 4.0) {previewMode === 'arte' ? '(Opcional)' : '*'}</strong>
                                     <button
                                         onClick={() => setIsLicenseModalOpen(true)}
                                         className="px-3 py-1 bg-white/5 hover:bg-gray-600 text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
@@ -652,6 +771,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                     - Adaptar: remixar, transformar e criar a partir do material para qualquer fim.<br />
                                     Sob os seguintes termos:<br />
                                     - Atribuição: Você deve dar o crédito apropriado, prover um link para a licença e indicar se mudanças foram feitas.
+                                    {previewMode === 'arte' && <><br /><br /><strong>Nota para Artes:</strong> Se você não aceitar esta licença, sua arte manterá os direitos autorais fechados (Todos os Direitos Reservados).</>}
                                 </div>
                             </div>
                             <label className="flex items-center gap-3 cursor-pointer group mt-2">
@@ -665,37 +785,21 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
 
                         <div className="h-px w-full bg-[#1E1E1E] my-2"></div>
 
-                        {/* Rascunho para Moderação */}
-                        <div className="flex flex-col gap-2">
-                            <label className="flex items-center gap-3 cursor-pointer group p-3 bg-brand-yellow/5 border border-brand-yellow/20 rounded-lg hover:border-brand-yellow/40 transition-colors">
-                                <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${needsModerationHelp ? 'bg-brand-yellow border-brand-yellow text-gray-900' : 'bg-[#1E1E1E] border-brand-yellow/60 group-hover:border-brand-yellow'}`}>
-                                    {needsModerationHelp && <span className="material-symbols-outlined text-sm font-bold">check</span>}
-                                </div>
-                                <input type="checkbox" className="hidden" checked={needsModerationHelp} onChange={(e) => setNeedsModerationHelp(e.target.checked)} />
-                                <div className="flex flex-col">
-                                    <span className={`text-sm font-bold transition-colors ${needsModerationHelp ? 'text-brand-yellow' : 'text-gray-300 group-hover:text-white'}`}>
-                                        Marcar como Rascunho para Elaboração da Moderação
-                                    </span>
-                                    <span className="text-xs text-gray-400 mt-1 leading-relaxed">
-                                        Se ativado, este envio não será publicado imediatamente (após analise). A equipe de moderação fará melhorias didáticas e de comunicação científica com base no seu esqueleto.
-                                    </span>
-                                </div>
-                            </label>
-                        </div>
+
 
                     </div>
 
                     <div className="flex flex-col sm:flex-row items-center gap-4 w-full mt-4">
-                        {!editId && (
+                        {!editId && previewMode !== 'arte' && (
                             <button
                                 onClick={handleSaveDraft}
-                                className="w-full sm:w-auto flex flex-col items-center justify-center px-8 py-3 rounded-xl bg-[#1E1E1E]/80 backdrop-blur-md border border-dashed border-gray-500/50 hover:border-brand-blue/50 hover:bg-white/5 text-gray-300 font-bold transition-all hover:scale-[1.02] active:scale-95 group shadow-lg"
+                                className="w-full sm:w-auto flex flex-col items-center justify-center px-6 py-2 min-h-[68px] rounded-xl bg-[#1E1E1E]/80 backdrop-blur-md border border-dashed border-gray-500/50 hover:border-brand-blue/50 hover:bg-white/5 text-gray-300 font-bold transition-all hover:scale-[1.02] active:scale-95 group shadow-lg"
                             >
-                                <div className="flex items-center gap-2 text-xl text-white group-hover:text-brand-blue transition-colors">
-                                    <span className="material-symbols-outlined text-[24px]">save</span>
-                                    <span>Salvar Rascunho Local</span>
+                                <div className="flex items-center gap-2 text-sm text-white group-hover:text-brand-blue transition-colors whitespace-nowrap">
+                                    <span className="material-symbols-outlined text-[18px]">save</span>
+                                    <span>Salvar Rascunho</span>
                                 </div>
-                                <span className="text-[10px] font-medium text-gray-500 uppercase tracking-widest mt-1 group-hover:text-gray-400 transition-colors">
+                                <span className="text-[9px] font-medium text-gray-500 uppercase tracking-widest mt-1 group-hover:text-gray-400 transition-colors whitespace-nowrap">
                                     Salvo em Cache (Máx. 3)
                                 </span>
                             </button>
@@ -704,8 +808,8 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                             <button
                                 onClick={handleUpdate}
                                 className="w-full flex items-center justify-center gap-2 px-8 py-5 rounded-xl bg-[#1E1E1E] border border-brand-blue/50 text-brand-blue font-bold text-xl hover:bg-brand-blue/10 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
-                                disabled={!readGuide || !acceptedCc || isSubmitting}
-                                title={(!readGuide || !acceptedCc) ? "Você precisa aceitar os termos acima para continuar" : ""}
+                                disabled={!readGuide || (previewMode !== 'arte' && !acceptedCc) || isSubmitting}
+                                title={(!readGuide || (previewMode !== 'arte' && !acceptedCc)) ? "Você precisa aceitar os termos acima para continuar" : ""}
                             >
                                 {isSubmitting ? 'Atualizando...' : 'Atualizar Original 🔄'}
                             </button>
@@ -713,8 +817,8 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                         <button
                             onClick={handlePublish}
                             className="w-full flex items-center justify-center gap-2 px-8 py-5 rounded-xl bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red text-white font-bold text-xl hover:opacity-90 transition-all shadow-[0_0_30px_rgba(255,204,0,0.3)] hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
-                            disabled={!readGuide || !acceptedCc || isSubmitting}
-                            title={(!readGuide || !acceptedCc) ? "Você precisa aceitar os termos acima para continuar" : ""}
+                            disabled={!readGuide || (previewMode !== 'arte' && !acceptedCc) || isSubmitting}
+                            title={(!readGuide || (previewMode !== 'arte' && !acceptedCc)) ? "Você precisa aceitar os termos acima para continuar" : ""}
                         >
                             {isSubmitting ? 'Lançando...' : (editId ? 'Lançar como Novo Post 🚀' : 'Lançar Conteúdo 🚀')}
                         </button>
@@ -724,7 +828,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             </main>
 
             {/* Coluna Direita: Pedagógico (Fixo) */}
-            {previewMode === 'edit' && (
+            {previewMode === 'fluxo' && (
                 <aside className="hidden xl:flex fixed right-8 top-32 w-64 flex-col z-10">
                     <div className="bg-[#121212]/60 backdrop-blur-md border border-brand-yellow/30 rounded-2xl p-4 flex flex-col gap-4 shadow-[0_0_30px_rgba(255,204,0,0.15)]">
                         <h3 className="text-white font-bold text-sm tracking-wider uppercase mb-2">Conexões Pedagógicas</h3>

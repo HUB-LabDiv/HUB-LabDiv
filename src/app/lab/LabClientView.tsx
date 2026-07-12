@@ -25,7 +25,7 @@ import { PerfilFeedbackCard } from './PerfilFeedbackCard';
 import { RadiationBadge } from '@/components/gamification/RadiationBadge';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
 import { RadiationTab } from '@/components/gamification/RadiationTab';
-import { ArtesHobbiesTab } from '@/components/profile/ArtesHobbiesTab';
+import { ThreadNode, Drop } from '@/components/comunidade/LogsView';
 import { Profile } from '@/types';
 import { Avatar } from "@/components/ui/Avatar";
 import { User } from '@supabase/supabase-js';
@@ -42,6 +42,7 @@ interface LabClientViewProps {
     initialViewedProfile: Profile | null;
     submissions: { post: PostDTO }[];
     savedPosts: PostDTO[];
+    userLogs: any[];
     followStats: { followers: number; following: number };
     initialAdoptionStatus: 'pending' | 'approved' | null;
     academicData: any;
@@ -55,6 +56,7 @@ export function LabClientView({
     initialViewedProfile,
     submissions,
     savedPosts,
+    userLogs,
     followStats,
     initialAdoptionStatus,
     academicData,
@@ -454,8 +456,9 @@ export function LabClientView({
 
                 <div className="flex justify-center border-t border-gray-200 dark:border-gray-800 mb-8 max-w-3xl mx-auto flex-wrap">
                     {[
-                        { id: 'publicacoes', label: 'PUBLICAÇÕES', icon: <Grid className="w-4 h-4" /> },
-                        { id: 'artes', label: 'ARTES & HOBBIES', icon: <ImageIcon className="w-4 h-4" /> },
+                        { id: 'fluxo', label: 'FLUXO', icon: <Grid className="w-4 h-4" /> },
+                        { id: 'artes', label: 'ARTE', icon: <ImageIcon className="w-4 h-4" /> },
+                        { id: 'logs', label: 'LOGS', icon: <FileText className="w-4 h-4" /> },
                         { id: 'estrelados', label: 'CONSTELAÇÃO', icon: <Star className="w-4 h-4" /> },
                         { id: 'radiacao', label: 'RADIAÇÃO', icon: <span className="text-sm">☢️</span> },
                     ].map((tab) => (
@@ -474,11 +477,13 @@ export function LabClientView({
                 </div>
 
                 <div className="animate-in fade-in duration-500 max-w-4xl mx-auto border-t-0">
-                    {activeTab === 'publicacoes' && (
+                    {(activeTab === 'fluxo' || activeTab === 'artes') && (() => {
+                        const filteredSubmissions = submissions.filter(sub => activeTab === 'artes' ? sub.post.category === 'Arte' : sub.post.category !== 'Arte');
+                        return (
                         <div>
-                            {submissions.length > 0 ? (
+                            {filteredSubmissions.length > 0 ? (
                                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-                                    {submissions.map(sub => {
+                                    {filteredSubmissions.map(sub => {
                                         const urls = parseMediaUrl(sub.post.mediaUrl);
                                         const firstMedia = urls[0] || '';
                                         const isImage = sub.post.mediaType === 'image';
@@ -608,7 +613,8 @@ export function LabClientView({
                                 </div>
                             )}
                         </div>
-                    )}
+                        );
+                    })()}
 
                     {activeTab === 'radiacao' && viewedProfile && (
                         <RadiationTab profile={{ id: viewedProfile.id, xp: viewedProfile.xp || 0, level: viewedProfile.level || 1 }} />
@@ -697,8 +703,16 @@ export function LabClientView({
                         </div>
                     )}
 
-                    {activeTab === 'artes' && viewedProfile && (
-                        <ArtesHobbiesTab profile={viewedProfile} isOwner={isViewingOwn} />
+                    {activeTab === 'logs' && (
+                        <div className="space-y-6">
+                            {userLogs.length > 0 ? (
+                                userLogs.map(log => <ThreadNode key={log.id} drop={log as Drop} />)
+                            ) : (
+                                <div className="py-20 text-center opacity-40">
+                                    <p className="font-mono text-xs uppercase tracking-widest">Nenhum log registrado.</p>
+                                </div>
+                            )}
+                        </div>
                     )}
                 </div>
             </div>

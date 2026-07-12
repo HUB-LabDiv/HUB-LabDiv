@@ -67,7 +67,7 @@ export function TelemetryManager() {
   const [segment, setSegment] = useState<string>('all');
   const [targetUserId, setTargetUserId] = useState<string>('');
   const [uidInput, setUidInput] = useState<string>('');
-  const [activeTab, setActiveTab] = useState<'geral' | 'ux' | 'valor' | 'empolgados' | 'eficiencia'>('geral');
+  const [activeTab, setActiveTab] = useState<'geral' | 'ux' | 'valor' | 'empolgados' | 'eficiencia' | 'acessos'>('geral');
   const [page, setPage] = useState(0);
   const pageSize = 20;
 
@@ -100,6 +100,7 @@ export function TelemetryManager() {
   const [engagementByFormat, setEngagementByFormat] = useState<any[]>([]);
   const [audioFunnelData, setAudioFunnelData] = useState<any[]>([]);
   const [playCount, setPlayCount] = useState(0);
+  const [tabAccesses, setTabAccesses] = useState<any[]>([]);
 
   const fetchTelemetry = async () => {
     setIsLoading(true);
@@ -197,13 +198,36 @@ export function TelemetryManager() {
     });
     setEventTypeData(Object.entries(typeCount).map(([name, value]) => ({ name, value })));
 
-    // 3. Dept Engagement Pie Chart
     const deptCount: Record<string, number> = {};
     rawData.filter(e => e.event_type === 'DEPT_FILTER').forEach(e => {
       const name = e.metadata?.dept_name || 'Geral';
       deptCount[name] = (deptCount[name] || 0) + 1;
     });
     setDeptEngagement(Object.entries(deptCount).map(([name, value]) => ({ name, value })));
+
+    // 3.5 Tab Accesses
+    const urlCount: Record<string, number> = {};
+    rawData.forEach(e => {
+      if (e.url) {
+        let path = e.url;
+        try {
+          if (path.startsWith('http')) {
+            path = new URL(path).pathname;
+          } else {
+            path = path.split('?')[0];
+          }
+        } catch {}
+        if (path && path !== '/') {
+          urlCount[path] = (urlCount[path] || 0) + 1;
+        }
+      }
+    });
+    setTabAccesses(
+      Object.entries(urlCount)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 12)
+        .map(([name, value]) => ({ name, value }))
+    );
 
     // 4. Adoption Tab Metrics
     const adoption = [
@@ -505,10 +529,12 @@ export function TelemetryManager() {
       <div className="flex flex-wrap gap-2 p-1.5 bg-white/5 rounded-2xl border border-white/5 self-start">
         {[
           { id: 'geral', label: 'Visão Geral', icon: LayoutGrid },
+          { id: 'clarity', label: 'MS Clarity', icon: Activity },
           { id: 'ux', label: 'UX & Fricção', icon: Zap },
           { id: 'valor', label: 'Adoção & Valor', icon: Heart },
           { id: 'eficiencia', label: 'Eficiência de Formato', icon: BarChart3 },
           { id: 'empolgados', label: 'Empolgados', icon: Trophy },
+          { id: 'acessos', label: 'Acessos', icon: Activity },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -568,6 +594,30 @@ export function TelemetryManager() {
                     Dinamismo da Jornada
                   </h3>
                   <TelemetryCharts data={eventTypeData} type="bar" />
+                </div>
+                </div>
+            )}
+
+            {activeTab === 'acessos' && (
+              <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="bg-white/[0.03] p-8 rounded-[40px] border border-white/5">
+                  <h3 className="text-[10px] font-black uppercase text-gray-500 tracking-[0.2em] mb-6 flex items-center gap-2">
+                    <Activity className="w-3 h-3 text-brand-yellow" />
+                    Contadores de Acesso por Aba / Rota
+                  </h3>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {tabAccesses.length > 0 ? tabAccesses.map((t, idx) => (
+                      <div key={idx} className="flex items-center justify-between p-6 bg-white/[0.02] rounded-3xl border border-white/5 hover:border-brand-yellow/30 transition-all hover:bg-brand-yellow/5">
+                        <span className="text-xs text-gray-300 font-bold truncate pr-4 uppercase tracking-widest" title={t.name}>{t.name}</span>
+                        <div className="flex items-center gap-2">
+                            <span className="text-xl font-black text-brand-yellow shrink-0">{t.value}</span>
+                            <span className="text-[8px] text-brand-yellow/50 font-bold uppercase">acessos</span>
+                        </div>
+                      </div>
+                    )) : (
+                      <div className="text-gray-500 text-xs">Sem dados suficientes</div>
+                    )}
+                  </div>
                 </div>
               </div>
             )}
@@ -820,6 +870,28 @@ export function TelemetryManager() {
                       </div>
                     </div>
                   ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'clarity' && (
+              <div className="w-full flex flex-col items-center justify-center gap-6 animate-fade-in h-[400px]">
+                <div className="bg-white/[0.02] p-8 rounded-[32px] border border-white/5 flex flex-col items-center justify-center text-center gap-4 max-w-md w-full shadow-xl">
+                  <div className="w-16 h-16 rounded-2xl bg-brand-blue/10 flex items-center justify-center border border-brand-blue/20 mb-2">
+                    <Activity className="w-8 h-8 text-brand-blue" />
+                  </div>
+                  <h3 className="text-white font-black text-xl uppercase tracking-wider">Dashboard MS Clarity</h3>
+                  <p className="text-gray-400 text-sm mb-4">
+                    A Microsoft não permite exibir o painel do Clarity dentro de outros sistemas por motivos de segurança. Clique no botão abaixo para abrir o dashboard em uma nova aba.
+                  </p>
+                  <a 
+                    href="https://clarity.microsoft.com/projects/view/vygiuv03xb/dashboard?date=Last%203%20days"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full flex items-center justify-center gap-2 px-8 py-4 bg-[#0F4780] hover:bg-brand-blue text-white font-bold uppercase tracking-wider rounded-xl transition-all hover:scale-105 shadow-lg"
+                  >
+                    Abrir MS Clarity <ExternalLink className="w-4 h-4" />
+                  </a>
                 </div>
               </div>
             )}

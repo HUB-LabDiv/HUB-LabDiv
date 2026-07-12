@@ -56,7 +56,7 @@ const profileSchema = z.object({
     department: z.string().max(100).optional(),
     is_labdiv: z.boolean().optional(),
     is_visible: z.boolean().optional(),
-    user_category: z.enum(['curioso', 'licenciatura', 'bacharelado', 'pos_graduacao', 'docente_pesquisador', 'aluno_usp', 'pesquisador']).default('curioso'),
+    user_category: z.enum(['curioso', 'licenciatura', 'bacharelado', 'pos_graduacao', 'docente_pesquisador', 'aluno_usp', 'pesquisador', 'fisica_medica', 'outro_instituto']).default('curioso'),
     seeking_assistant: z.boolean().default(false),
     interest_area: z.string().max(100).optional(),
     cultural_language: z.enum(['nerd_geek', 'artistica', 'jovem', 'academica']).default('jovem'),
@@ -155,7 +155,6 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
     });
 
     const [profileData, setProfileData] = useState<Profile | null>(null);
-    const [proofFile, setProofFile] = useState<File | null>(null);
 
     const useNickname = watch('use_nickname');
     const seekingMentor = watch('seeking_mentor');
@@ -295,16 +294,16 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
     const onSubmit = async (data: ProfileFormValues) => {
         setIsSaving(true);
 
-        let proofUrl = profileData?.usp_proof_url || null;
+        let avatarUrl = profileData?.avatar_url || null;
 
-        if (proofFile) {
+        if (newAvatar) {
             const formData = new FormData();
-            formData.append('proof', proofFile);
-            const uploadRes = await uploadEnrollmentProof(formData);
+            formData.append('avatar', newAvatar);
+            const uploadRes = await uploadAvatar(formData);
             if (uploadRes.success && uploadRes.path) {
-                proofUrl = uploadRes.path;
+                avatarUrl = uploadRes.path;
             } else {
-                toast.error(uploadRes.error || 'Erro ao fazer upload do arquivo');
+                toast.error(uploadRes.error || 'Erro ao fazer upload da imagem');
                 setIsSaving(false);
                 return;
             }
@@ -321,7 +320,8 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
             laboratory_name,
             department,
             institute: data.institute === 'Outros' ? other_institute : data.institute,
-            usp_proof_url: proofUrl,
+            avatar_url: avatarUrl,
+            usp_proof_url: profileData?.usp_proof_url || null,
             entrance_year: entrance_year ? parseInt(entrance_year, 10) : null,
             artistic_interests: artistic_interests_str
                 ? artistic_interests_str.split(',').map((s: string) => s.trim()).filter(Boolean)
@@ -478,11 +478,13 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                             {...register('user_category')}
                                             className="w-full bg-gray-50 dark:bg-black/20 border border-brand-red/30 rounded-2xl px-4 py-3 text-sm focus:border-brand-red outline-none transition-all cursor-pointer font-black text-gray-900 dark:text-white uppercase tracking-tight"
                                         >
+                                            <option value="bacharelado">Aluno Bacharelado</option>
+                                            <option value="fisica_medica">Aluno Física Médica</option>
+                                            <option value="licenciatura">Aluno Licenciatura</option>
+                                            <option value="pos_graduacao">Aluno Pós</option>
+                                            <option value="pesquisador">Professor/Pesquisador</option>
+                                            <option value="outro_instituto">Outro Instituto</option>
                                             <option value="curioso">Curioso / Visitante</option>
-                                            <option value="licenciatura">Licenciatura</option>
-                                            <option value="bacharelado">Bacharelado</option>
-                                            <option value="pos_graduacao">Pós-Graduação</option>
-                                            <option value="docente_pesquisador">Docente / Pesquisador</option>
                                         </select>
                                         <span className="text-[8px] font-black bg-brand-red/10 text-brand-red px-2 py-0.5 rounded uppercase font-mono h-fit shrink-0">Admin Edit</span>
                                     </div>
@@ -879,29 +881,6 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                             </div>
                                         );
                                     })()}
-
-                                    <div className="space-y-3 p-4 bg-brand-red/5 border border-brand-red/10 rounded-2xl">
-                                        <div className="flex items-center gap-2">
-                                            <FileUp className="w-4 h-4 text-brand-red" />
-                                            <label className="text-[10px] font-black uppercase tracking-widest text-brand-red">
-                                                Comprovante USP
-                                            </label>
-                                        </div>
-                                        <p className="text-[9px] text-brand-red/80 font-medium leading-relaxed">
-                                            ⚠️ Para sua privacidade, a foto/documento será apagada permanentemente dos nossos servidores 60 segundos após a avaliação da moderação. Se não houver avaliação, o arquivo será excluído automaticamente da nuvem em alguns dias.
-                                        </p>
-                                        <input
-                                            type="file"
-                                            accept="image/*,.pdf"
-                                            onChange={(e) => setProofFile(e.target.files?.[0] || null)}
-                                            className="w-full text-[10px] text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:bg-brand-red file:text-white hover:file:bg-brand-red/90 transition-all cursor-pointer"
-                                        />
-                                        {profileData?.usp_proof_url && !proofFile && (
-                                            <p className="text-[9px] text-brand-red font-bold uppercase mt-1 flex items-center gap-1">
-                                                <ShieldCheck className="w-3 h-3" /> Validado no LabDiv
-                                            </p>
-                                        )}
-                                    </div>
                                 </div>
                             )}
 

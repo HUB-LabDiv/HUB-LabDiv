@@ -15,8 +15,9 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
-import { approveProfile, getEnrollmentProofUrl } from '@/app/actions/profiles';
-import { Loader2, Check, X, AlertCircle, Info, ExternalLink } from 'lucide-react';
+import { approveProfile, getEnrollmentProofUrl, enableAutoApprove, disableAutoApprove, getAutoApproveStatus, updateProfileCategory } from '@/app/actions/profiles';
+import { Loader2, Check, X, AlertCircle, Info, ExternalLink, Edit } from 'lucide-react';
+import { EditProfileModal } from '@/components/profile/EditProfileModal';
 
 interface Profile {
     id: string;
@@ -27,6 +28,7 @@ interface Profile {
     review_status: string;
     bio: string;
     is_usp_member: boolean;
+    user_category?: string;
     created_at: string;
     username?: string;
     use_nickname?: boolean;
@@ -56,14 +58,31 @@ export default function ProfileApprovalPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [isProcessing, setIsProcessing] = useState<string | null>(null);
     const [activeFilter, setActiveFilter] = useState<'tudo' | 'basico' | 'artes'>('tudo');
+    const [autoApproveActive, setAutoApproveActive] = useState(false);
+    const [autoApproveExpiresAt, setAutoApproveExpiresAt] = useState<Date | null>(null);
+    const [isAutoApproveLoading, setIsAutoApproveLoading] = useState(false);
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
+    const [adminPassword, setAdminPassword] = useState('');
+    const [viewMode, setViewMode] = useState<'pending' | 'all'>('pending');
+    
+    // Modal states
+    const [editingProfileId, setEditingProfileId] = useState<string | null>(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     const fetchProfiles = async () => {
         setIsLoading(true);
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('review_status', 'pending')
-            .order('created_at', { ascending: false });
+        const status = await getAutoApproveStatus();
+        if (status.active) {
+            setAutoApproveActive(true);
+            setAutoApproveExpiresAt(new Date(status.expiresAt!));
+        }
+
+        const query = supabase.from('profiles').select('*').order('created_at', { ascending: false });
+        if (viewMode === 'pending') {
+            query.eq('review_status', 'pending');
+        }
+
+        const { data, error } = await query;
 
         if (error) {
             toast.error("Erro ao carregar perfis.");
@@ -75,16 +94,67 @@ export default function ProfileApprovalPage() {
 
     useEffect(() => {
         fetchProfiles();
-    }, []);
+    }, [viewMode]);
+
+    const handleAutoApproveClick = () => {
+        setShowPasswordModal(true);
+    };
+
+    const confirmAutoApprove = async () => {
+        if (!adminPassword) return;
+        setShowPasswordModal(false);
+        setIsAutoApproveLoading(true);
+        const res = await enableAutoApprove(1, adminPassword);
+        if (res.success) {
+            toast.success("Aprovação Automática ativada por 1 hora!");
+            setAutoApproveActive(true);
+            setAutoApproveExpiresAt(new Date(res.expiresAt!));
+            setProfiles([]);
+            setAdminPassword('');
+        } else {
+            toast.error(res.error || "Erro ao ativar auto-aprovação.");
+        }
+        setIsAutoApproveLoading(false);
+    };
+
+    const handleCancelAutoApprove = async () => {
+        setIsAutoApproveLoading(true);
+        const res = await disableAutoApprove();
+        if (res.success) {
+            toast.success("Auto-Aprovação desativada.");
+            setAutoApproveActive(false);
+            setAutoApproveExpiresAt(null);
+        } else {
+            toast.error(res.error || "Erro ao desativar.");
+        }
+        setIsAutoApproveLoading(false);
+    };
 
     const handleApprove = async (id: string) => {
         setIsProcessing(id);
         const res = await approveProfile(id);
         if (res.success) {
             toast.success("Perfil aprovado!");
-            setProfiles(prev => prev.filter(p => p.id !== id));
+            setProfiles(profiles.filter(p => p.id !== id));
         } else {
-            toast.error(res.error || "Erro ao aprovar perfil.");
+            toast.error(res.error || "Erro ao rejeitar perfil.");
+        }
+        setIsProcessing(null);
+    };
+
+    const handleEditProfile = (id: string) => {
+        setEditingProfileId(id);
+        setIsEditModalOpen(true);
+    };
+
+    const handleCategoryChange = async (id: string, newCategory: string) => {
+        setIsProcessing(id);
+        const res = await updateProfileCategory(id, newCategory);
+        if (res.success) {
+            toast.success("Categoria atualizada com sucesso.");
+            setProfiles(profiles.map(p => p.id === id ? { ...p, user_category: newCategory } : p));
+        } else {
+            toast.error(res.error || "Erro ao atualizar categoria.");
         }
         setIsProcessing(null);
     };
@@ -121,8 +191,6 @@ export default function ProfileApprovalPage() {
     };
 
     const renderDiff = (current: any, pending: any, label: string) => {
-        // Only skip if the field is not present in updates or hasn't changed
-        // We normalize null/undefined/false to a comparable state
         const normalize = (val: any) => {
             if (val === true) return 'SIM';
             if (val === false) return 'NÃO';
@@ -204,13 +272,56 @@ export default function ProfileApprovalPage() {
             <header className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-3xl font-black text-gray-900 dark:text-white uppercase tracking-tighter">
-                        Aprovação de <span className="text-brand-blue">Perfis</span>
+                        Moderação de Perfis
                     </h1>
-                    <p className="text-gray-400 mt-1 text-sm font-medium uppercase tracking-tight">Revise as edições de perfil para garantir a integridade da rede.</p>
+                    <p className="text-gray-400 mt-1 text-sm font-medium uppercase tracking-tight">Gerencie os perfis e categorias da comunidade.</p>
                 </div>
-                <div className="px-4 py-2 bg-brand-blue/10 border border-brand-blue/20 rounded-full flex items-center gap-2">
-                    <Info className="w-4 h-4 text-brand-blue" />
-                    <span className="text-[10px] font-black text-brand-blue uppercase tracking-widest">{profiles.length} Pendentes</span>
+                <div className="flex items-center gap-4">
+                    <div className="flex bg-white/5 border border-white/10 rounded-full p-1 mr-2">
+                        <button
+                            onClick={() => setViewMode('pending')}
+                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                                viewMode === 'pending' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-500 hover:text-white'
+                            }`}
+                        >
+                            Pendentes
+                        </button>
+                        <button
+                            onClick={() => setViewMode('all')}
+                            className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all ${
+                                viewMode === 'all' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-500 hover:text-white'
+                            }`}
+                        >
+                            Todos
+                        </button>
+                    </div>
+                    {viewMode === 'pending' && (
+                        <div className="px-4 py-2 bg-brand-blue/10 border border-brand-blue/20 rounded-full flex items-center gap-2">
+                            <Info className="w-4 h-4 text-brand-blue" />
+                            <span className="text-[10px] font-black text-brand-blue uppercase tracking-widest">{profiles.length} Pendentes</span>
+                        </div>
+                    )}
+                    {autoApproveActive ? (
+                        <button 
+                            onClick={handleCancelAutoApprove}
+                            disabled={isAutoApproveLoading}
+                            className="group px-4 py-2 bg-brand-yellow/10 border border-brand-yellow/40 hover:bg-red-500/10 hover:border-red-500/40 rounded-full flex items-center gap-2 transition-all disabled:opacity-50"
+                        >
+                            <span className="text-[10px] font-black text-brand-yellow group-hover:text-red-400 uppercase tracking-widest">
+                                <span className="group-hover:hidden">⚡ Auto-Aprovação Ativa (até {autoApproveExpiresAt?.toLocaleTimeString()})</span>
+                                <span className="hidden group-hover:inline">Desativar Auto-Aprovação</span>
+                            </span>
+                        </button>
+                    ) : (
+                        <button 
+                            onClick={handleAutoApproveClick}
+                            disabled={isAutoApproveLoading}
+                            className="px-4 py-2 bg-white/5 border border-white/10 hover:border-brand-yellow/50 hover:bg-brand-yellow/10 rounded-full flex items-center gap-2 transition-all disabled:opacity-50"
+                        >
+                            {isAutoApproveLoading ? <Loader2 className="w-4 h-4 text-brand-yellow animate-spin" /> : <span className="material-symbols-outlined text-[14px] text-brand-yellow">bolt</span>}
+                            <span className="text-[10px] font-black text-brand-yellow uppercase tracking-widest">Aprovar Todos (1h)</span>
+                        </button>
+                    )}
                 </div>
             </header>
 
@@ -319,37 +430,99 @@ export default function ProfileApprovalPage() {
 
                                 </div>
 
-                                <div className="flex flex-row lg:flex-col gap-3 shrink-0 lg:w-48 border-t lg:border-t-0 lg:border-l border-white/5 pt-6 lg:pt-0 lg:pl-8">
-                                    {(profile.pending_edits?.usp_proof_url || profile.usp_proof_url) && (
+                                <div className="flex flex-col gap-6 shrink-0 lg:w-64 border-t lg:border-t-0 lg:border-l border-white/5 pt-6 lg:pt-0 lg:pl-8">
+                                    <div className="space-y-4">
+                                        <div className="flex items-center gap-2 pb-4 border-b border-white/5">
+                                            <span className="material-symbols-outlined text-brand-yellow text-[20px]">admin_panel_settings</span>
+                                            <h4 className="text-[10px] font-black uppercase tracking-widest text-brand-yellow">Moderação Completa</h4>
+                                        </div>
                                         <button
-                                            onClick={() => handleViewProof(profile.pending_edits?.usp_proof_url || profile.usp_proof_url!)}
-                                            className="w-full py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-brand-blue font-black text-[10px] uppercase tracking-widest transition-all flex items-center justify-center gap-2 border border-brand-blue/20"
+                                            onClick={() => handleEditProfile(profile.id)}
+                                            className="w-full bg-[#121212] hover:bg-brand-yellow/10 border border-white/10 hover:border-brand-yellow/50 rounded-xl p-3 text-sm text-brand-yellow font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
                                         >
-                                            <ExternalLink className="w-3 h-3" />
-                                            Ver Comprovante
+                                            <Edit className="w-4 h-4" />
+                                            Editar Perfil
                                         </button>
-                                    )}
-                                    <button
-                                        disabled={isProcessing === profile.id}
-                                        onClick={() => handleApprove(profile.id)}
-                                        className="flex-1 py-4 rounded-2xl bg-brand-blue hover:bg-brand-blue/90 text-white font-black text-xs uppercase tracking-widest transition-all shadow-lg shadow-brand-blue/20 flex items-center justify-center gap-2 group-hover:scale-[1.02]"
-                                    >
-                                        {isProcessing === profile.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                                        Aprovar
-                                    </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Ações (apenas se for pending) */}
+                            {profile.review_status === 'pending' && (
+                                <div className="p-6 bg-[#0055ff]/5 border-t border-[#0055ff]/20 flex flex-col sm:flex-row justify-end gap-3 shrink-0">
                                     <button
                                         disabled={isProcessing === profile.id}
                                         onClick={() => handleReject(profile.id)}
-                                        className="flex-1 py-4 rounded-2xl bg-brand-red/10 hover:bg-brand-red/20 text-brand-red font-black text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                                        className="px-6 py-3 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-xl font-black uppercase tracking-widest text-xs transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                                     >
                                         <X className="w-4 h-4" />
                                         Rejeitar
                                     </button>
+                                    <button
+                                        disabled={isProcessing === profile.id}
+                                        onClick={() => handleApprove(profile.id)}
+                                        className="px-6 py-3 bg-brand-blue hover:bg-brand-blue/90 text-white font-black text-xs rounded-xl uppercase tracking-widest transition-all shadow-lg shadow-brand-blue/20 flex items-center justify-center gap-2"
+                                    >
+                                        {isProcessing === profile.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+                                        Aprovar
+                                    </button>
                                 </div>
-                            </div>
+                            )}
                         </div>
                     ))}
                 </div>
+            )}
+
+            {/* Password Modal */}
+            {showPasswordModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div className="bg-[#121212] border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+                        <h3 className="text-lg font-bold text-white mb-2">Confirmação de Segurança</h3>
+                        <p className="text-xs text-gray-400 mb-6">Insira a senha de Administrador ou Moderador para ativar a auto-aprovação.</p>
+                        
+                        <input
+                            type="password"
+                            placeholder="Senha"
+                            value={adminPassword}
+                            onChange={(e) => setAdminPassword(e.target.value)}
+                            onKeyDown={(e) => e.key === 'Enter' && confirmAutoApprove()}
+                            className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-brand-yellow mb-6"
+                            autoFocus
+                        />
+                        
+                        <div className="flex justify-end gap-3">
+                            <button
+                                onClick={() => setShowPasswordModal(false)}
+                                className="px-4 py-2 text-xs font-bold text-gray-400 hover:text-white transition-colors"
+                            >
+                                CANCELAR
+                            </button>
+                            <button
+                                onClick={confirmAutoApprove}
+                                disabled={!adminPassword}
+                                className="px-6 py-2 bg-brand-yellow text-gray-900 font-black text-xs rounded-lg hover:bg-[#E5B800] transition-colors disabled:opacity-50"
+                            >
+                                ATIVAR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+            {isEditModalOpen && editingProfileId && (
+                <EditProfileModal
+                    isOpen={isEditModalOpen}
+                    onClose={() => {
+                        setIsEditModalOpen(false);
+                        setEditingProfileId(null);
+                    }}
+                    onSuccess={() => {
+                        fetchProfiles();
+                        setIsEditModalOpen(false);
+                        setEditingProfileId(null);
+                    }}
+                    adminMode={true}
+                    adminUserId={editingProfileId}
+                />
             )}
         </div>
     );
