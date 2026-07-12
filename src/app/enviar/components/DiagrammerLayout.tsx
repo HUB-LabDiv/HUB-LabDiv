@@ -522,7 +522,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                     </div>
                                     <button
                                         onClick={() => setBlocks([])}
-                                        className="shrink-0 px-4 py-2 bg-[#121212] border border-white/10 hover:border-brand-red hover:text-brand-red rounded-lg text-xs font-bold uppercase transition-colors"
+                                        className="shrink-0 px-4 py-2 bg-[#121212] border border-white/10 hover:border-brand-blue hover:text-brand-blue rounded-lg text-xs font-bold uppercase transition-colors"
                                     >
                                         Limpar Canvas
                                     </button>
@@ -538,40 +538,13 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                     <div className="flex flex-col flex-1 max-w-sm">
                                         <div className="flex justify-between items-center mb-1">
                                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Autor/Apelido <span className="text-brand-red">*</span></span>
-                                            <span className={`text-[10px] font-bold ${authors.length > 60 ? 'text-brand-red' : 'text-gray-600'}`}>{authors.length}/60</span>
                                         </div>
-                                        <input
-                                            type="text"
-                                            value={authors}
-                                            maxLength={60}
-                                            onChange={(e) => setAuthors(e.target.value)}
-                                            placeholder={user?.user_metadata?.full_name || 'Seu Nome ou Pseudônimo'}
-                                            className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium placeholder-gray-600 transition-colors py-1"
-                                        />
-                                        {(mainName || pseudonyms.length > 0) && (
-                                            <div className="flex flex-wrap items-center gap-2 mt-2">
-                                                {mainName && (
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => setAuthors(mainName)}
-                                                        className={`px-2 py-1 text-[9px] font-black uppercase rounded-md transition-colors border ${authors === mainName ? 'bg-brand-blue text-white border-brand-blue' : 'text-gray-500 border-white/5 hover:border-brand-blue/50 hover:text-brand-blue'}`}
-                                                    >
-                                                        {mainName}
-                                                    </button>
-                                                )}
-                                                {pseudonyms.map(p => (
-                                                    <button
-                                                        key={p.id}
-                                                        type="button"
-                                                        onClick={() => setAuthors(p.name)}
-                                                        className={`px-2 py-1 text-[9px] font-black uppercase rounded-md transition-colors border ${authors === p.name ? 'bg-brand-blue text-white border-brand-blue' : 'text-gray-500 border-white/5 hover:border-brand-blue/50 hover:text-brand-blue'}`}
-                                                    >
-                                                        {p.name}
-                                                    </button>
-                                                ))}
-                                                <span className="text-[8px] text-gray-600 uppercase tracking-widest ml-1 hidden sm:inline">(Gerenciar apelidos no perfil)</span>
-                                            </div>
-                                        )}
+                                        <div className="w-full bg-transparent border-b border-white/5/50 text-white text-lg font-medium py-1">
+                                            {authors || user?.user_metadata?.full_name || 'Carregando...'}
+                                        </div>
+                                        <div className="mt-2 flex items-center">
+                                            <span className="text-[8px] text-gray-600 uppercase tracking-widest">(Gerenciar no perfil)</span>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -681,27 +654,27 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                 <div className="flex flex-col gap-1">
                                     <div className="flex justify-between items-center mb-1">
                                         <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest pl-1">Título da Contribuição <span className="text-brand-red">*</span></span>
-                                        <span className={`text-[10px] font-bold ${title.length > 100 ? 'text-brand-red' : 'text-gray-600'}`}>{title.length}/100</span>
+                                        <span className={`text-[10px] font-bold ${title.length > 27 ? 'text-brand-red' : 'text-gray-600'}`}>{title.length}/27</span>
                                     </div>
                                     <input
                                         type="text"
                                         value={title}
                                         onChange={(e) => setTitle(e.target.value)}
                                         placeholder="Digite aqui o título..."
-                                        maxLength={100}
+                                        maxLength={27}
                                         className="w-full text-4xl lg:text-5xl font-black bg-transparent outline-none text-white placeholder-gray-600 tracking-tight"
                                     />
                                 </div>
                                 <div className="flex flex-col gap-1">
                                     <div className="flex justify-between items-center mb-1">
                                         <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest pl-1">Descrição {previewMode !== 'arte' && <span className="text-brand-red">*</span>}</span>
-                                        <span className={`text-[10px] font-bold ${description.length > 300 ? 'text-brand-red' : 'text-gray-600'}`}>{description.length}/300</span>
+                                        <span className={`text-[10px] font-bold ${description.length > 234 ? 'text-brand-red' : 'text-gray-600'}`}>{description.length}/234</span>
                                     </div>
                                     <textarea
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
                                         placeholder={previewMode === 'arte' ? "Descrição opcional..." : "Resumo da contribuição..."}
-                                        maxLength={300}
+                                        maxLength={234}
                                         rows={4}
                                         className="w-full text-sm font-medium bg-white/5 border border-white/10 rounded-xl p-4 outline-none text-white placeholder-gray-500 resize-none focus:border-brand-blue/50 transition-colors"
                                     />
@@ -709,11 +682,13 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                             </div>
 
                             {/* 5. Separador Página Completa */}
-                            <div className="flex items-center gap-4 w-full opacity-50 my-12">
-                                <div className="h-px bg-white/5 flex-1"></div>
-                                <span className="text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">Visível apenas na página completa</span>
-                                <div className="h-px bg-white/5 flex-1"></div>
-                            </div>
+                            {previewMode !== 'arte' && (
+                                <div className="flex items-center gap-4 w-full opacity-50 my-12">
+                                    <div className="h-px bg-white/5 flex-1"></div>
+                                    <span className="text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">Visível apenas na página completa</span>
+                                    <div className="h-px bg-white/5 flex-1"></div>
+                                </div>
+                            )}
 
                             {/* 6. Blocos Secundários e Placeholders Restantes */}
                             <div className="flex flex-col gap-8 max-w-full mx-auto">

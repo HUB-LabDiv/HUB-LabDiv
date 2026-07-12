@@ -14,7 +14,7 @@
 
 import { createServerSupabase } from '@/lib/supabase/server';
 import { createAdminSupabase } from '@/lib/supabase/admin';
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 import { cookies } from 'next/headers';
 import { Profile, Freshman } from '@/types';
 import { sendAdminNotification } from '@/lib/notifications.server';
@@ -152,9 +152,23 @@ export async function approveProfile(profileId: string) {
 
     if (error) return { error: error.message };
 
+    // Update the author name on all past submissions
+    const mergedProfile = { ...profile, ...finalData };
+    const newPublicName = mergedProfile.use_nickname ? mergedProfile.username : mergedProfile.full_name;
+    
+    if (newPublicName) {
+        await supabase
+            .from('submissions')
+            .update({ authors: newPublicName })
+            .eq('user_id', profileId);
+    }
+
+    revalidatePath('/');
     revalidatePath('/lab');
     revalidatePath('/admin/profiles');
     revalidatePath('/orbit'); // Revalidate orbit view too
+    revalidateTag('trending-submissions-v2');
+    revalidateTag('featured-submissions-v2');
     return { success: true };
 }
 

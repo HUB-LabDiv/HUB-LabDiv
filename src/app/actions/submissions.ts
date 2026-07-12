@@ -255,6 +255,17 @@ export async function createPseudonym(name: string) {
     const { data: { user } } = await serverSupabase.auth.getUser();
     if (!user) return { error: 'Unauthorized' };
 
+    // Check if it already exists to avoid unique constraint error
+    const { data: existing } = await serverSupabase
+        .from('pseudonyms')
+        .select('*')
+        .eq('name', name)
+        .single();
+
+    if (existing) {
+        return { success: true, data: existing };
+    }
+
     const { data, error } = await serverSupabase
         .from('pseudonyms')
         .insert([{ name, user_id: user.id }])

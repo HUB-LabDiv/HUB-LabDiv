@@ -273,18 +273,21 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
             return;
         }
 
-        if (pseudonyms.length >= 2) {
-            toast.error("Limite de 2 apelidos atingido");
-            return;
-        }
-
         setIsCreatingNickname(true);
         const res = await createPseudonym(name);
         if (res.success && res.data) {
-            toast.success("Apelido criado!");
+            toast.success("Enviado para a moderação!");
             setPseudonyms(prev => [...prev, res.data]);
             setValue('username', res.data.name);
             setValue('new_nickname', '');
+            
+            // Auto-save the new nickname to profile so it goes to admin approval immediately
+            if (!adminMode) {
+                await updateProfile({
+                    username: res.data.name,
+                    use_nickname: true
+                });
+            }
         } else {
             toast.error(res.error || "Erro ao criar apelido");
         }
@@ -421,6 +424,49 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                 />
                             </div>
 
+                            <div className="p-4 bg-brand-blue/5 border border-brand-blue/10 rounded-2xl space-y-4">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-8 h-8 bg-brand-blue/10 rounded-lg flex items-center justify-center">
+                                            <ShieldCheck className="w-4 h-4 text-brand-blue" />
+                                        </div>
+                                        <div>
+                                            <span className="block text-xs font-black text-gray-900 dark:text-white uppercase tracking-tight">Mudar o nome público</span>
+                                            <span className="text-[10px] text-gray-400 font-medium whitespace-nowrap overflow-hidden">Oculte o nome que está na sua conta da google</span>
+                                        </div>
+                                    </div>
+                                    <label className="relative inline-flex items-center cursor-pointer">
+                                        <input type="checkbox" {...register('use_nickname')} className="sr-only peer" />
+                                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-blue"></div>
+                                    </label>
+                                </div>
+
+                                {useNickname && (
+                                    <div className="space-y-4 pt-2 animate-in slide-in-from-top-2 duration-300">
+                                        <div className="flex gap-2">
+                                            <input
+                                                {...register('new_nickname')}
+                                                placeholder="Mudança de nome"
+                                                className="flex-1 bg-white dark:bg-black/40 border border-gray-100 dark:border-white/10 rounded-xl px-3 py-2 text-xs outline-none focus:border-brand-blue/50 transition-all font-bold"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={handleCreateNickname}
+                                                disabled={isCreatingNickname || !watch('new_nickname')}
+                                                className="px-4 py-2 bg-brand-blue text-white rounded-xl text-[10px] font-black uppercase hover:bg-brand-blue/80 disabled:opacity-50 transition-all"
+                                            >
+                                                {isCreatingNickname ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Mudar'}
+                                            </button>
+                                        </div>
+                                        <div className="mt-3 pt-3 border-t border-brand-blue/10 flex flex-col gap-1">
+                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Seu nome público atual</span>
+                                            <span className="text-xs font-bold text-gray-900 dark:text-white">{watch('username') || 'Nenhum'}</span>
+                                        </div>
+                                        <input type="hidden" {...register('username')} />
+                                    </div>
+                                )}
+                            </div>
+
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 flex items-center gap-2">
                                     <FileText className="w-3 h-3" /> Bio
@@ -485,63 +531,6 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                 )}
                             </div>
 
-                            <div className="p-4 bg-brand-blue/5 border border-brand-blue/10 rounded-2xl space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 bg-brand-blue/10 rounded-lg flex items-center justify-center">
-                                            <ShieldCheck className="w-4 h-4 text-brand-blue" />
-                                        </div>
-                                        <div>
-                                            <span className="block text-xs font-black text-gray-900 dark:text-white uppercase tracking-tight">Usar apelido publicamente</span>
-                                            <span className="text-[9px] text-gray-500 font-medium whitespace-nowrap overflow-hidden">Oculta seu nome real no seu perfil</span>
-                                        </div>
-                                    </div>
-                                    <label className="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" {...register('use_nickname')} className="sr-only peer" />
-                                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-blue"></div>
-                                    </label>
-                                </div>
-
-                                {useNickname && (
-                                    <div className="space-y-4 pt-2 animate-in slide-in-from-top-2 duration-300">
-                                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">Seus Apelidos (Máx 2)</label>
-                                        {pseudonyms.length > 0 && (
-                                            <div className="grid grid-cols-2 gap-2">
-                                                {pseudonyms.map(pseudo => (
-                                                    <button
-                                                        key={pseudo.id}
-                                                        type="button"
-                                                        onClick={() => setValue('username', pseudo.name)}
-                                                        className={`px-3 py-2 rounded-xl text-[10px] font-black uppercase transition-all border ${watch('username') === pseudo.name
-                                                            ? 'bg-brand-blue text-white border-brand-blue shadow-lg shadow-brand-blue/20'
-                                                            : 'bg-white dark:bg-white/5 text-gray-500 border-gray-100 dark:border-white/5 hover:border-brand-blue/30'}`}
-                                                    >
-                                                        {pseudo.name}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        )}
-                                        {pseudonyms.length < 2 && (
-                                            <div className="flex gap-2">
-                                                <input
-                                                    {...register('new_nickname')}
-                                                    placeholder="Novo apelido..."
-                                                    className="flex-1 bg-white dark:bg-black/40 border border-gray-100 dark:border-white/10 rounded-xl px-3 py-2 text-xs outline-none focus:border-brand-blue/50 transition-all font-bold"
-                                                />
-                                                <button
-                                                    type="button"
-                                                    onClick={handleCreateNickname}
-                                                    disabled={isCreatingNickname || !watch('new_nickname')}
-                                                    className="px-4 py-2 bg-brand-blue text-white rounded-xl text-[10px] font-black uppercase hover:bg-brand-blue/80 disabled:opacity-50 transition-all"
-                                                >
-                                                    {isCreatingNickname ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Criar'}
-                                                </button>
-                                            </div>
-                                        )}
-                                        <input type="hidden" {...register('username')} />
-                                    </div>
-                                )}
-                            </div>
                         </div>
 
                         {/* 3. CONECTIVIDADE E INTERESSES */}
