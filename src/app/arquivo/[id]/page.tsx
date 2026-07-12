@@ -45,6 +45,7 @@ import { FollowTagButton } from '@/components/engagement/FollowTagButton';
 import { PostQuiz } from '@/components/media/PostQuiz';
 import { ContentRating } from '@/components/feedback/ContentRating';
 import { ReportButton } from './ReportButton';
+import { StyledArticleView } from '@/components/reading/StyledArticleView';
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -377,64 +378,25 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                 let blocks: any[] = [];
                                                 try { blocks = JSON.parse(submission.media_url || '[]'); } catch {}
                                                 if (!Array.isArray(blocks)) blocks = [];
+
+                                                {/* Collect all text blocks for the unified TOC */}
+                                                const allTextContent = blocks
+                                                    .filter((b: any) => b.type === 'text')
+                                                    .map((b: any) => b.content.text)
+                                                    .join('\n\n');
+                                                let tocRendered = false;
                                                 
                                                 return blocks.map((block) => {
                                                     if (block.type === 'text') {
+                                                        const showToc = !tocRendered;
+                                                        tocRendered = true;
                                                         return (
-                                                            <div key={block.id} className="text-gray-600 dark:text-gray-400 leading-relaxed prose prose-lg dark:prose-invert max-w-none prose-headings:text-gray-800 dark:prose-headings:text-gray-200 prose-a:text-brand-blue prose-img:rounded-xl overflow-x-auto w-full">
-                                                                <ReactMarkdown
-                                                                    remarkPlugins={[remarkMath]}
-                                                                    rehypePlugins={[rehypeSanitize, rehypeKatex]}
-                                                                    components={{
-                                                                        p: ({ node, children, ...props }) => {
-                                                                            const renderWithTooltips = (content: any): any => {
-                                                                                if (typeof content === 'string') {
-                                                                                    if (!palavrasGeradoras || palavrasGeradoras.length === 0) return content;
-                                                                                    const sortedWords = [...palavrasGeradoras].sort((a, b) => b.termo.length - a.termo.length);
-                                                                                    const pattern = new RegExp(`\\b(${sortedWords.map(w => w.termo.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')).join('|')})\\b`, 'gi');
-                                                                                    const parts = [];
-                                                                                    let lastIndex = 0;
-                                                                                    let match: RegExpExecArray | null;
-                                                                                    while ((match = pattern.exec(content)) !== null) {
-                                                                                        parts.push(content.substring(lastIndex, match.index));
-                                                                                        const word = sortedWords.find(w => w.termo.toLowerCase() === match![0].toLowerCase());
-                                                                                        if (word) {
-                                                                                            parts.push(
-                                                                                                <TranslationalTooltip
-                                                                                                    key={`${word.id}-${match.index}`}
-                                                                                                    term={word.termo}
-                                                                                                    academicDefinition={word.codificacao_academica}
-                                                                                                    constellations={word.signos_constelacoes as any}
-                                                                                                >
-                                                                                                    {match[0]}
-                                                                                                </TranslationalTooltip>
-                                                                                            );
-                                                                                        } else {
-                                                                                            parts.push(match[0]);
-                                                                                        }
-                                                                                        lastIndex = pattern.lastIndex;
-                                                                                    }
-                                                                                    parts.push(content.substring(lastIndex));
-                                                                                    return parts;
-                                                                                }
-                                                                                if (React.isValidElement(content)) {
-                                                                                    const element = content as React.ReactElement<any>;
-                                                                                    return React.cloneElement(element, { children: React.Children.map(element.props.children, renderWithTooltips) });
-                                                                                }
-                                                                                if (Array.isArray(content)) return content.map((child, i) => <React.Fragment key={i}>{renderWithTooltips(child)}</React.Fragment>);
-                                                                                return content;
-                                                                            };
-                                                                            return <p data-block-id={`p-${node?.position?.start.line}`} {...props}>{renderWithTooltips(children)}</p>;
-                                                                        },
-                                                                        h1: ({ node, ...props }) => <h1 data-block-id={`h1-${node?.position?.start.line}`} {...props} />,
-                                                                        h2: ({ node, ...props }) => <h2 data-block-id={`h2-${node?.position?.start.line}`} {...props} />,
-                                                                        h3: ({ node, ...props }) => <h3 data-block-id={`h3-${node?.position?.start.line}`} {...props} />,
-                                                                        blockquote: ({ node, ...props }) => <blockquote data-block-id={`bq-${node?.position?.start.line}`} {...props} />,
-                                                                        img: (props) => <MarkdownImage {...props} />,
-                                                                    }}
-                                                                >
-                                                                    {block.content.text}
-                                                                </ReactMarkdown>
+                                                            <div key={block.id}>
+                                                                <StyledArticleView
+                                                                    content={block.content.text}
+                                                                    palavrasGeradoras={palavrasGeradoras || undefined}
+                                                                    fullTextForToc={showToc ? allTextContent : undefined}
+                                                                />
                                                             </div>
                                                         );
                                                     } else if (block.type === 'image') {
@@ -495,95 +457,11 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                         {/* Componente A: Contexto HSEC */}
                                         <ContextPanel context={submission.contexto_hsec} />
 
-                                        <h2 className="text-sm font-bold text-gray-900 dark:text-white mb-2 uppercase tracking-wide">Descrição</h2>
-                                        <div className="text-gray-600 dark:text-gray-400 leading-relaxed prose prose-lg dark:prose-invert max-w-none prose-headings:text-gray-800 dark:prose-headings:text-gray-200 prose-a:text-brand-blue prose-img:rounded-xl overflow-x-auto">
-                                            <ReactMarkdown
-                                                remarkPlugins={[remarkMath]}
-                                                rehypePlugins={[rehypeSanitize, rehypeKatex]}
-                                                components={{
-                                                    p: ({ node, children, ...props }) => {
-                                                        const line = node?.position?.start.line;
-                                                        const id = `p-${line}`;
-                                                        const reflection = reflections?.find(r => r.ancora_paragrafo === id);
-
-                                                        // Recursive function to find and replace words in text nodes
-                                                        const renderWithTooltips = (content: any): any => {
-                                                            if (typeof content === 'string') {
-                                                                if (!palavrasGeradoras || palavrasGeradoras.length === 0) return content;
-
-                                                                const sortedWords = [...palavrasGeradoras].sort((a, b) => b.termo.length - a.termo.length);
-                                                                const pattern = new RegExp(`\\b(${sortedWords.map(w => w.termo.replace(/[.*+?^${}()|[\\]\\\\]/g, '\\\\$&')).join('|')})\\b`, 'gi');
-
-                                                                const parts = [];
-                                                                let lastIndex = 0;
-                                                                let match: RegExpExecArray | null;
-
-                                                                while ((match = pattern.exec(content)) !== null) {
-                                                                    const currentMatch = match; // Local copy for better type inference
-                                                                    parts.push(content.substring(lastIndex, currentMatch.index));
-                                                                    const word = sortedWords.find(w => w.termo.toLowerCase() === currentMatch[0].toLowerCase());
-                                                                    if (word) {
-                                                                        parts.push(
-                                                                            <TranslationalTooltip
-                                                                                key={`${word.id}-${match.index}`}
-                                                                                term={word.termo}
-                                                                                academicDefinition={word.codificacao_academica}
-                                                                                constellations={word.signos_constelacoes as any}
-                                                                            >
-                                                                                {currentMatch[0]}
-                                                                            </TranslationalTooltip>
-                                                                        );
-                                                                    } else {
-                                                                        parts.push(currentMatch[0]);
-                                                                    }
-                                                                    lastIndex = pattern.lastIndex;
-                                                                }
-                                                                parts.push(content.substring(lastIndex));
-                                                                return parts;
-                                                            }
-
-                                                            if (React.isValidElement(content)) {
-                                                                const element = content as React.ReactElement<any>;
-                                                                return React.cloneElement(element, {
-                                                                    children: React.Children.map(element.props.children, renderWithTooltips)
-                                                                });
-                                                            }
-
-                                                            if (Array.isArray(content)) {
-                                                                return content.map((child, i) => <React.Fragment key={i}>{renderWithTooltips(child)}</React.Fragment>);
-                                                            }
-
-                                                            return content;
-                                                        };
-
-                                                        return (
-                                                            <div className="relative group/para">
-                                                                <p data-block-id={id} {...props}>
-                                                                    {renderWithTooltips(children)}
-                                                                </p>
-                                                                {reflection && (
-                                                                    <BalloonReflexao
-                                                                        reflexaoId={reflection.id}
-                                                                        ancoraId={`reflexao-${id}`}
-                                                                        pergunta={reflection.pergunta_provocadora}
-                                                                        tipo={reflection.tipo_reflexao}
-                                                                        feedback={reflection.resposta_esperada_ou_gabarito}
-                                                                        opcoes={reflection.opcoes || []}
-                                                                    />
-                                                                )}
-                                                            </div>
-                                                        );
-                                                    },
-                                                    h1: ({ node, ...props }) => <h1 data-block-id={`h1-${node?.position?.start.line}`} {...props} />,
-                                                    h2: ({ node, ...props }) => <h2 data-block-id={`h2-${node?.position?.start.line}`} {...props} />,
-                                                    h3: ({ node, ...props }) => <h3 data-block-id={`h3-${node?.position?.start.line}`} {...props} />,
-                                                    blockquote: ({ node, ...props }) => <blockquote data-block-id={`bq-${node?.position?.start.line}`} {...props} />,
-                                                    img: (props) => <MarkdownImage {...props} />,
-                                                }}
-                                            >
-                                                {submission.description}
-                                            </ReactMarkdown>
-                                        </div>
+                                        <StyledArticleView
+                                            content={submission.description}
+                                            palavrasGeradoras={palavrasGeradoras || undefined}
+                                            fullTextForToc={submission.description}
+                                        />
                                     </div>
                                 )}
 
