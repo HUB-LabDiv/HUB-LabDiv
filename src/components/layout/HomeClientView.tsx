@@ -53,6 +53,8 @@ import { useTelemetry } from '@/hooks/useTelemetry';
 interface HomeClientViewProps {
     initialItems: MediaCardProps[];
     initialHasMore: boolean;
+    initialArteItems?: MediaCardProps[];
+    initialArteHasMore?: boolean;
     initialCategory?: string;
     trendingItems?: MediaCardProps[];
     featuredItems?: MediaCardProps[];
@@ -64,6 +66,8 @@ interface HomeClientViewProps {
 export const HomeClientView = ({
     initialItems,
     initialHasMore,
+    initialArteItems = [],
+    initialArteHasMore = false,
     initialCategory = 'Todos',
     trendingItems = [],
     featuredItems = [],
@@ -92,6 +96,12 @@ export const HomeClientView = ({
     const [items, setItems] = useState<MediaCardProps[]>(initialItems);
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(initialHasMore);
+    
+    // Arte State
+    const [arteItems, setArteItems] = useState<MediaCardProps[]>(initialArteItems);
+    const [artePage, setArtePage] = useState(1);
+    const [arteHasMore, setArteHasMore] = useState(initialArteHasMore);
+
     const [isLoading, setIsLoading] = useState(false);
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [likedIds, setLikedIds] = useState<Set<string>>(new Set(initialLikedIds));
@@ -256,30 +266,64 @@ export const HomeClientView = ({
         fetchFiltered();
     }, [debouncedQuery, selectedCategories, selectedMediaTypes, selectedYears]);
 
-    const loadMore = async () => {
-        if (isLoadingMore || !hasMore) return;
-        setIsLoadingMore(true);
+    const loadItems = async (pageNumber: number, append = false, forceCategory = 'Todos') => {
         try {
-            const next = await fetchSubmissions({
-                page: page + 1,
-                limit: 12,
-                query: debouncedQuery,
-                categories: selectedCategories.filter(c => c !== 'Todos'),
-                mediaTypes: selectedMediaTypes,
-                years: selectedYears.includes('Todos') ? undefined : selectedYears.map(y => parseInt(y)),
-                sort: 'recentes'
-            });
-            setItems(prev => [...prev, ...next.items]);
-            setHasMore(next.hasMore);
-            setPage(prev => prev + 1);
-        } catch (err) {
-            console.error(err);
+            setIsLoading(true);
+            
+            if (activeTab === 'arte') {
+                const result = await fetchSubmissions({
+                    page: pageNumber,
+                    limit: 12,
+                    query: searchQuery,
+                    sort: 'recentes',
+                    categories: ['Arte']
+                });
+
+                if (append) {
+                    setArteItems(prev => [...prev, ...result.items]);
+                } else {
+                    setArteItems(result.items);
+                }
+                setArteHasMore(result.hasMore);
+                setArtePage(pageNumber);
+            } else {
+                const result = await fetchSubmissions({
+                    page: pageNumber,
+                    limit: 12,
+                    query: searchQuery,
+                    sort: 'recentes',
+                    categories: forceCategory === 'Todos' ? [] : [forceCategory],
+                    excludeCategories: ['Arte']
+                });
+
+                if (append) {
+                    setItems(prev => [...prev, ...result.items]);
+                } else {
+                    setItems(result.items);
+                }
+                setHasMore(result.hasMore);
+                setPage(pageNumber);
+            }
+        } catch (error) {
+            console.error(error);
         } finally {
-            setIsLoadingMore(false);
+            setIsLoading(false);
         }
     };
 
-
+    const loadMore = useCallback(() => {
+        if (activeTab === 'arte') {
+            if (!isLoadingMore && arteHasMore) {
+                setIsLoadingMore(true);
+                loadItems(artePage + 1, true).finally(() => setIsLoadingMore(false));
+            }
+        } else {
+            if (!isLoadingMore && hasMore) {
+                setIsLoadingMore(true);
+                loadItems(page + 1, true).finally(() => setIsLoadingMore(false));
+            }
+        }
+    }, [page, hasMore, isLoadingMore, activeTab, artePage, arteHasMore]);
 
     return (
         <div 
@@ -298,17 +342,15 @@ export const HomeClientView = ({
                 
                 const deltaX = touch.clientX - swipeStartX.current;
                 const deltaY = touch.clientY - swipeStartY.current;
-                const threshold = 40; // lowered threshold for easier swipe
+                const threshold = 40;
                 
                 if (Math.abs(deltaX) > threshold && Math.abs(deltaX) > Math.abs(deltaY)) {
                     const tabs = ['logs', 'fluxo', 'arte'];
                     const currentIndex = tabs.indexOf(activeTab);
                     
                     if (deltaX < 0 && currentIndex < tabs.length - 1) {
-                        // Swipe left -> Next tab
                         handleTabChange(tabs[currentIndex + 1] as any);
                     } else if (deltaX > 0 && currentIndex > 0) {
-                        // Swipe right -> Previous tab
                         handleTabChange(tabs[currentIndex - 1] as any);
                     }
                 }
@@ -353,9 +395,8 @@ export const HomeClientView = ({
                 }
             }}
         >
-            {/* Tab Navigation */}
             <div className="h-16" aria-hidden="true" />
-            <div className="fixed top-20 left-0 right-0 z-[100] flex justify-center pointer-events-none">
+            <div className="fixed top-20 left-0 right-0 z-40 flex justify-center pointer-events-none">
                 <div className="flex p-1.5 bg-white/50 dark:bg-black/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
                     <button
                         onClick={() => handleTabChange('logs')}
@@ -416,9 +457,7 @@ export const HomeClientView = ({
                 </div>
             </div>
 
-            {/* HERÓI / INTRODUÇÃO */}
             <header className="relative pt-12 pb-24 flex-shrink-0 overflow-hidden rounded-[40px]">
-                {/* Degradê sutil nas cores da marca */}
                 <div className="absolute inset-0 pointer-events-none">
                     <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-brand-blue/8 rounded-full blur-[80px] -translate-x-1/3 -translate-y-1/4"></div>
                     <div className="absolute top-1/3 left-1/2 w-[400px] h-[400px] bg-brand-yellow/6 rounded-full blur-[80px] -translate-x-1/2"></div>
@@ -426,23 +465,21 @@ export const HomeClientView = ({
                 </div>
 
                 <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">
-                    {/* Feedback Card - Agora acima do título */}
                     <FluxoFeedbackCard className="mb-12" />
 
                     <h1
                         className="font-display font-black text-4xl md:text-6xl tracking-tighter mb-6 text-gray-900 dark:text-white leading-[0.9] uppercase italic animate-fade-in-up"
                         style={{ animationDelay: '0.1s' }}
                     >
-                        Hub de Comunicação Científica <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red">Lab-Div</span>
+                        HUB de comunicação científica <br />
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red">LabDiv</span>
                     </h1>
-
 
                     <p
                         className="text-base md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed font-medium animate-fade-in-up"
                         style={{ animationDelay: '0.2s' }}
                     >
-                        Hub de Comunicação Científica do Lab-Div - Um projeto para melhorar a comunicação do IF-USP e reunir em um FLUXO interativo o arquivo de material de divulgação do Lab-Div e de toda a comunidade — de dentro e fora do instituto.
+                        Esta plataforma é um local voltado para o desenvolvimento de relações pedagógicas reais, onde ambos os lados aprendem interativamente sobre o objeto em discussão. Mais do que isso, buscamos revelar o contexto e as pessoas por trás de cada descoberta, permitindo que a comunidade compreenda a ciência como uma construção humana viva e integral.
                     </p>
                 </div>
             </header>
@@ -458,68 +495,43 @@ export const HomeClientView = ({
                     >
                         <LogsView />
                     </motion.div>
-                ) : activeTab === 'arte' ? (
-                    <motion.div
-                        key="arte"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.4 }}
-                        className="py-12 flex flex-col items-center justify-center text-center px-4"
-                    >
-                        <div className="w-full max-w-4xl mx-auto mb-16 text-left">
-                            <FluxoFeedbackCard 
-                                title="Subaba Arte" 
-                                description="Esta é a subaba de Arte. O que você gostaria de ver e interagir nesta seção dedicada à arte e criatividade na USP?" 
-                                icon={<Palette className="w-5 h-5 text-brand-yellow" />}
-                            />
-                        </div>
-                        <div className="w-24 h-24 mb-6 rounded-full bg-brand-yellow/10 flex items-center justify-center border border-brand-yellow/20">
-                            <Palette className="w-12 h-12 text-brand-yellow" />
-                        </div>
-                        <h2 className="text-3xl font-black font-bukra text-white mb-4 uppercase tracking-tighter">Galeria de Arte em Breve</h2>
-                        <p className="text-gray-400 max-w-md mx-auto mb-8">
-                            Um espaço dedicado à expressão artística e criatividade da nossa comunidade está sendo desenvolvido.
-                        </p>
-                        <Link 
-                            href="/enviar"
-                            className="flex items-center gap-2 px-6 py-3 bg-brand-yellow text-gray-900 font-bold rounded-xl hover:bg-brand-yellow/90 transition-colors"
-                        >
-                            <Palette className="w-5 h-5" />
-                            Envie sua Arte
-                        </Link>
-                    </motion.div>
                 ) : (
                     <motion.div
-                        key="fluxo"
+                        key={activeTab}
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.4 }}
                     >
-                        <div className="max-w-4xl mx-auto mb-12">
-                            <FluxoFeedbackCard 
-                                title="Subaba Fluxo" 
-                                description="Esta é a subaba Fluxo. Aqui você acompanha a timeline principal de publicações, portfólios e descobertas. Como podemos melhorar essa experiência visual?" 
-                                icon={<Zap className="w-5 h-5 text-brand-blue" />}
-                            />
-                        </div>
-                        <h2 className="text-2xl md:text-3xl font-black font-bukra uppercase tracking-widest text-brand-blue mb-6 pl-4 flex items-center gap-3">
-                            <Zap className="w-6 h-6 md:w-8 md:h-8" />
-                            FLUXO
-                        </h2>
+                        {activeTab === 'arte' ? (
+                            <div className="w-full max-w-4xl mx-auto mb-16 text-left">
+                                <FluxoFeedbackCard 
+                                    title="Subaba Arte" 
+                                    description="Esta é a subaba de arte, onde a comunidade pode se expressar artisticamente. O que falta nesta seção dedicada à arte e criatividade na USP?" 
+                                    icon={<Palette className="w-5 h-5 text-brand-yellow" />}
+                                />
+                            </div>
+                        ) : (
+                            <div className="max-w-4xl mx-auto mb-12">
+                                <FluxoFeedbackCard 
+                                    title="Subaba Fluxo" 
+                                    description="Esta é a subaba Fluxo. Aqui você acompanha a timeline principal de publicações, onde a comunicação cientifica pode ter o maximo de interação." 
+                                    icon={<Zap className="w-5 h-5 text-brand-blue" />}
+                                />
+                            </div>
+                        )}
+
 
             {/* DESTAQUES (V8.0 optimized) */}
-            {featuredItems.length > 0 && !debouncedQuery && selectedCategories.includes('Todos') && (
+            {activeTab === 'fluxo' && featuredItems.length > 0 && !debouncedQuery && selectedCategories.includes('Todos') && (
                 <section className="mb-8">
                     <FeaturedCarousel items={featuredItems} highlightQuery={searchQuery} hideTitle={true} />
                 </section>
             )}
 
-
-
             {/* FILTROS (Restaurados) */}
-            <section className="z-40 bg-transparent py-4 -mx-4 px-4 border-b border-gray-100 dark:border-gray-800/50 mb-8">
+            {activeTab === 'fluxo' && (
+                <section className="z-40 bg-transparent py-4 -mx-4 px-4 border-b border-gray-100 dark:border-gray-800/50 mb-8">
                 <div className="flex flex-col gap-6">
                     {/* Formato */}
                     <div className="flex items-center gap-4">
@@ -619,9 +631,10 @@ export const HomeClientView = ({
                     </div>
                 </div>
             </section>
+            )}
 
             {/* EM ÓRBITA NO IFUSP (Trending Horizontal - Mover abaixo dos filtros) */}
-            {!debouncedQuery && selectedCategories.includes('Todos') && trendingItems.length > 0 && (
+            {activeTab === 'fluxo' && !debouncedQuery && selectedCategories.includes('Todos') && trendingItems.length > 0 && (
                 <section className="w-full py-8 bg-white dark:bg-card-dark rounded-[40px] border border-gray-100 dark:border-gray-800/50 shadow-sm mb-12">
                     <div className="px-8">
                         <div className="flex items-center justify-between mb-8">
@@ -686,8 +699,8 @@ export const HomeClientView = ({
 
             {/* FEED PRINCIPAL */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 min-h-[600px]">
-                {items.length > 0 ? (
-                    items.map((item, index) => {
+                {(activeTab === 'arte' ? arteItems : items).length > 0 ? (
+                    (activeTab === 'arte' ? arteItems : items).map((item, index) => {
                         const isAboveFold = index < 2;
 
                         if (isAboveFold) {
@@ -740,7 +753,7 @@ export const HomeClientView = ({
                 )}
             </div>
 
-            {hasMore && !isLoading && !isLoadingMore && (
+            {(activeTab === 'arte' ? arteHasMore : hasMore) && !isLoading && !isLoadingMore && (
                 <div className="flex justify-center pt-8">
                     <button
                         onClick={loadMore}

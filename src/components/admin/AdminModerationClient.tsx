@@ -20,14 +20,16 @@ import { CommentsManager } from './moderacao/CommentsManager';
 import { CorrectionsManager } from './moderacao/CorrectionsManager';
 import { NarrationManager } from './moderacao/NarrationManager';
 
-type ModerationTab = 'acervo' | 'submissoes' | 'comentarios' | 'correcoes' | 'narracao';
+type ModerationTab = 'acervo' | 'submissoes' | 'arte' | 'comentarios' | 'correcoes' | 'narracao';
 
-export function AdminModerationClient() {
+export function AdminModerationClient({ mode = 'fluxo' }: { mode?: 'fluxo' | 'arte' }) {
     const searchParams = useSearchParams();
-    const initialTab = (searchParams.get('tab') as ModerationTab) || 'submissoes';
+    const initialTab = mode === 'arte' ? 'arte' : ((searchParams.get('tab') as ModerationTab) || 'submissoes');
     const [activeTab, setActiveTab] = useState<ModerationTab>(initialTab);
 
-    const tabs = [
+    const tabs = mode === 'arte' ? [
+        { id: 'arte', label: 'Aprovação de Arte', icon: 'palette' }
+    ] : [
         { id: 'submissoes', label: 'Submissões', icon: 'assignment' },
         { id: 'acervo', label: 'Acervo Hub', icon: 'collections_bookmark' },
         { id: 'comentarios', label: 'Comentários', icon: 'chat_bubble' },
@@ -38,15 +40,20 @@ export function AdminModerationClient() {
     return (
         <div className="p-8 max-w-7xl mx-auto min-h-screen pb-20">
             <header className="mb-12">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 border border-brand-blue/20 text-brand-blue text-[10px] font-black uppercase tracking-widest mb-4">
+                <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full ${mode === 'arte' ? 'bg-brand-red/10 border-brand-red/20 text-brand-red' : 'bg-brand-blue/10 border-brand-blue/20 text-brand-blue'} text-[10px] font-black uppercase tracking-widest mb-4`}>
                     <span className="material-symbols-outlined text-sm">verified_user</span>
                     Torre de Moderação
                 </div>
                 <h1 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter leading-none">
-                    Moderação do <span className="text-brand-blue">Fluxo</span>
+                    Moderação {mode === 'arte' ? 'de ' : 'do '}
+                    <span className={mode === 'arte' ? 'text-brand-red' : 'text-brand-blue'}>
+                        {mode === 'arte' ? 'Arte' : 'Fluxo'}
+                    </span>
                 </h1>
                 <p className="text-gray-500 mt-4 text-sm font-medium max-w-2xl leading-relaxed">
-                    Central de controle para validação de conteúdo, gestão do acervo histórico e moderação da comunidade.
+                    {mode === 'arte' 
+                        ? 'Central de controle para validação de expressões artísticas, desenhos, poesias e criatividade.'
+                        : 'Central de controle para validação de conteúdo, gestão do acervo histórico e moderação da comunidade.'}
                 </p>
             </header>
 
@@ -58,7 +65,7 @@ export function AdminModerationClient() {
                         onClick={() => setActiveTab(tab.id as ModerationTab)}
                         className={`flex items-center gap-2.5 px-6 py-3 rounded-[20px] text-[10px] font-black uppercase tracking-widest transition-all ${
                             activeTab === tab.id
-                                ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20'
+                                ? (mode === 'arte' ? 'bg-brand-red text-white shadow-lg shadow-brand-red/20' : 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20')
                                 : 'text-gray-500 hover:text-white hover:bg-white/5'
                         }`}
                     >
@@ -70,7 +77,8 @@ export function AdminModerationClient() {
 
             <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                 {activeTab === 'acervo' && <AcervoManager />}
-                {activeTab === 'submissoes' && <SubmissionsManager />}
+                {activeTab === 'submissoes' && <SubmissionsManager excludeCategory="Arte" />}
+                {activeTab === 'arte' && <SubmissionsManager categoryFilter="Arte" />}
                 {activeTab === 'comentarios' && <CommentsManager />}
                 {activeTab === 'correcoes' && <CorrectionsManager />}
                 {activeTab === 'narracao' && <NarrationManager />}

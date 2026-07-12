@@ -12,13 +12,21 @@
 import { fetchSubmissions, fetchTrendingSubmissions, getFeaturedSubmissions, getTrendingTags } from '@/app/actions/submissions';
 
 export async function getInitialData() {
-    const [submissionsResult, trendingItems, featuredItems, trendingTags] = await Promise.all([
+    const [submissionsResult, arteResult, trendingItems, featuredItems, trendingTags] = await Promise.all([
         fetchSubmissions({
             page: 1,
             limit: 12,
             query: '',
             sort: 'recentes',
-            categories: []
+            categories: [],
+            excludeCategories: ['Arte']
+        }),
+        fetchSubmissions({
+            page: 1,
+            limit: 12,
+            query: '',
+            sort: 'recentes',
+            categories: ['Arte']
         }),
         fetchTrendingSubmissions(),
         getFeaturedSubmissions(10),
@@ -28,6 +36,8 @@ export async function getInitialData() {
     return {
         initialItems: submissionsResult.items,
         initialHasMore: submissionsResult.hasMore,
+        initialArteItems: arteResult.items,
+        initialArteHasMore: arteResult.hasMore,
         trendingItems: trendingItems.map(item => ({ ...item, isTrending: true })),
         featuredItems: featuredItems.map(item => ({ ...item, isFeatured: true })),
         trendingTags

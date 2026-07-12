@@ -51,6 +51,7 @@ export interface FetchParams {
     limit: number;
     query: string;
     categories?: string[];
+    excludeCategories?: string[];
     mediaTypes?: string[];
     sort: 'recentes' | 'antigas';
     author?: string;
@@ -60,7 +61,7 @@ export interface FetchParams {
     years?: number[];
 }
 
-export async function fetchSubmissions({ page, limit, query, categories, mediaTypes, sort, author, is_featured: featured, years, is_golden_standard, is_historical }: FetchParams): Promise<{ items: { post: PostDTO }[], hasMore: boolean }> {
+export async function fetchSubmissions({ page, limit, query, categories, excludeCategories, mediaTypes, sort, author, is_featured: featured, years, is_golden_standard, is_historical }: FetchParams): Promise<{ items: { post: PostDTO }[], hasMore: boolean }> {
     const supabaseServer = await createServerSupabase();
     let queryBuilder = supabaseServer
         .from('submissions')
@@ -72,6 +73,11 @@ export async function fetchSubmissions({ page, limit, query, categories, mediaTy
     if (is_golden_standard !== undefined) queryBuilder = queryBuilder.eq('is_golden_standard', is_golden_standard);
     if (is_historical !== undefined) queryBuilder = queryBuilder.eq('is_historical', is_historical);
     if (categories && categories.length > 0) queryBuilder = queryBuilder.in('category', categories);
+    if (excludeCategories && excludeCategories.length > 0) {
+        // Unfortunately Supabase JS .not('category', 'in', excludeCategories) might be tricky if it's an array, 
+        // but we can loop or use filter. Actually, .not('category', 'in', `(${excludeCategories.join(',')})`) works.
+        queryBuilder = queryBuilder.not('category', 'in', `(${excludeCategories.join(',')})`);
+    }
     if (author) queryBuilder = queryBuilder.eq('authors', author);
     if (mediaTypes && mediaTypes.length > 0) queryBuilder = queryBuilder.in('media_type', mediaTypes);
 
@@ -117,6 +123,7 @@ export const fetchTrendingSubmissions = unstable_cache(
             .select('*, profiles(avatar_url, xp, level, is_labdiv), like_count')
             .eq('status', 'aprovado')
             .neq('moderation_status', 'suspended')
+            .neq('category', 'Arte')
             .order('views', { ascending: false })
             .limit(6);
 
@@ -138,6 +145,7 @@ export const getFeaturedSubmissions = unstable_cache(
             .select('*, profiles(avatar_url, xp, level, is_labdiv)')
             .eq('status', 'aprovado')
             .neq('moderation_status', 'suspended')
+            .neq('category', 'Arte')
             .eq('is_featured', true)
             .order('created_at', { ascending: false })
             .limit(limit);

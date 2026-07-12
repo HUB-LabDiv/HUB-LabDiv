@@ -11,6 +11,14 @@
 
 export const CATEGORIES = [
     {
+        id: 'Arte',
+        title: 'Arte',
+        description: 'Expressões artísticas da comunidade: desenhos, pinturas, poemas e outras artes criativas.',
+        icon: 'palette',
+        color: 'brand-yellow',
+        examples: 'Ilustrações científicas, poesias, artes digitais.'
+    },
+    {
         id: 'Lab-Div',
         title: 'Lab-Div',
         description: 'Conteúdos oficiais, comunicados e projetos do Laboratório de Divulgação Científica.',

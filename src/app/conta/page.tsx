@@ -22,6 +22,7 @@ import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { useAuth } from '@/providers/AuthProvider';
 import { useRouter } from 'next/navigation';
 import { Share2, User, Download, Trash2, ShieldCheck } from 'lucide-react';
+import { FluxoFeedbackCard } from '@/components/feedback/FluxoFeedbackCard';
 
 export default function ContaPage() {
     const { user, profile, loading } = useAuth();
@@ -103,6 +104,14 @@ export default function ContaPage() {
                         Gerencie sua identidade, privacidade e conformidade com a LGPD no HUB.
                     </p>
                 </header>
+
+                <div className="max-w-4xl mb-6">
+                    <FluxoFeedbackCard 
+                        title="Aba Conta & Privacidade" 
+                        description="Aqui você tem controle total sobre seus dados, privacidade e perfil. O Hub LabDiv tem o compromisso de garantir transparência, proteção e total autonomia para todos os usuários da comunidade." 
+                        icon={<ShieldCheck className="w-5 h-5 text-brand-blue" />}
+                    />
+                </div>
 
                 {/* SEÇÃO 0: PERFIL E COMPARTILHAMENTO */}
                 <section className="bg-brand-blue/5 border border-brand-blue/10 rounded-2xl overflow-hidden p-6 md:p-8">

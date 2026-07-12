@@ -18,6 +18,8 @@ import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { LabTabContent } from './LabTabContent';
 import { PerguntasTabContent } from './PerguntasTabContent';
 import { EmaranhamentoTabContent } from './EmaranhamentoTabContent';
+import { FluxoFeedbackCard } from '@/components/feedback/FluxoFeedbackCard';
+import { Users } from 'lucide-react';
 
 export default function InteracaoClient() {
     const searchParams = useSearchParams();
@@ -51,6 +53,14 @@ export default function InteracaoClient() {
                         Pesquisa pessoal, conexão neural entre membros e canal direto com a equipe científica do Instituto de Física.
                     </p>
                 </header>
+
+                <div className="max-w-4xl mb-12">
+                    <FluxoFeedbackCard 
+                        title="Aba Interação" 
+                        description="Esta é a central de interações. Um espaço dedicado para você se conectar com outros membros da comunidade, organizar seu laboratório pessoal e enviar perguntas diretas aos cientistas do IFUSP." 
+                        icon={<Users className="w-5 h-5 text-brand-blue" />}
+                    />
+                </div>
 
                 {/* Custom Premium Tabs */}
                 <div className="flex gap-2 p-1 bg-white dark:bg-white/5 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-sm dark:shadow-none rounded-[20px] mb-12 w-fit overflow-x-auto scrollbar-hide max-w-full">

@@ -164,7 +164,7 @@ function CarouselSection({
     );
 }
 
-export function SubmissionsManager() {
+export function SubmissionsManager({ categoryFilter, excludeCategory }: { categoryFilter?: string; excludeCategory?: string }) {
     const [allSubmissions, setAllSubmissions] = useState<AdminPostDTO[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedItem, setSelectedItem] = useState<AdminPostDTO | null>(null);
@@ -184,6 +184,14 @@ export function SubmissionsManager() {
         setIsLoading(true);
         const trimmedQuery = query.trim();
         let supabaseQuery = supabase.from('submissions').select('*');
+        
+        if (categoryFilter) {
+            supabaseQuery = supabaseQuery.eq('category', categoryFilter);
+        }
+        if (excludeCategory) {
+            supabaseQuery = supabaseQuery.neq('category', excludeCategory);
+        }
+
         if (trimmedQuery) {
             supabaseQuery = supabaseQuery.or(`title.ilike.%${trimmedQuery}%,authors.ilike.%${trimmedQuery}%`);
         }
@@ -195,7 +203,7 @@ export function SubmissionsManager() {
             setAllSubmissions((data || []).map(sub => mapToAdminPostDTO(sub)));
         }
         setIsLoading(false);
-    }, []);
+    }, [categoryFilter, excludeCategory]);
 
     useEffect(() => {
         const timer = setTimeout(() => {
