@@ -32,7 +32,7 @@ export function ExplorarClient({ mapItems, oportunidades, glossario }: ExplorarC
             rightSidebar={<ColisorFeedbackCard />}
             fullWidth={true}
         >
-            <div className="min-h-screen py-6 px-4 max-w-7xl mx-auto">
+            <div className="min-h-screen py-6 px-4 max-w-7xl mx-auto overflow-x-hidden">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
