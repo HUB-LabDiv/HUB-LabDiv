@@ -81,8 +81,8 @@ export function CloudinaryUploader({ onUploadSuccess, accept, label, icon }: Clo
     return (
         <div className="flex flex-col items-center gap-1 mt-2 w-full">
             <label className="flex items-center gap-2 px-4 py-2 bg-brand-blue hover:bg-brand-blue/80 text-white text-sm font-bold rounded-lg cursor-pointer transition-colors shadow-lg shadow-brand-blue/20">
-                <span className="material-symbols-outlined">{isUploading ? 'hourglass_empty' : 'upload'}</span>
-                {isUploading ? 'Enviando...' : `Enviar Arquivo do Computador`}
+                <span className="material-symbols-outlined">{isUploading ? 'hourglass_empty' : (icon || 'upload')}</span>
+                {isUploading ? 'Enviando...' : (label || 'Enviar Arquivo do Computador')}
                 <input 
                     type="file" 
                     accept={accept}

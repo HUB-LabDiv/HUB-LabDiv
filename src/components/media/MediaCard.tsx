@@ -224,18 +224,20 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                         {post.authors}
                     </Link>
                 </div>
-                <div className="hover:scale-105 transition-transform active:scale-95">
-                    <Link
-                        href={`/arquivo/${post.id}`}
-                        onClick={(e) => e.stopPropagation()}
-                        className={`inline-flex items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider shadow-md transition-all hover:shadow-lg whitespace-nowrap shrink-0 ${buttonColorClass}`}
-                    >
-                        <span className="flex items-center gap-1">
-                            Página Completa
-                            <ExternalLink className="w-3 h-3" />
-                        </span>
-                    </Link>
-                </div>
+                {post.category !== 'Arte' && (
+                    <div className="hover:scale-105 transition-transform active:scale-95">
+                        <Link
+                            href={`/arquivo/${post.id}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className={`inline-flex items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider shadow-md transition-all hover:shadow-lg whitespace-nowrap shrink-0 ${buttonColorClass}`}
+                        >
+                            <span className="flex items-center gap-1">
+                                Página Completa
+                                <ExternalLink className="w-3 h-3" />
+                            </span>
+                        </Link>
+                    </div>
+                )}
             </div>
 
             <div
@@ -314,6 +316,12 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                             />
                         </m.div>
                     )
+                ) : post.mediaType === 'placeholder' ? (
+                    <div className="h-full w-full bg-brand-yellow/5 border-2 border-dashed border-brand-yellow/30 flex flex-col items-center justify-center p-8 text-center">
+                        <span className="material-symbols-outlined text-brand-yellow text-4xl mb-4 opacity-50">image</span>
+                        <span className="text-brand-yellow font-bold uppercase tracking-widest text-xs">Aqui fica o seu objeto principal</span>
+                        <span className="text-gray-500 text-xs mt-2">Sua mídia (Imagem, Vídeo, Modelo 3D) ou Objeto Pedagógico aparecerá aqui</span>
+                    </div>
                 ) : (
                     <div className="h-full w-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
                         <ImageOff className="w-10 h-10 text-slate-400" />
@@ -386,17 +394,13 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
 
                 <div className="space-y-1 cursor-pointer">
                     <div className="text-base sm:text-2xl leading-tight">
-                        <span className="font-bold mr-2 text-gray-900 dark:text-white">
-                            {useMemo(() => highlightMatch(post.authors, query), [post.authors, query])}
-                        </span>
                         <span className="font-bold text-gray-800 dark:text-gray-100">
                             {useMemo(() => highlightMatch(post.title, query), [post.title, query])}
                         </span>
                     </div>
                     {post.description && (
-                        <div className="text-sm text-gray-600 dark:text-gray-400 overflow-hidden max-h-[2.5rem] relative leading-tight">
+                        <div className="text-sm text-gray-600 dark:text-gray-400 overflow-hidden line-clamp-5 relative leading-snug">
                             {useMemo(() => stripMarkdownAndLatex(post.description!), [post.description])}
-                            <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white dark:from-card-dark to-transparent"></div>
                         </div>
                     )}
                 </div>

@@ -37,7 +37,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         authors, setAuthors, year, setYear,
         readGuide, setReadGuide, acceptedCc, setAcceptedCc, previewMode, setPreviewMode,
         category, setCategory, isHistorical, isGoldenStandard,
-        languageRegister, setLanguageRegister, needsModerationHelp, setNeedsModerationHelp, activeDraftId, setActiveDraftId, restoreMockBlocks, fluxoBlocks, arteBlocks
+        languageRegister, setLanguageRegister, needsModerationHelp, setNeedsModerationHelp, activeDraftId, setActiveDraftId, restoreMockBlocks, fluxoBlocks, arteBlocks, description, setDescription
     } = useSubmissionStore();
     const { saveDraft, drafts } = useDraftsStore();
     const [selectedPreviewId, setSelectedPreviewId] = React.useState<string>(previewMode === 'arte' ? 'arte' : 'fluxo');
@@ -45,30 +45,42 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
     const previewData = React.useMemo(() => {
         if (selectedPreviewId === 'fluxo') {
             const fb = previewMode === 'fluxo' ? blocks : fluxoBlocks;
+            const mediaBlock = fb.find((b: any) => ['image', 'video'].includes(b.type));
             return {
                 title,
                 category: category === 'Arte' ? 'Outros' : category, // Fallback
-                description: fb.find((b: any) => b.type === 'text')?.content?.text,
+                description: description || fb.find((b: any) => b.type === 'text')?.content?.text,
+                mediaUrl: mediaBlock?.content?.url,
+                mediaType: mediaBlock?.type,
                 blocks: fb
             };
         }
         if (selectedPreviewId === 'arte') {
             const ab = previewMode === 'arte' ? blocks : arteBlocks;
+            const mediaBlock = ab.find((b: any) => ['image', 'video'].includes(b.type));
             return {
                 title,
                 category: 'Arte',
-                description: ab.find((b: any) => b.type === 'text')?.content?.text,
+                description: description || ab.find((b: any) => b.type === 'text')?.content?.text,
+                mediaUrl: mediaBlock?.content?.url,
+                mediaType: mediaBlock?.type,
                 blocks: ab
             };
         }
         
         const draft = drafts.find(d => d.id === selectedPreviewId);
-        if (!draft) return { title, category, description: blocks.find((b: any) => b.type === 'text')?.content?.text, blocks };
+        if (!draft) {
+            const mediaBlock = blocks.find((b: any) => ['image', 'video'].includes(b.type));
+            return { title, category, description: blocks.find((b: any) => b.type === 'text')?.content?.text, mediaUrl: mediaBlock?.content?.url, mediaType: mediaBlock?.type, blocks };
+        }
         
+        const mediaBlock = draft.stateSnapshot?.blocks?.find((b: any) => ['image', 'video'].includes(b.type));
         return {
             title: draft.title,
             category: draft.stateSnapshot?.category,
             description: draft.stateSnapshot?.blocks?.find((b: any) => b.type === 'text')?.content?.text,
+            mediaUrl: mediaBlock?.content?.url,
+            mediaType: mediaBlock?.type,
             blocks: draft.stateSnapshot?.blocks || []
         };
     }, [selectedPreviewId, title, category, blocks, fluxoBlocks, arteBlocks, drafts, previewMode]);
@@ -118,9 +130,8 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             toast.error('O ano é obrigatório.');
             return;
         }
-        const hasText = blocks.some(b => b.type === 'text' && b.content?.text?.trim());
-        if (!hasText) {
-            toast.error('É obrigatório adicionar pelo menos um bloco de texto (Descrição/Conteúdo).');
+        if (previewMode !== 'arte' && (!description || !description.trim())) {
+            toast.error('É obrigatório adicionar uma Descrição (limite de 5 linhas).');
             return;
         }
 
@@ -146,7 +157,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 title,
                 authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
                 category: previewMode === 'arte' ? 'Arte' : (category || 'Outros'),
-                description: blocks.find(b => b.type === 'text')?.content?.text || 'Contribuição construída no Diagramador.',
+                description: description || blocks.find(b => b.type === 'text')?.content?.text || 'Contribuição construída no Diagramador.',
                 media_type: 'sdocx',
                 media_url: JSON.stringify(blocks),
                 event_year: previewMode === 'arte' ? new Date().getFullYear() : (year ? parseInt(year) : new Date().getFullYear()),
@@ -260,13 +271,16 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
     };
 
     const elaboracaoTypes = ['text', 'drive', 'reference', 'notes'];
-    const objetoTypes = ['image', 'video', 'audio', '3d_object', 'web_page', 'pdf'];
+    const objetoTypes = ['image', 'carousel', 'video', 'audio', '3d_object', 'web_page', 'pdf'];
     const pedagogicoTypes = ['quiz', 'reflection', 'context_history', 'context_social', 'context_political'];
 
     const hasElaboracao = blocks.some(b => elaboracaoTypes.includes(b.type));
     const hasObjeto = blocks.some(b => objetoTypes.includes(b.type));
     const hasPedagogico = blocks.some(b => pedagogicoTypes.includes(b.type));
     const showSugerida = !hasElaboracao || !hasObjeto || !hasPedagogico;
+
+    const objectBlock = blocks.find(b => objetoTypes.includes(b.type));
+    const bottomBlocks = blocks.filter(b => b.id !== objectBlock?.id);
 
     return (
         <div className="flex w-full min-h-[70vh] px-4 py-8 lg:px-8 max-w-[1920px] mx-auto justify-center relative">
@@ -279,6 +293,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                         <div className="grid grid-cols-1 gap-2">
                             <ToolboxButton icon="notes" label="Texto" onClick={() => addBlock('text')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-300" />
                             <ToolboxButton icon="image" label="Imagem" onClick={() => addBlock('image')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-300" />
+                            <ToolboxButton icon="view_carousel" label="Carrossel" onClick={() => addBlock('carousel')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-300" />
                             <ToolboxButton icon="view_in_ar" label="Modelo 3D" onClick={() => addBlock('3d_object')} colorClass="hover:bg-brand-yellow/20 hover:text-brand-yellow hover:border-brand-yellow/30 text-gray-300" />
                             <ToolboxButton icon="mic" label="Áudio" onClick={() => addBlock('audio')} colorClass="hover:bg-brand-red/20 hover:text-brand-red hover:border-brand-red/30 text-gray-300" />
                             <ToolboxButton icon="smart_display" label="Vídeo" onClick={() => addBlock('video')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-300" />
@@ -367,12 +382,12 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                             <MediaCard
                                 post={{
                                     id: 'preview-id',
-                                    title: previewData.title || 'Exemplo de Contribuição',
-                                    authors: user?.user_metadata?.full_name || user?.user_metadata?.name || 'Autor(a)',
-                                    description: previewData.description || 'A verdadeira Entropia do conhecimento diminui apenas quando a ciência não termina quando o experimento é concluído ou quando o paper é publicado.',
+                                    title: previewData.title || 'Seu Título Aqui',
+                                    authors: authors || user?.user_metadata?.full_name || user?.user_metadata?.name || 'Autor(a)',
+                                    description: previewData.description || 'Aqui fica sua descrição. Ela funciona como um resumo da sua contribuição e deve atrair a atenção do leitor.',
                                     category: previewData.category || 'Outros',
-                                    mediaType: 'text',
-                                    mediaUrl: '',
+                                    mediaType: previewData.mediaType || 'placeholder',
+                                    mediaUrl: previewData.mediaUrl || '',
                                     createdAt: new Date().toISOString(),
                                     userId: user?.id || 'mock',
                                     likeCount: 0,
@@ -390,57 +405,61 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                             />
                         </div>
 
-                        {/* Divisor Visual */}
-                        <div className="flex items-center gap-4 w-full opacity-50">
-                            <div className="h-px bg-white/5 flex-1"></div>
-                            <span className="text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">Layout do Artigo</span>
-                            <div className="h-px bg-white/5 flex-1"></div>
-                        </div>
-
-                        {/* Corpo do Artigo Fictício (Post Completo) */}
-                        <div className="w-full max-w-5xl mx-auto bg-[#1E1E1E] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-white/5 pointer-events-none mt-8">
-                            <div className="p-6 md:p-10 space-y-6">
-                                <div className="flex flex-wrap items-center gap-2">
-                                    <span className="px-3 py-1 bg-white/5 border border-white/10 text-gray-300 rounded-full text-xs font-bold tracking-wide uppercase">
-                                        {previewData.category || 'Todos'}
-                                    </span>
-                                    {isGoldenStandard && (
-                                        <span className="px-3 py-1 bg-gradient-to-r from-brand-yellow via-brand-yellow/80 to-brand-yellow text-gray-900 rounded-full text-xs font-black tracking-wide uppercase">
-                                            Padrão Ouro
-                                        </span>
-                                    )}
+                        {previewData.category !== 'Arte' && (
+                            <>
+                                {/* Divisor Visual */}
+                                <div className="flex items-center gap-4 w-full opacity-50">
+                                    <div className="h-px bg-white/5 flex-1"></div>
+                                    <span className="text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">Layout do Artigo</span>
+                                    <div className="h-px bg-white/5 flex-1"></div>
                                 </div>
 
-                                <h1 className="text-3xl md:text-4xl font-display font-bold text-white leading-tight">
-                                    {previewData.title || 'Sem Título'}
-                                </h1>
+                                {/* Corpo do Artigo Fictício (Post Completo) */}
+                                <div className="w-full max-w-5xl mx-auto bg-[#1E1E1E] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-white/5 pointer-events-none mt-8">
+                                    <div className="p-6 md:p-10 space-y-6">
+                                        <div className="flex flex-wrap items-center gap-2">
+                                            <span className="px-3 py-1 bg-white/5 border border-white/10 text-gray-300 rounded-full text-xs font-bold tracking-wide uppercase">
+                                                {previewData.category || 'Todos'}
+                                            </span>
+                                            {isGoldenStandard && (
+                                                <span className="px-3 py-1 bg-gradient-to-r from-brand-yellow via-brand-yellow/80 to-brand-yellow text-gray-900 rounded-full text-xs font-black tracking-wide uppercase">
+                                                    Padrão Ouro
+                                                </span>
+                                            )}
+                                        </div>
 
-                                <div className="flex flex-col py-4 border-y border-white/5">
-                                    <div className="flex items-center justify-between gap-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="size-10 rounded-full bg-brand-blue/20 flex items-center justify-center text-brand-blue font-bold text-xs uppercase shrink-0">
-                                                {(authors || user?.user_metadata?.full_name || 'A').substring(0, 2)}
+                                        <h1 className="text-3xl md:text-4xl font-display font-bold text-white leading-tight">
+                                            {previewData.title || 'Sem Título'}
+                                        </h1>
+
+                                        <div className="flex flex-col py-4 border-y border-white/5">
+                                            <div className="flex items-center justify-between gap-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="size-10 rounded-full bg-brand-blue/20 flex items-center justify-center text-brand-blue font-bold text-xs uppercase shrink-0">
+                                                        {(authors || user?.user_metadata?.full_name || 'A').substring(0, 2)}
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Autore(s)</span>
+                                                        <span className="text-sm font-bold text-white">{authors || user?.user_metadata?.full_name || 'Autor(a)'}</span>
+                                                    </div>
+                                                </div>
                                             </div>
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Autore(s)</span>
-                                                <span className="text-sm font-bold text-white">{authors || user?.user_metadata?.full_name || 'Autor(a)'}</span>
+                                        </div>
+
+                                        <div className="mt-8">
+                                            <h2 className="text-sm font-bold text-white mb-2 uppercase tracking-wide">Descrição</h2>
+                                            <div className="text-gray-400 leading-relaxed prose prose-lg prose-invert max-w-none">
+                                                <div className="flex flex-col gap-8">
+                                                    {previewData.blocks.map((block: any) => (
+                                                        <BlockRenderer key={block.id} block={block} forcePreview={true} />
+                                                    ))}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div className="mt-8">
-                                    <h2 className="text-sm font-bold text-white mb-2 uppercase tracking-wide">Descrição</h2>
-                                    <div className="text-gray-400 leading-relaxed prose prose-lg prose-invert max-w-none">
-                                        <div className="flex flex-col gap-8">
-                                            {previewData.blocks.map((block: any) => (
-                                                <BlockRenderer key={block.id} block={block} forcePreview={true} />
-                                            ))}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            </>
+                        )}
                     </div>
                 {/* 
                   ========== MODO EDIÇÃO ==========
@@ -492,127 +511,9 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
 
                         {/* Editor Principal */}
                         <div className="bg-[#121212]/60 border-brand-blue/30 shadow-[0_0_50px_rgba(15,71,128,0.2)] border rounded-[32px] p-6 lg:p-12 pb-64 relative min-h-[500px] z-20">
-                            <div className="mb-12 border-b border-brand-blue/30 pb-6 flex flex-col gap-6">
-                                <div className="flex flex-col gap-1">
-                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest pl-1">Título da Contribuição <span className="text-brand-red">*</span></span>
-                                    <input
-                                        type="text"
-                                        value={title}
-                                        onChange={(e) => setTitle(e.target.value)}
-                                        placeholder="Digite aqui o título..."
-                                        className="w-full text-4xl lg:text-5xl font-black bg-transparent outline-none text-white placeholder-gray-600 tracking-tight"
-                                    />
-                                </div>
-                                <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
-                                    <div className="flex items-center gap-3 flex-1 w-full">
-                                        <div className="size-10 rounded-full bg-brand-blue/20 flex items-center justify-center text-brand-blue font-bold text-xs uppercase shrink-0">
-                                            <span className="material-symbols-outlined text-[20px]">person_edit</span>
-                                        </div>
-                                        <div className="flex flex-col flex-1 max-w-sm">
-                                            <div className="flex justify-between items-center mb-1">
-                                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Autor/Apelido <span className="text-brand-red">*</span></span>
-                                                <span className={`text-[10px] font-bold ${authors.length > 60 ? 'text-brand-red' : 'text-gray-600'}`}>{authors.length}/60</span>
-                                            </div>
-                                            <input
-                                                type="text"
-                                                value={authors}
-                                                maxLength={60}
-                                                onChange={(e) => setAuthors(e.target.value)}
-                                                placeholder={user?.user_metadata?.full_name || 'Seu Nome ou Pseudônimo'}
-                                                className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium placeholder-gray-600 transition-colors py-1"
-                                            />
-                                            {(mainName || pseudonyms.length > 0) && (
-                                                <div className="flex flex-wrap items-center gap-2 mt-2">
-                                                    {mainName && (
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => setAuthors(mainName)}
-                                                            className={`px-2 py-1 text-[9px] font-black uppercase rounded-md transition-colors border ${authors === mainName ? 'bg-brand-blue text-white border-brand-blue' : 'text-gray-500 border-white/5 hover:border-brand-blue/50 hover:text-brand-blue'}`}
-                                                        >
-                                                            {mainName}
-                                                        </button>
-                                                    )}
-                                                    {pseudonyms.map(p => (
-                                                        <button
-                                                            key={p.id}
-                                                            type="button"
-                                                            onClick={() => setAuthors(p.name)}
-                                                            className={`px-2 py-1 text-[9px] font-black uppercase rounded-md transition-colors border ${authors === p.name ? 'bg-brand-blue text-white border-brand-blue' : 'text-gray-500 border-white/5 hover:border-brand-blue/50 hover:text-brand-blue'}`}
-                                                        >
-                                                            {p.name}
-                                                        </button>
-                                                    ))}
-                                                    <span className="text-[8px] text-gray-600 uppercase tracking-widest ml-1 hidden sm:inline">(Gerenciar apelidos no perfil)</span>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center gap-6 w-full md:w-auto">
-                                        {previewMode !== 'arte' && (
-                                            <>
-                                                <div className="flex flex-col max-w-[150px] w-full">
-                                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Categoria <span className="text-brand-red">*</span></span>
-                                                    <select
-                                                        value={category}
-                                                        onChange={(e) => setCategory(e.target.value)}
-                                                        className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
-                                                    >
-                                                        <option value="" disabled className="bg-[#121212] text-gray-500">Selecione...</option>
-                                                        {CATEGORIES.map(cat => (
-                                                            <option key={cat} value={cat} className="bg-[#121212] text-white">{cat}</option>
-                                                        ))}
-                                                    </select>
-                                                </div>
-
-                                                <div className="flex flex-col max-w-[150px] w-full">
-                                                    <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Linguagem <span className="text-brand-red">*</span></span>
-                                                    <select
-                                                        value={languageRegister}
-                                                        onChange={(e) => setLanguageRegister(e.target.value)}
-                                                        className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-yellow/50 focus:border-brand-yellow outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
-                                                    >
-                                                        <option value="jovem" className="bg-[#121212] text-white">Jovem</option>
-                                                        <option value="nerd_geek" className="bg-[#121212] text-white">Nerd/Geek</option>
-                                                        <option value="artistica" className="bg-[#121212] text-white">Artística</option>
-                                                        <option value="academica" className="bg-[#121212] text-white">Acadêmica</option>
-                                                    </select>
-                                                </div>
-                                            </>
-                                        )}
-
-                                        <div className="flex flex-col max-w-[100px] w-full">
-                                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Ano <span className="text-brand-red">*</span></span>
-                                            <input
-                                                type="number"
-                                                value={year}
-                                                onChange={(e) => setYear(e.target.value)}
-                                                min="1934"
-                                                max={new Date().getFullYear()}
-                                                className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1"
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {blocks.length === 0 && (
-                                <div className="mt-8 mb-4 w-full flex flex-col items-center gap-6">
-                                    {previewMode !== 'arte' && (
-                                        <button
-                                            onClick={() => restoreMockBlocks()}
-                                            className="px-4 py-2 bg-brand-yellow text-gray-900 font-black text-xs uppercase tracking-widest rounded-lg hover:bg-[#E5B800] transition-colors shadow-lg"
-                                        >
-                                            Voltar ao Post Pré-Montado
-                                        </button>
-                                    )}
-                                    <p className="font-medium text-gray-500 text-sm tracking-tight uppercase text-center">Seu canvas está vazio.</p>
-                                </div>
-                            )}
-
-                            {/* Warning for Mock Template */}
+                            {/* 1. Warning for Mock Template */}
                             {previewMode !== 'arte' && blocks.some(b => String(b.id).startsWith('mock-')) && (
-                                <div className="w-full bg-brand-yellow/10 border border-brand-yellow/30 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 mt-6">
+                                <div className="w-full bg-brand-yellow/10 border border-brand-yellow/30 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
                                     <div className="flex items-start gap-3">
                                         <span className="material-symbols-outlined text-[20px] text-brand-yellow shrink-0 mt-0.5">warning</span>
                                         <p className="text-sm text-gray-300">
@@ -628,87 +529,244 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                 </div>
                             )}
 
-                    {/* Área de Inserção Inicial / Blocos Obrigatórios */}
-                            {(showSugerida && previewMode !== 'arte') ? (
-                                <div className="w-full relative z-50 flex flex-col gap-4 mt-8">
-                                    {blocks.length === 0 ? (
-                                        <p className="text-[10px] text-gray-500 text-center uppercase tracking-widest font-black mb-2 opacity-50">Estrutura Sugerida</p>
-                                    ) : (
-                                        <p className="text-[10px] text-brand-yellow text-center uppercase tracking-widest font-black mb-2 opacity-80 mt-8">Eixos Obrigatórios Pendentes</p>
-                                    )}
-                                    
-                                    {!hasObjeto && (
-                                        <div className="w-full border-2 border-dashed border-brand-yellow/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-[#121212]/30 hover:bg-brand-yellow/5 transition-colors group text-center">
-                                            <div className="w-10 h-10 rounded-full bg-brand-yellow/10 flex items-center justify-center">
-                                                <span className="material-symbols-outlined text-brand-yellow">category</span>
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <span className="text-brand-yellow font-black uppercase tracking-widest text-[10px]">1. Seu Objeto Principal *</span>
-                                                <span className="text-gray-500 text-xs mt-1">Insira imagens, modelos 3D, áudio ou vídeo</span>
-                                            </div>
-                                            <div className="scale-90 group-hover:scale-100 transition-transform mt-2 relative z-10">
-                                                <InlineAddMenu variant="yellow" />
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {!hasElaboracao && (
-                                        <div className="w-full border-2 border-dashed border-brand-blue/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-[#121212]/30 hover:bg-brand-blue/5 transition-colors group text-center">
-                                            <div className="w-10 h-10 rounded-full bg-brand-blue/10 flex items-center justify-center">
-                                                <span className="material-symbols-outlined text-brand-blue">notes</span>
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <span className="text-brand-blue font-black uppercase tracking-widest text-[10px]">2. Elaboração / Conceituação *</span>
-                                                <span className="text-gray-500 text-xs mt-1">Insira textos de apoio, anotações ou referências</span>
-                                            </div>
-                                            <div className="scale-90 group-hover:scale-100 transition-transform mt-2 relative z-10">
-                                                <InlineAddMenu variant="blue" />
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {!hasPedagogico && (
-                                        <div className="w-full border-2 border-dashed border-brand-red/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-[#121212]/30 hover:bg-brand-red/5 transition-colors group text-center">
-                                            <div className="w-10 h-10 rounded-full bg-brand-red/10 flex items-center justify-center">
-                                                <span className="material-symbols-outlined text-brand-red">psychology</span>
-                                            </div>
-                                            <div className="flex flex-col">
-                                                <span className="text-brand-red font-black uppercase tracking-widest text-[10px]">3. Reflexão Pedagógica *</span>
-                                                <span className="text-gray-500 text-xs mt-1">Adicione quizzes ou contexto histórico/social</span>
-                                            </div>
-                                            <div className="scale-90 group-hover:scale-100 transition-transform mt-2 relative z-10">
-                                                <InlineAddMenu variant="red" />
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            ) : null}
-
-                            {/* Empty State Arte */}
-                            {previewMode === 'arte' && blocks.length === 0 && (
-                                <div className="w-full mt-12 flex flex-col items-center justify-center gap-6">
-                                    <div className="scale-125">
-                                        <InlineAddMenu />
+                            {/* 2. Metadados Obrigatórios (Author, Category, Language, Year) */}
+                            <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-12 border-b border-brand-blue/30 pb-8">
+                                <div className="flex items-center gap-3 flex-1 w-full">
+                                    <div className="size-10 rounded-full bg-brand-blue/20 flex items-center justify-center text-brand-blue font-bold text-xs uppercase shrink-0">
+                                        <span className="material-symbols-outlined text-[20px]">person_edit</span>
                                     </div>
-                                    <p className="text-gray-500 text-sm font-medium">Comece a adicionar blocos à sua arte.</p>
-                                </div>
-                            )}
-
-                            {/* Renderização dos Blocos em Edição */}
-                            <div className="flex flex-col gap-8 max-w-full mx-auto">
-                                {blocks.length > 0 && !(objetoTypes.includes(blocks[0].type)) && <InlineAddMenu />}
-                                {blocks.map((block, index) => {
-                                    const isLinkBlock = block.type === 'link';
-
-                                    return (
-                                        <React.Fragment key={block.id}>
-                                            <div className="w-full">
-                                                <BlockRenderer block={block} />
+                                    <div className="flex flex-col flex-1 max-w-sm">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Autor/Apelido <span className="text-brand-red">*</span></span>
+                                            <span className={`text-[10px] font-bold ${authors.length > 60 ? 'text-brand-red' : 'text-gray-600'}`}>{authors.length}/60</span>
+                                        </div>
+                                        <input
+                                            type="text"
+                                            value={authors}
+                                            maxLength={60}
+                                            onChange={(e) => setAuthors(e.target.value)}
+                                            placeholder={user?.user_metadata?.full_name || 'Seu Nome ou Pseudônimo'}
+                                            className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium placeholder-gray-600 transition-colors py-1"
+                                        />
+                                        {(mainName || pseudonyms.length > 0) && (
+                                            <div className="flex flex-wrap items-center gap-2 mt-2">
+                                                {mainName && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setAuthors(mainName)}
+                                                        className={`px-2 py-1 text-[9px] font-black uppercase rounded-md transition-colors border ${authors === mainName ? 'bg-brand-blue text-white border-brand-blue' : 'text-gray-500 border-white/5 hover:border-brand-blue/50 hover:text-brand-blue'}`}
+                                                    >
+                                                        {mainName}
+                                                    </button>
+                                                )}
+                                                {pseudonyms.map(p => (
+                                                    <button
+                                                        key={p.id}
+                                                        type="button"
+                                                        onClick={() => setAuthors(p.name)}
+                                                        className={`px-2 py-1 text-[9px] font-black uppercase rounded-md transition-colors border ${authors === p.name ? 'bg-brand-blue text-white border-brand-blue' : 'text-gray-500 border-white/5 hover:border-brand-blue/50 hover:text-brand-blue'}`}
+                                                    >
+                                                        {p.name}
+                                                    </button>
+                                                ))}
+                                                <span className="text-[8px] text-gray-600 uppercase tracking-widest ml-1 hidden sm:inline">(Gerenciar apelidos no perfil)</span>
                                             </div>
-                                            {!isLinkBlock && <InlineAddMenu insertAfterId={block.id} />}
-                                        </React.Fragment>
-                                    );
-                                })}
+                                        )}
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center gap-6 w-full md:w-auto">
+                                    {previewMode !== 'arte' && (
+                                        <>
+                                            <div className="flex flex-col max-w-[150px] w-full">
+                                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Categoria <span className="text-brand-red">*</span></span>
+                                                <select
+                                                    value={category}
+                                                    onChange={(e) => setCategory(e.target.value)}
+                                                    className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
+                                                >
+                                                    <option value="" disabled className="bg-[#121212] text-gray-500">Selecione...</option>
+                                                    {CATEGORIES.map(cat => (
+                                                        <option key={cat} value={cat} className="bg-[#121212] text-white">{cat}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
+
+                                            <div className="flex flex-col max-w-[150px] w-full">
+                                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Linguagem <span className="text-brand-red">*</span></span>
+                                                <select
+                                                    value={languageRegister}
+                                                    onChange={(e) => setLanguageRegister(e.target.value)}
+                                                    className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-yellow/50 focus:border-brand-yellow outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
+                                                >
+                                                    <option value="jovem" className="bg-[#121212] text-white">Jovem</option>
+                                                    <option value="nerd_geek" className="bg-[#121212] text-white">Nerd/Geek</option>
+                                                    <option value="artistica" className="bg-[#121212] text-white">Artística</option>
+                                                    <option value="academica" className="bg-[#121212] text-white">Acadêmica</option>
+                                                </select>
+                                            </div>
+                                        </>
+                                    )}
+
+                                    <div className="flex flex-col max-w-[100px] w-full">
+                                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Ano <span className="text-brand-red">*</span></span>
+                                        <input
+                                            type="number"
+                                            value={year}
+                                            onChange={(e) => setYear(e.target.value)}
+                                            min="1934"
+                                            max={new Date().getFullYear()}
+                                            className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1"
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 3. Bloco do Objeto ou Placeholders Principais */}
+                            <div className="flex flex-col gap-8 max-w-full mx-auto">
+                                {objectBlock ? (
+                                    <React.Fragment key={objectBlock.id}>
+                                        <div className="w-full">
+                                            <BlockRenderer block={objectBlock} />
+                                        </div>
+                                    </React.Fragment>
+                                ) : (
+                                    <>
+                                        {/* Canvas Vazio */}
+                                        <div className="mt-8 mb-4 w-full flex flex-col items-center gap-6">
+                                            {previewMode !== 'arte' && blocks.length === 0 && (
+                                                <button
+                                                    onClick={() => restoreMockBlocks()}
+                                                    className="px-4 py-2 bg-brand-yellow text-gray-900 font-black text-xs uppercase tracking-widest rounded-lg hover:bg-[#E5B800] transition-colors shadow-lg"
+                                                >
+                                                    Voltar ao Post Pré-Montado
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        {/* Empty State Arte */}
+                                        {previewMode === 'arte' && !hasObjeto && (
+                                            <div className="w-full flex flex-col items-center justify-center gap-6">
+                                                <div className="scale-125">
+                                                    <InlineAddMenu />
+                                                </div>
+                                                <p className="text-gray-500 text-sm font-medium">Comece a adicionar blocos à sua arte.</p>
+                                            </div>
+                                        )}
+
+                                        {/* Placeholder Objeto (Fluxo) */}
+                                        {(showSugerida && previewMode !== 'arte' && !hasObjeto) && (
+                                            <div className="w-full relative z-50 flex flex-col gap-4">
+                                                {blocks.length === 0 && <p className="text-[10px] text-gray-500 text-center uppercase tracking-widest font-black mb-2 opacity-50">Estrutura Sugerida</p>}
+                                                <div className="w-full border-2 border-dashed border-brand-yellow/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-[#121212]/30 hover:bg-brand-yellow/5 transition-colors group text-center">
+                                                    <div className="w-10 h-10 rounded-full bg-brand-yellow/10 flex items-center justify-center">
+                                                        <span className="material-symbols-outlined text-brand-yellow">category</span>
+                                                    </div>
+                                                    <div className="flex flex-col">
+                                                        <span className="text-brand-yellow font-black uppercase tracking-widest text-[10px]">1. Seu Objeto Principal *</span>
+                                                        <span className="text-gray-500 text-xs mt-1">Insira imagens, modelos 3D, áudio ou vídeo</span>
+                                                    </div>
+                                                    <div className="scale-90 group-hover:scale-100 transition-transform mt-2 relative z-10">
+                                                        <InlineAddMenu variant="yellow" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+                            </div>
+
+                            {/* 4. Título e Descrição */}
+                            <div className="flex flex-col gap-6 my-12">
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex justify-between items-center mb-1">
+                                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest pl-1">Título da Contribuição <span className="text-brand-red">*</span></span>
+                                        <span className={`text-[10px] font-bold ${title.length > 100 ? 'text-brand-red' : 'text-gray-600'}`}>{title.length}/100</span>
+                                    </div>
+                                    <input
+                                        type="text"
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        placeholder="Digite aqui o título..."
+                                        maxLength={100}
+                                        className="w-full text-4xl lg:text-5xl font-black bg-transparent outline-none text-white placeholder-gray-600 tracking-tight"
+                                    />
+                                </div>
+                                <div className="flex flex-col gap-1">
+                                    <div className="flex justify-between items-center mb-1">
+                                        <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest pl-1">Descrição {previewMode !== 'arte' && <span className="text-brand-red">*</span>}</span>
+                                        <span className={`text-[10px] font-bold ${description.length > 300 ? 'text-brand-red' : 'text-gray-600'}`}>{description.length}/300</span>
+                                    </div>
+                                    <textarea
+                                        value={description}
+                                        onChange={(e) => setDescription(e.target.value)}
+                                        placeholder={previewMode === 'arte' ? "Descrição opcional..." : "Resumo da contribuição..."}
+                                        maxLength={300}
+                                        rows={4}
+                                        className="w-full text-sm font-medium bg-white/5 border border-white/10 rounded-xl p-4 outline-none text-white placeholder-gray-500 resize-none focus:border-brand-blue/50 transition-colors"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* 5. Separador Página Completa */}
+                            <div className="flex items-center gap-4 w-full opacity-50 my-12">
+                                <div className="h-px bg-white/5 flex-1"></div>
+                                <span className="text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">Visível apenas na página completa</span>
+                                <div className="h-px bg-white/5 flex-1"></div>
+                            </div>
+
+                            {/* 6. Blocos Secundários e Placeholders Restantes */}
+                            <div className="flex flex-col gap-8 max-w-full mx-auto">
+                                {objectBlock && objectBlock.type !== 'link' && (
+                                    <InlineAddMenu insertAfterId={objectBlock.id} />
+                                )}
+                                {bottomBlocks.map((block) => (
+                                    <React.Fragment key={block.id}>
+                                        <div className="w-full">
+                                            <BlockRenderer block={block} />
+                                        </div>
+                                        {block.type !== 'link' && <InlineAddMenu insertAfterId={block.id} />}
+                                    </React.Fragment>
+                                ))}
+
+                                {/* Placeholders Secundários (Fluxo) */}
+                                {(showSugerida && previewMode !== 'arte') && (
+                                    <div className="w-full relative z-50 flex flex-col gap-4 mt-8">
+                                        {(blocks.length > 0 && (!hasElaboracao || !hasPedagogico)) && (
+                                            <p className="text-[10px] text-brand-yellow text-center uppercase tracking-widest font-black mb-2 opacity-80 mt-8">Eixos Obrigatórios Pendentes</p>
+                                        )}
+                                        
+                                        {!hasElaboracao && (
+                                            <div className="w-full border-2 border-dashed border-brand-blue/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-[#121212]/30 hover:bg-brand-blue/5 transition-colors group text-center">
+                                                <div className="w-10 h-10 rounded-full bg-brand-blue/10 flex items-center justify-center">
+                                                    <span className="material-symbols-outlined text-brand-blue">notes</span>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-brand-blue font-black uppercase tracking-widest text-[10px]">2. Elaboração / Conceituação *</span>
+                                                    <span className="text-gray-500 text-xs mt-1">Insira textos de apoio, anotações ou referências</span>
+                                                </div>
+                                                <div className="scale-90 group-hover:scale-100 transition-transform mt-2 relative z-10">
+                                                    <InlineAddMenu variant="blue" />
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        {!hasPedagogico && (
+                                            <div className="w-full border-2 border-dashed border-brand-red/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-[#121212]/30 hover:bg-brand-red/5 transition-colors group text-center">
+                                                <div className="w-10 h-10 rounded-full bg-brand-red/10 flex items-center justify-center">
+                                                    <span className="material-symbols-outlined text-brand-red">psychology</span>
+                                                </div>
+                                                <div className="flex flex-col">
+                                                    <span className="text-brand-red font-black uppercase tracking-widest text-[10px]">3. Reflexão Pedagógica *</span>
+                                                    <span className="text-gray-500 text-xs mt-1">Adicione quizzes ou contexto histórico/social</span>
+                                                </div>
+                                                <div className="scale-90 group-hover:scale-100 transition-transform mt-2 relative z-10">
+                                                    <InlineAddMenu variant="red" />
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

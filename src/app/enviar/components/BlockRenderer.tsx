@@ -14,6 +14,7 @@ import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
 import TextBlock from './blocks/TextBlock';
 import ImageBlock from './blocks/ImageBlock';
+import CarouselBlock from './blocks/CarouselBlock';
 import Model3DBlock from './blocks/Model3DBlock';
 import QuizBlock from './blocks/QuizBlock';
 import AudioBlock from './blocks/AudioBlock';
@@ -37,6 +38,7 @@ const getBlockTip = (type: string) => {
     switch(type) {
         case 'text': return "Use este bloco para desenvolver conceitos, explicar detalhes ou criar transições narrativas claras entre as mídias.";
         case 'image': return "Imagens fortes engajam o leitor. Certifique-se de que a imagem tenha boa resolução e agregue valor à explicação.";
+        case 'carousel': return "Carrosséis são ótimos para passo a passo, evoluções ou galerias. Mantenha as fotos visualmente coerentes.";
         case '3d_object': return "Modelos 3D permitem exploração livre. Ideal para anatomia, moléculas ou arquitetura onde o espaço importa.";
         case 'video': return "Vídeos são ótimos para demonstrações práticas. Mantenha-os curtos e vá direto ao ponto.";
         case 'audio': return "Áudios podem conter explicações guiadas ou sons de experimentos reais para enriquecer a imersão.";
@@ -74,6 +76,7 @@ export function BlockRenderer({ block, forcePreview = false }: BlockRendererProp
         switch (block.type) {
             case 'text': return <TextBlock block={block} isActive={isActive} />;
             case 'image': return <ImageBlock block={block} isActive={isActive} />;
+            case 'carousel': return <CarouselBlock block={block} isActive={isActive} />;
             case '3d_object': return <Model3DBlock block={block} isActive={isActive} />;
             case 'quiz': return <QuizBlock block={block} isActive={isActive} />;
             case 'audio': return <AudioBlock block={block} isActive={isActive} />;

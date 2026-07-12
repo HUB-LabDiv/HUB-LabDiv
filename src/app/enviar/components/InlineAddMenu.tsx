@@ -74,6 +74,7 @@ export function InlineAddMenu({ insertAfterId, variant = 'all', large = false }:
                             <div className="grid grid-cols-2 gap-1 sm:gap-2">
                                 <MenuBtn icon="notes" label="Texto" onClick={() => handleAdd('text')} />
                                 <MenuBtn icon="image" label="Imagem" onClick={() => handleAdd('image')} />
+                                <MenuBtn icon="view_carousel" label="Carrossel" onClick={() => handleAdd('carousel')} />
                                 <MenuBtn icon="smart_display" label="Vídeo" onClick={() => handleAdd('video')} />
                                 <MenuBtn icon="view_in_ar" label="Modelo 3D" onClick={() => handleAdd('3d_object')} />
                                 <MenuBtn icon="mic" label="Áudio" onClick={() => handleAdd('audio')} />
@@ -88,6 +89,7 @@ export function InlineAddMenu({ insertAfterId, variant = 'all', large = false }:
                                     <div className="grid grid-cols-2 gap-1 sm:gap-2">
                                         <MenuBtn icon="notes" label="Texto" onClick={() => handleAdd('text')} />
                                         {(variant === 'yellow' || variant === 'all') && <MenuBtn icon="image" label="Imagem" onClick={() => handleAdd('image')} />}
+                                        {(variant === 'yellow' || variant === 'all') && <MenuBtn icon="view_carousel" label="Carrossel" onClick={() => handleAdd('carousel')} />}
                                         {(variant === 'yellow' || variant === 'all') && <MenuBtn icon="smart_display" label="Vídeo" onClick={() => handleAdd('video')} />}
                                         {(variant === 'yellow' || variant === 'all') && <MenuBtn icon="view_in_ar" label="Modelo 3D" onClick={() => handleAdd('3d_object')} />}
                                         

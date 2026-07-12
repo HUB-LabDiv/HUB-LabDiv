@@ -17,6 +17,7 @@ export type SubmissionStep = 'category' | 'format' | 'basic' | 'optional' | 'cur
 
 const initialState = {
     step: 'category' as SubmissionStep,
+    description: '',
     category: '',
     title: 'Exemplo de Título',
     authors: '',
@@ -102,6 +103,7 @@ const initialState = {
 
 interface SubmissionState {
     currentStep: SubmissionStep;
+    description: string;
     category: string;
 
     // Metadados básicos
@@ -137,6 +139,7 @@ interface SubmissionState {
     watchedValues: any;
     setWatchedValues: (values: any) => void;
     setStep: (step: SubmissionStep) => void;
+    setDescription: (description: string) => void;
     setCategory: (category: string) => void;
 
     setTitle: (title: string) => void;
@@ -182,6 +185,7 @@ export const useSubmissionStore = create<SubmissionState>()(
     persist(
         (set) => ({
             currentStep: 'diagrammer',
+            description: initialState.description,
             category: initialState.category,
             title: initialState.title,
             authors: initialState.authors,
@@ -211,6 +215,7 @@ export const useSubmissionStore = create<SubmissionState>()(
             watchedValues: {},
             setWatchedValues: (values) => set({ watchedValues: values }),
             setStep: (step) => set({ currentStep: step }),
+            setDescription: (description) => set({ description }),
             setCategory: (category) => set({ category }),
 
             setTitle: (title) => set({ title }),
@@ -307,6 +312,7 @@ export const useSubmissionStore = create<SubmissionState>()(
 
             reset: () => set({
                 currentStep: 'diagrammer',
+                description: initialState.description,
                 category: initialState.category,
                 title: initialState.title,
                 authors: initialState.authors,
@@ -334,6 +340,7 @@ export const useSubmissionStore = create<SubmissionState>()(
             name: 'submission-store-storage',
             partialize: (state) => ({
                 currentStep: state.currentStep,
+                description: state.description,
                 category: state.category,
                 blocks: state.blocks,
                 title: state.title,

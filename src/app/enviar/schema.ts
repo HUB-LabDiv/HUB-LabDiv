@@ -13,7 +13,7 @@ import { z } from 'zod';
 
 export const blockTypeSchema = z.enum([
     // Media
-    'text', 'image', 'audio', '3d_object', 'video', 'web_game', 'web_page', 'pdf', 'notes', 'reference', 'drive', 'link',
+    'text', 'image', 'carousel', 'audio', '3d_object', 'video', 'web_game', 'web_page', 'pdf', 'notes', 'reference', 'drive', 'link',
     // Pedagogical
     'quiz', 'reflection', 'context_history', 'context_social', 'context_political', 'context_world_object', 'context_object_world', 'glossary'
 ]);
