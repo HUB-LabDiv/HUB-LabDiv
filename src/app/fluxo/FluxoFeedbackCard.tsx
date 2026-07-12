@@ -24,9 +24,9 @@ export function FluxoFeedbackCard({ className }: { className?: string }) {
 
   return (
     <ContextFeedbackCard
-      title="O Pulso do IFUSP"
+      title="Aba comunidade"
       icon={<span className="material-symbols-outlined text-2xl text-brand-blue">grain</span>}
-      description="Este é o pulso do IFUSP em tempo real. Com a agilidade de uma rede social e o rigor da academia, aqui a divulgação passiva se transforma em comunicação científica interativa. O ecossistema está em construção: como podemos melhorar seu fluxo?"
+      description="Está é a aba onde dividida em fluxo/logs/arte você pode interagir e aprender com a comunidade do instituto sobre a ciencia e quem a faz. Alguma sugestão de como o HUB pode melhorar nisso?"
       betaTag={true}
       onFeedbackClick={handleFeedbackClick}
       className={className}

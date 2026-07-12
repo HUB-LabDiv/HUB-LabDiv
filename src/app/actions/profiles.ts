@@ -14,7 +14,7 @@
 
 import { createServerSupabase } from '@/lib/supabase/server';
 import { createAdminSupabase } from '@/lib/supabase/admin';
-import { revalidatePath, revalidateTag } from 'next/cache';
+import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { Profile, Freshman } from '@/types';
 import { sendAdminNotification } from '@/lib/notifications.server';
@@ -167,8 +167,6 @@ export async function approveProfile(profileId: string) {
     revalidatePath('/lab');
     revalidatePath('/admin/profiles');
     revalidatePath('/orbit'); // Revalidate orbit view too
-    revalidateTag('trending-submissions-v2');
-    revalidateTag('featured-submissions-v2');
     return { success: true };
 }
 

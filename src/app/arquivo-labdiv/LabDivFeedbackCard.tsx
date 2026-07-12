@@ -21,7 +21,7 @@ export function LabDivFeedbackCard({ className }: { className?: string }) {
     
     return (
         <ContextFeedbackCard
-            title="Lab-Div"
+            title="Aba Lab-Div"
             description="Onde a ciência ganha forma, cor e movimento. No Lab-Div você acessa o núcleo criativo do Laboratório de Demonstrações: agende mentorias ou utilização do espaço novo milênio e explore o KitDiv. Descubra nosso catálogo 'Padrão Ouro' de divulgação científica, produzido por nossa equipe ou através de nossas consultorias. Como o Lab-Div pode ajudar a transformar sua pesquisa em comunicação de impacto? Nos conte!"
             betaTag={true}
             onFeedbackClick={() => setReportModalOpen(true, 'sugestao')}

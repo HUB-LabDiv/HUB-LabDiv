@@ -117,6 +117,11 @@ export const HomeClientView = ({
     const [activePageIndex, setActivePageIndex] = useState(0);
     const [showAllCategories, setShowAllCategories] = useState(false);
     const [showAllYears, setShowAllYears] = useState(false);
+    const swipeStartX = useRef<number | null>(null);
+    const swipeStartY = useRef<number | null>(null);
+    const wheelAccumulator = useRef<number>(0);
+    const lastWheelTime = useRef<number>(0);
+    const wheelCooldown = useRef<boolean>(false);
 
     // Trending Scroll State
     const trendingScrollRef = useRef<HTMLDivElement>(null);
@@ -277,29 +282,81 @@ export const HomeClientView = ({
 
 
     return (
-        <div className="space-y-4">
-            {/* Tab Navigation */}
-            <div className="sticky top-16 z-50 flex justify-center pb-4 pt-1">
-                <div className="flex p-1.5 bg-white/50 dark:bg-black/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl">
-                    <button
-                        onClick={() => handleTabChange('fluxo')}
-                        className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all ${
-                            activeTab === 'fluxo' ? 'text-white' : 'text-gray-500 hover:text-brand-blue'
-                        }`}
-                    >
-                        {activeTab === 'fluxo' && (
-                            <motion.div
-                                layoutId="activeTabHome"
-                                className="absolute inset-0 bg-brand-blue rounded-xl shadow-lg shadow-brand-blue/20"
-                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                            />
-                        )}
-                        <span className="relative z-10 flex items-center gap-2">
-                            <Zap className={`w-4 h-4 ${activeTab === 'fluxo' ? 'animate-pulse' : ''}`} />
-                            Fluxo
-                        </span>
-                    </button>
+        <div 
+            className="space-y-4 overflow-hidden w-full max-w-[100vw] min-h-[100dvh]"
+            onTouchStart={(e) => {
+                if ((e.target as Element).closest('.overflow-x-auto, .scroll-x')) return;
+                const touch = e.touches[0];
+                if (touch) {
+                    swipeStartX.current = touch.clientX;
+                    swipeStartY.current = touch.clientY;
+                }
+            }}
+            onTouchEnd={(e) => {
+                const touch = e.changedTouches[0];
+                if (!touch || swipeStartX.current === null || swipeStartY.current === null) return;
+                
+                const deltaX = touch.clientX - swipeStartX.current;
+                const deltaY = touch.clientY - swipeStartY.current;
+                const threshold = 40; // lowered threshold for easier swipe
+                
+                if (Math.abs(deltaX) > threshold && Math.abs(deltaX) > Math.abs(deltaY)) {
+                    const tabs = ['logs', 'fluxo', 'arte'];
+                    const currentIndex = tabs.indexOf(activeTab);
+                    
+                    if (deltaX < 0 && currentIndex < tabs.length - 1) {
+                        // Swipe left -> Next tab
+                        handleTabChange(tabs[currentIndex + 1] as any);
+                    } else if (deltaX > 0 && currentIndex > 0) {
+                        // Swipe right -> Previous tab
+                        handleTabChange(tabs[currentIndex - 1] as any);
+                    }
+                }
+                swipeStartX.current = null;
+                swipeStartY.current = null;
+            }}
+            onTouchCancel={() => {
+                swipeStartX.current = null;
+                swipeStartY.current = null;
+            }}
+            onWheel={(e) => {
+                if ((e.target as Element).closest('.overflow-x-auto, .scroll-x')) return;
 
+                const now = Date.now();
+                if (now - lastWheelTime.current > 400) {
+                    wheelAccumulator.current = 0;
+                }
+                lastWheelTime.current = now;
+
+                if (wheelCooldown.current) return;
+
+                if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
+                    wheelAccumulator.current += e.deltaX;
+                    
+                    if (Math.abs(wheelAccumulator.current) > 150) {
+                        const tabs = ['logs', 'fluxo', 'arte'];
+                        const currentIndex = tabs.indexOf(activeTab);
+                        
+                        if (wheelAccumulator.current > 0 && currentIndex < tabs.length - 1) {
+                            handleTabChange(tabs[currentIndex + 1] as any);
+                            wheelCooldown.current = true;
+                            setTimeout(() => { wheelCooldown.current = false; }, 800);
+                        } else if (wheelAccumulator.current < 0 && currentIndex > 0) {
+                            handleTabChange(tabs[currentIndex - 1] as any);
+                            wheelCooldown.current = true;
+                            setTimeout(() => { wheelCooldown.current = false; }, 800);
+                        }
+                        wheelAccumulator.current = 0;
+                    }
+                } else {
+                    wheelAccumulator.current = 0;
+                }
+            }}
+        >
+            {/* Tab Navigation */}
+            <div className="h-16" aria-hidden="true" />
+            <div className="fixed top-20 left-0 right-0 z-[100] flex justify-center pointer-events-none">
+                <div className="flex p-1.5 bg-white/50 dark:bg-black/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
                     <button
                         onClick={() => handleTabChange('logs')}
                         className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all ${
@@ -316,6 +373,25 @@ export const HomeClientView = ({
                         <span className="relative z-10 flex items-center gap-2">
                             <MessageSquare className={`w-4 h-4 ${activeTab === 'logs' ? 'animate-bounce' : ''}`} />
                             Logs
+                        </span>
+                    </button>
+
+                    <button
+                        onClick={() => handleTabChange('fluxo')}
+                        className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all ${
+                            activeTab === 'fluxo' ? 'text-white' : 'text-gray-500 hover:text-brand-blue'
+                        }`}
+                    >
+                        {activeTab === 'fluxo' && (
+                            <motion.div
+                                layoutId="activeTabHome"
+                                className="absolute inset-0 bg-brand-blue rounded-xl shadow-lg shadow-brand-blue/20"
+                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                            />
+                        )}
+                        <span className="relative z-10 flex items-center gap-2">
+                            <Zap className={`w-4 h-4 ${activeTab === 'fluxo' ? 'animate-pulse' : ''}`} />
+                            Fluxo
                         </span>
                     </button>
 
@@ -340,49 +416,6 @@ export const HomeClientView = ({
                 </div>
             </div>
 
-            <AnimatePresence mode="wait">
-                {activeTab === 'logs' ? (
-                    <motion.div
-                        key="logs"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.4 }}
-                    >
-                        <LogsView />
-                    </motion.div>
-                ) : activeTab === 'arte' ? (
-                    <motion.div
-                        key="arte"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.4 }}
-                        className="py-32 flex flex-col items-center justify-center text-center px-4"
-                    >
-                        <div className="w-24 h-24 mb-6 rounded-full bg-brand-yellow/10 flex items-center justify-center border border-brand-yellow/20">
-                            <Palette className="w-12 h-12 text-brand-yellow" />
-                        </div>
-                        <h2 className="text-3xl font-black font-bukra text-white mb-4 uppercase tracking-tighter">Galeria de Arte em Breve</h2>
-                        <p className="text-gray-400 max-w-md mx-auto mb-8">
-                            Um espaço dedicado à expressão artística e criatividade da nossa comunidade está sendo desenvolvido.
-                        </p>
-                        <Link 
-                            href="/enviar"
-                            className="flex items-center gap-2 px-6 py-3 bg-brand-yellow text-gray-900 font-bold rounded-xl hover:bg-brand-yellow/90 transition-colors"
-                        >
-                            <Palette className="w-5 h-5" />
-                            Envie sua Arte
-                        </Link>
-                    </motion.div>
-                ) : (
-                    <motion.div
-                        key="fluxo"
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.4 }}
-                    >
             {/* HERÓI / INTRODUÇÃO */}
             <header className="relative pt-12 pb-24 flex-shrink-0 overflow-hidden rounded-[40px]">
                 {/* Degradê sutil nas cores da marca */}
@@ -413,6 +446,68 @@ export const HomeClientView = ({
                     </p>
                 </div>
             </header>
+
+            <AnimatePresence mode="wait">
+                {activeTab === 'logs' ? (
+                    <motion.div
+                        key="logs"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.4 }}
+                    >
+                        <LogsView />
+                    </motion.div>
+                ) : activeTab === 'arte' ? (
+                    <motion.div
+                        key="arte"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.4 }}
+                        className="py-12 flex flex-col items-center justify-center text-center px-4"
+                    >
+                        <div className="w-full max-w-4xl mx-auto mb-16 text-left">
+                            <FluxoFeedbackCard 
+                                title="Subaba Arte" 
+                                description="Esta é a subaba de Arte. O que você gostaria de ver e interagir nesta seção dedicada à arte e criatividade na USP?" 
+                                icon={<Palette className="w-5 h-5 text-brand-yellow" />}
+                            />
+                        </div>
+                        <div className="w-24 h-24 mb-6 rounded-full bg-brand-yellow/10 flex items-center justify-center border border-brand-yellow/20">
+                            <Palette className="w-12 h-12 text-brand-yellow" />
+                        </div>
+                        <h2 className="text-3xl font-black font-bukra text-white mb-4 uppercase tracking-tighter">Galeria de Arte em Breve</h2>
+                        <p className="text-gray-400 max-w-md mx-auto mb-8">
+                            Um espaço dedicado à expressão artística e criatividade da nossa comunidade está sendo desenvolvido.
+                        </p>
+                        <Link 
+                            href="/enviar"
+                            className="flex items-center gap-2 px-6 py-3 bg-brand-yellow text-gray-900 font-bold rounded-xl hover:bg-brand-yellow/90 transition-colors"
+                        >
+                            <Palette className="w-5 h-5" />
+                            Envie sua Arte
+                        </Link>
+                    </motion.div>
+                ) : (
+                    <motion.div
+                        key="fluxo"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -20 }}
+                        transition={{ duration: 0.4 }}
+                    >
+                        <div className="max-w-4xl mx-auto mb-12">
+                            <FluxoFeedbackCard 
+                                title="Subaba Fluxo" 
+                                description="Esta é a subaba Fluxo. Aqui você acompanha a timeline principal de publicações, portfólios e descobertas. Como podemos melhorar essa experiência visual?" 
+                                icon={<Zap className="w-5 h-5 text-brand-blue" />}
+                            />
+                        </div>
+                        <h2 className="text-2xl md:text-3xl font-black font-bukra uppercase tracking-widest text-brand-blue mb-6 pl-4 flex items-center gap-3">
+                            <Zap className="w-6 h-6 md:w-8 md:h-8" />
+                            FLUXO
+                        </h2>
 
             {/* DESTAQUES (V8.0 optimized) */}
             {featuredItems.length > 0 && !debouncedQuery && selectedCategories.includes('Todos') && (
