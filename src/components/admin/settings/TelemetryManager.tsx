@@ -874,7 +874,7 @@ export function TelemetryManager() {
               </div>
             )}
 
-            {activeTab === 'clarity' && (
+            {(activeTab as string) === 'clarity' && (
               <div className="w-full flex flex-col items-center justify-center gap-6 animate-fade-in h-[400px]">
                 <div className="bg-white/[0.02] p-8 rounded-[32px] border border-white/5 flex flex-col items-center justify-center text-center gap-4 max-w-md w-full shadow-xl">
                   <div className="w-16 h-16 rounded-2xl bg-brand-blue/10 flex items-center justify-center border border-brand-blue/20 mb-2">

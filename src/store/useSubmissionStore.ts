@@ -22,7 +22,6 @@ const initialState = {
     title: 'Exemplo de Título',
     authors: '',
     year: new Date().getFullYear().toString(),
-    description: '',
     whatsapp: '',
     blocks: [
         {
@@ -110,7 +109,6 @@ interface SubmissionState {
     title: string;
     authors: string;
     year: string;
-    description: string;
     whatsapp: string;
 
     blocks: Block[];
@@ -145,7 +143,6 @@ interface SubmissionState {
     setTitle: (title: string) => void;
     setAuthors: (authors: string) => void;
     setYear: (year: string) => void;
-    setDescription: (description: string) => void;
     setWhatsapp: (whatsapp: string) => void;
     
     setLanguageRegister: (val: string) => void;
@@ -190,7 +187,6 @@ export const useSubmissionStore = create<SubmissionState>()(
             title: initialState.title,
             authors: initialState.authors,
             year: initialState.year,
-            description: initialState.description,
             whatsapp: initialState.whatsapp,
             blocks: initialState.blocks,
             fluxoBlocks: initialState.blocks,
@@ -221,7 +217,6 @@ export const useSubmissionStore = create<SubmissionState>()(
             setTitle: (title) => set({ title }),
             setAuthors: (authors) => set({ authors }),
             setYear: (year) => set({ year }),
-            setDescription: (description) => set({ description }),
             setWhatsapp: (whatsapp) => set({ whatsapp }),
             
             setLanguageRegister: (languageRegister) => set({ languageRegister }),
@@ -317,7 +312,6 @@ export const useSubmissionStore = create<SubmissionState>()(
                 title: initialState.title,
                 authors: initialState.authors,
                 year: initialState.year,
-                description: initialState.description,
                 whatsapp: initialState.whatsapp,
                 blocks: initialState.blocks,
                 fluxoBlocks: initialState.blocks,

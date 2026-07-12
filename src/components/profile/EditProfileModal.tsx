@@ -296,19 +296,6 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
 
         let avatarUrl = profileData?.avatar_url || null;
 
-        if (newAvatar) {
-            const formData = new FormData();
-            formData.append('avatar', newAvatar);
-            const uploadRes = await uploadAvatar(formData);
-            if (uploadRes.success && uploadRes.path) {
-                avatarUrl = uploadRes.path;
-            } else {
-                toast.error(uploadRes.error || 'Erro ao fazer upload da imagem');
-                setIsSaving(false);
-                return;
-            }
-        }
-
         // Remove new_nickname and email (read-only) and map fields to profileData
         const { new_nickname, email, artistic_interests_str, entrance_year, other_institute, education_level, external_institution, research_line, interest_area, office_room, laboratory_name, department, ...restData } = data;
 
