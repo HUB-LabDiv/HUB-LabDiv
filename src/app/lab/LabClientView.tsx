@@ -14,6 +14,7 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Image from 'next/image';
 import { supabase } from '@/lib/supabase';
 import { PostDTO } from '@/dtos/media';
 import { parseMediaUrl, getYoutubeThumbnail, getOptimizedUrl } from '@/lib/media-utils';
@@ -456,24 +457,38 @@ export function LabClientView({
 
                 <div className="flex justify-center border-t border-gray-200 dark:border-gray-800 mb-8 max-w-3xl mx-auto flex-wrap">
                     {[
-                        { id: 'fluxo', label: 'FLUXO', icon: <Grid className="w-4 h-4" /> },
-                        { id: 'artes', label: 'ARTE', icon: <ImageIcon className="w-4 h-4" /> },
-                        { id: 'logs', label: 'LOGS', icon: <FileText className="w-4 h-4" /> },
-                        { id: 'estrelados', label: 'CONSTELAÇÃO', icon: <Star className="w-4 h-4" /> },
+                        { id: 'fluxo', label: 'FLUXO', icon: <Grid className={`w-4 h-4 ${activeTab === 'fluxo' ? 'text-brand-blue' : ''}`} /> },
+                        { id: 'artes', label: 'ARTE', icon: <ImageIcon className={`w-4 h-4 ${activeTab === 'artes' ? 'text-brand-yellow' : ''}`} /> },
+                        { id: 'logs', label: 'LOGS', icon: <FileText className={`w-4 h-4 ${activeTab === 'logs' ? 'text-brand-red' : ''}`} /> },
+                        { id: 'estrelados', label: 'CONSTELAÇÃO', icon: <Star className={`w-4 h-4 ${activeTab === 'estrelados' ? 'text-brand-yellow fill-brand-yellow' : ''}`} /> },
                         { id: 'radiacao', label: 'RADIAÇÃO', icon: <span className="text-sm">☢️</span> },
-                    ].map((tab) => (
+                    ].map((tab) => {
+                        const isActive = activeTab === tab.id;
+                        let colorClass = 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300';
+                        if (isActive) {
+                            switch (tab.id) {
+                                case 'fluxo': colorClass = 'text-brand-blue border-t-2 border-brand-blue -mt-[1px]'; break;
+                                case 'artes': colorClass = 'text-brand-yellow border-t-2 border-brand-yellow -mt-[1px]'; break;
+                                case 'logs': colorClass = 'text-brand-red border-t-2 border-brand-red -mt-[1px]'; break;
+                                case 'estrelados': colorClass = 'text-brand-blue border-t-2 border-brand-blue -mt-[1px]'; break;
+                                case 'radiacao': colorClass = 'border-t-2 border-brand-yellow -mt-[1px] text-gray-900 dark:text-white'; break;
+                            }
+                        }
+
+                        return (
                         <button
                             key={tab.id}
                             onClick={() => handleTabChange(tab.id)}
-                            className={`flex items-center gap-2 px-6 py-4 text-xs font-bold tracking-widest transition-all ${activeTab === tab.id
-                                ? 'text-gray-900 dark:text-white border-t-2 border-gray-900 dark:border-white -mt-[1px]'
-                                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
-                                }`}
+                            className={`flex items-center gap-2 px-6 py-4 text-xs font-bold tracking-widest transition-all ${colorClass}`}
                         >
                             {tab.icon}
-                            {tab.label}
+                            {tab.id === 'radiacao' && isActive ? (
+                                <span className="bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red bg-clip-text text-transparent">{tab.label}</span>
+                            ) : (
+                                <span>{tab.label}</span>
+                            )}
                         </button>
-                    ))}
+                    )})}
                 </div>
 
                 <div className="animate-in fade-in duration-500 max-w-4xl mx-auto border-t-0">
@@ -485,25 +500,30 @@ export function LabClientView({
                                 <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                                     {filteredSubmissions.map(sub => {
                                         const urls = parseMediaUrl(sub.post.mediaUrl);
-                                        const firstMedia = urls[0] || '';
-                                        const isImage = sub.post.mediaType === 'image';
+                                        let firstMedia = urls[0] || '';
+                                        if (sub.post.mediaType === 'pdf' && firstMedia.toLowerCase().endsWith('.pdf')) {
+                                            firstMedia = firstMedia.replace(/\.pdf$/i, '.jpg');
+                                        }
                                         const isVideo = sub.post.mediaType === 'video';
+                                        const isImage = !isVideo && !!firstMedia;
 
                                         let thumbUrl = '';
-                                        if (isImage) {
+                                        if (isImage && firstMedia) {
                                             thumbUrl = getOptimizedUrl(firstMedia, 400, 70, sub.post.category, 'image');
-                                        } else if (isVideo) {
+                                        } else if (isVideo && firstMedia) {
                                             thumbUrl = getYoutubeThumbnail(firstMedia);
                                         }
 
                                         return (
-                                            <a key={sub.post.id} href={`/arquivo/${sub.post.id}`} className="group relative aspect-video bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-2xl cursor-pointer border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all">
+                                            <a key={sub.post.id} href={`/arquivo/${sub.post.id}`} className="group relative aspect-square bg-gray-100 dark:bg-gray-800 overflow-hidden rounded-2xl cursor-pointer border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl transition-all">
                                                 {thumbUrl ? (
                                                     <>
-                                                        <img
+                                                        <Image
                                                             src={thumbUrl}
                                                             alt={sub.post.title}
-                                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                                            fill
+                                                            sizes="(max-width: 768px) 50vw, 33vw"
+                                                            className="object-contain bg-black/5 dark:bg-white/5 group-hover:scale-105 transition-transform duration-500"
                                                             onError={(e) => {
                                                                 e.currentTarget.style.display = 'none';
                                                                 const parent = e.currentTarget.parentElement;
@@ -513,9 +533,8 @@ export function LabClientView({
                                                                 }
                                                             }}
                                                         />
-                                                        <div className="fallback-container hidden w-full h-full flex-col items-center justify-center p-4">
-                                                            <FileText className="w-12 h-12 text-gray-400 dark:text-white/10 mb-2" />
-                                                            <span className="text-[10px] font-black text-gray-500 dark:text-white/40 uppercase tracking-widest leading-tight px-4 line-clamp-3">{sub.post.title || 'MÍDIA INDISPONÍVEL'}</span>
+                                                        <div className="fallback-container hidden w-full h-full flex-col items-center justify-center p-4 bg-gradient-to-br from-gray-200 to-gray-100 dark:from-gray-800 dark:to-gray-900">
+                                                            <FileText className="w-12 h-12 text-gray-400/50 dark:text-white/10" />
                                                         </div>
                                                         {isVideo && (
                                                             <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
@@ -526,18 +545,16 @@ export function LabClientView({
                                                         )}
                                                     </>
                                                 ) : sub.post.mediaType === 'pdf' ? (
-                                                    <div className="w-full h-full bg-brand-yellow/5 dark:bg-brand-yellow/10 flex flex-col items-center justify-center p-4 text-center">
-                                                        <FileText className="w-12 h-12 text-brand-yellow/50 mb-2" />
-                                                        <span className="text-[10px] font-black text-brand-yellow uppercase tracking-widest leading-tight px-4 line-clamp-3">{sub.post.title || 'MÍDIA INDISPONÍVEL'}</span>
+                                                    <div className="w-full h-full bg-gradient-to-br from-brand-yellow/20 to-brand-yellow/5 dark:from-brand-yellow/10 dark:to-brand-yellow/5 flex flex-col items-center justify-center p-4 text-center">
+                                                        <FileText className="w-12 h-12 text-brand-yellow/50" />
                                                     </div>
                                                 ) : (
-                                                    <div className="w-full h-full bg-brand-blue/5 dark:bg-brand-blue/10 flex flex-col items-center justify-center p-4 text-center">
-                                                        <FileText className="w-12 h-12 text-brand-blue/50 mb-2" />
-                                                        <span className="text-[10px] font-black text-brand-blue uppercase tracking-widest leading-tight px-4 line-clamp-3">{sub.post.title || 'MÍDIA INDISPONÍVEL'}</span>
+                                                    <div className="w-full h-full bg-gradient-to-br from-brand-blue/20 to-brand-blue/5 dark:from-brand-blue/10 dark:to-brand-blue/5 flex flex-col items-center justify-center p-4 text-center">
+                                                        <FileText className="w-12 h-12 text-brand-blue/50" />
                                                     </div>
                                                 )}
 
-                                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 text-white">
+                                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 text-white z-10">
                                                     <div className="flex items-center gap-1.5 font-bold">
                                                         <Heart className="w-5 h-5 fill-current" />
                                                         <span>{sub.post.likeCount}</span>
@@ -549,14 +566,14 @@ export function LabClientView({
                                                 </div>
 
                                                 {sub.post.status !== 'aprovado' && (
-                                                    <div className="absolute top-2 right-2 px-2 py-1 bg-black/80 backdrop-blur-md rounded text-[9px] font-bold text-white uppercase tracking-wider">
+                                                    <div className="absolute top-2 right-2 px-2 py-1 bg-black/80 backdrop-blur-md rounded text-[9px] font-bold text-white uppercase tracking-wider z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                                         {sub.post.status === 'pendente' ? 'Análise' : sub.post.status}
                                                     </div>
                                                 )}
 
                                                 {/* Moderation Actions (Owner Only) */}
                                                 {isViewingOwn && (
-                                                    <div className="absolute top-2 left-2 flex gap-2">
+                                                    <div className="absolute top-2 left-2 flex gap-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                                         <button 
                                                             onClick={(e) => {
                                                                 e.preventDefault();

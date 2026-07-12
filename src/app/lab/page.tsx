@@ -35,7 +35,7 @@ export default async function LabPage({ searchParams }: LabPageProps) {
     const params = await searchParams;
     const queryUserId = typeof params.user === 'string' ? params.user : undefined;
     const targetUserId = queryUserId || currentUser.id;
-    const initialTab = typeof params.tab === 'string' ? params.tab : 'publicacoes';
+    const initialTab = typeof params.tab === 'string' ? params.tab : 'fluxo';
 
     // 1. Fetch primary profiles (Wait concurrently)
     const [
