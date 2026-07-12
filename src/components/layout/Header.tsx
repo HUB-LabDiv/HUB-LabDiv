@@ -312,10 +312,10 @@ export function Header() {
             <button
                 onClick={toggleTheme}
                 aria-label="Alternar Tema Claro e Escuro"
-                className="md:hidden fixed left-4 z-[50] size-11 flex items-center justify-center rounded-full bg-white dark:bg-[#282828] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 shadow-md dark:shadow-lg dark:shadow-black/50 transition-colors active:scale-95"
+                className="md:hidden fixed left-2 z-[50] size-9 flex items-center justify-center rounded-full bg-white dark:bg-[#282828] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 shadow-md dark:shadow-lg dark:shadow-black/50 transition-colors active:scale-95"
                 style={{ top: 'calc(76px + env(safe-area-inset-top, 0px))' }}
             >
-                <span className="material-symbols-outlined text-[20px]">
+                <span className="material-symbols-outlined text-[18px]">
                     {theme === 'dark' ? 'light_mode' : 'dark_mode'}
                 </span>
             </button>
@@ -323,11 +323,11 @@ export function Header() {
             <button
                 onClick={() => setReportModalOpen(true)}
                 aria-label="Reportar Erro ou Enviar Feedback"
-                className="md:hidden fixed right-4 z-[50] size-11 flex items-center justify-center rounded-full bg-brand-red text-white shadow-md shadow-brand-red/30 transition-transform active:scale-95"
+                className="md:hidden fixed right-2 z-[50] size-9 flex items-center justify-center rounded-full bg-brand-red text-white shadow-md shadow-brand-red/30 transition-transform active:scale-95"
                 title="Reportar Erro / Feedback"
                 style={{ top: 'calc(76px + env(safe-area-inset-top, 0px))' }}
             >
-                <span className="material-symbols-outlined text-[20px]">report</span>
+                <span className="material-symbols-outlined text-[18px]">report</span>
             </button>
 
             <SearchOverlay

@@ -23,6 +23,7 @@ import { Profile } from '@/types';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { LabDivView } from '@/components/labdiv/LabDivView';
 import { useTelemetry } from '@/hooks/useTelemetry';
+import { useSwipe } from '@/hooks/useSwipe';
 
 interface SobreClientProps {
     initialTestimonials: MediaCardProps[];
@@ -75,29 +76,39 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
 
     const effectivePersona = calculateEffectivePersona();
 
+    const tabs: Array<'labdiv' | 'sobre'> = ['labdiv', 'sobre'];
+    const swipeHandlers = useSwipe({
+        onSwipedLeft: () => {
+            if (activeTab === 'labdiv') handleTabChange('sobre');
+        },
+        onSwipedRight: () => {
+            if (activeTab === 'sobre') handleTabChange('labdiv');
+        }
+    });
+
     return (
         <MainLayoutWrapper
             rightSidebar={<SobreFeedbackCard />}
             fullWidth={true}
         >
-            <div className="max-w-7xl mx-auto px-4 py-8">
+            <div className="max-w-7xl mx-auto px-4 py-8" {...swipeHandlers}>
                 {/* Segmented Control for Institucional Hub */}
                 <div className="flex justify-center mb-12 sticky top-16 z-40 py-2">
                     <div className="bg-white/80 dark:bg-[#1e1e1e]/80 backdrop-blur-xl p-1 rounded-2xl border border-gray-200/50 dark:border-white/5 flex gap-1 shadow-lg">
                         <button
                             onClick={() => handleTabChange('labdiv')}
-                            className={`flex items-center gap-2 px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                            className={`flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-8 sm:py-3 rounded-xl text-[9px] sm:text-xs font-black uppercase tracking-widest transition-all ${
                                 activeTab === 'labdiv'
                                     ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20'
                                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
                             }`}
                         >
-                            <Library className="w-4 h-4" />
+                            <Library className="w-3 h-3 sm:w-4 sm:h-4" />
                             Lab-Div
                         </button>
                         <button
                             onClick={() => handleTabChange('sobre')}
-                            className={`flex items-center gap-2 px-8 py-3 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                            className={`flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-8 sm:py-3 rounded-xl text-[9px] sm:text-xs font-black uppercase tracking-widest transition-all ${
                                 activeTab === 'sobre'
                                     ? 'bg-gray-900 dark:bg-white text-white dark:text-black shadow-lg'
                                     : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'

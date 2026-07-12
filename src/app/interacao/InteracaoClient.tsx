@@ -20,6 +20,7 @@ import { PerguntasTabContent } from './PerguntasTabContent';
 import { EmaranhamentoTabContent } from './EmaranhamentoTabContent';
 import { FluxoFeedbackCard } from '@/components/feedback/FluxoFeedbackCard';
 import { Users } from 'lucide-react';
+import { useSwipe } from '@/hooks/useSwipe';
 
 export default function InteracaoClient() {
     const searchParams = useSearchParams();
@@ -38,10 +39,56 @@ export default function InteracaoClient() {
         window.history.replaceState(null, '', `/interacao?tab=${tab}`);
     };
 
+    const tabs = ['emaranhamento', 'perguntas'];
+    const swipeHandlers = useSwipe({
+        onSwipedLeft: () => {
+            const currentIndex = tabs.indexOf(activeTab);
+            if (currentIndex < tabs.length - 1) {
+                handleTabChange(tabs[currentIndex + 1]);
+            }
+        },
+        onSwipedRight: () => {
+            const currentIndex = tabs.indexOf(activeTab);
+            if (currentIndex > 0) {
+                handleTabChange(tabs[currentIndex - 1]);
+            }
+        }
+    });
+
     return (
         <MainLayoutWrapper fullWidth={true}>
-            <div className="py-8 max-w-7xl mx-auto px-4">
-                <header className="mb-8">
+            <div className="py-8 max-w-7xl mx-auto px-4" {...swipeHandlers}>
+                {/* Custom Premium Tabs */}
+                <div className="sticky top-[76px] -mt-5 z-40 flex justify-center mb-8 w-full pointer-events-none">
+                    <div className="flex gap-0.5 sm:gap-2 p-1 bg-white/90 dark:bg-white/5 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-lg rounded-[20px] w-fit overflow-hidden max-w-[calc(100vw-6rem)] pointer-events-auto">
+                        {[
+                            { id: 'emaranhamento', label: 'Emaranhamento', icon: 'hub' },
+                            { id: 'perguntas', label: 'Pergunte a um Cientista', icon: 'quiz' },
+                        ].map((tab) => (
+                            <button
+                                key={tab.id}
+                                onClick={() => handleTabChange(tab.id)}
+                                className={`flex items-center justify-center gap-1 sm:gap-3 px-1.5 py-1 sm:px-6 sm:py-3 rounded-[16px] text-[7px] sm:text-[10px] font-black tracking-[0.1em] transition-all whitespace-nowrap overflow-hidden text-ellipsis ${activeTab === tab.id
+                                    ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20'
+                                    : 'text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
+                                    }`}
+                            >
+                                <span className="material-symbols-outlined text-[12px] sm:text-[18px] shrink-0">{tab.icon}</span>
+                                <span className="truncate">{tab.label.toUpperCase()}</span>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="max-w-4xl mb-8">
+                    <FluxoFeedbackCard 
+                        title="Aba Interação" 
+                        description="Esta é a central de interações. Um espaço dedicado para você se conectar com outros membros da comunidade e enviar perguntas diretas aos cientistas do IFUSP." 
+                        icon={<Users className="w-5 h-5 text-brand-blue" />}
+                    />
+                </div>
+
+                <header className="mb-12">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 border border-brand-blue/20 text-brand-blue text-[10px] font-black uppercase tracking-widest mb-4">
                         <span className="material-symbols-outlined text-sm">hub</span>
                         Central de Colaboração
@@ -54,38 +101,8 @@ export default function InteracaoClient() {
                     </p>
                 </header>
 
-                <div className="max-w-4xl mb-12">
-                    <FluxoFeedbackCard 
-                        title="Aba Interação" 
-                        description="Esta é a central de interações. Um espaço dedicado para você se conectar com outros membros da comunidade, organizar seu laboratório pessoal e enviar perguntas diretas aos cientistas do IFUSP." 
-                        icon={<Users className="w-5 h-5 text-brand-blue" />}
-                    />
-                </div>
-
-                {/* Custom Premium Tabs */}
-                <div className="flex gap-2 p-1 bg-white dark:bg-white/5 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-sm dark:shadow-none rounded-[20px] mb-12 w-fit overflow-x-auto scrollbar-hide max-w-full">
-                    {[
-                        { id: 'emaranhamento', label: 'Emaranhamento', icon: 'hub' },
-                        { id: 'lab', label: 'Laboratório Pessoal', icon: 'science' },
-                        { id: 'perguntas', label: 'Pergunte a um Cientista', icon: 'quiz' },
-                    ].map((tab) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => handleTabChange(tab.id)}
-                            className={`flex items-center gap-3 px-6 py-3 rounded-[16px] text-[10px] font-black tracking-[0.15em] transition-all whitespace-nowrap ${activeTab === tab.id
-                                ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20'
-                                : 'text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
-                                }`}
-                        >
-                            <span className="material-symbols-outlined text-[18px]">{tab.icon}</span>
-                            {tab.label.toUpperCase()}
-                        </button>
-                    ))}
-                </div>
-
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
                     <Suspense fallback={<div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-brand-blue border-t-transparent rounded-full animate-spin" /></div>}>
-                        {activeTab === 'lab' && <LabTabContent />}
                         {activeTab === 'perguntas' && <PerguntasTabContent />}
                         {activeTab === 'emaranhamento' && <EmaranhamentoTabContent />}
                     </Suspense>

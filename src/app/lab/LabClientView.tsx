@@ -477,7 +477,7 @@ export function LabClientView({
                         <button
                             key={tab.id}
                             onClick={() => handleTabChange(tab.id)}
-                            className={`flex items-center gap-2 px-6 py-4 text-xs font-bold tracking-widest transition-all ${colorClass}`}
+                            className={`flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-4 text-[9px] sm:text-xs font-bold tracking-widest transition-all ${colorClass}`}
                         >
                             {tab.icon}
                             {tab.id === 'radiacao' && isActive ? (

@@ -400,7 +400,7 @@ export const HomeClientView = ({
                 <div className="flex p-1.5 bg-white/50 dark:bg-black/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
                     <button
                         onClick={() => handleTabChange('logs')}
-                        className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all ${
+                        className={`relative flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-black font-bukra uppercase tracking-widest transition-all ${
                             activeTab === 'logs' ? 'text-white' : 'text-gray-500 hover:text-brand-red'
                         }`}
                     >
@@ -419,7 +419,7 @@ export const HomeClientView = ({
 
                     <button
                         onClick={() => handleTabChange('fluxo')}
-                        className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all ${
+                        className={`relative flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-black font-bukra uppercase tracking-widest transition-all ${
                             activeTab === 'fluxo' ? 'text-white' : 'text-gray-500 hover:text-brand-blue'
                         }`}
                     >
@@ -438,7 +438,7 @@ export const HomeClientView = ({
 
                     <button
                         onClick={() => handleTabChange('arte')}
-                        className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all ${
+                        className={`relative flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-black font-bukra uppercase tracking-widest transition-all ${
                             activeTab === 'arte' ? 'text-white' : 'text-gray-500 hover:text-brand-yellow'
                         }`}
                     >

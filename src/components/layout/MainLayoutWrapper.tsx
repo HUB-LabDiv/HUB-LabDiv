@@ -49,7 +49,7 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = false, f
     const { profile } = useAuth();
 
     return (
-        <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col overflow-x-hidden">
+        <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col overflow-x-clip">
             {!hideHeader && <Header />}
 
             {!focusMode ? (

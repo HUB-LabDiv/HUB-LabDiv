@@ -14,6 +14,7 @@ import { redirect } from 'next/navigation';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { FerramentasFeedbackCard } from './FerramentasFeedbackCard';
 import { ToolsSubNav } from '@/components/layout/ToolsSubNav';
+import { SwipeWrapper } from '@/components/layout/SwipeWrapper';
 
 export default async function FerramentasLayout({ children }: { children: React.ReactNode }) {
     const supabase = await createServerSupabase();
@@ -29,8 +30,12 @@ export default async function FerramentasLayout({ children }: { children: React.
             fullWidth={true}
             rightSidebar={<FerramentasFeedbackCard />}
         >
-            <ToolsSubNav />
-            {children}
+            <SwipeWrapper routes={['/ferramentas', '/ferramentas/trilhas', '/ferramentas/match']}>
+                <div className="py-8 max-w-7xl mx-auto px-4 lg:px-8 w-full flex-1">
+                    <ToolsSubNav />
+                    {children}
+                </div>
+            </SwipeWrapper>
         </MainLayoutWrapper>
     );
 }
