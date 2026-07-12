@@ -40,8 +40,8 @@ export function ExplorarClient({ mapItems, oportunidades, glossario }: ExplorarC
                 >
                     <div className="max-w-4xl mx-auto mb-12">
                         <FluxoFeedbackCard 
-                            title="Aba GCIF - Grande Colisor do IF" 
-                            description="Esta é a aba onde ficam reunidas todo tipo de informações sobre o instituto de física da USP." 
+                            title="Aba CGIF - Grande Colisor do IF" 
+                            description="Esta é a aba onde ficam reunidas todo tipo de informações sobre o instituto de física da USP retiradas do portal do IF, editais, jupiterweb... Porem pode e provavelmente há informações erradas nessa pagina, viu alguma?" 
                             icon={<Atom className="w-5 h-5 text-brand-blue" />}
                         />
                     </div>

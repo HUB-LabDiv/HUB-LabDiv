@@ -158,9 +158,9 @@ export function LabClientView({
     return (
         <MainLayoutWrapper 
             userId={currentUser.id}
-            rightSidebar={<PerfilFeedbackCard />}
         >
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                <PerfilFeedbackCard className="w-full max-w-3xl mx-auto mb-8" />
                 <div className="bg-white dark:bg-[#121212] rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-800 mb-8">
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 sm:gap-12 max-w-3xl mx-auto">
                         <div className="relative shrink-0">
@@ -182,8 +182,6 @@ export function LabClientView({
                                 </span>
                                 {viewedProfile && <RadiationBadge xp={viewedProfile.xp || 0} level={viewedProfile.level || 1} size="md" showTierName />}
                             </h1>
-
-                            <PerfilFeedbackCard className="block lg:hidden mb-8" />
 
                             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-6 pt-1">
                                 <div className="text-center sm:text-left">
