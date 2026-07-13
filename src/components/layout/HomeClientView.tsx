@@ -396,7 +396,10 @@ export const HomeClientView = ({
             }}
         >
             <div className="h-16" aria-hidden="true" />
-            <div className="fixed top-20 left-0 right-0 z-40 flex justify-center pointer-events-none">
+            <div 
+                className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none"
+                style={{ top: 'calc(5rem + env(safe-area-inset-top, 0px))' }}
+            >
                 <div className="flex p-1.5 bg-white/50 dark:bg-black/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
                     <button
                         onClick={() => handleTabChange('logs')}

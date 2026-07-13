@@ -31,7 +31,10 @@ export function ToolsSubNav() {
     };
 
     return (
-        <nav className="w-full mb-6 sticky top-16 z-40 py-2">
+        <nav 
+            className="w-full mb-6 sticky z-40 py-2"
+            style={{ top: 'calc(4rem + env(safe-area-inset-top, 0px))' }}
+        >
             <div className="flex items-center justify-center">
                 <div className="flex gap-2 p-1 bg-white/80 dark:bg-[#1e1e1e]/80 backdrop-blur-xl border border-gray-200 dark:border-white/10 rounded-[20px] w-fit overflow-x-auto scrollbar-hide max-w-full shadow-lg">
                     {tools.map((tool) => {

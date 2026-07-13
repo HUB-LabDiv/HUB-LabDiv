@@ -153,8 +153,11 @@ export function ColisorClientView({ oportunidades }: ColisorClientViewProps) {
 
     return (
         <div className="py-8 max-w-7xl mx-auto px-4 space-y-16">
-            {/* NEW: Top Navigation Bar */}
-            <nav id="gcif-top-nav" className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-8 sticky top-20 z-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-2 rounded-2xl border border-gray-100 dark:border-white/5 shadow-xl shadow-black/5">
+            <nav 
+                id="gcif-top-nav" 
+                className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-8 sticky z-40 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md p-2 rounded-2xl border border-gray-100 dark:border-white/5 shadow-xl shadow-black/5"
+                style={{ top: 'calc(5rem + env(safe-area-inset-top, 0px))' }}
+            >
                 {navItems.map((item) => (
                     <button
                         key={item.label}

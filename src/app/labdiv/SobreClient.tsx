@@ -93,7 +93,10 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
         >
             <div className="max-w-7xl mx-auto px-4 py-8" {...swipeHandlers}>
                 {/* Segmented Control for Institucional Hub */}
-                <div className="flex justify-center mb-12 sticky top-16 z-40 py-2">
+                <div 
+                    className="flex justify-center mb-12 sticky z-40 py-2"
+                    style={{ top: 'calc(4rem + env(safe-area-inset-top, 0px))' }}
+                >
                     <div className="bg-white/80 dark:bg-[#1e1e1e]/80 backdrop-blur-xl p-1 rounded-2xl border border-gray-200/50 dark:border-white/5 flex gap-1 shadow-lg">
                         <button
                             onClick={() => handleTabChange('labdiv')}

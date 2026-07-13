@@ -58,8 +58,10 @@ export default function InteracaoClient() {
     return (
         <MainLayoutWrapper fullWidth={true}>
             <div className="py-8 max-w-7xl mx-auto px-4" {...swipeHandlers}>
-                {/* Custom Premium Tabs */}
-                <div className="sticky top-[76px] -mt-5 z-40 flex justify-center mb-8 w-full pointer-events-none">
+                <div 
+                    className="sticky -mt-5 z-40 flex justify-center mb-8 w-full pointer-events-none"
+                    style={{ top: 'calc(76px + env(safe-area-inset-top, 0px))' }}
+                >
                     <div className="flex gap-0.5 sm:gap-2 p-1 bg-white/90 dark:bg-white/5 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-lg rounded-[20px] w-fit overflow-hidden max-w-[calc(100vw-6rem)] pointer-events-auto">
                         {[
                             { id: 'emaranhamento', label: 'Emaranhamento', icon: 'hub' },

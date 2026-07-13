@@ -33,8 +33,10 @@ const YearGroup = ({ year, yearSubmissions }: { year: string, yearSubmissions: S
         <div ref={ref} className="mb-16 min-h-[400px]">
             {inView ? (
                 <>
-                    {/* Year Sticky Header */}
-                    <div className="sticky top-24 z-20 flex justify-center mb-12">
+                    <div 
+                        className="sticky z-20 flex justify-center mb-12"
+                        style={{ top: 'calc(6rem + env(safe-area-inset-top, 0px))' }}
+                    >
                         <m.div
                             initial={{ scale: 0.8, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}

@@ -318,8 +318,10 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                     <p className="text-sm text-gray-400">Aqui você pode diagramar seu post.</p>
                 </div>
 
-                {/* Tabs de Modo: Fluxo, Arte, Preview */}
-                <div className="w-full flex justify-center sticky top-24 z-40 px-4">
+                <div 
+                    className="w-full flex justify-center sticky z-40 px-4"
+                    style={{ top: 'calc(6rem + env(safe-area-inset-top, 0px))' }}
+                >
                     <div className="bg-[#121212]/80 backdrop-blur-md p-2 rounded-2xl border border-white/5 flex items-center justify-center gap-2 shadow-lg w-fit mx-auto">
                         <button
                             onClick={() => setPreviewMode('fluxo')}

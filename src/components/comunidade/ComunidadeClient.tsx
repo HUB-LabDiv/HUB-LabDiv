@@ -124,7 +124,10 @@ export function ComunidadeClient({ initialFluxoData }: ComunidadeClientProps) {
     return (
         <div className="min-h-screen bg-transparent pt-2">
             {/* Tab Navigation */}
-            <div className="sticky top-16 z-50 flex justify-center pb-4 pt-1">
+            <div 
+                className="sticky z-50 flex justify-center pb-4 pt-1"
+                style={{ top: 'calc(4rem + env(safe-area-inset-top, 0px))' }}
+            >
                 <div className="flex p-1.5 bg-white/50 dark:bg-black/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl">
                     <button
                         onClick={() => handleTabChange('mural')}
