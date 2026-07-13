@@ -79,6 +79,33 @@ export default function AdminLayoutClient({
                 </button>
             </div>
 
+            {/* Quick Access Icon Scrollbar (Mobile Only) */}
+            <div 
+                className="md:hidden bg-[#121212]/95 backdrop-blur-md border-b border-white/5 overflow-x-auto no-scrollbar flex gap-2 px-4 py-2 sticky z-40 transition-colors"
+                style={{ top: 'calc(3.75rem + env(safe-area-inset-top, 0px))' }}
+            >
+                {filteredLinks.map((link) => {
+                    const isActive = pathname === link.href;
+                    return (
+                        <Link
+                            key={link.href}
+                            href={link.href}
+                            prefetch={true}
+                            className={`flex-shrink-0 size-9 flex items-center justify-center rounded-xl transition-all border ${
+                                isActive 
+                                    ? 'bg-[#0055ff] border-[#0055ff]/50 text-white shadow-lg shadow-[#0055ff]/20' 
+                                    : 'bg-[#1e1e1e] border-white/5 text-gray-400 hover:text-white'
+                            }`}
+                            title={link.name}
+                        >
+                            <span className="material-symbols-outlined text-[18px]">
+                                {link.icon}
+                            </span>
+                        </Link>
+                    );
+                })}
+            </div>
+
             <aside 
                 className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex w-full md:w-72 bg-[#1e1e1e] md:bg-[#121212] border-r border-white/5 flex-col justify-between shrink-0 fixed md:sticky inset-x-0 bottom-0 z-50 md:z-40 transition-all duration-300 shadow-2xl overflow-hidden`}
                 style={{ top: 'var(--admin-sidebar-top)', height: 'var(--admin-sidebar-height)' }}
