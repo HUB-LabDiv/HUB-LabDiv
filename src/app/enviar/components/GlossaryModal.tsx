@@ -123,7 +123,7 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
     return (
         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={onClose}>
             <div className="w-full max-w-2xl max-h-[90vh] bg-[#121212] border border-brand-yellow/50 shadow-[0_0_30px_rgba(255,204,0,0.15)] rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-                <div className="flex justify-between items-center p-4 border-b border-gray-800 bg-[#1E1E1E]">
+                <div className="flex justify-between items-center p-3 sm:p-4 border-b border-gray-800 bg-[#1E1E1E]">
                     <div className="flex items-center gap-2 text-brand-yellow">
                         <span className="material-symbols-outlined text-2xl">menu_book</span>
                         <span className="font-bold uppercase tracking-wider">Glossário Global</span>
@@ -133,8 +133,8 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
                     </button>
                 </div>
                 
-                <div className="p-4 overflow-y-auto flex-1 custom-scrollbar">
-                    <p className="text-sm text-gray-400 mb-4">
+                <div className="p-3 sm:p-4 overflow-y-auto flex-1 custom-scrollbar">
+                    <p className="text-xs sm:text-sm text-gray-400 mb-4">
                         Qualquer palavra cadastrada no Glossário será automaticamente destacada em amarelo nos seus textos (Auto-Tooltip).
                     </p>
 
@@ -155,13 +155,13 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
                                 return (
                                     <div 
                                         key={w.id} 
-                                        className={`p-4 bg-[#1E1E1E] border ${isExpanded ? 'border-brand-yellow/30' : 'border-gray-800'} rounded-xl cursor-pointer hover:border-gray-700 transition-colors`}
+                                        className={`p-3 sm:p-4 bg-[#1E1E1E] border ${isExpanded ? 'border-brand-yellow/30' : 'border-gray-800'} rounded-xl cursor-pointer hover:border-gray-700 transition-colors`}
                                         onClick={() => setExpandedWordId(isExpanded ? null : w.id)}
                                     >
                                         <div className="flex items-center justify-between">
-                                            <h4 className="text-brand-yellow font-bold text-xl flex items-center gap-2">
+                                            <h4 className="text-brand-yellow font-bold text-sm sm:text-base flex items-center gap-2 break-all">
                                                 {w.termo} 
-                                                {w.is_pending && <span className="text-[10px] bg-brand-red/20 text-brand-red px-2 py-0.5 rounded uppercase">Pendente</span>}
+                                                {w.is_pending && <span className="text-[9px] bg-brand-red/20 text-brand-red px-1.5 py-0.5 rounded uppercase">Pendente</span>}
                                             </h4>
                                             <span className={`material-symbols-outlined text-gray-500 transition-transform ${isExpanded ? 'rotate-180 text-brand-yellow' : ''}`}>expand_more</span>
                                         </div>
