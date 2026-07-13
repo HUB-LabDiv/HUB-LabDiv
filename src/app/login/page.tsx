@@ -180,7 +180,7 @@ function LoginContent() {
                     }
                     
                     const path = data.url.replace('hublabdiv://', '/');
-                    router.push(path);
+                    window.location.href = path;
                 }
             });
             return () => {
