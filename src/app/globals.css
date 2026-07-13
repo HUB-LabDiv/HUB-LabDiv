@@ -612,3 +612,17 @@ body::before {
     height: calc(4rem + env(safe-area-inset-top, 0px)) !important;
   }
 }
+
+/* ========================================
+   Module 5: Admin Page Layout Customization
+   ======================================== */
+:root {
+  --admin-sidebar-top: calc(3.75rem + env(safe-area-inset-top, 0px));
+  --admin-sidebar-height: calc(100vh - (3.75rem + env(safe-area-inset-top, 0px)));
+}
+@media (min-width: 768px) {
+  :root {
+    --admin-sidebar-top: 0px;
+    --admin-sidebar-height: 100vh;
+  }
+}

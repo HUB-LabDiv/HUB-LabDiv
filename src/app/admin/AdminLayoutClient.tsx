@@ -53,35 +53,41 @@ export default function AdminLayoutClient({
     return (
         <div className="bg-transparent text-gray-900 dark:text-gray-100 font-sans antialiased min-h-screen flex flex-col md:flex-row overflow-hidden">
             {/* Mobile Header */}
-            <div className="md:hidden bg-neutral-900 text-white p-4 flex items-center justify-between border-b border-gray-800 z-[60]">
+            <div 
+                className="md:hidden bg-[#121212]/95 backdrop-blur-md text-white px-4 py-3 flex items-center justify-between border-b border-white/5 sticky top-0 z-[60] transition-colors"
+                style={{ paddingTop: 'calc(0.75rem + env(safe-area-inset-top, 0px))' }}
+            >
                 <div className="flex items-center gap-2">
                     <Link 
                         href="/"
-                        className="p-2 bg-gray-800 rounded-lg flex items-center justify-center hover:bg-gray-700 transition-colors"
+                        className="size-9 bg-gray-800/80 hover:bg-gray-700/80 rounded-xl flex items-center justify-center border border-white/5 transition-all active:scale-95"
                         aria-label="Sair do Admin"
                     >
-                        <span className="material-symbols-outlined text-sm">logout</span>
+                        <span className="material-symbols-outlined text-[18px]">logout</span>
                     </Link>
-                    <div className="font-bold text-lg flex items-center gap-2">
-                        <span className="material-symbols-outlined text-[#0055ff]">security</span>
+                    <div className="font-bold text-base flex items-center gap-2">
+                        <span className="material-symbols-outlined text-[#0055ff] text-[18px]">security</span>
                         Admin<span className="text-brand-yellow">Panel</span>
                     </div>
                 </div>
                 <button
                     onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                    className="p-2 bg-gray-800 rounded-lg focus:outline-none"
+                    className="size-9 bg-gray-800/80 hover:bg-gray-700/80 rounded-xl flex items-center justify-center border border-white/5 transition-all active:scale-95 focus:outline-none"
                     aria-label="Toggle Menu"
                 >
-                    <span className="material-symbols-outlined">{isMobileMenuOpen ? 'close' : 'menu'}</span>
+                    <span className="material-symbols-outlined text-[20px]">{isMobileMenuOpen ? 'close' : 'menu'}</span>
                 </button>
             </div>
 
-            <aside className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex w-full md:w-72 bg-neutral-900 border-r border-gray-800 flex-col justify-between shrink-0 h-[calc(100vh-73px)] md:h-screen overflow-hidden md:sticky top-0 absolute inset-x-0 bottom-0 z-50 md:z-40 transition-colors shadow-2xl`}>
+            <aside 
+                className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex w-full md:w-72 bg-[#1e1e1e] md:bg-[#121212] border-r border-white/5 flex-col justify-between shrink-0 fixed md:sticky inset-x-0 bottom-0 z-50 md:z-40 transition-all duration-300 shadow-2xl overflow-hidden`}
+                style={{ top: 'var(--admin-sidebar-top)', height: 'var(--admin-sidebar-height)' }}
+            >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#0055ff]/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-brand-red/10 rounded-full blur-2xl translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
 
-                <div className="flex flex-col gap-4 p-6 relative z-10">
-                    <div className="flex items-center gap-3 pb-6 border-b border-gray-800 transition-colors">
+                <div className="flex flex-col gap-4 p-6 relative z-10 flex-1 overflow-hidden">
+                    <div className="hidden md:flex items-center gap-3 pb-6 border-b border-gray-800 dark:border-white/10 transition-colors">
                         <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                             <div className="relative w-10 h-10 flex-shrink-0">
                                 <div className="absolute w-6 h-7 bg-[#0055ff] rounded-[1px] top-0 left-0 z-0"></div>
@@ -95,7 +101,7 @@ export default function AdminLayoutClient({
                         </Link>
                     </div>
 
-                    <nav className="flex flex-col gap-1.5 overflow-y-auto max-h-[calc(100vh-200px)] no-scrollbar">
+                    <nav className="flex flex-col gap-1.5 overflow-y-auto flex-1 no-scrollbar py-2">
                         {filteredLinks.map((link) => {
                             const isActive = pathname === link.href;
                             return (
@@ -119,7 +125,7 @@ export default function AdminLayoutClient({
                     </nav>
                 </div>
 
-                <div className="p-6 pb-24 border-t border-gray-800 transition-colors relative z-10 bg-neutral-900">
+                <div className="p-6 border-t border-gray-800 dark:border-white/5 transition-colors relative z-10 bg-[#1e1e1e] md:bg-[#121212]">
                     <button
                         onClick={async () => {
                             await signOut('/login');
@@ -133,7 +139,10 @@ export default function AdminLayoutClient({
                 </div>
             </aside>
 
-            <main className="flex-1 overflow-y-auto h-screen relative bg-transparent">
+            <main 
+                className="flex-1 overflow-y-auto relative bg-transparent"
+                style={{ height: 'var(--admin-sidebar-height)' }}
+            >
                 {children}
             </main>
         </div>
