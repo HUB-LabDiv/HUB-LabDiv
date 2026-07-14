@@ -10,20 +10,22 @@
  */
 
 import React, { useState } from 'react';
-import { generateCloudinarySignature } from '@/app/actions/media';
+import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
 
 interface CloudinaryUploaderProps {
     onUploadSuccess: (url: string) => void;
     accept: string;
     label: string;
     icon: string;
+    /** Cloudinary resource type: 'auto' (padrão), 'raw' (para PDFs/docs), 'image', 'video' */
+    resourceType?: 'auto' | 'raw' | 'image' | 'video';
 }
 
-export function CloudinaryUploader({ onUploadSuccess, accept, label, icon }: CloudinaryUploaderProps) {
-    const [isUploading, setIsUploading] = useState(false);
+export function CloudinaryUploader({ onUploadSuccess, accept, label, icon, resourceType = 'auto' }: CloudinaryUploaderProps) {
     const [error, setError] = useState('');
+    const setPendingFile = usePendingUploadsStore((state) => state.setPendingFile);
 
-    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
 
@@ -32,67 +34,37 @@ export function CloudinaryUploader({ onUploadSuccess, accept, label, icon }: Clo
             return;
         }
 
-        setIsUploading(true);
         setError('');
 
         try {
-            const signatureData = await generateCloudinarySignature();
-            if (!signatureData) {
-                throw new Error("Server action falhou em retornar dados.");
-            }
-            if ('error' in signatureData) {
-                throw new Error("Erro do Servidor: " + signatureData.error);
-            }
-
-            const { signature, timestamp, cloudName, apiKey, folder } = signatureData;
+            // Generate local preview URL
+            const localUrl = URL.createObjectURL(file);
             
-            if (!cloudName) {
-                throw new Error("Cloud Name não está configurado no servidor.");
-            }
-
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('api_key', apiKey!);
-            formData.append('timestamp', String(timestamp));
-            formData.append('signature', signature);
-            formData.append('folder', folder);
-
-            try {
-                const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`, {
-                    method: 'POST',
-                    body: formData,
-                });
-                const data = await res.json();
-                if (!res.ok) throw new Error(data.error?.message || 'Erro no upload do Cloudinary');
-                
-                onUploadSuccess(data.secure_url);
-            } catch (fetchErr: any) {
-                console.error("Cloudinary fetch error:", fetchErr);
-                throw new Error("Erro de rede com Cloudinary: " + fetchErr.message + " (Pode ser seu AdBlocker)");
-            }
+            // Register file in the pending uploads store
+            setPendingFile(localUrl, file, resourceType);
+            
+            // Trigger success callback with local URL instantly
+            onUploadSuccess(localUrl);
         } catch (err: any) {
-            console.error('Upload failed:', err);
-            setError(err.message || 'Falha no upload do arquivo.');
-        } finally {
-            setIsUploading(false);
+            console.error('Local file load failed:', err);
+            setError(err.message || 'Falha ao carregar arquivo local.');
         }
     };
 
     return (
         <div className="flex flex-col items-center gap-1 mt-2 w-full">
             <label className="flex items-center gap-2 px-4 py-2 bg-brand-blue hover:bg-brand-blue/80 text-white text-sm font-bold rounded-lg cursor-pointer transition-colors shadow-lg shadow-brand-blue/20">
-                <span className="material-symbols-outlined">{isUploading ? 'hourglass_empty' : (icon || 'upload')}</span>
-                {isUploading ? 'Enviando...' : (label || 'Enviar Arquivo do Computador')}
+                <span className="material-symbols-outlined">{icon || 'upload'}</span>
+                {label || 'Selecionar Arquivo'}
                 <input 
                     type="file" 
                     accept={accept}
                     className="hidden" 
                     onChange={handleUpload}
-                    disabled={isUploading}
                 />
             </label>
             <span className="text-[10px] text-gray-500 font-medium uppercase tracking-widest text-center mt-1">
-                Anexar arquivos de até 10MB
+                Visualização instantânea (até 10MB)
             </span>
             {error && <span className="text-gray-200 text-xs font-bold text-center mt-1">{error}</span>}
         </div>

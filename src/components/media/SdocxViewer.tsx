@@ -16,10 +16,11 @@ import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import rehypeSanitize from 'rehype-sanitize';
+import { processAlignedText, stripAllAlignmentMarkers } from '@/lib/textAlignment';
 import { MarkdownImage } from '@/components/reading/MarkdownImageLightbox';
 import { BalloonReflexao } from '@/components/reading/BalloonReflexao';
 import { TranslationalTooltip } from '@/components/reading/TranslationalTooltip';
-import { formatYoutubeUrl, getPdfViewerUrl } from '@/lib/media-utils';
+import { formatYoutubeUrl, getPdfViewerUrl, getPdfEmbedUrl } from '@/lib/media-utils';
 
 interface SdocxViewerProps {
     blocks: any[];
@@ -87,7 +88,7 @@ export function SdocxViewer({ blocks, reflections, palavrasGeradoras }: SdocxVie
                                     img: (props) => <MarkdownImage {...props} />,
                                 }}
                             >
-                                {block.content.text}
+                                {stripAllAlignmentMarkers(block.content.text)}
                             </ReactMarkdown>
                         </div>
                     );
@@ -115,7 +116,7 @@ export function SdocxViewer({ blocks, reflections, palavrasGeradoras }: SdocxVie
                 } else if (block.type === 'pdf') {
                     return (
                         <div key={block.id} className="w-full h-[700px] my-8 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-xl bg-gray-50 dark:bg-gray-900">
-                            <iframe src={getPdfViewerUrl(block.content.url)} className="w-full h-full border-none" />
+                            <iframe src={getPdfEmbedUrl(block.content.url)} className="w-full h-full border-none" />
                         </div>
                     );
                 } else if (block.type === 'reflection') {
@@ -134,7 +135,11 @@ export function SdocxViewer({ blocks, reflections, palavrasGeradoras }: SdocxVie
                                 {titles[block.type]}
                             </h3>
                             <div className="prose prose-sm dark:prose-invert text-gray-700 dark:text-gray-300 max-w-none">
-                                <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{block.content.text}</ReactMarkdown>
+                                {processAlignedText(block.content.text).map((seg: any, i: number) => (
+                                    <div key={i} style={{ textAlign: seg.align }}>
+                                        <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{seg.text}</ReactMarkdown>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     );

@@ -85,6 +85,7 @@ export const getPdfViewerUrl = (url: string) => {
     if (!url || typeof url !== 'string') return '';
     let viewerUrl = url;
 
+    // Remover transformações Cloudinary (ex: /upload/w_800,q_70/v123/...)
     if (viewerUrl.includes('/upload/')) {
         viewerUrl = viewerUrl.replace(/\/upload\/.*?(\/v\d+\/)/, '/upload$1');
     }
@@ -93,6 +94,12 @@ export const getPdfViewerUrl = (url: string) => {
         viewerUrl = viewerUrl.replace(/\.jpg$/i, '.pdf');
     }
     return viewerUrl;
+};
+
+export const getPdfEmbedUrl = (url: string) => {
+    const rawPdfUrl = getPdfViewerUrl(url);
+    if (!rawPdfUrl) return '';
+    return `${rawPdfUrl}#toolbar=0`;
 };
 export const getOptimizedUrl = (url: string, width = 800, quality = 70, category?: string, type?: string) => {
     if (!url || typeof url !== 'string') return '';

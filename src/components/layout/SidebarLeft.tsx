@@ -23,7 +23,6 @@ import {
     Route,
     HelpCircle,
     UserSearch,
-    Map,
     ShieldAlert,
     MessageSquare,
     MessageCircle,
@@ -47,7 +46,6 @@ const mainLinks = [
     { name: 'Comunidade', href: '/', icon: <span className="material-symbols-outlined text-2xl">groups</span>, color: 'brand-red' },
     { name: 'GCIF', href: '/gcif', icon: <ColisorIcon className="w-6 h-6" />, color: 'brand-blue' },
     { name: 'LabDiv', href: '/labdiv', icon: <span className="material-symbols-outlined text-2xl">info</span>, color: 'brand-yellow' },
-    { name: 'Mapa do IFUSP', href: '/gcif#mapa', icon: <Map className="w-6 h-6" />, color: 'brand-blue' },
 ];
 
 const categoryLinks = [

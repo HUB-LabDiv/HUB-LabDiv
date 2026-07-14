@@ -9,14 +9,19 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
 import { CloudinaryUploader } from './CloudinaryUploader';
+import { getPdfViewerUrl, getPdfEmbedUrl } from '@/lib/media-utils';
 
 export default function PdfBlock({ block, isActive }: { block: Block; isActive: boolean }) {
     const { updateBlock } = useSubmissionStore();
     const pdfUrl = block.content.url || '';
+
+    /** URL processada (corrige transformações Cloudinary, extensão, etc.) */
+    const viewerUrl = getPdfViewerUrl(pdfUrl);
+    const embedUrl = getPdfEmbedUrl(pdfUrl);
 
     return (
         <div className="flex flex-col gap-4">
@@ -29,6 +34,7 @@ export default function PdfBlock({ block, isActive }: { block: Block; isActive: 
                         accept=".pdf,application/pdf"
                         label="Upload de PDF"
                         icon="upload_file"
+                        resourceType="image"
                         onUploadSuccess={(url) => updateBlock(block.id, { url })}
                     />
                     
@@ -57,22 +63,33 @@ export default function PdfBlock({ block, isActive }: { block: Block; isActive: 
                         </div>
                     ) : (
                         <iframe 
-                            src={`${pdfUrl}#toolbar=0`} 
+                            src={embedUrl} 
                             className="w-full h-full"
                             title="PDF Viewer"
                         />
                     )}
-                    
-                    {isActive && (
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+
+                    {/* Barra inferior com ações */}
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                        <a
+                            href={viewerUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800/80 hover:bg-gray-700 text-gray-300 hover:text-white text-xs font-bold rounded-lg transition-colors uppercase tracking-wider"
+                            onClick={(e) => e.stopPropagation()}
+                        >
+                            <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                            Abrir PDF
+                        </a>
+                        {isActive && (
                             <button 
                                 onClick={() => updateBlock(block.id, { url: '' })}
-                                className="px-4 py-2 bg-brand-red text-white rounded-lg font-medium shadow-lg hover:bg-brand-red transition-colors"
+                                className="px-3 py-1.5 bg-brand-red/80 hover:bg-brand-red text-white text-xs font-bold rounded-lg transition-colors uppercase tracking-wider"
                             >
-                                Remover PDF
+                                Remover
                             </button>
-                        </div>
-                    )}
+                        )}
+                    </div>
                 </div>
             )}
         </div>

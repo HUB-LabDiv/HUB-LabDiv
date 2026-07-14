@@ -26,6 +26,8 @@ import { TargetProfileModal } from './TargetProfileModal';
 import { updateSubmission } from '@/app/actions/submissions';
 import { DraftsMenu } from './DraftsMenu';
 import { useDraftsStore } from '@/store/useDraftsStore';
+import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
+import { uploadFileToCloudinary } from '@/lib/cloudinary-upload';
 
 interface DiagrammerLayoutProps {
     editId?: string | null;
@@ -141,25 +143,61 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         }
 
         setIsSubmitting(true);
-        const toastId = toast.loading('Enviando para moderação...');
+        const toastId = toast.loading('Processando arquivos...');
 
         try {
-            const reflexoesBlocks = blocks.filter(b => b.type === 'reflection');
+            const pendingFiles = usePendingUploadsStore.getState().pendingFiles;
+            const localToPublicUrls: Record<string, string> = {};
+
+            // Se houver uploads pendentes, faz primeiro
+            if (Object.keys(pendingFiles).length > 0) {
+                toast.loading('Fazendo upload dos arquivos para a nuvem...', { id: toastId });
+                try {
+                    for (const [localUrl, pending] of Object.entries(pendingFiles)) {
+                        const publicUrl = await uploadFileToCloudinary(pending.file, pending.resourceType);
+                        localToPublicUrls[localUrl] = publicUrl;
+                    }
+                } catch (uploadErr: any) {
+                    console.error('Failed to upload pending files:', uploadErr);
+                    toast.error(`Falha no upload dos arquivos: ${uploadErr.message}`, { id: toastId });
+                    setIsSubmitting(false);
+                    return;
+                }
+            }
+
+            // Substitui todos os URLs locais blob: pelos URLs públicos correspondentes
+            const updatedBlocks = blocks.map(block => {
+                const blockContentStr = JSON.stringify(block.content);
+                let updatedContentStr = blockContentStr;
+                
+                for (const [localUrl, publicUrl] of Object.entries(localToPublicUrls)) {
+                    updatedContentStr = updatedContentStr.replaceAll(localUrl, publicUrl);
+                }
+                
+                return {
+                    ...block,
+                    content: JSON.parse(updatedContentStr)
+                };
+            });
+
+            toast.loading('Enviando para moderação...', { id: toastId });
+
+            const reflexoesBlocks = updatedBlocks.filter(b => b.type === 'reflection');
             const reflexoes = reflexoesBlocks.map(b => ({
                 ancora_paragrafo: b.id,
                 pergunta_provocadora: b.content.question || 'Reflexão',
                 tipo_reflexao: 'aberta'
             }));
 
-            const quizBlock = blocks.find(b => b.type === 'quiz');
+            const quizBlock = updatedBlocks.find(b => b.type === 'quiz');
 
             const payload = {
                 title,
                 authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
                 category: previewMode === 'arte' ? 'Arte' : (category || 'Outros'),
-                description: description || blocks.find(b => b.type === 'text')?.content?.text || 'Contribuição construída no Diagramador.',
+                description: description || updatedBlocks.find(b => b.type === 'text')?.content?.text || 'Contribuição construída no Diagramador.',
                 media_type: 'sdocx',
-                media_url: JSON.stringify(blocks),
+                media_url: JSON.stringify(updatedBlocks),
                 event_year: previewMode === 'arte' ? new Date().getFullYear() : (year ? parseInt(year) : new Date().getFullYear()),
                 is_historical: isHistorical,
                 is_golden_standard: isGoldenStandard,
@@ -177,6 +215,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 toast.error('Erro ao lançar conteúdo: Verifique os campos.', { id: toastId });
             } else {
                 toast.success('Conteúdo enviado com sucesso! Está no painel para análise.', { id: toastId });
+                usePendingUploadsStore.getState().clearPendingFiles();
                 useSubmissionStore.getState().reset();
                 router.push('/');
             }
@@ -200,25 +239,61 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         }
 
         setIsSubmitting(true);
-        const toastId = toast.loading('Atualizando postagem...');
+        const toastId = toast.loading('Processando arquivos...');
 
         try {
-            const reflexoesBlocks = blocks.filter(b => b.type === 'reflection');
+            const pendingFiles = usePendingUploadsStore.getState().pendingFiles;
+            const localToPublicUrls: Record<string, string> = {};
+
+            // Se houver uploads pendentes, faz primeiro
+            if (Object.keys(pendingFiles).length > 0) {
+                toast.loading('Fazendo upload dos arquivos para a nuvem...', { id: toastId });
+                try {
+                    for (const [localUrl, pending] of Object.entries(pendingFiles)) {
+                        const publicUrl = await uploadFileToCloudinary(pending.file, pending.resourceType);
+                        localToPublicUrls[localUrl] = publicUrl;
+                    }
+                } catch (uploadErr: any) {
+                    console.error('Failed to upload pending files:', uploadErr);
+                    toast.error(`Falha no upload dos arquivos: ${uploadErr.message}`, { id: toastId });
+                    setIsSubmitting(false);
+                    return;
+                }
+            }
+
+            // Substitui todos os URLs locais blob: pelos URLs públicos correspondentes
+            const updatedBlocks = blocks.map(block => {
+                const blockContentStr = JSON.stringify(block.content);
+                let updatedContentStr = blockContentStr;
+                
+                for (const [localUrl, publicUrl] of Object.entries(localToPublicUrls)) {
+                    updatedContentStr = updatedContentStr.replaceAll(localUrl, publicUrl);
+                }
+                
+                return {
+                    ...block,
+                    content: JSON.parse(updatedContentStr)
+                };
+            });
+
+            toast.loading('Atualizando postagem...', { id: toastId });
+
+            const reflexoesBlocks = updatedBlocks.filter(b => b.type === 'reflection');
             const reflexoes = reflexoesBlocks.map(b => ({
                 ancora_paragrafo: b.id,
                 pergunta_provocadora: b.content.question || 'Reflexão',
                 tipo_reflexao: 'aberta'
             }));
 
-            const quizBlock = blocks.find(b => b.type === 'quiz');
+            const quizBlock = updatedBlocks.find(b => b.type === 'quiz');
 
             const payload = {
                 title,
                 authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
                 category: previewData.category || 'Outros',
-                description: blocks.find(b => b.type === 'text')?.content?.text || 'Contribuição construída no Diagramador.',
+                description: updatedBlocks.find(b => b.type === 'text')?.content?.text || 'Contribuição construída no Diagramador.',
                 media_type: 'sdocx',
-                media_url: JSON.stringify(blocks),
+                media_url: JSON.stringify(updatedBlocks),
                 event_year: year ? parseInt(year) : new Date().getFullYear(),
                 is_historical: isHistorical,
                 is_golden_standard: isGoldenStandard,
@@ -236,6 +311,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 toast.error('Erro ao atualizar conteúdo.', { id: toastId });
             } else {
                 toast.success('Conteúdo atualizado com sucesso!', { id: toastId });
+                usePendingUploadsStore.getState().clearPendingFiles();
                 useSubmissionStore.getState().reset();
                 router.push(`/arquivo/${editId}`);
             }

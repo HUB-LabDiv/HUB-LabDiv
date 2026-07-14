@@ -9,7 +9,13 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import React, { useRef, useCallback, useEffect } from 'react';
+import React, { useRef, useCallback, useEffect, useState } from 'react';
+import {
+    type TextAlign,
+    getLineAlignmentAtCursor,
+    setLineAlignmentAtCursor,
+    processAlignedText,
+} from '@/lib/textAlignment';
 import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
 import { GlossaryParser } from '@/components/GlossaryParser';
@@ -78,6 +84,13 @@ const LATEX_EXAMPLES: LatexExample[] = [
     { label: 'Bloco Display', formula: '$$\nE = mc^2\n$$', display: '$$…$$' },
 ];
 
+const ALIGN_OPTIONS: { value: TextAlign; icon: string; label: string }[] = [
+    { value: 'left', icon: 'format_align_left', label: 'Esquerda' },
+    { value: 'center', icon: 'format_align_center', label: 'Centro' },
+    { value: 'right', icon: 'format_align_right', label: 'Direita' },
+    { value: 'justify', icon: 'format_align_justify', label: 'Justificado' },
+];
+
 export default function TextBlock({ block, isActive }: TextBlockProps) {
     const { updateBlock } = useSubmissionStore();
     const textContent = block.content.text || '';
@@ -85,6 +98,16 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
     const [showGlossaryModal, setShowGlossaryModal] = React.useState(false);
     const [glossarySearchTerm, setGlossarySearchTerm] = React.useState('');
     const [localPreview, setLocalPreview] = React.useState(false);
+
+    /* ── Alinhamento per-line ── */
+    const [currentLineAlign, setCurrentLineAlign] = useState<TextAlign>('left');
+
+    /** Atualiza o indicador de alinhamento com base na posição do cursor */
+    const syncLineAlignment = useCallback(() => {
+        const textarea = textareaRef.current;
+        if (!textarea) return;
+        setCurrentLineAlign(getLineAlignmentAtCursor(textContent, textarea.selectionStart));
+    }, [textContent]);
 
     /* ── Dropdown states ── */
     const [showMarkdownMenu, setShowMarkdownMenu] = React.useState(false);
@@ -273,6 +296,49 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
                             Código
                         </button>
 
+                        <div className="w-px h-4 bg-gray-700/50 mx-0.5 shrink-0"></div>
+
+                        {/* ── Alinhamento de Texto (per-line) ── */}
+                        <div className="flex items-center bg-gray-800/60 rounded-lg p-0.5 gap-0.5">
+                            {ALIGN_OPTIONS.map((opt) => (
+                                <button
+                                    key={opt.value}
+                                    onClick={() => {
+                                        const textarea = textareaRef.current;
+                                        if (!textarea) return;
+                                        const { text: newText, newCursorPosition } = setLineAlignmentAtCursor(
+                                            textContent,
+                                            textarea.selectionStart,
+                                            opt.value,
+                                        );
+                                        updateBlock(block.id, { text: newText });
+                                        setCurrentLineAlign(opt.value);
+                                        // Reposicionar cursor após a atualização
+                                        setTimeout(() => {
+                                            textarea.focus();
+                                            textarea.setSelectionRange(newCursorPosition, newCursorPosition);
+                                        }, 0);
+                                    }}
+                                    className={`p-1.5 rounded-md transition-all duration-150 ${
+                                        currentLineAlign === opt.value
+                                            ? 'bg-brand-yellow/15 text-brand-yellow shadow-sm'
+                                            : 'text-gray-500 hover:text-gray-300 hover:bg-gray-700/50'
+                                    }`}
+                                    title={opt.label}
+                                >
+                                    <span className="material-symbols-outlined text-[14px]">{opt.icon}</span>
+                                </button>
+                            ))}
+                        </div>
+
+                        <div className="w-px h-4 bg-gray-700/50 mx-0.5 shrink-0"></div>
+
+                        {/* ── Quebra de Linha forçada ── */}
+                        <button onClick={() => insertRawText('  \n')} className={btnClass} title="Quebra de Linha (forçada)">
+                            <span className="material-symbols-outlined text-[14px]">keyboard_return</span>
+                            Quebra
+                        </button>
+
                     </div>
                 </div>
             )}
@@ -282,7 +348,14 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
                     ref={textareaRef}
                     autoFocus
                     value={textContent}
-                    onChange={(e) => updateBlock(block.id, { text: e.target.value })}
+                    onChange={(e) => {
+                        updateBlock(block.id, { text: e.target.value });
+                        // Agenda sync de alinhamento após o state atualizar
+                        setTimeout(() => syncLineAlignment(), 0);
+                    }}
+                    onSelect={syncLineAlignment}
+                    onClick={syncLineAlignment}
+                    onKeyUp={syncLineAlignment}
                     placeholder="Escreva seu texto (Markdown e LaTeX $...$ são suportados)..."
                     className="w-full min-h-[150px] bg-transparent text-gray-200 outline-none resize-y placeholder-gray-600 font-sans leading-relaxed"
                 />
@@ -290,7 +363,13 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
                 <div className={`w-full min-h-[50px] font-sans leading-relaxed ${textContent ? 'text-gray-200' : 'text-gray-600'}`}>
                     {textContent ? (
                         <div className="prose prose-sm dark:prose-invert max-w-none prose-headings:text-white prose-p:text-gray-300 prose-strong:text-white prose-code:text-brand-yellow prose-code:bg-gray-800 prose-code:px-1 prose-code:rounded prose-blockquote:border-brand-blue prose-blockquote:text-gray-400 prose-hr:border-gray-700">
-                            <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{textContent}</ReactMarkdown>
+                            {processAlignedText(textContent).map((segment, idx) => (
+                                <div key={idx} style={{ textAlign: segment.align }}>
+                                    <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>
+                                        {segment.text}
+                                    </ReactMarkdown>
+                                </div>
+                            ))}
                         </div>
                     ) : 'Bloco de texto vazio. Clique em Editar.'}
                 </div>

@@ -31,10 +31,11 @@ import { ShareButtons } from './ShareButtons';
 import { ExportPDFButton } from './ExportPDFButton';
 import { CommentsSection, Comment } from './CommentsSection';
 import { ImageCarouselClient } from './ImageCarouselClient';
-import { getDownloadUrl, parseMediaUrl, formatYoutubeUrl, getPdfViewerUrl } from '@/lib/media-utils';
+import { getDownloadUrl, parseMediaUrl, formatYoutubeUrl, getPdfViewerUrl, getPdfEmbedUrl } from '@/lib/media-utils';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
+import { stripAllAlignmentMarkers, processAlignedText } from '@/lib/textAlignment';
 import rehypeSanitize from 'rehype-sanitize';
 import { MarkdownImage } from '@/components/reading/MarkdownImageLightbox';
 import { ViewTracker } from "@/components/telemetry/ViewTracker";
@@ -393,9 +394,9 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                         return (
                                                             <div key={block.id}>
                                                                 <StyledArticleView
-                                                                    content={block.content.text}
+                                                                    content={stripAllAlignmentMarkers(block.content.text)}
                                                                     palavrasGeradoras={palavrasGeradoras || undefined}
-                                                                    fullTextForToc={showToc ? allTextContent : undefined}
+                                                                    fullTextForToc={showToc ? stripAllAlignmentMarkers(allTextContent) : undefined}
                                                                 />
                                                             </div>
                                                         );
@@ -423,7 +424,7 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                     } else if (block.type === 'pdf') {
                                                         return (
                                                             <div key={block.id} className="w-full h-[700px] my-8 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-xl bg-gray-50 dark:bg-gray-900">
-                                                                <iframe src={getPdfViewerUrl(block.content.url)} className="w-full h-full border-none" />
+                                                                <iframe src={getPdfEmbedUrl(block.content.url)} className="w-full h-full border-none" />
                                                             </div>
                                                         );
                                                     } else if (block.type === 'reflection') {
@@ -442,7 +443,11 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                                     {titles[block.type]}
                                                                 </h3>
                                                                 <div className="prose prose-sm dark:prose-invert text-gray-700 dark:text-gray-300 max-w-none">
-                                                                    <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{block.content.text}</ReactMarkdown>
+                                                                    {processAlignedText(block.content.text).map((seg: any, i: number) => (
+                                                                        <div key={i} style={{ textAlign: seg.align }}>
+                                                                            <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{seg.text}</ReactMarkdown>
+                                                                        </div>
+                                                                    ))}
                                                                 </div>
                                                             </div>
                                                         );
