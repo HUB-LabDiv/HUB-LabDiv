@@ -15,21 +15,23 @@ export function DraftsMenu() {
         }
     };
 
-    const handleNew = () => {
-        if (window.confirm('Tem certeza que deseja iniciar um novo post? O rascunho atual, se não foi salvo, será perdido.')) {
-            reset();
-            toast.success('Nova prancheta iniciada!');
-        }
-    };
+
 
     const handleExport = (draft: Draft) => {
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(draft));
+        const jsonString = JSON.stringify(draft, null, 2);
+        const blob = new Blob([jsonString], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+
         const downloadAnchorNode = document.createElement('a');
-        downloadAnchorNode.setAttribute("href", dataStr);
-        downloadAnchorNode.setAttribute("download", `rascunho_${draft.title.replace(/\s+/g, '_')}.labdiv`);
+        downloadAnchorNode.setAttribute("href", url);
+        downloadAnchorNode.setAttribute("download", `rascunho_${draft.title.replace(/\s+/g, '_') || 'sem_titulo'}.labdiv`);
         document.body.appendChild(downloadAnchorNode);
         downloadAnchorNode.click();
         downloadAnchorNode.remove();
+        
+        // Libera URL da memória
+        URL.revokeObjectURL(url);
+        
         toast.success('Rascunho exportado!');
     };
 
@@ -69,7 +71,6 @@ export function DraftsMenu() {
                 type="file" 
                 ref={fileInputRef} 
                 onChange={handleImport} 
-                accept=".labdiv,.json" 
                 className="hidden" 
             />
 
@@ -85,12 +86,6 @@ export function DraftsMenu() {
                     >
                         <span className="material-symbols-outlined text-[14px]">upload</span>
                         Importar Rascunho
-                    </button>
-                    <button 
-                        onClick={handleNew}
-                        className="text-[10px] font-black uppercase px-4 py-2 rounded-xl bg-brand-blue/10 text-brand-blue hover:bg-brand-blue/20 transition-colors border border-brand-blue/30"
-                    >
-                        + Novo Post
                     </button>
                 </div>
             </div>

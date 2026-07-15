@@ -13,22 +13,32 @@ import React from 'react';
 import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
 import { CloudinaryUploader } from './CloudinaryUploader';
+import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
 
 export default function VideoBlock({ block, isActive }: { block: Block; isActive: boolean }) {
     const { updateBlock } = useSubmissionStore();
     const videoUrl = block.content.url || '';
 
+    // Verifica se é GIF ou YouTube
+    const pendingFile = usePendingUploadsStore((state) => state.pendingFiles[videoUrl]);
+    const isGif = videoUrl.toLowerCase().endsWith('.gif') || 
+                  (pendingFile && pendingFile.file.type === 'image/gif') || 
+                  videoUrl.startsWith('data:image/gif');
+
+    const isYouTube = videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be');
+
     return (
         <div className="flex flex-col gap-4">
             {!videoUrl ? (
-                <div className="w-full min-h-[12rem] border-2 border-dashed border-brand-red/30 rounded-xl flex flex-col items-center justify-center text-gray-300 transition-colors bg-brand-red/10 p-6">
-                    <span className="material-symbols-outlined text-4xl mb-2">smart_display</span>
-                    <span className="text-sm font-medium mb-4">Adicione um Vídeo</span>
+                <div className="w-full min-h-[14rem] border-2 border-dashed border-brand-red/30 rounded-xl flex flex-col items-center justify-center text-gray-300 transition-colors bg-brand-red/10 p-6">
+                    <span className="material-symbols-outlined text-4xl mb-2 text-brand-red">smart_display</span>
+                    <span className="text-sm font-medium mb-4">Adicione um Vídeo (YouTube) ou GIF Animado</span>
                     
                     <CloudinaryUploader 
-                        accept="video/*"
-                        label="Upload de Vídeo"
-                        icon="upload_file"
+                        accept="image/gif"
+                        label="Upload de GIF"
+                        icon="gif"
+                        resourceType="image"
                         onUploadSuccess={(url) => updateBlock(block.id, { url })}
                     />
                     
@@ -40,8 +50,8 @@ export default function VideoBlock({ block, isActive }: { block: Block; isActive
 
                     <input 
                         type="url" 
-                        placeholder="Cole um link de Vídeo, ou link de pasta do Drive (se arquivo > 10MB)..."
-                        className="mt-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-brand-red text-white text-sm w-3/4 text-center transition-colors hover:border-brand-red/50"
+                        placeholder="Cole o link do vídeo do YouTube (ex: https://www.youtube.com/watch?v=...) "
+                        className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-brand-red text-white text-sm w-3/4 text-center transition-colors hover:border-brand-red/50"
                         value={videoUrl}
                         onChange={(e) => updateBlock(block.id, { url: e.target.value })}
                         onClick={(e) => e.stopPropagation()}
@@ -49,20 +59,26 @@ export default function VideoBlock({ block, isActive }: { block: Block; isActive
                 </div>
             ) : (
                 <div className="relative group rounded-xl overflow-hidden bg-black border border-gray-800">
-                    {videoUrl.includes('drive.google') ? (
-                        <div className="w-full h-48 flex flex-col items-center justify-center text-gray-400 bg-gray-800/30">
-                            <span className="material-symbols-outlined text-4xl mb-2 text-gray-200">folder_zip</span>
-                            <span className="text-sm font-bold uppercase tracking-widest text-gray-200 mb-2">Pasta do Google Drive</span>
-                            <a href={videoUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-brand-red underline-offset-4">Acessar Materiais (Upload &gt; 10MB)</a>
+                    {isGif ? (
+                        <div className="w-full flex justify-center bg-gray-950 p-2">
+                            <img 
+                                src={videoUrl} 
+                                alt="GIF Animado" 
+                                className="w-full max-h-[500px] object-contain rounded-lg animate-fade-in" 
+                            />
                         </div>
-                    ) : videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be') ? (
+                    ) : isYouTube ? (
                         <iframe 
                             className="w-full aspect-video"
                             src={videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/')}
                             allowFullScreen
                         />
                     ) : (
-                        <video src={videoUrl} controls className="w-full max-h-[500px]" />
+                        <div className="w-full h-48 flex flex-col items-center justify-center text-gray-400 bg-gray-800/30 p-6 text-center">
+                            <span className="material-symbols-outlined text-4xl mb-2 text-brand-red">warning</span>
+                            <span className="text-sm font-bold uppercase tracking-widest text-brand-red mb-2">Formato Inválido</span>
+                            <span className="text-xs text-gray-400">Por favor, cole um link do YouTube ou envie um arquivo GIF.</span>
+                        </div>
                     )}
                     
                     {isActive && (
@@ -71,7 +87,7 @@ export default function VideoBlock({ block, isActive }: { block: Block; isActive
                                 onClick={() => updateBlock(block.id, { url: '' })}
                                 className="px-4 py-2 bg-brand-red text-white rounded-lg font-medium shadow-lg hover:bg-brand-red transition-colors"
                             >
-                                Substituir Vídeo
+                                Substituir Conteúdo
                             </button>
                         </div>
                     )}

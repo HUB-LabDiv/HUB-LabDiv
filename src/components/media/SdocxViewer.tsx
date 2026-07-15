@@ -99,7 +99,12 @@ export function SdocxViewer({ blocks, reflections, palavrasGeradoras }: SdocxVie
                         </div>
                     );
                 } else if (block.type === 'video') {
-                    return (
+                    const isGif = block.content.url?.toLowerCase().endsWith('.gif');
+                    return isGif ? (
+                        <div key={block.id} className="relative rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 my-8 w-full flex items-center justify-center p-4">
+                            <img src={block.content.url} alt="GIF Animado" className="w-full h-auto max-h-[600px] object-contain rounded-lg" loading="lazy" />
+                        </div>
+                    ) : (
                         <div key={block.id} className="w-full aspect-video bg-black rounded-xl overflow-hidden my-8 shadow-lg">
                             <iframe src={formatYoutubeUrl(block.content.url)} className="w-full h-full border-none" allowFullScreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
                         </div>
