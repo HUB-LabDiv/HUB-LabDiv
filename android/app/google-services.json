@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "388305904608",
+    "project_id": "hub-labdiv",
+    "storage_bucket": "hub-labdiv.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:388305904608:android:2c91c252166cd4f8d98185",
+        "android_client_info": {
+          "package_name": "br.usp.ifusp.hublabdiv"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3EpVgEfFiWxKTjGM610QQhAP6yPNhx4A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

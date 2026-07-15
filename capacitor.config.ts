@@ -7,7 +7,8 @@ const config: CapacitorConfig = {
   server: {
     url: 'https://hub-lab-div.vercel.app/',
     cleartext: true
-  }
+  },
+  appendUserAgent: 'LabDiv-App'
 };
 
 export default config;

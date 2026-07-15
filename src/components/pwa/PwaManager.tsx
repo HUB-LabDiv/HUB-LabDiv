@@ -14,9 +14,32 @@
 
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import { usePushNotifications } from '@/hooks/usePushNotifications';
+import { App } from '@capacitor/app';
 
 export function PwaManager() {
     const [isOffline, setIsOffline] = useState(false);
+    
+    // Inicializa os listeners de Push Notifications nativas via Capacitor
+    usePushNotifications();
+
+    useEffect(() => {
+        // Intercepta Deep Links do Widget (ex: hublabdiv://trilhas)
+        const listener = App.addListener('appUrlOpen', (event) => {
+            const urlString = event.url;
+            if (urlString.startsWith('hublabdiv://')) {
+                const path = urlString.replace('hublabdiv://', '');
+                
+                // Mapeia os caminhos
+                if (path === 'lab-pessoal') window.location.href = '/lab-pessoal';
+                else if (path === 'trilhas') window.location.href = '/ferramentas/trilhas';
+            }
+        });
+
+        return () => {
+            listener.then(l => l.remove());
+        };
+    }, []);
 
     useEffect(() => {
         // Handle native online/offline events

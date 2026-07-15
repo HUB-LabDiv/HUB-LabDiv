@@ -21,6 +21,12 @@ export const CookieBanner = () => {
 
     useEffect(() => {
         setMounted(true);
+
+        const isApp = typeof window !== 'undefined' && navigator.userAgent.includes('LabDiv-App');
+        if (isApp) {
+            return; // Se estiver rodando dentro do App (WebView), não exibe o banner de cookies.
+        }
+
         // Opt-in absoluto: Nunca iniciamos em true. Só perguntamos se estiver nulo.
         const consent = localStorage.getItem('cookie_consent');
         if (consent === null) { 
