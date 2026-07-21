@@ -36,8 +36,30 @@ export function PwaManager() {
             }
         });
 
+        // --- INÍCIO: CACHE WARMER (Caminho 1) ---
+        // Espera 5 segundos para não travar o carregamento inicial da UI
+        const warmerTimer = setTimeout(() => {
+            if (typeof window !== 'undefined' && 'caches' in window) {
+                const rotasCriticas = [
+                    '/timeline', 
+                    '/lab-pessoal', 
+                    '/ferramentas/trilhas', 
+                    '/arquivo',
+                    '/offline'
+                ];
+                
+                console.log('🔥 [Cache Warmer] Iniciando pré-carregamento silencioso...');
+                rotasCriticas.forEach(rota => {
+                    // O Service Worker com Stale-While-Revalidate vai interceptar esse fetch
+                    // e salvar no cache automaticamente.
+                    fetch(rota, { priority: 'low' }).catch(() => {}); 
+                });
+            }
+        }, 5000);
+
         return () => {
             listener.then(l => l.remove());
+            clearTimeout(warmerTimer);
         };
     }, []);
 

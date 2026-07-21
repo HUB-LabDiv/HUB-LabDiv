@@ -93,6 +93,7 @@ export interface Profile {
     cpf_hash?: string;
     birthdate?: string;
     guardian_email?: string;
+    push_token?: string;
     created_at: string;
 
 }

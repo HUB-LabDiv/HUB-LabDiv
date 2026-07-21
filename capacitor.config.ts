@@ -8,7 +8,12 @@ const config: CapacitorConfig = {
     url: 'https://hub-lab-div.vercel.app/',
     cleartext: true
   },
-  appendUserAgent: 'LabDiv-App'
+  appendUserAgent: 'LabDiv-App',
+  plugins: {
+    PushNotifications: {
+      presentationOptions: ["badge", "sound", "alert"]
+    }
+  }
 };
 
 export default config;

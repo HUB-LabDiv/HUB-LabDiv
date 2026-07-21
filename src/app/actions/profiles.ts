@@ -1122,3 +1122,24 @@ export async function fetchTargetProfileStats() {
         }
     };
 }
+
+export async function updatePushToken(token: string) {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        return { error: 'Não autorizado' };
+    }
+
+    const { error } = await supabase
+        .from('profiles')
+        .update({ push_token: token })
+        .eq('id', user.id);
+
+    if (error) {
+        console.error('Error updating push token:', error);
+        return { error: error.message };
+    }
+
+    return { success: true };
+}

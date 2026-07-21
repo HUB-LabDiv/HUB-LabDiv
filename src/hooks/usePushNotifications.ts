@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { PushNotifications } from '@capacitor/push-notifications';
 import { Capacitor } from '@capacitor/core';
 import toast from 'react-hot-toast';
+import { updatePushToken } from '@/app/actions/profiles';
 
 export function usePushNotifications() {
     useEffect(() => {
@@ -11,6 +12,18 @@ export function usePushNotifications() {
 
         const registerPush = async () => {
             try {
+                // Criação do Canal Obrigatório para Android 8.0+
+                if (Capacitor.getPlatform() === 'android') {
+                    await PushNotifications.createChannel({
+                        id: 'labdiv_push_channel',
+                        name: 'HUB LabDiv Notificações',
+                        description: 'Notificações importantes do HUB LabDiv',
+                        importance: 5,
+                        visibility: 1,
+                        vibration: true,
+                    });
+                }
+
                 // Solicita permissão para exibir notificações
                 const { receive } = await PushNotifications.requestPermissions();
                 
@@ -25,9 +38,15 @@ export function usePushNotifications() {
                 if (!isMounted) return;
 
                 // Eventos de Push Notifications
-                PushNotifications.addListener('registration', (token) => {
+                PushNotifications.addListener('registration', async (token) => {
                     console.log('Push registration success, token: ' + token.value);
-                    // Opcional: Salvar token no banco de dados para enviar pushes específicos
+                    // Salvar token no banco de dados para enviar pushes específicos
+                    try {
+                        await updatePushToken(token.value);
+                        console.log('Token salvo no servidor com sucesso.');
+                    } catch (err) {
+                        console.error('Erro ao salvar push token no servidor:', err);
+                    }
                 });
 
                 PushNotifications.addListener('registrationError', (error: any) => {

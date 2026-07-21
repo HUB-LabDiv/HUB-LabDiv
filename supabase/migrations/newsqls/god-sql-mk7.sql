@@ -302,4 +302,4 @@ DROP POLICY IF EXISTS "System can update settings" ON public.system_settings;
 CREATE POLICY "System can update settings"
     ON public.system_settings FOR ALL
     USING (true)
-    WITH CHECK (true);
+    WITH CHECK (true);ALTER TABLE profiles ADD COLUMN IF NOT EXISTS push_token TEXT;

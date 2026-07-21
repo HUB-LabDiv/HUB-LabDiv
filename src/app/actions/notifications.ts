@@ -104,5 +104,32 @@ export async function sendAutomaticNotification({ userId, title, message, link, 
         // We don't fail the whole action if only audit fails, but it's good to know
     }
 
+    // 3. (NEW) Send Real Push Notification via Edge Function
+    try {
+        // Obter o token do usuário alvo
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('push_token')
+            .eq('id', userId)
+            .single();
+
+        if (profile?.push_token) {
+            console.log(`Disparando Push Notification Real para token: ${profile.push_token}`);
+            const { error: invokeError } = await supabase.functions.invoke('send-push-notification', {
+                body: { 
+                    title: title, 
+                    body: message, 
+                    user_token: profile.push_token 
+                }
+            });
+
+            if (invokeError) {
+                console.error('Erro ao invocar Edge Function de Push:', invokeError);
+            }
+        }
+    } catch (e) {
+        console.error('Falha geral ao disparar Push Notification:', e);
+    }
+
     return { success: true };
 }
