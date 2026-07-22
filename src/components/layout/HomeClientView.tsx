@@ -501,6 +501,26 @@ export const HomeClientView = ({
                             </div>
                         )}
 
+                        {activeTab === 'fluxo' && (
+                            <div className="w-full max-w-4xl mx-auto mb-8 text-left space-y-8">
+                                <FluxoFeedbackCard 
+                                    title="Fluxo" 
+                                    description="Este é o seu feed principal. O que você gostaria de ver aqui para facilitar a exploração da nossa comunidade?" 
+                                    icon={<Zap className="w-5 h-5 text-brand-blue" />}
+                                />
+                                <div className="flex flex-col gap-3 relative mb-8">
+                                    <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-blue/5 rounded-full blur-[60px] pointer-events-none"></div>
+                                    <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-blue flex items-center gap-4 relative z-10">
+                                        <Zap className="w-12 h-12" />
+                                        FLUXO
+                                    </h1>
+                                    <p className="text-gray-400 font-medium text-sm border-l-2 border-brand-blue pl-4 max-w-xl leading-relaxed">
+                                        Explore as contribuições, materiais e memórias compartilhadas pela comunidade do IFUSP.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+
 
             {/* DESTAQUES (V8.0 optimized) */}
             {activeTab === 'fluxo' && featuredItems.length > 0 && !debouncedQuery && selectedCategories.includes('Todos') && (
