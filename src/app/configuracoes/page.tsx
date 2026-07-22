@@ -21,12 +21,16 @@ import { toast } from 'react-hot-toast';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { useAuth } from '@/providers/AuthProvider';
 import { useRouter } from 'next/navigation';
-import { Share2, User, Download, Trash2, ShieldCheck } from 'lucide-react';
+import { Share2, User, Download, Trash2, ShieldCheck, Database, Palette } from 'lucide-react';
 import { FluxoFeedbackCard } from '@/components/feedback/FluxoFeedbackCard';
+import { CacheManager } from '@/components/cache/CacheManager';
 
-export default function ContaPage() {
+type ConfigTab = 'conta' | 'armazenamento' | 'personalizacao';
+
+export default function ConfigPage() {
     const { user, profile, loading } = useAuth();
     const router = useRouter();
+    const [activeTab, setActiveTab] = useState<ConfigTab>('conta');
     const [isDeleting, setIsDeleting] = useState(false);
     const [isDeletingData, setIsDeletingData] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
@@ -107,13 +111,48 @@ export default function ContaPage() {
 
                 <div className="max-w-4xl mb-6">
                     <FluxoFeedbackCard 
-                        title="Aba Conta & Privacidade" 
-                        description="Aqui você tem controle total sobre seus dados, privacidade e perfil. O Hub LabDiv tem o compromisso de garantir transparência, proteção e total autonomia para todos os usuários da comunidade." 
+                        title="Configurações do HUB" 
+                        description="Aqui você tem controle total sobre seus dados, armazenamento e preferências. O Hub LabDiv tem o compromisso de garantir transparência, proteção e autonomia para todos os usuários." 
                         icon={<ShieldCheck className="w-5 h-5 text-brand-blue" />}
                     />
                 </div>
 
-                {/* SEÇÃO 0: PERFIL E COMPARTILHAMENTO */}
+                <div className="flex flex-wrap gap-2 p-1 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[24px] mb-8 w-fit">
+                    <button
+                        onClick={() => setActiveTab('conta')}
+                        className={`flex items-center gap-2.5 px-6 py-3 rounded-[20px] text-[10px] font-black uppercase tracking-widest transition-all ${
+                            activeTab === 'conta'
+                                ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20'
+                                : 'text-gray-500 hover:text-white hover:bg-white/5'
+                        }`}
+                    >
+                        <ShieldCheck className="w-4 h-4" /> Conta & Privacidade
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('armazenamento')}
+                        className={`flex items-center gap-2.5 px-6 py-3 rounded-[20px] text-[10px] font-black uppercase tracking-widest transition-all ${
+                            activeTab === 'armazenamento'
+                                ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20'
+                                : 'text-gray-500 hover:text-white hover:bg-white/5'
+                        }`}
+                    >
+                        <Database className="w-4 h-4" /> Armazenamento & Cache
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('personalizacao')}
+                        className={`flex items-center gap-2.5 px-6 py-3 rounded-[20px] text-[10px] font-black uppercase tracking-widest transition-all ${
+                            activeTab === 'personalizacao'
+                                ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20'
+                                : 'text-gray-500 hover:text-white hover:bg-white/5'
+                        }`}
+                    >
+                        <Palette className="w-4 h-4" /> Personalização
+                    </button>
+                </div>
+
+                {activeTab === 'conta' && (
+                    <div className="space-y-10 animate-in fade-in duration-500">
+                        {/* SEÇÃO 0: PERFIL E COMPARTILHAMENTO */}
                 <section className="bg-brand-blue/5 border border-brand-blue/10 rounded-2xl overflow-hidden p-6 md:p-8">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-8">
                         <div className="flex items-center gap-6">
@@ -211,6 +250,24 @@ export default function ContaPage() {
                         </p>
                     </div>
                 </section>
+                </div>
+                )}
+
+                {activeTab === 'armazenamento' && (
+                    <div className="animate-in fade-in duration-500">
+                        <CacheManager />
+                    </div>
+                )}
+
+                {activeTab === 'personalizacao' && (
+                    <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in duration-500">
+                        <Palette className="w-16 h-16 text-gray-700 mb-4" />
+                        <h2 className="text-xl font-bold text-gray-500">Em Breve</h2>
+                        <p className="text-sm text-gray-600 mt-2 max-w-md">
+                            As opções de personalização da sua interface (temas personalizados, fontes e preferências de visualização) estarão disponíveis nas próximas atualizações.
+                        </p>
+                    </div>
+                )}
 
                 <DeleteAccountModal
                     isOpen={isDeleting}

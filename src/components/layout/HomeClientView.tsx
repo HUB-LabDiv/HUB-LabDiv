@@ -460,32 +460,7 @@ export const HomeClientView = ({
                 </div>
             </div>
 
-            <header className="relative pt-12 pb-24 flex-shrink-0 overflow-hidden rounded-[40px]">
-                <div className="absolute inset-0 pointer-events-none">
-                    <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-brand-blue/8 rounded-full blur-[80px] -translate-x-1/3 -translate-y-1/4"></div>
-                    <div className="absolute top-1/3 left-1/2 w-[400px] h-[400px] bg-brand-yellow/6 rounded-full blur-[80px] -translate-x-1/2"></div>
-                    <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-brand-red/8 rounded-full blur-[80px] translate-x-1/3 translate-y-1/4"></div>
-                </div>
 
-                <div className="max-w-4xl mx-auto px-4 relative z-10 text-center">
-                    <FluxoFeedbackCard className="mb-12" />
-
-                    <h1
-                        className="font-display font-black text-4xl md:text-6xl tracking-tighter mb-6 text-gray-900 dark:text-white leading-[0.9] uppercase italic animate-fade-in-up"
-                        style={{ animationDelay: '0.1s' }}
-                    >
-                        HUB de comunicação científica <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red">LabDiv</span>
-                    </h1>
-
-                    <p
-                        className="text-base md:text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed font-medium animate-fade-in-up"
-                        style={{ animationDelay: '0.2s' }}
-                    >
-                        Esta plataforma é um local voltado para o desenvolvimento de relações pedagógicas reais, onde ambos os lados aprendem interativamente sobre o objeto em discussão. Mais do que isso, buscamos revelar o contexto e as pessoas por trás de cada descoberta, permitindo que a comunidade compreenda a ciência como uma construção humana viva e integral.
-                    </p>
-                </div>
-            </header>
 
             <AnimatePresence mode="wait">
                 {activeTab === 'logs' ? (
@@ -509,7 +484,7 @@ export const HomeClientView = ({
                         {activeTab === 'arte' ? (
                             <div className="w-full max-w-4xl mx-auto mb-16 text-left">
                                 <FluxoFeedbackCard 
-                                    title="Subaba Arte" 
+                                    title="Arte" 
                                     description="Esta é a subaba de arte, onde a comunidade pode se expressar artisticamente. O que falta nesta seção dedicada à arte e criatividade na USP?" 
                                     icon={<Palette className="w-5 h-5 text-brand-yellow" />}
                                 />
@@ -517,7 +492,7 @@ export const HomeClientView = ({
                         ) : (
                             <div className="max-w-4xl mx-auto mb-12">
                                 <FluxoFeedbackCard 
-                                    title="Subaba Fluxo" 
+                                    title="Fluxo" 
                                     description="Esta é a subaba Fluxo. Aqui você acompanha a timeline principal de publicações, onde a comunicação cientifica pode ter o maximo de interação." 
                                     icon={<Zap className="w-5 h-5 text-brand-blue" />}
                                 />

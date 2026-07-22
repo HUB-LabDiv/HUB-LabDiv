@@ -37,7 +37,7 @@ export default function AdminLayoutClient({
         { name: 'Moderação da Comunidade', href: '/admin/moderacao', icon: 'verified_user' },
         { name: 'Moderação do CGIF', href: '/admin/cgif', icon: 'admin_panel_settings' },
         { name: 'Central de Notificações', href: '/admin/notificacoes', icon: 'notifications' },
-        { name: 'Arena de Desafios', href: '/admin/desafios', icon: 'emoji_events' },
+        { name: 'Moderação do Observatório', href: '/admin/observatorio', icon: 'emoji_events' },
         { name: 'Aprovação de Perfis', href: '/admin/profiles', icon: 'manage_accounts' },
         { name: 'Validação do Match', href: '/admin/adocoes', icon: 'favorite' },
         { name: 'Pergunte a um Cientista', href: '/admin/perguntas', icon: 'quiz' },

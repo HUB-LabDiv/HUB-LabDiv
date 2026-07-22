@@ -20,7 +20,7 @@ import { CommentsManager } from './moderacao/CommentsManager';
 import { CorrectionsManager } from './moderacao/CorrectionsManager';
 import { NarrationManager } from './moderacao/NarrationManager';
 
-type ModerationTab = 'acervo' | 'submissoes' | 'arte' | 'comentarios' | 'correcoes' | 'narracao';
+type ModerationTab = 'acervo' | 'submissoes' | 'arte' | 'comentarios' | 'correcoes' | 'narracao' | 'bruto';
 
 export function AdminModerationClient({ mode = 'fluxo' }: { mode?: 'fluxo' | 'arte' }) {
     const searchParams = useSearchParams();
@@ -31,6 +31,7 @@ export function AdminModerationClient({ mode = 'fluxo' }: { mode?: 'fluxo' | 'ar
         { id: 'arte', label: 'Aprovação de Arte', icon: 'palette' }
     ] : [
         { id: 'submissoes', label: 'Submissões', icon: 'assignment' },
+        { id: 'bruto', label: 'Material Bruto', icon: 'lightbulb' },
         { id: 'acervo', label: 'Acervo Hub', icon: 'collections_bookmark' },
         { id: 'comentarios', label: 'Comentários', icon: 'chat_bubble' },
         { id: 'narracao', label: 'Narração & TTS', icon: 'record_voice_over' },
@@ -76,6 +77,7 @@ export function AdminModerationClient({ mode = 'fluxo' }: { mode?: 'fluxo' | 'ar
             </div>
 
             <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                {activeTab === 'bruto' && <SubmissionsManager needsModerationHelpOnly={true} />}
                 {activeTab === 'acervo' && <AcervoManager />}
                 {activeTab === 'submissoes' && <SubmissionsManager excludeCategory="Arte" />}
                 {activeTab === 'arte' && <SubmissionsManager categoryFilter="Arte" />}

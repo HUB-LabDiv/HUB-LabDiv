@@ -55,7 +55,7 @@ const categoryLinks = [
 ];
 
 const secondaryLinks = [
-    { name: 'Conta & Privacidade', href: '/conta', icon: <Settings className="w-5 h-5" /> },
+    { name: 'Configurações', href: '/configuracoes', icon: <Settings className="w-5 h-5" /> },
     { name: 'Painel Admin', href: '/admin', icon: <ShieldAlert className="w-5 h-5" /> },
 ];
 

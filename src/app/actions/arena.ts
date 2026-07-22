@@ -14,6 +14,9 @@
 
 import { createServerSupabase } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { Resend } from 'resend';
+
+const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
 export async function fetchChallenges() {
     const supabase = await createServerSupabase();
@@ -213,5 +216,117 @@ export async function fetchArenaFeedback() {
     }
 
     return { success: true, data };
+}
+
+export async function submitHubAdoption(data: { discipline_name: string; summary: string; usage_intent: string; requested_features: string }) {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: 'Não autorizado' };
+
+    const { error } = await supabase
+        .from('hub_adoptions')
+        .insert({
+            user_id: user.id,
+            discipline_name: data.discipline_name,
+            summary: data.summary,
+            usage_intent: data.usage_intent,
+            requested_features: data.requested_features
+        });
+
+    if (error) {
+        console.error('Error submitting hub adoption:', error);
+        return { error: 'Erro ao enviar adoção' };
+    }
+
+    // Send email to hublabdiv@gmail.com
+    if (resend) {
+        const { data: profile } = await supabase.from('profiles').select('full_name, email').eq('id', user.id).single();
+        const userName = profile?.full_name || 'Pesquisador';
+        const userEmail = profile?.email || user.email || 'Email não informado';
+
+        try {
+            await resend.emails.send({
+                from: 'HUB Lab-Div <noreply@labdiv.com.br>',
+                to: 'hublabdiv@gmail.com',
+                subject: `Novo Pedido de Adoção de Disciplina: ${data.discipline_name}`,
+                html: `
+                    <div style="font-family: sans-serif; color: #1e1e1e;">
+                        <h2 style="color: #0F4780;">Novo Pedido de Adoção do HUB</h2>
+                        <p><strong>Pesquisador:</strong> ${userName} (${userEmail})</p>
+                        <p><strong>Disciplina:</strong> ${data.discipline_name}</p>
+                        <br/>
+                        <p><strong>Ementa/Resumo:</strong></p>
+                        <blockquote style="border-left: 4px solid #0F4780; padding-left: 10px; color: #555;">${data.summary || 'Não informado'}</blockquote>
+                        <br/>
+                        <p><strong>Como pretende usar:</strong></p>
+                        <blockquote style="border-left: 4px solid #F14343; padding-left: 10px; color: #555;">${data.usage_intent || 'Não informado'}</blockquote>
+                        <br/>
+                        <p><strong>Recursos solicitados:</strong></p>
+                        <blockquote style="border-left: 4px solid #FFCC00; padding-left: 10px; color: #555;">${data.requested_features || 'Não informado'}</blockquote>
+                    </div>
+                `
+            });
+        } catch (emailError) {
+            console.error('Erro ao enviar email de adoção via Resend:', emailError);
+            // Continua mesmo se falhar o e-mail
+        }
+    }
+
+    revalidatePath('/arena');
+    revalidatePath('/admin/observatorio');
+    return { success: true };
+}
+
+export async function fetchHubAdoptions() {
+    const supabase = await createServerSupabase();
+    
+    // Admin check
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: 'Não autorizado' };
+    
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    if (profile?.role !== 'admin') return { error: 'Apenas administradores podem ver adoções' };
+
+    const { data, error } = await supabase
+        .from('hub_adoptions')
+        .select('*, user:profiles(full_name, username, email, avatar_url)')
+        .order('created_at', { ascending: false });
+
+    if (error) {
+        console.error('Error fetching hub adoptions:', error);
+        return { error: 'Erro ao buscar adoções' };
+    }
+
+    return { success: true, data };
+}
+
+export async function updateHubAdoptionStatus(adoptionId: string, status: 'pendente' | 'aprovado' | 'rejeitado') {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    // Verify admin role
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user?.id)
+        .single();
+
+    if (profile?.role !== 'admin') {
+        return { success: false, error: 'Acesso negado' };
+    }
+
+    const { error } = await supabase
+        .from('hub_adoptions')
+        .update({ status })
+        .eq('id', adoptionId);
+
+    if (error) {
+        console.error('Error updating adoption status:', error);
+        return { success: false, error: error.message };
+    }
+
+    revalidatePath('/admin/observatorio');
+    return { success: true };
 }
 

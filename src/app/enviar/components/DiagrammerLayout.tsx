@@ -227,6 +227,91 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         }
     };
 
+    const handlePublishIdea = async () => {
+        if (!title.trim()) {
+            toast.error('O título é obrigatório.');
+            return;
+        }
+        if (!authors.trim()) {
+            toast.error('O nome de autor/apelido é obrigatório.');
+            return;
+        }
+        if (!description || !description.trim()) {
+            toast.error('É obrigatório adicionar uma Descrição (limite de 5 linhas).');
+            return;
+        }
+        if (!readGuide) {
+            toast.error('Por favor, aceite os termos legais antes de enviar.');
+            return;
+        }
+
+        setIsSubmitting(true);
+        const toastId = toast.loading('Processando material base...');
+
+        try {
+            const pendingFiles = usePendingUploadsStore.getState().pendingFiles;
+            const localToPublicUrls: Record<string, string> = {};
+
+            if (Object.keys(pendingFiles).length > 0) {
+                toast.loading('Fazendo upload dos arquivos para a nuvem...', { id: toastId });
+                try {
+                    for (const [localUrl, pending] of Object.entries(pendingFiles)) {
+                        const publicUrl = await uploadFileToCloudinary(pending.file, pending.resourceType);
+                        localToPublicUrls[localUrl] = publicUrl;
+                    }
+                } catch (uploadErr: any) {
+                    console.error('Failed to upload pending files:', uploadErr);
+                    toast.error(`Falha no upload dos arquivos: ${uploadErr.message}`, { id: toastId });
+                    setIsSubmitting(false);
+                    return;
+                }
+            }
+
+            const updatedBlocks = blocks.map(block => {
+                const blockContentStr = JSON.stringify(block.content);
+                let updatedContentStr = blockContentStr;
+                for (const [localUrl, publicUrl] of Object.entries(localToPublicUrls)) {
+                    updatedContentStr = updatedContentStr.replaceAll(localUrl, publicUrl);
+                }
+                return { ...block, content: JSON.parse(updatedContentStr) };
+            });
+
+            toast.loading('Enviando para a moderação ajudá-lo...', { id: toastId });
+
+            const payload = {
+                title,
+                authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
+                category: category || 'Outros',
+                description: description || 'Contribuição baseada em material bruto.',
+                media_type: 'sdocx',
+                media_url: JSON.stringify(updatedBlocks),
+                event_year: year ? parseInt(year) : new Date().getFullYear(),
+                is_historical: isHistorical,
+                is_golden_standard: isGoldenStandard,
+                accepted_cc: acceptedCc,
+                language_register: languageRegister,
+                needs_moderation_help: true,
+            };
+
+            const res = await createSubmission(payload as any);
+
+            if (res.error) {
+                console.error(res.error);
+                toast.error('Erro ao enviar ideia / material base.', { id: toastId });
+            } else {
+                toast.success('Ideia enviada com sucesso! A moderação montará o post.', { id: toastId });
+                usePendingUploadsStore.getState().clearPendingFiles();
+                useSubmissionStore.getState().reset();
+                router.push('/');
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error('Erro inesperado ao enviar.', { id: toastId });
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
     const handleUpdate = async () => {
         if (!editId) return;
         if (!title.trim()) {
@@ -933,6 +1018,17 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                         >
                             {isSubmitting ? 'Lançando...' : (editId ? 'Lançar como Novo Post 🚀' : 'Lançar Conteúdo 🚀')}
                         </button>
+                        
+                        {!editId && (
+                            <button
+                                onClick={handlePublishIdea}
+                                className="w-full flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-[#121212] border border-brand-yellow/30 text-brand-yellow font-bold text-sm hover:bg-brand-yellow/10 transition-all shadow-[0_0_15px_rgba(255,204,0,0.1)] hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                                disabled={!readGuide || isSubmitting}
+                                title={!readGuide ? "Você precisa aceitar os termos acima para continuar" : "Envie o material bruto e deixe que os moderadores formatem e publiquem por você."}
+                            >
+                                {isSubmitting ? 'Enviando...' : 'Apenas enviar ideia / material base 💡'}
+                            </button>
+                        )}
                     </div>
                 </div>
 

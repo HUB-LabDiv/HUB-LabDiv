@@ -13,11 +13,11 @@
 
 
 import React, { useEffect, useState, useCallback } from 'react';
-import { fetchArenaSuggestions, updateSuggestionStatus, createChallenge, fetchArenaFeedback } from '@/app/actions/arena';
+import { fetchArenaSuggestions, updateSuggestionStatus, createChallenge, fetchArenaFeedback, fetchHubAdoptions, updateHubAdoptionStatus } from '@/app/actions/arena';
 import { 
     Trophy, Check, X, Clock, Loader2, Search, Inbox, 
     ShieldCheck, Calendar, MessageSquare, Microscope, User, Plus,
-    Lightbulb, AlertCircle, Sparkles
+    Lightbulb, AlertCircle, Sparkles, BookOpen
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { format } from 'date-fns';
@@ -54,8 +54,9 @@ interface Feedback {
 export default function AdminChallengesPage() {
     const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
     const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+    const [adoptions, setAdoptions] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [activeSection, setActiveSection] = useState<'arena' | 'hub'>('arena');
+    const [activeSection, setActiveSection] = useState<'arena' | 'hub' | 'adoptions'>('arena');
     const [filter, setFilter] = useState<'pending' | 'approved' | 'rejected'>('pending');
     const [searchQuery, setSearchQuery] = useState('');
 
@@ -67,9 +68,10 @@ export default function AdminChallengesPage() {
 
     const loadData = useCallback(async () => {
         setIsLoading(true);
-        const [suggestionsRes, feedbacksRes] = await Promise.all([
+        const [suggestionsRes, feedbacksRes, adoptionsRes] = await Promise.all([
             fetchArenaSuggestions(),
-            fetchArenaFeedback()
+            fetchArenaFeedback(),
+            fetchHubAdoptions()
         ]);
 
         if (suggestionsRes.success && suggestionsRes.data) {
@@ -77,6 +79,9 @@ export default function AdminChallengesPage() {
         }
         if (feedbacksRes.success && feedbacksRes.data) {
             setFeedbacks(feedbacksRes.data);
+        }
+        if (adoptionsRes.success && adoptionsRes.data) {
+            setAdoptions(adoptionsRes.data);
         }
         setIsLoading(false);
     }, []);
@@ -115,6 +120,16 @@ export default function AdminChallengesPage() {
         }
     };
 
+    const handleAdoptionAction = async (id: string, status: 'aprovado' | 'rejeitado' | 'pendente') => {
+        const res = await updateHubAdoptionStatus(id, status);
+        if (res.success) {
+            toast.success(status === 'aprovado' ? 'Adoção aprovada!' : status === 'rejeitado' ? 'Adoção recusada.' : 'Status revertido.');
+            loadData();
+        } else {
+            toast.error(res.error || 'Erro ao processar adoção');
+        }
+    };
+
     const filteredSuggestions = suggestions.filter((s: Suggestion) => {
         const matchesFilter = s.status === filter;
         const matchesSearch = 
@@ -131,6 +146,14 @@ export default function AdminChallengesPage() {
             f.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
             f.user?.full_name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
             f.user?.username?.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesSearch;
+    });
+
+    const filteredAdoptions = adoptions.filter((a: any) => {
+        const matchesSearch = 
+            a.discipline_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            a.summary?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            a.user?.full_name?.toLowerCase().includes(searchQuery.toLowerCase());
         return matchesSearch;
     });
 
@@ -188,6 +211,20 @@ export default function AdminChallengesPage() {
                         {feedbacks.length}
                     </span>
                 </button>
+                <button 
+                    onClick={() => setActiveSection('adoptions')}
+                    className={`flex items-center gap-3 px-6 py-4 rounded-[2rem] text-xs font-black uppercase tracking-widest transition-all ${
+                        activeSection === 'adoptions' 
+                        ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20' 
+                        : 'bg-white/5 text-gray-500 hover:text-white hover:bg-white/10 border border-white/5'
+                    }`}
+                >
+                    <BookOpen size={16} />
+                    Adoções em Disciplinas
+                    <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeSection === 'adoptions' ? 'bg-black/20 text-white' : 'bg-white/5'}`}>
+                        {adoptions.length}
+                    </span>
+                </button>
             </div>
 
             {/* Content Filters & Search */}
@@ -241,6 +278,14 @@ export default function AdminChallengesPage() {
                                     suggestion={suggestion} 
                                     onAction={handleAction} 
                                 />
+                            ))
+                        )
+                    ) : activeSection === 'adoptions' ? (
+                        filteredAdoptions.length === 0 ? (
+                            <EmptyState icon={BookOpen} message="Nenhum pedido de adoção encontrado." />
+                        ) : (
+                            filteredAdoptions.map((adoption: any) => (
+                                <AdoptionCard key={adoption.id} adoption={adoption} onAction={handleAdoptionAction} />
                             ))
                         )
                     ) : (
@@ -451,6 +496,89 @@ function CreateModal({ onClose, onSave, title, setTitle, desc, setDesc, loading 
                         Criar Desafio Agora
                     </button>
                 </div>
+            </div>
+        </div>
+    );
+}
+
+function AdoptionCard({ adoption, onAction }: { adoption: any, onAction: any }) {
+    return (
+        <div className="group glass-card p-8 rounded-[3rem] border border-white/5 hover:border-brand-blue/40 transition-all flex flex-col md:flex-row gap-8 shadow-2xl">
+            <div className="shrink-0 relative">
+                <Avatar 
+                    src={adoption.user?.avatar_url} 
+                    name={adoption.user?.username || adoption.user?.full_name} 
+                    size="lg"
+                />
+                <div className="absolute -bottom-2 -right-2 bg-brand-blue text-white p-1.5 rounded-lg border-4 border-[#121212] shadow-xl">
+                    <BookOpen size={14} />
+                </div>
+            </div>
+
+            <div className="flex-1 space-y-4">
+                <div className="flex items-center gap-3">
+                    <span className={`px-3 py-1 text-[9px] font-black uppercase rounded-lg tracking-widest ${
+                        adoption.status === 'pendente' ? 'bg-brand-blue/10 text-brand-blue border border-brand-blue/20' : 
+                        adoption.status === 'aprovado' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
+                        'bg-red-500/10 text-red-500 border border-red-500/20'
+                    }`}>
+                        {adoption.status}
+                    </span>
+                    <span className="text-[10px] text-gray-500 font-mono tracking-widest flex items-center gap-1">
+                        <Clock size={12} />
+                        {format(new Date(adoption.created_at), "dd/MM 'às' HH:mm", { locale: ptBR })}
+                    </span>
+                </div>
+                
+                <div>
+                    <h3 className="text-xl font-bold text-white uppercase tracking-tight">{adoption.discipline_name}</h3>
+                    <p className="text-[10px] text-brand-blue uppercase font-black tracking-widest mt-1">
+                        Solicitado por {adoption.user?.full_name} (@{adoption.user?.username})
+                    </p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
+                        <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2">Ementa / Resumo</p>
+                        <p className="text-sm text-gray-300">{adoption.summary || 'Não informado'}</p>
+                    </div>
+                    <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
+                        <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2">Como pretende usar</p>
+                        <p className="text-sm text-gray-300">{adoption.usage_intent || 'Não informado'}</p>
+                    </div>
+                    <div className="bg-black/20 p-4 rounded-2xl border border-white/5 md:col-span-2">
+                        <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2">Recursos Solicitados</p>
+                        <p className="text-sm text-gray-300">{adoption.requested_features || 'Nenhum'}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="flex flex-row md:flex-col gap-3">
+                {adoption.status === 'pendente' ? (
+                    <>
+                        <button 
+                            onClick={() => onAction(adoption.id, 'aprovado')}
+                            className="p-4 bg-white hover:bg-brand-blue text-black hover:text-white rounded-2xl transition-all shadow-xl hover:scale-110"
+                            title="Aprovar"
+                        >
+                            <Check size={20} strokeWidth={3} />
+                        </button>
+                        <button 
+                            onClick={() => onAction(adoption.id, 'rejeitado')}
+                            className="p-4 bg-white/5 hover:bg-red-500 border border-white/10 hover:border-red-500 text-gray-400 hover:text-white rounded-2xl transition-all hover:scale-110"
+                            title="Recusar"
+                        >
+                            <X size={20} strokeWidth={3} />
+                        </button>
+                    </>
+                ) : (
+                    <button 
+                        onClick={() => onAction(adoption.id, 'pendente')}
+                        className="px-6 py-4 bg-white/5 text-gray-500 hover:text-white rounded-2xl text-[9px] font-black uppercase tracking-widest border border-white/5 hover:border-white/20 transition-all"
+                    >
+                        Reverter
+                    </button>
+                )}
             </div>
         </div>
     );

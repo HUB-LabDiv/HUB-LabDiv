@@ -146,8 +146,14 @@ function CarouselSection({
                         >
                             {items.map((item) => (
                                 <div key={item.id} className="flex flex-col gap-2 min-w-[200px]">
-                                    <div onClick={() => onCardClick(item)} className="cursor-pointer">
+                                    <div onClick={() => onCardClick(item)} className="cursor-pointer relative">
                                         <MediaCard post={item} />
+                                        {item.needsModerationHelp && (
+                                            <div className="absolute -top-2 -left-2 bg-brand-yellow text-black text-[9px] font-black uppercase px-2 py-1 rounded-lg shadow-xl border-2 border-[#121212] z-20 flex items-center gap-1">
+                                                <AlertTriangle size={12} />
+                                                Material Bruto
+                                            </div>
+                                        )}
                                     </div>
                                     {actions && (
                                         <div className="flex items-center gap-1.5 px-1">
@@ -164,7 +170,7 @@ function CarouselSection({
     );
 }
 
-export function SubmissionsManager({ categoryFilter, excludeCategory }: { categoryFilter?: string; excludeCategory?: string }) {
+export function SubmissionsManager({ categoryFilter, excludeCategory, needsModerationHelpOnly }: { categoryFilter?: string; excludeCategory?: string; needsModerationHelpOnly?: boolean; }) {
     const [allSubmissions, setAllSubmissions] = useState<AdminPostDTO[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [selectedItem, setSelectedItem] = useState<AdminPostDTO | null>(null);
@@ -190,6 +196,9 @@ export function SubmissionsManager({ categoryFilter, excludeCategory }: { catego
         }
         if (excludeCategory) {
             supabaseQuery = supabaseQuery.neq('category', excludeCategory);
+        }
+        if (needsModerationHelpOnly) {
+            supabaseQuery = supabaseQuery.eq('needs_moderation_help', true);
         }
 
         if (trimmedQuery) {

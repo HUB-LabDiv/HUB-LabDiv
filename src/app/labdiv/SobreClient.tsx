@@ -38,7 +38,7 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
     const { trackEvent } = useTelemetry();
     const scrollContainerRef = React.useRef<HTMLDivElement>(null);
     const [activePersonaOverride, setActivePersonaOverride] = React.useState<PersonaType | null>(null);
-    const [activeTab, setActiveTab] = React.useState<'sobre' | 'labdiv'>('labdiv');
+    const [activeTab, setActiveTab] = React.useState<'sobre' | 'labdiv'>('sobre');
 
     // Sync state with URL
     React.useEffect(() => {
@@ -92,7 +92,7 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
             fullWidth={true}
         >
             <div className="max-w-7xl mx-auto px-4 py-8" {...swipeHandlers}>
-                {/* Segmented Control for Institucional Hub */}
+                {/* CODIGO MORTO - Segmented Control for Institucional Hub 
                 <div 
                     className="flex justify-center mb-12 sticky z-40 py-2"
                     style={{ top: 'calc(4rem + env(safe-area-inset-top, 0px))' }}
@@ -122,6 +122,7 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
                         </button>
                     </div>
                 </div>
+                */}
 
                 {activeTab === 'sobre' ? (
                     <div className="animate-in fade-in slide-in-from-bottom-5 duration-700">
@@ -136,16 +137,24 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
                 <SobreFeedbackCard className="block lg:hidden mb-12 max-w-2xl mx-auto" />
                 <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed mb-10">
                 </p>
-                <div className="flex justify-center">
-                    <Link href="/apresentacao" className="bg-gradient-to-r from-brand-blue to-brand-red p-[2px] rounded-3xl hover:scale-105 transition-transform shadow-2xl shadow-brand-blue/20">
-                        <div className="bg-[#121212] rounded-[22px] px-8 py-4 flex items-center gap-3 h-full">
+                <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                    <Link href="/apresentacao" className="bg-gradient-to-r from-brand-blue to-brand-red p-[2px] rounded-3xl hover:scale-105 transition-transform shadow-2xl shadow-brand-blue/20 w-full sm:w-auto">
+                        <div className="bg-white dark:bg-[#121212] rounded-[22px] px-8 py-4 flex items-center justify-center gap-3 h-full">
                             <BookOpen className="w-6 h-6 text-brand-yellow" />
-                            <span className="font-black uppercase tracking-widest text-white text-sm md:text-base">
+                            <span className="font-black uppercase tracking-widest text-gray-900 dark:text-white text-sm md:text-base">
                                 Apresentação do HUB
                             </span>
-                            <ArrowRight className="w-5 h-5 text-white" />
+                            <ArrowRight className="w-5 h-5 text-gray-900 dark:text-white" />
                         </div>
                     </Link>
+                    <a href="https://sites.google.com/usp.br/labdiv/in%C3%ADcio?authuser=0" target="_blank" rel="noopener noreferrer" className="bg-brand-blue p-[2px] rounded-3xl hover:scale-105 transition-transform shadow-2xl shadow-brand-blue/20 w-full sm:w-auto">
+                        <div className="bg-white dark:bg-[#121212] rounded-[22px] px-8 py-4 flex items-center justify-center gap-3 h-full">
+                            <ExternalLink className="w-6 h-6 text-brand-blue" />
+                            <span className="font-black uppercase tracking-widest text-brand-blue text-sm md:text-base">
+                                Acessar site do Lab-Div
+                            </span>
+                        </div>
+                    </a>
                 </div>
             </div>
 

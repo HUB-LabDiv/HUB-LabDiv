@@ -24,7 +24,7 @@ export function LogsFeedbackCard({ className }: { className?: string }) {
 
   return (
     <ContextFeedbackCard
-      title="Subaba Logs do IFUSP"
+      title="Logs"
       description="O que está rolando nos corredores? Solte o verbo, compartilhe aquela fofoca ou dê um aviso rápido que não cabe num post completo. Descubra um espaço feito para a comunidade desabafar e trocar informações. O IF é feito de gente: como podemos deixar esse mural mais vivo?"
       betaTag={true}
       onFeedbackClick={handleFeedbackClick}

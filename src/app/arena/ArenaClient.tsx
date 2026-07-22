@@ -13,10 +13,10 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { fetchChallenges, submitToChallenge, voteSubmission, proposeChallenge, fetchArenaSuggestions } from '@/app/actions/arena';
+import { fetchChallenges, submitToChallenge, voteSubmission, proposeChallenge, fetchArenaSuggestions, submitHubAdoption } from '@/app/actions/arena';
 import { submitHubSuggestion } from '@/app/actions/feedback';
 import { Avatar } from "@/components/ui/Avatar";
-import { Loader2, Trophy, MessageSquare, ThumbsUp, Plus, Calendar, AlertCircle, Microscope, UserPlus, Settings, Lightbulb, ClipboardList } from 'lucide-react';
+import { Loader2, Trophy, MessageSquare, ThumbsUp, Plus, Calendar, AlertCircle, Microscope, UserPlus, Settings, Lightbulb, ClipboardList, BookOpen } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
@@ -45,6 +45,10 @@ export default function ArenaClient({ profile }: { profile: any }) {
 
     const [isSeekingAssistant, setIsSeekingAssistant] = useState(profile?.seeking_assistant || false);
     const [isUpdatingRecruitment, setIsUpdatingRecruitment] = useState(false);
+
+    const [showAdoptionModal, setShowAdoptionModal] = useState(false);
+    const [adoptionData, setAdoptionData] = useState({ discipline_name: '', summary: '', usage_intent: '', requested_features: '' });
+    const [isSubmittingAdoption, setIsSubmittingAdoption] = useState(false);
 
     const loadData = async () => {
         setIsLoading(true);
@@ -126,6 +130,24 @@ export default function ArenaClient({ profile }: { profile: any }) {
         setIsSubmittingHub(false);
     };
 
+    const handleHubAdoption = async () => {
+        if (!adoptionData.discipline_name.trim() || !adoptionData.usage_intent.trim()) {
+            toast.error('Preencha o nome da disciplina e como pretende usar o HUB');
+            return;
+        }
+
+        setIsSubmittingAdoption(true);
+        const res = await submitHubAdoption(adoptionData);
+        if (res.success) {
+            toast.success('Solicitação enviada com sucesso! Entraremos em contato.');
+            setShowAdoptionModal(false);
+            setAdoptionData({ discipline_name: '', summary: '', usage_intent: '', requested_features: '' });
+        } else {
+            toast.error(res.error || 'Erro ao enviar solicitação');
+        }
+        setIsSubmittingAdoption(false);
+    };
+
     const handleVote = async (submissionId: string) => {
         const res = await voteSubmission(submissionId);
         if (res.success) {
@@ -171,6 +193,13 @@ export default function ArenaClient({ profile }: { profile: any }) {
                     >
                         <Plus className="w-4 h-4" />
                         Propor Novo Desafio
+                    </button>
+                    <button 
+                        onClick={() => setShowAdoptionModal(true)}
+                        className="px-6 py-3 bg-brand-blue text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:scale-105 transition-all shadow-lg flex items-center gap-2"
+                    >
+                        <BookOpen className="w-4 h-4" />
+                        Adotar na Disciplina
                     </button>
                 </div>
             </header>
@@ -407,6 +436,74 @@ export default function ArenaClient({ profile }: { profile: any }) {
                                 <p className="text-[10px] text-brand-yellow font-bold uppercase tracking-tight leading-normal">
                                     Sua sugestão passará por uma análise administrativa antes de ser publicada oficialmente na Arena.
                                 </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Modal de Adoção na Disciplina */}
+            {showAdoptionModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+                    <div className="w-full max-w-2xl bg-[#1E1E1E] rounded-[40px] border border-brand-blue/30 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
+                        <div className="p-8 space-y-6 max-h-[90vh] overflow-y-auto no-scrollbar">
+                            <div className="flex items-center justify-between">
+                                <div className="space-y-1">
+                                    <h3 className="text-2xl font-display font-bold text-white uppercase tracking-tight flex items-center gap-2"><BookOpen className="text-brand-blue"/> Adotar o HUB</h3>
+                                    <p className="text-xs text-gray-500 font-medium">Traga a metodologia do Lab-Div para a sua disciplina.</p>
+                                </div>
+                                <button onClick={() => setShowAdoptionModal(false)} className="text-gray-500 hover:text-white transition-colors">&times;</button>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Nome da Disciplina</label>
+                                    <input 
+                                        type="text"
+                                        value={adoptionData.discipline_name}
+                                        onChange={(e) => setAdoptionData({...adoptionData, discipline_name: e.target.value})}
+                                        placeholder="Ex: FGE0102 - Física Geral e Experimental"
+                                        className="w-full bg-black/20 border border-white/5 rounded-2xl px-6 py-4 text-sm text-white focus:outline-none focus:border-brand-blue/50 transition-all"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Ementa / Resumo</label>
+                                    <textarea 
+                                        value={adoptionData.summary}
+                                        onChange={(e) => setAdoptionData({...adoptionData, summary: e.target.value})}
+                                        placeholder="Resumo do que é ensinado na disciplina..."
+                                        className="w-full h-24 bg-black/20 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-blue/50 transition-all resize-none"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Como pretende usar o HUB?</label>
+                                    <textarea 
+                                        value={adoptionData.usage_intent}
+                                        onChange={(e) => setAdoptionData({...adoptionData, usage_intent: e.target.value})}
+                                        placeholder="Ex: Atividades avaliativas, construção de portfólio dos alunos..."
+                                        className="w-full h-24 bg-black/20 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-blue/50 transition-all resize-none"
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <label className="text-[10px] font-black uppercase tracking-widest text-gray-500">Recursos e Atualizações Desejadas</label>
+                                    <textarea 
+                                        value={adoptionData.requested_features}
+                                        onChange={(e) => setAdoptionData({...adoptionData, requested_features: e.target.value})}
+                                        placeholder="Ex: Gostaria de uma área específica para minha turma, integração com o Moodle..."
+                                        className="w-full h-24 bg-black/20 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-blue/50 transition-all resize-none"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-4 pt-2">
+                                <button 
+                                    onClick={handleHubAdoption}
+                                    disabled={isSubmittingAdoption}
+                                    className="flex-1 py-4 bg-brand-blue text-white font-black uppercase text-xs tracking-widest rounded-2xl hover:scale-[1.02] transition-all shadow-lg flex items-center justify-center gap-2"
+                                >
+                                    {isSubmittingAdoption ? <Loader2 className="w-4 h-4 animate-spin" /> : <BookOpen className="w-4 h-4" />}
+                                    Enviar Solicitação
+                                </button>
                             </div>
                         </div>
                     </div>

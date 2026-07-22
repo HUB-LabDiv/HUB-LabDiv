@@ -106,7 +106,7 @@ export function Header() {
     return (
         <>
             <header
-                className="fixed left-0 right-0 h-16 bg-transparent z-50 transition-colors pwa-header"
+                className="fixed left-0 right-0 h-16 bg-white/30 dark:bg-black/30 backdrop-blur-md border-b border-white/20 dark:border-white/10 z-50 transition-colors pwa-header shadow-sm"
                 style={{ top: 'env(safe-area-inset-top, 0px)' }}
             >
                 <div className="max-w-[1800px] mx-auto h-full px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-4">
@@ -134,7 +134,7 @@ export function Header() {
                             </div>
                             <div className="flex items-center gap-1.5 sm:gap-2.5 ml-0 sm:ml-1 scale-75 sm:scale-100 origin-left">
                                 <div className="w-px h-5 sm:h-7 bg-gray-200 dark:bg-white/15"></div>
-                                <IFUSPLogo size={42} className="text-brand-blue dark:text-brand-blue opacity-80 group-hover:opacity-100 transition-opacity" />
+                                <IFUSPLogo size={42} className="text-brand-blue dark:text-brand-blue-accent transition-opacity" />
                             </div>
                         </div>
                     </Link>
@@ -260,12 +260,12 @@ export function Header() {
                                                 Meu Laboratório
                                             </Link>
                                             <Link
-                                                href="/conta"
+                                                href="/configuracoes"
                                                 onClick={() => setProfileMenuOpen(false)}
                                                 className="px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 transition-colors flex items-center gap-2 font-medium"
                                             >
-                                                <span className="material-symbols-outlined text-[18px] text-[#0F4780] dark:text-[#8bb8e8]">manage_accounts</span>
-                                                Conta & Privacidade
+                                                <span className="material-symbols-outlined text-[18px] text-[#0F4780] dark:text-[#8bb8e8]">settings</span>
+                                                Configurações
                                             </Link>
                                             <div className="h-[1px] bg-gray-100 dark:bg-white/10 my-1"></div>
                                             <button

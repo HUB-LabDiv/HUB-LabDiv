@@ -300,6 +300,39 @@ CREATE POLICY "Public can view settings"
 
 DROP POLICY IF EXISTS "System can update settings" ON public.system_settings;
 CREATE POLICY "System can update settings"
-    ON public.system_settings FOR ALL
     USING (true)
-    WITH CHECK (true);ALTER TABLE profiles ADD COLUMN IF NOT EXISTS push_token TEXT;
+    WITH CHECK (true);
+
+ALTER TABLE profiles ADD COLUMN IF NOT EXISTS push_token TEXT;
+
+-- ==============================================================================
+-- HUB ADOPTIONS (ADOÇÃO EM DISCIPLINAS)
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.hub_adoptions (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    discipline_name TEXT NOT NULL,
+    summary TEXT,
+    usage_intent TEXT,
+    requested_features TEXT,
+    status TEXT DEFAULT 'pendente',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.hub_adoptions ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Admin tem acesso total às adoções" ON public.hub_adoptions;
+CREATE POLICY "Admin tem acesso total às adoções"
+    ON public.hub_adoptions FOR ALL
+    USING (true)
+    WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Usuários autenticados podem inserir adoções" ON public.hub_adoptions;
+CREATE POLICY "Usuários autenticados podem inserir adoções"
+    ON public.hub_adoptions FOR INSERT
+    WITH CHECK (auth.uid() IS NOT NULL);
+
+DROP POLICY IF EXISTS "Usuários podem ler suas próprias adoções" ON public.hub_adoptions;
+CREATE POLICY "Usuários podem ler suas próprias adoções"
+    ON public.hub_adoptions FOR SELECT
+    USING (auth.uid() = user_id);

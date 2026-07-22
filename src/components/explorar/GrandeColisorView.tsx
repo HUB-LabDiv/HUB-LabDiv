@@ -156,7 +156,6 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
         <div className="flex flex-col gap-32 pb-32">
             {/* 1. Header & Intro */}
             <section className="relative pt-12 text-center md:text-left">
-                <div className="absolute top-0 right-0 w-[300px] md:w-[500px] h-[300px] md:h-[500px] bg-brand-blue/5 blur-[80px] md:blur-[120px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/4 md:translate-x-1/2" />
                 
                 <div className="flex flex-col md:flex-row items-center gap-8 mb-12">
                     <motion.div 
@@ -178,7 +177,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
             </section>
 
             {/* NEW: Top Navigation Bar */}
-            <nav id="gcif-top-nav" className="flex flex-wrap items-center justify-center md:justify-start gap-2 relative z-40 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md p-2 rounded-2xl border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none shadow-xl shadow-black/5 -mt-16 mb-8">
+            <nav id="gcif-top-nav" className="flex flex-wrap items-center justify-center md:justify-start gap-2 relative z-40 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md p-2 rounded-2xl border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none shadow-xl shadow-black/5 -mt-16 mb-8">
                 {navItems.map((item) => {
                     const isActive = activeSection === item.id;
                     return (
@@ -219,7 +218,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                 ) : (
                     <div className="grid gap-6 md:grid-cols-3">
                         {oportunidades.map((item) => (
-                            <div key={item.id} className="bg-white dark:bg-[#1E1E1E] rounded-[32px] border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none p-8 flex flex-col gap-4 hover:border-brand-blue/30 transition-all hover:-translate-y-1 group">
+                            <div key={item.id} className="bg-white dark:bg-[#1E1E1E] rounded-[32px] border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none p-8 flex flex-col gap-4 hover:border-brand-blue/30 transition-all hover:-translate-y-1 group">
                                 <div className="flex items-center justify-between">
                                     <span className="px-3 py-1 bg-brand-blue/10 text-brand-blue text-[10px] font-black uppercase rounded-full">{item.tipo}</span>
                                 </div>
@@ -273,7 +272,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                         icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><ColisorIcon size={20} animate={false} /></div>}
                     >
                         {/* Lab-Div Card */}
-                        <div className="snap-center shrink-0 w-[300px] md:w-[400px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none relative overflow-hidden group flex flex-col">
+                        <div className="snap-center shrink-0 w-[300px] md:w-[400px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none relative overflow-hidden group flex flex-col">
                             <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:opacity-20 transition-opacity">
                                 <Landmark className="w-32 h-32 text-gray-900 dark:text-white" />
                             </div>
@@ -286,7 +285,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                         </div>
 
                         {/* Boletim Supernova */}
-                        <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group">
+                        <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group">
                             <div className="size-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-8">
                                 <span className="material-symbols-outlined text-4xl">newspaper</span>
                             </div>
@@ -296,7 +295,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                         </div>
 
                         {/* BIFUSP */}
-                        <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group">
+                        <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group">
                             <div className="size-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-8">
                                 <span className="material-symbols-outlined text-4xl">library_books</span>
                             </div>
@@ -305,7 +304,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                             <a href="https://portal.if.usp.br/biblioteca/" target="_blank" className="mt-auto px-8 py-4 border border-brand-blue/20 text-brand-blue rounded-2xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-blue/10 transition-colors">Consultar</a>
                         </div>
                         {/* Grupo Noether */}
-                        <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group">
+                        <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group">
                             <div className="size-16 bg-brand-yellow/10 rounded-2xl flex items-center justify-center text-brand-yellow mb-8">
                                 <span className="material-symbols-outlined text-4xl">group</span>
                             </div>
@@ -327,7 +326,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                         icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><Info className="w-5 h-5" /></div>}
                     >
                         {/* Hackerspace */}
-                        <div className="snap-center shrink-0 w-[300px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-8 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group hover:border-brand-yellow/30 transition-all">
+                        <div className="snap-center shrink-0 w-[300px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-8 border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group hover:border-brand-yellow/30 transition-all">
                             <div className="size-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-6 group-hover:scale-110 transition-transform">
                                 <span className="material-symbols-outlined text-4xl">memory</span>
                             </div>
@@ -337,7 +336,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                         </div>
 
                         {/* DigitalLab - Espaço no Inova */}
-                        <div className="snap-center shrink-0 w-[300px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-8 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group opacity-50 grayscale">
+                        <div className="snap-center shrink-0 w-[300px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-8 border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group opacity-50 grayscale">
                             <div className="size-16 bg-brand-red/10 rounded-2xl flex items-center justify-center text-brand-red mb-6">
                                 <span className="material-symbols-outlined text-4xl">desktop_windows</span>
                             </div>
@@ -349,7 +348,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                         </div>
 
                         {/* CEFISMA - Amélia Império */}
-                        <div className="snap-center shrink-0 w-[300px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-8 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group hover:border-brand-blue/30 transition-all">
+                        <div className="snap-center shrink-0 w-[300px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-8 border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group hover:border-brand-blue/30 transition-all">
                             <div className="size-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-6 group-hover:scale-110 transition-transform">
                                 <span className="material-symbols-outlined text-4xl">groups</span>
                             </div>
@@ -359,7 +358,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                         </div>
 
                         {/* Lab Demo */}
-                        <div className="snap-center shrink-0 w-[300px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-8 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group group">
+                        <div className="snap-center shrink-0 w-[300px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-8 border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group group">
                             <div className="size-16 bg-brand-red/10 rounded-2xl flex items-center justify-center text-brand-red mb-6">
                                 <span className="material-symbols-outlined text-4xl">rocket_launch</span>
                             </div>
@@ -369,7 +368,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                         </div>
 
                         {/* Parque CienTec */}
-                        <div className="snap-center shrink-0 w-[400px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none relative overflow-hidden group">
+                        <div className="snap-center shrink-0 w-[400px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none relative overflow-hidden group">
                             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                                 <span className="material-symbols-outlined text-9xl text-gray-900 dark:text-white">park</span>
                             </div>
@@ -378,7 +377,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                             </div>
                             <h3 className="text-2xl font-black uppercase mb-4 text-gray-900 dark:text-white">CienTec</h3>
                             <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">Física a céu aberto. Museus, trilhas e observação estelar.</p>
-                            <a href="https://parquecientec.usp.br" target="_blank" className="px-8 py-3 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-900 dark:text-white border border-transparent dark:border-white/10 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-colors">Acessar Parque</a>
+                            <a href="https://parquecientec.usp.br" target="_blank" className="px-8 py-3 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-900 dark:text-white border border-transparent dark:border-white/20 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-colors">Acessar Parque</a>
                         </div>
                     </NetflixFeed>
                 </div>
@@ -391,7 +390,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                 icon={<div className="p-3 bg-brand-red/10 rounded-2xl text-brand-red"><Sparkles className="w-8 h-8" /></div>}
             >
                 {influencers.map((influencer, index) => (
-                    <div key={index} className="flex flex-col items-center text-center group snap-center shrink-0 w-[280px] p-8 bg-white dark:bg-[#1E1E1E] rounded-[40px] border border-gray-200 dark:border-white/5 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none hover:border-brand-yellow/30 transition-all">
+                    <div key={index} className="flex flex-col items-center text-center group snap-center shrink-0 w-[280px] p-8 bg-white dark:bg-[#1E1E1E] rounded-[40px] border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none hover:border-brand-yellow/30 transition-all">
                         <div className={`relative w-24 h-24 rounded-full mb-6 flex items-center justify-center text-2xl font-bold text-white bg-${influencer.color} ring-4 ring-black/5 dark:ring-black/20 group-hover:scale-105 transition-transform`}>
                             {influencer.imagePlaceholder}
                         </div>
