@@ -15,11 +15,11 @@ export function DeleteSpecificDataModal({ isOpen, onClose }: DeleteSpecificDataM
     if (!isOpen) return null;
 
     const categories = [
-        { id: 'submissions', label: 'Minhas Submissões (Auditório Hub)', description: 'Remove permanentemente seus posts e acervo submetido.' },
-        { id: 'comments', label: 'Meus Comentários', description: 'Exclui todos os comentários que você fez na plataforma.' },
-        { id: 'articles', label: 'Meus Micro Artigos (Drops)', description: 'Apaga todos os seus micro artigos e logs do IFUSP.' },
-        { id: 'questions', label: 'Minhas Perguntas', description: 'Remove perguntas enviadas ao Cientista.' },
-        { id: 'interactions', label: 'Minhas Interações', description: 'Desfaz suas curtidas, itens salvos e conexões (seguidores/seguindo).' }
+        { id: 'submissions', label: 'Minhas Submissões (Fluxo/Auditório)', description: 'Seus posts são obrigatoriamente CC e serão apenas anonimizados, preservando o acervo IFUSP.' },
+        { id: 'comments', label: 'Meus Comentários', description: 'Seus comentários fazem parte do fluxo e também serão anonimizados (CC).' },
+        { id: 'articles', label: 'Meus Micro Artigos (Arte/Drops)', description: 'Remove permanentemente todos os seus artigos de arte, já que o CC é opcional.' },
+        { id: 'questions', label: 'Minhas Perguntas', description: 'Remove permanentemente perguntas enviadas ao Cientista.' },
+        { id: 'interactions', label: 'Minhas Interações', description: 'Desfaz permanentemente suas curtidas, itens salvos e conexões (seguidores/seguindo).' }
     ];
 
     const toggleCategory = (id: string) => {

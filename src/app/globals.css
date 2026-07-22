@@ -83,10 +83,12 @@
 :root {
   color-scheme: light dark;
   --background: #F8FAFC; /* Fundo levemente cinza no claro para destacar os cards brancos */
+  --text-halo: 0 0 4px #F8FAFC, 0 0 8px #F8FAFC, 0 0 16px #F8FAFC, 0 0 24px #F8FAFC, 0 0 32px #F8FAFC, 0 0 48px #F8FAFC;
 }
 
 .dark {
   --background: #09090B; /* Fundo mais escuro no dark para destacar os cards #1E1E1E */
+  --text-halo: 0 0 4px #09090B, 0 0 8px #09090B, 0 0 16px #09090B, 0 0 24px #09090B, 0 0 32px #09090B, 0 0 48px #09090B;
   /* Neutral Dark for Lab-Div Identity */
 }
 
@@ -101,6 +103,7 @@ body {
   position: relative;
   z-index: 0;
   background-color: var(--background);
+  text-shadow: var(--text-halo);
   scrollbar-color: auto var(--background);
   scroll-behavior: smooth;
   overscroll-behavior-y: none;
@@ -125,22 +128,21 @@ body::before {
   pointer-events: none;
 }
 
-/* Light mode: 100% visible and bright */
+/* Light mode: 75% opacity */
 :root:not(.dark) body::before {
-  opacity: 0.85;
-  filter: saturate(1.5) contrast(1.2);
+  opacity: 0.75;
+  filter: contrast(1.2);
 }
 
-/* Dark mode: 100% visible, bright and colorful */
+/* Dark mode: 75% opacity */
 .dark body::before {
-  opacity: 0.85;
-  filter: brightness(1.5) saturate(2) contrast(1.2);
+  opacity: 0.75;
+  filter: brightness(1.5) contrast(1.2);
 }
 
-/* Admin Mode: Restore brand colors and vibrant opacity */
+/* Admin Mode: Same opacity and filter settings */
 .admin-page::before {
-  opacity: 1 !important;
-  filter: none !important;
+  opacity: 0.75 !important;
 }
 
 /* Performance: CSS-only animation replaces framer-motion in hero (no JS blocking) */

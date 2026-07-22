@@ -135,21 +135,37 @@ export function CacheManager() {
                 {cachesList.length === 0 ? (
                     <p className="text-gray-500 text-sm">Nenhum cache encontrado.</p>
                 ) : (
-                    cachesList.map((cache) => (
-                        <div key={cache.name} className="flex items-center justify-between bg-white/5 border border-white/5 rounded-xl p-4">
-                            <div className="flex items-center gap-3">
-                                <Database className="w-5 h-5 text-gray-400" />
-                                <span className="text-white font-mono text-sm">{cache.name}</span>
+                    cachesList.map((cache) => {
+                        let description = 'Cache temporário de sessão.';
+                        if (cache.name.includes('labdiv-hub') || cache.name.includes('workbox-precache')) {
+                            description = 'Recursos de interface, componentes offline e assets estruturais do sistema.';
+                        } else if (cache.name.includes('images') || cache.name.includes('imagens')) {
+                            description = 'Imagens, fotos e ilustrações cacheadas para carregamento mais rápido.';
+                        } else if (cache.name.includes('fonts')) {
+                            description = 'Tipografias e iconografias do sistema.';
+                        } else if (cache.name.includes('data')) {
+                            description = 'Dados estáticos de páginas pré-carregadas.';
+                        }
+
+                        return (
+                            <div key={cache.name} className="flex items-center justify-between bg-white/5 border border-white/5 rounded-xl p-4">
+                                <div className="flex items-start gap-3">
+                                    <Database className="w-5 h-5 text-brand-blue shrink-0 mt-1" />
+                                    <div className="flex flex-col">
+                                        <span className="text-white font-bold text-sm">{cache.name}</span>
+                                        <span className="text-xs text-gray-400 mt-1">{description}</span>
+                                    </div>
+                                </div>
+                                <button
+                                    onClick={() => handleDeleteCache(cache.name)}
+                                    className="p-2 text-gray-400 hover:text-brand-red hover:bg-brand-red/10 rounded-lg transition-colors shrink-0"
+                                    title="Excluir este cache"
+                                >
+                                    <Trash2 className="w-4 h-4" />
+                                </button>
                             </div>
-                            <button
-                                onClick={() => handleDeleteCache(cache.name)}
-                                className="p-2 text-gray-400 hover:text-brand-red hover:bg-brand-red/10 rounded-lg transition-colors"
-                                title="Excluir este cache"
-                            >
-                                <Trash2 className="w-4 h-4" />
-                            </button>
-                        </div>
-                    ))
+                        );
+                    })
                 )}
             </div>
         </div>

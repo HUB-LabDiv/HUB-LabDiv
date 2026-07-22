@@ -355,7 +355,6 @@ BEGIN
 
     -- [A] Anonimizar Conteúdo Acadêmico/Científico (Licença CC)
     UPDATE public.submissions SET user_id = GHOST_UUID WHERE user_id = target_user_id;
-    UPDATE public.micro_articles SET author_id = GHOST_UUID WHERE author_id = target_user_id;
     UPDATE public.comments SET user_id = GHOST_UUID WHERE user_id = target_user_id;
     UPDATE public.reproductions SET user_id = GHOST_UUID WHERE user_id = target_user_id;
     UPDATE public.testimonials SET user_id = GHOST_UUID WHERE user_id = target_user_id;
@@ -396,6 +395,7 @@ BEGIN
     DELETE FROM public.pseudonyms WHERE user_id = target_user_id;
     DELETE FROM public.hub_adoptions WHERE user_id = target_user_id;
     DELETE FROM public.analytics_plays WHERE user_id = target_user_id;
+    DELETE FROM public.micro_articles WHERE author_id = target_user_id;
     
     IF user_email IS NOT NULL THEN
         DELETE FROM public.perguntas WHERE email = user_email;

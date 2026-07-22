@@ -131,16 +131,20 @@ export async function deleteSpecificUserData(categories: string[]) {
   const userEmail = user.email;
 
   try {
+    const GHOST_UUID = '00000000-0000-0000-0000-000000000000';
+
     for (const category of categories) {
       switch (category) {
         case 'submissions':
-          await supabase.from('submissions').delete().eq('user_id', userId);
-          // Opcional: apagar da tabela de votos, se aplicável, porém a cascade costuma cuidar disso.
+          // Submissões (Fluxo) são CC obrigatório, portanto anonimizadas
+          await supabase.from('submissions').update({ user_id: GHOST_UUID }).eq('user_id', userId);
           break;
         case 'comments':
-          await supabase.from('comments').delete().eq('user_id', userId);
+          // Comentários acompanham o fluxo científico, também anonimizados
+          await supabase.from('comments').update({ user_id: GHOST_UUID }).eq('user_id', userId);
           break;
         case 'articles':
+          // Micro Artigos (Arte/Drops) têm CC opcional, portanto são deletados
           await supabase.from('micro_articles').delete().eq('author_id', userId);
           break;
         case 'questions':
