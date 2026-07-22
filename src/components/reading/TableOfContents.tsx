@@ -97,7 +97,7 @@ export function TableOfContents() {
                                     className={`block w-full text-left text-xs leading-snug py-1.5 px-2 rounded-lg transition-all truncate
                                         ${item.level === 1 ? 'font-bold' : item.level === 2 ? 'pl-4 font-medium' : 'pl-6 font-normal text-[11px]'}
                                         ${activeId === item.id
-                                            ? 'bg-brand-blue/10 text-brand-blue dark:text-blue-400 border-l-2 border-brand-blue'
+                                            ? 'bg-brand-blue/10 text-brand-blue dark:text-brand-blue border-l-2 border-brand-blue'
                                             : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-800'
                                         }`}
                                 >
@@ -127,7 +127,7 @@ export function TableOfContents() {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={() => setIsSheetOpen(false)}
-                            className="lg:hidden fixed inset-0 z-[200] bg-black/50 backdrop-blur-sm print:hidden"
+                            className="lg:hidden fixed inset-0 z-[200] bg-background-dark/50 backdrop-blur-sm print:hidden"
                         />
                         <m.div
                             initial={{ y: '100%' }}
@@ -156,7 +156,7 @@ export function TableOfContents() {
                                             className={`block w-full text-left py-3 px-3 rounded-xl transition-all min-h-[44px]
                                                 ${item.level === 1 ? 'text-sm font-bold' : item.level === 2 ? 'text-sm pl-5 font-medium' : 'text-xs pl-8 font-normal'}
                                                 ${activeId === item.id
-                                                    ? 'bg-brand-blue/10 text-brand-blue dark:text-blue-400'
+                                                    ? 'bg-brand-blue/10 text-brand-blue dark:text-brand-blue'
                                                     : 'text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
                                                 }`}
                                         >

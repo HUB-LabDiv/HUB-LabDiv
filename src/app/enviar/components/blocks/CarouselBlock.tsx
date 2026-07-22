@@ -86,13 +86,13 @@ export default function CarouselBlock({ block, isActive }: CarouselBlockProps) {
                             <>
                                 <button 
                                     onClick={handlePrev}
-                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 flex items-center justify-center text-white transition-colors z-10"
+                                    className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background-dark/50 hover:bg-background-dark/80 flex items-center justify-center text-white transition-colors z-10"
                                 >
                                     <span className="material-symbols-outlined">chevron_left</span>
                                 </button>
                                 <button 
                                     onClick={handleNext}
-                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-black/50 hover:bg-black/80 flex items-center justify-center text-white transition-colors z-10"
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-background-dark/50 hover:bg-background-dark/80 flex items-center justify-center text-white transition-colors z-10"
                                 >
                                     <span className="material-symbols-outlined">chevron_right</span>
                                 </button>
@@ -130,10 +130,10 @@ export default function CarouselBlock({ block, isActive }: CarouselBlockProps) {
                                         onClick={(e) => { e.stopPropagation(); setCurrentIndex(i); }}
                                     >
                                         <Image src={url} alt={`Thumbnail ${i}`} fill className="object-cover" />
-                                        <div className="absolute inset-0 bg-black/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <div className="absolute inset-0 bg-background-dark/40 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
                                             <button 
                                                 onClick={(e) => { e.stopPropagation(); handleRemoveImage(i); }}
-                                                className="w-8 h-8 bg-brand-red text-white rounded-full flex items-center justify-center hover:bg-red-500 transition-colors shadow-lg"
+                                                className="w-8 h-8 bg-brand-red text-white rounded-full flex items-center justify-center hover:bg-brand-red transition-colors shadow-lg"
                                                 title="Remover Imagem"
                                             >
                                                 <span className="material-symbols-outlined text-[16px]">delete</span>

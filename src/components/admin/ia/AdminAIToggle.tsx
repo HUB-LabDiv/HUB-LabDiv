@@ -57,7 +57,7 @@ export function AdminAIToggle() {
                     </p>
                 </div>
                 
-                <div className="flex items-center gap-3 bg-white dark:bg-[#121212] py-2 px-4 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
+                <div className="flex items-center gap-3 bg-white dark:bg-background-dark py-2 px-4 rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm">
                     <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Status:</span>
                     <button 
                         onClick={() => setIsEnabled(!isEnabled)}
@@ -80,14 +80,14 @@ export function AdminAIToggle() {
                     </h3>
                     
                     {logs.length === 0 ? (
-                        <div className="text-center py-6 bg-white/40 dark:bg-black/20 rounded-2xl border border-white/20 dark:border-gray-800 backdrop-blur-sm">
+                        <div className="text-center py-6 bg-white/40 dark:bg-background-dark/20 rounded-2xl border border-white/20 dark:border-gray-800 backdrop-blur-sm">
                             <Sparkles className="w-6 h-6 text-gray-300 mx-auto mb-2" />
                             <p className="text-sm font-medium text-gray-500">Nenhuma intervenção recente da inteligência artificial.</p>
                         </div>
                     ) : (
                         <div className="grid gap-3">
                             {logs.map(log => (
-                                <div key={log.id} className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white/60 dark:bg-black/30 backdrop-blur-sm p-4 rounded-2xl border border-brand-blue/10 hover:border-brand-blue/30 transition-colors">
+                                <div key={log.id} className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 bg-white/60 dark:bg-background-dark/30 backdrop-blur-sm p-4 rounded-2xl border border-brand-blue/10 hover:border-brand-blue/30 transition-colors">
                                     <div className="flex items-start gap-4">
                                         <div className="w-10 h-10 rounded-xl bg-green-500/10 flex items-center justify-center shrink-0">
                                             <CheckCircle2 className="w-5 h-5 text-green-500" />

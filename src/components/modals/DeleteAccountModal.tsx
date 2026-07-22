@@ -66,10 +66,10 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
     };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
-      <div className="bg-[#1E1E1E] border border-red-500/30 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl shadow-red-500/10">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background-dark/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
+      <div className="bg-[#1E1E1E] border border-brand-red/30 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl shadow-brand-red/10">
         <div className="p-6">
-          <div className="flex items-center gap-3 text-red-500 mb-4">
+          <div className="flex items-center gap-3 text-brand-red mb-4">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
             <h2 className="text-xl font-bold tracking-tight">ZONA DE PERIGO</h2>
           </div>
@@ -78,17 +78,17 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
             <p>
               Você está prestes a <span className="text-white font-semibold">excluir permanentemente</span> sua conta no HUB Lab-Div.
             </p>
-            <div className="bg-red-500/5 border border-red-500/20 p-4 rounded-xl space-y-2">
+            <div className="bg-brand-red/5 border border-brand-red/20 p-4 rounded-xl space-y-2">
               <p className="flex gap-2">
-                <span className="text-red-400">•</span> 
+                <span className="text-brand-red">•</span> 
                 Sua identidade será removida e dados sensíveis apagados.
               </p>
               <p className="flex gap-2">
-                <span className="text-red-400">•</span> 
+                <span className="text-brand-red">•</span> 
                 <span>Suas contribuições no acervo científico (Artigos e Drops) serão <span className="text-white">anonimizadas</span> mas mantidas sob licença <span className="text-white">CC BY 4.0</span>.</span>
               </p>
               <p className="flex gap-2">
-                <span className="text-red-400">•</span> 
+                <span className="text-brand-red">•</span> 
                 Esta ação é irreversível. Não poderemos recuperar seus dados.
               </p>
             </div>
@@ -102,7 +102,7 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
                 value={confirmText}
                 onChange={(e) => setConfirmText(e.target.value.toUpperCase())}
                 placeholder="EXCLUIR"
-                className="w-full bg-black/40 border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-red-500/50 transition-colors text-white placeholder:text-gray-700"
+                className="w-full bg-background-dark/40 border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-brand-red/50 transition-colors text-white placeholder:text-gray-700"
               />
             </div>
           </div>
@@ -119,7 +119,7 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
           <button 
             onClick={handleDelete}
             disabled={confirmText !== 'EXCLUIR' || isLoading}
-            className="flex-1 px-6 py-4 text-sm font-bold text-red-500 hover:bg-red-500/10 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+            className="flex-1 px-6 py-4 text-sm font-bold text-brand-red hover:bg-brand-red/10 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
           >
             {isLoading ? 'Excluindo...' : 'Confirmar Exclusão'}
           </button>

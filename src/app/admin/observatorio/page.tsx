@@ -158,7 +158,7 @@ export default function AdminChallengesPage() {
     });
 
     return (
-        <div className="p-8 max-w-6xl mx-auto space-y-8 min-h-screen bg-[#121212]/50 rounded-[3rem] border border-white/5 backdrop-blur-sm relative">
+        <div className="p-8 max-w-6xl mx-auto space-y-8 min-h-screen bg-background-dark/50 rounded-[3rem] border border-white/5 backdrop-blur-sm relative">
             <header className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white flex items-center gap-4 group">
@@ -193,7 +193,7 @@ export default function AdminChallengesPage() {
                 >
                     <Trophy size={16} />
                     Sugestões de Desafios
-                    <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeSection === 'arena' ? 'bg-black/20' : 'bg-white/5'}`}>
+                    <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeSection === 'arena' ? 'bg-background-dark/20' : 'bg-white/5'}`}>
                         {suggestions.length}
                     </span>
                 </button>
@@ -207,7 +207,7 @@ export default function AdminChallengesPage() {
                 >
                     <Lightbulb size={16} />
                     Melhorias do HUB
-                    <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeSection === 'hub' ? 'bg-black/20' : 'bg-white/5'}`}>
+                    <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeSection === 'hub' ? 'bg-background-dark/20' : 'bg-white/5'}`}>
                         {feedbacks.length}
                     </span>
                 </button>
@@ -221,7 +221,7 @@ export default function AdminChallengesPage() {
                 >
                     <BookOpen size={16} />
                     Adoções em Disciplinas
-                    <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeSection === 'adoptions' ? 'bg-black/20 text-white' : 'bg-white/5'}`}>
+                    <span className={`ml-2 px-2 py-0.5 rounded-full text-[10px] ${activeSection === 'adoptions' ? 'bg-background-dark/20 text-white' : 'bg-white/5'}`}>
                         {adoptions.length}
                     </span>
                 </button>
@@ -346,7 +346,7 @@ function SuggestionCard({ suggestion, onAction }: { suggestion: Suggestion, onAc
                     <span className={`px-3 py-1 text-[9px] font-black uppercase rounded-lg tracking-widest ${
                         suggestion.status === 'pending' ? 'bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20' : 
                         suggestion.status === 'approved' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
-                        'bg-red-500/10 text-red-500 border border-red-500/20'
+                        'bg-brand-red/10 text-brand-red border border-brand-red/20'
                     }`}>
                         {suggestion.status}
                     </span>
@@ -380,7 +380,7 @@ function SuggestionCard({ suggestion, onAction }: { suggestion: Suggestion, onAc
                         </button>
                         <button 
                             onClick={() => onAction(suggestion.id, 'rejected')}
-                            className="p-4 bg-white/5 hover:bg-red-500 border border-white/10 hover:border-red-500 text-gray-400 hover:text-white rounded-2xl transition-all hover:scale-110"
+                            className="p-4 bg-white/5 hover:bg-brand-red border border-white/10 hover:border-brand-red text-gray-400 hover:text-white rounded-2xl transition-all hover:scale-110"
                             title="Recusar"
                         >
                             <X size={20} strokeWidth={3} />
@@ -448,7 +448,7 @@ function FeedbackCard({ feedback }: { feedback: Feedback }) {
 
 function CreateModal({ onClose, onSave, title, setTitle, desc, setDesc, loading }: any) {
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background-dark/80 backdrop-blur-md animate-in fade-in duration-300">
             <div className="glass-card w-full max-w-xl rounded-[40px] border border-white/10 p-10 space-y-8 shadow-2xl animate-in zoom-in-95 duration-300">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
@@ -473,7 +473,7 @@ function CreateModal({ onClose, onSave, title, setTitle, desc, setDesc, loading 
                             value={title}
                             onChange={(e) => setTitle(e.target.value)}
                             placeholder="Ex: Maratona de Física Quântica"
-                            className="w-full bg-black/40 border border-white/5 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-brand-yellow/50 transition-all font-bold tracking-tight"
+                            className="w-full bg-background-dark/40 border border-white/5 rounded-2xl px-6 py-4 text-white focus:outline-none focus:border-brand-yellow/50 transition-all font-bold tracking-tight"
                         />
                     </div>
 
@@ -483,7 +483,7 @@ function CreateModal({ onClose, onSave, title, setTitle, desc, setDesc, loading 
                             value={desc}
                             onChange={(e) => setDesc(e.target.value)}
                             placeholder="Descreva as regras, objetivos e premiação do desafio..."
-                            className="w-full h-40 bg-black/40 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-yellow/50 transition-all resize-none"
+                            className="w-full h-40 bg-background-dark/40 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-yellow/50 transition-all resize-none"
                         />
                     </div>
 
@@ -520,7 +520,7 @@ function AdoptionCard({ adoption, onAction }: { adoption: any, onAction: any }) 
                     <span className={`px-3 py-1 text-[9px] font-black uppercase rounded-lg tracking-widest ${
                         adoption.status === 'pendente' ? 'bg-brand-blue/10 text-brand-blue border border-brand-blue/20' : 
                         adoption.status === 'aprovado' ? 'bg-green-500/10 text-green-500 border border-green-500/20' :
-                        'bg-red-500/10 text-red-500 border border-red-500/20'
+                        'bg-brand-red/10 text-brand-red border border-brand-red/20'
                     }`}>
                         {adoption.status}
                     </span>
@@ -538,15 +538,15 @@ function AdoptionCard({ adoption, onAction }: { adoption: any, onAction: any }) 
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                    <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
+                    <div className="bg-background-dark/20 p-4 rounded-2xl border border-white/5">
                         <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2">Ementa / Resumo</p>
                         <p className="text-sm text-gray-300">{adoption.summary || 'Não informado'}</p>
                     </div>
-                    <div className="bg-black/20 p-4 rounded-2xl border border-white/5">
+                    <div className="bg-background-dark/20 p-4 rounded-2xl border border-white/5">
                         <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2">Como pretende usar</p>
                         <p className="text-sm text-gray-300">{adoption.usage_intent || 'Não informado'}</p>
                     </div>
-                    <div className="bg-black/20 p-4 rounded-2xl border border-white/5 md:col-span-2">
+                    <div className="bg-background-dark/20 p-4 rounded-2xl border border-white/5 md:col-span-2">
                         <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2">Recursos Solicitados</p>
                         <p className="text-sm text-gray-300">{adoption.requested_features || 'Nenhum'}</p>
                     </div>
@@ -565,7 +565,7 @@ function AdoptionCard({ adoption, onAction }: { adoption: any, onAction: any }) 
                         </button>
                         <button 
                             onClick={() => onAction(adoption.id, 'rejeitado')}
-                            className="p-4 bg-white/5 hover:bg-red-500 border border-white/10 hover:border-red-500 text-gray-400 hover:text-white rounded-2xl transition-all hover:scale-110"
+                            className="p-4 bg-white/5 hover:bg-brand-red border border-white/10 hover:border-brand-red text-gray-400 hover:text-white rounded-2xl transition-all hover:scale-110"
                             title="Recusar"
                         >
                             <X size={20} strokeWidth={3} />

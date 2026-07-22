@@ -205,7 +205,7 @@ export default function AdminReportsPage() {
                                                 <h3 className="text-[10px] font-black text-gray-600 uppercase tracking-[0.3em] mb-4">Captura de Tela</h3>
                                                 <a href={selectedReport.screenshot_url} target="_blank" rel="noopener noreferrer" className="block relative group rounded-3xl overflow-hidden border border-white/10">
                                                     <img src={selectedReport.screenshot_url} alt="Evidência" className="w-full h-auto group-hover:scale-105 transition-transform duration-700" />
-                                                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                    <div className="absolute inset-0 bg-background-dark/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                                                         <ExternalLink className="text-white" />
                                                     </div>
                                                 </a>

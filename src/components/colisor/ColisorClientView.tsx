@@ -368,7 +368,7 @@ export function ColisorClientView({ oportunidades }: ColisorClientViewProps) {
                             <div key={index} className="flex flex-col items-center text-center group snap-center shrink-0 w-[260px] md:w-[300px] p-6 bg-white dark:bg-card-dark rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 hover:-translate-y-2 hover:shadow-xl transition-all duration-300">
                                 <div className={`relative w-28 h-28 rounded-full mb-5 flex items-center justify-center text-4xl font-bold text-white bg-${influencer.color} shadow-lg ring-4 ring-background-light dark:ring-background-dark outline outline-2 outline-gray-200 dark:outline-gray-800 transition-transform group-hover:scale-105 duration-300`}>
                                     {influencer.imagePlaceholder}
-                                    <div className="absolute inset-0 rounded-full bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    <div className="absolute inset-0 rounded-full bg-background-dark/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                                 </div>
                                 <h3 className="text-xl font-extrabold text-gray-900 dark:text-white mb-1 group-hover:text-brand-yellow transition-colors">{influencer.name}</h3>
                                 <p className={`text-xs font-bold uppercase tracking-wider text-${influencer.color} mb-4`}>{influencer.role}</p>

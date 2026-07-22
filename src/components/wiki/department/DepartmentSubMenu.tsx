@@ -66,7 +66,7 @@ export function DepartmentSubMenu() {
     };
 
     return (
-        <div className="sticky top-[88px] z-40 py-4 bg-white/80 dark:bg-[#121212]/80 backdrop-blur-md border-b border-gray-200 dark:border-white/5 transition-all w-full mb-8">
+        <div className="sticky top-[88px] z-40 py-4 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-gray-200 dark:border-white/5 transition-all w-full mb-8">
             <nav className="flex items-center gap-2 overflow-x-auto no-scrollbar snap-x">
                 {anchors.map(anchor => {
                     const isActive = activeId === anchor.id;

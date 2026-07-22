@@ -247,16 +247,25 @@ export const FluxoView = ({
     };
 
     return (
-        <div className="space-y-4 pt-8">
-            {/* New Blue Logs-style Header for Fluxo */}
-            <div className="flex flex-col gap-3 relative mb-12">
+        <div className="max-w-4xl mx-auto space-y-8 pt-8">
+            {/* 1. Feedback Card FIRST */}
+            <div className="w-full mb-6">
+                <FluxoFeedbackCard 
+                    title="Fluxo" 
+                    description="Esta é a subaba Fluxo. Aqui você acompanha a timeline principal de publicações, onde a comunicação científica pode ter o máximo de interação." 
+                    icon={<Zap className="w-5 h-5 text-brand-blue" />}
+                />
+            </div>
+
+            {/* 2. Header (H1 Title + Description) */}
+            <div className="flex flex-col gap-3 relative mb-8">
                 <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-blue/5 rounded-full blur-[60px] pointer-events-none"></div>
-                <h1 className="text-5xl font-black uppercase italic tracking-tighter text-[#1F9FCF] flex items-center gap-4 relative z-10">
-                    <Zap className="w-12 h-12 fill-[#1F9FCF]" />
+                <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-blue flex items-center gap-4 relative z-10">
+                    <Zap className="w-12 h-12 fill-brand-blue" />
                     FLUXO
                 </h1>
-                <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px] border-l-2 border-brand-blue-accent pl-4 max-w-lg">
-                    O ecossistema IFUSP em movimento. Documentação colaborativa e registro histórico da nossa ciência.
+                <p className="text-gray-400 font-medium text-sm border-l-2 border-brand-blue pl-4 max-w-xl leading-relaxed">
+                    Acompanhe a timeline principal de publicações e produções acadêmicas do IFUSP. Onde a comunicação científica ganha movimento e máxima interação da comunidade.
                 </p>
             </div>
 
@@ -398,7 +407,7 @@ export const FluxoView = ({
 
             <AnimatePresence>
                 {isSyncing && (
-                    <motion.div initial={{ opacity: 0, x: 50, scale: 0.9 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: 50, scale: 0.9 }} className="fixed top-24 right-6 z-[200] bg-black/80 backdrop-blur-xl border border-brand-blue-accent/30 rounded-2xl p-4 flex items-center gap-4 shadow-[0_0_30px_rgba(31,159,207,0.15)]">
+                    <motion.div initial={{ opacity: 0, x: 50, scale: 0.9 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: 50, scale: 0.9 }} className="fixed top-24 right-6 z-[200] bg-background-dark/80 backdrop-blur-xl border border-brand-blue-accent/30 rounded-2xl p-4 flex items-center gap-4 shadow-[0_0_30px_rgba(31,159,207,0.15)]">
                         <div className="relative w-10 h-10 flex items-center justify-center">
                             <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border border-brand-blue-accent/30 rounded-full" />
                             <div className="relative">

@@ -195,7 +195,7 @@ export default function PerguntasPage() {
             {/* Submit Question Modal */}
             {
                 showModal && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4" onClick={() => !isSubmitting && setShowModal(false)}>
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background-dark/60 backdrop-blur-sm p-4" onClick={() => !isSubmitting && setShowModal(false)}>
                         <div
                             className="bg-white dark:bg-card-dark rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800"
                             onClick={(e) => e.stopPropagation()}
@@ -221,7 +221,7 @@ export default function PerguntasPage() {
                             ) : (
                                 <div className="p-6 space-y-5">
                                     {submitError && (
-                                        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 text-sm font-medium flex items-center gap-2 border border-red-200 dark:border-red-800">
+                                        <div className="p-3 rounded-lg bg-red-50 dark:bg-red-900/20 text-brand-red dark:text-brand-red text-sm font-medium flex items-center gap-2 border border-red-200 dark:border-red-800">
                                             <span className="material-symbols-outlined text-[18px]">error</span>
                                             {submitError}
                                         </div>

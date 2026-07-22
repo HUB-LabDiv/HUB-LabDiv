@@ -26,7 +26,7 @@ export default function AdminLoginGate() {
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-neutral-900 p-4">
-            <div className="bg-black/50 border border-gray-800 p-8 rounded-2xl w-full max-w-md shadow-2xl backdrop-blur-sm">
+            <div className="bg-background-dark/50 border border-gray-800 p-8 rounded-2xl w-full max-w-md shadow-2xl backdrop-blur-sm">
                 <div className="text-center mb-8">
                     <div className="flex justify-center items-center gap-2 mb-4">
                         <span className="material-symbols-outlined text-[#0055ff] text-4xl">security</span>
@@ -36,7 +36,7 @@ export default function AdminLoginGate() {
                 </div>
 
                 <div className="space-y-4 mb-8">
-                    <Link href="/login" className="w-full flex items-center justify-center gap-2 bg-[#0055ff] hover:bg-blue-600 text-white p-3 rounded-xl transition-colors font-medium">
+                    <Link href="/login" className="w-full flex items-center justify-center gap-2 bg-[#0055ff] hover:bg-brand-blue text-white p-3 rounded-xl transition-colors font-medium">
                         <span className="material-symbols-outlined text-[20px]">login</span>
                         Ir para Página de Login Padrão
                     </Link>

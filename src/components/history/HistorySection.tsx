@@ -32,7 +32,7 @@ export const HistorySection = ({ history }: HistorySectionProps) => {
     if (history.length === 0) return null;
 
     return (
-        <section className="py-12 bg-[#121212]">
+        <section className="py-12 bg-background-dark">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center gap-3 mb-8">
                     <span className="material-symbols-outlined text-brand-blue text-3xl">history</span>

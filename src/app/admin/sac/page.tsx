@@ -184,7 +184,7 @@ export default function AdminSacPage() {
             {respondingTo && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
                     <div className="bg-white dark:bg-[#1e1e1e] rounded-2xl w-full max-w-2xl shadow-xl border border-gray-200 dark:border-white/10 flex flex-col">
-                        <div className="px-6 py-4 border-b border-gray-200 dark:border-white/10 flex justify-between items-center bg-gray-50 dark:bg-black/20">
+                        <div className="px-6 py-4 border-b border-gray-200 dark:border-white/10 flex justify-between items-center bg-gray-50 dark:bg-background-dark/20">
                             <h2 className="text-xl font-black uppercase text-gray-900 dark:text-white flex items-center gap-2">
                                 <MessageSquare className="w-5 h-5 text-brand-blue" />
                                 Responder Dúvida
@@ -203,13 +203,13 @@ export default function AdminSacPage() {
                                     rows={6}
                                     value={resposta}
                                     onChange={e => setResposta(e.target.value)}
-                                    className="w-full bg-white dark:bg-black/20 border border-gray-300 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-brand-blue transition-colors resize-none"
+                                    className="w-full bg-white dark:bg-background-dark/20 border border-gray-300 dark:border-white/10 rounded-xl px-4 py-3 text-gray-900 dark:text-white focus:outline-none focus:border-brand-blue transition-colors resize-none"
                                     placeholder="Escreva a resposta aqui. Ao aprovar, esta dúvida ficará visível publicamente na aba Ferramentas."
                                 />
                             </div>
                             <p className="text-[10px] text-gray-400">Um email automático será enviado para o aluno (se disponível) notificando que a dúvida foi respondida.</p>
                         </div>
-                        <div className="px-6 py-4 bg-gray-50 dark:bg-black/20 border-t border-gray-200 dark:border-white/10 flex justify-end gap-3 rounded-b-2xl">
+                        <div className="px-6 py-4 bg-gray-50 dark:bg-background-dark/20 border-t border-gray-200 dark:border-white/10 flex justify-end gap-3 rounded-b-2xl">
                             <button
                                 onClick={() => setRespondingTo(null)}
                                 className="px-5 py-3 text-xs font-bold uppercase text-gray-500 hover:text-gray-700 dark:hover:text-white transition-colors"

@@ -92,7 +92,7 @@ export function DraftsMenu() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {drafts.length === 0 ? (
-                    <div className="col-span-1 md:col-span-3 p-8 rounded-[24px] border border-dashed border-white/10 bg-[#121212]/50 flex flex-col items-center justify-center gap-2 text-gray-500 backdrop-blur-md">
+                    <div className="col-span-1 md:col-span-3 p-8 rounded-[24px] border border-dashed border-white/10 bg-background-dark/50 flex flex-col items-center justify-center gap-2 text-gray-500 backdrop-blur-md">
                         <span className="material-symbols-outlined text-3xl opacity-30">draft</span>
                         <p className="text-sm">Nenhum rascunho salvo.</p>
                     </div>
@@ -117,7 +117,7 @@ export function DraftsMenu() {
                                 </button>
                                 <button 
                                     onClick={(e) => { e.stopPropagation(); deleteDraft(draft.id); }}
-                                    className="flex-1 py-1.5 flex items-center justify-center gap-1 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500 hover:text-white transition-colors text-[10px] font-bold uppercase tracking-wider"
+                                    className="flex-1 py-1.5 flex items-center justify-center gap-1 rounded-lg bg-brand-red/10 text-brand-red hover:bg-brand-red hover:text-white transition-colors text-[10px] font-bold uppercase tracking-wider"
                                 >
                                     <span className="material-symbols-outlined text-[14px]">delete</span>
                                     Excluir

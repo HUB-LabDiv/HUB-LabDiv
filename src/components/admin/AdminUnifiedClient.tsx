@@ -296,8 +296,8 @@ export function AdminUnifiedClient() {
                     onClick={() => setActiveTab('perigo')}
                     className={`flex items-center gap-2.5 px-6 py-3 rounded-[16px] text-[10px] font-black uppercase tracking-widest transition-all ${
                         activeTab === 'perigo'
-                            ? 'bg-red-600 text-white shadow-lg shadow-red-900/20'
-                            : 'text-gray-500 hover:text-red-500 hover:bg-neutral-800'
+                            ? 'bg-brand-red text-white shadow-lg shadow-red-900/20'
+                            : 'text-gray-500 hover:text-brand-red hover:bg-neutral-800'
                     }`}
                 >
                     <span className="material-symbols-outlined text-sm">dangerous</span>
@@ -370,7 +370,7 @@ export function AdminUnifiedClient() {
                                                         <select
                                                             value={profile.role || 'user'}
                                                             onChange={(e) => handleRoleChange(profile.id, e.target.value)}
-                                                            className="bg-black/20 border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-brand-yellow/50 transition-colors w-full cursor-pointer"
+                                                            className="bg-background-dark/20 border border-white/10 rounded-xl px-3 py-2 text-xs font-bold text-white focus:outline-none focus:border-brand-yellow/50 transition-colors w-full cursor-pointer"
                                                         >
                                                             {ROLES.map(role => (
                                                                 <option key={role.value} value={role.value} className="bg-neutral-900">
@@ -406,7 +406,7 @@ export function AdminUnifiedClient() {
                                                         </button>
                                                         <button
                                                             onClick={() => setDeleteModal({ isOpen: true, id: profile.id, name: profile.full_name })}
-                                                            className="p-1.5 rounded-lg border border-red-500/30 text-red-500 hover:bg-red-500 hover:text-white transition-all"
+                                                            className="p-1.5 rounded-lg border border-brand-red/30 text-brand-red hover:bg-brand-red hover:text-white transition-all"
                                                         >
                                                             <span className="material-symbols-outlined text-xs">delete</span>
                                                         </button>
@@ -426,9 +426,9 @@ export function AdminUnifiedClient() {
                         {/* Reset Nuclear */}
                         <section className="p-8 bg-red-950/10 border border-red-900/30 rounded-[32px] relative overflow-hidden group">
                             <div className="absolute top-0 right-0 p-6 opacity-5 group-hover:scale-110 transition-transform">
-                                <span className="material-symbols-outlined text-[120px] text-red-500">nuclear_power</span>
+                                <span className="material-symbols-outlined text-[120px] text-brand-red">nuclear_power</span>
                             </div>
-                            <h2 className="text-2xl font-black text-red-500 mb-4 flex items-center gap-3">
+                            <h2 className="text-2xl font-black text-brand-red mb-4 flex items-center gap-3">
                                 <span className="material-symbols-outlined">warning</span>
                                 Reset Nuclear
                             </h2>
@@ -441,18 +441,18 @@ export function AdminUnifiedClient() {
                                     type="password"
                                     placeholder="Chave de Admin"
                                     required
-                                    className="w-full bg-black/40 border border-red-900/30 rounded-2xl px-5 py-4 text-white placeholder:text-gray-700 focus:outline-none focus:border-red-500 transition-colors"
+                                    className="w-full bg-background-dark/40 border border-red-900/30 rounded-2xl px-5 py-4 text-white placeholder:text-gray-700 focus:outline-none focus:border-brand-red transition-colors"
                                 />
                                 <input
                                     name="confirm_phrase"
                                     type="text"
                                     placeholder="ESTOU CIENTE DA DESTRUIÇÃO TOTAL"
                                     required
-                                    className="w-full bg-black/40 border border-red-900/30 rounded-2xl px-5 py-4 text-white placeholder:text-gray-700 focus:outline-none focus:border-red-500 transition-colors text-[10px] uppercase font-black"
+                                    className="w-full bg-background-dark/40 border border-red-900/30 rounded-2xl px-5 py-4 text-white placeholder:text-gray-700 focus:outline-none focus:border-brand-red transition-colors text-[10px] uppercase font-black"
                                 />
                                 <button
                                     disabled={isDangerLoading}
-                                    className="w-full py-5 bg-red-600 hover:bg-red-500 disabled:bg-neutral-900 text-white font-black rounded-2xl shadow-2xl shadow-red-900/20 transition-all active:scale-95 flex items-center justify-center gap-2 uppercase tracking-widest text-xs"
+                                    className="w-full py-5 bg-brand-red hover:bg-brand-red disabled:bg-neutral-900 text-white font-black rounded-2xl shadow-2xl shadow-red-900/20 transition-all active:scale-95 flex items-center justify-center gap-2 uppercase tracking-widest text-xs"
                                 >
                                     EXECUTAR PROTOCOLO ZERO
                                 </button>
@@ -468,7 +468,7 @@ export function AdminUnifiedClient() {
                                     value={secretKey}
                                     onChange={(e) => setSecretKey(e.target.value)}
                                     placeholder="Chave para ações manuais"
-                                    className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-brand-yellow/50 transition-colors"
+                                    className="w-full bg-background-dark/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-brand-yellow/50 transition-colors"
                                 />
                             </div>
 
@@ -523,7 +523,7 @@ export function AdminUnifiedClient() {
                                 value={targetUid}
                                 onChange={(e) => setTargetUid(e.target.value)}
                                 placeholder="UID do Usuário"
-                                className="flex-1 bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-brand-blue transition-colors"
+                                className="flex-1 bg-background-dark/40 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-brand-blue transition-colors"
                             />
                             <button
                                 onClick={handleSpecificWipe}
@@ -551,7 +551,7 @@ export function AdminUnifiedClient() {
                                 placeholder="E-mails para preservar (ex: admin@usp.br, coordenacao@if.usp.br)"
                                 rows={3}
                                 required
-                                className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm placeholder:text-gray-700 focus:outline-none focus:border-purple-500 transition-colors"
+                                className="w-full bg-background-dark/40 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm placeholder:text-gray-700 focus:outline-none focus:border-purple-500 transition-colors"
                             />
                             <button
                                 type="submit"

@@ -226,7 +226,7 @@ export function CorrectionsManager() {
                         <button onClick={() => handleBulkStatus('rejected')} className="px-4 py-2 bg-brand-red text-white hover:bg-brand-red/80 rounded-xl text-xs font-bold transition-all flex items-center gap-2">
                             <X className="w-4 h-4" /> Rejeitar
                         </button>
-                        <button onClick={handleBulkDelete} className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-500 hover:bg-red-600 hover:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2">
+                        <button onClick={handleBulkDelete} className="px-4 py-2 bg-gray-100 dark:bg-gray-800 text-gray-500 hover:bg-brand-red hover:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2">
                             <Trash2 className="w-4 h-4" /> Excluir
                         </button>
                     </div>
@@ -259,7 +259,7 @@ export function CorrectionsManager() {
                             <div className="pt-1">
                                 <button 
                                     onClick={() => toggleSelect(correction.id)}
-                                    className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${selectedIds.has(correction.id) ? 'bg-brand-blue border-brand-blue' : 'border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-black/20'}`}
+                                    className={`w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${selectedIds.has(correction.id) ? 'bg-brand-blue border-brand-blue' : 'border-gray-200 dark:border-gray-700 bg-white/50 dark:bg-background-dark/20'}`}
                                 >
                                     {selectedIds.has(correction.id) && <Check className="w-4 h-4 text-white" />}
                                 </button>
@@ -304,7 +304,7 @@ export function CorrectionsManager() {
                                     </div>
                                 </div>
 
-                                <div className="p-4 bg-white/50 dark:bg-black/20 rounded-2xl border border-gray-100 dark:border-gray-800 text-gray-700 dark:text-gray-300 text-sm leading-relaxed flex gap-3">
+                                <div className="p-4 bg-white/50 dark:bg-background-dark/20 rounded-2xl border border-gray-100 dark:border-gray-800 text-gray-700 dark:text-gray-300 text-sm leading-relaxed flex gap-3">
                                     <MessageSquare className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
                                     {correction.suggestion}
                                 </div>

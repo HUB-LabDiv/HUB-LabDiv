@@ -77,7 +77,7 @@ export default function Model3DBlock({ block, isActive }: { block: Block; isActi
                             allowFullScreen
                         ></iframe>
                     ) : (
-                        <div className="w-full h-[400px] flex items-center justify-center bg-black/20 rounded-lg border border-gray-800">
+                        <div className="w-full h-[400px] flex items-center justify-center bg-background-dark/20 rounded-lg border border-gray-800">
                             {/* @ts-ignore */}
                             <model-viewer 
                                 src={modelUrl} 

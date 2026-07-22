@@ -64,7 +64,7 @@ export function FreireIACopilot() {
 
                         <button 
                             disabled 
-                            className="w-full flex justify-center items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-black/40 text-gray-400 dark:text-gray-500 rounded-xl text-xs font-bold uppercase tracking-widest cursor-not-allowed border border-dashed border-gray-300 dark:border-gray-700"
+                            className="w-full flex justify-center items-center gap-2 px-4 py-3 bg-gray-100 dark:bg-background-dark/40 text-gray-400 dark:text-gray-500 rounded-xl text-xs font-bold uppercase tracking-widest cursor-not-allowed border border-dashed border-gray-300 dark:border-gray-700"
                         >
                             <PenTool className="w-4 h-4" />
                             Analisar a Didática

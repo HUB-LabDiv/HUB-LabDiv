@@ -319,7 +319,7 @@ export default function ArenaClient({ profile }: { profile: any }) {
                                         value={hubSuggestion}
                                         onChange={(e) => setHubSuggestion(e.target.value)}
                                         placeholder="Como podemos tornar o HUB uma ferramenta melhor para sua pesquisa? Alguma funcionalidade faltando?"
-                                        className="w-full h-40 bg-black/40 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-yellow/50 transition-all resize-none shadow-inner"
+                                        className="w-full h-40 bg-background-dark/40 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-yellow/50 transition-all resize-none shadow-inner"
                                     />
                                     <button
                                         onClick={handleHubSuggestion}
@@ -351,7 +351,7 @@ export default function ArenaClient({ profile }: { profile: any }) {
 
             {/* Modal de Submissão de Desafio (Participar) */}
             {showSubmitModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background-dark/80 backdrop-blur-md animate-in fade-in duration-300">
                     <div className="w-full max-w-2xl bg-[#1E1E1E] rounded-[40px] border border-white/10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
                         <div className="p-8 space-y-6">
                             <div className="flex items-center justify-between">
@@ -362,7 +362,7 @@ export default function ArenaClient({ profile }: { profile: any }) {
                             <textarea 
                                 value={submissionContent}
                                 onChange={(e) => setSubmissionContent(e.target.value)}
-                                className="w-full h-48 bg-black/20 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-yellow/50 transition-all resize-none"
+                                className="w-full h-48 bg-background-dark/20 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-yellow/50 transition-all resize-none"
                                 placeholder="Descreva seu resumo ou solução para o desafio..."
                             />
 
@@ -387,7 +387,7 @@ export default function ArenaClient({ profile }: { profile: any }) {
 
             {/* Modal de Propor Novo Desafio */}
             {showProposeModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background-dark/80 backdrop-blur-md animate-in fade-in duration-300">
                     <div className="w-full max-w-2xl bg-[#1E1E1E] rounded-[40px] border border-white/10 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
                         <div className="p-8 space-y-6">
                             <div className="flex items-center justify-between">
@@ -406,7 +406,7 @@ export default function ArenaClient({ profile }: { profile: any }) {
                                         value={proposalTitle}
                                         onChange={(e) => setProposalTitle(e.target.value)}
                                         placeholder="Ex: Resumo de Artigo da Semana"
-                                        className="w-full bg-black/20 border border-white/5 rounded-2xl px-6 py-4 text-sm text-white focus:outline-none focus:border-brand-yellow/50 transition-all"
+                                        className="w-full bg-background-dark/20 border border-white/5 rounded-2xl px-6 py-4 text-sm text-white focus:outline-none focus:border-brand-yellow/50 transition-all"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -415,7 +415,7 @@ export default function ArenaClient({ profile }: { profile: any }) {
                                         value={proposalDesc}
                                         onChange={(e) => setProposalDesc(e.target.value)}
                                         placeholder="Descreva o objetivo do desafio, datas sugeridas e premiação (XP/Badges)..."
-                                        className="w-full h-40 bg-black/20 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-yellow/50 transition-all resize-none"
+                                        className="w-full h-40 bg-background-dark/20 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-yellow/50 transition-all resize-none"
                                     />
                                 </div>
                             </div>
@@ -444,7 +444,7 @@ export default function ArenaClient({ profile }: { profile: any }) {
 
             {/* Modal de Adoção na Disciplina */}
             {showAdoptionModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-300">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background-dark/80 backdrop-blur-md animate-in fade-in duration-300">
                     <div className="w-full max-w-2xl bg-[#1E1E1E] rounded-[40px] border border-brand-blue/30 overflow-hidden shadow-2xl animate-in zoom-in-95 duration-300">
                         <div className="p-8 space-y-6 max-h-[90vh] overflow-y-auto no-scrollbar">
                             <div className="flex items-center justify-between">
@@ -463,7 +463,7 @@ export default function ArenaClient({ profile }: { profile: any }) {
                                         value={adoptionData.discipline_name}
                                         onChange={(e) => setAdoptionData({...adoptionData, discipline_name: e.target.value})}
                                         placeholder="Ex: FGE0102 - Física Geral e Experimental"
-                                        className="w-full bg-black/20 border border-white/5 rounded-2xl px-6 py-4 text-sm text-white focus:outline-none focus:border-brand-blue/50 transition-all"
+                                        className="w-full bg-background-dark/20 border border-white/5 rounded-2xl px-6 py-4 text-sm text-white focus:outline-none focus:border-brand-blue/50 transition-all"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -472,7 +472,7 @@ export default function ArenaClient({ profile }: { profile: any }) {
                                         value={adoptionData.summary}
                                         onChange={(e) => setAdoptionData({...adoptionData, summary: e.target.value})}
                                         placeholder="Resumo do que é ensinado na disciplina..."
-                                        className="w-full h-24 bg-black/20 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-blue/50 transition-all resize-none"
+                                        className="w-full h-24 bg-background-dark/20 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-blue/50 transition-all resize-none"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -481,7 +481,7 @@ export default function ArenaClient({ profile }: { profile: any }) {
                                         value={adoptionData.usage_intent}
                                         onChange={(e) => setAdoptionData({...adoptionData, usage_intent: e.target.value})}
                                         placeholder="Ex: Atividades avaliativas, construção de portfólio dos alunos..."
-                                        className="w-full h-24 bg-black/20 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-blue/50 transition-all resize-none"
+                                        className="w-full h-24 bg-background-dark/20 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-blue/50 transition-all resize-none"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -490,7 +490,7 @@ export default function ArenaClient({ profile }: { profile: any }) {
                                         value={adoptionData.requested_features}
                                         onChange={(e) => setAdoptionData({...adoptionData, requested_features: e.target.value})}
                                         placeholder="Ex: Gostaria de uma área específica para minha turma, integração com o Moodle..."
-                                        className="w-full h-24 bg-black/20 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-blue/50 transition-all resize-none"
+                                        className="w-full h-24 bg-background-dark/20 border border-white/5 rounded-3xl p-6 text-sm text-gray-300 focus:outline-none focus:border-brand-blue/50 transition-all resize-none"
                                     />
                                 </div>
                             </div>

@@ -143,9 +143,9 @@ export default function MapaClient({ glossario }: MapaClientProps) {
                 colorMode="dark"
             >
                 <Background color="#333" gap={16} />
-                <Controls className="bg-black border border-gray-800 fill-white" />
+                <Controls className="bg-background-dark border border-gray-800 fill-white" />
             </ReactFlow>
-            <div className="absolute top-4 left-4 bg-black/80 backdrop-blur border border-white/10 p-4 rounded-xl max-w-sm pointer-events-none text-sm text-gray-300">
+            <div className="absolute top-4 left-4 bg-background-dark/80 backdrop-blur border border-white/10 p-4 rounded-xl max-w-sm pointer-events-none text-sm text-gray-300">
                 <h3 className="font-bold text-white mb-2 uppercase tracking-widest text-xs flex items-center gap-2">
                     <span className="material-symbols-outlined text-brand-yellow">hub</span>
                     Construtor de Constelações

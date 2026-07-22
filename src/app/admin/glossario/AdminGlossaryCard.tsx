@@ -153,7 +153,7 @@ export function AdminGlossaryCard({ palavra, allConstellations = [] }: { palavra
                                 type="text" 
                                 value={mainForm.termo} 
                                 onChange={e => setMainForm({...mainForm, termo: e.target.value})}
-                                className="bg-black/50 border border-gray-700 rounded px-3 py-1 text-white w-full text-xl font-bold"
+                                className="bg-background-dark/50 border border-gray-700 rounded px-3 py-1 text-white w-full text-xl font-bold"
                             />
                         ) : (
                             <h2 className="text-xl font-bold text-white flex flex-wrap items-center gap-2 break-all sm:break-words">
@@ -169,7 +169,7 @@ export function AdminGlossaryCard({ palavra, allConstellations = [] }: { palavra
                                     <button onClick={() => setIsEditingMain(false)} className="p-1.5 text-gray-500 hover:bg-gray-800 rounded-lg transition-colors cursor-pointer" title="Cancelar"><span className="material-symbols-outlined text-[18px]">close</span></button>
                                 </>
                             ) : (
-                                <button onClick={() => setIsEditingMain(true)} className="p-1.5 text-blue-400 hover:bg-blue-400/20 rounded-lg transition-colors cursor-pointer" title="Editar Núcleo"><span className="material-symbols-outlined text-[18px]">edit</span></button>
+                                <button onClick={() => setIsEditingMain(true)} className="p-1.5 text-brand-blue hover:bg-brand-blue/20 rounded-lg transition-colors cursor-pointer" title="Editar Núcleo"><span className="material-symbols-outlined text-[18px]">edit</span></button>
                             )}
 
                             {palavra.is_pending && (
@@ -189,7 +189,7 @@ export function AdminGlossaryCard({ palavra, allConstellations = [] }: { palavra
                         <textarea 
                             value={mainForm.codificacao_academica}
                             onChange={e => setMainForm({...mainForm, codificacao_academica: e.target.value})}
-                            className="bg-black/50 border border-gray-700 rounded px-3 py-2 text-white w-full text-sm min-h-[100px]"
+                            className="bg-background-dark/50 border border-gray-700 rounded px-3 py-2 text-white w-full text-sm min-h-[100px]"
                         />
                     ) : (
                         <p className="text-sm text-gray-300 leading-relaxed mt-1">
@@ -214,14 +214,14 @@ export function AdminGlossaryCard({ palavra, allConstellations = [] }: { palavra
                                     <div className="flex items-center ml-1 border-l border-white/20 pl-1 gap-1">
                                         {!gerada.is_pending && (
                                             <>
-                                                <button onClick={() => handleEditGenerated(gerada.id, gerada.termo)} className="text-blue-400 hover:text-blue-300" title="Editar"><span className="material-symbols-outlined text-[14px]">edit</span></button>
-                                                <button onClick={() => handleDeleteGenerated(gerada.id)} className="text-red-500 hover:text-red-400" title="Excluir"><span className="material-symbols-outlined text-[14px]">delete</span></button>
+                                                <button onClick={() => handleEditGenerated(gerada.id, gerada.termo)} className="text-brand-blue hover:text-blue-300" title="Editar"><span className="material-symbols-outlined text-[14px]">edit</span></button>
+                                                <button onClick={() => handleDeleteGenerated(gerada.id)} className="text-brand-red hover:text-brand-red" title="Excluir"><span className="material-symbols-outlined text-[14px]">delete</span></button>
                                             </>
                                         )}
                                         {gerada.is_pending && (
                                             <>
                                                 <button onClick={() => handleApproveGenerated(gerada.id)} className="text-green-500 hover:text-green-400"><span className="material-symbols-outlined text-[14px]">check</span></button>
-                                                <button onClick={() => handleRejectGenerated(gerada.id)} className="text-brand-red hover:text-red-400"><span className="material-symbols-outlined text-[14px]">close</span></button>
+                                                <button onClick={() => handleRejectGenerated(gerada.id)} className="text-brand-red hover:text-brand-red"><span className="material-symbols-outlined text-[14px]">close</span></button>
                                             </>
                                         )}
                                     </div>
@@ -247,11 +247,11 @@ export function AdminGlossaryCard({ palavra, allConstellations = [] }: { palavra
                     </div>
 
                     {isAddingConst && (
-                        <div className="bg-black/40 p-4 rounded-xl border border-brand-blue/50 mb-4 flex flex-col gap-3">
+                        <div className="bg-background-dark/40 p-4 rounded-xl border border-brand-blue/50 mb-4 flex flex-col gap-3">
                             <input 
                                 type="text" placeholder="Nome (Ex: NERD)" list={`const-list-${palavra.id}`}
                                 value={constForm.constelacao} onChange={e => setConstForm({...constForm, constelacao: e.target.value})}
-                                className="bg-black border border-gray-700 rounded px-3 py-2 text-white text-sm"
+                                className="bg-background-dark border border-gray-700 rounded px-3 py-2 text-white text-sm"
                             />
                             <datalist id={`const-list-${palavra.id}`}>
                                 {allConstellations.map(c => <option key={c} value={c} />)}
@@ -259,7 +259,7 @@ export function AdminGlossaryCard({ palavra, allConstellations = [] }: { palavra
                             <textarea 
                                 placeholder="Tradução..." 
                                 value={constForm.descodificacao} onChange={e => setConstForm({...constForm, descodificacao: e.target.value})}
-                                className="bg-black border border-gray-700 rounded px-3 py-2 text-white text-sm min-h-[60px]"
+                                className="bg-background-dark border border-gray-700 rounded px-3 py-2 text-white text-sm min-h-[60px]"
                             />
                             <div className="flex justify-end gap-2">
                                 <button onClick={() => setIsAddingConst(false)} className="text-xs text-gray-500 hover:text-white px-3 py-1">Cancelar</button>
@@ -276,14 +276,14 @@ export function AdminGlossaryCard({ palavra, allConstellations = [] }: { palavra
                                         <input 
                                             type="text" value={editConstForm.constelacao} onChange={e => setEditConstForm({...editConstForm, constelacao: e.target.value})}
                                             list={`const-list-edit-${palavra.id}`}
-                                            className="bg-black border border-gray-700 rounded px-2 py-1 text-white text-xs font-bold uppercase"
+                                            className="bg-background-dark border border-gray-700 rounded px-2 py-1 text-white text-xs font-bold uppercase"
                                         />
                                         <datalist id={`const-list-edit-${palavra.id}`}>
                                             {allConstellations.map(c => <option key={c} value={c} />)}
                                         </datalist>
                                         <textarea 
                                             value={editConstForm.descodificacao} onChange={e => setEditConstForm({...editConstForm, descodificacao: e.target.value})}
-                                            className="bg-black border border-gray-700 rounded px-2 py-1 text-white text-xs min-h-[60px]"
+                                            className="bg-background-dark border border-gray-700 rounded px-2 py-1 text-white text-xs min-h-[60px]"
                                         />
                                         <div className="flex justify-end gap-1 mt-1">
                                             <button onClick={() => setEditingConstId(null)} className="text-[10px] text-gray-400 bg-gray-800 px-2 py-1 rounded">Cancelar</button>
@@ -297,11 +297,11 @@ export function AdminGlossaryCard({ palavra, allConstellations = [] }: { palavra
                                                 {constelacao.constelacao} {constelacao.is_pending && '(Pendente)'}
                                             </span>
                                             
-                                            <div className="flex gap-1 bg-black/40 rounded p-0.5 opacity-0 group-hover/const:opacity-100 transition-opacity">
+                                            <div className="flex gap-1 bg-background-dark/40 rounded p-0.5 opacity-0 group-hover/const:opacity-100 transition-opacity">
                                                 {!constelacao.is_pending && (
                                                     <>
-                                                        <button onClick={() => { setEditingConstId(constelacao.id); setEditConstForm({ constelacao: constelacao.constelacao, descodificacao: constelacao.descodificacao }); }} className="text-blue-400 hover:bg-blue-400/20 rounded p-1" title="Editar"><span className="material-symbols-outlined text-[14px]">edit</span></button>
-                                                        <button onClick={() => handleDeleteConstellation(constelacao.id)} className="text-red-500 hover:bg-red-500/20 rounded p-1" title="Excluir"><span className="material-symbols-outlined text-[14px]">delete</span></button>
+                                                        <button onClick={() => { setEditingConstId(constelacao.id); setEditConstForm({ constelacao: constelacao.constelacao, descodificacao: constelacao.descodificacao }); }} className="text-brand-blue hover:bg-brand-blue/20 rounded p-1" title="Editar"><span className="material-symbols-outlined text-[14px]">edit</span></button>
+                                                        <button onClick={() => handleDeleteConstellation(constelacao.id)} className="text-brand-red hover:bg-brand-red/20 rounded p-1" title="Excluir"><span className="material-symbols-outlined text-[14px]">delete</span></button>
                                                     </>
                                                 )}
                                                 {constelacao.is_pending && (

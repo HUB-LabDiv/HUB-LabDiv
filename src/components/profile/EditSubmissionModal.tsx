@@ -54,8 +54,8 @@ export function EditSubmissionModal({ isOpen, onClose, post }: EditSubmissionMod
     };
 
     return (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-[#121212] rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800 flex flex-col max-h-[90vh]">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-background-dark/60 backdrop-blur-sm animate-in fade-in duration-300">
+            <div className="bg-white dark:bg-background-dark rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800 flex flex-col max-h-[90vh]">
                 <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
                     <div>
                         <h2 className="text-xl font-bold text-gray-900 dark:text-white">Solicitar Edição</h2>

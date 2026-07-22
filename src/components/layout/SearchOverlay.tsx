@@ -103,7 +103,7 @@ const wikiEntries = [
 const navRoutes = [
     { label: 'Grade Horária / Cronograma', href: '/ferramentas', icon: 'calendar_month', color: 'text-brand-blue-accent', desc: 'Monte seu cronograma semestral do Júpiter' },
     { label: 'Trilhas de Aprendizado', href: '/trilhas', icon: 'auto_stories', color: 'text-brand-yellow', desc: 'Descubra a ordem ideal de matérias' },
-    { label: 'GCIF (Grande Colisor do IF)', href: '/gcif', icon: 'hub', color: 'text-brand-blue-accent', desc: 'Oportunidades de pesquisa e projetos' },
+    { label: 'GCIF (Grande Colisor do IF)', href: '/gcif', icon: 'hub', color: 'text-brand-blue', desc: 'Oportunidades de pesquisa e projetos' },
     { label: 'Meu Laboratório / Perfil', href: '/lab', icon: 'science', color: 'text-brand-red', desc: 'XP, conquistas e painel pessoal' },
     { label: 'Comunidade & Interações', href: '/', icon: 'forum', color: 'text-brand-red', desc: 'Mural público e networking' },
     { label: 'Submeter ou Editar Wiki', href: '/interacao', icon: 'edit_square', color: 'text-brand-blue-accent', desc: 'Colabore criando novas páginas' },
@@ -249,14 +249,14 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         <>
             {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9998] animate-in fade-in duration-200"
+                className="fixed inset-0 bg-background-dark/60 backdrop-blur-sm z-[9998] animate-in fade-in duration-200"
                 onClick={onClose}
             />
 
             {/* Overlay Panel */}
             <div className="fixed inset-x-0 top-0 z-[9999] flex justify-center pt-[72px] px-4 pointer-events-none">
                 <div
-                    className="w-full max-w-[640px] bg-[#1A1A1A] border border-white/10 rounded-2xl shadow-2xl overflow-hidden pointer-events-auto animate-in slide-in-from-top-4 fade-in duration-300"
+                    className="w-full max-w-[640px] bg-card-dark border border-white/10 rounded-2xl shadow-2xl overflow-hidden pointer-events-auto animate-in slide-in-from-top-4 fade-in duration-300"
                     onClick={(e) => e.stopPropagation()}
                 >
                     {/* Search Input */}

@@ -56,7 +56,7 @@ export function DeleteSpecificDataModal({ isOpen, onClose }: DeleteSpecificDataM
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-background-dark/60 backdrop-blur-sm p-4 animate-in fade-in duration-200">
             <div className="bg-neutral-900 border border-gray-800 p-6 md:p-8 rounded-2xl w-full max-w-lg shadow-2xl">
                 <div className="flex items-center gap-3 mb-6">
                     <span className="material-symbols-outlined text-brand-red text-3xl">delete_sweep</span>
@@ -69,7 +69,7 @@ export function DeleteSpecificDataModal({ isOpen, onClose }: DeleteSpecificDataM
 
                 <div className="space-y-3 mb-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
                     {categories.map(cat => (
-                        <label key={cat.id} className="flex gap-4 p-4 rounded-xl border border-gray-800 bg-black/20 cursor-pointer hover:border-gray-600 transition-colors">
+                        <label key={cat.id} className="flex gap-4 p-4 rounded-xl border border-gray-800 bg-background-dark/20 cursor-pointer hover:border-gray-600 transition-colors">
                             <input 
                                 type="checkbox"
                                 className="mt-1 w-5 h-5 accent-brand-red cursor-pointer"
@@ -92,7 +92,7 @@ export function DeleteSpecificDataModal({ isOpen, onClose }: DeleteSpecificDataM
                         type="text"
                         value={confirmWord}
                         onChange={(e) => setConfirmWord(e.target.value)}
-                        className="w-full bg-black/50 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-red transition-colors"
+                        className="w-full bg-background-dark/50 border border-gray-800 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-brand-red transition-colors"
                         placeholder="APAGAR"
                     />
                 </div>
@@ -108,7 +108,7 @@ export function DeleteSpecificDataModal({ isOpen, onClose }: DeleteSpecificDataM
                     <button
                         onClick={handleDelete}
                         disabled={isDeleting || confirmWord !== 'APAGAR' || selectedCategories.length === 0}
-                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm bg-brand-red text-white hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-brand-red/20"
+                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm bg-brand-red text-white hover:bg-brand-red disabled:opacity-50 disabled:cursor-not-allowed transition-colors shadow-lg shadow-brand-red/20"
                     >
                         {isDeleting ? 'Apagando...' : 'Confirmar Exclusão'}
                     </button>

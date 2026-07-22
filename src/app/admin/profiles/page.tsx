@@ -305,9 +305,9 @@ export default function ProfileApprovalPage() {
                         <button 
                             onClick={handleCancelAutoApprove}
                             disabled={isAutoApproveLoading}
-                            className="group px-4 py-2 bg-brand-yellow/10 border border-brand-yellow/40 hover:bg-red-500/10 hover:border-red-500/40 rounded-full flex items-center gap-2 transition-all disabled:opacity-50"
+                            className="group px-4 py-2 bg-brand-yellow/10 border border-brand-yellow/40 hover:bg-brand-red/10 hover:border-brand-red/40 rounded-full flex items-center gap-2 transition-all disabled:opacity-50"
                         >
-                            <span className="text-[10px] font-black text-brand-yellow group-hover:text-red-400 uppercase tracking-widest">
+                            <span className="text-[10px] font-black text-brand-yellow group-hover:text-brand-red uppercase tracking-widest">
                                 <span className="group-hover:hidden">⚡ Auto-Aprovação Ativa (até {autoApproveExpiresAt?.toLocaleTimeString()})</span>
                                 <span className="hidden group-hover:inline">Desativar Auto-Aprovação</span>
                             </span>
@@ -438,7 +438,7 @@ export default function ProfileApprovalPage() {
                                         </div>
                                         <button
                                             onClick={() => handleEditProfile(profile.id)}
-                                            className="w-full bg-[#121212] hover:bg-brand-yellow/10 border border-white/10 hover:border-brand-yellow/50 rounded-xl p-3 text-sm text-brand-yellow font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
+                                            className="w-full bg-background-dark hover:bg-brand-yellow/10 border border-white/10 hover:border-brand-yellow/50 rounded-xl p-3 text-sm text-brand-yellow font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
                                         >
                                             <Edit className="w-4 h-4" />
                                             Editar Perfil
@@ -453,7 +453,7 @@ export default function ProfileApprovalPage() {
                                     <button
                                         disabled={isProcessing === profile.id}
                                         onClick={() => handleReject(profile.id)}
-                                        className="px-6 py-3 bg-red-500/10 text-red-500 hover:bg-red-500 hover:text-white rounded-xl font-black uppercase tracking-widest text-xs transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                        className="px-6 py-3 bg-brand-red/10 text-brand-red hover:bg-brand-red hover:text-white rounded-xl font-black uppercase tracking-widest text-xs transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                                     >
                                         <X className="w-4 h-4" />
                                         Rejeitar
@@ -475,8 +475,8 @@ export default function ProfileApprovalPage() {
 
             {/* Password Modal */}
             {showPasswordModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-                    <div className="bg-[#121212] border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background-dark/60 backdrop-blur-sm">
+                    <div className="bg-background-dark border border-white/10 rounded-2xl p-6 w-full max-w-sm shadow-2xl">
                         <h3 className="text-lg font-bold text-white mb-2">Confirmação de Segurança</h3>
                         <p className="text-xs text-gray-400 mb-6">Insira a senha de Administrador ou Moderador para ativar a auto-aprovação.</p>
                         
@@ -486,7 +486,7 @@ export default function ProfileApprovalPage() {
                             value={adminPassword}
                             onChange={(e) => setAdminPassword(e.target.value)}
                             onKeyDown={(e) => e.key === 'Enter' && confirmAutoApprove()}
-                            className="w-full bg-black/50 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-brand-yellow mb-6"
+                            className="w-full bg-background-dark/50 border border-white/10 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-brand-yellow mb-6"
                             autoFocus
                         />
                         

@@ -273,7 +273,7 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
                                     e.stopPropagation();
                                     setShowAdoptionTooltip(!showAdoptionTooltip);
                                 }}
-                                className="p-0.5 rounded-full hover:bg-black/10 transition-colors"
+                                className="p-0.5 rounded-full hover:bg-background-dark/10 transition-colors"
                             >
                                 <HelpCircle className="w-4 h-4 cursor-help text-gray-900/60 hover:text-gray-900 transition-colors" />
                             </button>
@@ -661,7 +661,7 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
 
             <AnimatePresence>
                 {selectedPerson && (
-                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-background-dark/80 backdrop-blur-sm">
                         <motion.div
                             initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}

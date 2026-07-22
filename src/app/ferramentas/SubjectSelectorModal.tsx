@@ -84,14 +84,14 @@ export function SubjectSelectorModal({
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                className="absolute inset-0 bg-background-dark/60 backdrop-blur-sm"
                 onClick={onClose}
             />
             <motion.div
                 initial={{ opacity: 0, scale: 0.95, y: 20 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                className="relative w-full max-w-2xl max-h-[85vh] bg-[#121212] border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden"
+                className="relative w-full max-w-2xl max-h-[85vh] bg-background-dark border border-white/10 rounded-3xl shadow-2xl flex flex-col overflow-hidden"
             >
                 {/* Header */}
                 <div className="p-6 border-b border-white/5 flex items-center justify-between shrink-0 bg-white/[0.02]">
@@ -182,7 +182,7 @@ export function SubjectSelectorModal({
                                                 initial={{ height: 0, opacity: 0 }}
                                                 animate={{ height: 'auto', opacity: 1 }}
                                                 exit={{ height: 0, opacity: 0 }}
-                                                className="border-t border-white/5 bg-black/40"
+                                                className="border-t border-white/5 bg-background-dark/40"
                                             >
                                                 <div className="p-4 space-y-4">
                                                     {(() => {
@@ -215,7 +215,7 @@ export function SubjectSelectorModal({
                                                                     }}
                                                                     className={`w-full sm:w-auto px-4 py-2 border text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 shrink-0 ${
                                                                         isEnrolled 
-                                                                        ? 'bg-red-500/10 text-red-500 border-red-500/20 hover:bg-red-500 hover:text-white shadow-lg shadow-red-500/10' 
+                                                                        ? 'bg-brand-red/10 text-brand-red border-brand-red/20 hover:bg-brand-red hover:text-white shadow-lg shadow-brand-red/10' 
                                                                         : 'bg-[#00A3FF]/10 text-[#00A3FF] border-[#00A3FF]/20 hover:bg-[#00A3FF] hover:text-white shadow-lg shadow-[#00A3FF]/10'
                                                                     }`}
                                                                 >

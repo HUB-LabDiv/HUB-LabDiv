@@ -73,7 +73,7 @@ export function SacModal({ isOpen, onClose }: SacModalProps) {
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={onClose} />
+            <div className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm" onClick={onClose} />
             <div className="relative bg-[#1e1e1e] border border-white/10 w-full max-w-lg rounded-3xl p-6 shadow-2xl animate-in fade-in zoom-in-95 duration-200">
                 <button
                     onClick={onClose}

@@ -85,7 +85,7 @@ export function LabDivTeam() {
                     <div key={index} className="shrink-0 snap-center sm:snap-start w-[280px] flex flex-col items-center text-center group/card bg-white dark:bg-[#1e1e1e] p-6 rounded-3xl border border-gray-100 dark:border-white/5 shadow-sm hover:-translate-y-2 hover:shadow-xl transition-all duration-300">
                         <div className={`relative w-28 h-28 rounded-full mb-5 flex items-center justify-center text-4xl font-bold text-white bg-${creator.color} shadow-lg ring-4 ring-gray-50 dark:ring-[#121212] outline outline-2 outline-gray-200 dark:outline-white/10 transition-transform group-hover/card:scale-105 duration-300`}>
                             {creator.imagePlaceholder}
-                            <div className="absolute inset-0 rounded-full bg-black/10 opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
+                            <div className="absolute inset-0 rounded-full bg-background-dark/10 opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
                         </div>
                         <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-1 tracking-tight">{creator.name}</h3>
                         <p className={`text-[10px] uppercase tracking-widest font-black text-${creator.color} mb-3`}>{creator.role}</p>

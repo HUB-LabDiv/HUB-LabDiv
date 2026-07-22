@@ -165,13 +165,13 @@ export default function ParentalConsentPage() {
         }
     };
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center dark:bg-[#121212] text-[#0F4780]">Carregando portal de segurança...</div>;
-    if (!tokenData) return <div className="min-h-screen flex items-center justify-center dark:bg-[#121212] text-red-500 font-bold">Link inválido ou expirado.</div>;
+    if (loading) return <div className="min-h-screen flex items-center justify-center dark:bg-background-dark text-[#0F4780]">Carregando portal de segurança...</div>;
+    if (!tokenData) return <div className="min-h-screen flex items-center justify-center dark:bg-background-dark text-brand-red font-bold">Link inválido ou expirado.</div>;
 
     const isFormValid = cpf.replace(/\D/g, '').length === 11 && birthdate !== '' && accepted;
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-[#121212] flex items-center justify-center p-4">
+        <main className="min-h-screen bg-gray-50 dark:bg-background-dark flex items-center justify-center p-4">
             <motion.div 
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -196,17 +196,17 @@ export default function ParentalConsentPage() {
                         </p>
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 my-10">
-                            <div className="flex flex-col items-center text-center p-6 bg-gray-50 dark:bg-[#1A1A1A] rounded-xl border border-gray-100 dark:border-gray-800/50 shadow-sm transition-transform hover:scale-105">
+                            <div className="flex flex-col items-center text-center p-6 bg-gray-50 dark:bg-card-dark rounded-xl border border-gray-100 dark:border-gray-800/50 shadow-sm transition-transform hover:scale-105">
                                 <Search className="w-10 h-10 text-[#0F4780] mb-4" />
                                 <h3 className="font-display font-bold text-base mb-3 text-[#0F4780] dark:text-blue-300 uppercase tracking-tighter">Perfil de Estudo</h3>
                                 <p className="font-sans text-xs text-gray-600 dark:text-gray-400 leading-relaxed font-semibold">Leitura, pesquisa e organização sem interações sociais.</p>
                             </div>
-                            <div className="flex flex-col items-center text-center p-6 bg-gray-50 dark:bg-[#1A1A1A] rounded-xl border border-gray-100 dark:border-gray-800/50 shadow-sm transition-transform hover:scale-105">
+                            <div className="flex flex-col items-center text-center p-6 bg-gray-50 dark:bg-card-dark rounded-xl border border-gray-100 dark:border-gray-800/50 shadow-sm transition-transform hover:scale-105">
                                 <Mail className="w-10 h-10 text-[#0F4780] mb-4" />
                                 <h3 className="font-display font-bold text-base mb-3 text-[#0F4780] dark:text-blue-300 uppercase tracking-tighter">Sempre Perto</h3>
                                 <p className="font-sans text-xs text-gray-600 dark:text-gray-400 leading-relaxed font-semibold">Receba atualizações de uso e dicas de segurança digital.</p>
                             </div>
-                            <div className="flex flex-col items-center text-center p-6 bg-gray-50 dark:bg-[#1A1A1A] rounded-xl border border-gray-100 dark:border-gray-800/50 shadow-sm transition-transform hover:scale-105">
+                            <div className="flex flex-col items-center text-center p-6 bg-gray-50 dark:bg-card-dark rounded-xl border border-gray-100 dark:border-gray-800/50 shadow-sm transition-transform hover:scale-105">
                                 <ShieldCheck className="w-10 h-10 text-[#0F4780] mb-4" />
                                 <h3 className="font-display font-bold text-base mb-3 text-[#0F4780] dark:text-blue-300 uppercase tracking-tighter">Supervisão</h3>
                                 <p className="font-sans text-xs text-gray-600 dark:text-gray-400 leading-relaxed font-semibold">Apoio para facilitar o diálogo e segurança digital em casa.</p>
@@ -231,7 +231,7 @@ export default function ParentalConsentPage() {
                                 Ao autorizar o acesso, guardaremos o seu e-mail de responsável. Faremos isso para manter você atualizado sobre como o jovem está explorando a plataforma e para enviar dicas de segurança digital. Aliás, <strong>convidamos você a também criar sua conta!</strong> Saber o que os filhos fazem na internet — aqui e em qualquer rede social — é o primeiro passo para uma navegação saudável.
                             </p>
 
-                            <blockquote className="border-l-4 border-yellow-400 pl-4 py-2 mt-6 bg-yellow-50 dark:bg-yellow-900/10 italic text-sm text-gray-600 dark:text-gray-400">
+                            <blockquote className="border-l-4 border-brand-yellow pl-4 py-2 mt-6 bg-yellow-50 dark:bg-yellow-900/10 italic text-sm text-gray-600 dark:text-gray-400">
                                 <strong>Lembrete Importante:</strong> O ECA Digital e nossas travas de segurança são ferramentas de apoio, mas nada substitui o seu olhar e orientação. A responsabilidade de supervisionar a jornada digital do jovem ainda é sua.
                             </blockquote>
 
@@ -253,26 +253,26 @@ export default function ParentalConsentPage() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1">
-                                    Seu CPF <span className="text-red-500">*</span>
+                                    Seu CPF <span className="text-brand-red">*</span>
                                 </label>
                                 <input
                                     type="text"
                                     value={cpf}
                                     onChange={handleCpfChange}
                                     placeholder="000.000.000-00"
-                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-[#151515] border border-gray-200 dark:border-gray-800 rounded-xl dark:text-white outline-hidden focus:border-[#0F4780] transition-all"
+                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-card-dark border border-gray-200 dark:border-gray-800 rounded-xl dark:text-white outline-hidden focus:border-[#0F4780] transition-all"
                                     required
                                 />
                             </div>
                             <div className="space-y-2">
                                 <label className="text-[10px] font-bold text-gray-500 uppercase flex items-center gap-1">
-                                    Nascimento <span className="text-red-500">*</span>
+                                    Nascimento <span className="text-brand-red">*</span>
                                 </label>
                                 <input
                                     type="date"
                                     value={birthdate}
                                     onChange={(e) => setBirthdate(e.target.value)}
-                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-[#151515] border border-gray-200 dark:border-gray-800 rounded-xl dark:text-white outline-hidden focus:border-[#0F4780] transition-all"
+                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-card-dark border border-gray-200 dark:border-gray-800 rounded-xl dark:text-white outline-hidden focus:border-[#0F4780] transition-all"
                                     required
                                 />
                             </div>
@@ -281,7 +281,7 @@ export default function ParentalConsentPage() {
                         {/* Checkbox de Aceite */}
                         <div className="space-y-4">
                             <p className="text-[10px] font-bold text-gray-400 uppercase">Declaração de Responsabilidade</p>
-                            <label className={`flex items-start gap-4 p-5 rounded-xl border-2 transition-all cursor-pointer ${accepted ? 'border-[#0F4780] bg-[#0F4780]/5' : 'border-gray-100 dark:border-gray-800 bg-white dark:bg-[#1A1A1A]'}`}>
+                            <label className={`flex items-start gap-4 p-5 rounded-xl border-2 transition-all cursor-pointer ${accepted ? 'border-[#0F4780] bg-[#0F4780]/5' : 'border-gray-100 dark:border-gray-800 bg-white dark:bg-card-dark'}`}>
                                 <div className="relative flex items-center mt-1">
                                     <input 
                                         type="checkbox" 
@@ -310,7 +310,7 @@ export default function ParentalConsentPage() {
                 </div>
                 
                 {/* Rodapé da Carta */}
-                <div className="bg-gray-50 dark:bg-[#1A1A1A] p-6 text-center border-t border-gray-100 dark:border-gray-800">
+                <div className="bg-gray-50 dark:bg-card-dark p-6 text-center border-t border-gray-100 dark:border-gray-800">
                     <p className="text-[9px] text-gray-500 uppercase tracking-widest leading-loose">
                         HUB Lab-Div &bull; IFUSP &bull; Laboratório de Comunicação Científica <br/>
                         Em conformidade com a LGPD (Lei 13.709/18) e o ECA (Lei 8.069/90)

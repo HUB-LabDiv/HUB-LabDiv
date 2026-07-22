@@ -76,7 +76,7 @@ export function DivAIAWidget() {
             shadowFab: 'hover:shadow-[0_0_30px_rgba(241,67,67,0.5)] shadow-[0_0_20px_rgba(241,67,67,0.3)]',
             iconColor: 'text-white',
             fabIconColor: 'text-white',
-            pulseColor: 'bg-red-400',
+            pulseColor: 'bg-brand-red',
             message: (
                 <>
                     Alerta de Sistema. Aqui é o <strong className="text-brand-red">Auto-Moderador (Modera.IA)</strong> 🛡️.<br/><br/>
@@ -151,7 +151,7 @@ export function DivAIAWidget() {
                 <div className={`relative overflow-hidden bg-gradient-to-r ${gradientHeader} border-b border-white/10 px-6 py-5 transition-colors duration-500`}>
                     {/* Efeitos de brilho */}
                     <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2"></div>
-                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-black/10 rounded-full blur-xl translate-y-1/2 -translate-x-1/2"></div>
+                    <div className="absolute bottom-0 left-0 w-24 h-24 bg-background-dark/10 rounded-full blur-xl translate-y-1/2 -translate-x-1/2"></div>
                     
                     <div className="relative z-10 flex items-center justify-between">
                         <div className="flex items-center gap-3">
@@ -176,13 +176,13 @@ export function DivAIAWidget() {
                 </div>
 
                 {/* Corpo do Chat */}
-                <div className="p-6 bg-gray-50 dark:bg-black/20 min-h-[250px] max-h-[400px] overflow-y-auto w-full flex flex-col gap-4">
+                <div className="p-6 bg-gray-50 dark:bg-background-dark/20 min-h-[250px] max-h-[400px] overflow-y-auto w-full flex flex-col gap-4">
                     {/* Mensagem da IA */}
                     <div className="flex gap-3 max-w-[90%]">
                         <div className={`w-8 h-8 rounded-full bg-gradient-to-br ${gradientHeader} flex items-center justify-center shrink-0 shadow-sm transition-colors duration-500`}>
                             <BotIcon className="w-4 h-4 text-white" />
                         </div>
-                        <div className="bg-white dark:bg-[#121212] p-4 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 dark:border-gray-800 relative z-20">
+                        <div className="bg-white dark:bg-background-dark p-4 rounded-2xl rounded-tl-none shadow-sm border border-gray-100 dark:border-gray-800 relative z-20">
                             <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed font-open-sans">
                                 {message}
                             </p>
@@ -192,7 +192,7 @@ export function DivAIAWidget() {
 
                 {/* Input área mockada */}
                 <div className="p-4 bg-white dark:bg-[#1E1E1E] border-t border-gray-100 dark:border-gray-800">
-                    <div className="bg-gray-100 dark:bg-black/40 rounded-xl px-4 py-3 flex items-center gap-3 w-full border border-transparent dark:border-gray-800 cursor-not-allowed opacity-70">
+                    <div className="bg-gray-100 dark:bg-background-dark/40 rounded-xl px-4 py-3 flex items-center gap-3 w-full border border-transparent dark:border-gray-800 cursor-not-allowed opacity-70">
                         <MessageSquare className="w-5 h-5 text-gray-400" />
                         <span className="text-sm text-gray-500 truncate">{placeholder}</span>
                     </div>

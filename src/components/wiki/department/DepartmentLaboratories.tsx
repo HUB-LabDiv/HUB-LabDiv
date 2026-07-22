@@ -92,7 +92,7 @@ async function LaboratoryAccordion({ lab }: { lab: any }) {
                 </p>
 
                 {latestPosts.length > 0 && (
-                    <div className="bg-gray-50 dark:bg-[#1A1A1A] p-4 rounded-xl">
+                    <div className="bg-gray-50 dark:bg-card-dark p-4 rounded-xl">
                         <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-3">Pesquisas Recentes</p>
                         <ul className="space-y-2">
                             {latestPosts.map((post: any) => (

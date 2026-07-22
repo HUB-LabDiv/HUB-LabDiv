@@ -136,7 +136,7 @@ export default function ReAcceptTermsPage() {
     };
 
     return (
-        <main className="flex min-h-screen py-10 items-center justify-center p-4 bg-gray-50 dark:bg-[#121212] font-open-sans">
+        <main className="flex min-h-screen py-10 items-center justify-center p-4 bg-gray-50 dark:bg-background-dark font-open-sans">
             <div className="w-full max-w-3xl space-y-8 bg-white dark:bg-[#1E1E1E] p-8 rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-800 animate-in fade-in slide-in-from-bottom-8 duration-700">
                 
                 <div className="flex flex-col items-center text-center space-y-4">
@@ -185,21 +185,21 @@ export default function ReAcceptTermsPage() {
                                 O que guardamos no seu navegador?
                             </h5>
                             <div className="space-y-4">
-                                <div className="flex justify-between items-center bg-white/50 dark:bg-black/20 p-3 rounded-xl border border-amber-100 dark:border-amber-900/10">
+                                <div className="flex justify-between items-center bg-white/50 dark:bg-background-dark/20 p-3 rounded-xl border border-amber-100 dark:border-amber-900/10">
                                     <div>
                                         <p className="text-sm font-bold text-gray-900 dark:text-white mb-1">Chave de Acesso (Login)</p>
                                         <p className="text-xs text-gray-500 dark:text-gray-400">Serve para o site te reconhecer e não pedir sua senha toda hora.</p>
                                     </div>
                                     <span className="text-[10px] bg-amber-200/50 dark:bg-amber-900/50 px-2 py-1 rounded-lg font-black text-amber-700 dark:text-amber-400 uppercase">Essencial</span>
                                 </div>
-                                <div className="flex justify-between items-center bg-white/50 dark:bg-black/20 p-3 rounded-xl border border-amber-100 dark:border-amber-900/10">
+                                <div className="flex justify-between items-center bg-white/50 dark:bg-background-dark/20 p-3 rounded-xl border border-amber-100 dark:border-amber-900/10">
                                     <div>
                                         <p className="text-sm font-bold text-gray-900 dark:text-white mb-1">Suas Preferências</p>
                                         <p className="text-xs text-gray-500 dark:text-gray-400">Lembra se você aceitou os termos e desligou os rastreadores.</p>
                                     </div>
                                     <span className="text-[10px] bg-amber-200/50 dark:bg-amber-900/50 px-2 py-1 rounded-lg font-black text-amber-700 dark:text-amber-400 uppercase">Memória</span>
                                 </div>
-                                <div className="flex justify-between items-center bg-white/50 dark:bg-black/20 p-3 rounded-xl border border-amber-100 dark:border-amber-900/10">
+                                <div className="flex justify-between items-center bg-white/50 dark:bg-background-dark/20 p-3 rounded-xl border border-amber-100 dark:border-amber-900/10">
                                     <div>
                                         <p className="text-sm font-bold text-gray-900 dark:text-white mb-1">Tranca de Segurança</p>
                                         <p className="text-xs text-gray-500 dark:text-gray-400">Protege sua conta contra invasores e ataques digitais.</p>
@@ -228,7 +228,7 @@ export default function ReAcceptTermsPage() {
                     <div className="p-5 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-colors ${
-                                !birthdate ? 'bg-gray-200 dark:bg-gray-700' : isMinor ? 'bg-red-500 text-white' : 'bg-brand-blue text-white'
+                                !birthdate ? 'bg-gray-200 dark:bg-gray-700' : isMinor ? 'bg-brand-red text-white' : 'bg-brand-blue text-white'
                             }`}>
                                 <span className="material-symbols-outlined text-xl">
                                     {!birthdate ? 'lock' : isMinor ? 'child_care' : 'verified_user'}
@@ -242,7 +242,7 @@ export default function ReAcceptTermsPage() {
                             </div>
                         </div>
                         {isMinor && birthdate && (
-                             <span className="px-2 py-0.5 bg-red-500 text-white text-[9px] font-black rounded uppercase">Blindagem Ativa</span>
+                             <span className="px-2 py-0.5 bg-brand-red text-white text-[9px] font-black rounded uppercase">Blindagem Ativa</span>
                         )}
                         {!isMinor && birthdate && privacyAccepted && (
                              <span className="px-2 py-0.5 bg-green-500 text-white text-[9px] font-black rounded uppercase">Validado</span>
@@ -254,7 +254,7 @@ export default function ReAcceptTermsPage() {
                         {isMinor ? (
                             <div className="space-y-4">
                                 <section className="p-4 bg-red-100/10 border border-red-200/30 rounded-xl">
-                                    <h5 className="text-red-500 font-bold mb-2 uppercase text-xs">Proteção de Menores (ECA/LGPD)</h5>
+                                    <h5 className="text-brand-red font-bold mb-2 uppercase text-xs">Proteção de Menores (ECA/LGPD)</h5>
                                     <p>Identificamos que você é menor de idade. Como o HUB Lab-Div prioriza a segurança total da criança e do adolescente, todos os sensores de telemetria comportamental externa (Microsoft Clarity) foram <strong>desativados permanentemente</strong> para o seu acesso.</p>
                                 </section>
                                 <section>
@@ -270,29 +270,29 @@ export default function ReAcceptTermsPage() {
                                 </section>
 
                                 <section className="p-5 bg-zinc-100 dark:bg-zinc-900/80 rounded-2xl border border-zinc-200 dark:border-zinc-800 transition-colors">
-                                    <h5 className="text-brand-blue dark:text-blue-400 font-bold mb-4 uppercase text-xs flex items-center gap-2">
+                                    <h5 className="text-brand-blue dark:text-brand-blue font-bold mb-4 uppercase text-xs flex items-center gap-2">
                                         <span className="material-symbols-outlined text-sm">menu_book</span>
                                         Glossário Técnico do HUB
                                     </h5>
                                     <div className="space-y-4 font-medium text-zinc-700 dark:text-zinc-300">
                                         <div className="flex gap-3">
-                                            <span className="text-brand-blue dark:text-blue-500 mt-1">•</span>
+                                            <span className="text-brand-blue dark:text-brand-blue mt-1">•</span>
                                             <p><strong className="text-zinc-900 dark:text-white">Frontend:</strong> É a "capa" do site. Tudo o que você vê, clica e interage no seu navegador ou celular.</p>
                                         </div>
                                         <div className="flex gap-3">
-                                            <span className="text-brand-blue dark:text-blue-500 mt-1">•</span>
+                                            <span className="text-brand-blue dark:text-brand-blue mt-1">•</span>
                                             <p><strong className="text-zinc-900 dark:text-white">UX (User Experience):</strong> É o estudo de como tornar o site fácil e agradável. Exemplos: botões bem posicionados e tempos de carga rápidos.</p>
                                         </div>
                                         <div className="flex gap-3">
-                                            <span className="text-brand-blue dark:text-blue-500 mt-1">•</span>
+                                            <span className="text-brand-blue dark:text-brand-blue mt-1">•</span>
                                             <p><strong className="text-zinc-900 dark:text-white">APIs:</strong> São como "garçons" que levam pedidos do site para os servidores e trazem as respostas (ex: buscar sua foto de perfil).</p>
                                         </div>
                                         <div className="flex gap-3">
-                                            <span className="text-brand-blue dark:text-blue-500 mt-1">•</span>
+                                            <span className="text-brand-blue dark:text-brand-blue mt-1">•</span>
                                             <p><strong className="text-zinc-900 dark:text-white">Microsoft Clarity:</strong> Ferramenta que gera "mapas de calor", mostrando onde os usuários mais clicam, ajudando a detectar botões que não funcionam.</p>
                                         </div>
                                         <div className="flex gap-3">
-                                            <span className="text-brand-blue dark:text-blue-500 mt-1">•</span>
+                                            <span className="text-brand-blue dark:text-brand-blue mt-1">•</span>
                                             <p><strong className="text-zinc-900 dark:text-white">Supabase:</strong> Nosso "arquivo digital" seguro, onde guardamos suas preferências, posts e configurações de perfil com criptografia.</p>
                                         </div>
                                     </div>
@@ -307,7 +307,7 @@ export default function ReAcceptTermsPage() {
                     </div>
 
                     {/* Ação de Aceite */}
-                    <div className="p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-[#121212]">
+                    <div className="p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-background-dark">
                         {!birthdate ? (
                             <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-gray-400 uppercase italic py-4">
                                 <span className="material-symbols-outlined text-sm">lock</span>
@@ -315,8 +315,8 @@ export default function ReAcceptTermsPage() {
                             </div>
                         ) : isMinor ? (
                             <div className="p-3 bg-red-100/30 border border-red-200 dark:border-red-900/20 rounded-xl flex items-center gap-3">
-                                <span className="material-symbols-outlined text-red-500 text-lg">verified</span>
-                                <p className="text-[10px] text-red-600 dark:text-red-400 font-bold leading-tight">
+                                <span className="material-symbols-outlined text-brand-red text-lg">verified</span>
+                                <p className="text-[10px] text-brand-red dark:text-brand-red font-bold leading-tight">
                                     Política de Proteção de Menores aplicada. Você pode prosseguir com a regularização sem sensores de telemetria.
                                 </p>
                             </div>
@@ -349,8 +349,8 @@ export default function ReAcceptTermsPage() {
 
 
                 {/* Gatekeeper Check Form */}
-                <form onSubmit={handleSubmit} className="mt-8 space-y-6 bg-gray-50 p-6 rounded-xl dark:bg-[#151515] border border-gray-200 dark:border-gray-800">
-                    <div className="flex items-center gap-2 text-yellow-500 dark:text-[#FFCC00]">
+                <form onSubmit={handleSubmit} className="mt-8 space-y-6 bg-gray-50 p-6 rounded-xl dark:bg-card-dark border border-gray-200 dark:border-gray-800">
+                    <div className="flex items-center gap-2 text-brand-yellow dark:text-[#FFCC00]">
                         <span className="material-symbols-outlined text-xl">security</span>
                         <h3 className="font-bold text-lg">Proteção de Dados: Verificação de Identidade <span className="text-[10px] opacity-70">(a verificação de idade é para cumprir a lei do eca digital)</span></h3>
                     </div>

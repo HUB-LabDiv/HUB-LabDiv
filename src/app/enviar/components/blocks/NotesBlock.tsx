@@ -38,7 +38,7 @@ export default function NotesBlock({ block, isActive }: { block: Block; isActive
                 value={text}
                 onChange={(e) => updateBlock(block.id, { text: e.target.value })}
                 placeholder="Escreva seus comentários aqui..."
-                className="w-full bg-black/40 border border-brand-yellow/20 rounded-lg p-3 outline-none resize-y min-h-[100px] text-gray-300 placeholder-gray-600 focus:border-brand-yellow/50"
+                className="w-full bg-background-dark/40 border border-brand-yellow/20 rounded-lg p-3 outline-none resize-y min-h-[100px] text-gray-300 placeholder-gray-600 focus:border-brand-yellow/50"
             />
         </div>
     );

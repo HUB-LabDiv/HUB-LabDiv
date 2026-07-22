@@ -64,7 +64,7 @@ function CarouselSection({ title, items, onAction, icon }: CarouselSectionProps)
                                 </div>
                                 
                                 <textarea
-                                    className="w-full text-xs p-4 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white/50 dark:bg-black/20 dark:text-white focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue outline-none transition-all resize-none h-32 leading-relaxed"
+                                    className="w-full text-xs p-4 rounded-2xl border border-gray-100 dark:border-gray-800 bg-white/50 dark:bg-background-dark/20 dark:text-white focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue outline-none transition-all resize-none h-32 leading-relaxed"
                                     defaultValue={item.description}
                                     onBlur={(e) => onAction(item.id, e.target.value)}
                                     placeholder="Descreva a obra com detalhes para acessibilidade..."

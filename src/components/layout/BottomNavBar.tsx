@@ -191,7 +191,7 @@ export const BottomNavBar = () => {
                 {/* Backdrop */}
                 <div
                     onClick={() => setDrawerOpen(false)}
-                    className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                    className="absolute inset-0 bg-background-dark/60 backdrop-blur-sm"
                 />
 
                 <div

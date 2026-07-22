@@ -67,12 +67,12 @@ export function MetricsModal({ isOpen, onClose, post }: MetricsModalProps) {
 
     return (
         <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/80 backdrop-blur-sm">
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-background-dark/80 backdrop-blur-sm">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                    className="bg-[#121212] border border-brand-blue/30 rounded-[32px] p-6 lg:p-10 w-full max-w-3xl shadow-[0_0_50px_rgba(15,71,128,0.2)] relative max-h-[90vh] overflow-y-auto custom-scrollbar"
+                    className="bg-background-dark border border-brand-blue/30 rounded-[32px] p-6 lg:p-10 w-full max-w-3xl shadow-[0_0_50px_rgba(15,71,128,0.2)] relative max-h-[90vh] overflow-y-auto custom-scrollbar"
                 >
                     <button
                         onClick={onClose}
@@ -132,7 +132,7 @@ export function MetricsModal({ isOpen, onClose, post }: MetricsModalProps) {
                                     ) : (
                                         <div className="flex flex-col gap-4">
                                             {Object.entries(analytics.block_interactions).map(([blockId, blockData]: [string, any]) => (
-                                                <div key={blockId} className="bg-black/40 rounded-xl p-4 border border-white/5">
+                                                <div key={blockId} className="bg-background-dark/40 rounded-xl p-4 border border-white/5">
                                                     <div className="flex justify-between items-center mb-2">
                                                         <span className="text-xs font-bold text-gray-300 uppercase">Bloco: {blockId.substring(0, 8)}...</span>
                                                         <span className="text-[10px] bg-white/10 px-2 py-1 rounded text-gray-400">{blockData.type || 'Interação'}</span>

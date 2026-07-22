@@ -86,7 +86,7 @@ export function KnowledgeSuggestionWidget({ departmentId, departmentName }: Prop
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="absolute inset-0 bg-black/80 backdrop-blur-md w-full h-full"
+                            className="absolute inset-0 bg-background-dark/80 backdrop-blur-md w-full h-full"
                             onClick={() => setIsOpen(false)}
                         />
 
@@ -98,7 +98,7 @@ export function KnowledgeSuggestionWidget({ departmentId, departmentName }: Prop
                                 exit={{ opacity: 0, scale: 0.9, y: 30 }}
                                 role="dialog"
                                 aria-modal="true"
-                                className="relative w-full max-w-lg bg-white dark:bg-[#121212] rounded-[40px] border border-gray-200 dark:border-white/10 shadow-2xl overflow-hidden z-10"
+                                className="relative w-full max-w-lg bg-white dark:bg-background-dark rounded-[40px] border border-gray-200 dark:border-white/10 shadow-2xl overflow-hidden z-10"
                                 onKeyDown={(e) => e.key === 'Escape' && setIsOpen(false)}
                             >
                                 <div className="p-10">

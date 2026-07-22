@@ -34,13 +34,13 @@ export function ReadingRuler() {
                 >
                     {/* Top Overlay: Dims content above the ruler */}
                     <div
-                        className="absolute top-0 left-0 right-0 bg-black/40 dark:bg-black/60 backdrop-blur-[1px]"
+                        className="absolute top-0 left-0 right-0 bg-background-dark/40 dark:bg-background-dark/60 backdrop-blur-[1px]"
                         style={{ height: `calc(${RULER_TOP_PERCENT}vh - ${RULER_HEIGHT / 2}px)` }}
                     />
                     
                     {/* Bottom Overlay: Dims content below the ruler */}
                     <div
-                        className="absolute bottom-0 left-0 right-0 bg-black/40 dark:bg-black/60 backdrop-blur-[1px]"
+                        className="absolute bottom-0 left-0 right-0 bg-background-dark/40 dark:bg-background-dark/60 backdrop-blur-[1px]"
                         style={{ top: `calc(${RULER_TOP_PERCENT}vh + ${RULER_HEIGHT / 2}px)` }}
                     />
 

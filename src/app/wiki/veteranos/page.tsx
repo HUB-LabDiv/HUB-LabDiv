@@ -177,7 +177,7 @@ export default function VeteranosPage() {
                                     initial={{ opacity: 0, y: 20 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ delay: idx * 0.1 }}
-                                    className="break-inside-avoid p-8 rounded-[32px] bg-[#1a1a1a] border border-white/5 hover:border-white/10 transition-colors relative group"
+                                    className="break-inside-avoid p-8 rounded-[32px] bg-card-dark border border-white/5 hover:border-white/10 transition-colors relative group"
                                 >
                                     <div className="absolute top-8 right-8">
                                         <div className={`size-2 rounded-full bg-${categoryColor} shadow-[0_0_10px_currentColor]`} />
@@ -219,11 +219,11 @@ export default function VeteranosPage() {
             {/* Modal de Transmissão */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => !isSubmitting && setIsModalOpen(false)} />
+                    <div className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm" onClick={() => !isSubmitting && setIsModalOpen(false)} />
                     <motion.div 
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="bg-[#1a1a1a] border border-white/10 p-8 rounded-[32px] w-full max-w-md relative z-10 shadow-2xl"
+                        className="bg-card-dark border border-white/10 p-8 rounded-[32px] w-full max-w-md relative z-10 shadow-2xl"
                     >
                         <button 
                             onClick={() => setIsModalOpen(false)}
@@ -240,7 +240,7 @@ export default function VeteranosPage() {
                             <div>
                                 <label className="block text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Categoria</label>
                                 <select 
-                                    className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-brand-blue outline-none transition-colors"
+                                    className="w-full bg-background-dark border border-white/10 rounded-xl p-3 text-white focus:border-brand-blue outline-none transition-colors"
                                     value={newTip.categoria}
                                     onChange={e => setNewTip({...newTip, categoria: e.target.value})}
                                     disabled={isSubmitting}
@@ -254,7 +254,7 @@ export default function VeteranosPage() {
                                     type="text" 
                                     required
                                     maxLength={80}
-                                    className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-brand-blue outline-none transition-colors"
+                                    className="w-full bg-background-dark border border-white/10 rounded-xl p-3 text-white focus:border-brand-blue outline-none transition-colors"
                                     placeholder="Ex: Como sobreviver a Física 1"
                                     value={newTip.titulo}
                                     onChange={e => setNewTip({...newTip, titulo: e.target.value})}
@@ -267,7 +267,7 @@ export default function VeteranosPage() {
                                     required
                                     maxLength={500}
                                     rows={4}
-                                    className="w-full bg-black border border-white/10 rounded-xl p-3 text-white focus:border-brand-blue outline-none transition-colors resize-none"
+                                    className="w-full bg-background-dark border border-white/10 rounded-xl p-3 text-white focus:border-brand-blue outline-none transition-colors resize-none"
                                     placeholder="Escreva sua dica detalhada aqui..."
                                     value={newTip.conteudo}
                                     onChange={e => setNewTip({...newTip, conteudo: e.target.value})}

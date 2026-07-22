@@ -118,7 +118,7 @@ export const Avatar = ({ src, name = 'Usuário', size = 'md', className = '', cu
                 style={ringStyle}
             >
                 {/* The Inner Content */}
-                <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-white dark:bg-[#121212]">
+                <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center bg-white dark:bg-background-dark">
                     {renderContent()}
                 </div>
             </div>

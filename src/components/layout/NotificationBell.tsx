@@ -206,7 +206,7 @@ export const NotificationBell = ({ userId }: { userId: string | undefined }) => 
                                                                         handleMarkAsRead(notif.id);
                                                                         setIsOpen(false);
                                                                     }}
-                                                                    className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-blue text-white hover:bg-blue-600 transition-all shadow-sm"
+                                                                    className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-blue text-white hover:bg-brand-blue transition-all shadow-sm"
                                                                 >
                                                                     <span className="material-symbols-outlined text-[10px] font-bold">link</span>
                                                                     <span className="text-[8px] font-black uppercase tracking-tighter">LINK</span>

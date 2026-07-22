@@ -154,8 +154,8 @@ export function JupiterSyncModal({ isOpen, onClose, onSuccess }: JupiterSyncModa
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-            <div className={`bg-[#121212] w-full ${step === 'auth' ? 'max-w-md' : 'max-w-2xl'} rounded-[32px] border border-white/10 shadow-2xl overflow-hidden transition-all duration-500`}>
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background-dark/80 backdrop-blur-md">
+            <div className={`bg-background-dark w-full ${step === 'auth' ? 'max-w-md' : 'max-w-2xl'} rounded-[32px] border border-white/10 shadow-2xl overflow-hidden transition-all duration-500`}>
                 <div className="p-8">
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center gap-3">

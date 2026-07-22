@@ -19,7 +19,7 @@ export const metadata = {
 
 export default function InteracaoPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen bg-[#121212]" />}>
+        <Suspense fallback={<div className="min-h-screen bg-background-dark" />}>
             <InteracaoClient />
         </Suspense>
     );

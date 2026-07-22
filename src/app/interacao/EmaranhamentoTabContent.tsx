@@ -260,7 +260,7 @@ export function EmaranhamentoTabContent() {
                                 </div>
                             )}
                         </div>
-                        <div className="p-4 border-t border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-black/20 flex gap-2">
+                        <div className="p-4 border-t border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-background-dark/20 flex gap-2">
                              <input 
                                 value={groupMessage} 
                                 onChange={e => setGroupMessage(e.target.value)} 
@@ -423,7 +423,7 @@ export function EmaranhamentoTabContent() {
 
             {/* Create Group Modal */}
             {showCreateGroup && (
-                <div className="fixed inset-0 z-[110] flex items-center justify-center bg-black/90 backdrop-blur-xl p-4 animate-in fade-in duration-300">
+                <div className="fixed inset-0 z-[110] flex items-center justify-center bg-background-dark/90 backdrop-blur-xl p-4 animate-in fade-in duration-300">
                      <div className="bg-white dark:bg-[#181818] border border-gray-200 dark:border-white/10 rounded-[40px] w-full max-w-md p-10 space-y-8 shadow-2xl relative">
                         <button onClick={() => setShowCreateGroup(false)} className="absolute right-8 top-8 text-gray-500 hover:text-gray-900 dark:text-white transition-colors p-2 hover:bg-white dark:bg-white/5 rounded-full"><X className="size-6" /></button>
                         

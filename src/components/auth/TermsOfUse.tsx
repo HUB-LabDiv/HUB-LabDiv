@@ -19,8 +19,8 @@ interface TermsOfUseProps {
 export function TermsOfUse({ onAccept, acceptedVersion }: TermsOfUseProps) {
   return (
     <div className="flex flex-col h-full max-h-[60vh] overflow-hidden bg-white dark:bg-[#1E1E1E] rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm font-open-sans">
-      <div className="p-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-[#121212]">
-        <h3 className="text-lg font-bold text-[#0F4780] dark:text-blue-400 uppercase tracking-tight">
+      <div className="p-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-background-dark">
+        <h3 className="text-lg font-bold text-[#0F4780] dark:text-brand-blue uppercase tracking-tight">
           Termos de Uso e LGPD (HUB Lab-Div)
         </h3>
         <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-1 italic">Versão: v2.0</p>
@@ -59,7 +59,7 @@ export function TermsOfUse({ onAccept, acceptedVersion }: TermsOfUseProps) {
             Caso você solicite a exclusão de sua conta, reservamo-nos o direito de retenção autoral e científica. Seu perfil pessoal, foto, e-mail e dados identificáveis serão definitivamente deletados. 
             Contudo, conteúdos públicos previamente submetidos serão mantidos na plataforma no formato de <strong>Anonimizados ("Usuário Excluído")</strong>, para preservar o histórico colaborativo da rede científica.
           </p>
-          <p className="mt-2 font-medium text-blue-600 dark:text-blue-400">
+          <p className="mt-2 font-medium text-brand-blue dark:text-brand-blue">
             O usuário tem o direito de solicitar a portabilidade de seus dados a qualquer momento através da ferramenta de exportação estruturada disponível nas configurações.
           </p>
         </section>
@@ -84,7 +84,7 @@ export function TermsOfUse({ onAccept, acceptedVersion }: TermsOfUseProps) {
       </div>
 
       {onAccept && (
-        <div className="p-4 bg-gray-50 dark:bg-[#121212] border-t border-gray-100 dark:border-gray-800 flex justify-end">
+        <div className="p-4 bg-gray-50 dark:bg-background-dark border-t border-gray-100 dark:border-gray-800 flex justify-end">
           <button 
             onClick={onAccept}
             disabled={acceptedVersion === 'v2.0'}

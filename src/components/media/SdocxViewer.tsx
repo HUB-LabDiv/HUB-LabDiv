@@ -105,7 +105,7 @@ export function SdocxViewer({ blocks, reflections, palavrasGeradoras }: SdocxVie
                             <img src={block.content.url} alt="GIF Animado" className="w-full h-auto max-h-[600px] object-contain rounded-lg" loading="lazy" />
                         </div>
                     ) : (
-                        <div key={block.id} className="w-full aspect-video bg-black rounded-xl overflow-hidden my-8 shadow-lg">
+                        <div key={block.id} className="w-full aspect-video bg-background-dark rounded-xl overflow-hidden my-8 shadow-lg">
                             <iframe src={formatYoutubeUrl(block.content.url)} className="w-full h-full border-none" allowFullScreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
                         </div>
                     );

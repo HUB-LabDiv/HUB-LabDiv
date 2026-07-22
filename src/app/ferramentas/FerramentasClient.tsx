@@ -797,7 +797,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     }
                     /* Remove limitations do Modal do Cronograma para não cortar nas bordas */
                     .fixed.inset-0.z-\[100\] { position: relative !important; inset: auto !important; }
-                    .absolute.inset-0.bg-black\/80 { display: none !important; }
+                    .absolute.inset-0.bg-background-dark\/80 { display: none !important; }
                     .relative.bg-\[\#1e1e1e\] { max-height: none !important; height: auto !important; overflow: visible !important; border: none !important; padding: 0 !important; box-shadow: none !important; margin: 0 !important; max-width: 100% !important; background: white !important; }
                     
                     .glass-card { background: white !important; border: 0 !important; padding: 0 !important; margin: 0 !important; box-shadow: none !important; }
@@ -833,7 +833,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                 <button
                     onClick={handleReset}
                     disabled={isResetting}
-                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3.5 bg-red-500/10 text-red-500 border border-red-500/20 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-red-500 hover:text-white transition-all disabled:opacity-50 shadow-sm group"
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3.5 bg-brand-red/10 text-brand-red border border-brand-red/20 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-brand-red hover:text-white transition-all disabled:opacity-50 shadow-sm group"
                     title="Resetar todos os dados de estudos"
                 >
                     {isResetting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4 group-hover:scale-110 transition-transform" />}
@@ -891,13 +891,13 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                         <div className="relative group/scroll">
                             <button
                                 onClick={() => enrollmentListRef.current?.scrollBy({ left: -300, behavior: 'smooth' })}
-                                className="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 z-10 p-2 bg-white dark:bg-[#1a1a1a] rounded-full shadow-lg border border-gray-200 dark:border-gray-800 text-brand-blue transition-opacity flex"
+                                className="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 z-10 p-2 bg-white dark:bg-card-dark rounded-full shadow-lg border border-gray-200 dark:border-gray-800 text-brand-blue transition-opacity flex"
                             >
                                 <ChevronLeft size={20} />
                             </button>
                             <button
                                 onClick={() => enrollmentListRef.current?.scrollBy({ left: 300, behavior: 'smooth' })}
-                                className="absolute right-0 top-1/2 -translate-y-1/2 -mr-2 z-10 p-2 bg-white dark:bg-[#1a1a1a] rounded-full shadow-lg border border-gray-200 dark:border-gray-800 text-brand-blue transition-opacity flex"
+                                className="absolute right-0 top-1/2 -translate-y-1/2 -mr-2 z-10 p-2 bg-white dark:bg-card-dark rounded-full shadow-lg border border-gray-200 dark:border-gray-800 text-brand-blue transition-opacity flex"
                             >
                                 <ChevronRight size={20} />
                             </button>
@@ -953,7 +953,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                                                 toast.error('Erro ao remover bloco');
                                                             }
                                                         }}
-                                                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/10 text-red-500 opacity-0 group-hover:opacity-100 hover:bg-red-500 hover:text-white transition-all"
+                                                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-brand-red/10 text-brand-red opacity-0 group-hover:opacity-100 hover:bg-brand-red hover:text-white transition-all"
                                                     >
                                                         <X size={12} />
                                                     </button>
@@ -1007,7 +1007,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                                     <button
                                                         onClick={(e) => toggleCursando(e, p.trail_id)}
                                                         disabled={isUpdating === p.trail_id}
-                                                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-red-500/10 text-red-500 opacity-0 group-hover:opacity-100 hover:bg-red-500 hover:text-white transition-all disabled:opacity-50"
+                                                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-brand-red/10 text-brand-red opacity-0 group-hover:opacity-100 hover:bg-brand-red hover:text-white transition-all disabled:opacity-50"
                                                         title="Remover matrícula"
                                                     >
                                                         <X size={12} />
@@ -1072,7 +1072,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                                 toast.error('Selecione um bloco no calendário primeiro');
                                             }
                                         }}
-                                        className={`flex items-center gap-2 px-4 py-2 bg-red-500/10 border border-red-500/20 text-red-500 rounded-2xl transition-all hover:bg-red-500 hover:text-white cursor-pointer ${viewMode === 'view' ? 'hidden' : ''}`}
+                                        className={`flex items-center gap-2 px-4 py-2 bg-brand-red/10 border border-brand-red/20 text-brand-red rounded-2xl transition-all hover:bg-brand-red hover:text-white cursor-pointer ${viewMode === 'view' ? 'hidden' : ''}`}
                                         title="Arraste aqui para excluir, ou clique após selecionar o bloco"
                                     >
                                         <Trash2 className="w-4 h-4 transition-transform" />
@@ -1128,7 +1128,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                             </div>
                         </div>
                 
-                        <div className={`bg-white dark:bg-[#1e1e1e] p-6 rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden print:overflow-visible transition-all ${viewMode === 'view' ? 'bg-gray-50/50 dark:bg-[#121212] border-brand-blue/10' : 'print:border-none print:bg-white print:p-0 print:m-0'}`}>
+                        <div className={`bg-white dark:bg-[#1e1e1e] p-6 rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden print:overflow-visible transition-all ${viewMode === 'view' ? 'bg-gray-50/50 dark:bg-background-dark border-brand-blue/10' : 'print:border-none print:bg-white print:p-0 print:m-0'}`}>
                             {viewMode === 'view' ? (
                                 <div className="relative group/view-scroll">
                                     <button
@@ -1136,7 +1136,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                             const el = document.getElementById('view-calendar-scroll');
                                             el?.scrollBy({ left: -300, behavior: 'smooth' });
                                         }}
-                                        className="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 z-10 p-2 bg-white dark:bg-[#1a1a1a] rounded-full shadow-lg border border-gray-200 dark:border-gray-800 text-brand-blue transition-opacity flex"
+                                        className="absolute left-0 top-1/2 -translate-y-1/2 -ml-2 z-10 p-2 bg-white dark:bg-card-dark rounded-full shadow-lg border border-gray-200 dark:border-gray-800 text-brand-blue transition-opacity flex"
                                     >
                                         <ChevronLeft size={20} />
                                     </button>
@@ -1145,7 +1145,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                             const el = document.getElementById('view-calendar-scroll');
                                             el?.scrollBy({ left: 300, behavior: 'smooth' });
                                         }}
-                                        className="absolute right-0 top-1/2 -translate-y-1/2 -mr-2 z-10 p-2 bg-white dark:bg-[#1a1a1a] rounded-full shadow-lg border border-gray-200 dark:border-gray-800 text-brand-blue transition-opacity flex"
+                                        className="absolute right-0 top-1/2 -translate-y-1/2 -mr-2 z-10 p-2 bg-white dark:bg-card-dark rounded-full shadow-lg border border-gray-200 dark:border-gray-800 text-brand-blue transition-opacity flex"
                                     >
                                         <ChevronRight size={20} />
                                     </button>
@@ -1179,14 +1179,14 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                                         {dayEvents.length > 0 ? dayEvents.map(e => (
                                                             <div 
                                                                 key={e.id} 
-                                                                className="p-4 rounded-[22px] border border-black/5 dark:border-white/10 shadow-lg flex flex-col gap-2 transition-all hover:bg-black/[0.02] dark:hover:bg-white/[0.05] relative overflow-hidden"
+                                                                className="p-4 rounded-[22px] border border-black/5 dark:border-white/10 shadow-lg flex flex-col gap-2 transition-all hover:bg-background-dark/[0.02] dark:hover:bg-white/[0.05] relative overflow-hidden"
                                                                 style={{ 
                                                                     borderLeft: `4px solid ${e.color}`,
                                                                     backgroundColor: `${e.color}40`,
                                                                 }}
                                                             >
                                                                 <div className="flex items-center justify-between">
-                                                                    <span className="text-[10px] font-black bg-black/5 dark:bg-white/10 px-2.5 py-1 rounded-full text-gray-700 dark:text-white/70">
+                                                                    <span className="text-[10px] font-black bg-background-dark/5 dark:bg-white/10 px-2.5 py-1 rounded-full text-gray-700 dark:text-white/70">
                                                                         {new Date(e.start).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                                                                     </span>
                                                                 </div>
@@ -1300,7 +1300,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                                                 e.stopPropagation();
                                                                 handleDeleteEvent(eventInfo.event.id);
                                                             }}
-                                                            className="p-1 bg-brand-red hover:bg-red-600 rounded text-white transition-all shadow-lg active:scale-95"
+                                                            className="p-1 bg-brand-red hover:bg-brand-red rounded text-white transition-all shadow-lg active:scale-95"
                                                         >
                                                             <Trash2 className="w-2.5 h-2.5" />
                                                         </button>
@@ -1464,7 +1464,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
 
             {isCreateModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsCreateModalOpen(false)} />
+                    <div className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm" onClick={() => setIsCreateModalOpen(false)} />
                     <div className="relative bg-[#1e1e1e] border border-white/10 rounded-[32px] p-8 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200">
                         <h3 className="text-2xl font-display font-black text-white uppercase tracking-tight mb-6">Novo Bloco</h3>
                         <div className="space-y-4">
@@ -1519,7 +1519,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
 
             {isExportModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsExportModalOpen(false)} />
+                    <div className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm" onClick={() => setIsExportModalOpen(false)} />
                     <div className="relative bg-[#1e1e1e] border border-white/10 rounded-[32px] p-8 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200">
                         <h3 className="text-2xl font-display font-black text-white uppercase tracking-tight mb-2">Exportar</h3>
                         <p className="text-gray-400 text-xs mb-8">Escolha o formato para salvar seu cronograma.</p>
@@ -1571,7 +1571,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
 
             {isHelpModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsHelpModalOpen(false)} />
+                    <div className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm" onClick={() => setIsHelpModalOpen(false)} />
                     <div className="relative bg-[#1e1e1e] border border-white/10 rounded-[40px] p-10 max-w-lg w-full shadow-2xl animate-in zoom-in-95 duration-200">
                         <div className="flex items-center gap-4 mb-8">
                             <div className="size-12 rounded-2xl bg-brand-blue/10 flex items-center justify-center text-brand-blue border border-brand-blue/20">
@@ -1635,7 +1635,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
 
             {isSettingsOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsSettingsOpen(false)} />
+                    <div className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm" onClick={() => setIsSettingsOpen(false)} />
                     <div className="relative bg-[#1e1e1e] border border-white/10 rounded-[40px] p-10 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200">
                         <div className="flex items-center gap-4 mb-8">
                             <div className="size-12 rounded-2xl bg-brand-red/10 flex items-center justify-center text-brand-red border border-brand-red/20">

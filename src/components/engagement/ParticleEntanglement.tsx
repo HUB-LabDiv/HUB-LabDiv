@@ -165,7 +165,7 @@ export const ParticleEntanglement = ({ recipientId }: ParticleEntanglementProps)
                                         <a
                                             href={`/arquivo/${msg.attachment_id}`}
                                             onClick={(e) => e.stopPropagation()}
-                                            className="mt-2 p-2 bg-black/20 rounded-lg flex items-center gap-2 border border-white/5 hover:bg-brand-blue/20 hover:border-brand-blue/30 transition-colors cursor-pointer"
+                                            className="mt-2 p-2 bg-background-dark/20 rounded-lg flex items-center gap-2 border border-white/5 hover:bg-brand-blue/20 hover:border-brand-blue/30 transition-colors cursor-pointer"
                                         >
                                             <span className="material-symbols-outlined text-[10px] text-brand-blue">link</span>
                                             <span className="text-[10px] font-bold uppercase truncate">Artigo Anexado</span>
@@ -225,7 +225,7 @@ export const ParticleEntanglement = ({ recipientId }: ParticleEntanglementProps)
             </AnimatePresence>
 
             {/* Input Area */}
-            <div className="p-4 bg-black/20">
+            <div className="p-4 bg-background-dark/20">
                 <div className="flex items-end gap-2">
                     <button
                         onClick={() => setIsSelectorOpen(!isSelectorOpen)}

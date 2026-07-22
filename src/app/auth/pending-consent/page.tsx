@@ -40,10 +40,10 @@ export default function PendingConsentPage() {
     };
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-[#121212] flex items-center justify-center p-4">
+        <main className="min-h-screen bg-gray-50 dark:bg-background-dark flex items-center justify-center p-4">
             <div className="w-full max-w-md bg-white dark:bg-[#1E1E1E] rounded-xl shadow-lg p-8 text-center border border-gray-100 dark:border-gray-800">
                 <div className="w-20 h-20 bg-yellow-100 dark:bg-[#FFCC00]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span className="material-symbols-outlined text-5xl text-yellow-600 dark:text-[#FFCC00]">pending_actions</span>
+                    <span className="material-symbols-outlined text-5xl text-brand-yellow dark:text-[#FFCC00]">pending_actions</span>
                 </div>
                 
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Aguardando Autorização</h1>
@@ -54,7 +54,7 @@ export default function PendingConsentPage() {
                     </div>
                 </p>
                 
-                <div className="bg-gray-50 dark:bg-[#1A1A1A] p-4 rounded-lg mb-8 text-sm text-left border border-gray-100 dark:border-gray-800">
+                <div className="bg-gray-50 dark:bg-card-dark p-4 rounded-lg mb-8 text-sm text-left border border-gray-100 dark:border-gray-800">
                     <h3 className="font-bold text-gray-700 dark:text-gray-300 mb-2">Próximos Passos:</h3>
                     <ul className="space-y-2 text-gray-600 dark:text-gray-400">
                         <li className="flex gap-2">

@@ -300,6 +300,7 @@ CREATE POLICY "Public can view settings"
 
 DROP POLICY IF EXISTS "System can update settings" ON public.system_settings;
 CREATE POLICY "System can update settings"
+    ON public.system_settings FOR ALL
     USING (true)
     WITH CHECK (true);
 

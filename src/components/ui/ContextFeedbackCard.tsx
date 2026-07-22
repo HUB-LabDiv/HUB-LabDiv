@@ -34,7 +34,8 @@ export const ContextFeedbackCard = ({
 }: ContextFeedbackCardProps) => {
     return (
         <aside 
-            className={`bg-white dark:bg-zinc-900 border border-gray-300 dark:border-zinc-800 rounded-xl p-6 shadow-xl w-full flex flex-col gap-4 ${className}`}
+            suppressHydrationWarning
+            className={`bg-white dark:bg-card-dark border border-gray-200 dark:border-white/20 rounded-2xl p-6 shadow-xl w-full flex flex-col gap-4 ${className}`}
             aria-labelledby="feedback-card-title"
         >
             <div className="flex items-start justify-between gap-3">

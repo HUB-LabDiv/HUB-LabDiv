@@ -65,10 +65,10 @@ export const CATEGORY_STYLES: Record<string, {
     },
     'Pesquisadores': {
         bg: 'bg-brand-red',
-        hover: 'hover:bg-red-600',
+        hover: 'hover:bg-brand-red',
         text: 'text-white',
         accent: 'card-accent-red',
-        filterActive: 'bg-brand-red hover:bg-red-600 border-transparent text-white shadow-md',
+        filterActive: 'bg-brand-red hover:bg-brand-red border-transparent text-white shadow-md',
         filterInactive: 'bg-white dark:bg-form-dark text-gray-600 dark:text-gray-300 hover:bg-brand-red/10 dark:hover:bg-brand-red/20 hover:text-brand-red border-gray-200 dark:border-gray-700 hover:border-brand-red',
         cardBadge: 'bg-brand-red/90 text-white shadow-brand-red/50'
     },
@@ -83,10 +83,10 @@ export const CATEGORY_STYLES: Record<string, {
     },
     'Eventos': {
         bg: 'bg-brand-red',
-        hover: 'hover:bg-red-600',
+        hover: 'hover:bg-brand-red',
         text: 'text-white',
         accent: 'card-accent-red',
-        filterActive: 'bg-brand-red hover:bg-red-600 border-transparent text-white shadow-md',
+        filterActive: 'bg-brand-red hover:bg-brand-red border-transparent text-white shadow-md',
         filterInactive: 'bg-white dark:bg-form-dark text-gray-600 dark:text-gray-300 hover:bg-brand-red/10 dark:hover:bg-brand-red/20 hover:text-brand-red border-gray-200 dark:border-gray-700 hover:border-brand-red',
         cardBadge: 'bg-brand-red/90 text-white shadow-brand-red/50'
     },
@@ -110,10 +110,10 @@ export const CATEGORY_STYLES: Record<string, {
     },
     'Convivência': {
         bg: 'bg-brand-red',
-        hover: 'hover:bg-red-600',
+        hover: 'hover:bg-brand-red',
         text: 'text-white',
         accent: 'card-accent-red',
-        filterActive: 'bg-brand-red hover:bg-red-600 border-transparent text-white shadow-md',
+        filterActive: 'bg-brand-red hover:bg-brand-red border-transparent text-white shadow-md',
         filterInactive: 'bg-white dark:bg-form-dark text-gray-600 dark:text-gray-300 hover:bg-brand-red/10 dark:hover:bg-brand-red/20 hover:text-brand-red border-gray-200 dark:border-gray-700 hover:border-brand-red',
         cardBadge: 'bg-brand-red/90 text-white shadow-brand-red/50'
     },
@@ -128,10 +128,10 @@ export const CATEGORY_STYLES: Record<string, {
     },
     'Mural do Deu Ruim': {
         bg: 'bg-brand-red',
-        hover: 'hover:bg-red-600',
+        hover: 'hover:bg-brand-red',
         text: 'text-white',
         accent: 'card-accent-red',
-        filterActive: 'bg-brand-red hover:bg-red-600 border-transparent text-white shadow-md',
+        filterActive: 'bg-brand-red hover:bg-brand-red border-transparent text-white shadow-md',
         filterInactive: 'bg-white dark:bg-form-dark text-gray-600 dark:text-gray-300 hover:bg-brand-red/10 dark:hover:bg-brand-red/20 hover:text-brand-red border-gray-200 dark:border-gray-700 hover:border-brand-red',
         cardBadge: 'bg-brand-red/90 text-white shadow-brand-red/50'
     },

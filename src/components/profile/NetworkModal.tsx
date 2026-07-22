@@ -104,8 +104,8 @@ export function NetworkModal({ isOpen, onClose, userId, isViewingOwn, initialTab
     };
 
     return (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-[#121212] rounded-3xl w-full max-w-md shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800 flex flex-col h-[70vh]">
+        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-background-dark/60 backdrop-blur-sm animate-in fade-in duration-300">
+            <div className="bg-white dark:bg-background-dark rounded-3xl w-full max-w-md shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800 flex flex-col h-[70vh]">
                 
                 {/* Header Actions */}
                 <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50 dark:bg-white/5">

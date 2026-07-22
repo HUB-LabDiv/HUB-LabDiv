@@ -26,11 +26,11 @@ interface BadgeProps {
 
 const badgeStyles = {
     pioneiro: {
-        color: 'text-blue-500',
-        bg: 'bg-blue-500/10',
-        border: 'border-blue-500/20',
+        color: 'text-brand-blue',
+        bg: 'bg-brand-blue/10',
+        border: 'border-brand-blue/20',
         icon: <Zap size={24} />,
-        gradient: 'from-blue-500/20 to-transparent'
+        gradient: 'from-brand-blue/20 to-transparent'
     },
     curador: {
         color: 'text-purple-500',

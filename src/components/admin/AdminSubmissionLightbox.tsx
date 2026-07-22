@@ -152,11 +152,11 @@ export function AdminSubmissionLightbox({
     return (
         <>
             <div
-                className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 md:p-6 lg:p-12 transition-opacity"
+                className="fixed inset-0 z-[100] flex items-center justify-center bg-background-dark/90 backdrop-blur-sm p-4 md:p-6 lg:p-12 transition-opacity"
                 onClick={onClose}
             >
                 <button
-                    className="absolute top-4 right-4 md:top-6 md:right-6 text-white hover:text-red-400 bg-white/10 hover:bg-white/20 rounded-full p-2 transition-all flex items-center justify-center backdrop-blur-md z-[110]"
+                    className="absolute top-4 right-4 md:top-6 md:right-6 text-white hover:text-brand-red bg-white/10 hover:bg-white/20 rounded-full p-2 transition-all flex items-center justify-center backdrop-blur-md z-[110]"
                     onClick={(e) => { e.stopPropagation(); onClose(); }}
                     aria-label="Close modal"
                 >
@@ -190,21 +190,21 @@ export function AdminSubmissionLightbox({
                     {/* Mobile Global Nav Overlay */}
                     <div className="md:hidden absolute inset-y-0 left-0 w-16 z-[106] flex items-center px-1 pointer-events-none">
                         {hasPrev && (
-                            <button onClick={onPrev} className="pointer-events-auto bg-black/40 hover:bg-black/60 text-white rounded-r-lg p-2 backdrop-blur-sm transition-colors">
+                            <button onClick={onPrev} className="pointer-events-auto bg-background-dark/40 hover:bg-background-dark/60 text-white rounded-r-lg p-2 backdrop-blur-sm transition-colors">
                                 <ChevronLeft className="w-8 h-8" />
                             </button>
                         )}
                     </div>
                     <div className="md:hidden absolute inset-y-0 right-0 w-16 z-[106] flex items-center justify-end px-1 pointer-events-none">
                         {hasNext && (
-                            <button onClick={onNext} className="pointer-events-auto bg-black/40 hover:bg-black/60 text-white rounded-l-lg p-2 backdrop-blur-sm transition-colors">
+                            <button onClick={onNext} className="pointer-events-auto bg-background-dark/40 hover:bg-background-dark/60 text-white rounded-l-lg p-2 backdrop-blur-sm transition-colors">
                                 <ChevronRight className="w-8 h-8" />
                             </button>
                         )}
                     </div>
 
                     {/* Media Section */}
-                    <div className={`flex-1 bg-black flex items-center justify-center relative min-h-[30vh] lg:min-h-full group ${statusType === 'rejeitado' ? 'grayscale' : ''}`}>
+                    <div className={`flex-1 bg-background-dark flex items-center justify-center relative min-h-[30vh] lg:min-h-full group ${statusType === 'rejeitado' ? 'grayscale' : ''}`}>
                         {item.mediaType === 'video' ? (
                             (() => {
                                 const rawUrl = Array.isArray(item.mediaUrl) ? item.mediaUrl[0] : item.mediaUrl;
@@ -286,7 +286,7 @@ export function AdminSubmissionLightbox({
                                                     <ChevronRight className="w-8 h-8" />
                                                 </button>
 
-                                                <div className="absolute bottom-6 flex gap-2 bg-black/40 px-3 py-2 rounded-full backdrop-blur-md">
+                                                <div className="absolute bottom-6 flex gap-2 bg-background-dark/40 px-3 py-2 rounded-full backdrop-blur-md">
                                                     {urls.map((_, i) => (
                                                         <div
                                                             key={i}
@@ -312,7 +312,7 @@ export function AdminSubmissionLightbox({
                                 </span>
                             )}
                             {statusType === 'rejeitado' && (
-                                <span className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 rounded-full text-xs font-bold tracking-wide uppercase line-through">
+                                <span className="px-3 py-1 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-brand-red rounded-full text-xs font-bold tracking-wide uppercase line-through">
                                     Rejeitado
                                 </span>
                             )}
@@ -554,7 +554,7 @@ export function AdminSubmissionLightbox({
                                                 </div>
                                                 <button
                                                     onClick={() => handleUnlinkTrail(link.id, link.trail_id)}
-                                                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-all"
+                                                    className="p-1.5 text-gray-400 hover:text-brand-red hover:bg-red-50 dark:hover:bg-red-900/20 rounded-md transition-all"
                                                     title="Remover vínculo"
                                                 >
                                                     <Trash2 size={12} />
@@ -665,7 +665,7 @@ export function AdminSubmissionLightbox({
                                             setIsActioning(false);
                                             onClose();
                                         }}
-                                        className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-900/20 dark:text-red-400 transition-colors text-sm font-medium disabled:opacity-50"
+                                        className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-900/20 dark:text-brand-red transition-colors text-sm font-medium disabled:opacity-50"
                                     >
                                         <Ban className="w-5 h-5" /> Rejeitar
                                     </button>
@@ -683,7 +683,7 @@ export function AdminSubmissionLightbox({
                                     </button>
                                     <button
                                         onClick={() => { onReject?.(item.id); onClose(); }}
-                                        className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 border border-red-200 dark:border-red-800 transition-colors text-sm font-medium"
+                                        className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-brand-red hover:bg-red-100 dark:hover:bg-red-900/40 border border-red-200 dark:border-red-800 transition-colors text-sm font-medium"
                                     >
                                         <Ban className="w-5 h-5" /> Rejeitar
                                     </button>
@@ -700,7 +700,7 @@ export function AdminSubmissionLightbox({
                                     </button>
                                     <button
                                         onClick={() => setShowDeleteConfirm(true)}
-                                        className="w-full flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/40 border border-red-200 dark:border-red-800 transition-colors text-sm font-medium"
+                                        className="w-full flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-brand-red hover:bg-red-100 dark:hover:bg-red-900/40 border border-red-200 dark:border-red-800 transition-colors text-sm font-medium"
                                     >
                                         <Trash2 className="w-5 h-5" /> Deletar Definitivamente
                                     </button>
@@ -726,17 +726,17 @@ export function AdminSubmissionLightbox({
 
             {/* Confirmation Modal for Permanent Deletion */}
             {showDeleteConfirm && (
-                <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+                <div className="fixed inset-0 z-[200] flex items-center justify-center bg-background-dark/80 backdrop-blur-sm p-4">
                     <div className="bg-white dark:bg-form-dark p-8 rounded-3xl max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200 border-2 border-red-100 dark:border-red-900/30">
                         <div className="flex flex-col items-center text-center">
                             <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-6">
-                                <Trash2 className="w-8 h-8 text-red-600 dark:text-red-400" />
+                                <Trash2 className="w-8 h-8 text-brand-red dark:text-brand-red" />
                             </div>
                             <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-3">Deleção Permanente</h3>
                             <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
                                 Tem certeza que deseja excluir permanentemente esta submissão?
                                 <br /><br />
-                                <strong className="text-red-600 dark:text-red-400">Esta ação NÃO PODE ser desfeita.</strong> Os arquivos físicos associados serão apagados do servidor.
+                                <strong className="text-brand-red dark:text-brand-red">Esta ação NÃO PODE ser desfeita.</strong> Os arquivos físicos associados serão apagados do servidor.
                             </p>
                             <div className="flex gap-3 w-full">
                                 <button
@@ -749,7 +749,7 @@ export function AdminSubmissionLightbox({
                                 <button
                                     onClick={handleDelete}
                                     disabled={isDeleting}
-                                    className="flex-1 px-6 py-3 rounded-xl font-bold bg-red-600 hover:bg-red-700 text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                    className="flex-1 px-6 py-3 rounded-xl font-bold bg-brand-red hover:bg-red-700 text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                                 >
                                     {isDeleting ? (
                                         <>

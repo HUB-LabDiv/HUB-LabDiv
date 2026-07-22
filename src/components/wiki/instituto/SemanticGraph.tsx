@@ -52,7 +52,7 @@ export function SemanticGraph() {
                                 transition={{ delay: idx * 0.1, type: 'spring' }}
                                 className="flex flex-col items-center gap-4 group"
                             >
-                                <div className={`p-5 rounded-full bg-[#121212] border border-white/5 group-hover:border-brand-blue/40 shadow-2xl transition-all duration-500 relative`}>
+                                <div className={`p-5 rounded-full bg-background-dark border border-white/5 group-hover:border-brand-blue/40 shadow-2xl transition-all duration-500 relative`}>
                                    <div className={`absolute inset-0 rounded-full blur-xl opacity-0 group-hover:opacity-20 transition-opacity ${node.color.replace('text-', 'bg-')}`} />
                                    <div className={`${node.color} group-hover:scale-110 transition-transform`}>
                                        {node.icon}

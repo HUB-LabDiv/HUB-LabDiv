@@ -148,7 +148,7 @@ export function CourseTree({ trails, completedIds, cursandoIds }: CourseTreeProp
     const onConnect = useCallback((params: any) => setEdges((eds) => addEdge(params, eds)), []);
 
     return (
-        <div className="w-full h-[600px] bg-[#121212] rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
+        <div className="w-full h-[600px] bg-background-dark rounded-[2rem] border border-white/5 overflow-hidden shadow-2xl">
             <ReactFlow
                 nodes={nodes}
                 edges={edges}

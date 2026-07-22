@@ -48,7 +48,7 @@ export default function WebPageBlock({ block, isActive }: WebPageBlockProps) {
                             value={url}
                             onChange={(e) => updateBlock(block.id, { url: e.target.value, height })}
                             placeholder="https://..."
-                            className="w-full bg-black/40 border border-gray-700/50 rounded-xl px-4 py-3 text-sm outline-none focus:border-brand-blue/50 text-white placeholder-gray-600 transition-colors"
+                            className="w-full bg-background-dark/40 border border-gray-700/50 rounded-xl px-4 py-3 text-sm outline-none focus:border-brand-blue/50 text-white placeholder-gray-600 transition-colors"
                         />
                     </div>
                     <div className="flex flex-col gap-1">
@@ -70,7 +70,7 @@ export default function WebPageBlock({ block, isActive }: WebPageBlockProps) {
             )}
 
             {embedUrl ? (
-                <div className="w-full rounded-xl overflow-hidden border border-gray-800/50 bg-black/20 transition-all duration-300 max-h-[75vh]" style={{ height: `${height}px` }}>
+                <div className="w-full rounded-xl overflow-hidden border border-gray-800/50 bg-background-dark/20 transition-all duration-300 max-h-[75vh]" style={{ height: `${height}px` }}>
                     <iframe 
                         src={embedUrl} 
                         className="w-full h-full border-0"

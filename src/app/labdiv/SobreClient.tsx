@@ -139,7 +139,7 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
                 </p>
                 <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
                     <Link href="/apresentacao" className="bg-gradient-to-r from-brand-blue to-brand-red p-[2px] rounded-3xl hover:scale-105 transition-transform shadow-2xl shadow-brand-blue/20 w-full sm:w-auto">
-                        <div className="bg-white dark:bg-[#121212] rounded-[22px] px-8 py-4 flex items-center justify-center gap-3 h-full">
+                        <div className="bg-white dark:bg-background-dark rounded-[22px] px-8 py-4 flex items-center justify-center gap-3 h-full">
                             <BookOpen className="w-6 h-6 text-brand-yellow" />
                             <span className="font-black uppercase tracking-widest text-gray-900 dark:text-white text-sm md:text-base">
                                 Apresentação do HUB
@@ -148,7 +148,7 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
                         </div>
                     </Link>
                     <a href="https://sites.google.com/usp.br/labdiv/in%C3%ADcio?authuser=0" target="_blank" rel="noopener noreferrer" className="bg-brand-blue p-[2px] rounded-3xl hover:scale-105 transition-transform shadow-2xl shadow-brand-blue/20 w-full sm:w-auto">
-                        <div className="bg-white dark:bg-[#121212] rounded-[22px] px-8 py-4 flex items-center justify-center gap-3 h-full">
+                        <div className="bg-white dark:bg-background-dark rounded-[22px] px-8 py-4 flex items-center justify-center gap-3 h-full">
                             <ExternalLink className="w-6 h-6 text-brand-blue" />
                             <span className="font-black uppercase tracking-widest text-brand-blue text-sm md:text-base">
                                 Acessar site do Lab-Div
@@ -255,7 +255,7 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
                     </div>
 
                     {/* Persona Toggle Overlay */}
-                    <div className="absolute bottom-4 right-4 md:right-8 bg-black/40 backdrop-blur-md border border-white/10 p-1.5 rounded-full flex items-center gap-1 z-20">
+                    <div className="absolute bottom-4 right-4 md:right-8 bg-background-dark/40 backdrop-blur-md border border-white/10 p-1.5 rounded-full flex items-center gap-1 z-20">
                         {(['visitante', 'curioso', 'aluno_usp', 'pesquisador'] as PersonaType[]).map((p) => (
                             <button
                                 key={p}

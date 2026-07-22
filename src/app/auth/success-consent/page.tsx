@@ -21,7 +21,7 @@ export default function SuccessConsentPage() {
     const router = useRouter();
 
     return (
-        <main className="min-h-screen bg-gray-50 dark:bg-[#121212] flex items-center justify-center p-4">
+        <main className="min-h-screen bg-gray-50 dark:bg-background-dark flex items-center justify-center p-4">
             <motion.div 
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}

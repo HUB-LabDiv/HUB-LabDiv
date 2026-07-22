@@ -62,7 +62,7 @@ export function MarkdownImage({ src, alt, ...props }: any) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         onClick={handleClose}
-                        className="fixed inset-0 z-[300] bg-black/90 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out print:hidden"
+                        className="fixed inset-0 z-[300] bg-background-dark/90 backdrop-blur-md flex items-center justify-center p-4 cursor-zoom-out print:hidden"
                     >
                         <m.img
                             initial={{ scale: 0.8, opacity: 0 }}

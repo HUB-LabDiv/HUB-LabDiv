@@ -127,7 +127,7 @@ export default function AdminDropsPage() {
     );
 
     return (
-        <div className="p-8 max-w-6xl mx-auto space-y-8 min-h-screen bg-[#121212]/50 rounded-[3rem] border border-white/5 backdrop-blur-sm">
+        <div className="p-8 max-w-6xl mx-auto space-y-8 min-h-screen bg-background-dark/50 rounded-[3rem] border border-white/5 backdrop-blur-sm">
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div className="flex-1">
                     <h1 className="text-4xl font-black italic uppercase tracking-tighter text-white flex items-center gap-4 group">
@@ -181,7 +181,7 @@ export default function AdminDropsPage() {
                 </div>
             ) : filteredDrops.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-32 bg-[#1E1E1E]/50 rounded-[4rem] border-2 border-dashed border-white/5 transition-all">
-                    <div className="p-8 bg-black/40 rounded-full mb-8 border border-white/5 shadow-inner">
+                    <div className="p-8 bg-background-dark/40 rounded-full mb-8 border border-white/5 shadow-inner">
                         <Inbox className="w-16 h-16 text-gray-700" />
                     </div>
                     <p className="text-white font-black uppercase tracking-[0.3em] text-[10px] italic">Silêncio no Laboratório.</p>
@@ -254,7 +254,7 @@ function DropAdminCard({ drop, handleAction }: { drop: Drop, handleAction: (id: 
             
             <div className="flex items-center gap-5 relative z-10">
                 <div className="relative shrink-0">
-                    <div className="w-16 h-16 rounded-[1.5rem] bg-black/20 overflow-hidden ring-4 ring-white/5 relative flex items-center justify-center">
+                    <div className="w-16 h-16 rounded-[1.5rem] bg-background-dark/20 overflow-hidden ring-4 ring-white/5 relative flex items-center justify-center">
                         <img 
                             src={drop.profiles?.avatar || `https://api.dicebear.com/7.x/avataaars/svg?seed=${drop.id}`} 
                             onError={(e) => {
@@ -277,7 +277,7 @@ function DropAdminCard({ drop, handleAction }: { drop: Drop, handleAction: (id: 
                         />
                     </div>
                     {drop.is_featured && (
-                        <div className="absolute -top-1 -right-1 bg-yellow-500 text-white p-1.5 rounded-lg border-2 border-[#1E1E1E] shadow-lg animate-bounce">
+                        <div className="absolute -top-1 -right-1 bg-brand-yellow text-white p-1.5 rounded-lg border-2 border-[#1E1E1E] shadow-lg animate-bounce">
                             <Star size={12} fill="currentColor" />
                         </div>
                     )}
@@ -296,11 +296,11 @@ function DropAdminCard({ drop, handleAction }: { drop: Drop, handleAction: (id: 
                     </div>
                 </div>
                     <div className="flex flex-col items-end gap-1">
-                        <div className="flex items-center gap-2 text-[10px] font-black text-white/50 bg-black/60 px-4 py-2 rounded-2xl border border-white/5 font-mono shadow-inner">
+                        <div className="flex items-center gap-2 text-[10px] font-black text-white/50 bg-background-dark/60 px-4 py-2 rounded-2xl border border-white/5 font-mono shadow-inner">
                             <Atom className="w-3.5 h-3.5 text-brand-red animate-spin-slow" />
                             {drop.likes_count || 0}
                         </div>
-                        <div className="flex items-center gap-2 text-[10px] font-black text-white/50 bg-black/60 px-4 py-2 rounded-2xl border border-white/5 font-mono shadow-inner">
+                        <div className="flex items-center gap-2 text-[10px] font-black text-white/50 bg-background-dark/60 px-4 py-2 rounded-2xl border border-white/5 font-mono shadow-inner">
                             <Clock className="w-3.5 h-3.5 text-brand-red" />
                             {new Date(drop.created_at).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                         </div>
@@ -310,7 +310,7 @@ function DropAdminCard({ drop, handleAction }: { drop: Drop, handleAction: (id: 
 
             <div className="relative">
                 {drop.parent && (
-                    <div className="mb-4 p-3 bg-black/40 rounded-2xl border-l-4 border-brand-red/50 text-[10px] text-gray-400 italic">
+                    <div className="mb-4 p-3 bg-background-dark/40 rounded-2xl border-l-4 border-brand-red/50 text-[10px] text-gray-400 italic">
                         <span className="font-black text-brand-red/70 not-italic mr-1">RESPONDENDO A @{drop.parent.author?.handle}:</span>
                         "{drop.parent.content.slice(0, 100)}{drop.parent.content.length > 100 ? '...' : ''}"
                     </div>
@@ -340,21 +340,21 @@ function DropAdminCard({ drop, handleAction }: { drop: Drop, handleAction: (id: 
                 {!drop.is_featured ? (
                     <button 
                         onClick={() => handleAction(drop.id, 'feature')}
-                        className="flex-1 bg-white/5 hover:bg-yellow-500/20 text-yellow-500/60 hover:text-yellow-500 px-6 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] border border-white/5 hover:border-yellow-500/50 transition-all flex items-center justify-center gap-2 shadow-sm"
+                        className="flex-1 bg-white/5 hover:bg-brand-yellow/20 text-brand-yellow/60 hover:text-brand-yellow px-6 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] border border-white/5 hover:border-brand-yellow/50 transition-all flex items-center justify-center gap-2 shadow-sm"
                     >
                         <Star size={18} /> DESTACAR
                     </button>
                 ) : (
                     <button 
                         onClick={() => handleAction(drop.id, 'remove_feature')}
-                        className="flex-1 bg-white/5 hover:bg-blue-500/20 text-blue-500/60 hover:text-blue-500 px-6 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] border border-white/5 hover:border-blue-500/50 transition-all flex items-center justify-center gap-2 shadow-sm"
+                        className="flex-1 bg-white/5 hover:bg-brand-blue/20 text-brand-blue/60 hover:text-brand-blue px-6 py-4 rounded-[1.5rem] text-[10px] font-black uppercase tracking-[0.2em] border border-white/5 hover:border-brand-blue/50 transition-all flex items-center justify-center gap-2 shadow-sm"
                     >
                         <ShieldCheck size={18} /> DESAFIXAR
                     </button>
                 )}
                 <button 
                     onClick={() => handleAction(drop.id, 'delete')}
-                    className="p-4 aspect-square bg-[#121212] hover:bg-brand-red text-gray-600 hover:text-white rounded-[1.5rem] border border-white/5 transition-all flex items-center justify-center shadow-2xl shadow-black hover:shadow-brand-red/40"
+                    className="p-4 aspect-square bg-background-dark hover:bg-brand-red text-gray-600 hover:text-white rounded-[1.5rem] border border-white/5 transition-all flex items-center justify-center shadow-2xl shadow-black hover:shadow-brand-red/40"
                 >
                     <Trash2 size={22} />
                 </button>

@@ -79,7 +79,7 @@ export const TimelineItem = ({ submission, isLeft = true }: TimelineItemProps) =
                             </div>
                         )}
                         {submission.media_type === 'video' && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/20">
+                            <div className="absolute inset-0 flex items-center justify-center bg-background-dark/20">
                                 <span className="material-symbols-outlined text-white text-3xl filled">play_circle</span>
                             </div>
                         )}

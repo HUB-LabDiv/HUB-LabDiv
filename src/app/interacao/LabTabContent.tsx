@@ -125,7 +125,7 @@ export function LabTabContent() {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Rich Profile Header */}
-            <div className="bg-white dark:bg-[#121212] rounded-[32px] p-8 border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden group">
+            <div className="bg-white dark:bg-background-dark rounded-[32px] p-8 border border-gray-100 dark:border-gray-800 shadow-sm relative overflow-hidden group">
                 <div className="flex flex-col md:flex-row items-center md:items-start gap-8 relative z-10">
                     <div className="shrink-0">
                         <Avatar
@@ -188,7 +188,7 @@ export function LabTabContent() {
                         </p>
 
                         <div className="flex flex-wrap gap-2 pt-2 justify-center md:justify-start">
-                            {viewedProfile.linkedin_url && <a href={viewedProfile.linkedin_url} target="_blank" className="p-2 bg-white/5 hover:bg-blue-600/20 rounded-lg transition-all text-gray-500 hover:text-blue-500 border border-white/5"><Linkedin className="size-4" /></a>}
+                            {viewedProfile.linkedin_url && <a href={viewedProfile.linkedin_url} target="_blank" className="p-2 bg-white/5 hover:bg-brand-blue/20 rounded-lg transition-all text-gray-500 hover:text-brand-blue border border-white/5"><Linkedin className="size-4" /></a>}
                             {viewedProfile.github_url && <a href={viewedProfile.github_url} target="_blank" className="p-2 bg-white/5 hover:bg-gray-800 rounded-lg transition-all text-gray-500 hover:text-white border border-white/5"><Github className="size-4" /></a>}
                             {viewedProfile.instagram_url && <a href={viewedProfile.instagram_url} target="_blank" className="p-2 bg-white/5 hover:bg-pink-600/20 rounded-lg transition-all text-gray-500 hover:text-pink-500 border border-white/5"><Instagram className="size-4" /></a>}
                             {viewedProfile.portfolio_url && <a href={viewedProfile.portfolio_url} target="_blank" className="p-2 bg-white/5 hover:bg-brand-blue/20 rounded-lg transition-all text-gray-500 hover:text-brand-blue border border-white/5"><Globe className="size-4" /></a>}
@@ -199,7 +199,7 @@ export function LabTabContent() {
 
             {/* Academic Section */}
             {viewedProfile.user_category === 'aluno_usp' && academicData && (
-                <div className="bg-white dark:bg-[#121212] rounded-[32px] p-6 border border-gray-100 dark:border-gray-800">
+                <div className="bg-white dark:bg-background-dark rounded-[32px] p-6 border border-gray-100 dark:border-gray-800">
                     <h4 className="text-[10px] font-black uppercase text-brand-blue tracking-[0.2em] flex items-center gap-2 mb-4">
                         <GraduationCap className="size-4" /> Ecossistema Acadêmico
                     </h4>
@@ -281,7 +281,7 @@ export function LabTabContent() {
                                                 <span className="text-[8px] font-black uppercase text-center text-gray-500 dark:text-white/40 leading-tight line-clamp-3">{sub.post.title || 'MÍDIA INDISPONÍVEL'}</span>
                                             </div>
                                         )}
-                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                                        <div className="absolute inset-0 bg-background-dark/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
                                             <div className="flex items-center gap-1.5 text-white text-xs font-bold">
                                                 <Heart className="size-4 fill-current" /> {sub.post.likeCount}
                                             </div>
@@ -346,7 +346,7 @@ export function LabTabContent() {
                                                 <span className="text-[8px] font-black uppercase text-center text-gray-500 dark:text-white/40 leading-tight line-clamp-3">{post.title || 'MÍDIA INDISPONÍVEL'}</span>
                                             </div>
                                         )}
-                                        <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
+                                        <div className="absolute inset-0 bg-background-dark/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-4">
                                             <div className="flex items-center gap-1.5 text-white text-xs font-bold">
                                                 <Heart className="size-4 fill-current" /> {post.likeCount}
                                             </div>

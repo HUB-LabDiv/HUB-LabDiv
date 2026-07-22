@@ -268,7 +268,7 @@ export const SidebarRight = ({ tags: propTags, authors: propAuthors }: SidebarRi
                                         <div className="flex gap-1 shrink-0">
                                             <button
                                                 onClick={() => handleFollowToggle(user.id)}
-                                                className={`px-3 py-1.5 text-[10px] font-black rounded-full transition-all ${isFollowing ? 'bg-gray-100 dark:bg-white/10 text-gray-500 hover:bg-red-500/10 hover:text-red-500' :
+                                                className={`px-3 py-1.5 text-[10px] font-black rounded-full transition-all ${isFollowing ? 'bg-gray-100 dark:bg-white/10 text-gray-500 hover:bg-brand-red/10 hover:text-brand-red' :
                                                     (user.name.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % 3 === 0 ? 'bg-brand-blue text-white hover:scale-105 shadow-lg shadow-brand-blue/10' :
                                                         (user.name.split('').reduce((a, b) => a + b.charCodeAt(0), 0)) % 3 === 1 ? 'bg-brand-yellow text-gray-900 hover:scale-105 shadow-lg shadow-brand-yellow/10' :
                                                             'bg-brand-red text-white hover:scale-105 shadow-lg shadow-brand-red/10'

@@ -170,7 +170,7 @@ export function PerguntasTabContent() {
 
             {/* Modal */}
             {showModal && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4" onClick={() => !isSubmitting && setShowModal(false)}>
+                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background-dark/80 backdrop-blur-md p-4" onClick={() => !isSubmitting && setShowModal(false)}>
                     <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-[32px] w-full max-w-lg p-8 space-y-6 animate-in fade-in zoom-in-95 duration-300 shadow-2xl" onClick={e => e.stopPropagation()}>
                         <div className="flex items-center justify-between">
                             <h2 className="text-sm font-black uppercase tracking-widest text-brand-blue flex items-center gap-2">
@@ -187,7 +187,7 @@ export function PerguntasTabContent() {
                             </div>
                         ) : (
                             <div className="space-y-4">
-                                {submitError && <p className="text-[10px] text-red-500 font-black uppercase bg-red-500/10 p-2 rounded-lg">{submitError}</p>}
+                                {submitError && <p className="text-[10px] text-brand-red font-black uppercase bg-brand-red/10 p-2 rounded-lg">{submitError}</p>}
                                 <div className="space-y-1">
                                     <label className="text-[9px] font-black uppercase tracking-widest text-gray-500">Seu Nome</label>
                                     <input value={nome} onChange={e => setNome(e.target.value)} type="text" className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-xs text-white outline-none focus:border-brand-blue/50 transition-all font-bold" placeholder="Digite seu nome..." />

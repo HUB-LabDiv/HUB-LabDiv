@@ -486,7 +486,7 @@ export function SubmissionsManager({ categoryFilter, excludeCategory, needsModer
             )}
 
             {editingItem && (
-                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-background-dark/60 backdrop-blur-sm">
                     <div className="bg-white dark:bg-card-dark rounded-2xl w-full max-w-2xl shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-700 flex flex-col max-h-[90vh]">
                         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center bg-white/10 dark:bg-background-dark/10 backdrop-blur-md">
                             <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">

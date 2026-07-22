@@ -75,7 +75,7 @@ export default function ImageBlock({ block, isActive }: ImageBlockProps) {
                     )}
                     
                     {isActive && (
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div className="absolute inset-0 bg-background-dark/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                             <button 
                                 onClick={() => updateBlock(block.id, { url: '' })}
                                 className="px-4 py-2 bg-brand-red text-white rounded-lg font-medium shadow-lg hover:bg-brand-red transition-colors"

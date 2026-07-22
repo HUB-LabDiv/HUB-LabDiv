@@ -278,7 +278,7 @@ export default async function ArquivoItemPage({ params }: PageProps) {
 
                             {/* Media Section - skip for text/zip/sdocx */}
                             {submission.media_type !== 'text' && submission.media_type !== 'zip' && submission.media_type !== 'sdocx' && (
-                                <div className="bg-black flex items-center justify-center min-h-[300px] md:min-h-[500px]">
+                                <div className="bg-background-dark flex items-center justify-center min-h-[300px] md:min-h-[500px]">
                                     {submission.media_type === 'video' ? (
                                         <div className="w-full h-full aspect-video">
                                             {urls.length > 0 ? (
@@ -345,7 +345,7 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                 <div className="flex flex-col py-4 border-y border-gray-100 dark:border-gray-800">
                                     <div className="flex items-center justify-between gap-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary dark:text-blue-400 font-bold text-xs uppercase shrink-0">
+                                            <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary dark:text-brand-blue font-bold text-xs uppercase shrink-0">
                                                 {submission.authors.substring(0, 2)}
                                             </div>
                                             <div className="flex flex-col">
@@ -413,7 +413,7 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                                 <img src={block.content.url} alt="GIF Animado" className="w-full h-auto max-h-[600px] object-contain rounded-lg" loading="lazy" />
                                                             </div>
                                                         ) : (
-                                                            <div key={block.id} className="w-full aspect-video bg-black rounded-xl overflow-hidden my-8 shadow-lg">
+                                                            <div key={block.id} className="w-full aspect-video bg-background-dark rounded-xl overflow-hidden my-8 shadow-lg">
                                                                 <iframe src={formatYoutubeUrl(block.content.url)} className="w-full h-full border-none" allowFullScreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" />
                                                             </div>
                                                         );
@@ -543,7 +543,7 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                             <a key={rel.id} href={`/arquivo/${rel.id}`} className="group block bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
                                                 <div className="aspect-video bg-gray-100 dark:bg-gray-800 overflow-hidden relative">
                                                     {rel.media_type === 'video' ? (
-                                                        <div className="w-full h-full flex items-center justify-center bg-black">
+                                                        <div className="w-full h-full flex items-center justify-center bg-background-dark">
                                                             <span className="material-symbols-outlined text-4xl text-white/50">play_circle</span>
                                                         </div>
                                                     ) : rel.media_type === 'text' ? (

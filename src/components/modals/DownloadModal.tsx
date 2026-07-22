@@ -185,7 +185,7 @@ export const DownloadModal = ({ id, title, authors, avatarUrl, description, medi
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClose(); }}
-                className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm"
             />
 
             <m.div
@@ -283,7 +283,7 @@ export const DownloadModal = ({ id, title, authors, avatarUrl, description, medi
             <div className="fixed -top-[9999px] -left-[9999px] -z-50 opacity-0 pointer-events-none" aria-hidden="true">
                 <div
                     ref={cardRef}
-                    className="w-[600px] p-10 bg-[#121212] flex flex-col gap-6 text-white border-2 border-brand-blue/30 rounded-3xl"
+                    className="w-[600px] p-10 bg-background-dark flex flex-col gap-6 text-white border-2 border-brand-blue/30 rounded-3xl"
                     style={{ fontFamily: '"Inter", sans-serif' }}
                 >
                     <div className="flex items-center justify-between">
@@ -294,7 +294,7 @@ export const DownloadModal = ({ id, title, authors, avatarUrl, description, medi
                     </div>
 
                     {mediaUrl && (
-                        <div className="w-full aspect-video rounded-xl bg-black/20 border border-gray-800 overflow-hidden shadow-inner">
+                        <div className="w-full aspect-video rounded-xl bg-background-dark/20 border border-gray-800 overflow-hidden shadow-inner">
                             <img src={mediaUrl} crossOrigin="anonymous" alt="Capa" className="w-full h-full object-cover" />
                         </div>
                     )}

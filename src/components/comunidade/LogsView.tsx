@@ -160,15 +160,16 @@ export function LogsView() {
 
     return (
         <div className="max-w-4xl mx-auto space-y-12 pb-20 pt-8">
-            <div className="flex flex-col gap-3 relative">
+            <LogsFeedbackCard className="block mb-8" />
+
+            <div className="flex flex-col gap-3 relative mb-6">
                 <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-red/5 rounded-full blur-[60px] pointer-events-none"></div>
                 <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-red flex items-center gap-4 relative z-10">
                     <FilePenLine className="w-12 h-12" />
                     Logs
                 </h1>
-                <LogsFeedbackCard className="block lg:hidden mb-8" />
-                <p className="text-gray-500 font-bold uppercase tracking-widest text-[10px] border-l-2 border-brand-red pl-4">
-                    Logs do IFUSP em tempo real. O que está acontecendo no instituto agora?
+                <p className="text-gray-400 font-medium text-sm border-l-2 border-brand-red pl-4 max-w-xl leading-relaxed">
+                    Microatualizações rápidas, descobertas recentes e notícias de bastidores transmitidas em tempo real pelos pesquisadores e estudantes do IFUSP.
                 </p>
             </div>
 
@@ -192,7 +193,7 @@ export function LogsView() {
                     <button
                         type="submit"
                         disabled={isSubmitting || !content.trim()}
-                        className="bg-brand-red hover:bg-red-600 text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-brand-red/20 shadow-inner"
+                        className="bg-brand-red hover:bg-brand-red text-white px-8 py-3 rounded-2xl font-black uppercase tracking-widest text-xs flex items-center gap-3 hover:scale-105 active:scale-95 transition-all shadow-lg shadow-brand-red/20 shadow-inner"
                     >
                         {isSubmitting ? 'Transmitindo...' : <>Lançar <Send className="w-4 h-4" /></>}
                     </button>
@@ -219,11 +220,11 @@ export function LogsView() {
 
             <AnimatePresence>
                 {isSyncing && (
-                    <motion.div initial={{ opacity: 0, x: 50, scale: 0.9 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: 50, scale: 0.9 }} className="fixed top-6 right-6 z-[100] bg-black/80 backdrop-blur-xl border border-blue-500/30 rounded-2xl p-4 flex items-center gap-4 shadow-[0_0_30px_rgba(0,163,255,0.15)]">
+                    <motion.div initial={{ opacity: 0, x: 50, scale: 0.9 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: 50, scale: 0.9 }} className="fixed top-6 right-6 z-[100] bg-background-dark/80 backdrop-blur-xl border border-brand-blue/30 rounded-2xl p-4 flex items-center gap-4 shadow-[0_0_30px_rgba(0,163,255,0.15)]">
                         <div className="relative w-10 h-10 flex items-center justify-center">
-                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border border-blue-500/30 rounded-full" />
+                            <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border border-brand-blue/30 rounded-full" />
                             <div className="relative">
-                                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1, repeat: Infinity }} className="w-2 h-2 bg-blue-500 rounded-full shadow-[0_0_10px_#00A3FF]" />
+                                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1, repeat: Infinity }} className="w-2 h-2 bg-brand-blue rounded-full shadow-[0_0_10px_#00A3FF]" />
                                 <Atom className="absolute -top-3 -left-3 w-8 h-8 text-white/10 animate-pulse" />
                             </div>
                         </div>
@@ -232,7 +233,7 @@ export function LogsView() {
                             <p className="text-[8px] font-mono text-gray-400 uppercase tracking-widest leading-none">Atualizando_Partículas...</p>
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/5 rounded-b-2xl overflow-hidden">
-                            <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 4, ease: "linear" }} className="h-full bg-blue-500 shadow-[0_0_10px_#3b82f6]" />
+                            <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 4, ease: "linear" }} className="h-full bg-brand-blue shadow-[0_0_10px_#3b82f6]" />
                         </div>
                     </motion.div>
                 )}
@@ -242,8 +243,8 @@ export function LogsView() {
 }
 
 function FeedSection({ title, icon, color, children }: { title: string, icon: React.ReactNode, color: 'red' | 'yellow', children: React.ReactNode }) {
-    const borderColor = color === 'red' ? 'via-brand-red/50' : 'via-yellow-500/50';
-    const textColor = color === 'red' ? 'text-brand-red' : 'text-yellow-500';
+    const borderColor = color === 'red' ? 'via-brand-red/50' : 'via-brand-yellow/50';
+    const textColor = color === 'red' ? 'text-brand-red' : 'text-brand-yellow';
 
     return (
         <div className="space-y-6">
@@ -325,7 +326,7 @@ export function ThreadNode({ drop, level = 0, onRefresh, setIsSyncing }: { drop:
                     <div className="flex-1 min-w-0 flex flex-col gap-2">
                         <div className="flex flex-wrap items-center gap-2 mb-1">
                             <span className="font-black text-sm text-gray-900 dark:text-white truncate max-w-[150px]">@{drop.profiles?.handle || 'membro'}</span>
-                            <div className="flex items-center gap-2 text-[9px] font-black font-mono text-gray-500 bg-black/20 px-2 py-1 rounded-lg border border-white/5 shrink-0">
+                            <div className="flex items-center gap-2 text-[9px] font-black font-mono text-gray-500 bg-background-dark/20 px-2 py-1 rounded-lg border border-white/5 shrink-0">
                                 <Clock className="w-2.5 h-2.5 text-brand-red" />
                                 {new Date(drop.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </div>
@@ -350,17 +351,17 @@ export function ThreadNode({ drop, level = 0, onRefresh, setIsSyncing }: { drop:
                             <div className="flex items-center gap-4 border-l border-white/5 pl-4 ml-2">
                                 <button onClick={async (e) => { e.stopPropagation(); if (setIsSyncing) setIsSyncing(true); const res = await reactToDrop(drop.id, 'up'); if (res?.error) toast.error(res.error); else if (onRefresh) onRefresh(); if (setIsSyncing) setIsSyncing(false); }} className="flex items-center gap-2 group/react hover:scale-110 transition-transform">
                                     <div className="relative">
-                                        <Atom size={18} className={`${drop.user_reaction === 'up' ? 'text-blue-400' : 'text-gray-600/40'} group-hover/react:text-blue-400 transition-colors`} />
-                                        <ArrowUp size={10} className={`absolute -top-1.5 -right-1.5 ${drop.user_reaction === 'up' ? 'text-blue-400 font-bold' : 'text-gray-600/40'} group-hover/react:text-blue-400 transition-colors`} />
+                                        <Atom size={18} className={`${drop.user_reaction === 'up' ? 'text-brand-blue' : 'text-gray-600/40'} group-hover/react:text-brand-blue transition-colors`} />
+                                        <ArrowUp size={10} className={`absolute -top-1.5 -right-1.5 ${drop.user_reaction === 'up' ? 'text-brand-blue font-bold' : 'text-gray-600/40'} group-hover/react:text-brand-blue transition-colors`} />
                                     </div>
-                                    <span className={`text-[10px] font-mono font-black ${drop.user_reaction === 'up' ? 'text-blue-500' : 'text-gray-600/60'}`}>{drop.likes_count || 0}</span>
+                                    <span className={`text-[10px] font-mono font-black ${drop.user_reaction === 'up' ? 'text-brand-blue' : 'text-gray-600/60'}`}>{drop.likes_count || 0}</span>
                                 </button>
                                 <button onClick={async (e) => { e.stopPropagation(); if (setIsSyncing) setIsSyncing(true); const res = await reactToDrop(drop.id, 'down'); if (res?.error) toast.error(res.error); else if (onRefresh) onRefresh(); if (setIsSyncing) setIsSyncing(false); }} className="flex items-center gap-2 group/react hover:scale-110 transition-transform">
                                     <div className={`relative ${drop.user_reaction === 'down' ? 'opacity-100' : 'opacity-30 group-hover/react:opacity-100'} transition-opacity`}>
-                                        <Atom size={18} className={`${drop.user_reaction === 'down' ? 'text-red-400' : 'text-gray-500'} group-hover/react:text-red-400 transition-colors`} />
-                                        <ArrowDown size={10} className={`absolute -bottom-1.5 -right-1.5 ${drop.user_reaction === 'down' ? 'text-red-400' : 'text-gray-400'} group-hover/react:text-red-400`} />
+                                        <Atom size={18} className={`${drop.user_reaction === 'down' ? 'text-brand-red' : 'text-gray-500'} group-hover/react:text-brand-red transition-colors`} />
+                                        <ArrowDown size={10} className={`absolute -bottom-1.5 -right-1.5 ${drop.user_reaction === 'down' ? 'text-brand-red' : 'text-gray-400'} group-hover/react:text-brand-red`} />
                                     </div>
-                                    <span className={`text-[10px] font-mono font-black ${drop.user_reaction === 'down' ? 'text-red-500/80' : 'text-gray-600/60'}`}>{drop.dislikes_count || 0}</span>
+                                    <span className={`text-[10px] font-mono font-black ${drop.user_reaction === 'down' ? 'text-brand-red/80' : 'text-gray-600/60'}`}>{drop.dislikes_count || 0}</span>
                                 </button>
                             </div>
                             {isLoadingThreads && <div className="w-3 h-3 border-2 border-brand-red border-t-transparent rounded-full animate-spin"></div>}
@@ -370,7 +371,7 @@ export function ThreadNode({ drop, level = 0, onRefresh, setIsSyncing }: { drop:
 
                 <div className={`overflow-hidden transition-all duration-300 ${showReplyInput ? 'mt-4 opacity-100' : 'max-h-0 opacity-0'}`} style={{ maxHeight: showReplyInput ? '500px' : '0' }}>
                     <form onSubmit={handleReply} className="flex gap-2">
-                        <input value={replyContent} onChange={(e) => setReplyContent(e.target.value)} placeholder="Adicionar ao fio..." className="flex-1 bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-xs focus:ring-1 focus:ring-brand-red outline-none text-white" maxLength={260} autoFocus={showReplyInput} />
+                        <input value={replyContent} onChange={(e) => setReplyContent(e.target.value)} placeholder="Adicionar ao fio..." className="flex-1 bg-background-dark/40 border border-white/10 rounded-xl px-4 py-2 text-xs focus:ring-1 focus:ring-brand-red outline-none text-white" maxLength={260} autoFocus={showReplyInput} />
                         <button type="submit" disabled={isSubmittingReply || !replyContent.trim()} className="bg-brand-red p-2 rounded-xl text-white hover:scale-105 transition-all text-xs font-black flex items-center justify-center min-w-[36px]">
                             {isSubmittingReply ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
                         </button>

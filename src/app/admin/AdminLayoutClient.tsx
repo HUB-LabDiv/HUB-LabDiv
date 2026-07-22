@@ -54,7 +54,7 @@ export default function AdminLayoutClient({
         <div className="bg-transparent text-gray-900 dark:text-gray-100 font-sans antialiased min-h-screen flex flex-col md:flex-row overflow-hidden">
             {/* Mobile Header */}
             <div 
-                className="md:hidden bg-[#121212]/95 backdrop-blur-md text-white px-4 py-3 flex items-center justify-between border-b border-white/5 sticky top-0 z-[60] transition-colors"
+                className="md:hidden bg-background-dark/95 backdrop-blur-md text-white px-4 py-3 flex items-center justify-between border-b border-white/5 sticky top-0 z-[60] transition-colors"
                 style={{ paddingTop: 'calc(0.75rem + env(safe-area-inset-top, 0px))' }}
             >
                 <div className="flex items-center gap-2">
@@ -81,7 +81,7 @@ export default function AdminLayoutClient({
 
             {/* Quick Access Icon Scrollbar (Mobile Only) */}
             <div 
-                className="md:hidden bg-[#121212]/95 backdrop-blur-md border-b border-white/5 overflow-x-auto no-scrollbar flex gap-2 px-4 py-2 sticky z-40 transition-colors"
+                className="md:hidden bg-background-dark/95 backdrop-blur-md border-b border-white/5 overflow-x-auto no-scrollbar flex gap-2 px-4 py-2 sticky z-40 transition-colors"
                 style={{ top: 'calc(3.75rem + env(safe-area-inset-top, 0px))' }}
             >
                 {filteredLinks.map((link) => {
@@ -107,7 +107,7 @@ export default function AdminLayoutClient({
             </div>
 
             <aside 
-                className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex w-full md:w-72 bg-[#1e1e1e] md:bg-[#121212] border-r border-white/5 flex-col justify-between shrink-0 fixed md:sticky inset-x-0 bottom-0 z-50 md:z-40 transition-all duration-300 shadow-2xl overflow-hidden`}
+                className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex w-full md:w-72 bg-[#1e1e1e] md:bg-background-dark border-r border-white/5 flex-col justify-between shrink-0 fixed md:sticky inset-x-0 bottom-0 z-50 md:z-40 transition-all duration-300 shadow-2xl overflow-hidden`}
                 style={{ top: 'var(--admin-sidebar-top)', height: 'var(--admin-sidebar-height)' }}
             >
                 <div className="absolute top-0 right-0 w-32 h-32 bg-[#0055ff]/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
@@ -152,7 +152,7 @@ export default function AdminLayoutClient({
                     </nav>
                 </div>
 
-                <div className="p-6 border-t border-gray-800 dark:border-white/5 transition-colors relative z-10 bg-[#1e1e1e] md:bg-[#121212]">
+                <div className="p-6 border-t border-gray-800 dark:border-white/5 transition-colors relative z-10 bg-[#1e1e1e] md:bg-background-dark">
                     <button
                         onClick={async () => {
                             await signOut('/login');

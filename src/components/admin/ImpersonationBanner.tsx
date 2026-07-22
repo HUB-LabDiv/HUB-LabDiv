@@ -61,7 +61,7 @@ export function ImpersonationBanner({ impersonatedName }: ImpersonationBannerPro
                 exit={{ y: -100 }}
                 className="fixed top-0 left-0 right-0 z-[9999] flex justify-center p-4 pointer-events-none"
             >
-                <div className="bg-[#121212]/90 backdrop-blur-md border border-brand-yellow/30 shadow-[0_0_30px_rgba(255,215,0,0.1)] rounded-full px-6 py-2 flex items-center gap-4 pointer-events-auto transition-all hover:border-brand-yellow/50">
+                <div className="bg-background-dark/90 backdrop-blur-md border border-brand-yellow/30 shadow-[0_0_30px_rgba(255,215,0,0.1)] rounded-full px-6 py-2 flex items-center gap-4 pointer-events-auto transition-all hover:border-brand-yellow/50">
                     <div className="flex items-center gap-2">
                         <div className="relative">
                             <ShieldAlert className="text-brand-yellow w-5 h-5 animate-pulse" />

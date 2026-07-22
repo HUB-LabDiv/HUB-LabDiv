@@ -23,7 +23,7 @@ function SubmitButton() {
         <button
             type="submit"
             disabled={pending}
-            className="w-full bg-primary hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-blue-500/30 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-slate-50 dark:focus:ring-offset-slate-900 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 group"
+            className="w-full bg-primary hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-xl shadow-lg shadow-brand-blue/30 transition-all focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 focus:ring-offset-slate-50 dark:focus:ring-offset-slate-900 disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2 group"
         >
             {pending ? 'Verificando...' : 'Entrar no Painel'}
             {!pending && <span className="material-symbols-outlined text-[20px] group-hover:translate-x-1 transition-transform">login</span>}
@@ -68,14 +68,14 @@ export default function LoginPage() {
                                     required
                                     placeholder="Senha de acesso"
                                     className={`w-full pl-11 pr-4 py-3 bg-slate-50 dark:bg-form-dark/50 border rounded-xl focus:ring-2 focus:outline-none transition-all placeholder:text-slate-400 text-slate-900 dark:text-white ${errorMsg
-                                        ? 'border-red-300 dark:border-red-500/50 focus:border-red-500 focus:ring-red-200 dark:focus:ring-red-900/40'
+                                        ? 'border-red-300 dark:border-brand-red/50 focus:border-brand-red focus:ring-red-200 dark:focus:ring-red-900/40'
                                         : 'border-slate-200 dark:border-slate-700 focus:border-primary focus:ring-primary/20'
                                         }`}
                                 />
                             </div>
 
                             {errorMsg && (
-                                <div className="text-red-500 dark:text-red-400 text-sm font-medium animate-pulse text-left pl-2 flex items-center gap-1.5">
+                                <div className="text-brand-red dark:text-brand-red text-sm font-medium animate-pulse text-left pl-2 flex items-center gap-1.5">
                                     <span className="material-symbols-outlined text-[16px]">error</span>
                                     {errorMsg}
                                 </div>

@@ -94,13 +94,13 @@ export function ConstelacoesGraphView({ glossario }: GraphViewProps) {
                     colorMode="dark"
                 >
                     <Background color="#222" gap={16} />
-                    <Controls className="bg-black border border-gray-800 fill-white" />
+                    <Controls className="bg-background-dark border border-gray-800 fill-white" />
                 </ReactFlow>
             </div>
             
             {/* Painel Lateral com as Traduções ao clicar */}
             {selectedWord && (
-                <div className="w-80 h-full bg-[#121212] border-l border-gray-800 p-6 overflow-y-auto animate-in slide-in-from-right duration-300">
+                <div className="w-80 h-full bg-background-dark border-l border-gray-800 p-6 overflow-y-auto animate-in slide-in-from-right duration-300">
                     <div className="flex justify-between items-start mb-6">
                         <h3 className="text-xl font-black uppercase text-brand-yellow tracking-widest">{selectedWord.termo}</h3>
                         <button onClick={() => setSelectedWord(null)} className="text-gray-500 hover:text-white">
@@ -108,7 +108,7 @@ export function ConstelacoesGraphView({ glossario }: GraphViewProps) {
                         </button>
                     </div>
                     
-                    <div className="bg-black/40 p-4 rounded-xl border border-white/5 mb-6">
+                    <div className="bg-background-dark/40 p-4 rounded-xl border border-white/5 mb-6">
                         <span className="text-[10px] font-bold text-gray-500 uppercase block mb-2">Significado Acadêmico</span>
                         <p className="text-sm text-gray-300 leading-relaxed">{selectedWord.codificacao_academica}</p>
                     </div>

@@ -486,8 +486,8 @@ const pageContent: Record<string, any> = {
                             Professores são pesquisadores. A melhor forma de conseguir uma Iniciação Científica é a proatividade: mande um email formal, apresente seu interesse e pergunte quando pode ir à sua sala para conversar brevemente.
                         </p>
                         <div className="flex gap-2">
-                            <span className="px-2 py-0.5 bg-black/5 dark:bg-white/5 rounded text-[9px] font-bold text-gray-600 dark:text-gray-500">#Proatividade</span>
-                            <span className="px-2 py-0.5 bg-black/5 dark:bg-white/5 rounded text-[9px] font-bold text-gray-600 dark:text-gray-500">#EtiquetaAcademica</span>
+                            <span className="px-2 py-0.5 bg-background-dark/5 dark:bg-white/5 rounded text-[9px] font-bold text-gray-600 dark:text-gray-500">#Proatividade</span>
+                            <span className="px-2 py-0.5 bg-background-dark/5 dark:bg-white/5 rounded text-[9px] font-bold text-gray-600 dark:text-gray-500">#EtiquetaAcademica</span>
                         </div>
                     </div>
                 )

@@ -36,7 +36,7 @@ export default function LinkBlock({ block, isActive }: LinkBlockProps) {
                             value={label}
                             onChange={(e) => updateBlock(block.id, { ...block.content, label: e.target.value })}
                             placeholder="Ex: Acesse o artigo completo..."
-                            className="w-full bg-[#121212] border border-gray-700 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-brand-blue"
+                            className="w-full bg-background-dark border border-gray-700 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-brand-blue"
                         />
                     </div>
                     <div className="flex flex-col gap-1">
@@ -46,7 +46,7 @@ export default function LinkBlock({ block, isActive }: LinkBlockProps) {
                             value={url}
                             onChange={(e) => updateBlock(block.id, { ...block.content, url: e.target.value })}
                             placeholder="https://..."
-                            className="w-full bg-[#121212] border border-gray-700 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-brand-blue"
+                            className="w-full bg-background-dark border border-gray-700 rounded-lg px-4 py-2 text-white text-sm focus:outline-none focus:border-brand-blue"
                         />
                     </div>
                 </div>

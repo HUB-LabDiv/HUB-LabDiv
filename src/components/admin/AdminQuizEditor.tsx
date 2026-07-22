@@ -133,7 +133,7 @@ export function AdminQuizEditor({ submissionId, submissionTitle, initialQuiz, on
     };
 
     return (
-        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
+        <div className="fixed inset-0 z-[300] flex items-center justify-center bg-background-dark/70 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
             <div className="bg-white dark:bg-[#1A1A2E] rounded-3xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800">
 
                 {/* Header */}
@@ -155,7 +155,7 @@ export function AdminQuizEditor({ submissionId, submissionTitle, initialQuiz, on
                 {/* Questions List — Scrollable */}
                 <div className="flex-1 overflow-y-auto p-5 space-y-5">
                     {questions.map((q, qIdx) => (
-                        <div key={q.id} className="p-4 bg-gray-50 dark:bg-[#121212] rounded-2xl border border-gray-100 dark:border-gray-800 space-y-3 relative group">
+                        <div key={q.id} className="p-4 bg-gray-50 dark:bg-background-dark rounded-2xl border border-gray-100 dark:border-gray-800 space-y-3 relative group">
                             {/* Question Header */}
                             <div className="flex items-start gap-2">
                                 <div className="flex items-center gap-1.5 shrink-0 pt-2">
@@ -171,7 +171,7 @@ export function AdminQuizEditor({ submissionId, submissionTitle, initialQuiz, on
                                 />
                                 <button
                                     onClick={() => removeQuestion(qIdx)}
-                                    className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all shrink-0 opacity-0 group-hover:opacity-100"
+                                    className="p-1.5 text-gray-400 hover:text-brand-red hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all shrink-0 opacity-0 group-hover:opacity-100"
                                     title="Remover pergunta"
                                 >
                                     <Trash2 size={14} />
@@ -229,7 +229,7 @@ export function AdminQuizEditor({ submissionId, submissionTitle, initialQuiz, on
                         <button
                             onClick={handleDelete}
                             disabled={isDeleting || isSaving}
-                            className="px-4 py-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 flex items-center gap-1.5"
+                            className="px-4 py-2.5 text-brand-red hover:bg-red-50 dark:hover:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl text-xs font-bold transition-all disabled:opacity-50 flex items-center gap-1.5"
                         >
                             <Trash2 size={14} />
                             {isDeleting ? 'Removendo...' : 'Remover Quiz'}

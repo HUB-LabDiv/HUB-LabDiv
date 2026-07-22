@@ -46,7 +46,7 @@ export default function PrivacyPolicy() {
                             expand_more
                         </span>
                     </summary>
-                    <div className="p-6 pt-0 text-gray-600 dark:text-gray-300 border-t border-gray-100 dark:border-white/5 leading-relaxed bg-gray-50/50 dark:bg-black/20">
+                    <div className="p-6 pt-0 text-gray-600 dark:text-gray-300 border-t border-gray-100 dark:border-white/5 leading-relaxed bg-gray-50/50 dark:bg-background-dark/20">
                         <p className="mb-3">
                             <strong className="text-gray-900 dark:text-white">Se você navega de fininho (Anônimo):</strong> Não coletamos <strong>NADA</strong> que te identifique. Ferramentas de rastreio de comportamento (Telemetria) ficam paradas, como estátuas.
                         </p>
@@ -69,7 +69,7 @@ export default function PrivacyPolicy() {
                             expand_more
                         </span>
                     </summary>
-                    <div className="p-6 pt-0 text-gray-600 dark:text-gray-300 border-t border-gray-100 dark:border-white/5 leading-relaxed bg-gray-50/50 dark:bg-black/20">
+                    <div className="p-6 pt-0 text-gray-600 dark:text-gray-300 border-t border-gray-100 dark:border-white/5 leading-relaxed bg-gray-50/50 dark:bg-background-dark/20">
                         <p className="mb-4">
                             Se seu cadastro acender a luz vermelha da faixa pre-18 anos, algumas portinhas serão trancadas automaticamente. O HUB bloqueia:
                         </p>
@@ -97,7 +97,7 @@ export default function PrivacyPolicy() {
                             expand_more
                         </span>
                     </summary>
-                    <div className="p-6 pt-0 text-gray-600 dark:text-gray-300 border-t border-gray-100 dark:border-white/5 leading-relaxed bg-gray-50/50 dark:bg-black/20">
+                    <div className="p-6 pt-0 text-gray-600 dark:text-gray-300 border-t border-gray-100 dark:border-white/5 leading-relaxed bg-gray-50/50 dark:bg-background-dark/20">
                         <p className="mb-3">
                             Nosso Opt-In é autêntico e inverteu a velha lógica mercenária (Zero Dark Patterns).
                         </p>

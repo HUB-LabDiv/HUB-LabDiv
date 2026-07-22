@@ -214,7 +214,7 @@ function LoginContent() {
 
                     <div className="space-y-4">
                         {errorParam === 'usp-domain-required' && (
-                            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-500 text-xs text-center font-bold animate-pulse">
+                            <div className="p-3 rounded-xl bg-brand-red/10 border border-brand-red/20 text-brand-red text-xs text-center font-bold animate-pulse">
                                 Acesso Negado: E-mail @usp.br obrigatório.
                             </div>
                         )}
@@ -275,7 +275,7 @@ function LoginContent() {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+                        className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background-dark/60 backdrop-blur-sm"
                     >
                         <motion.div
                             initial={{ scale: 0.9, y: 20 }}

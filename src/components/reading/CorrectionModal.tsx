@@ -71,7 +71,7 @@ export function CorrectionModal({ selection, onClose, onSave }: CorrectionModalP
     };
 
     return (
-        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[150] flex items-center justify-center p-4 bg-background-dark/60 backdrop-blur-sm">
             <motion.div
                 initial={{ scale: 0.9, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -125,7 +125,7 @@ export function CorrectionModal({ selection, onClose, onSave }: CorrectionModalP
                         <button
                             onClick={handleSave}
                             disabled={isSaving || !suggestedText.trim()}
-                            className="flex-1 px-4 py-2 bg-brand-red hover:bg-red-600 text-white font-bold rounded-xl transition-all shadow-md disabled:opacity-50"
+                            className="flex-1 px-4 py-2 bg-brand-red hover:bg-brand-red text-white font-bold rounded-xl transition-all shadow-md disabled:opacity-50"
                         >
                             {isSaving ? 'Enviando...' : 'Enviar Sugestão'}
                         </button>

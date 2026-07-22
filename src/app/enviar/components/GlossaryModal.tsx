@@ -121,8 +121,8 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
     };
 
     return (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm" onClick={onClose}>
-            <div className="w-full max-w-2xl max-h-[90vh] bg-[#121212] border border-brand-yellow/50 shadow-[0_0_30px_rgba(255,204,0,0.15)] rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-background-dark/80 backdrop-blur-sm" onClick={onClose}>
+            <div className="w-full max-w-2xl max-h-[90vh] bg-background-dark border border-brand-yellow/50 shadow-[0_0_30px_rgba(255,204,0,0.15)] rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
                 <div className="flex justify-between items-center p-3 sm:p-4 border-b border-gray-800 bg-[#1E1E1E]">
                     <div className="flex items-center gap-2 text-brand-yellow">
                         <span className="material-symbols-outlined text-2xl">menu_book</span>
@@ -168,13 +168,13 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
                                         
                                         {isExpanded && (
                                             <div className="flex flex-col gap-2 mt-4 pt-4 border-t border-gray-800" onClick={e => e.stopPropagation()}>
-                                                <div className="bg-black/30 p-3 rounded border border-white/5">
+                                                <div className="bg-background-dark/30 p-3 rounded border border-white/5">
                                                     <span className="text-[10px] text-gray-500 uppercase font-bold block mb-1">Acadêmica</span>
                                                     <span className="text-sm text-gray-300 leading-relaxed">{w.codificacao_academica}</span>
                                                 </div>
                                                 
                                                 {w.signos_constelacoes?.map((c: any) => (
-                                                    <div key={c.id} className="bg-black/30 p-3 rounded border border-white/5">
+                                                    <div key={c.id} className="bg-background-dark/30 p-3 rounded border border-white/5">
                                                         <span className="text-[10px] text-gray-500 uppercase font-bold block mb-1">
                                                             {c.constelacao} {c.is_pending && '(Pendente)'}
                                                         </span>
@@ -186,7 +186,7 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
                                                     <div className="mt-3 p-4 bg-brand-blue/10 border border-brand-blue/30 rounded-lg flex flex-col gap-3">
                                                         <span className="text-sm font-bold text-brand-blue">Nova Constelação (Linguagem) para {w.termo}</span>
                                                         <div className="flex flex-col gap-2">
-                                                            <input type="text" list="language-options" value={newLanguage} onChange={e => setNewLanguage(e.target.value)} placeholder="Ex: jovem, artística, gamer..." className="bg-[#121212] text-white p-2 rounded border border-white/10 outline-none focus:border-brand-blue" />
+                                                            <input type="text" list="language-options" value={newLanguage} onChange={e => setNewLanguage(e.target.value)} placeholder="Ex: jovem, artística, gamer..." className="bg-background-dark text-white p-2 rounded border border-white/10 outline-none focus:border-brand-blue" />
                                                             <datalist id="language-options">
                                                                 <option value="jovem" />
                                                                 <option value="nerd_geek" />
@@ -194,9 +194,9 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
                                                                 <option value="academica" />
                                                             </datalist>
                                                         </div>
-                                                        <textarea value={newTransText} onChange={e => setNewTransText(e.target.value)} placeholder="Significado/Explicação nesta linguagem..." className="bg-[#121212] text-white p-2 rounded border border-white/10 min-h-[80px] outline-none focus:border-brand-blue" />
+                                                        <textarea value={newTransText} onChange={e => setNewTransText(e.target.value)} placeholder="Significado/Explicação nesta linguagem..." className="bg-background-dark text-white p-2 rounded border border-white/10 min-h-[80px] outline-none focus:border-brand-blue" />
                                                         <div className="flex gap-2">
-                                                            <button onClick={() => handleAddTrans(w.id)} className="px-4 bg-brand-blue text-white py-2 rounded font-bold hover:bg-blue-600 transition-colors cursor-pointer">Salvar Tradução</button>
+                                                            <button onClick={() => handleAddTrans(w.id)} className="px-4 bg-brand-blue text-white py-2 rounded font-bold hover:bg-brand-blue transition-colors cursor-pointer">Salvar Tradução</button>
                                                             <button onClick={() => setShowAddTrans(null)} className="px-4 bg-gray-800 text-white rounded hover:bg-gray-700 transition-colors cursor-pointer">Cancelar</button>
                                                         </div>
                                                     </div>
@@ -214,7 +214,7 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
                             <div className="p-8 text-center bg-[#1E1E1E] border border-gray-800 border-dashed rounded-xl">
                                 <span className="material-symbols-outlined text-4xl text-gray-600 mb-2">search_off</span>
                                 <p className="text-gray-400 mb-4">A palavra <strong className="text-white">"{searchTerm}"</strong> não foi encontrada.</p>
-                                <button onClick={() => { setNewWord(searchTerm); setShowAddWord(true); }} className="px-6 py-2 bg-brand-yellow text-black font-bold rounded-lg hover:bg-yellow-500 transition-colors cursor-pointer">
+                                <button onClick={() => { setNewWord(searchTerm); setShowAddWord(true); }} className="px-6 py-2 bg-brand-yellow text-black font-bold rounded-lg hover:bg-brand-yellow transition-colors cursor-pointer">
                                     Cadastrar nova palavra
                                 </button>
                             </div>
@@ -226,55 +226,55 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
                                     <span className="material-symbols-outlined text-brand-yellow">add_circle</span>
                                     Cadastrar Nova Palavra Geradora
                                 </h4>
-                                <input type="text" value={newWord} onChange={e => setNewWord(e.target.value)} placeholder="Termo / Palavra" className="bg-[#121212] border border-gray-700 rounded p-3 text-white outline-none focus:border-brand-yellow" />
-                                <textarea value={newAcad} onChange={e => setNewAcad(e.target.value)} placeholder="Significado / Codificação Acadêmica Base" className="bg-[#121212] border border-gray-700 rounded p-3 text-white min-h-[100px] outline-none focus:border-brand-yellow" />
-                                <div className="space-y-3 p-4 bg-black/30 rounded-lg border border-white/5">
+                                <input type="text" value={newWord} onChange={e => setNewWord(e.target.value)} placeholder="Termo / Palavra" className="bg-background-dark border border-gray-700 rounded p-3 text-white outline-none focus:border-brand-yellow" />
+                                <textarea value={newAcad} onChange={e => setNewAcad(e.target.value)} placeholder="Significado / Codificação Acadêmica Base" className="bg-background-dark border border-gray-700 rounded p-3 text-white min-h-[100px] outline-none focus:border-brand-yellow" />
+                                <div className="space-y-3 p-4 bg-background-dark/30 rounded-lg border border-white/5">
                                     <h5 className="text-sm font-bold text-gray-300 uppercase">Adicionar Traduções / Constelações</h5>
                                     
                                     {pendingTranslations.length > 0 && (
                                         <div className="flex flex-col gap-2 mb-3">
                                             {pendingTranslations.map((pt, i) => (
-                                                <div key={i} className="flex items-start justify-between bg-[#121212] p-2 rounded border border-brand-blue/30 text-sm">
+                                                <div key={i} className="flex items-start justify-between bg-background-dark p-2 rounded border border-brand-blue/30 text-sm">
                                                     <div>
                                                         <span className="font-bold text-brand-blue uppercase text-[10px] mr-2">{pt.language}</span>
                                                         <span className="text-gray-300">{pt.text}</span>
                                                     </div>
-                                                    <button onClick={() => setPendingTranslations(pendingTranslations.filter((_, idx) => idx !== i))} className="text-brand-red hover:text-red-400"><span className="material-symbols-outlined text-[16px]">close</span></button>
+                                                    <button onClick={() => setPendingTranslations(pendingTranslations.filter((_, idx) => idx !== i))} className="text-brand-red hover:text-brand-red"><span className="material-symbols-outlined text-[16px]">close</span></button>
                                                 </div>
                                             ))}
                                         </div>
                                     )}
 
                                     <div className="flex flex-col gap-2">
-                                        <input type="text" list="language-options-temp" value={tempLang} onChange={e => setTempLang(e.target.value)} placeholder="Nova linguagem (ex: jovem, artística, gamer...)" className="bg-[#121212] border border-gray-700 rounded p-2 text-white outline-none focus:border-brand-blue" />
+                                        <input type="text" list="language-options-temp" value={tempLang} onChange={e => setTempLang(e.target.value)} placeholder="Nova linguagem (ex: jovem, artística, gamer...)" className="bg-background-dark border border-gray-700 rounded p-2 text-white outline-none focus:border-brand-blue" />
                                         <datalist id="language-options-temp">
                                             <option value="jovem" />
                                             <option value="nerd_geek" />
                                             <option value="artistica" />
                                         </datalist>
-                                        <textarea value={tempTransText} onChange={e => setTempTransText(e.target.value)} placeholder="Significado nesta linguagem..." className="bg-[#121212] border border-gray-700 rounded p-2 text-white min-h-[60px] outline-none focus:border-brand-blue" />
+                                        <textarea value={tempTransText} onChange={e => setTempTransText(e.target.value)} placeholder="Significado nesta linguagem..." className="bg-background-dark border border-gray-700 rounded p-2 text-white min-h-[60px] outline-none focus:border-brand-blue" />
                                         <button onClick={addTempTranslation} className="bg-brand-blue/20 text-brand-blue font-bold py-2 px-4 rounded hover:bg-brand-blue/30 transition-colors w-fit text-sm cursor-pointer">
                                             + Adicionar Tradução
                                         </button>
                                     </div>
                                 </div>
 
-                                <div className="space-y-3 p-4 bg-black/30 rounded-lg border border-white/5">
+                                <div className="space-y-3 p-4 bg-background-dark/30 rounded-lg border border-white/5">
                                     <h5 className="text-sm font-bold text-gray-300 uppercase">Adicionar Palavras Filhas (Derivadas)</h5>
                                     
                                     {pendingGenerated.length > 0 && (
                                         <div className="flex flex-wrap gap-2 mb-3">
                                             {pendingGenerated.map((pg, i) => (
-                                                <div key={i} className="flex items-center gap-1 bg-[#121212] p-1.5 px-3 rounded-full border border-gray-600 text-sm text-gray-300">
+                                                <div key={i} className="flex items-center gap-1 bg-background-dark p-1.5 px-3 rounded-full border border-gray-600 text-sm text-gray-300">
                                                     <span>{pg}</span>
-                                                    <button onClick={() => setPendingGenerated(pendingGenerated.filter((_, idx) => idx !== i))} className="text-brand-red hover:text-red-400 flex items-center"><span className="material-symbols-outlined text-[14px]">close</span></button>
+                                                    <button onClick={() => setPendingGenerated(pendingGenerated.filter((_, idx) => idx !== i))} className="text-brand-red hover:text-brand-red flex items-center"><span className="material-symbols-outlined text-[14px]">close</span></button>
                                                 </div>
                                             ))}
                                         </div>
                                     )}
 
                                     <div className="flex gap-2">
-                                        <input type="text" value={tempGenerated} onChange={e => setTempGenerated(e.target.value)} placeholder="Ex: Integral, Derivada..." className="bg-[#121212] border border-gray-700 rounded p-2 text-white outline-none focus:border-brand-blue flex-1" />
+                                        <input type="text" value={tempGenerated} onChange={e => setTempGenerated(e.target.value)} placeholder="Ex: Integral, Derivada..." className="bg-background-dark border border-gray-700 rounded p-2 text-white outline-none focus:border-brand-blue flex-1" />
                                         <button onClick={addTempGenerated} className="bg-brand-blue/20 text-brand-blue font-bold py-2 px-4 rounded hover:bg-brand-blue/30 transition-colors cursor-pointer text-sm">
                                             + Adicionar
                                         </button>
@@ -282,7 +282,7 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
                                 </div>
 
                                 <div className="flex gap-2 mt-4 pt-4 border-t border-gray-800">
-                                    <button onClick={handleAddWord} className="bg-brand-yellow text-black font-bold py-3 px-6 rounded-lg hover:bg-yellow-500 flex-1 transition-colors cursor-pointer">
+                                    <button onClick={handleAddWord} className="bg-brand-yellow text-black font-bold py-3 px-6 rounded-lg hover:bg-brand-yellow flex-1 transition-colors cursor-pointer">
                                         Salvar no Glossário Global
                                     </button>
                                     <button onClick={() => setShowAddWord(false)} className="bg-gray-800 text-white font-bold py-3 px-6 rounded-lg hover:bg-gray-700 transition-colors cursor-pointer">

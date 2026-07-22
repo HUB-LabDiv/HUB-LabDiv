@@ -128,7 +128,7 @@ export function ComunidadeClient({ initialFluxoData }: ComunidadeClientProps) {
                 className="sticky z-50 flex justify-center pb-4 pt-1"
                 style={{ top: 'calc(4rem + env(safe-area-inset-top, 0px))' }}
             >
-                <div className="flex p-1.5 bg-white/50 dark:bg-black/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl">
+                <div className="flex p-1.5 bg-white/50 dark:bg-background-dark/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl">
                     <button
                         onClick={() => handleTabChange('mural')}
                         className={`relative flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all ${

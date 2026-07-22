@@ -81,7 +81,7 @@ export default function ParentConsentPage() {
 
     if (isAdult) {
         return (
-            <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-gray-50 dark:bg-[#121212]">
+            <main className="flex min-h-screen flex-col items-center justify-center p-4 bg-gray-50 dark:bg-background-dark">
                 <div className="w-full max-w-lg p-8 bg-white dark:bg-[#1E1E1E] rounded-xl shadow-lg border border-green-200 dark:border-green-800 text-center">
                     <h2 className="text-2xl font-bold text-green-700 dark:text-green-400 mb-4">
                         Age Gate Aprovado
@@ -101,7 +101,7 @@ export default function ParentConsentPage() {
     }
 
     return (
-        <main className="flex min-h-screen items-center justify-center p-4 bg-gray-50 dark:bg-[#121212]">
+        <main className="flex min-h-screen items-center justify-center p-4 bg-gray-50 dark:bg-background-dark">
             <div className="w-full max-w-md p-8 bg-white dark:bg-[#1E1E1E] rounded-xl shadow-lg border border-gray-100 dark:border-gray-800">
                 <div className="mb-6 text-center">
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 uppercase">

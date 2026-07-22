@@ -57,7 +57,7 @@ export function SacSection() {
                         <div key={faq.id} className="border border-gray-100 dark:border-white/5 rounded-3xl overflow-hidden bg-gray-50 dark:bg-white/5">
                             <button
                                 onClick={() => setOpenFaqId(openFaqId === faq.id ? null : faq.id)}
-                                className="w-full flex items-center justify-between p-6 text-left hover:bg-black/5 dark:hover:bg-white/5 transition-colors focus:outline-none"
+                                className="w-full flex items-center justify-between p-6 text-left hover:bg-background-dark/5 dark:hover:bg-white/5 transition-colors focus:outline-none"
                             >
                                 <span className="font-bold text-gray-800 dark:text-gray-200 text-sm uppercase tracking-widest">{faq.pergunta}</span>
                                 <ChevronDown className={`w-5 h-5 text-gray-500 transition-transform ${openFaqId === faq.id ? 'rotate-180' : ''}`} />

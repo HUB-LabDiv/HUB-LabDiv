@@ -73,11 +73,11 @@ export default function TransparenciaPage() {
                                 <strong> Creative Commons Attribution 4.0 International (CC BY 4.0)</strong>.
                             </p>
                             <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 list-none pl-0">
-                                <li className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-black/20 rounded-2xl">
+                                <li className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-background-dark/20 rounded-2xl">
                                     <span className="material-symbols-outlined text-green-500">check_circle</span>
                                     <span className="text-sm"><strong>Compartilhar:</strong> Copiar e redistribuir o material em qualquer suporte ou formato.</span>
                                 </li>
-                                <li className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-black/20 rounded-2xl">
+                                <li className="flex items-start gap-3 p-4 bg-gray-50 dark:bg-background-dark/20 rounded-2xl">
                                     <span className="material-symbols-outlined text-green-500">check_circle</span>
                                     <span className="text-sm"><strong>Adaptar:</strong> Remixar, transformar e criar a partir do material para qualquer fim.</span>
                                 </li>

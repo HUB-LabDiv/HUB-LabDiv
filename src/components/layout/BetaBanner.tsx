@@ -16,7 +16,7 @@ export function BetaBanner() {
         <motion.div 
             initial={{ y: -100 }}
             animate={{ y: 0 }}
-            className="w-full bg-[#0F4780] dark:bg-[#121212] text-white py-2.5 px-4 flex flex-col lg:flex-row items-center justify-center gap-x-8 gap-y-2 border-b border-white/10 relative z-[70] shadow-2xl"
+            className="w-full bg-[#0F4780] dark:bg-background-dark text-white py-2.5 px-4 flex flex-col lg:flex-row items-center justify-center gap-x-8 gap-y-2 border-b border-white/10 relative z-[70] shadow-2xl"
         >
             <div className="flex flex-col sm:flex-row items-center gap-3">
                 <div className="flex items-center gap-2 shrink-0">

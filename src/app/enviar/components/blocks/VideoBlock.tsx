@@ -58,7 +58,7 @@ export default function VideoBlock({ block, isActive }: { block: Block; isActive
                     />
                 </div>
             ) : (
-                <div className="relative group rounded-xl overflow-hidden bg-black border border-gray-800">
+                <div className="relative group rounded-xl overflow-hidden bg-background-dark border border-gray-800">
                     {isGif ? (
                         <div className="w-full flex justify-center bg-gray-950 p-2">
                             <img 
@@ -82,7 +82,7 @@ export default function VideoBlock({ block, isActive }: { block: Block; isActive
                     )}
                     
                     {isActive && (
-                        <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        <div className="absolute inset-0 bg-background-dark/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
                             <button 
                                 onClick={() => updateBlock(block.id, { url: '' })}
                                 className="px-4 py-2 bg-brand-red text-white rounded-lg font-medium shadow-lg hover:bg-brand-red transition-colors"

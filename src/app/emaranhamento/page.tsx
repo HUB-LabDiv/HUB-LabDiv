@@ -358,7 +358,7 @@ export default function EmaranhamentoPage() {
                                     </div>
 
                                     {/* Group Input */}
-                                    <div className="p-4 bg-black/20">
+                                    <div className="p-4 bg-background-dark/20">
                                         <div className="flex items-end gap-2">
                                             <textarea
                                                 value={groupMessage}
@@ -596,7 +596,7 @@ export default function EmaranhamentoPage() {
 
                 {/* CREATE GROUP MODAL */}
                 {showCreateGroup && (
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background-dark/60 backdrop-blur-sm p-4">
                         <div className="bg-[#1E1E1E] rounded-[32px] border border-white/10 w-full max-w-md p-8 space-y-6 animate-in fade-in zoom-in-95 duration-300">
                             <div className="flex items-center justify-between">
                                 <h2 className="text-sm font-black uppercase tracking-widest text-brand-yellow flex items-center gap-2">

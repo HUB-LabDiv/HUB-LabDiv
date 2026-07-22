@@ -99,7 +99,7 @@ export function ImageCarouselClient({ urls, title, slides }: { urls: string[], t
 
     return (
         <div 
-            className="relative w-full h-full flex items-center justify-center min-h-[300px] md:min-h-[500px] bg-black/20 rounded-3xl overflow-hidden touch-pan-y"
+            className="relative w-full h-full flex items-center justify-center min-h-[300px] md:min-h-[500px] bg-background-dark/20 rounded-3xl overflow-hidden touch-pan-y"
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
         >
@@ -140,7 +140,7 @@ export function ImageCarouselClient({ urls, title, slides }: { urls: string[], t
                         <span className="material-symbols-outlined text-2xl md:text-3xl">chevron_right</span>
                     </button>
 
-                    <div className="absolute bottom-6 flex gap-2 bg-black/40 px-3 py-2 rounded-full backdrop-blur-md z-20">
+                    <div className="absolute bottom-6 flex gap-2 bg-background-dark/40 px-3 py-2 rounded-full backdrop-blur-md z-20">
                         {displayItems.map((_, i) => (
                             <div
                                 key={i}

@@ -161,7 +161,7 @@ export function LabClientView({
         >
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
                 <PerfilFeedbackCard className="w-full max-w-3xl mx-auto mb-8" />
-                <div className="bg-white dark:bg-[#121212] rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-800 mb-8">
+                <div className="bg-white dark:bg-background-dark rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-800 mb-8">
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 sm:gap-12 max-w-3xl mx-auto">
                         <div className="relative shrink-0">
                             <Avatar
@@ -341,7 +341,7 @@ export function LabClientView({
                                 {/* Redes Sociais e Contato */}
                                 <div className="mt-4 flex flex-wrap gap-3">
                                     {viewedProfile?.lattes_url && (
-                                        <a href={viewedProfile.lattes_url} target="_blank" rel="noopener noreferrer" title="Currículo Lattes" className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-800/50 rounded-xl text-[10px] font-black uppercase hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors flex items-center gap-1.5 shadow-sm">
+                                        <a href={viewedProfile.lattes_url} target="_blank" rel="noopener noreferrer" title="Currículo Lattes" className="px-3 py-1.5 bg-blue-50 dark:bg-blue-900/20 text-brand-blue dark:text-brand-blue border border-blue-200 dark:border-blue-800/50 rounded-xl text-[10px] font-black uppercase hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors flex items-center gap-1.5 shadow-sm">
                                             <FileText className="w-3.5 h-3.5" />
                                             Lattes CNPq
                                         </a>
@@ -403,7 +403,7 @@ export function LabClientView({
 
                 {/* Academic Context (Only for Alunos) */}
                 {viewedProfile?.user_category === 'aluno_usp' && academicData && (
-                    <div className="bg-white dark:bg-[#121212] rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-800 mb-8 animate-in fade-in slide-in-from-top-2 duration-700">
+                    <div className="bg-white dark:bg-background-dark rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-800 mb-8 animate-in fade-in slide-in-from-top-2 duration-700">
                         <div className="flex flex-col md:flex-row gap-8 items-start">
                             <div className="flex-1 space-y-4">
                                 <h4 className="text-[10px] font-black uppercase text-brand-blue tracking-[0.2em] flex items-center gap-2">
@@ -521,7 +521,7 @@ export function LabClientView({
                                                             alt={sub.post.title}
                                                             fill
                                                             sizes="(max-width: 768px) 50vw, 33vw"
-                                                            className="object-contain bg-black/5 dark:bg-white/5 group-hover:scale-105 transition-transform duration-500"
+                                                            className="object-contain bg-background-dark/5 dark:bg-white/5 group-hover:scale-105 transition-transform duration-500"
                                                             onError={(e) => {
                                                                 e.currentTarget.style.display = 'none';
                                                                 const parent = e.currentTarget.parentElement;
@@ -535,7 +535,7 @@ export function LabClientView({
                                                             <FileText className="w-12 h-12 text-gray-400/50 dark:text-white/10" />
                                                         </div>
                                                         {isVideo && (
-                                                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
+                                                            <div className="absolute inset-0 flex items-center justify-center bg-background-dark/20 group-hover:bg-background-dark/40 transition-colors">
                                                                 <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30">
                                                                     <Play className="w-6 h-6 text-white fill-current" />
                                                                 </div>
@@ -552,7 +552,7 @@ export function LabClientView({
                                                     </div>
                                                 )}
 
-                                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 text-white z-10">
+                                                <div className="absolute inset-0 bg-background-dark/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 text-white z-10">
                                                     <div className="flex items-center gap-1.5 font-bold">
                                                         <Heart className="w-5 h-5 fill-current" />
                                                         <span>{sub.post.likeCount}</span>
@@ -564,7 +564,7 @@ export function LabClientView({
                                                 </div>
 
                                                 {sub.post.status !== 'aprovado' && (
-                                                    <div className="absolute top-2 right-2 px-2 py-1 bg-black/80 backdrop-blur-md rounded text-[9px] font-bold text-white uppercase tracking-wider z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                                    <div className="absolute top-2 right-2 px-2 py-1 bg-background-dark/80 backdrop-blur-md rounded text-[9px] font-bold text-white uppercase tracking-wider z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                                         {sub.post.status === 'pendente' ? 'Análise' : sub.post.status}
                                                     </div>
                                                 )}
@@ -582,7 +582,7 @@ export function LabClientView({
                                                             title="Solicitar Edição"
                                                         >
                                                             <Edit className="w-4 h-4" />
-                                                            <span className="absolute left-10 top-1/2 -translate-y-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">Editar</span>
+                                                            <span className="absolute left-10 top-1/2 -translate-y-1/2 bg-background-dark/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">Editar</span>
                                                         </button>
                                                         <button 
                                                             onClick={(e) => {
@@ -595,7 +595,7 @@ export function LabClientView({
                                                             title="Ver Estatísticas Pedagógicas"
                                                         >
                                                             <BarChart2 className="w-4 h-4" />
-                                                            <span className="absolute left-10 top-1/2 -translate-y-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">Estatísticas</span>
+                                                            <span className="absolute left-10 top-1/2 -translate-y-1/2 bg-background-dark/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">Estatísticas</span>
                                                         </button>
                                                         <button 
                                                             onClick={(e) => {
@@ -607,7 +607,7 @@ export function LabClientView({
                                                             title="Solicitar Anonimização"
                                                         >
                                                             <Trash2 className="w-4 h-4" />
-                                                            <span className="absolute left-10 top-1/2 -translate-y-1/2 bg-black/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">Anonimizar</span>
+                                                            <span className="absolute left-10 top-1/2 -translate-y-1/2 bg-background-dark/80 text-[10px] px-2 py-1 rounded opacity-0 group-hover/btn:opacity-100 whitespace-nowrap pointer-events-none transition-opacity">Anonimizar</span>
                                                         </button>
                                                     </div>
                                                 )}
@@ -674,7 +674,7 @@ export function LabClientView({
                                                             <span className="text-[10px] font-black text-gray-500 dark:text-white/40 uppercase tracking-widest leading-tight px-4 line-clamp-3">{post.title || 'MÍDIA INDISPONÍVEL'}</span>
                                                         </div>
                                                         {isVideo && (
-                                                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
+                                                            <div className="absolute inset-0 flex items-center justify-center bg-background-dark/20 group-hover:bg-background-dark/40 transition-colors">
                                                                 <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30">
                                                                     <Play className="w-6 h-6 text-white fill-current" />
                                                                 </div>
@@ -692,7 +692,7 @@ export function LabClientView({
                                                     <Star className="w-5 h-5 text-brand-yellow fill-current" />
                                                 </div>
 
-                                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 text-white">
+                                                <div className="absolute inset-0 bg-background-dark/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 text-white">
                                                     <div className="flex items-center gap-1.5 font-bold">
                                                         <Heart className="w-5 h-5 fill-current" />
                                                         <span>{post.likeCount}</span>

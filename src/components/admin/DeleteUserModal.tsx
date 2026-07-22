@@ -46,7 +46,7 @@ export function DeleteUserModal({ isOpen, onClose, onConfirm, userName }: Delete
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     onClick={onClose}
-                    className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+                    className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm"
                 />
 
                 <motion.div
@@ -80,7 +80,7 @@ export function DeleteUserModal({ isOpen, onClose, onConfirm, userName }: Delete
                             value={confirmText}
                             onChange={(e) => setConfirmText(e.target.value)}
                             placeholder="Digite aqui..."
-                            className="w-full bg-black/40 border border-brand-red/20 rounded-2xl px-4 py-3 text-center text-sm text-white focus:border-brand-red focus:outline-none transition-all placeholder:text-gray-700"
+                            className="w-full bg-background-dark/40 border border-brand-red/20 rounded-2xl px-4 py-3 text-center text-sm text-white focus:border-brand-red focus:outline-none transition-all placeholder:text-gray-700"
                         />
                     </div>
 
@@ -94,7 +94,7 @@ export function DeleteUserModal({ isOpen, onClose, onConfirm, userName }: Delete
                         <button
                             disabled={confirmText !== 'EXCLUIR' || isDeleting}
                             onClick={handleConfirm}
-                            className="flex-[2] py-4 bg-brand-red hover:bg-red-600 text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-brand-red/20 flex items-center justify-center gap-2 disabled:opacity-30 disabled:grayscale"
+                            className="flex-[2] py-4 bg-brand-red hover:bg-brand-red text-white rounded-2xl text-xs font-black uppercase tracking-widest transition-all shadow-lg shadow-brand-red/20 flex items-center justify-center gap-2 disabled:opacity-30 disabled:grayscale"
                         >
                             {isDeleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                             {isDeleting ? 'Deletando...' : 'Confirmar Exclusão'}

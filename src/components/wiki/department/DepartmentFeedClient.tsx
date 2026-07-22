@@ -118,7 +118,7 @@ export function DepartmentFeedClient({ posts }: { posts: PostRecord[] }) {
             {/* SEÇÃO 1: HALL DA FAMA (Padrão Ouro) */}
             {semesterKeys.length > 0 && (
                 <div className="relative p-[2px] rounded-[34px] bg-gradient-to-br from-brand-yellow/50 via-brand-yellow/10 to-transparent shadow-lg shadow-brand-yellow/5">
-                    <div className="bg-white dark:bg-[#121212] rounded-[32px] p-8 h-full w-full">
+                    <div className="bg-white dark:bg-background-dark rounded-[32px] p-8 h-full w-full">
                         <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
                             <div className="flex items-center gap-4">
                                 <div className="w-12 h-12 bg-gradient-to-br from-brand-yellow to-orange-400 rounded-2xl flex items-center justify-center shadow-lg shadow-brand-yellow/30 text-white">

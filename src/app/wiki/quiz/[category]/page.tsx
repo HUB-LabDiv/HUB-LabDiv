@@ -234,7 +234,7 @@ export default function RadiationQuizPage({ params }: { params: Promise<{ catego
                                             disabled={showExplanation}
                                             className={`w-full p-6 rounded-3xl border text-left transition-all flex items-center justify-between group
                                                 ${showAsCorrect ? 'bg-green-500/10 border-green-500/50 text-green-400' :
-                                                    showAsWrong ? 'bg-red-500/10 border-red-500/50 text-red-400' :
+                                                    showAsWrong ? 'bg-brand-red/10 border-brand-red/50 text-brand-red' :
                                                         isSelected ? 'bg-brand-red/10 border-brand-red/50 text-brand-red' :
                                                             'bg-white/2 border-white/5 text-gray-400 hover:border-white/20 hover:bg-white/5'}
                                             `}
@@ -256,7 +256,7 @@ export default function RadiationQuizPage({ params }: { params: Promise<{ catego
                                         className="mt-8 pt-8 border-t border-white/5"
                                     >
                                         <div className="flex items-start gap-4 mb-6">
-                                            <AlertCircle className={`w-5 h-5 shrink-0 ${selectedOption === currentQuestion.correct_option ? 'text-green-500' : 'text-red-500'}`} />
+                                            <AlertCircle className={`w-5 h-5 shrink-0 ${selectedOption === currentQuestion.correct_option ? 'text-green-500' : 'text-brand-red'}`} />
                                             <p className="text-sm text-gray-400 leading-relaxed font-medium">
                                                 {currentQuestion.explanation || (selectedOption === currentQuestion.correct_option ? 'Resposta correta! Você extraiu radiação.' : 'Resposta incorreta. Estude mais a Wiki para estabilizar seu sinal.')}
                                             </p>

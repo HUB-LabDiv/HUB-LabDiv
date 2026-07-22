@@ -144,7 +144,7 @@ function SubmitPageContent() {
 
 export default function SubmitPage() {
     return (
-        <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center">Carregando...</div>}>
+        <Suspense fallback={<div className="min-h-screen bg-background-dark flex items-center justify-center">Carregando...</div>}>
             <SubmitPageContent />
         </Suspense>
     );

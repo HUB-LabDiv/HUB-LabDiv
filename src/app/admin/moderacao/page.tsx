@@ -29,7 +29,7 @@ export default function AdminComunidadeHubPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
                 {/* Moderação do Fluxo (Submissões) */}
-                <Link href="/admin/moderacao/fluxo" className="group p-8 rounded-3xl bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/5 hover:border-brand-blue transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
+                <Link href="/admin/moderacao/fluxo" className="group p-8 rounded-3xl bg-white dark:bg-card-dark border border-gray-100 dark:border-white/5 hover:border-brand-blue transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all">
                         <ClipboardCheck className="w-32 h-32 text-brand-blue" />
                     </div>
@@ -46,7 +46,7 @@ export default function AdminComunidadeHubPage() {
                 </Link>
 
                 {/* Logs do IFUSP */}
-                <Link href="/admin/drops" className="group p-8 rounded-3xl bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/5 hover:border-brand-yellow transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
+                <Link href="/admin/drops" className="group p-8 rounded-3xl bg-white dark:bg-card-dark border border-gray-100 dark:border-white/5 hover:border-brand-yellow transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all">
                         <MessageSquare className="w-32 h-32 text-brand-yellow" />
                     </div>
@@ -62,7 +62,7 @@ export default function AdminComunidadeHubPage() {
                     </div>
                 </Link>
                 {/* Aprovação de Arte */}
-                <Link href="/admin/moderacao/arte" className="group p-8 rounded-3xl bg-white dark:bg-[#1a1a1a] border border-gray-100 dark:border-white/5 hover:border-brand-red transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
+                <Link href="/admin/moderacao/arte" className="group p-8 rounded-3xl bg-white dark:bg-card-dark border border-gray-100 dark:border-white/5 hover:border-brand-red transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all">
                         <Palette className="w-32 h-32 text-brand-red" />
                     </div>

@@ -44,7 +44,7 @@ export function GalleryThumbnail({ post, showMetrics = false }: { post: PostDTO,
                         <img
                             src={thumbUrl}
                             alt={post.title}
-                            className="w-full h-full object-contain bg-black/5 dark:bg-white/5 group-hover:scale-105 transition-transform duration-500"
+                            className="w-full h-full object-contain bg-background-dark/5 dark:bg-white/5 group-hover:scale-105 transition-transform duration-500"
                             onError={(e) => {
                                 e.currentTarget.style.display = 'none';
                                 const parent = e.currentTarget.parentElement;
@@ -58,7 +58,7 @@ export function GalleryThumbnail({ post, showMetrics = false }: { post: PostDTO,
                             <FileText className="w-12 h-12 text-gray-400/50 dark:text-white/10" />
                         </div>
                         {isVideo && (
-                            <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
+                            <div className="absolute inset-0 flex items-center justify-center bg-background-dark/20 group-hover:bg-background-dark/40 transition-colors">
                                 <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30">
                                     <Play className="w-6 h-6 text-white fill-current" />
                                 </div>
@@ -76,7 +76,7 @@ export function GalleryThumbnail({ post, showMetrics = false }: { post: PostDTO,
                 )}
 
                 {showMetrics && (
-                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 text-white z-10 pointer-events-none">
+                    <div className="absolute inset-0 bg-background-dark/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 text-white z-10 pointer-events-none">
                         <div className="flex items-center gap-1.5 font-bold">
                             <Heart className="w-5 h-5 fill-current" />
                             <span>{post.likeCount || 0}</span>
@@ -96,7 +96,7 @@ export function GalleryThumbnail({ post, showMetrics = false }: { post: PostDTO,
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4"
+                        className="fixed inset-0 z-[100] flex items-center justify-center bg-background-dark/90 p-4"
                         onClick={() => setIsModalOpen(false)}
                     >
                         <button 

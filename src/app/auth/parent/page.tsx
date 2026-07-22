@@ -50,7 +50,7 @@ export default function ParentLoginPage() {
     };
 
     return (
-        <main className="flex min-h-screen items-center justify-center p-4 bg-gray-50 dark:bg-[#121212]">
+        <main className="flex min-h-screen items-center justify-center p-4 bg-gray-50 dark:bg-background-dark">
             <div className="w-full max-w-md p-8 bg-white dark:bg-[#1E1E1E] rounded-xl shadow-lg border border-gray-100 dark:border-gray-800">
                 <div className="mb-6 text-center">
                     <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 uppercase">

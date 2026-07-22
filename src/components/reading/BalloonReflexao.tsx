@@ -184,7 +184,7 @@ export function BalloonReflexao({
                                     "{response}"
                                 </p>
                                 {feedback && (
-                                    <div className="mt-4 p-4 bg-white/50 dark:bg-black/20 rounded-2xl border border-gray-100 dark:border-white/5">
+                                    <div className="mt-4 p-4 bg-white/50 dark:bg-background-dark/20 rounded-2xl border border-gray-100 dark:border-white/5">
                                         <h5 className="text-[10px] font-black uppercase tracking-widest text-brand-blue mb-2">Síntese do Lab-Div</h5>
                                         <p className="text-xs text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
                                             {feedback}

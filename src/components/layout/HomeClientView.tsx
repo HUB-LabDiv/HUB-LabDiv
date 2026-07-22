@@ -400,7 +400,7 @@ export const HomeClientView = ({
                 className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none"
                 style={{ top: 'calc(5rem + env(safe-area-inset-top, 0px))' }}
             >
-                <div className="flex p-1.5 bg-white/50 dark:bg-black/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
+                <div className="flex p-1.5 bg-white/50 dark:bg-background-dark/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
                     <button
                         onClick={() => handleTabChange('logs')}
                         className={`relative flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-black font-bukra uppercase tracking-widest transition-all ${
@@ -481,21 +481,23 @@ export const HomeClientView = ({
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.4 }}
                     >
-                        {activeTab === 'arte' ? (
-                            <div className="w-full max-w-4xl mx-auto mb-16 text-left">
+                        {activeTab === 'arte' && (
+                            <div className="w-full max-w-4xl mx-auto mb-8 text-left space-y-8">
                                 <FluxoFeedbackCard 
                                     title="Arte" 
                                     description="Esta é a subaba de arte, onde a comunidade pode se expressar artisticamente. O que falta nesta seção dedicada à arte e criatividade na USP?" 
                                     icon={<Palette className="w-5 h-5 text-brand-yellow" />}
                                 />
-                            </div>
-                        ) : (
-                            <div className="max-w-4xl mx-auto mb-12">
-                                <FluxoFeedbackCard 
-                                    title="Fluxo" 
-                                    description="Esta é a subaba Fluxo. Aqui você acompanha a timeline principal de publicações, onde a comunicação cientifica pode ter o maximo de interação." 
-                                    icon={<Zap className="w-5 h-5 text-brand-blue" />}
-                                />
+                                <div className="flex flex-col gap-3 relative mb-8">
+                                    <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-yellow/5 rounded-full blur-[60px] pointer-events-none"></div>
+                                    <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-yellow flex items-center gap-4 relative z-10">
+                                        <Palette className="w-12 h-12" />
+                                        ARTE
+                                    </h1>
+                                    <p className="text-gray-400 font-medium text-sm border-l-2 border-brand-yellow pl-4 max-w-xl leading-relaxed">
+                                        Espaço dedicado à expressão artística, cultura e criatividade da comunidade da Física USP.
+                                    </p>
+                                </div>
                             </div>
                         )}
 
@@ -742,7 +744,7 @@ export const HomeClientView = ({
                             <Zap className="w-5 h-5 fill-current" />
                             Expandir Acervo
                         </span>
-                        <div className="absolute inset-0 bg-gradient-to-r from-brand-blue via-blue-400 to-brand-blue translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 opacity-30" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-brand-blue via-brand-blue to-brand-blue translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 opacity-30" />
                     </button>
                 </div>
             )}
@@ -754,7 +756,7 @@ export const HomeClientView = ({
                         initial={{ opacity: 0, x: 50, scale: 0.9 }}
                         animate={{ opacity: 1, x: 0, scale: 1 }}
                         exit={{ opacity: 0, x: 50, scale: 0.9 }}
-                        className="fixed top-24 right-6 z-[200] bg-black/80 backdrop-blur-xl border border-brand-blue-accent/30 rounded-2xl p-4 flex items-center gap-4 shadow-[0_0_30px_rgba(31,159,207,0.15)]"
+                        className="fixed top-24 right-6 z-[200] bg-background-dark/80 backdrop-blur-xl border border-brand-blue-accent/30 rounded-2xl p-4 flex items-center gap-4 shadow-[0_0_30px_rgba(31,159,207,0.15)]"
                     >
                         <div className="relative w-10 h-10 flex items-center justify-center">
                             <motion.div

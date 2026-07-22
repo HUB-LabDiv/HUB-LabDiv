@@ -93,7 +93,7 @@ export function ICInterestModal({ isOpen, onClose, initialData }: ICInterestModa
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+                <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-background-dark/80 backdrop-blur-md">
                     <motion.div
                         initial={{ opacity: 0, scale: 0.9, y: 30 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -136,7 +136,7 @@ export function ICInterestModal({ isOpen, onClose, initialData }: ICInterestModa
                                         placeholder="Ex: Física de Partículas, Nanotecnologia..."
                                         value={formData.ic_research_area || ''}
                                         onChange={(e) => setFormData({ ...formData, ic_research_area: e.target.value })}
-                                        className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-red/20 transition-all font-bold dark:text-white"
+                                        className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-red/20 transition-all font-bold dark:text-white"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -144,7 +144,7 @@ export function ICInterestModal({ isOpen, onClose, initialData }: ICInterestModa
                                     <select 
                                         value={formData.ic_preferred_department || ''}
                                         onChange={(e) => setFormData({ ...formData, ic_preferred_department: e.target.value })}
-                                        className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-red/20 transition-all font-bold dark:text-white appearance-none cursor-pointer"
+                                        className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-red/20 transition-all font-bold dark:text-white appearance-none cursor-pointer"
                                     >
                                         <option value="" disabled className="dark:bg-[#1E1E1E]">Selecione um departamento...</option>
                                         <option value="DFMA" className="dark:bg-[#1E1E1E]">DFMA - Física Matemática</option>
@@ -162,7 +162,7 @@ export function ICInterestModal({ isOpen, onClose, initialData }: ICInterestModa
                                         placeholder="Ex: Lab de Cristalografia, Síncrotron..."
                                         value={formData.ic_preferred_lab || ''}
                                         onChange={(e) => setFormData({ ...formData, ic_preferred_lab: e.target.value })}
-                                        className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-red/20 transition-all font-bold dark:text-white"
+                                        className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/10 rounded-2xl px-5 py-4 text-sm focus:outline-none focus:ring-2 focus:ring-brand-red/20 transition-all font-bold dark:text-white"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -175,7 +175,7 @@ export function ICInterestModal({ isOpen, onClose, initialData }: ICInterestModa
                                     
                                     <div className="flex flex-col border border-gray-100 dark:border-white/10 rounded-2xl overflow-hidden focus-within:ring-2 focus-within:ring-brand-red/20 transition-all">
                                         {/* Toolbar */}
-                                        <div className="flex flex-wrap gap-1 p-1.5 bg-gray-50/50 dark:bg-black/20 border-b border-gray-100 dark:border-white/10">
+                                        <div className="flex flex-wrap gap-1 p-1.5 bg-gray-50/50 dark:bg-background-dark/20 border-b border-gray-100 dark:border-white/10">
                                             {toolbar.map((tool) => (
                                                 <button
                                                     key={tool.label}
@@ -197,7 +197,7 @@ export function ICInterestModal({ isOpen, onClose, initialData }: ICInterestModa
                                             rows={6}
                                             value={formData.ic_letter_of_interest || ''}
                                             onChange={(e) => setFormData({ ...formData, ic_letter_of_interest: e.target.value })}
-                                            className="w-full bg-white dark:bg-black/10 px-5 py-4 text-sm focus:outline-none transition-all font-bold dark:text-white resize-none"
+                                            className="w-full bg-white dark:bg-background-dark/10 px-5 py-4 text-sm focus:outline-none transition-all font-bold dark:text-white resize-none"
                                         />
                                     </div>
                                 </div>

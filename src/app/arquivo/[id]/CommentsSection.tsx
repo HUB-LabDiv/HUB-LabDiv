@@ -133,7 +133,7 @@ export function CommentsSection({ submissionId, submissionTitle, initialComments
             </div>
 
             <form onSubmit={handleSubmit} className="bg-gray-50 dark:bg-card-dark/50 rounded-2xl p-6 border border-gray-100 dark:border-gray-800 mb-10">
-                {error && <div className="mb-4 text-sm text-red-500 font-bold">{error}</div>}
+                {error && <div className="mb-4 text-sm text-brand-red font-bold">{error}</div>}
                 {successMsg && (
                     <div className="mb-4 p-4 bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500 text-green-700 dark:text-green-300 text-sm font-medium animate-in fade-in slide-in-from-left-2 duration-300">
                         <div className="flex items-center gap-2">
@@ -225,7 +225,7 @@ export function CommentsSection({ submissionId, submissionTitle, initialComments
                                 {selectedFile && (
                                     <div className="flex items-center gap-2 bg-gray-100 dark:bg-gray-800 px-3 py-1.5 rounded-md border border-gray-200 dark:border-gray-700">
                                         <span className="text-xs font-bold text-gray-700 dark:text-gray-300 truncate max-w-[150px]">{selectedFile.name}</span>
-                                        <button type="button" onClick={() => setSelectedFile(null)} className="text-gray-400 hover:text-red-500 flex items-center">
+                                        <button type="button" onClick={() => setSelectedFile(null)} className="text-gray-400 hover:text-brand-red flex items-center">
                                             <span className="material-symbols-outlined text-[14px]">close</span>
                                         </button>
                                     </div>

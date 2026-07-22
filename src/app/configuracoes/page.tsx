@@ -212,7 +212,7 @@ export default function ConfigPage() {
                 </section>
 
                 {/* SEÇÃO 2: ZONA DE PERIGO */}
-                <section className="bg-red-500/5 border border-red-500/10 rounded-2xl overflow-hidden p-6 md:p-8">
+                <section className="bg-brand-red/5 border border-brand-red/10 rounded-2xl overflow-hidden p-6 md:p-8">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div className="space-y-3 max-w-md">
                             <div className="flex items-center gap-2 text-brand-red">
@@ -234,7 +234,7 @@ export default function ConfigPage() {
                             </button>
                             <button
                                 onClick={() => setIsDeleting(true)}
-                                className="px-6 py-3 border border-red-500/20 text-red-500 font-bold rounded-xl hover:bg-red-500/10 transition-all active:scale-95 flex items-center justify-center gap-2 text-xs uppercase tracking-widest whitespace-nowrap"
+                                className="px-6 py-3 border border-brand-red/20 text-brand-red font-bold rounded-xl hover:bg-brand-red/10 transition-all active:scale-95 flex items-center justify-center gap-2 text-xs uppercase tracking-widest whitespace-nowrap"
                                 id="btn-delete-account"
                             >
                                 <Trash2 size={16} />
@@ -243,7 +243,7 @@ export default function ConfigPage() {
                         </div>
                     </div>
 
-                    <div className="mt-8 pt-6 border-t border-red-500/10 flex gap-4 text-xs text-red-400/60 leading-relaxed italic">
+                    <div className="mt-8 pt-6 border-t border-brand-red/10 flex gap-4 text-xs text-brand-red/60 leading-relaxed italic">
                         <ShieldCheck size={16} className="shrink-0" />
                         <p>
                             Nota Legal: Conteúdos sob a licença Creative Commons BY 4.0 não serão removidos, apenas desvinculados de sua identidade pessoal (reatribuição ao perfil anônimo).

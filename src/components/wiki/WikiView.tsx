@@ -302,7 +302,7 @@ export function WikiView() {
                             >
                                 <Link
                                     href={cell.href}
-                                    className={`relative block h-full group glass-card rounded-[40px] p-8 hover:border-${cell.color}/30 transition-all shadow-2xl overflow-hidden`}
+                                    className={`relative block h-full group glass-card rounded-[40px] p-8 hover:border-${cell.color} transition-all shadow-2xl overflow-hidden`}
                                 >
                                     <div className={`absolute -right-20 -top-20 size-64 bg-${cell.color}/5 blur-[100px] group-hover:bg-${cell.color}/10 transition-colors`}></div>
                                     <div className="relative z-10 flex flex-col h-full">
@@ -352,58 +352,17 @@ export function WikiView() {
 
 
                 {/* --- Novos Banners Inferiores --- */}
-                <div className="grid grid-cols-1 gap-6 mb-12">
-                    <motion.div
-                        initial={{ opacity: 0, y: 40 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ duration: 0.8, delay: 0.5 }}
-                        className="relative group w-full"
-                    >
-                        <div className="absolute -inset-0.5 bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red rounded-[32px] blur opacity-50 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none z-0"></div>
-                        <a
-                            href={acessoRapidoCell.href}
-                            onClick={(e) => {
-                                // Fallback hard redirect
-                                window.location.href = acessoRapidoCell.href;
-                            }}
-                            className="relative z-10 flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-[#1a1a1a] dark:bg-black/80 backdrop-blur-2xl border border-white/10 hover:border-white/20 transition-all overflow-hidden text-left cursor-pointer block pointer-events-auto"
-                        >
-                            <div className="flex flex-col md:flex-row items-center gap-8 relative z-10 pointer-events-none">
-                                <div className="size-20 bg-gradient-to-br from-brand-blue via-brand-yellow to-brand-red text-white rounded-[28px] flex items-center justify-center group-hover:scale-110 transition-all duration-700 shadow-2xl">
-                                    {acessoRapidoCell.icon}
-                                </div>
-                                <div className="text-center md:text-left">
-                                    <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
-                                        <h3 className="text-3xl md:text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red italic uppercase tracking-tighter">
-                                            {acessoRapidoCell.title}
-                                        </h3>
-                                        <span className="hidden md:block px-3 py-1 bg-white/10 border border-white/20 text-white text-[10px] font-black uppercase rounded-full italic">Central</span>
-                                    </div>
-                                    <p className="text-gray-400 font-medium max-w-md">
-                                        {acessoRapidoCell.description}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="mt-8 md:mt-0 relative z-10 pointer-events-none">
-                                <div className="px-8 py-4 bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red text-white font-black rounded-full transition-all text-xs uppercase tracking-widest flex items-center gap-3 overflow-hidden">
-                                    {acessoRapidoCell.cta} <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                                </div>
-                            </div>
-                        </a>
-                    </motion.div>
-                </div>
-
-                {/* --- Horizontal Instituto Banner --- */}
+                {/* 1. Horizontal Instituto Banner (Top) */}
                 <motion.div
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.5 }}
-                    className="relative group w-full mb-12"
+                    className="relative group w-full mb-6"
                 >
                     <div className="absolute -inset-0.5 bg-brand-blue-ifusp/30 rounded-[32px] blur opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     <Link
                         href={institutoCell.href}
-                        className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-gradient-to-r from-brand-blue-ifusp/20 to-brand-blue/10 backdrop-blur-2xl border border-white/5 hover:border-brand-blue-ifusp/40 transition-all overflow-hidden text-left"
+                        className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-white dark:bg-card-dark backdrop-blur-2xl border border-gray-200 dark:border-white/20 hover:border-brand-blue-ifusp/40 transition-all overflow-hidden text-left shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none"
                     >
                         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-blue-ifusp/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4"></div>
                         <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
@@ -411,12 +370,9 @@ export function WikiView() {
                                 {institutoCell.icon}
                             </div>
                             <div className="text-center md:text-left">
-                                <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
-                                    <h3 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter">
-                                        {renderIFUSP(institutoCell.title)}
-                                    </h3>
-                                    <span className="hidden md:block px-3 py-1 bg-brand-blue-ifusp/20 border border-brand-blue-ifusp/30 text-brand-blue-ifusp text-[10px] font-black uppercase rounded-full italic">Institucional</span>
-                                </div>
+                                <h3 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter mb-2">
+                                    {renderIFUSP(institutoCell.title)}
+                                </h3>
                                 <p className="text-gray-400 font-medium max-w-md">
                                     {renderIFUSP(institutoCell.description)}
                                 </p>
@@ -430,7 +386,45 @@ export function WikiView() {
                     </Link>
                 </motion.div>
 
-                {/* --- Horizontal Quiz Banner --- */}
+                {/* 2. IFUSP 101 Banner (Middle - Pure Yellow) */}
+                <div className="grid grid-cols-1 gap-6 mb-6">
+                    <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.5 }}
+                        className="relative group w-full"
+                    >
+                        <a
+                            href={acessoRapidoCell.href}
+                            onClick={(e) => {
+                                // Fallback hard redirect
+                                window.location.href = acessoRapidoCell.href;
+                            }}
+                            className="relative z-10 flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-white dark:bg-card-dark backdrop-blur-2xl border border-gray-200 dark:border-white/20 hover:border-brand-yellow transition-all overflow-hidden text-left cursor-pointer block pointer-events-auto shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none"
+                        >
+                            <div className="flex flex-col md:flex-row items-center gap-8 relative z-10 pointer-events-none">
+                                <div className="size-20 bg-brand-yellow/10 text-brand-yellow rounded-[28px] flex items-center justify-center ring-1 ring-brand-yellow/20 group-hover:scale-110 transition-all duration-700 shadow-2xl">
+                                    {acessoRapidoCell.icon}
+                                </div>
+                                <div className="text-center md:text-left">
+                                    <h3 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter mb-2">
+                                        {acessoRapidoCell.title}
+                                    </h3>
+                                    <p className="text-gray-400 font-medium max-w-md">
+                                        {acessoRapidoCell.description}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="mt-8 md:mt-0 relative z-10 pointer-events-none">
+                                <div className="px-8 py-4 bg-brand-yellow text-gray-900 font-black rounded-full transition-all text-xs uppercase tracking-widest flex items-center gap-3 overflow-hidden shadow-xl shadow-brand-yellow/20">
+                                    {acessoRapidoCell.cta} <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                                </div>
+                            </div>
+                        </a>
+                    </motion.div>
+                </div>
+
+                {/* 3. Horizontal Quiz Banner (Bottom) */}
                 <motion.div
                     id="teste-radiacao"
                     initial={{ opacity: 0, y: 40 }}
@@ -438,10 +432,10 @@ export function WikiView() {
                     transition={{ duration: 0.8, delay: 0.6 }}
                     className="relative group w-full mb-4 scroll-mt-32"
                 >
-                    <div className="absolute -inset-0.5 bg-brand-blue/30 rounded-[32px] blur opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-500"></div>
+                    <div className="absolute -inset-0.5 bg-brand-red/30 rounded-[32px] blur opacity-0 group-hover:opacity-100 animate-pulse transition-opacity duration-500"></div>
                     <Link
                         href={quizCell.href}
-                        className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-gradient-to-r from-blue-900/20 to-purple-900/20 backdrop-blur-2xl border border-white/5 hover:border-brand-blue/40 transition-all overflow-hidden"
+                        className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-white dark:bg-card-dark backdrop-blur-2xl border border-gray-200 dark:border-white/20 hover:border-brand-red transition-all overflow-hidden shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none"
                     >
                         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-blue/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4"></div>
                         <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4"></div>
@@ -450,19 +444,16 @@ export function WikiView() {
                                 {quizCell.icon}
                             </div>
                             <div className="text-center md:text-left">
-                                <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
-                                    <h3 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter">
-                                        {quizCell.title}
-                                    </h3>
-                                    <span className="hidden md:block px-3 py-1 bg-brand-red/20 border border-brand-red/30 text-brand-red text-[10px] font-black uppercase rounded-full">Gamificação</span>
-                                </div>
+                                <h3 className="text-3xl md:text-4xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter mb-2">
+                                    {quizCell.title}
+                                </h3>
                                 <p className="text-gray-400 font-medium max-w-md">
-                                    {quizCell.description} <span className="text-brand-blue font-bold">Exploda o contador Geiger.</span>
+                                    {quizCell.description} <span className="text-brand-red font-bold">Exploda o contador Geiger.</span>
                                 </p>
                             </div>
                         </div>
                         <div className="mt-8 md:mt-0 relative z-10">
-                            <div className="px-12 py-5 bg-brand-blue text-white font-black rounded-[24px] group-hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-widest flex items-center gap-4 shadow-2xl shadow-brand-blue/30">
+                            <div className="px-12 py-5 bg-brand-red text-white font-black rounded-[24px] group-hover:scale-105 active:scale-95 transition-all text-sm uppercase tracking-widest flex items-center gap-4 shadow-2xl shadow-brand-red/30">
                                 {quizCell.cta} <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                             </div>
                         </div>

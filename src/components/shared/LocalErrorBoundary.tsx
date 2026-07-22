@@ -17,7 +17,7 @@ export class LocalErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return this.props.fallback || (
-        <div className="p-4 m-2 border-2 border-red-500/50 bg-red-500/10 text-red-500 text-[10px] font-mono rounded-xl">
+        <div className="p-4 m-2 border-2 border-brand-red/50 bg-brand-red/10 text-brand-red text-[10px] font-mono rounded-xl">
             [Erro de Renderização Isolado] {this.state.error?.message}
         </div>
       );

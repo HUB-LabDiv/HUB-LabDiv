@@ -106,7 +106,7 @@ export function Header() {
     return (
         <>
             <header
-                className="fixed left-0 right-0 h-16 bg-white/30 dark:bg-black/30 backdrop-blur-md border-b border-white/20 dark:border-white/10 z-50 transition-colors pwa-header shadow-sm"
+                className="fixed left-0 right-0 h-16 bg-white/30 dark:bg-background-dark/30 backdrop-blur-md border-b border-white/20 dark:border-white/10 z-50 transition-colors pwa-header shadow-sm"
                 style={{ top: 'env(safe-area-inset-top, 0px)' }}
             >
                 <div className="max-w-[1800px] mx-auto h-full px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-4">

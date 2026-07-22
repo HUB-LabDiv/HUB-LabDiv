@@ -29,9 +29,9 @@ export function WikiOracle() {
                 
                 {/* Ícone 3D Mock */}
                 <div className="shrink-0 w-20 h-20 rounded-2xl bg-gradient-to-br from-brand-blue to-blue-800 p-[2px] shadow-lg relative">
-                    <div className="w-full h-full bg-white dark:bg-black/80 rounded-2xl flex items-center justify-center overflow-hidden relative">
+                    <div className="w-full h-full bg-white dark:bg-background-dark/80 rounded-2xl flex items-center justify-center overflow-hidden relative">
                         <Sparkles className="w-8 h-8 text-brand-yellow animate-pulse relative z-10" />
-                        <div className="absolute inset-0 bg-blue-500/10 backdrop-blur-sm"></div>
+                        <div className="absolute inset-0 bg-brand-blue/10 backdrop-blur-sm"></div>
                     </div>
                 </div>
 
@@ -55,10 +55,10 @@ export function WikiOracle() {
                             value={query}
                             onChange={(e) => setQuery(e.target.value)}
                             placeholder="Pesquisar usando linguagem natural... (Ex: 'Quais são as áreas de pesquisa do IFusp?')"
-                            className="w-full bg-white dark:bg-[#121212] border-2 border-brand-blue/20 focus:border-brand-blue rounded-xl pl-12 pr-4 py-4 text-sm outline-none transition-all dark:text-white shadow-sm"
+                            className="w-full bg-white dark:bg-background-dark border-2 border-brand-blue/20 focus:border-brand-blue rounded-xl pl-12 pr-4 py-4 text-sm outline-none transition-all dark:text-white shadow-sm"
                         />
                         <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                        <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-brand-blue text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-blue-600 transition-colors">
+                        <button className="absolute right-2 top-1/2 -translate-y-1/2 bg-brand-blue text-white px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-brand-blue transition-colors">
                             Buscar
                         </button>
 
@@ -71,7 +71,7 @@ export function WikiOracle() {
             </div>
             
             {/* O overlay disabled para indicar que está em dev */}
-            <div className="absolute inset-0 z-20 pointer-events-none bg-white/5 dark:bg-black/5 backdrop-blur-[1px] flex items-center justify-center">
+            <div className="absolute inset-0 z-20 pointer-events-none bg-white/5 dark:bg-background-dark/5 backdrop-blur-[1px] flex items-center justify-center">
                 {/* You can add a subtle diagonal stripe pattern here in future config if needed */}
             </div>
         </div>

@@ -383,7 +383,7 @@ export default function TrailDetailsClient({
                                             {trail.equivalency_map && Object.keys(trail.equivalency_map).length > 0 && (
                                                 <div className="pl-11 pt-2 space-y-3">
                                                     {Object.entries(trail.equivalency_map).map(([ruleName, rule]: [string, any]) => (
-                                                        <div key={ruleName} className="p-3 bg-gray-50 dark:bg-[#121212]/60 rounded-lg border border-cyan-500/20">
+                                                        <div key={ruleName} className="p-3 bg-gray-50 dark:bg-background-dark/60 rounded-lg border border-cyan-500/20">
                                                             <div className="text-[9px] font-mono text-cyan-500/80 mb-2 uppercase tracking-widest font-black leading-tight border-b border-cyan-500/10 pb-1">
                                                                 VIA: {ruleName}
                                                             </div>
@@ -420,7 +420,7 @@ export default function TrailDetailsClient({
                                                             <Link
                                                                 key={eq.id}
                                                                 href={`/trilhas/${eq.id}`}
-                                                                className="group flex items-center gap-3 p-3 bg-gray-50 dark:bg-[#121212]/60 border border-cyan-500/10 rounded-lg hover:border-cyan-500/30 transition-all"
+                                                                className="group flex items-center gap-3 p-3 bg-gray-50 dark:bg-background-dark/60 border border-cyan-500/10 rounded-lg hover:border-cyan-500/30 transition-all"
                                                             >
                                                                 <eqCfg.icon size={12} style={{ color: eqCfg.color }} className="shrink-0" />
                                                                 <div className="min-w-0">
@@ -472,7 +472,7 @@ export default function TrailDetailsClient({
                                                 <Link
                                                     key={prereq.course_code}
                                                     href={`/trilhas/${prereq.id}`}
-                                                    className="group flex items-center gap-3 p-3 bg-[#121212]/60 border border-[#FF4B4B]/15 rounded-lg hover:border-[#FF4B4B]/40 transition-all"
+                                                    className="group flex items-center gap-3 p-3 bg-background-dark/60 border border-[#FF4B4B]/15 rounded-lg hover:border-[#FF4B4B]/40 transition-all"
                                                 >
                                                     <Lock size={12} className="text-[#FF4B4B] shrink-0 group-hover:hidden" />
                                                     <Unlock size={12} className="text-[#FF4B4B] shrink-0 hidden group-hover:block" />
@@ -608,7 +608,7 @@ export default function TrailDetailsClient({
                                                 </div>
 
                                                 <div className="flex items-start gap-4 mb-4">
-                                                    <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-[#121212] flex items-center justify-center text-gray-400 dark:text-gray-500 group-hover:text-brand-blue dark:group-hover:text-[#00A3FF] transition-colors shrink-0">
+                                                    <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-background-dark flex items-center justify-center text-gray-400 dark:text-gray-500 group-hover:text-brand-blue dark:group-hover:text-[#00A3FF] transition-colors shrink-0">
                                                         {item.media_type === 'video' ? <Play size={20} /> : <FileText size={20} />}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
@@ -837,7 +837,7 @@ export default function TrailDetailsClient({
                                             <Link
                                                 key={prereq.course_code}
                                                 href={`/trilhas/${prereq.id}`}
-                                                className="flex items-center gap-2 p-2 rounded bg-[#121212] border border-gray-800 hover:border-[#FF4B4B]/30 transition-all group"
+                                                className="flex items-center gap-2 p-2 rounded bg-background-dark border border-gray-800 hover:border-[#FF4B4B]/30 transition-all group"
                                             >
                                                 <Lock size={10} className="text-[#FF4B4B]/50 shrink-0" />
                                                 <div className="min-w-0">
@@ -866,7 +866,7 @@ export default function TrailDetailsClient({
                                                 <Link
                                                     key={eq.id}
                                                     href={`/trilhas/${eq.id}`}
-                                                    className="flex items-center gap-2 p-2 rounded bg-[#121212] border border-gray-800 hover:border-cyan-500/30 transition-all group"
+                                                    className="flex items-center gap-2 p-2 rounded bg-background-dark border border-gray-800 hover:border-cyan-500/30 transition-all group"
                                                 >
                                                     <eqCfg.icon size={10} style={{ color: eqCfg.color }} className="shrink-0" />
                                                     <div className="min-w-0">
@@ -889,7 +889,7 @@ export default function TrailDetailsClient({
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-black/60 backdrop-blur-md"
+                            className="fixed inset-0 z-[200] flex flex-col items-center justify-center bg-background-dark/60 backdrop-blur-md"
                         >
                             <div className="relative w-32 h-32 flex items-center justify-center">
                                 {/* Animated Rings */}

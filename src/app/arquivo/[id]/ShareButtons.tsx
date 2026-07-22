@@ -69,8 +69,8 @@ export function ShareButtons({ title, id }: ShareButtonsProps) {
 
     const shareOptions = isMounted ? [
         { name: 'WhatsApp', icon: 'chat_bubble', color: 'bg-green-500', link: `https://wa.me/?text=${encodeURIComponent(`${title} — Hub Lab-Div\n${getUrl()}`)}` },
-        { name: 'X (Twitter)', icon: 'close', color: 'bg-black', link: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${title} — Hub Lab-Div`)}&url=${encodeURIComponent(getUrl())}` },
-        { name: 'Telegram', icon: 'send', color: 'bg-blue-400', link: `https://t.me/share/url?url=${encodeURIComponent(getUrl())}&text=${encodeURIComponent(title)}` },
+        { name: 'X (Twitter)', icon: 'close', color: 'bg-background-dark', link: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${title} — Hub Lab-Div`)}&url=${encodeURIComponent(getUrl())}` },
+        { name: 'Telegram', icon: 'send', color: 'bg-brand-blue', link: `https://t.me/share/url?url=${encodeURIComponent(getUrl())}&text=${encodeURIComponent(title)}` },
     ] : [];
     
     return (
@@ -109,7 +109,7 @@ export function ShareButtons({ title, id }: ShareButtonsProps) {
             {isMounted && typeof navigator !== 'undefined' && typeof navigator.share === 'function' && (
                 <button
                     onClick={handleNativeShare}
-                    className="mt-6 px-6 py-3 bg-primary dark:bg-blue-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity w-full sm:w-auto"
+                    className="mt-6 px-6 py-3 bg-primary dark:bg-brand-blue text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity w-full sm:w-auto"
                 >
                     <span className="material-symbols-outlined">share</span>
                     Mais Opções Nativa

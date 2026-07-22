@@ -345,7 +345,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background-dark/60 backdrop-blur-sm animate-in fade-in duration-300">
             <div className="bg-white dark:bg-[#1E1E1E] w-full max-w-lg rounded-[32px] overflow-hidden shadow-2xl border border-gray-100 dark:border-white/5 animate-in zoom-in-95 duration-300">
                 {/* Header */}
                 <div className="px-8 py-6 border-b border-gray-50 dark:border-white/5 flex items-center justify-between bg-gray-50/50 dark:bg-white/[0.02]">
@@ -447,7 +447,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                             <input
                                                 {...register('new_nickname')}
                                                 placeholder="Mudança de nome"
-                                                className="flex-1 bg-white dark:bg-black/40 border border-gray-100 dark:border-white/10 rounded-xl px-3 py-2 text-xs outline-none focus:border-brand-blue/50 transition-all font-bold"
+                                                className="flex-1 bg-white dark:bg-background-dark/40 border border-gray-100 dark:border-white/10 rounded-xl px-3 py-2 text-xs outline-none focus:border-brand-blue/50 transition-all font-bold"
                                             />
                                             <button
                                                 type="button"
@@ -474,7 +474,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                 <textarea
                                     {...register('bio')}
                                     rows={3}
-                                    className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all placeholder:text-gray-400 resize-none"
+                                    className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all placeholder:text-gray-400 resize-none"
                                     placeholder="Conte um pouco sobre você..."
                                 />
                                 {errors.bio && <p className="text-[10px] text-brand-red font-bold uppercase ml-1">{errors.bio.message}</p>}
@@ -489,7 +489,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                 </label>
                                 <select
                                     {...register('cultural_language')}
-                                    className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all cursor-pointer font-bold text-gray-900 dark:text-white uppercase tracking-tight"
+                                    className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all cursor-pointer font-bold text-gray-900 dark:text-white uppercase tracking-tight"
                                 >
                                     <option value="jovem">Jovem</option>
                                     <option value="nerd_geek">Nerd/Geek</option>
@@ -509,7 +509,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                     <div className="flex items-center gap-2">
                                         <select
                                             {...register('user_category')}
-                                            className="w-full bg-gray-50 dark:bg-black/20 border border-brand-red/30 rounded-2xl px-4 py-3 text-sm focus:border-brand-red outline-none transition-all cursor-pointer font-black text-gray-900 dark:text-white uppercase tracking-tight"
+                                            className="w-full bg-gray-50 dark:bg-background-dark/20 border border-brand-red/30 rounded-2xl px-4 py-3 text-sm focus:border-brand-red outline-none transition-all cursor-pointer font-black text-gray-900 dark:text-white uppercase tracking-tight"
                                         >
                                             <option value="bacharelado">Aluno Bacharelado</option>
                                             <option value="fisica_medica">Aluno Física Médica</option>
@@ -522,7 +522,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                         <span className="text-[8px] font-black bg-brand-red/10 text-brand-red px-2 py-0.5 rounded uppercase font-mono h-fit shrink-0">Admin Edit</span>
                                     </div>
                                 ) : (
-                                    <div className="px-4 py-3 bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl flex items-center justify-between">
+                                    <div className="px-4 py-3 bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl flex items-center justify-between">
                                         <span className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-tight">
                                             {watch('user_category').replace('_', ' ')}
                                         </span>
@@ -542,7 +542,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                     </label>
                                     <input
                                         {...register('whatsapp')}
-                                        className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all"
+                                        className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all"
                                         placeholder="(11) 98765-4321"
                                     />
                                 </div>
@@ -553,7 +553,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                     </label>
                                     <input
                                         {...register('lattes_url')}
-                                        className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all"
+                                        className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all"
                                         placeholder="https://lattes.cnpq.br/..."
                                     />
                                     {errors.lattes_url && <p className="text-[10px] text-brand-red font-bold ml-1 uppercase">{errors.lattes_url.message}</p>}
@@ -565,7 +565,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                     </label>
                                     <input
                                         {...register('portfolio_url')}
-                                        className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all"
+                                        className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all"
                                         placeholder="https://seu-site.com..."
                                     />
                                     {errors.portfolio_url && <p className="text-[10px] text-brand-red font-bold ml-1 uppercase">{errors.portfolio_url.message}</p>}
@@ -585,13 +585,13 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                     return (
                                         <div key={netId} className="flex flex-col gap-1 animate-in fade-in slide-in-from-top-2">
                                             <div className="flex items-center gap-2">
-                                                <div className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl shrink-0">
+                                                <div className="w-10 h-10 flex items-center justify-center bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl shrink-0">
                                                     <Icon className="w-4 h-4 text-gray-400" />
                                                 </div>
                                                 <div className="flex-1">
                                                     <input
                                                         {...register(netId as any)}
-                                                        className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all placeholder:text-gray-400 font-bold text-gray-900 dark:text-white"
+                                                        className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all placeholder:text-gray-400 font-bold text-gray-900 dark:text-white"
                                                         placeholder={`Link do seu ${network.label}...`}
                                                     />
                                                 </div>
@@ -624,7 +624,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                                 + Vincular Rede Social
                                             </button>
                                         ) : (
-                                            <div className="p-3 bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl flex flex-wrap items-center gap-2 animate-in fade-in slide-in-from-top-2">
+                                            <div className="p-3 bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl flex flex-wrap items-center gap-2 animate-in fade-in slide-in-from-top-2">
                                                 <select
                                                     value={selectedNetworkToAdd}
                                                     onChange={(e) => setSelectedNetworkToAdd(e.target.value)}
@@ -682,7 +682,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                             </label>
                             <input
                                 {...register('artistic_interests_str')}
-                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all placeholder:text-gray-400"
+                                className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all placeholder:text-gray-400"
                                 placeholder="O que você faz nas horas vagas?"
                             />
 
@@ -723,7 +723,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                             <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Escolaridade</label>
                                             <select
                                                 {...register('education_level')}
-                                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all appearance-none cursor-pointer font-bold"
+                                                className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all appearance-none cursor-pointer font-bold"
                                             >
                                                 <option value="" disabled>Selecione</option>
                                                 <option value="Ensino Médio">Ensino Médio</option>
@@ -737,7 +737,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                             <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Instituição</label>
                                             <input
                                                 {...register('external_institution')}
-                                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all"
+                                                className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all"
                                                 placeholder="Sua escola ou faculdade"
                                             />
                                         </div>
@@ -746,7 +746,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                         <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Área de Interesse</label>
                                         <input
                                             {...register('interest_area')}
-                                            className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all font-bold"
+                                            className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all font-bold"
                                             placeholder="Ex: Astrofísica, Robótica, IA..."
                                         />
                                     </div>
@@ -764,7 +764,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                             <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Instituto</label>
                                             <select
                                                 {...register('institute')}
-                                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all appearance-none cursor-pointer font-bold"
+                                                className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all appearance-none cursor-pointer font-bold"
                                             >
                                                 <option value="" disabled>Selecione</option>
                                                 {institutes.map(inst => <option key={inst} value={inst}>{inst}</option>)}
@@ -775,7 +775,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                             {selectedInstitute === 'IF-USP' ? (
                                                 <select
                                                     {...register('course')}
-                                                    className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all appearance-none cursor-pointer font-bold"
+                                                    className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all appearance-none cursor-pointer font-bold"
                                                 >
                                                     <option value="" disabled>Selecione seu curso</option>
                                                     <option value="Bacharelado em Física">Bacharelado em Física</option>
@@ -785,7 +785,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                             ) : (
                                                 <input
                                                     {...register('course')}
-                                                    className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all font-bold"
+                                                    className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all font-bold"
                                                     placeholder="Ex: Bacharelado em Matemática"
                                                 />
                                             )}
@@ -799,7 +799,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                         <input
                                             type="number"
                                             {...register('entrance_year')}
-                                            className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all"
+                                            className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all"
                                             placeholder="Ex: 2022"
                                         />
                                     </div>
@@ -881,7 +881,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                         <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Linha de Pesquisa</label>
                                         <input
                                             {...register('research_line')}
-                                            className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-yellow/50 outline-none transition-all font-bold"
+                                            className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-yellow/50 outline-none transition-all font-bold"
                                             placeholder="Ex: Física de Partículas..."
                                         />
                                     </div>
@@ -891,7 +891,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                             <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Departamento</label>
                                             <input
                                                 {...register('department')}
-                                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-yellow/50 outline-none transition-all font-bold"
+                                                className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-yellow/50 outline-none transition-all font-bold"
                                                 placeholder="Ex: DFMA"
                                             />
                                         </div>
@@ -899,7 +899,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                             <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Sala / Lab</label>
                                             <input
                                                 {...register('office_room')}
-                                                className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-yellow/50 outline-none transition-all font-bold"
+                                                className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-yellow/50 outline-none transition-all font-bold"
                                                 placeholder="Ex: 201"
                                             />
                                         </div>
@@ -909,7 +909,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                         <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1">Instituição / Laboratório</label>
                                         <input
                                             {...register('laboratory_name')}
-                                            className="w-full bg-gray-50 dark:bg-black/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-yellow/50 outline-none transition-all"
+                                            className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-yellow/50 outline-none transition-all"
                                             placeholder="Ex: Lab de Cristalografia"
                                         />
                                     </div>

@@ -83,13 +83,13 @@ export default function AdminDicasPage() {
                     <Loader2 className="w-8 h-8 animate-spin text-brand-blue" />
                 </div>
             ) : tips.length === 0 ? (
-                <div className="text-center p-12 bg-white dark:bg-[#1a1a1a] rounded-3xl border border-gray-100 dark:border-white/5 text-gray-500 font-medium">
+                <div className="text-center p-12 bg-white dark:bg-card-dark rounded-3xl border border-gray-100 dark:border-white/5 text-gray-500 font-medium">
                     Nenhuma dica encontrada nesta categoria.
                 </div>
             ) : (
                 <div className="grid grid-cols-1 gap-6">
                     {tips.map(tip => (
-                        <div key={tip.id} className="bg-white dark:bg-[#1a1a1a] p-6 rounded-3xl border border-gray-100 dark:border-white/5 flex flex-col md:flex-row gap-6">
+                        <div key={tip.id} className="bg-white dark:bg-card-dark p-6 rounded-3xl border border-gray-100 dark:border-white/5 flex flex-col md:flex-row gap-6">
                             <div className="flex-1">
                                 <div className="flex items-center gap-3 mb-2">
                                     <span className="px-3 py-1 bg-brand-blue/10 text-brand-blue text-[10px] font-black uppercase rounded-full tracking-widest">
@@ -121,7 +121,7 @@ export default function AdminDicasPage() {
                                     <button
                                         onClick={() => handleUpdateStatus(tip.id, 'rejected')}
                                         disabled={isUpdating}
-                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-red-500/10 text-red-600 hover:bg-red-500 hover:text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-colors"
+                                        className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-brand-red/10 text-brand-red hover:bg-brand-red hover:text-white rounded-xl font-bold text-xs uppercase tracking-widest transition-colors"
                                     >
                                         <X className="w-4 h-4" /> Rejeitar
                                     </button>

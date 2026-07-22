@@ -126,8 +126,8 @@ export const ShareMenu = ({ id, title, author, onClose }: ShareMenuProps) => {
 
     const shareOptions = [
         { name: 'WhatsApp', icon: 'chat_bubble', color: 'bg-green-500', link: `https://wa.me/?text=${encodeURIComponent(`${title} — ${author}\n${url}`)}` },
-        { name: 'X (Twitter)', icon: 'close', color: 'bg-black', link: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${title} — ${author}`)}&url=${encodeURIComponent(url)}` },
-        { name: 'Telegram', icon: 'send', color: 'bg-blue-400', link: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}` },
+        { name: 'X (Twitter)', icon: 'close', color: 'bg-background-dark', link: `https://twitter.com/intent/tweet?text=${encodeURIComponent(`${title} — ${author}`)}&url=${encodeURIComponent(url)}` },
+        { name: 'Telegram', icon: 'send', color: 'bg-brand-blue', link: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(title)}` },
     ];
 
     return (
@@ -137,7 +137,7 @@ export const ShareMenu = ({ id, title, author, onClose }: ShareMenuProps) => {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={onClose}
-                className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+                className="absolute inset-0 bg-background-dark/60 backdrop-blur-sm"
             />
 
             <m.div
@@ -260,7 +260,7 @@ export const ShareMenu = ({ id, title, author, onClose }: ShareMenuProps) => {
                     {typeof navigator !== 'undefined' && typeof navigator.share === 'function' && (
                         <button
                             onClick={handleNativeShare}
-                            className="w-full mt-8 py-3 bg-primary dark:bg-blue-600 text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+                            className="w-full mt-8 py-3 bg-primary dark:bg-brand-blue text-white rounded-xl font-bold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
                         >
                             <span className="material-symbols-outlined">share</span>
                             Mais Opções Nativa

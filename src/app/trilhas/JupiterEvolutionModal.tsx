@@ -102,8 +102,8 @@ export function JupiterEvolutionModal({ isOpen, onClose, onSuccess }: JupiterEvo
     };
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md">
-            <div className="bg-white dark:bg-[#121212] w-full max-w-md rounded-[32px] border border-gray-200 dark:border-white/10 shadow-2xl overflow-hidden transition-all duration-500">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background-dark/60 backdrop-blur-md">
+            <div className="bg-white dark:bg-background-dark w-full max-w-md rounded-[32px] border border-gray-200 dark:border-white/10 shadow-2xl overflow-hidden transition-all duration-500">
                 <div className="p-8">
                     <div className="flex justify-between items-center mb-6">
                         <div className="flex items-center gap-3">

@@ -332,9 +332,9 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                     <>
                         {/* Simplified hover effect - removed blur for better performance */}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                        <button onClick={handlePrevImage} aria-label="Imagem Anterior" className="absolute left-2 top-1/2 -translate-y-1/2 size-8 bg-black/60 hover:bg-black/90 text-white rounded-full flex items-center justify-center z-10 hover:scale-110"><ChevronLeft className="w-5 h-5" /></button>
-                        <button onClick={handleNextImage} aria-label="Próxima Imagem" className="absolute right-2 top-1/2 -translate-y-1/2 size-8 bg-black/60 hover:bg-black/90 text-white rounded-full flex items-center justify-center z-10 hover:scale-110"><ChevronRight className="w-5 h-5" /></button>
-                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10 px-2 py-1 rounded-full bg-black/40">
+                        <button onClick={handlePrevImage} aria-label="Imagem Anterior" className="absolute left-2 top-1/2 -translate-y-1/2 size-8 bg-background-dark/60 hover:bg-background-dark/90 text-white rounded-full flex items-center justify-center z-10 hover:scale-110"><ChevronLeft className="w-5 h-5" /></button>
+                        <button onClick={handleNextImage} aria-label="Próxima Imagem" className="absolute right-2 top-1/2 -translate-y-1/2 size-8 bg-background-dark/60 hover:bg-background-dark/90 text-white rounded-full flex items-center justify-center z-10 hover:scale-110"><ChevronRight className="w-5 h-5" /></button>
+                        <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-10 px-2 py-1 rounded-full bg-background-dark/40">
                             {urls.map((_, idx) => (
                                 <div key={idx} className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentImageIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/50'}`} />
                             ))}
@@ -344,7 +344,7 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                 )}
 
                 {post.mediaType === 'video' && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-colors group-hover:bg-black/40">
+                    <div className="absolute inset-0 flex items-center justify-center bg-background-dark/30 transition-colors group-hover:bg-background-dark/40">
                         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white text-primary shadow-2xl transition-transform group-hover:scale-110">
                             <Play className="w-6 h-6 fill-current" />
                         </div>

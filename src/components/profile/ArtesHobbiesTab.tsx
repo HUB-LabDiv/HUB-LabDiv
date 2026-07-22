@@ -82,7 +82,7 @@ export function ArtesHobbiesTab({ profile, isOwner }: ArtesHobbiesTabProps) {
             return (
                 <div className="w-full h-48 bg-gray-100 dark:bg-gray-800 rounded-t-xl overflow-hidden relative group flex items-center justify-center">
                     <img src={thumbUrl} alt={item.title} className="w-full h-full object-cover opacity-80" />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/40 transition-colors">
+                    <div className="absolute inset-0 flex items-center justify-center bg-background-dark/20 group-hover:bg-background-dark/40 transition-colors">
                         <div className="w-12 h-12 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center border border-white/30">
                             <Video className="w-6 h-6 text-white fill-current" />
                         </div>

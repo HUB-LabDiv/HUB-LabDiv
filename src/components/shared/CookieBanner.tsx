@@ -58,7 +58,7 @@ export const CookieBanner = () => {
 
     return (
         <div className="fixed bottom-0 left-0 right-0 z-[9999] p-4 sm:p-6 pointer-events-none flex justify-center">
-            <div className="w-full max-w-4xl bg-white dark:bg-[#121212] border-t-4 border-t-brand-blue border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl p-6 pointer-events-auto flex flex-col md:flex-row gap-6 items-center justify-between animate-fade-in-up">
+            <div className="w-full max-w-4xl bg-white dark:bg-background-dark border-t-4 border-t-brand-blue border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl p-6 pointer-events-auto flex flex-col md:flex-row gap-6 items-center justify-between animate-fade-in-up">
                 <div className="flex-1 text-center md:text-left">
                     <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2 flex items-center justify-center md:justify-start gap-2">
                         <span className="material-symbols-outlined text-brand-blue">cookie</span>

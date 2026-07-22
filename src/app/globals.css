@@ -259,7 +259,7 @@ body::before {
   }
 
   .glass-card {
-    @apply bg-white/40 dark:bg-card-dark/40 backdrop-blur-3xl border border-black/5 dark:border-white/5 shadow-sm dark:shadow-none;
+    @apply bg-white dark:bg-card-dark backdrop-blur-3xl border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none;
   }
 
   /* Animation for scroll */

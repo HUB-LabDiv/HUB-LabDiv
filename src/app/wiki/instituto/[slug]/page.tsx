@@ -96,7 +96,7 @@ export default function DepartmentWikiPage({ params }: { params: Promise<{ slug:
                 </div>
 
                 {/* 2. Sticky Navigation Bar */}
-                <div className={`sticky top-0 z-40 -mx-4 px-4 py-2 transition-all duration-300 ${scrolled ? 'bg-white/80 dark:bg-[#121212]/80 backdrop-blur-xl border-b border-gray-100 dark:border-white/5 shadow-sm' : ''}`}>
+                <div className={`sticky top-0 z-40 -mx-4 px-4 py-2 transition-all duration-300 ${scrolled ? 'bg-white/80 dark:bg-background-dark/80 backdrop-blur-xl border-b border-gray-100 dark:border-white/5 shadow-sm' : ''}`}>
                     <div className="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar">
                         {[
                             { id: 'laboratorios', label: 'Laboratórios', icon: <ScienceIcon className="w-4 h-4" /> },
