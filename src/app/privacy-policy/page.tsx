@@ -119,6 +119,56 @@ export default function PrivacyPolicy() {
                         </div>
                     </div>
                 </details>
+
+                {/* Rule 4: LGPD e Direitos do Usuário */}
+                <details className="group bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden transition-all duration-300 [&_summary::-webkit-details-marker]:hidden open:shadow-lg open:border-brand-blue/30">
+                    <summary className="flex items-center justify-between p-6 cursor-pointer select-none font-bold text-gray-900 dark:text-white outline-none">
+                        <div className="flex items-center gap-4">
+                            <span className="flex items-center justify-center w-10 h-10 rounded-full bg-brand-blue/10 text-brand-blue shrink-0 border border-brand-blue/20">
+                                <span className="material-symbols-outlined">gavel</span>
+                            </span>
+                            <span>Seus Direitos (LGPD) e Anonimização (CC BY 4.0)</span>
+                        </div>
+                        <span className="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform duration-300">
+                            expand_more
+                        </span>
+                    </summary>
+                    <div className="p-6 pt-0 text-gray-600 dark:text-gray-300 border-t border-gray-100 dark:border-white/5 leading-relaxed bg-gray-50/50 dark:bg-background-dark/20">
+                        <p className="mb-3">
+                            A Lei Geral de Proteção de Dados garante que você tem controle sobre sua vida digital. Oferecemos ferramentas para:
+                        </p>
+                        <ul className="list-disc pl-6 space-y-2 mb-4 font-medium">
+                            <li><strong>Portabilidade (Takeout):</strong> Você pode baixar um arquivo contendo todas as suas interações, postagens e curtidas.</li>
+                            <li><strong>Exclusão de Conta:</strong> Ao deletar sua conta, seus dados pessoais (nome, e-mail, biografia) e sociais (curtidas, quem você segue, histórico de leitura) são <strong>destruídos instantaneamente e permanentemente</strong>.</li>
+                        </ul>
+                        <p className="mb-3">
+                            <strong className="text-brand-yellow">Atenção ao Direito de Propriedade Intelectual:</strong> O conteúdo científico, artigos, dúvidas e submissões são publicados sob a licença de pesquisa aberta <strong>Creative Commons (CC BY 4.0)</strong>. Portanto, ao excluir a conta, seu material acadêmico <strong>não é deletado, mas sim rigorosamente anonimizado</strong>. Um &quot;Usuário Fantasma&quot; assume a autoria para não quebrar a integridade das pesquisas da universidade.
+                        </p>
+                    </div>
+                </details>
+
+                {/* Rule 5: Marco Civil da Internet */}
+                <details className="group bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl overflow-hidden transition-all duration-300 [&_summary::-webkit-details-marker]:hidden open:shadow-lg open:border-brand-blue/30">
+                    <summary className="flex items-center justify-between p-6 cursor-pointer select-none font-bold text-gray-900 dark:text-white outline-none">
+                        <div className="flex items-center gap-4">
+                            <span className="flex items-center justify-center w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-500 shrink-0 border border-emerald-500/20">
+                                <span className="material-symbols-outlined">policy</span>
+                            </span>
+                            <span>Marco Civil da Internet (MCI)</span>
+                        </div>
+                        <span className="material-symbols-outlined text-gray-400 group-open:rotate-180 transition-transform duration-300">
+                            expand_more
+                        </span>
+                    </summary>
+                    <div className="p-6 pt-0 text-gray-600 dark:text-gray-300 border-t border-gray-100 dark:border-white/5 leading-relaxed bg-gray-50/50 dark:bg-background-dark/20">
+                        <p className="mb-3">
+                            Em obediência ao Artigo 15 do Marco Civil da Internet, somos legalmente obrigados a manter os <strong>Logs de Acesso</strong> de todos os usuários de forma segura, sigilosa e controlada.
+                        </p>
+                        <p>
+                            Isso significa que o seu Endereço IP, junto com a data, hora e fuso horário da conexão, ficam retidos por <strong>6 meses</strong> após o acesso. Estes dados técnicos são separados do seu perfil, não são usados para marketing e só podem ser acessados sob ordem judicial brasileira (para investigações de crimes cibernéticos). Mesmo que você exclua sua conta hoje, esses logs técnicos específicos permanecem isolados por 6 meses antes da destruição automática.
+                        </p>
+                    </div>
+                </details>
             </main>
 
             <footer className="mt-12 text-center border-t border-gray-200 dark:border-white/10 pt-8 pb-4">

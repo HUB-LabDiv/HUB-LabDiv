@@ -337,3 +337,91 @@ DROP POLICY IF EXISTS "Usuários podem ler suas próprias adoções" ON public.h
 CREATE POLICY "Usuários podem ler suas próprias adoções"
     ON public.hub_adoptions FOR SELECT
     USING (auth.uid() = user_id);
+
+-- ==============================================================================
+-- HUB LAB-DIV: SUPABASE SQL MIGRATION (GOD-SQL-MK8 - LGPD ADEQUATION)
+-- ==============================================================================
+
+CREATE OR REPLACE FUNCTION public.soft_delete_user(target_user_id UUID)
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+DECLARE
+    GHOST_UUID UUID := '00000000-0000-0000-0000-000000000000';
+    user_email TEXT;
+BEGIN
+    SELECT email INTO user_email FROM auth.users WHERE id = target_user_id;
+
+    -- [A] Anonimizar Conteúdo Acadêmico/Científico (Licença CC)
+    UPDATE public.submissions SET user_id = GHOST_UUID WHERE user_id = target_user_id;
+    UPDATE public.micro_articles SET author_id = GHOST_UUID WHERE author_id = target_user_id;
+    UPDATE public.comments SET user_id = GHOST_UUID WHERE user_id = target_user_id;
+    UPDATE public.reproductions SET user_id = GHOST_UUID WHERE user_id = target_user_id;
+    UPDATE public.testimonials SET user_id = GHOST_UUID WHERE user_id = target_user_id;
+    UPDATE public.corrections SET user_id = GHOST_UUID WHERE user_id = target_user_id;
+    UPDATE public.admin_notifications SET sender_id = GHOST_UUID WHERE sender_id = target_user_id;
+    UPDATE public.knowledge_suggestions SET user_id = GHOST_UUID WHERE user_id = target_user_id;
+    UPDATE public.arena_suggestions SET researcher_id = GHOST_UUID WHERE researcher_id = target_user_id;
+    UPDATE public.researcher_challenges SET creator_id = GHOST_UUID WHERE creator_id = target_user_id;
+    UPDATE public.group_messages SET sender_id = GHOST_UUID WHERE sender_id = target_user_id;
+    UPDATE public.wiki_articles SET author_id = GHOST_UUID WHERE author_id = target_user_id;
+    UPDATE public.dicas_veteranos SET autor_id = GHOST_UUID WHERE autor_id = target_user_id;
+
+    -- [B] Limpar Interações, Dados Sociais e Pessoais (Delete PII)
+    DELETE FROM public.follows WHERE follower_id = target_user_id OR following_id = target_user_id;
+    DELETE FROM public.saved_posts WHERE user_id = target_user_id;
+    DELETE FROM public.curtidas WHERE user_id = target_user_id;
+    DELETE FROM public.notifications WHERE user_id = target_user_id;
+    DELETE FROM public.messages WHERE sender_id = target_user_id OR recipient_id = target_user_id;
+    DELETE FROM public.entanglement_messages WHERE sender_id = target_user_id OR receiver_id = target_user_id;
+    DELETE FROM public.reading_history WHERE user_id = target_user_id;
+    DELETE FROM public.user_trail_progress WHERE user_id = target_user_id;
+    DELETE FROM public.parent_child_links WHERE parent_id = target_user_id OR child_id = target_user_id;
+    DELETE FROM public.user_badges WHERE user_id = target_user_id;
+    DELETE FROM public.profile_badges WHERE profile_id = target_user_id;
+    DELETE FROM public.parental_consent_tokens WHERE child_id = target_user_id;
+    DELETE FROM public.private_notes WHERE user_id = target_user_id;
+    DELETE FROM public.kudos WHERE sender_id = target_user_id OR receiver_id = target_user_id;
+    DELETE FROM public.reactions WHERE user_id = target_user_id;
+    DELETE FROM public.user_completed_trails WHERE user_id = target_user_id;
+    DELETE FROM public.entangled_group_members WHERE user_id = target_user_id;
+    DELETE FROM public.user_custom_blocks WHERE user_id = target_user_id;
+    DELETE FROM public.user_calendar_events WHERE user_id = target_user_id;
+    DELETE FROM public.research_adoptions WHERE researcher_id = target_user_id OR student_id = target_user_id;
+    DELETE FROM public.adoptions WHERE mentor_id = target_user_id OR freshman_id = target_user_id;
+    DELETE FROM public.profiles_xp_history WHERE profile_id = target_user_id;
+    DELETE FROM public.map_interactions WHERE user_id = target_user_id;
+    DELETE FROM public.telemetry_events WHERE user_id = target_user_id;
+    DELETE FROM public.pseudonyms WHERE user_id = target_user_id;
+    DELETE FROM public.hub_adoptions WHERE user_id = target_user_id;
+    DELETE FROM public.analytics_plays WHERE user_id = target_user_id;
+    
+    IF user_email IS NOT NULL THEN
+        DELETE FROM public.perguntas WHERE email = user_email;
+    END IF;
+
+    -- [C] Wipe no Perfil Público
+    UPDATE public.profiles SET
+        full_name = '[Usuário Excluído]',
+        username = 'excluido_' || substr(target_user_id::text, 1, 8),
+        email = NULL,
+        avatar_url = NULL,
+        bio = NULL,
+        bio_draft = NULL,
+        whatsapp = NULL,
+        lattes_url = NULL,
+        linkedin_url = NULL,
+        github_url = NULL,
+        cpf_hash = NULL,
+        is_visible = false,
+        is_public = false,
+        jupiter_subjects_cache = '[]'::jsonb
+    WHERE id = target_user_id;
+
+    -- [D] Remover Registro de Autenticação (Profiles será deletado em cascade se configurado, senão deleta manualmente)
+    DELETE FROM auth.users WHERE id = target_user_id;
+END;
+$$;
+
+ALTER FUNCTION public.soft_delete_user(uuid) SET search_path = public;

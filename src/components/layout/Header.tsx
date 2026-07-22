@@ -145,7 +145,7 @@ export function Header() {
                             {[
                                 { label: 'Comunidade', href: '/', color: '#F14343' },
                                 { label: 'GCIF', href: '/gcif', color: '#1F9FCF' },
-                                { label: 'LabDiv', href: '/labdiv', color: '#FFCC00' },
+                                { label: 'Sobre', href: '/labdiv', color: '#FFCC00' },
                                 { label: 'Ferramentas', href: '/ferramentas', color: '#F14343' },
                                 { label: 'Interações', href: '/interacao', color: '#1F9FCF' },
                             ].map((tab) => {

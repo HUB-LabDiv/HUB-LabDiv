@@ -40,7 +40,13 @@ export async function exportUserData() {
     follows,
     followers,
     likes,
-    saved
+    saved,
+    dicasVeteranos,
+    wikiArticles,
+    hubAdoptions,
+    reproductions,
+    readingHistory,
+    entanglementMessages
   ] = await Promise.all([
     supabase.from('profiles').select('*').eq('id', userId).single(),
     supabase.from('submissions').select('*').eq('user_id', userId),
@@ -51,6 +57,12 @@ export async function exportUserData() {
     supabase.from('follows').select('*').eq('following_id', userId),
     supabase.from('curtidas').select('*').eq('user_id', userId),
     supabase.from('saved_posts').select('*').eq('user_id', userId),
+    supabase.from('dicas_veteranos').select('*').eq('autor_id', userId),
+    supabase.from('wiki_articles').select('*').eq('author_id', userId),
+    supabase.from('hub_adoptions').select('*').eq('user_id', userId),
+    supabase.from('reproductions').select('*').eq('user_id', userId),
+    supabase.from('reading_history').select('*').eq('user_id', userId),
+    supabase.from('entanglement_messages').select('*').eq('sender_id', userId)
   ]);
 
   const exportData = {
@@ -66,12 +78,20 @@ export async function exportUserData() {
       articles: articles.data || [],
       comments: comments.data || [],
       questions: questions.data || [],
+      dicas_veteranos: dicasVeteranos.data || [],
+      wiki_articles: wikiArticles.data || [],
+      hub_adoptions: hubAdoptions.data || [],
+      reproductions: reproductions.data || []
     },
     social: {
       following_count: follows.data?.length || 0,
       followers_count: followers.data?.length || 0,
       likes_given: likes.data || [],
       saved_items: saved.data || [],
+      entanglement_messages: entanglementMessages.data || []
+    },
+    history: {
+      reading_history: readingHistory.data || []
     }
   };
 
