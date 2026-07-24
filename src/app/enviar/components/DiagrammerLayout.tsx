@@ -119,7 +119,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
     const submissionMutation = useMutation({
         mutationFn: async (payload: any) => {
             const res = await createSubmission(payload);
-            if (res.error) throw new Error(typeof res.error === 'string' ? res.error : JSON.stringify(res.error));
+            if ((res as any)?.error) throw new Error(typeof (res as any).error === 'string' ? (res as any).error : JSON.stringify((res as any).error));
             return res;
         }
     });
@@ -127,7 +127,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
     const updateMutation = useMutation({
         mutationFn: async ({ id, payload }: { id: string, payload: any }) => {
             const res = await updateSubmission(id, payload);
-            if (res.error) throw new Error(typeof res.error === 'string' ? res.error : JSON.stringify(res.error));
+            if ((res as any)?.error) throw new Error(typeof (res as any).error === 'string' ? (res as any).error : JSON.stringify((res as any).error));
             return res;
         }
     });

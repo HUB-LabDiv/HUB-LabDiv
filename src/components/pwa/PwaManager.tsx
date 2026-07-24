@@ -40,6 +40,13 @@ export function PwaManager() {
         // Espera 5 segundos para não travar o carregamento inicial da UI
         const warmerTimer = setTimeout(() => {
             if (typeof window !== 'undefined' && 'caches' in window) {
+                // Checa se o usuário desativou ou restringiu o cache automático (Restrito ou Off)
+                const cacheMode = localStorage.getItem('hub_cache_mode') || (localStorage.getItem('hub_auto_cache_enabled') === 'false' ? 'off' : 'full');
+                if (cacheMode !== 'full') {
+                    console.log(`⚡ [Cache Warmer] Modo de cache [${cacheMode}]: pré-carregamento de páginas suspenso.`);
+                    return;
+                }
+
                 const rotasCriticas = [
                     '/timeline', 
                     '/lab-pessoal', 
@@ -88,7 +95,7 @@ export function PwaManager() {
         // Handle native online/offline events
         const handleOffline = () => {
             setIsOffline(true);
-            toast.error('Sem Internet. Você está offline.', {
+            toast.error('Sem internet. As interações das páginas em que você já navegou e interagiu serão salvas localmente.', {
                 id: 'offline-status',
                 duration: Infinity,
                 icon: '📵'

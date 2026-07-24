@@ -9,7 +9,7 @@
  */
 
 import { useState, useEffect } from 'react';
-import { HardDrive, Trash2, Database, AlertTriangle, Loader2 } from 'lucide-react';
+import { HardDrive, Trash2, Database, AlertTriangle, Loader2, Wifi, WifiOff, ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 
 interface CacheInfo {
@@ -17,11 +17,14 @@ interface CacheInfo {
     size?: number;
 }
 
+export type CacheMode = 'full' | 'restricted' | 'off';
+
 export function CacheManager() {
     const [cachesList, setCachesList] = useState<CacheInfo[]>([]);
     const [storageUsage, setStorageUsage] = useState<number | null>(null);
     const [storageQuota, setStorageQuota] = useState<number | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [cacheMode, setCacheMode] = useState<CacheMode>('full');
 
     const loadCacheData = async () => {
         setIsLoading(true);
@@ -36,10 +39,37 @@ export function CacheManager() {
                 const cacheNames = await caches.keys();
                 setCachesList(cacheNames.map(name => ({ name })));
             }
+
+            if (typeof window !== 'undefined') {
+                const savedMode = localStorage.getItem('hub_cache_mode') as CacheMode | null;
+                if (savedMode && ['full', 'restricted', 'off'].includes(savedMode)) {
+                    setCacheMode(savedMode);
+                } else {
+                    const legacyAuto = localStorage.getItem('hub_auto_cache_enabled');
+                    setCacheMode(legacyAuto === 'false' ? 'off' : 'full');
+                }
+            }
         } catch (error) {
             console.error('Error loading cache data:', error);
         } finally {
             setIsLoading(false);
+        }
+    };
+
+    const handleSelectMode = async (mode: CacheMode) => {
+        setCacheMode(mode);
+        if (typeof window !== 'undefined') {
+            localStorage.setItem('hub_cache_mode', mode);
+            localStorage.setItem('hub_auto_cache_enabled', mode === 'full' ? 'true' : 'false');
+        }
+
+        if (mode === 'restricted') {
+            await handleClearAllButAuth();
+            toast.success('Modo Restrito ativado! Caches de mídias e páginas limpos, apenas logins e rascunhos mantidos.');
+        } else if (mode === 'full') {
+            toast.success('Modo Offline-First Total ativado!');
+        } else {
+            toast('Cache automático desativado.', { icon: '📵' });
         }
     };
 
@@ -71,13 +101,12 @@ export function CacheManager() {
             if ('caches' in window) {
                 const cacheNames = await caches.keys();
                 for (const name of cacheNames) {
-                    // Evitar deletar caches de sessão ou auth, se existirem
+                    // Preserva os dados essenciais mantendo a autenticação e sessão intactas
                     if (!name.toLowerCase().includes('auth') && !name.toLowerCase().includes('session')) {
                         await caches.delete(name);
                     }
                 }
             }
-            toast.success('Caches de mídia e offline limpos, autenticação mantida.');
             loadCacheData();
         } catch (error) {
             toast.error('Erro ao limpar caches.');
@@ -94,6 +123,87 @@ export function CacheManager() {
 
     return (
         <div className="space-y-6">
+            {/* Seletor de Modo de Cache & Privacidade de Armazenamento */}
+            <div className="bg-[#1E1E1E] border border-white/5 rounded-2xl p-6 transition-all space-y-4">
+                <div className="flex items-center gap-3 mb-2">
+                    <div className="w-10 h-10 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue">
+                        <Database className="w-5 h-5" />
+                    </div>
+                    <div>
+                        <h2 className="text-xl font-bold text-white">Política de Cache & Offline-First</h2>
+                        <p className="text-xs text-gray-400">Escolha o nível de armazenamento local que deseja permitir neste dispositivo.</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    {/* Opção 1: Full */}
+                    <div
+                        onClick={() => handleSelectMode('full')}
+                        className={`cursor-pointer rounded-xl p-4 border transition-all flex flex-col justify-between ${
+                            cacheMode === 'full' 
+                                ? 'bg-brand-blue/10 border-brand-blue text-white shadow-lg shadow-brand-blue/10' 
+                                : 'bg-white/5 border-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <span className="font-bold text-sm flex items-center gap-2">
+                                    <Wifi className="w-4 h-4 text-brand-blue" /> Offline-First Total
+                                </span>
+                                {cacheMode === 'full' && <CheckCircle2 className="w-4 h-4 text-brand-blue" />}
+                            </div>
+                            <p className="text-xs leading-relaxed text-gray-400">
+                                Salva automaticamente páginas navegadas, mídias, login e rascunhos para uso contínuo sem internet.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Opção 2: Restricted (Apenas Login & Rascunhos) */}
+                    <div
+                        onClick={() => handleSelectMode('restricted')}
+                        className={`cursor-pointer rounded-xl p-4 border transition-all flex flex-col justify-between ${
+                            cacheMode === 'restricted' 
+                                ? 'bg-brand-yellow/10 border-brand-yellow text-white shadow-lg shadow-brand-yellow/10' 
+                                : 'bg-white/5 border-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <span className="font-bold text-sm flex items-center gap-2 text-brand-yellow">
+                                    <ShieldCheck className="w-4 h-4" /> Restrito (Login & Rascunhos)
+                                </span>
+                                {cacheMode === 'restricted' && <CheckCircle2 className="w-4 h-4 text-brand-yellow" />}
+                            </div>
+                            <p className="text-xs leading-relaxed text-gray-400">
+                                Desativa o cache de páginas e mídias. Mantém estritamente sua **sessão de login** e **rascunhos salvos**.
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Opção 3: Off */}
+                    <div
+                        onClick={() => handleSelectMode('off')}
+                        className={`cursor-pointer rounded-xl p-4 border transition-all flex flex-col justify-between ${
+                            cacheMode === 'off' 
+                                ? 'bg-brand-red/10 border-brand-red text-white shadow-lg shadow-brand-red/10' 
+                                : 'bg-white/5 border-white/5 text-gray-400 hover:bg-white/10 hover:text-white'
+                        }`}
+                    >
+                        <div className="space-y-2">
+                            <div className="flex items-center justify-between">
+                                <span className="font-bold text-sm flex items-center gap-2 text-gray-300">
+                                    <WifiOff className="w-4 h-4" /> Desativado
+                                </span>
+                                {cacheMode === 'off' && <CheckCircle2 className="w-4 h-4 text-brand-red" />}
+                            </div>
+                            <p className="text-xs leading-relaxed text-gray-400">
+                                Nenhum pré-carregamento de páginas em segundo plano. Economiza todo o espaço local.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div className="bg-[#1E1E1E] border border-white/5 rounded-2xl p-6">
                 <div className="flex items-center gap-4 mb-6">
                     <div className="w-12 h-12 rounded-full bg-brand-blue/10 flex items-center justify-center">

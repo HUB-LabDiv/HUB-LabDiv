@@ -26,15 +26,26 @@ export function ClientPwaManager() {
     const [mounted, setMounted] = useState(false);
     useEffect(() => {
         setMounted(true);
-        // Antigravity: Dispara a inicialização e warm-up do IndexedDB local
-        warmUpOfflineDatabase();
+        const cacheMode = typeof localStorage !== 'undefined' ? (localStorage.getItem('hub_cache_mode') || 'full') : 'full';
+        
+        // Warmup do banco local se não estiver desativado totalmente
+        if (cacheMode !== 'off') {
+            warmUpOfflineDatabase();
+        }
         if (navigator.onLine) {
             flushDurableQueue();
         }
         
         // Antigravity: Aviso Global de Queda de Conexão
         const handleOffline = () => {
-            toast.error('Sem internet. Não se preocupe, suas interações serão salvas localmente e enviadas automaticamente depois.', {
+            let message = 'Sem internet. As interações das páginas que você já acessou/interagiu serão salvas localmente e enviadas quando a conexão voltar.';
+            if (cacheMode === 'restricted') {
+                message = 'Sem internet. O cache de páginas está no modo Restrito: sua sessão de login e rascunhos continuam salvos localmente.';
+            } else if (cacheMode === 'off') {
+                message = 'Sem internet. O cache automático em segundo plano está desativado.';
+            }
+
+            toast.error(message, {
                 icon: '📡',
                 duration: 6000,
                 style: {

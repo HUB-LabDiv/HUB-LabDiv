@@ -83,12 +83,12 @@
 :root {
   color-scheme: light dark;
   --background: #F8FAFC; /* Fundo levemente cinza no claro para destacar os cards brancos */
-  --text-halo: 0 0 4px #F8FAFC, 0 0 8px #F8FAFC, 0 0 16px #F8FAFC, 0 0 24px #F8FAFC, 0 0 32px #F8FAFC, 0 0 48px #F8FAFC;
+  --text-halo: 0 1px 3px rgba(248, 250, 252, 0.8);
 }
 
 .dark {
   --background: #09090B; /* Fundo mais escuro no dark para destacar os cards #1E1E1E */
-  --text-halo: 0 0 4px #09090B, 0 0 8px #09090B, 0 0 16px #09090B, 0 0 24px #09090B, 0 0 32px #09090B, 0 0 48px #09090B;
+  --text-halo: 0 1px 3px rgba(9, 9, 11, 0.9);
   /* Neutral Dark for Lab-Div Identity */
 }
 
