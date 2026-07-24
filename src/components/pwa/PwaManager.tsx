@@ -45,15 +45,36 @@ export function PwaManager() {
                     '/lab-pessoal', 
                     '/ferramentas/trilhas', 
                     '/arquivo',
+                    '/interacao',
                     '/offline'
                 ];
+                const rotasSecundarias = [
+                    '/',
+                    '/ferramentas',
+                    '/admin',
+                    '/admin/perguntas',
+                    '/admin/reports',
+                    '/admin/profiles',
+                    '/admin/drops',
+                    '/admin/cgif',
+                    '/admin/sac',
+                    '/gcif',
+                    '/drops',
+                    '/perguntas'
+                ];
                 
-                console.log('🔥 [Cache Warmer] Iniciando pré-carregamento silencioso...');
+                console.log('🔥 [Cache Warmer] Iniciando pré-carregamento VIP (Críticas)...');
                 rotasCriticas.forEach(rota => {
-                    // O Service Worker com Stale-While-Revalidate vai interceptar esse fetch
-                    // e salvar no cache automaticamente.
                     fetch(rota, { priority: 'low' }).catch(() => {}); 
                 });
+
+                // Espera mais 10s para carregar o resto sem travar a navegação inicial
+                setTimeout(() => {
+                    console.log('🔥 [Cache Warmer] Baixando rotas secundárias...');
+                    rotasSecundarias.forEach(rota => {
+                        fetch(rota, { priority: 'low' }).catch(() => {}); 
+                    });
+                }, 10000);
             }
         }, 5000);
 

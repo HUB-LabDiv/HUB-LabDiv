@@ -16,6 +16,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'react-hot-toast';
 import { toggleLike, toggleSave } from '@/app/actions/media';
+import { useMutation } from '@tanstack/react-query';
 
 interface UseMediaInteractionProps {
     id: string;
@@ -56,6 +57,58 @@ export function useMediaInteraction({ id, initialLikes, initialSaves, initialLik
         return true;
     }, [userId, router]);
 
+    const likeMutation = useMutation({
+        mutationFn: async () => {
+            const result = await toggleLike({ submission_id: id });
+            if (result.error) throw new Error(result.error);
+            return result;
+        },
+        onError: (err, variables, context: any) => {
+            if (context?.prevLiked !== undefined) {
+                setLiked(context.prevLiked);
+                setLikes(context.prevLikes);
+            }
+            if (navigator.onLine) toast.error(err.message || "Erro ao curtir");
+        },
+        onSuccess: (data, variables, context: any) => {
+            if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate([10]);
+            if (!context?.prevLiked && navigator.onLine) {
+                toast.success('Curtida sincronizada!', { icon: '❤️' });
+            }
+        },
+        onMutate: () => {
+            const prevLiked = liked;
+            const prevLikes = likes;
+            return { prevLiked, prevLikes };
+        }
+    });
+
+    const saveMutation = useMutation({
+        mutationFn: async () => {
+            const result = await toggleSave({ submission_id: id });
+            if (result.error) throw new Error(result.error);
+            return result;
+        },
+        onError: (err, variables, context: any) => {
+            if (context?.prevSaved !== undefined) {
+                setSaved(context.prevSaved);
+                setSaves(context.prevSaves);
+            }
+            if (navigator.onLine) toast.error(err.message || "Erro ao salvar");
+        },
+        onSuccess: (data, variables, context: any) => {
+            if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate([8]);
+            if (!context?.prevSaved && navigator.onLine) {
+                toast.success('Acervo atualizado!', { icon: '📂' });
+            }
+        },
+        onMutate: () => {
+            const prevSaved = saved;
+            const prevSaves = saves;
+            return { prevSaved, prevSaves };
+        }
+    });
+
     const handleLike = useCallback(async () => {
         if (!checkAuth()) return;
 
@@ -63,80 +116,38 @@ export function useMediaInteraction({ id, initialLikes, initialSaves, initialLik
         if (now - lastLikeClick.current < 1000) return;
         lastLikeClick.current = now;
 
-        if (isLiking) return;
+        if (likeMutation.isPending) return;
 
-        // Optimistic UI
+        // Optimistic UI imediata
         const prevLiked = liked;
         const prevLikes = likes;
         setLiked(!prevLiked);
         setLikes(prevLiked ? Math.max(0, prevLikes - 1) : prevLikes + 1);
 
-        setIsLiking(true);
-        if (setIsSyncing) setIsSyncing(true);
-        try {
-            const result = await toggleLike({ submission_id: id });
-            if (result.error) {
-                throw new Error(result.error);
-            }
-            // V8.0 Haptic Feedback (#200)
-            if (typeof navigator !== 'undefined' && navigator.vibrate) {
-                navigator.vibrate([10]);
-            }
-            if (!prevLiked) {
-                toast.success('Curtida sincronizada!', { icon: '❤️' });
-            }
-            // revalidatePath handles data sync
-        } catch (err: any) {
-            setLiked(prevLiked);
-            setLikes(prevLikes);
-            toast.error(err.message || "Erro ao curtir");
-        } finally {
-            setIsLiking(false);
-            if (setIsSyncing) setIsSyncing(false);
-        }
-    }, [id, liked, likes, isLiking, checkAuth]);
+        likeMutation.mutate();
+    }, [liked, likes, checkAuth, likeMutation]);
 
     const handleSave = useCallback(async () => {
         if (!checkAuth()) return;
 
-        if (isSaving) return;
+        if (saveMutation.isPending) return;
 
+        // Optimistic UI imediata
         const prevSaved = saved;
         const prevSaves = saves;
         setSaved(!prevSaved);
         setSaves(!prevSaved ? prevSaves + 1 : Math.max(0, prevSaves - 1));
 
-        setIsSaving(true);
-        if (setIsSyncing) setIsSyncing(true);
-        try {
-            const result = await toggleSave({ submission_id: id });
-            if (result.error) throw new Error(result.error);
-
-            // V8.0 Haptic Feedback (#200)
-            if (typeof navigator !== 'undefined' && navigator.vibrate) {
-                navigator.vibrate([8]);
-            }
-
-            if (!prevSaved) {
-                toast.success('Acervo atualizado!', { icon: '📂' });
-            }
-        } catch (err: any) {
-            setSaved(prevSaved);
-            setSaves(prevSaves);
-            toast.error(err.message || "Erro ao salvar");
-        } finally {
-            setIsSaving(false);
-            if (setIsSyncing) setIsSyncing(false);
-        }
-    }, [id, saved, saves, isSaving, checkAuth]);
+        saveMutation.mutate();
+    }, [saved, saves, checkAuth, saveMutation]);
 
     return {
         likes,
         liked,
         saves,
         saved,
-        isLiking,
-        isSaving,
+        isLiking: likeMutation.isPending,
+        isSaving: saveMutation.isPending,
         handleLike,
         handleSave
     };

@@ -169,7 +169,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                         <h1 className="text-4xl md:text-7xl font-black italic uppercase tracking-tighter mb-4">
                             Grande <span className="text-brand-blue">Colisor</span> do IF (GCIF)
                         </h1>
-                        <p className="text-gray-500 max-w-2xl text-lg font-medium leading-relaxed">
+                        <p className="text-gray-500 max-w-2xl text-lg font-medium leading-relaxed [text-shadow:var(--text-halo)]">
                             O hub unificado de conhecimento, iniciativas e oportunidades da Física USP. Onde a radiação da criatividade encontra a precisão da pesquisa.
                         </p>
                     </div>

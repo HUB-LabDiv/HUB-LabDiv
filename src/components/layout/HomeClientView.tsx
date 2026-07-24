@@ -494,7 +494,7 @@ export const HomeClientView = ({
                                         <Palette className="w-12 h-12" />
                                         ARTE
                                     </h1>
-                                    <p className="text-gray-400 font-medium text-sm border-l-2 border-brand-yellow pl-4 max-w-xl leading-relaxed">
+                                    <p className="text-gray-400 font-medium text-sm border-l-2 border-brand-yellow pl-4 max-w-xl leading-relaxed [text-shadow:var(--text-halo)]">
                                         Espaço dedicado à expressão artística, cultura e criatividade da comunidade da Física USP.
                                     </p>
                                 </div>
@@ -514,7 +514,7 @@ export const HomeClientView = ({
                                         <Zap className="w-12 h-12" />
                                         FLUXO
                                     </h1>
-                                    <p className="text-gray-400 font-medium text-sm border-l-2 border-brand-blue pl-4 max-w-xl leading-relaxed">
+                                    <p className="text-gray-400 font-medium text-sm border-l-2 border-brand-blue pl-4 max-w-xl leading-relaxed [text-shadow:var(--text-halo)]">
                                         Explore as contribuições, materiais e memórias compartilhadas pela comunidade do IFUSP.
                                     </p>
                                 </div>

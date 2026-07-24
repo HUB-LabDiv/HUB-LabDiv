@@ -16,6 +16,8 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { PergunteFeedbackCard } from './PergunteFeedbackCard';
+import { useMutation } from '@tanstack/react-query';
+import { toast } from 'react-hot-toast';
 
 interface Pergunta {
     id: string;
@@ -35,7 +37,6 @@ export default function PerguntasPage() {
     const [nome, setNome] = useState('');
     const [email, setEmail] = useState('');
     const [perguntaText, setPerguntaText] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [submitSuccess, setSubmitSuccess] = useState(false);
     const [submitError, setSubmitError] = useState('');
 
@@ -58,49 +59,65 @@ export default function PerguntasPage() {
         fetchPerguntas();
     }, []);
 
-    const handleSubmit = async () => {
-        setIsSubmitting(true);
-        setSubmitError('');
-
-        if (!nome.trim() || !email.trim() || !perguntaText.trim()) {
-            setSubmitError('Preencha todos os campos obrigatórios.');
-            setIsSubmitting(false);
-            return;
-        }
-
-        const { error } = await supabase.from('perguntas').insert([{
-            nome: nome.trim(),
-            email: email.trim(),
-            pergunta: perguntaText.trim(),
-            status: 'pendente',
-        }]);
-
-        if (error) {
-            setSubmitError('Erro ao enviar pergunta. Tente novamente.');
-            console.error(error);
-        } else {
-            // Send notification
+    const submitPergunta = useMutation({
+        mutationFn: async (novaPergunta: any) => {
+            const { error } = await supabase.from('perguntas').insert([novaPergunta]);
+            if (error) throw error;
+            
             fetch('/api/notify', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     type: 'question',
-                    userName: nome.trim(),
-                    question: perguntaText.trim()
+                    userName: novaPergunta.nome,
+                    question: novaPergunta.pergunta
                 })
             }).catch(() => { });
-
-            setSubmitSuccess(true);
-            setNome('');
-            setEmail('');
-            setPerguntaText('');
-            setTimeout(() => {
-                setShowModal(false);
-                setSubmitSuccess(false);
-            }, 2500);
+            
+            return true;
+        },
+        onSuccess: () => {
+            if (navigator.onLine) {
+                setSubmitSuccess(true);
+            }
+        },
+        onError: (err) => {
+            console.error('Falha de rede ou servidor:', err);
         }
-        setIsSubmitting(false);
+    });
+
+    const handleSubmit = async () => {
+        setSubmitError('');
+
+        if (!nome.trim() || !email.trim() || !perguntaText.trim()) {
+            setSubmitError('Preencha todos os campos obrigatórios.');
+            return;
+        }
+
+        submitPergunta.mutate({
+            nome: nome.trim(),
+            email: email.trim(),
+            pergunta: perguntaText.trim(),
+            status: 'pendente',
+        });
+
+        // UX Optimista para Offline-First: 
+        if (!navigator.onLine) {
+            toast('Sem internet! 📡 Mas não se preocupe, salvamos sua pergunta na fila e ela será enviada ao retornar.', { icon: '📦' });
+        }
+        
+        setSubmitSuccess(true);
+        setNome('');
+        setEmail('');
+        setPerguntaText('');
+        
+        setTimeout(() => {
+            setShowModal(false);
+            setSubmitSuccess(false);
+        }, 2500);
     };
+
+    const isSubmitting = submitPergunta.isPending;
 
     // Removed duplicate import for MainLayoutWrapper
 

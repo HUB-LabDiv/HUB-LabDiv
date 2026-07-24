@@ -17,6 +17,7 @@ import { useNavigationStore } from '@/store/useNavigationStore';
 import { X, AlertTriangle, ShieldCheck, Flag, Info, Loader2 } from 'lucide-react';
 import { submitContentReport } from '@/app/actions/reports';
 import { toast } from 'react-hot-toast';
+import { useMutation } from '@tanstack/react-query';
 
 const CATEGORIES = [
     { id: 'abuso', label: 'Abuso/Exploração Infantil', severity: 'gravissima' },
@@ -34,7 +35,6 @@ export function ContentReportModal() {
     const { isContentReportModalOpen, reportSubmissionId, closeContentReport } = useNavigationStore();
     const [selectedCategory, setSelectedCategory] = useState<string>('');
     const [reason, setReason] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
     
     const categoryInfo = CATEGORIES.find(c => c.id === selectedCategory);
     const isGravissima = categoryInfo?.severity === 'gravissima';
@@ -45,11 +45,29 @@ export function ContentReportModal() {
         if (!isContentReportModalOpen) {
             setSelectedCategory('');
             setReason('');
-            setIsSubmitting(false);
         }
     }, [isContentReportModalOpen]);
 
     if (!isContentReportModalOpen) return null;
+
+    const reportMutation = useMutation({
+        mutationFn: async (formData: FormData) => {
+            const res = await submitContentReport(formData);
+            if (!res.success) throw new Error(res.error || 'Erro ao enviar denúncia.');
+            return res;
+        },
+        onSuccess: () => {
+            if (navigator.onLine) {
+                toast.success('Denúncia enviada com sucesso. Obrigado por colaborar!');
+            }
+            closeContentReport();
+        },
+        onError: (err) => {
+            if (navigator.onLine) {
+                toast.error(err.message || 'Falha ao enviar denúncia.');
+            }
+        }
+    });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -58,27 +76,20 @@ export function ContentReportModal() {
             return;
         }
 
-        setIsSubmitting(true);
         const formData = new FormData();
         formData.append('submission_id', reportSubmissionId || '');
         formData.append('category', selectedCategory);
         formData.append('reason', reason);
         formData.append('url', typeof window !== 'undefined' ? window.location.href : '');
 
-        try {
-            const res = await submitContentReport(formData);
-            if (res.success) {
-                toast.success('Denúncia enviada com sucesso. Obrigado por colaborar!');
-                closeContentReport();
-            } else {
-                toast.error(res.error || 'Erro ao enviar denúncia.');
-            }
-        } catch (err) {
-            toast.error('Falha na comunicação com o servidor.');
-        } finally {
-            setIsSubmitting(false);
+        reportMutation.mutate(formData);
+
+        if (!navigator.onLine) {
+            closeContentReport();
         }
     };
+    
+    const isSubmitting = reportMutation.isPending;
 
     return (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-background-dark/80 backdrop-blur-md animate-in fade-in duration-300">

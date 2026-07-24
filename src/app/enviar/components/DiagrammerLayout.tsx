@@ -24,6 +24,7 @@ import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { TargetProfileModal } from './TargetProfileModal';
 import { updateSubmission } from '@/app/actions/submissions';
+import { useMutation } from '@tanstack/react-query';
 import { DraftsMenu } from './DraftsMenu';
 import { useDraftsStore } from '@/store/useDraftsStore';
 import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
@@ -114,6 +115,22 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
     const { user } = useAuth();
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = React.useState(false);
+
+    const submissionMutation = useMutation({
+        mutationFn: async (payload: any) => {
+            const res = await createSubmission(payload);
+            if (res.error) throw new Error(typeof res.error === 'string' ? res.error : JSON.stringify(res.error));
+            return res;
+        }
+    });
+
+    const updateMutation = useMutation({
+        mutationFn: async ({ id, payload }: { id: string, payload: any }) => {
+            const res = await updateSubmission(id, payload);
+            if (res.error) throw new Error(typeof res.error === 'string' ? res.error : JSON.stringify(res.error));
+            return res;
+        }
+    });
 
     const handlePublish = async () => {
         if (!title.trim()) {
@@ -208,17 +225,28 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 quiz: quizBlock ? [quizBlock.content] : undefined,
             };
 
-            const res = await createSubmission(payload as any);
-
-            if (res.error) {
-                console.error(res.error);
-                toast.error('Erro ao lançar conteúdo: Verifique os campos.', { id: toastId });
-            } else {
-                toast.success('Conteúdo enviado com sucesso! Está no painel para análise.', { id: toastId });
-                usePendingUploadsStore.getState().clearPendingFiles();
-                useSubmissionStore.getState().reset();
-                router.push('/');
-            }
+            submissionMutation.mutate(payload as any, {
+                onSuccess: () => {
+                    if (navigator.onLine) {
+                        toast.success('Conteúdo enviado com sucesso! Está no painel para análise.', { id: toastId });
+                    }
+                    usePendingUploadsStore.getState().clearPendingFiles();
+                    useSubmissionStore.getState().reset();
+                    router.push('/');
+                },
+                onError: () => {
+                    if (navigator.onLine) {
+                        toast.error('Erro ao lançar conteúdo: Verifique os campos.', { id: toastId });
+                    } else {
+                        // Offline flow success (queued)
+                        usePendingUploadsStore.getState().clearPendingFiles();
+                        useSubmissionStore.getState().reset();
+                        toast.dismiss(toastId);
+                        router.push('/');
+                    }
+                }
+            });
+            
         } catch (error) {
             console.error(error);
             toast.error('Erro inesperado ao lançar conteúdo.', { id: toastId });
@@ -293,17 +321,26 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 needs_moderation_help: true,
             };
 
-            const res = await createSubmission(payload as any);
-
-            if (res.error) {
-                console.error(res.error);
-                toast.error('Erro ao enviar ideia / material base.', { id: toastId });
-            } else {
-                toast.success('Ideia enviada com sucesso! A moderação montará o post.', { id: toastId });
-                usePendingUploadsStore.getState().clearPendingFiles();
-                useSubmissionStore.getState().reset();
-                router.push('/');
-            }
+            submissionMutation.mutate(payload as any, {
+                onSuccess: () => {
+                    if (navigator.onLine) {
+                        toast.success('Ideia enviada com sucesso! A moderação montará o post.', { id: toastId });
+                    }
+                    usePendingUploadsStore.getState().clearPendingFiles();
+                    useSubmissionStore.getState().reset();
+                    router.push('/');
+                },
+                onError: () => {
+                    if (navigator.onLine) {
+                        toast.error('Erro ao enviar ideia / material base.', { id: toastId });
+                    } else {
+                        usePendingUploadsStore.getState().clearPendingFiles();
+                        useSubmissionStore.getState().reset();
+                        toast.dismiss(toastId);
+                        router.push('/');
+                    }
+                }
+            });
         } catch (error) {
             console.error(error);
             toast.error('Erro inesperado ao enviar.', { id: toastId });
@@ -389,17 +426,26 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 quiz: quizBlock ? [quizBlock.content] : undefined,
             };
 
-            const res = await updateSubmission(editId, payload);
-
-            if (res.error) {
-                console.error(res.error);
-                toast.error('Erro ao atualizar conteúdo.', { id: toastId });
-            } else {
-                toast.success('Conteúdo atualizado com sucesso!', { id: toastId });
-                usePendingUploadsStore.getState().clearPendingFiles();
-                useSubmissionStore.getState().reset();
-                router.push(`/arquivo/${editId}`);
-            }
+            updateMutation.mutate({ id: editId, payload }, {
+                onSuccess: () => {
+                    if (navigator.onLine) {
+                        toast.success('Conteúdo atualizado com sucesso!', { id: toastId });
+                    }
+                    usePendingUploadsStore.getState().clearPendingFiles();
+                    useSubmissionStore.getState().reset();
+                    router.push(`/arquivo/${editId}`);
+                },
+                onError: () => {
+                    if (navigator.onLine) {
+                        toast.error('Erro ao atualizar conteúdo.', { id: toastId });
+                    } else {
+                        usePendingUploadsStore.getState().clearPendingFiles();
+                        useSubmissionStore.getState().reset();
+                        toast.dismiss(toastId);
+                        router.push(`/arquivo/${editId}`);
+                    }
+                }
+            });
         } catch (error) {
             console.error(error);
             toast.error('Erro inesperado ao atualizar conteúdo.', { id: toastId });

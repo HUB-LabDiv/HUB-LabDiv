@@ -29,12 +29,20 @@ export default function OfflinePage() {
                 Verifique sua conexão ou tente novamente.
             </p>
 
-            <Link
-                href="/"
-                className="px-8 py-4 bg-brand-blue hover:bg-brand-darkBlue text-white font-bold rounded-2xl transition-all shadow-xl shadow-brand-blue/20"
-            >
-                Tentar reconectar
-            </Link>
+            <div className="flex flex-col sm:flex-row gap-4">
+                <Link
+                    href="/"
+                    className="px-8 py-4 bg-brand-blue hover:bg-brand-darkBlue text-white font-bold rounded-2xl transition-all shadow-xl shadow-brand-blue/20"
+                >
+                    Tentar reconectar
+                </Link>
+                <Link
+                    href="/"
+                    className="px-8 py-4 bg-white/10 hover:bg-white/20 text-white font-bold rounded-2xl transition-all border border-white/10"
+                >
+                    Voltar ao Início
+                </Link>
+            </div>
 
             <p className="mt-12 text-[10px] uppercase font-black tracking-widest text-gray-400 text-brand-blue/40">
                 Lab-Div Offline Resilience V3.0

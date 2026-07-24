@@ -52,6 +52,7 @@ import { TelemetryManager } from "@/components/telemetry/TelemetryManager";
 import { CookieBanner } from "@/components/shared/CookieBanner";
 import { RouteFocusManager } from "@/components/shared/RouteFocusManager";
 import { VLibrasWidget } from "@/components/ui/VLibrasWidget";
+import { QueryProvider } from "@/providers/QueryProvider";
 
 /**
  * V4.0.0 Layout - Protocol Apocalypse Certified
@@ -153,9 +154,10 @@ export default async function RootLayout({
         suppressHydrationWarning
       >
         <LazyMotion features={domAnimation}>
-          <AuthProvider>
-            <ReadingExperienceProvider>
-              <SearchProvider>
+          <QueryProvider>
+            <AuthProvider>
+              <ReadingExperienceProvider>
+                <SearchProvider>
                 <Toaster position="top-right" toastOptions={{
                   duration: 4000,
                   style: {
@@ -187,6 +189,7 @@ export default async function RootLayout({
               </SearchProvider>
             </ReadingExperienceProvider>
           </AuthProvider>
+          </QueryProvider>
         </LazyMotion>
       </body>
     </html>

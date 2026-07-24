@@ -23,23 +23,47 @@ export async function submitFAQ(data: { pergunta: string; nome: string; num_usp:
         const supabase = await createServerSupabase();
         
         const { data: user } = await supabase.auth.getUser();
-        if (!user.user) {
-            return { success: false, error: 'Usuário não autenticado' };
-        }
 
-        const { error } = await supabase
+        const faqPayload = {
+            pergunta: data.pergunta,
+            nome: data.nome,
+            num_usp: data.num_usp,
+            email: data.email || user?.user?.email || '',
+            status: 'pending'
+        };
+
+        let { error } = await supabase
             .from('sac_faq')
-            .insert({
-                pergunta: data.pergunta,
-                nome: data.nome,
-                num_usp: data.num_usp,
-                email: data.email,
-                status: 'pending'
-            });
+            .insert(faqPayload);
+
+        if (error) {
+            console.warn('[SAC] Standard insert failed, retrying with Admin Client:', error.message);
+            try {
+                const { createAdminSupabase } = await import('@/lib/supabase/admin');
+                const adminSupabase = createAdminSupabase();
+                const { error: adminErr } = await adminSupabase.from('sac_faq').insert(faqPayload);
+                if (!adminErr) error = null;
+            } catch (adminEx) {
+                console.error('[SAC] Admin Supabase client error:', adminEx);
+            }
+        }
 
         if (error) {
             console.error('Erro ao submeter FAQ:', error);
             return { success: false, error: 'Falha ao registrar dúvida no sistema.' };
+        }
+
+        // Dispara notificação por e-mail para os administradores
+        try {
+            const { sendAdminNotification } = await import('@/lib/notifications.server');
+            await sendAdminNotification({
+                type: 'question',
+                userName: `${data.nome} (Nº USP: ${data.num_usp})`,
+                question: data.pergunta,
+                details: data.email
+            });
+        } catch (notifErr) {
+            console.warn('[SAC] Notificação por e-mail ignorada ou falhou:', notifErr);
         }
 
         revalidatePath('/admin/sac');

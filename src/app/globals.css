@@ -103,7 +103,6 @@ body {
   position: relative;
   z-index: 0;
   background-color: var(--background);
-  text-shadow: var(--text-halo);
   scrollbar-color: auto var(--background);
   scroll-behavior: smooth;
   overscroll-behavior-y: none;

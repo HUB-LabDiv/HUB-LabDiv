@@ -168,7 +168,7 @@ export function LogsView() {
                     <FilePenLine className="w-12 h-12" />
                     Logs
                 </h1>
-                <p className="text-gray-400 font-medium text-sm border-l-2 border-brand-red pl-4 max-w-xl leading-relaxed">
+                <p className="text-gray-400 font-medium text-sm border-l-2 border-brand-red pl-4 max-w-xl leading-relaxed [text-shadow:var(--text-halo)]">
                     Microatualizações rápidas, descobertas recentes e notícias de bastidores transmitidas em tempo real pelos pesquisadores e estudantes do IFUSP.
                 </p>
             </div>

@@ -19,15 +19,16 @@ import {
     X,
     Camera,
     Send,
-    MessageSquare,
+    CheckCircle2,
     MessageCircle,
     Mail,
-    CheckCircle2,
     Loader2
 } from 'lucide-react';
 import { submitFeedback } from '@/app/actions/feedback';
+import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { useNavigationStore } from '@/store/useNavigationStore';
+import { offlineCrud } from '@/lib/offline-sync';
 
 interface ReportModalProps {
     isOpen: boolean;
@@ -37,7 +38,6 @@ interface ReportModalProps {
 export function ReportModal({ isOpen, onClose }: ReportModalProps) {
     const { reportType } = useNavigationStore();
     const [step, setStep] = useState<'form' | 'success'>('form');
-    const [isSubmitting, setIsSubmitting] = useState(false);
     const [description, setDescription] = useState('');
     const [type, setType] = useState('bug');
     const [screenshot, setScreenshot] = useState<File | null>(null);
@@ -64,6 +64,43 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
         }
     };
 
+    const reportMutation = useMutation({
+        mutationFn: async (payload: { type: string; description: string; user_agent?: string; url?: string }) => {
+            try {
+                const result = await submitFeedback(payload);
+                if (!result.success) throw new Error('Erro ao enviar report.');
+                return result;
+            } catch (err: any) {
+                if (!navigator.onLine || err.message === 'Failed to fetch' || err.message.includes('Network') || err.message.includes('fetch')) {
+                    await offlineCrud.enqueueMutation({
+                        endpoint: '/api/sync',
+                        method: 'POST',
+                        payload
+                    });
+                    return { success: true, offline: true };
+                }
+                throw err;
+            }
+        },
+        onSuccess: (data: any) => {
+            if (data?.offline) {
+                toast.success('Report salvo na fila local! Será enviado quando houver rede.');
+                onClose();
+            } else {
+                setStep('success');
+                toast.success('Report enviado com sucesso!');
+            }
+        },
+        onError: () => {
+            if (navigator.onLine) {
+                toast.error('Erro ao enviar report. Tente novamente.');
+            } else {
+                toast.success('Report salvo na fila local! Será enviado quando houver rede.');
+                onClose();
+            }
+        }
+    });
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!description) {
@@ -71,28 +108,17 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
             return;
         }
 
-        setIsSubmitting(true);
-        const formData = new FormData();
-        formData.append('type', type);
-        formData.append('description', description);
-        if (screenshot) formData.append('screenshot', screenshot);
-        formData.append('user_agent', navigator.userAgent);
-        formData.append('url', window.location.href);
+        const payload = {
+            type,
+            description,
+            user_agent: navigator.userAgent,
+            url: window.location.href
+        };
 
-        try {
-            const result = await submitFeedback(formData);
-            if (result.success) {
-                setStep('success');
-                toast.success('Report enviado com sucesso!');
-            } else {
-                toast.error('Erro ao enviar report. Tente novamente.');
-            }
-        } catch (error) {
-            toast.error('Erro de conexão.');
-        } finally {
-            setIsSubmitting(false);
-        }
+        reportMutation.mutate(payload);
     };
+    
+    const isSubmitting = reportMutation.isPending;
 
     return (
         <AnimatePresence>

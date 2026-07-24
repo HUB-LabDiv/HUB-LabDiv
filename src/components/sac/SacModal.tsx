@@ -16,6 +16,8 @@ import React, { useState } from 'react';
 import { X, Send, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { submitFAQ } from '@/app/actions/sac';
+import { useMutation } from '@tanstack/react-query';
+import { offlineCrud } from '@/lib/offline-sync';
 
 interface SacModalProps {
     isOpen: boolean;
@@ -26,9 +28,46 @@ export function SacModal({ isOpen, onClose }: SacModalProps) {
     const [pergunta, setPergunta] = useState('');
     const [nome, setNome] = useState('');
     const [numUsp, setNumUsp] = useState('');
-    const [isSubmitting, setIsSubmitting] = useState(false);
-
-    if (!isOpen) return null;
+    const sacMutation = useMutation({
+        mutationFn: async (payload: any) => {
+            try {
+                const res = await submitFAQ(payload);
+                if (!res.success) throw new Error(res.error || 'Erro ao enviar dúvida.');
+                return res;
+            } catch (err: any) {
+                if (!navigator.onLine || err.message === 'Failed to fetch' || err.message.includes('Network') || err.message.includes('fetch')) {
+                    await offlineCrud.enqueueMutation({
+                        endpoint: '/api/sync',
+                        method: 'POST',
+                        payload: payload
+                    });
+                    return { success: true, offline: true };
+                }
+                throw err;
+            }
+        },
+        onSuccess: (data: any, variables) => {
+            if (data?.offline) {
+                toast.success('Dúvida salva na fila local! Será enviada quando houver conexão.');
+            } else {
+                toast.success('Dúvida enviada com sucesso aos moderadores!');
+            }
+            setPergunta('');
+            setNome('');
+            setNumUsp('');
+            onClose();
+        },
+        onError: (err) => {
+            if (navigator.onLine) {
+                toast.error(err.message || 'Erro ao enviar dúvida.');
+            } else {
+                setPergunta('');
+                setNome('');
+                setNumUsp('');
+                onClose();
+            }
+        }
+    });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -38,38 +77,19 @@ export function SacModal({ isOpen, onClose }: SacModalProps) {
             return;
         }
 
-        setIsSubmitting(true);
-        
-        // Simulação do email do usuário logado (pode ser obtido globalmente, mas usaremos um fixo para simplificar)
-        // No contexto real, você pegaria o email do profile, mas aqui deixaremos opcional ou fixo caso falte
         const userEmail = ''; 
 
-        const res = await submitFAQ({
+        sacMutation.mutate({
             pergunta,
             nome,
             num_usp: numUsp,
             email: userEmail
         });
-
-        setIsSubmitting(false);
-
-        if (res.success) {
-            // Abre o cliente de e-mail do aluno
-            const subject = encodeURIComponent(`Dúvida SAC - ${nome}`);
-            const body = encodeURIComponent(
-                `Saudação,\n\n${pergunta}\n\nAtenciosamente,\n${nome}\nNº USP: ${numUsp}`
-            );
-            window.location.href = `mailto:salunosif@usp.br?subject=${subject}&body=${body}`;
-            
-            toast.success('Dúvida enviada com sucesso!');
-            setPergunta('');
-            setNome('');
-            setNumUsp('');
-            onClose();
-        } else {
-            toast.error(res.error || 'Erro ao enviar dúvida.');
-        }
     };
+    
+    const isSubmitting = sacMutation.isPending;
+
+    if (!isOpen) return null;
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -83,7 +103,7 @@ export function SacModal({ isOpen, onClose }: SacModalProps) {
                 </button>
                 
                 <h2 className="text-2xl font-black uppercase tracking-tighter text-white mb-2">Enviar Dúvida</h2>
-                <p className="text-sm text-gray-400 mb-6">Sua dúvida será enviada para a Seção de Alunos e poderá aparecer no nosso painel de dúvidas frequentes.</p>
+                <p className="text-sm text-gray-400 mb-6">Sua dúvida será enviada aos moderadores e a resposta ficará aqui. Se necessário, encaminharemos para a Seção de Alunos (por isso a necessidade do Nº USP).</p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
