@@ -26,6 +26,7 @@ type Tab = 'challenges' | 'suggestions' | 'match';
 import { MatchAcademicoTab } from '@/components/profile/MatchAcademicoTab';
 
 import { ArenaFeedbackCard } from './ArenaFeedbackCard';
+import { MatchFeedbackCard } from './MatchFeedbackCard';
 
 export default function ArenaClient({ profile }: { profile: any }) {
     const [activeTab, setActiveTab] = useState<Tab>('challenges');
@@ -342,8 +343,17 @@ export default function ArenaClient({ profile }: { profile: any }) {
                     )}
                     
                     {activeTab === 'match' && (
-                        <div className="animate-in fade-in duration-700">
-                             <MatchAcademicoTab profile={profile} />
+                        <div className="animate-in fade-in duration-700 space-y-8">
+                            <div className="max-w-4xl mx-auto w-full">
+                                <MatchFeedbackCard className="w-full" />
+                            </div>
+                            <header className="space-y-2 text-center md:text-left">
+                                <h2 className="text-3xl font-display font-black text-white uppercase tracking-tight">
+                                    Match <span className="text-brand-yellow">Acadêmico</span>
+                                </h2>
+                                <p className="text-gray-400 font-medium italic">Conecte-se com colegas, orientadores e oportunidades de pesquisa no IFUSP.</p>
+                            </header>
+                            <MatchAcademicoTab profile={profile} />
                         </div>
                     )}
                 </div>

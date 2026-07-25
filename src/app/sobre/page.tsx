@@ -14,8 +14,8 @@ import { SobreClient } from "./SobreClient";
 import { createServerSupabase } from "@/lib/supabase/server";
 
 export const metadata = {
-    title: 'LabDiv | Hub Lab-Div',
-    description: 'Conheça o Laboratório de Divulgação Científica do IFUSP e o projeto do Hub.',
+    title: 'Sobre | Hub LabDiv',
+    description: 'Conheça o Laboratório de Divulgação Científica do IFUSP e a proposta do Hub.',
 };
 
 export default async function SobrePage() {

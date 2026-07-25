@@ -62,7 +62,7 @@ export function ConstelacoesLinguisticas({ glossario }: ConstelacoesProps) {
                         <span className="material-symbols-outlined text-brand-yellow text-4xl">menu_book</span>
                         Glossário Hub
                     </h3>
-                    <p className="text-gray-400 mt-2 max-w-xl text-sm">
+                    <p className="text-gray-400 mt-2 max-w-xl text-sm [text-shadow:var(--text-halo-strong)]">
                         Explore nosso dicionário vivo e descubra as traduções que conectam o saber acadêmico com a linguagem das ruas, da internet e da arte.
                     </p>
                 </div>

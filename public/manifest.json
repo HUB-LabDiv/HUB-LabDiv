@@ -1,5 +1,5 @@
 {
-    "name": "Hub de Comunicação Científica do Lab-Div",
+    "name": "Hub de Comunicação Científica do LabDiv",
     "short_name": "LabDiv Hub",
     "description": "O hub oficial de comunicação científica do Instituto de Física da USP",
     "start_url": "/",
@@ -8,17 +8,17 @@
     "theme_color": "#121212",
     "icons": [
         {
-            "src": "/android-chrome-192x192.png",
-            "sizes": "192x192",
-            "type": "image/png"
+            "src": "/icone-HUBLabDiv.svg",
+            "sizes": "512x512",
+            "type": "image/svg+xml"
         },
         {
-            "src": "/android-chrome-512x512.png",
+            "src": "/icone-HUBLabDiv.png",
             "sizes": "512x512",
             "type": "image/png"
         },
         {
-            "src": "/android-chrome-512x512.png",
+            "src": "/icone-HUBLabDiv-white.png",
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable"

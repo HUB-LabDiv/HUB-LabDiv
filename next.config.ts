@@ -43,6 +43,7 @@ const nextConfig: NextConfig = {
       { source: '/dms', destination: '/emaranhamento', permanent: true },
       { source: '/timeline', destination: '/fluxo', permanent: true },
       { source: '/guia', destination: '/manual', permanent: true },
+      { source: '/labdiv', destination: '/sobre', permanent: true },
     ];
   },
   async headers() {

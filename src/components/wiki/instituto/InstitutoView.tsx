@@ -36,7 +36,7 @@ export function InstitutoView({ mapItems }: InstitutoViewProps) {
                     <h2 className="text-3xl font-black text-gray-900 dark:text-white uppercase italic tracking-tighter">
                         Campus <span className="text-brand-blue">Interativo</span>
                     </h2>
-                    <p className="text-gray-400 font-medium max-w-2xl">
+                    <p className="text-gray-400 font-medium max-w-2xl [text-shadow:var(--text-halo-strong)]">
                         Navegue pelas descobertas e registros através da geografia do Instituto. 
                         Localize laboratórios, eventos e marcos históricos.
                     </p>

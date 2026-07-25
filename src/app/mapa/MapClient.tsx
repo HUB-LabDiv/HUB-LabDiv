@@ -35,7 +35,7 @@ export default function MapClient({ initialItems }: { initialItems: MediaCardPro
                     <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-brand-red mb-4">
                         Campus Interativo
                     </h1>
-                    <p className="text-gray-500 dark:text-gray-400 font-medium">
+                    <p className="text-gray-500 dark:text-gray-400 font-medium [text-shadow:var(--text-halo-strong)]">
                         Navegue pelas descobertas e registros através da geografia do Instituto.
                     </p>
                 </header>

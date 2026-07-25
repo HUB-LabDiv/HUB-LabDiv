@@ -11,11 +11,10 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-
 import { ContextFeedbackCard } from "@/components/ui/ContextFeedbackCard";
 import { useNavigationStore } from "@/store/useNavigationStore";
 
-export function FluxoFeedbackCard({ className }: { className?: string }) {
+export function EnviarFeedbackCard({ className }: { className?: string }) {
   const { setReportModalOpen } = useNavigationStore();
 
   const handleFeedbackClick = () => {
@@ -24,9 +23,8 @@ export function FluxoFeedbackCard({ className }: { className?: string }) {
 
   return (
     <ContextFeedbackCard
-      title="Comunidade"
-      icon={<span className="material-symbols-outlined text-2xl text-brand-blue">grain</span>}
-      description="Está é a aba onde dividida em fluxo/logs/arte você pode interagir e aprender com a comunidade do instituto sobre a ciencia e quem a faz. Alguma sugestão de como o HUB pode melhorar nisso?"
+      title="Plataforma de Lançamento"
+      description="Esta é a plataforma de lançamento e diagramação do HUB. Aqui você pode criar e publicar materiais de divulgação científica, articular blocos interativos (textos, mídias, quizzes e reflexões), organizar rascunhos e enviar conteúdos para o ecossistema. Tem alguma sugestão de melhoria ou encontrou alguma anomalia?"
       betaTag={true}
       onFeedbackClick={handleFeedbackClick}
       className={className}

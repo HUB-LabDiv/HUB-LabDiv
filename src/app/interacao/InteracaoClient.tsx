@@ -19,7 +19,7 @@ import { LabTabContent } from './LabTabContent';
 import { PerguntasTabContent } from './PerguntasTabContent';
 import { EmaranhamentoTabContent } from './EmaranhamentoTabContent';
 import { FluxoFeedbackCard } from '@/components/feedback/FluxoFeedbackCard';
-import { Users } from 'lucide-react';
+import { Users, HelpCircle } from 'lucide-react';
 import { useSwipe } from '@/hooks/useSwipe';
 
 export default function InteracaoClient() {
@@ -84,9 +84,13 @@ export default function InteracaoClient() {
 
                 <div className="max-w-4xl mb-8">
                     <FluxoFeedbackCard 
-                        title="Aba Interação" 
-                        description="Esta é a central de interações. Um espaço dedicado para você se conectar com outros membros da comunidade e enviar perguntas diretas aos cientistas do IFUSP." 
-                        icon={<Users className="w-5 h-5 text-brand-blue" />}
+                        title={activeTab === 'emaranhamento' ? "Emaranhamento" : "Pergunte a um Cientista"} 
+                        description={
+                            activeTab === 'emaranhamento'
+                                ? "Onde a física individual se torna inteligência coletiva. Aqui você constrói sua rede de contatos no Instituto, navega pelo diretório para encontrar alunos, professores e técnicos com interesses similares e cria grupos de estudo."
+                                : "Sua linha direta com a ciência. Faça perguntas sobre física ou sobre a vida acadêmica e conte com a equipe do LabDiv e pesquisadores parceiros para responder."
+                        } 
+                        icon={activeTab === 'emaranhamento' ? <Users className="w-5 h-5 text-brand-blue" /> : <HelpCircle className="w-5 h-5 text-brand-blue" />}
                     />
                 </div>
 

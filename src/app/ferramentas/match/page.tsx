@@ -11,7 +11,7 @@
 
 import { createServerSupabase } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
-import { MatchAcademicoTab } from '@/components/profile/MatchAcademicoTab';
+import { MatchPageClient } from './MatchPageClient';
 
 export const metadata = {
     title: 'Match Acadêmico | IFUSP',
@@ -42,5 +42,5 @@ export default async function FerramentasMatchPage() {
         ...(profile.pending_edits || {})
     };
 
-    return <MatchAcademicoTab profile={mergedProfile} />;
+    return <MatchPageClient profile={mergedProfile} />;
 }

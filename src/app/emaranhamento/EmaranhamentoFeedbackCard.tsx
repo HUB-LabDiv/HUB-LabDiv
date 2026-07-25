@@ -21,7 +21,7 @@ export const EmaranhamentoFeedbackCard = ({ className }: { className?: string })
 
     return (
         <ContextFeedbackCard
-            title="Aba Emaranhamento"
+            title="Emaranhamento"
             description="Onde a física individual se torna inteligência coletiva. Aqui você constrói sua rede de contatos no Instituto. Navegue pelo diretório para encontrar alunos, professores e técnicos com interesses similares, e crie grupos de estudo para sobreviver às disciplinas complexas ou debater tópicos avançados de pesquisa. Forme equipes e fortaleça as conexões no campus. A rede de Emaranhamento (Beta) une a nossa comunidade. Qual funcionalidade facilitaria ainda mais seus encontros acadêmicos? Nos conte!"
             betaTag={true}
             onFeedbackClick={() => setReportModalOpen(true, 'sugestao')}

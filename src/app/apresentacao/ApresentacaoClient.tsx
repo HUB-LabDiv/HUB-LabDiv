@@ -73,7 +73,7 @@ export function ApresentacaoClient() {
                 </nav>
             </div>
             
-            <Link href="/labdiv?tab=sobre" className="glass-card rounded-3xl p-6 border-white/5 hover:border-white/20 transition-colors flex flex-col items-center justify-center text-center group">
+            <Link href="/sobre?tab=sobre" className="glass-card rounded-3xl p-6 border-white/5 hover:border-white/20 transition-colors flex flex-col items-center justify-center text-center group">
                 <ArrowLeft className="w-6 h-6 text-gray-400 group-hover:text-white transition-colors mb-2 group-hover:-translate-x-1" />
                 <span className="text-xs font-black uppercase tracking-widest text-gray-400 group-hover:text-white">Voltar para o HUB</span>
             </Link>
@@ -109,14 +109,15 @@ export function ApresentacaoClient() {
                         </p>
                     </div>
                     
-                    {/* Imagem Original Movida */}
-                    <div className="mt-16 rounded-3xl overflow-hidden border border-white/10 shadow-2xl relative bg-[#11141a] max-w-2xl mx-auto">
+                    {/* Imagem do Ícone Oficial do HUB */}
+                    <div className="mt-16 rounded-3xl overflow-hidden border border-white/10 shadow-2xl relative bg-white p-8 max-w-md mx-auto flex items-center justify-center">
                          <Image 
-                            src="/apresentacao/image1.png" 
-                            alt="Mapa mental do Hub LabDiv" 
-                            width={800} 
-                            height={800} 
-                            className="w-full h-auto object-cover opacity-90 hover:opacity-100 transition-opacity"
+                            src="/icone-HUBLabDiv-white.png" 
+                            alt="Ícone Oficial HUB LabDiv" 
+                            width={512} 
+                            height={512} 
+                            className="w-full h-auto object-contain hover:scale-105 transition-transform duration-300"
+                            priority
                         />
                     </div>
 

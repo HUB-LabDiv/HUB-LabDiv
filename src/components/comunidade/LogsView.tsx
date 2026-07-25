@@ -15,7 +15,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from "@/lib/supabase";
-import { FilePenLine, Send, Atom, Clock, Star, Hash, GitCommit, Loader2, Zap, ArrowUp, ArrowDown } from 'lucide-react';
+import { FilePenLine, Send, Atom, Clock, Star, Hash, GitCommit, Loader2, Zap, ArrowUp, ArrowDown, Radio } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { LogsFeedbackCard } from '@/app/drops/LogsFeedbackCard';
@@ -211,8 +211,12 @@ export function LogsView() {
                     {recentDrops.length > 0 ? (
                         recentDrops.map(drop => <ThreadNode key={drop.id} drop={drop} level={0} onRefresh={fetchDrops} setIsSyncing={setIsSyncing} />)
                     ) : (
-                        <div className="py-20 text-center opacity-40">
-                            <p className="font-mono text-xs uppercase tracking-widest">Nenhuma transmissão captada nas últimas 24h.</p>
+                        <div className="py-12 px-6 text-center bg-[#1E1E1E] border border-white/5 rounded-3xl space-y-3 shadow-xl my-4">
+                            <div className="w-12 h-12 rounded-full bg-brand-red/10 border border-brand-red/20 flex items-center justify-center mx-auto text-brand-red">
+                                <Radio className="w-5 h-5 animate-pulse" />
+                            </div>
+                            <p className="font-mono text-xs uppercase tracking-widest text-gray-300 font-bold">Nenhuma transmissão captada nas últimas 24h.</p>
+                            <p className="text-xs text-gray-400 max-w-sm mx-auto">Seja o primeiro a enviar uma descoberta ou notícia rápida no campo acima!</p>
                         </div>
                     )}
                 </FeedSection>

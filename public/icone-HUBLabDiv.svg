@@ -1,0 +1,161 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Official LabDiv Brand Gradient: Blue -> Red -> Yellow -->
+    <linearGradient id="labdivBrandGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0F4780" />
+      <stop offset="48%" stop-color="#F14343" />
+      <stop offset="100%" stop-color="#FFCC00" />
+    </linearGradient>
+
+    <!-- Horizontal Smooth Gradient for Cap Top Surface with Highlights -->
+    <linearGradient id="capTopGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#0E4277" />
+      <stop offset="22%" stop-color="#0F4780" />
+      <stop offset="48%" stop-color="#F14343" />
+      <stop offset="78%" stop-color="#FFCC00" />
+      <stop offset="100%" stop-color="#FCE055" />
+    </linearGradient>
+
+    <!-- Horizontal Gradient for Skull Cap Base Ring -->
+    <linearGradient id="capBaseGradient" x1="5%" y1="0%" x2="95%" y2="0%">
+      <stop offset="0%" stop-color="#0B3764" />
+      <stop offset="25%" stop-color="#0F4780" />
+      <stop offset="50%" stop-color="#F14343" />
+      <stop offset="80%" stop-color="#FFCC00" />
+      <stop offset="100%" stop-color="#E5B800" />
+    </linearGradient>
+  </defs>
+
+  <!-- ================= 2. CAP BASE (CILINDRO / ANEL INFERIOR) ================= -->
+  <g>
+    <!-- Base Cylinder Fill -->
+    <path d="M 126 310 L 126 385 C 126 425, 386 425, 386 385 L 386 310 Z"
+          fill="url(#capBaseGradient)" />
+
+    <!-- Shadow Cast by Top Hat onto Base (Geometrically clipped to not bleed out) -->
+    <path d="M 126 305 L 126 333 L 256 395 L 386 333 L 386 305 Z"
+          fill="#000000"
+          opacity="0.3" />
+
+    <!-- Base Cylinder Stroke -->
+    <path d="M 126 310 L 126 385 C 126 425, 386 425, 386 385 L 386 310 Z"
+          fill="none"
+          stroke="#000000"
+          stroke-width="8"
+          stroke-linejoin="round" />
+  </g>
+
+  <!-- ================= 3. CAP ISOMETRIC DIAMOND TOP (SURFACE) ================= -->
+  <g>
+
+    <!-- Main Diamond Surface Path -->
+    <path d="M 256 165
+             L 476 270
+             L 256 375
+             L 36 270
+             Z"
+          fill="url(#capTopGradient)"
+          stroke="#000000"
+          stroke-width="8"
+          stroke-linejoin="round"
+          stroke-linecap="round" />
+
+    <!-- Top Bevel Highlight (Iluminação nas duas linhas superiores) -->
+    <path d="M 52 272 L 256 173 L 460 272"
+          fill="none"
+          stroke="#FFFFFF"
+          stroke-width="6"
+          stroke-linecap="round"
+          opacity="0.3" />
+
+  </g>
+
+  <!-- ================= 4. TASSEL (CORDÃO E BORLA NO CANTO ESQUERDO) ================= -->
+  <g stroke-linejoin="round" stroke-linecap="round">
+    <!-- Cord Shadow -->
+    <path d="M 72 286 L 72 339" stroke="#000000" stroke-width="10" opacity="0.4" />
+    
+    <!-- Cord Hanging from Left Top Edge -->
+    <path d="M 70 286 L 70 335" stroke="#000000" stroke-width="10" />
+    <path d="M 70 276 L 70 335" stroke="#0F4780" stroke-width="6" />
+
+    <!-- Tassel Ring Bead -->
+    <circle cx="70" cy="347" r="12" fill="#0F4780" stroke="#000000" stroke-width="4" />
+
+    <!-- Tassel Skirt Fringe -->
+    <path d="M 56 363 L 42 446 Q 70 460 98 446 L 84 363 Z"
+          fill="#0F4780"
+          stroke="#000000"
+          stroke-width="8" />
+  </g>
+
+  <!-- ================= 1. SIGNAL WAVES CROWN (SITTING ABOVE THE CAP) ================= -->
+  <!-- Wave structure with NO filters. We use double layered strokes. 
+       Base is a thick black stroke.
+       Then the colored stroke.
+       We can add a fake glow layer behind it by duplicating the colored stroke, making it thick and low opacity.
+  -->
+  <!-- ================= 1. SIGNAL WAVES CROWN (SITTING ABOVE THE CAP) ================= -->
+  <g stroke-linecap="round" fill="none">
+    
+    <!-- FAR LEFT WAVES (BLUE #0F4780) -->
+    <!-- Wave L2 (Outer) -->
+    <path d="M 53 225 C 27 168 27 104 53 50" stroke="#0F4780" stroke-width="26" opacity="0.3" />
+    <path d="M 53 225 C 27 168 27 104 53 50" stroke="#000000" stroke-width="8" />
+    <path d="M 53 225 C 27 168 27 104 53 50" stroke="#0F4780" stroke-width="10" />
+    
+    <!-- Wave L1 (Inner) -->
+    <path d="M 94 196 C 72 157 72 109 94 72" stroke="#0F4780" stroke-width="26" opacity="0.3" />
+    <path d="M 94 196 C 72 157 72 109 94 72" stroke="#000000" stroke-width="8" />
+    <path d="M 94 196 C 72 157 72 109 94 72" stroke="#0F4780" stroke-width="10" />
+
+    <!-- MIDDLE LEFT WAVES (RED #F14343) -->
+    <!-- Wave M-L2 -->
+    <path d="M 138 183 C 120 153 120 118 138 88" stroke="#F14343" stroke-width="26" opacity="0.3" />
+    <path d="M 138 183 C 120 153 120 118 138 88" stroke="#000000" stroke-width="8" />
+    <path d="M 138 183 C 120 153 120 118 138 88" stroke="#F14343" stroke-width="10" />
+
+    <!-- Wave M-L1 -->
+    <path d="M 178 165 C 164 145 164 125 178 105" stroke="#F14343" stroke-width="26" opacity="0.3" />
+    <path d="M 178 165 C 164 145 164 125 178 105" stroke="#000000" stroke-width="8" />
+    <path d="M 178 165 C 164 145 164 125 178 105" stroke="#F14343" stroke-width="10" />
+
+    <!-- TOP CENTER WIFI ARCS (RED #F14343) -->
+    <!-- Arc 3 (Largest Top Center Arc) -->
+    <path d="M 210 110 C 235 92 277 92 302 110" stroke="#F14343" stroke-width="26" opacity="0.3" />
+    <path d="M 210 110 C 235 92 277 92 302 110" stroke="#000000" stroke-width="10" />
+    <path d="M 210 110 C 235 92 277 92 302 110" stroke="#F14343" stroke-width="10" />
+
+    <!-- Arc 2 (Middle Top Center Arc) -->
+    <path d="M 224 128 C 242 114 270 114 288 128" stroke="#F14343" stroke-width="26" opacity="0.3" />
+    <path d="M 224 128 C 242 114 270 114 288 128" stroke="#000000" stroke-width="10" />
+    <path d="M 224 128 C 242 114 270 114 288 128" stroke="#F14343" stroke-width="10" />
+
+    <!-- Arc 1 (Smallest Center Arc) -->
+    <path d="M 238 146 C 248 136 264 136 274 146" stroke="#F14343" stroke-width="22" opacity="0.3" />
+    <path d="M 238 146 C 248 136 264 136 274 146" stroke="#000000" stroke-width="8" />
+    <path d="M 238 146 C 248 136 264 136 274 146" stroke="#F14343" stroke-width="9" />
+
+    <!-- MIDDLE RIGHT WAVES (RED #F14343) -->
+    <!-- Wave M-R1 -->
+    <path d="M 334 165 C 348 145 348 125 334 105" stroke="#F14343" stroke-width="26" opacity="0.3" />
+    <path d="M 334 165 C 348 145 348 125 334 105" stroke="#000000" stroke-width="8" />
+    <path d="M 334 165 C 348 145 348 125 334 105" stroke="#F14343" stroke-width="10" />
+
+    <!-- Wave M-R2 -->
+    <path d="M 374 183 C 392 153 392 118 374 88" stroke="#F14343" stroke-width="26" opacity="0.3" />
+    <path d="M 374 183 C 392 153 392 118 374 88" stroke="#000000" stroke-width="8" />
+    <path d="M 374 183 C 392 153 392 118 374 88" stroke="#F14343" stroke-width="10" />
+
+    <!-- FAR RIGHT WAVES (YELLOW #FFCC00) -->
+    <!-- Wave R1 (Inner) -->
+    <path d="M 418 196 C 440 157 440 109 418 72" stroke="#FFCC00" stroke-width="26" opacity="0.3" />
+    <path d="M 418 196 C 440 157 440 109 418 72" stroke="#000000" stroke-width="8" />
+    <path d="M 418 196 C 440 157 440 109 418 72" stroke="#FFCC00" stroke-width="10" />
+
+    <!-- Wave R2 (Outer) -->
+    <path d="M 459 225 C 485 168 485 104 459 50" stroke="#FFCC00" stroke-width="26" opacity="0.3" />
+    <path d="M 459 225 C 485 168 485 104 459 50" stroke="#000000" stroke-width="8" />
+    <path d="M 459 225 C 485 168 485 104 459 50" stroke="#FFCC00" stroke-width="10" />
+  </g>
+</svg>

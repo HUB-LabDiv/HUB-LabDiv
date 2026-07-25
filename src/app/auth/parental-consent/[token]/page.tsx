@@ -237,7 +237,7 @@ export default function ParentalConsentPage() {
 
                             <div className="mt-8">
                                 <a 
-                                    href="/labdiv?tab=sobre" 
+                                    href="/sobre?tab=sobre" 
                                     target="_blank" 
                                     className="inline-flex items-center gap-2 px-6 py-3 bg-white dark:bg-transparent border-2 border-[#0F4780] text-[#0F4780] dark:text-blue-300 rounded-xl font-bold hover:bg-[#0F4780] hover:text-white transition-all text-sm group"
                                 >

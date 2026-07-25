@@ -95,8 +95,8 @@ export const Avatar = ({ src, name = 'Usuário', size = 'md', className = '', cu
         background: `conic-gradient(
             from 270deg,
             #0F4780 0deg,
-            #FFCC00 90deg,
-            #F14343 180deg,
+            #F14343 90deg,
+            #FFCC00 180deg,
             ${tier?.hex || '#6B7280'} 180deg 360deg
         )`
     } : tier ? {

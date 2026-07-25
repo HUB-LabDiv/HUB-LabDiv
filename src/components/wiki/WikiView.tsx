@@ -275,7 +275,7 @@ export function WikiView() {
                             transition={{ duration: 0.6 }}
                         >
                             <h1 className="text-5xl md:text-7xl font-black tracking-tighter uppercase italic leading-[0.8] mb-4 text-gray-900 dark:text-white">
-                                WIKI <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-brand-blue to-brand-yellow">HUB</span>
+                                WIKI <span className="text-gradient-brand">HUB</span>
                             </h1>
                             <p className="text-gray-400 text-lg max-w-xl font-medium leading-relaxed [text-shadow:var(--text-halo)]">
                                 {renderIFUSP('O Síncrotron de Conhecimento do IFUSP. O repositório definitivo para sobrevivência, ética e divulgação científica.')}

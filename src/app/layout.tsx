@@ -67,6 +67,11 @@ export const metadata: Metadata = {
     images: ['/api/og?title=Hub%20de%20Comunicação%20Científica&category=IFUSP'],
   },
   manifest: "/manifest.json",
+  icons: {
+    icon: '/icone-HUBLabDiv-circular.svg',
+    shortcut: '/icone-HUBLabDiv-circular.svg',
+    apple: '/icone-HUBLabDiv.png',
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",

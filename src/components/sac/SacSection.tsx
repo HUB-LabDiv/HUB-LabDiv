@@ -40,7 +40,7 @@ export function SacSection() {
                         <MessageSquareCode className="w-10 h-10 text-brand-blue" />
                         SAC <span className="text-brand-red">LabDiv</span>
                     </h2>
-                    <p className="text-gray-500 text-lg font-medium mt-2">Dúvidas frequentes sobre o HUB e a Secão de Alunos.</p>
+                    <p className="text-gray-500 text-lg font-medium mt-2 [text-shadow:var(--text-halo-strong)]">Dúvidas frequentes sobre o HUB e a Secão de Alunos.</p>
                 </div>
                 <button
                     onClick={() => setIsSacModalOpen(true)}

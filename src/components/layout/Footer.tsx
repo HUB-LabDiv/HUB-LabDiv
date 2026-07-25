@@ -13,6 +13,7 @@
 
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { AppRoutes } from '@/types/navigation';
 import { ColisorIcon } from '../icons/ColisorIcon';
 import { USPLogo } from '../icons/USPLogo';
@@ -24,26 +25,30 @@ export function Footer() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
                     <div className="col-span-1 lg:col-span-1">
-                        <div className="flex items-center gap-3 mb-6 bg-white/10 backdrop-blur-sm rounded-xl px-3 py-3 border border-white/10 w-fit -ml-4">
+                        <div className="flex items-center gap-3 mb-6 bg-white/90 dark:bg-gray-900/90 backdrop-blur-3xl rounded-2xl px-4 py-3.5 border border-white/30 dark:border-white/10 shadow-2xl w-fit -ml-1">
                             <div className="relative w-10 h-10 flex-shrink-0">
-                                <div className="absolute w-[60%] h-[75%] bg-brand-blue rounded-[2px] top-0 left-0 z-0 shadow-sm"></div>
-                                <div className="absolute w-[60%] h-[75%] bg-brand-red rounded-[2px] bottom-0 right-0 z-0 translate-y-1 shadow-sm"></div>
-                                <div className="absolute w-[60%] h-[60%] bg-brand-yellow rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 shadow-md border-2 border-white"></div>
+                                <Image
+                                    src="/icone-HUBLabDiv.svg"
+                                    alt="HUB LabDiv Logo"
+                                    width={40}
+                                    height={40}
+                                    className="w-full h-full object-contain"
+                                />
                             </div>
                             <div className="flex flex-col -space-y-0.5">
                                 <div className="flex items-baseline gap-1.5">
-                                    <span className="font-bukra font-bold text-xl text-white uppercase leading-tight">HUB</span>
-                                    <span className="font-bukra font-black text-xl text-white leading-tight">LabDiv</span>
-                                    <div className="flex flex-col items-center opacity-70">
-                                        <span className="text-[7px] font-black px-1.5 py-0.5 rounded bg-white/15 text-white/70 ml-1">V3.2.0</span>
-                                        <span className="text-[8px] font-black uppercase tracking-tighter ml-1 text-white/40">(BETA)</span>
+                                    <span className="font-bukra font-bold text-xl text-gray-900 dark:text-white uppercase leading-tight">HUB</span>
+                                    <span className="font-bukra font-black text-xl text-gradient-brand leading-tight">LabDiv</span>
+                                    <div className="flex flex-col items-center opacity-90">
+                                        <span className="text-[7px] font-black px-1.5 py-0.5 rounded bg-brand-blue/10 dark:bg-white/10 text-brand-blue dark:text-gray-400 ml-1">V3.2.0</span>
+                                        <span className="text-[8px] font-black uppercase tracking-tighter ml-1 text-brand-blue dark:text-gray-500">(BETA)</span>
                                     </div>
                                 </div>
-                                <span className="text-[8px] uppercase tracking-wider text-white/50 font-bukra font-medium">Física USP</span>
+                                <span className="text-[8px] uppercase tracking-wider text-gray-500 dark:text-gray-400 font-bukra font-medium">Física USP</span>
                             </div>
                             <div className="flex items-center gap-2.5 ml-1">
-                                <div className="w-px h-7 bg-white/20"></div>
-                                <IFUSPLogo size={42} className="text-white opacity-90" />
+                                <div className="w-px h-7 bg-gray-200 dark:bg-white/15"></div>
+                                <IFUSPLogo size={42} className="text-brand-blue dark:text-brand-blue-accent opacity-95" />
                             </div>
                         </div>
                         <p className="text-sm text-white/60 mb-6 leading-relaxed">
@@ -57,6 +62,7 @@ export function Footer() {
                         <ul className="space-y-3">
                             <li><Link href="/" className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">groups</span> Comunidade</Link></li>
                             <li><Link href="/gcif" className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"><ColisorIcon size={20} animate={false} className="w-5 h-5 flex-shrink-0" /> O Grande Colisor do IF</Link></li>
+                            <li><Link href="/sobre" className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">info</span> Sobre o HUB</Link></li>
                             <li><Link href="/ferramentas" className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">construction</span> Ferramentas acadêmicas</Link></li>
                             <li><Link href="/perguntas" className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">help_outline</span> Interação (Pergunte/Lab)</Link></li>
 
@@ -90,7 +96,7 @@ export function Footer() {
 
                     <div>
                         <h4 className="font-bold text-white mb-6 uppercase text-xs tracking-wider border-l-4 border-brand-red pl-3">
-                            <span className="text-white">LabDiv</span>
+                            <span className="text-gradient-brand font-black">LabDiv</span>
                         </h4>
                         <ul className="space-y-4">
                             <li className="flex items-start gap-3 text-sm text-white/60">

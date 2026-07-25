@@ -21,7 +21,7 @@ export function WikiFeedbackCard({ className }: { className?: string }) {
     
     return (
         <ContextFeedbackCard
-            title="Aba Wiki Hub"
+            title="Wiki Hub"
             description="A Base de Conhecimento do Hub. Construída pelo LabDiv, a Wiki é o lugar mais amigável para entender os cursos e o instituto sem o 'bucrocratês' dos editais oficiais. Saiba quais são os departamentos, onde buscar apoio psicológico no IF, o que fazer após se formar ou consulte o guia essencial para recém-chegados. Como a Wiki pode ser mais útil para sua jornada? Nos conte!"
             betaTag={true}
             onFeedbackClick={() => setReportModalOpen(true, 'sugestao')}

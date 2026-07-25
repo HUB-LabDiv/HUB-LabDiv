@@ -215,12 +215,12 @@ export function ColisorClientView({ oportunidades }: ColisorClientViewProps) {
                             <img src="/labdiv-logo.png" alt="Logo do Lab-Div" className="w-full h-full object-contain" />
                         </div>
                         <h2 className="text-xl md:text-2xl font-black tracking-tight mb-2 md:mb-3">
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-brand-blue to-brand-yellow">Lab-Div</span>
+                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-red to-brand-yellow">Lab-Div</span>
                         </h2>
                         <p className="text-[10px] md:text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-4 md:mb-6">
                             Inspirada no CommLab do MIT, foca na comunicação científica no IFUSP. Oferece tutoria entre pares para escrita científica, apresentações e design.
                         </p>
-                        <Link href="/labdiv?tab=labdiv" className="text-brand-blue font-black flex items-center gap-1 md:gap-2 group-hover:underline text-[10px] md:text-sm mt-auto w-fit whitespace-nowrap">
+                        <Link href="/sobre?tab=labdiv" className="text-brand-blue font-black flex items-center gap-1 md:gap-2 group-hover:underline text-[10px] md:text-sm mt-auto w-fit whitespace-nowrap">
                             Explorar <span className="hidden sm:inline">Acervo</span> <span className="material-symbols-outlined text-sm md:text-base">arrow_forward</span>
                         </Link>
                     </div>

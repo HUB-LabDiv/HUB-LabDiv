@@ -24,7 +24,7 @@ import { ColisorIcon } from '../icons/ColisorIcon';
 
 const drawerLinks: (NavItem & { color?: string })[] = [
     { name: 'Central de Interações', href: '/interacao?tab=emaranhamento', icon: 'hub', isPrimary: true, color: 'brand-blue' },
-    { name: 'Sobre', href: '/labdiv', icon: 'info', color: 'brand-blue' },
+    { name: 'Sobre', href: '/sobre', icon: 'info', color: 'brand-blue' },
     { name: 'Admin', href: '/admin', icon: 'analytics', color: 'brand-blue' },
 ];
 

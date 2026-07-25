@@ -392,7 +392,7 @@ export default function TrilhasClient({
 
     return (
         <>
-            <TrilhasFeedbackCard className="block lg:hidden mt-6" />
+            <TrilhasFeedbackCard className="block lg:hidden mt-6 mb-8" />
 
             <div className="dark:text-white text-gray-900 transition-colors">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">

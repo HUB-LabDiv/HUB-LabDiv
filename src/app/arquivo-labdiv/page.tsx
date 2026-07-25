@@ -11,6 +11,6 @@
 
 import { redirect } from 'next/navigation';
 
-export default function ArquivoLabDivRedirect() {
-    redirect('/labdiv?tab=labdiv');
+export default function ArquivoLabDivRedirectPage() {
+    redirect('/sobre?tab=labdiv');
 }

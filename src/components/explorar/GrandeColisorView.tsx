@@ -262,7 +262,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                     </div>
                     <div>
                         <h2 className="text-3xl font-black italic uppercase tracking-tighter">Iniciativas e Espaços do IF</h2>
-                        <p className="text-gray-500 font-medium">Explore projetos ativos e a infraestrutura do ecossistema.</p>
+                        <p className="text-gray-500 font-medium [text-shadow:var(--text-halo-strong)]">Explore projetos ativos e a infraestrutura do ecossistema.</p>
                     </div>
                 </div>
 
@@ -415,7 +415,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                     </div>
                     <div>
                         <h2 className="text-3xl font-black italic uppercase tracking-tighter">Campus Interativo</h2>
-                        <p className="text-gray-500 font-medium">Navegue pelas descobertas e registros através da geografia do Instituto.</p>
+                        <p className="text-gray-500 font-medium [text-shadow:var(--text-halo-strong)]">Navegue pelas descobertas e registros através da geografia do Instituto.</p>
                     </div>
                 </div>
 
@@ -437,7 +437,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                     </div>
                     <div>
                         <h2 className="text-3xl font-black italic uppercase tracking-tighter">Glossário Translacional</h2>
-                        <p className="text-gray-500 font-medium">As constelações linguísticas construídas pela comunidade.</p>
+                        <p className="text-gray-500 font-medium [text-shadow:var(--text-halo-strong)]">As constelações linguísticas construídas pela comunidade.</p>
                     </div>
                 </div>
                 {glossario && glossario.length > 0 ? (

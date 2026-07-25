@@ -816,6 +816,8 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                 }
             `}</style>
 
+            <FerramentasFeedbackCard className="block lg:hidden mb-6" />
+
             <header className="flex flex-col md:flex-row items-center justify-between gap-6 print:hidden">
                 <div className="space-y-2">
                     <h1 className="text-4xl font-display font-black text-gray-900 dark:text-white uppercase tracking-tighter">
@@ -825,8 +827,6 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                 </div>
 
             </header>
-
-            <FerramentasFeedbackCard className="block lg:hidden" />
 
             {/* Action Buttons - Premium Refined Layout */}
             <div id="grade-horaria-actions" className="flex flex-wrap items-center gap-3 py-4 border-t border-gray-100 dark:border-white/5">

@@ -114,17 +114,20 @@ export function Header() {
                     <Link href="/" className="flex items-center gap-1.5 sm:gap-3 group shrink-0" onClick={closeAll}>
                         <div className="flex items-center gap-1.5 sm:gap-3">
                             <div className="relative w-7 h-7 sm:w-9 sm:h-9 flex-shrink-0 group-hover:scale-110 transition-transform duration-500">
-                                <div className="absolute -inset-1 bg-gradient-to-r from-brand-blue via-brand-red to-brand-blue rounded-lg blur opacity-0 group-hover:opacity-40 transition-opacity animate-premium-glow"></div>
-                                <div className="relative w-full h-full">
-                                    <div className="absolute w-[60%] h-[75%] bg-brand-blue rounded-[2px] top-0 left-0 z-0 shadow-sm"></div>
-                                    <div className="absolute w-[60%] h-[75%] bg-brand-red rounded-[2px] bottom-0 right-0 z-0 translate-y-1 shadow-sm"></div>
-                                    <div className="absolute w-[60%] h-[60%] bg-brand-yellow rounded-full top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 shadow-md border-2 border-white dark:border-[#1A1A1A]"></div>
-                                </div>
+                                <div className="absolute -inset-1 bg-gradient-brand rounded-lg blur opacity-0 group-hover:opacity-40 transition-opacity animate-premium-glow"></div>
+                                <Image
+                                    src="/icone-HUBLabDiv.svg"
+                                    alt="HUB LabDiv Logo"
+                                    width={36}
+                                    height={36}
+                                    className="relative w-full h-full object-contain"
+                                    priority
+                                />
                             </div>
                             <div className="flex flex-col -space-y-1">
                                 <div className="text-base sm:text-xl font-bukra font-bold tracking-tight flex items-baseline gap-1 sm:gap-1.5 leading-tight">
                                     <span className="text-gray-900 dark:text-white uppercase">HUB</span>
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-red to-brand-blue font-black">LabDiv</span>
+                                    <span className="text-gradient-brand font-black">LabDiv</span>
                                     <div className="flex flex-col items-center opacity-80">
                                         <span className="text-[6px] sm:text-[8px] font-black px-1 sm:px-1.5 py-0.5 rounded bg-brand-blue/10 dark:bg-white/10 text-brand-blue dark:text-gray-400/80 ml-1">V3.2.0</span>
                                         <span className="text-[6px] sm:text-[8px] font-black uppercase tracking-tighter ml-1 text-brand-blue dark:text-gray-500">(BETA)</span>
@@ -145,7 +148,7 @@ export function Header() {
                             {[
                                 { label: 'Comunidade', href: '/', color: '#F14343' },
                                 { label: 'GCIF', href: '/gcif', color: '#1F9FCF' },
-                                { label: 'Sobre', href: '/labdiv', color: '#FFCC00' },
+                                { label: 'Sobre', href: '/sobre', color: '#FFCC00' },
                                 { label: 'Ferramentas', href: '/ferramentas', color: '#F14343' },
                                 { label: 'Interações', href: '/interacao', color: '#1F9FCF' },
                             ].map((tab) => {

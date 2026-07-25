@@ -93,7 +93,7 @@ export const TimelineView = ({ submissions }: TimelineViewProps) => {
     return (
         <div className="max-w-4xl mx-auto px-4 py-12">
             <header className="text-center mb-16">
-                <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-red to-brand-blue bg-[length:200%_auto] animate-gradient-flow mb-4">
+                <h1 className="text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-brand-yellow via-brand-red to-brand-blue bg-[length:200%_auto] animate-gradient-flow mb-4">
                     Linha do Tempo
                 </h1>
                 <p className="text-gray-500 dark:text-gray-400 max-w-lg mx-auto">

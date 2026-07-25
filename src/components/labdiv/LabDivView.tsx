@@ -31,7 +31,7 @@ export function LabDivView() {
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center gap-8">
                     <div className="flex-1">
                         <h1 className="font-display font-bold text-4xl md:text-5xl tracking-tight mb-4 text-gray-900 dark:text-white">
-                            O que é o <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-brand-blue to-brand-yellow">Lab-Div</span>?
+                            O que é o <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-red to-brand-yellow">Lab-Div</span>?
                         </h1>
                         <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-2xl">
                             É um laboratório de divulgação científica que produz, reúne e ajuda a criar material de divulgação científica para melhorar a divulgação científica do IF.

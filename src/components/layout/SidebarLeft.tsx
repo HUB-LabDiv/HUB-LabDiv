@@ -45,7 +45,7 @@ import { useNavigationStore } from '@/store/useNavigationStore';
 const mainLinks = [
     { name: 'Comunidade', href: '/', icon: <span className="material-symbols-outlined text-2xl">groups</span>, color: 'brand-red' },
     { name: 'GCIF', href: '/gcif', icon: <ColisorIcon className="w-6 h-6" />, color: 'brand-blue' },
-    { name: 'Sobre', href: '/labdiv', icon: <span className="material-symbols-outlined text-2xl">info</span>, color: 'brand-yellow' },
+    { name: 'Sobre', href: '/sobre', icon: <span className="material-symbols-outlined text-2xl">info</span>, color: 'brand-yellow' },
 ];
 
 const categoryLinks = [

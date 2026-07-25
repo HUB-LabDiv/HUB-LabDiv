@@ -321,7 +321,7 @@ export function ColisorClientView({ oportunidades }: ColisorClientViewProps) {
                         <img src="/labdiv-logo.png" alt="Logo do Lab-Div" className="w-full h-full object-contain" />
                     </div>
                     <h2 className="text-2xl font-black tracking-tight mb-3">
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-red via-brand-blue to-brand-yellow">Lab-Div</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-red to-brand-yellow">Lab-Div</span>
                     </h2>
                     <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mb-6">
                         Inspirada no CommLab do MIT, foca na comunicação científica no IFUSP. Oferece tutoria entre pares para escrita científica e design.

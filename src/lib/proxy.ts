@@ -48,7 +48,7 @@ export async function proxy(request: NextRequest) {
     const isPublicRoute = pathname === '/' ||
         pathname.startsWith('/gcif') ||
         pathname.startsWith('/comunidade') ||
-        pathname.startsWith('/labdiv') ||
+        pathname.startsWith('/sobre') ||
         pathname.startsWith('/fluxo') ||
         pathname.startsWith('/drops') ||
         pathname.startsWith('/api/og');
