@@ -20,10 +20,17 @@ async function main() {
     // 1. Read the bg-science.svg and modify it to have a dark background (#121212)
     const bgSvgRaw = readFileSync(resolve(publicDir, 'bg-science.svg'), 'utf-8');
     
+    // Boost contrast of colors and opacities in background SVG
+    const bgSvgBoosted = bgSvgRaw
+        .replaceAll('#0F4780', '#5BA4FC') // Brighter science blue
+        .replaceAll('#F14343', '#FF6B6B') // Vibrant light red
+        .replaceAll('#FFCC00', '#FFE15D') // High contrast light yellow
+        .replace(/opacity="0\.[0-9]+"/g, 'opacity="0.95"'); // High opacity
+
     // Wrap the bg-science SVG content with a dark background rect and resize to 512x512
     const bgSvgWithBackground = `<svg xmlns="http://www.w3.org/2000/svg" width="${SIZE}" height="${SIZE}" viewBox="0 0 1200 1200">
   <rect width="1200" height="1200" fill="#121212"/>
-  ${bgSvgRaw.replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '')}
+  ${bgSvgBoosted.replace(/<svg[^>]*>/, '').replace(/<\/svg>/, '')}
 </svg>`;
 
     // 2. Render bg-science SVG to a buffer at target size
