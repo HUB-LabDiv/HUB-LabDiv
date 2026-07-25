@@ -13,6 +13,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { signOut } from '@/app/actions/auth';
 
@@ -66,7 +67,13 @@ export default function AdminLayoutClient({
                         <span className="material-symbols-outlined text-[18px]">logout</span>
                     </Link>
                     <div className="font-bold text-base flex items-center gap-2">
-                        <span className="material-symbols-outlined text-[#0055ff] text-[18px]">security</span>
+                        <Image
+                            src="/icone-HUBLabDiv.svg"
+                            alt="HUB LabDiv Logo"
+                            width={24}
+                            height={24}
+                            className="w-6 h-6 object-contain"
+                        />
                         Admin<span className="text-brand-yellow">Panel</span>
                     </div>
                 </div>
@@ -117,9 +124,14 @@ export default function AdminLayoutClient({
                     <div className="hidden md:flex items-center gap-3 pb-6 border-b border-gray-800 dark:border-white/10 transition-colors">
                         <Link href="/" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
                             <div className="relative w-10 h-10 flex-shrink-0">
-                                <div className="absolute w-6 h-7 bg-[#0055ff] rounded-[1px] top-0 left-0 z-0"></div>
-                                <div className="absolute w-6 h-7 bg-brand-red rounded-[1px] bottom-0 right-0 z-0 translate-y-1"></div>
-                                <div className="absolute w-6 h-6 bg-brand-yellow rounded-full top-2 left-2 z-20 shadow-sm border border-transparent"></div>
+                                <Image
+                                    src="/icone-HUBLabDiv.svg"
+                                    alt="HUB LabDiv Logo"
+                                    width={40}
+                                    height={40}
+                                    className="w-full h-full object-contain"
+                                    priority
+                                />
                             </div>
                             <div className="flex flex-col overflow-hidden">
                                 <h1 className="text-white text-lg font-bold leading-tight truncate">Admin<span className="text-brand-yellow">Panel</span></h1>

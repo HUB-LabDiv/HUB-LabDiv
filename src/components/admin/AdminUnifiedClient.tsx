@@ -33,6 +33,7 @@ import {
 import { DeleteUserModal } from '@/components/admin/DeleteUserModal';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
 import { TelemetryManager } from './settings/TelemetryManager';
+import { useSwipe } from '@/hooks/useSwipe';
 
 interface Profile {
     id: string;
@@ -53,6 +54,22 @@ const ROLES = [
 
 export function AdminUnifiedClient() {
     const [activeTab, setActiveTab] = useState<'papeis' | 'perigo' | 'telemetria'>('papeis');
+    
+    const adminTabs: Array<'papeis' | 'perigo' | 'telemetria'> = ['papeis', 'perigo', 'telemetria'];
+    const swipeHandlers = useSwipe({
+        onSwipedLeft: () => {
+            const currentIndex = adminTabs.indexOf(activeTab);
+            if (currentIndex < adminTabs.length - 1) {
+                setActiveTab(adminTabs[currentIndex + 1]);
+            }
+        },
+        onSwipedRight: () => {
+            const currentIndex = adminTabs.indexOf(activeTab);
+            if (currentIndex > 0) {
+                setActiveTab(adminTabs[currentIndex - 1]);
+            }
+        }
+    });
     
     // Profiles State
     const [profiles, setProfiles] = useState<Profile[]>([]);
@@ -265,7 +282,7 @@ export function AdminUnifiedClient() {
     );
 
     return (
-        <div className="p-8 max-w-7xl mx-auto min-h-screen">
+        <div {...swipeHandlers} className="p-8 max-w-7xl mx-auto min-h-screen">
             <header className="mb-12">
                 <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/10 border border-brand-yellow/20 text-brand-yellow text-[10px] font-black uppercase tracking-widest mb-4">
                     <span className="material-symbols-outlined text-sm">settings</span>

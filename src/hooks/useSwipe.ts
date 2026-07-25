@@ -6,10 +6,10 @@ interface SwipeInput {
 }
 
 export function useSwipe({ onSwipedLeft, onSwipedRight }: SwipeInput) {
-    const [touchStartX, setTouchStartX] = useState<number | null>(null);
-    const [touchEndX, setTouchEndX] = useState<number | null>(null);
-    const [touchStartY, setTouchStartY] = useState<number | null>(null);
-    const [touchEndY, setTouchEndY] = useState<number | null>(null);
+    const touchStartX = useRef<number | null>(null);
+    const touchEndX = useRef<number | null>(null);
+    const touchStartY = useRef<number | null>(null);
+    const touchEndY = useRef<number | null>(null);
 
     const lastSwipeTime = useRef<number>(0);
     const wheelAccumulator = useRef<number>(0);
@@ -19,22 +19,27 @@ export function useSwipe({ onSwipedLeft, onSwipedRight }: SwipeInput) {
     const minSwipeDistance = 50;
 
     const onTouchStart = (e: TouchEvent) => {
-        setTouchEndX(null);
-        setTouchEndY(null);
-        setTouchStartX(e.targetTouches[0].clientX);
-        setTouchStartY(e.targetTouches[0].clientY);
+        touchEndX.current = null;
+        touchEndY.current = null;
+        touchStartX.current = e.targetTouches[0].clientX;
+        touchStartY.current = e.targetTouches[0].clientY;
     };
 
     const onTouchMove = (e: TouchEvent) => {
-        setTouchEndX(e.targetTouches[0].clientX);
-        setTouchEndY(e.targetTouches[0].clientY);
+        touchEndX.current = e.targetTouches[0].clientX;
+        touchEndY.current = e.targetTouches[0].clientY;
     };
 
     const onTouchEndHandler = () => {
-        if (!touchStartX || !touchEndX || !touchStartY || !touchEndY) return;
+        if (
+            touchStartX.current === null ||
+            touchEndX.current === null ||
+            touchStartY.current === null ||
+            touchEndY.current === null
+        ) return;
         
-        const distanceX = touchStartX - touchEndX;
-        const distanceY = touchStartY - touchEndY;
+        const distanceX = touchStartX.current - touchEndX.current;
+        const distanceY = touchStartY.current - touchEndY.current;
         
         // Ensure the swipe is mostly horizontal (X distance is greater than Y distance)
         const isHorizontalSwipe = Math.abs(distanceX) > Math.abs(distanceY);
@@ -50,6 +55,11 @@ export function useSwipe({ onSwipedLeft, onSwipedRight }: SwipeInput) {
         if (isRightSwipe) {
             onSwipedRight();
         }
+
+        touchStartX.current = null;
+        touchEndX.current = null;
+        touchStartY.current = null;
+        touchEndY.current = null;
     };
 
     const onWheel = (e: WheelEvent) => {
@@ -84,3 +94,4 @@ export function useSwipe({ onSwipedLeft, onSwipedRight }: SwipeInput) {
         onWheel
     };
 }
+

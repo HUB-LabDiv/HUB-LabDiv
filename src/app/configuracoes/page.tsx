@@ -24,6 +24,7 @@ import { useRouter } from 'next/navigation';
 import { Share2, User, Download, Trash2, ShieldCheck, Database, Palette } from 'lucide-react';
 import { FluxoFeedbackCard } from '@/components/feedback/FluxoFeedbackCard';
 import { CacheManager } from '@/components/cache/CacheManager';
+import { useSwipe } from '@/hooks/useSwipe';
 
 type ConfigTab = 'conta' | 'armazenamento' | 'personalizacao';
 
@@ -35,6 +36,22 @@ export default function ConfigPage() {
     const [isDeletingData, setIsDeletingData] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+    const tabs: ConfigTab[] = ['conta', 'armazenamento', 'personalizacao'];
+    const swipeHandlers = useSwipe({
+        onSwipedLeft: () => {
+            const currentIndex = tabs.indexOf(activeTab);
+            if (currentIndex < tabs.length - 1) {
+                setActiveTab(tabs[currentIndex + 1]);
+            }
+        },
+        onSwipedRight: () => {
+            const currentIndex = tabs.indexOf(activeTab);
+            if (currentIndex > 0) {
+                setActiveTab(tabs[currentIndex - 1]);
+            }
+        }
+    });
 
     const handleExport = async () => {
         setIsExporting(true);
@@ -98,7 +115,7 @@ export default function ConfigPage() {
 
     return (
         <MainLayoutWrapper userId={user?.id}>
-            <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-10 animate-in fade-in slide-in-from-top-4 duration-500">
+            <div {...swipeHandlers} className="max-w-3xl mx-auto p-4 md:p-8 space-y-10 animate-in fade-in slide-in-from-top-4 duration-500">
                 {/* 1. SWITCH DE ABA */}
                 <div className="flex flex-wrap justify-center sm:justify-start gap-2 p-1 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[24px] mb-6 w-fit mx-auto sm:mx-0">
                     <button
