@@ -15,6 +15,7 @@ import { toast } from 'react-hot-toast';
 interface CacheInfo {
     name: string;
     size?: number;
+    itemsCount?: number;
 }
 
 export type CacheMode = 'full' | 'restricted' | 'off';
@@ -37,7 +38,28 @@ export function CacheManager() {
 
             if ('caches' in window) {
                 const cacheNames = await caches.keys();
-                setCachesList(cacheNames.map(name => ({ name })));
+                const detailedCaches: CacheInfo[] = await Promise.all(
+                    cacheNames.map(async (name) => {
+                        let size = 0;
+                        let itemsCount = 0;
+                        try {
+                            const cache = await caches.open(name);
+                            const keys = await cache.keys();
+                            itemsCount = keys.length;
+                            for (const request of keys) {
+                                const response = await cache.match(request);
+                                if (response) {
+                                    const blob = await response.clone().blob();
+                                    size += blob.size;
+                                }
+                            }
+                        } catch (e) {
+                            console.error(`Error calculating size for cache ${name}:`, e);
+                        }
+                        return { name, size, itemsCount };
+                    })
+                );
+                setCachesList(detailedCaches);
             }
 
             if (typeof window !== 'undefined') {
@@ -101,12 +123,13 @@ export function CacheManager() {
             if ('caches' in window) {
                 const cacheNames = await caches.keys();
                 for (const name of cacheNames) {
-                    // Preserva os dados essenciais mantendo a autenticação e sessão intactas
-                    if (!name.toLowerCase().includes('auth') && !name.toLowerCase().includes('session')) {
+                    // Preserva os dados essenciais mantendo a autenticação, sessão e rascunhos salvos intactos
+                    if (!name.toLowerCase().includes('auth') && !name.toLowerCase().includes('session') && !name.toLowerCase().includes('draft')) {
                         await caches.delete(name);
                     }
                 }
             }
+            toast.success('Caches limpos! Sua sessão de login e rascunhos foram mantidos.');
             loadCacheData();
         } catch (error) {
             toast.error('Erro ao limpar caches.');
@@ -229,13 +252,13 @@ export function CacheManager() {
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-brand-yellow/10 border border-brand-yellow/20 rounded-xl p-4">
                     <div className="flex items-center gap-3">
                         <AlertTriangle className="w-5 h-5 text-brand-yellow shrink-0" />
-                        <p className="text-sm text-brand-yellow font-medium">Você pode liberar espaço removendo dados armazenados offline.</p>
+                        <p className="text-sm text-brand-yellow font-medium">Você pode liberar espaço removendo dados offline (sua sessão e rascunhos salvos serão preservados).</p>
                     </div>
                     <button 
                         onClick={handleClearAllButAuth}
                         className="px-4 py-2 bg-brand-yellow text-black text-xs font-bold rounded-lg uppercase hover:bg-brand-yellow/90 transition-colors whitespace-nowrap"
                     >
-                        Limpar (Manter Sessão)
+                        Limpar (Manter Sessão e Rascunhos)
                     </button>
                 </div>
             </div>
@@ -262,7 +285,14 @@ export function CacheManager() {
                                 <div className="flex items-start gap-3">
                                     <Database className="w-5 h-5 text-brand-blue shrink-0 mt-1" />
                                     <div className="flex flex-col">
-                                        <span className="text-white font-bold text-sm">{cache.name}</span>
+                                        <div className="flex items-center gap-2 flex-wrap">
+                                            <span className="text-white font-bold text-sm">{cache.name}</span>
+                                            {cache.size !== undefined && (
+                                                <span className="text-brand-yellow font-mono font-bold text-xs bg-brand-yellow/10 border border-brand-yellow/20 px-2 py-0.5 rounded-md">
+                                                    ({formatBytes(cache.size)}{cache.itemsCount ? ` — ${cache.itemsCount} arquivos` : ''})
+                                                </span>
+                                            )}
+                                        </div>
                                         <span className="text-xs text-gray-400 mt-1">{description}</span>
                                     </div>
                                 </div>

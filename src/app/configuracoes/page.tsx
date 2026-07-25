@@ -99,25 +99,8 @@ export default function ConfigPage() {
     return (
         <MainLayoutWrapper userId={user?.id}>
             <div className="max-w-3xl mx-auto p-4 md:p-8 space-y-10 animate-in fade-in slide-in-from-top-4 duration-500">
-                <header className="space-y-3">
-                    <h1 className="text-3xl font-bukra font-black tracking-tight text-white flex items-center gap-3">
-                        <span className="material-symbols-outlined text-brand-blue text-4xl">manage_accounts</span>
-                        Conta & Privacidade
-                    </h1>
-                    <p className="text-gray-400 font-medium">
-                        Gerencie sua identidade, privacidade e conformidade com a LGPD no HUB.
-                    </p>
-                </header>
-
-                <div className="max-w-4xl mb-6">
-                    <FluxoFeedbackCard 
-                        title="Configurações do HUB" 
-                        description="Aqui você tem controle total sobre seus dados, armazenamento e preferências. O Hub LabDiv tem o compromisso de garantir transparência, proteção e autonomia para todos os usuários." 
-                        icon={<ShieldCheck className="w-5 h-5 text-brand-blue" />}
-                    />
-                </div>
-
-                <div className="flex flex-wrap gap-2 p-1 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[24px] mb-8 w-fit">
+                {/* 1. SWITCH DE ABA */}
+                <div className="flex flex-wrap justify-center sm:justify-start gap-2 p-1 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[24px] mb-6 w-fit mx-auto sm:mx-0">
                     <button
                         onClick={() => setActiveTab('conta')}
                         className={`flex items-center gap-2.5 px-6 py-3 rounded-[20px] text-[10px] font-black uppercase tracking-widest transition-all ${
@@ -149,6 +132,34 @@ export default function ConfigPage() {
                         <Palette className="w-4 h-4" /> Personalização
                     </button>
                 </div>
+
+                {/* 2. CARD DE FEEDBACK */}
+                <div className="max-w-4xl mb-6">
+                    <FluxoFeedbackCard 
+                        title="Configurações do HUB" 
+                        description="Aqui você tem controle total sobre seus dados, armazenamento e preferências. O Hub LabDiv tem o compromisso de garantir transparência, proteção e autonomia para todos os usuários." 
+                        icon={<ShieldCheck className="w-5 h-5 text-brand-blue" />}
+                    />
+                </div>
+
+                {/* 3. TÍTULO DA PÁGINA */}
+                <header className="space-y-3">
+                    <h1 className="text-3xl font-bukra font-black tracking-tight text-white flex items-center gap-3 outline-none focus:outline-none">
+                        <span className="material-symbols-outlined text-brand-blue text-4xl">
+                            {activeTab === 'conta' ? 'manage_accounts' : activeTab === 'armazenamento' ? 'database' : 'palette'}
+                        </span>
+                        {activeTab === 'conta' && 'Conta & Privacidade'}
+                        {activeTab === 'armazenamento' && 'Armazenamento & Cache'}
+                        {activeTab === 'personalizacao' && 'Personalização'}
+                    </h1>
+                    <p className="text-gray-400 font-medium">
+                        {activeTab === 'conta' && 'Gerencie sua identidade, privacidade e conformidade com a LGPD no HUB.'}
+                        {activeTab === 'armazenamento' && 'Gerencie o uso de armazenamento local, mídias offline e caches do dispositivo.'}
+                        {activeTab === 'personalizacao' && 'Personalize temas, acessibilidade e preferências de interface do HUB.'}
+                    </p>
+                </header>
+
+                {/* 4. CONTEÚDO */}
 
                 {activeTab === 'conta' && (
                     <div className="space-y-10 animate-in fade-in duration-500">

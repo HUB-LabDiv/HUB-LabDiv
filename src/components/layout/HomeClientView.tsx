@@ -508,9 +508,9 @@ export const HomeClientView = ({
                                     description="Este é o seu feed principal. O que você gostaria de ver aqui para facilitar a exploração da nossa comunidade?" 
                                     icon={<Zap className="w-5 h-5 text-brand-blue" />}
                                 />
-                                <div className="flex flex-col gap-3 relative mb-8">
+                                <div className="flex flex-col gap-3 relative mb-8 outline-none focus:outline-none">
                                     <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-blue/5 rounded-full blur-[60px] pointer-events-none"></div>
-                                    <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-blue flex items-center gap-4 relative z-10">
+                                    <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-blue flex items-center gap-4 relative z-10 outline-none focus:outline-none">
                                         <Zap className="w-12 h-12" />
                                         FLUXO
                                     </h1>

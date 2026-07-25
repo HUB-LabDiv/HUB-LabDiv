@@ -101,6 +101,12 @@ html {
   overscroll-behavior-y: none !important;
 }
 
+/* 🚫 Prevent focus outlines on non-interactive headings and title wrappers */
+h1:focus, h1:focus-visible, h2:focus, h2:focus-visible, h3:focus, h3:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 body {
   position: relative;
   z-index: 0;
