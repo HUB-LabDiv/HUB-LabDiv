@@ -29,6 +29,7 @@ import { UserMinimalDTO } from '@/types/navigation';
 import { useAuth } from '@/providers/AuthProvider';
 import { useTelemetry } from '@/hooks/useTelemetry';
 import { IFUSPLogo } from '../icons/IFUSPLogo';
+import { usePersonalizacaoStore } from '@/store/usePersonalizacaoStore';
 
 /**
  * V8.0 Header - Fort Knox Edition
@@ -38,6 +39,7 @@ export function Header() {
     const { trackEvent } = useTelemetry();
     const pathname = usePathname();
     const { theme, toggleTheme } = useTheme();
+    const { institution } = usePersonalizacaoStore();
 
     // Sharded UI State (V8.0 Navigation Store)
     const {
@@ -133,18 +135,58 @@ export function Header() {
                                         <span className="text-[6px] sm:text-[8px] font-black uppercase tracking-tighter ml-1 text-brand-blue dark:text-gray-500">(BETA)</span>
                                     </div>
                                 </div>
-                                <span className="text-[6px] sm:text-[9px] font-bukra font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">IFUSP</span>
+                                <span className="text-[6px] sm:text-[9px] font-bukra font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">
+                                    {institution === 'ime' ? 'IME-USP' : institution === 'iag' ? 'IAG-USP' : institution === 'igc' ? 'IGC-USP' : institution === 'io' ? 'IO-USP' : 'IFUSP'}
+                                </span>
                             </div>
                             <div className="flex items-center gap-1.5 sm:gap-2.5 ml-0 sm:ml-1 scale-75 sm:scale-100 origin-left">
                                 <div className="w-px h-5 sm:h-7 bg-gray-200 dark:bg-white/15"></div>
-                                <IFUSPLogo size={42} className="text-brand-blue dark:text-brand-blue-accent transition-opacity" />
+                                {institution === 'ime' ? (
+                                    <Image 
+                                        src="/instituto_de_matemtica_e_estatstica_universidade_de_so_paulo_ime_usp_logo.jpeg"
+                                        alt="IME USP Logo"
+                                        width={42}
+                                        height={42}
+                                        className="object-contain rounded-lg border border-white/15"
+                                        priority
+                                    />
+                                ) : institution === 'iag' ? (
+                                    <Image 
+                                        src="/2oj0z6xd_400x400.jpg"
+                                        alt="IAG USP Logo"
+                                        width={42}
+                                        height={42}
+                                        className="object-contain rounded-lg border border-white/15"
+                                        priority
+                                    />
+                                ) : institution === 'igc' ? (
+                                    <Image 
+                                        src="/unnamed.jpg"
+                                        alt="IGC USP Logo"
+                                        width={42}
+                                        height={42}
+                                        className="object-contain rounded-lg border border-white/15"
+                                        priority
+                                    />
+                                ) : institution === 'io' ? (
+                                    <Image 
+                                        src="/image.png"
+                                        alt="IO USP Logo"
+                                        width={42}
+                                        height={42}
+                                        className="object-contain rounded-lg border border-white/15"
+                                        priority
+                                    />
+                                ) : (
+                                    <IFUSPLogo size={42} className="text-brand-blue dark:text-brand-blue-accent transition-opacity" />
+                                )}
                             </div>
                         </div>
                     </Link>
 
                     {/* Middle: Nav Tabs + Search (The Notch) - Hardened V8.1 with Static Centering */}
                     <div className="hidden xl:flex absolute left-1/2 -translate-x-1/2 top-0 z-50">
-                        <div className="bg-[#0F4780] rounded-b-[24px] px-8 py-3 flex items-center gap-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-x border-b border-white/10 backdrop-blur-xl">
+                        <div className="bg-[#0F4780] rounded-b-[24px] px-8 py-3 flex items-center gap-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-x border-b border-white/10 backdrop-blur-xl transition-colors duration-300">
                             {[
                                 { label: 'Comunidade', href: '/', color: '#F14343' },
                                 { label: 'GCIF', href: '/gcif', color: '#1F9FCF' },

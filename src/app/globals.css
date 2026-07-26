@@ -122,17 +122,42 @@ body {
   padding-right: env(safe-area-inset-right);
 }
 
-/* Scientific background pattern - moved to pseudo-element for visibility control */
+/* Scientific background patterns by institution */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
-  background-image: url('/bg-science.svg');
+  background-image: url('/bg-if.svg');
   background-size: 1200px 1200px;
   background-repeat: repeat;
   background-attachment: fixed;
   pointer-events: none;
+}
+
+html[data-institution="ime"] body::before,
+body[data-institution="ime"]::before {
+  background-image: url('/bg-ime.svg') !important;
+}
+
+html[data-institution="iag"] body::before,
+body[data-institution="iag"]::before {
+  background-image: url('/bg-iag.svg') !important;
+}
+
+html[data-institution="igc"] body::before,
+body[data-institution="igc"]::before {
+  background-image: url('/bg-igc.svg') !important;
+}
+
+html[data-institution="io"] body::before,
+body[data-institution="io"]::before {
+  background-image: url('/bg-io.svg') !important;
+}
+
+html[data-institution="ifusp"] body::before,
+body[data-institution="ifusp"]::before {
+  background-image: url('/bg-if.svg') !important;
 }
 
 /* Light mode: 75% opacity */

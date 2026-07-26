@@ -260,3 +260,11 @@ export interface Trail {
 
 // ALIASES PARA V3.2.0
 export type Particle = Submission;
+
+// PERSONALIZAÇÃO TEMAS
+export type ThemeInstitution = 'ifusp' | 'ime' | 'iag' | 'igc' | 'io';
+
+export interface PersonalizacaoStoreState {
+    institution: ThemeInstitution;
+    setInstitution: (inst: ThemeInstitution) => void;
+}

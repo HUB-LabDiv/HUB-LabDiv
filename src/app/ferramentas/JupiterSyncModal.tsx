@@ -1,3 +1,5 @@
+'use client';
+
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
  * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
@@ -10,34 +12,75 @@
  */
 
 import React, { useState } from 'react';
-import { X, Loader2, RefreshCw, Lock, Check, Calendar, BookOpen, Palette } from 'lucide-react';
-import { toast } from 'react-hot-toast';
 import { syncJupiterData } from '@/app/actions/calendar';
+import { 
+    X, RefreshCw, Check, BookOpen, Calendar, Loader2, Lock
+} from 'lucide-react';
+import { toast } from 'react-hot-toast';
+
 import { useAuth } from '@/providers/AuthProvider';
 
 interface JupiterSyncModalProps {
     isOpen: boolean;
     onClose: () => void;
     onSuccess: () => void;
+    user?: any;
+    profile?: any;
 }
 
-type Step = 'auth' | 'review' | 'cached';
-
 const PRESET_COLORS = [
-    '#3B82F6', // Blue
-    '#06B6D4', // Cyan/Teal
-    '#FFCC00', // Yellow
-    '#F97316', // Orange
-    '#EF4444', // Red
+    '#3B82F6', // Azul
+    '#EF4444', // Vermelho
+    '#EAB308', // Amarelo
+    '#10B981', // Verde
+    '#8B5CF6', // Roxo
+    '#F97316', // Laranja
+    '#EC4899', // Rosa
 ];
 
-export function JupiterSyncModal({ isOpen, onClose, onSuccess }: JupiterSyncModalProps) {
-    const { user, profile } = useAuth();
-    const [step, setStep] = useState<Step>('auth');
+export function JupiterSyncModal({ isOpen, onClose, onSuccess, user: propUser, profile: propProfile }: JupiterSyncModalProps) {
+    const { user: authUser, profile: authProfile } = useAuth();
+    const user = propUser || authUser;
+    const profile = propProfile || authProfile;
+
+    const [step, setStep] = useState<'cached' | 'auth' | 'review'>('auth');
     const [nUsp, setNUsp] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     
+    // Scraped Data
+    const [scrapedSubjects, setScrapedSubjects] = useState<any[]>([]);
+    const [subjectsOptions, setSubjectsOptions] = useState<{
+        [code: string]: {
+            linkToCalendar: boolean;
+            generateStudy: boolean;
+            color: string;
+            title: string;
+        }
+    }>({});
+
+    const populateFromCache = React.useCallback((cache: any) => {
+        if (!cache?.subjects) return;
+        const subjects = cache.subjects || [];
+        const courseNames = cache.courseNames || {};
+        
+        setScrapedSubjects(subjects);
+        
+        const codes = Array.from(new Set(subjects.map((s: any) => s.code))) as string[];
+        const initialOptions: any = {};
+        
+        codes.forEach((code, idx) => {
+            initialOptions[code] = {
+                linkToCalendar: true,
+                generateStudy: true,
+                color: PRESET_COLORS[idx % PRESET_COLORS.length],
+                title: courseNames[code] || code
+            };
+        });
+        
+        setSubjectsOptions(initialOptions);
+    }, []);
+
     // Auto-fill nUSP from email prefix
     React.useEffect(() => {
         if (isOpen && user?.email?.endsWith('@usp.br') && !nUsp) {
@@ -50,21 +93,13 @@ export function JupiterSyncModal({ isOpen, onClose, onSuccess }: JupiterSyncModa
 
     // [FAST SYNC] Check if cache exists on modal open
     React.useEffect(() => {
-        if (isOpen && profile?.jupiter_subjects_cache?.subjects && step === 'auth') {
+        if (isOpen && profile?.jupiter_subjects_cache?.subjects) {
+            populateFromCache(profile.jupiter_subjects_cache);
             setStep('cached');
+        } else if (isOpen) {
+            setStep('auth');
         }
-    }, [isOpen, profile, step]);
-    
-    // Scraped Data
-    const [scrapedSubjects, setScrapedSubjects] = useState<any[]>([]);
-    const [subjectsOptions, setSubjectsOptions] = useState<{
-        [code: string]: {
-            linkToCalendar: boolean;
-            generateStudy: boolean;
-            color: string;
-            title: string;
-        }
-    }>({});
+    }, [isOpen, profile, populateFromCache]);
 
     if (!isOpen) return null;
 
@@ -181,29 +216,35 @@ export function JupiterSyncModal({ isOpen, onClose, onSuccess }: JupiterSyncModa
                                     <span className="text-sm font-bold uppercase tracking-tight">Sincronização Ativa</span>
                                 </div>
                                 <p className="text-xs text-gray-400 leading-relaxed">
-                                    Você já possui {profile.jupiter_subjects_cache.subjects.length} disciplinas sincronizadas em {new Date(profile.last_jupiter_sync).toLocaleDateString('pt-BR')}.
+                                    Você já possui {profile?.jupiter_subjects_cache?.subjects?.length || 0} disciplinas sincronizadas em {profile?.last_jupiter_sync ? new Date(profile.last_jupiter_sync).toLocaleDateString('pt-BR') : 'data recente'}.
                                 </p>
                              </div>
 
                              <div className="flex flex-col gap-3">
                                 <button
+                                    onClick={() => setStep('review')}
+                                    className="w-full bg-brand-yellow hover:opacity-90 text-[#121212] font-black uppercase tracking-widest text-[11px] py-4 rounded-2xl transition-all shadow-lg shadow-brand-yellow/20 font-bold"
+                                >
+                                    Ver / Inserir Disciplinas na Grade
+                                </button>
+                                <button
                                     onClick={onClose}
-                                    className="w-full bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest text-[11px] py-4 rounded-2xl transition-all"
+                                    className="w-full bg-white/5 hover:bg-white/10 text-white font-black uppercase tracking-widest text-[11px] py-3 rounded-2xl transition-all"
                                 >
                                     Manter Grade Atual
                                 </button>
                                 <button
                                     onClick={() => setStep('auth')}
-                                    className="w-full flex items-center justify-center gap-2 text-[10px] text-gray-500 hover:text-brand-yellow font-black uppercase tracking-widest py-2 transition-all"
+                                    className="w-full flex items-center justify-center gap-2 text-[10px] text-gray-500 hover:text-brand-yellow font-black uppercase tracking-widest py-2 transition-all mt-1"
                                 >
                                     <RefreshCw className="w-3 h-3" />
-                                    Refazer Sincronização Completa
+                                    Refazer Sincronização Completa com Júpiter
                                 </button>
                              </div>
                         </div>
                     )}
 
-                    {step === 'auth' ? (
+                    {step === 'auth' && (
                         <>
                             <p className="text-sm text-gray-400 mb-8 leading-relaxed">
                                 Conecte-se ao JúpiterWeb para importar sua grade horária oficial automaticamente para o cronograma do Hub.
@@ -262,7 +303,9 @@ export function JupiterSyncModal({ isOpen, onClose, onSuccess }: JupiterSyncModa
                                 </p>
                             </div>
                         </>
-                    ) : (
+                    )}
+
+                    {step === 'review' && (
                         <div className="space-y-6">
                             <div className="max-h-[400px] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-white/10 space-y-3">
                             {Object.keys(subjectsOptions).length > 0 ? (
@@ -336,7 +379,7 @@ export function JupiterSyncModal({ isOpen, onClose, onSuccess }: JupiterSyncModa
                                 ) : (
                                     <>
                                         <Check className="w-5 h-5" />
-                                        <span>Confirmar Grade</span>
+                                        <span>Confirmar e Inserir na Grade</span>
                                     </>
                                 )}
                             </button>

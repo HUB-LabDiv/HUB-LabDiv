@@ -24,6 +24,8 @@ import { useAuth } from '@/providers/AuthProvider';
 import { ContentReportModal } from '../modals/ContentReportModal';
 import { ReportModal } from '../feedback/ReportModal';
 
+import { usePersonalizacaoStore } from '@/store/usePersonalizacaoStore';
+
 interface MainLayoutWrapperProps {
     children: React.ReactNode;
     focusMode?: boolean;
@@ -47,6 +49,16 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = false, f
         setReportModalOpen
     } = useNavigationStore();
     const { profile } = useAuth();
+    const { institution } = usePersonalizacaoStore();
+
+    React.useEffect(() => {
+        if (typeof window !== 'undefined') {
+            document.documentElement.setAttribute('data-institution', institution);
+            if (document.body) {
+                document.body.setAttribute('data-institution', institution);
+            }
+        }
+    }, [institution]);
 
     return (
         <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col overflow-x-clip">
@@ -99,7 +111,7 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = false, f
             {!focusMode && (profile?.is_adult === true || profile?.user_category === 'pesquisador' || profile?.user_category === 'docente_pesquisador') && (
                 <Link
                     href="/enviar"
-                    className="hidden xl:flex fixed bottom-8 right-8 z-[60] bg-brand-blue text-white px-6 h-14 rounded-full shadow-2xl items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all group border border-white/10"
+                    className="hidden xl:flex fixed bottom-8 right-8 z-[60] bg-brand-blue hover:bg-brand-blue-hover text-white px-6 h-14 rounded-full shadow-2xl items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all group border border-white/10"
                     title="Lançar à Órbita"
                 >
                     <span className="material-symbols-outlined text-2xl group-hover:-translate-y-1 transition-transform">rocket_launch</span>

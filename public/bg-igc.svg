@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" fill="none">
+  <!-- Geosciences, Mineralogy & Geology Equations & Formulas (No Emojis, Pure Math & Blackboard Symbols) -->
+  <text x="80" y="60" fill="#0F4780" opacity="1" font-size="22" font-family="Georgia, serif" transform="rotate(-12 80 60)">SiO₂ + Al₂O₃</text>
+  <text x="650" y="120" fill="#F14343" opacity="1" font-size="18" font-family="Georgia, serif" transform="rotate(8 650 120)">Fe₂O₃ · nH₂O</text>
+  <text x="1020" y="80" fill="#FFCC00" opacity="1" font-size="16" font-family="Georgia, serif" transform="rotate(-5 1020 80)">CaCO₃</text>
+  <text x="350" y="200" fill="#FFCC00" opacity="1" font-size="20" font-family="Georgia, serif" transform="rotate(15 350 200)">p = ρ g h</text>
+  <text x="900" y="250" fill="#0F4780" opacity="1" font-size="24" font-family="Georgia, serif" transform="rotate(-8 900 250)">v_p / v_s</text>
+  <text x="150" y="340" fill="#F14343" opacity="1" font-size="16" font-family="Georgia, serif" transform="rotate(6 150 340)">Mg₂SiO₄ (Olivine)</text>
+  <text x="550" y="380" fill="#0F4780" opacity="1" font-size="18" font-family="Georgia, serif" transform="rotate(-10 550 380)">T_c = 580°C</text>
+  <text x="1050" y="400" fill="#FFCC00" opacity="1" font-size="14" font-family="Georgia, serif" transform="rotate(12 1050 400)">ΔT / Δz = 30°C/km</text>
+  <text x="80" y="500" fill="#FFCC00" opacity="1" font-size="20" font-family="Georgia, serif" transform="rotate(-6 80 500)">4.54 Ga (Age of Earth)</text>
+  <text x="400" y="550" fill="#F14343" opacity="1" font-size="16" font-family="Georgia, serif" transform="rotate(9 400 550)">pH = -log[H⁺]</text>
+  <text x="750" y="520" fill="#0F4780" opacity="1" font-size="22" font-family="Georgia, serif" transform="rotate(-15 750 520)">δ¹⁸O / δ¹³C</text>
+  <text x="200" y="680" fill="#0F4780" opacity="1" font-size="18" font-family="Georgia, serif" transform="rotate(4 200 680)">²³⁸U → ²⁰⁶Pb</text>
+  <text x="600" y="720" fill="#FFCC00" opacity="1" font-size="16" font-family="Georgia, serif" transform="rotate(-7 600 720)">Q - Ab - Or</text>
+  <text x="1000" y="650" fill="#F14343" opacity="1" font-size="20" font-family="Georgia, serif" transform="rotate(11 1000 650)">Ma / Ga</text>
+  <text x="100" y="850" fill="#F14343" opacity="1" font-size="14" font-family="Georgia, serif" transform="rotate(-9 100 850)">N(t) = N₀ e^{-λ t}</text>
+  <text x="480" y="900" fill="#0F4780" opacity="1" font-size="22" font-family="Georgia, serif" transform="rotate(7 480 900)">σ = E ε</text>
+  <text x="850" y="870" fill="#FFCC00" opacity="1" font-size="16" font-family="Georgia, serif" transform="rotate(-13 850 870)">K-Ar Dating</text>
+  <text x="300" y="1050" fill="#FFCC00" opacity="1" font-size="18" font-family="Georgia, serif" transform="rotate(5 300 1050)">v_s = √(μ/ρ)</text>
+  <text x="700" y="1080" fill="#F14343" opacity="1" font-size="14" font-family="Georgia, serif" transform="rotate(-8 700 1080)">Al₂SiO₅ (Kyanite/Sillimanite)</text>
+  <text x="1080" y="1000" fill="#0F4780" opacity="1" font-size="20" font-family="Georgia, serif" transform="rotate(10 1080 1000)">P-T Diagram</text>
+  <text x="50" y="1150" fill="#0F4780" opacity="1" font-size="16" font-family="Georgia, serif" transform="rotate(-4 50 1150)">CuFeS₂ (Chalcopyrite)</text>
+  <text x="550" y="1150" fill="#F14343" opacity="1" font-size="18" font-family="Georgia, serif" transform="rotate(14 550 1150)">NaCl</text>
+  <text x="950" y="1150" fill="#FFCC00" opacity="1" font-size="22" font-family="Georgia, serif" transform="rotate(-11 950 1150)">Fe₂SiO₄ (Fayalite)</text>
+
+  <!-- Tiny dots & Stratigraphic / Fault lines / Crystal Grid Sketches -->
+  <circle cx="120" cy="130" r="1.5" fill="#0F4780" opacity="1"/>
+  <circle cx="450" cy="90" r="1" fill="#F14343" opacity="1"/>
+  <circle cx="780" cy="170" r="2" fill="#FFCC00" opacity="1"/>
+  <circle cx="300" cy="300" r="1" fill="#FFCC00" opacity="1"/>
+  <circle cx="950" cy="330" r="1.5" fill="#0F4780" opacity="1"/>
+  <circle cx="600" cy="450" r="1" fill="#F14343" opacity="1"/>
+
+  <!-- Stratigraphic fold sketches -->
+  <path d="M 220 440 Q 250 460 280 440" stroke="#0F4780" stroke-width="0.8" fill="none"/>
+  <path d="M 220 450 Q 250 470 280 450" stroke="#F14343" stroke-width="0.8" fill="none"/>
+  <path d="M 220 460 Q 250 480 280 460" stroke="#FFCC00" stroke-width="0.8" fill="none"/>
+
+  <!-- Crystal diamond lattice sketch -->
+  <polygon points="850,730 865,750 850,770 835,750" fill="none" stroke="#FFCC00" stroke-width="0.8"/>
+  <line x1="850" y1="730" x2="850" y2="770" stroke="#0F4780" stroke-width="0.6"/>
+  <line x1="835" y1="750" x2="865" y2="750" stroke="#F14343" stroke-width="0.6"/>
+</svg>

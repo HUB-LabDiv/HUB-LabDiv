@@ -18,10 +18,13 @@ import { AppRoutes } from '@/types/navigation';
 import { ColisorIcon } from '../icons/ColisorIcon';
 import { USPLogo } from '../icons/USPLogo';
 import { IFUSPLogo } from '../icons/IFUSPLogo';
+import { usePersonalizacaoStore } from '@/store/usePersonalizacaoStore';
 
 export function Footer() {
+    const { institution } = usePersonalizacaoStore();
+
     return (
-        <footer className="bg-brand-blue border-t border-white/10 pt-16 pb-20 md:pb-8 text-white/90">
+        <footer className="bg-brand-blue border-t border-white/10 pt-16 pb-20 md:pb-8 text-white/90 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
                     <div className="col-span-1 lg:col-span-1">
@@ -44,15 +47,55 @@ export function Footer() {
                                         <span className="text-[8px] font-black uppercase tracking-tighter ml-1 text-brand-blue dark:text-gray-500">(BETA)</span>
                                     </div>
                                 </div>
-                                <span className="text-[8px] uppercase tracking-wider text-gray-500 dark:text-gray-400 font-bukra font-medium">Física USP</span>
+                                <span className="text-[8px] uppercase tracking-wider text-gray-500 dark:text-gray-400 font-bukra font-medium">
+                                    {institution === 'ime' ? 'IME-USP' : institution === 'iag' ? 'IAG-USP' : institution === 'igc' ? 'IGC-USP' : institution === 'io' ? 'IO-USP' : 'Física USP'}
+                                </span>
                             </div>
                             <div className="flex items-center gap-2.5 ml-1">
                                 <div className="w-px h-7 bg-gray-200 dark:bg-white/15"></div>
-                                <IFUSPLogo size={42} className="text-brand-blue dark:text-brand-blue-accent opacity-95" />
+                                {institution === 'ime' ? (
+                                    <Image 
+                                        src="/instituto_de_matemtica_e_estatstica_universidade_de_so_paulo_ime_usp_logo.jpeg"
+                                        alt="IME USP Logo"
+                                        width={42}
+                                        height={42}
+                                        className="object-contain rounded-lg border border-gray-200 dark:border-white/10"
+                                        priority
+                                    />
+                                ) : institution === 'iag' ? (
+                                    <Image 
+                                        src="/2oj0z6xd_400x400.jpg"
+                                        alt="IAG USP Logo"
+                                        width={42}
+                                        height={42}
+                                        className="object-contain rounded-lg border border-gray-200 dark:border-white/10"
+                                        priority
+                                    />
+                                ) : institution === 'igc' ? (
+                                    <Image 
+                                        src="/unnamed.jpg"
+                                        alt="IGC USP Logo"
+                                        width={42}
+                                        height={42}
+                                        className="object-contain rounded-lg border border-gray-200 dark:border-white/10"
+                                        priority
+                                    />
+                                ) : institution === 'io' ? (
+                                    <Image 
+                                        src="/image.png"
+                                        alt="IO USP Logo"
+                                        width={42}
+                                        height={42}
+                                        className="object-contain rounded-lg border border-gray-200 dark:border-white/10"
+                                        priority
+                                    />
+                                ) : (
+                                    <IFUSPLogo size={42} className="text-brand-blue dark:text-brand-blue-accent opacity-95" />
+                                )}
                             </div>
                         </div>
-                        <p className="text-sm text-white/60 mb-6 leading-relaxed">
-                            Hub de Comunicação Científica do Lab-Div - Um projeto para melhorar a comunicação do IFUSP e reunir em um FLUXO interativo o arquivo de material de divulgação do Lab-Div e de toda a comunidade — de dentro e fora do instituto.
+                        <p className="text-sm text-white/80 mb-6 leading-relaxed">
+                            Hub de Comunicação Científica do Lab-Div - Um projeto para melhorar a comunicação do {institution === 'ime' ? 'IME-USP' : institution === 'iag' ? 'IAG-USP' : institution === 'igc' ? 'IGC-USP' : institution === 'io' ? 'IO-USP' : 'IFUSP'} e reunir em um FLUXO interativo o arquivo de material de divulgação do Lab-Div e de toda a comunidade — de dentro e fora do instituto.
                         </p>
 
                     </div>
@@ -60,21 +103,21 @@ export function Footer() {
                     <div>
                         <h4 className="font-bold text-white mb-6 uppercase text-xs tracking-wider border-l-4 border-white/40 pl-3">Navegação</h4>
                         <ul className="space-y-3">
-                            <li><Link href="/" className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">groups</span> Comunidade</Link></li>
-                            <li><Link href="/gcif" className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"><ColisorIcon size={20} animate={false} className="w-5 h-5 flex-shrink-0" /> O Grande Colisor do IF</Link></li>
-                            <li><Link href="/sobre" className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">info</span> Sobre o HUB</Link></li>
-                            <li><Link href="/ferramentas" className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">construction</span> Ferramentas acadêmicas</Link></li>
-                            <li><Link href="/perguntas" className="flex items-center gap-3 text-sm text-white/60 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">help_outline</span> Interação (Pergunte/Lab)</Link></li>
+                            <li><Link href="/" className="flex items-center gap-3 text-sm text-white/80 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">groups</span> Comunidade</Link></li>
+                            <li><Link href="/gcif" className="flex items-center gap-3 text-sm text-white/80 hover:text-white transition-colors"><ColisorIcon size={20} animate={false} className="w-5 h-5 flex-shrink-0" /> O Grande Colisor do IF</Link></li>
+                            <li><Link href="/sobre" className="flex items-center gap-3 text-sm text-white/80 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">info</span> Sobre o HUB</Link></li>
+                            <li><Link href="/ferramentas" className="flex items-center gap-3 text-sm text-white/80 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">construction</span> Ferramentas acadêmicas</Link></li>
+                            <li><Link href="/perguntas" className="flex items-center gap-3 text-sm text-white/80 hover:text-white transition-colors"><span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0">help_outline</span> Central de interações</Link></li>
 
-                            <li><Link href="/admin" className="flex items-center gap-3 text-[10px] text-gray-400/50 dark:text-gray-600/50 hover:text-brand-blue-accent dark:hover:text-brand-blue-accent transition-colors mt-4"><span className="material-symbols-outlined text-[16px] w-5 h-5 flex items-center justify-center flex-shrink-0">admin_panel_settings</span> Painel de Controle</Link></li>
+                            <li><Link href="/admin" className="flex items-center gap-3 text-[10px] text-white/60 hover:text-white transition-colors mt-4"><span className="material-symbols-outlined text-[16px] w-5 h-5 flex items-center justify-center flex-shrink-0">admin_panel_settings</span> Painel de Controle</Link></li>
                         </ul>
                     </div>
 
                     <div>
                         <h4 className="font-bold text-white mb-6 uppercase text-xs tracking-wider border-l-4 border-white/40 pl-3">Responsável pelo site</h4>
                         <ul className="space-y-3">
-                            <li className="flex items-start gap-3 text-sm text-white/60">
-                                <span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-brand-blue-accent">person</span>
+                            <li className="flex items-start gap-3 text-sm text-white/80">
+                                <span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-white">person</span>
                                 <div>
                                     <p className="font-medium text-white">João Stangorlini</p>
                                     <button
@@ -84,7 +127,7 @@ export function Footer() {
                                             import('react-hot-toast').then(m => m.toast.success('E-mail copiado!'));
                                             window.location.href = `mailto:${email}`;
                                         }}
-                                        className="hover:text-brand-blue-accent transition-colors text-left"
+                                        className="hover:underline transition-colors text-left"
                                     >
                                         joaopaulostangorlini@usp.br
                                     </button>
@@ -95,14 +138,14 @@ export function Footer() {
                     </div>
 
                     <div>
-                        <h4 className="font-bold text-white mb-6 uppercase text-xs tracking-wider border-l-4 border-brand-red pl-3">
-                            <span className="text-gradient-brand font-black">LabDiv</span>
+                        <h4 className="font-bold text-white mb-6 uppercase text-xs tracking-wider border-l-4 border-white/60 pl-3">
+                            <span className="font-black text-white">LabDiv</span>
                         </h4>
                         <ul className="space-y-4">
-                            <li className="flex items-start gap-3 text-sm text-white/60">
-                                <span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-brand-red">school</span>
+                            <li className="flex items-start gap-3 text-sm text-white/80">
+                                <span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-white">school</span>
                                 <div>
-                                    <p className="text-[10px] text-white/40 mb-0.5">Docente responsável:</p>
+                                    <p className="text-[10px] text-white/60 mb-0.5">Docente responsável:</p>
                                     <p className="font-medium text-white">Prof. Caetano Miranda</p>
                                     <button
                                         onClick={() => {
@@ -111,14 +154,14 @@ export function Footer() {
                                             import('react-hot-toast').then(m => m.toast.success('E-mail copiado!'));
                                             window.location.href = `mailto:${email}`;
                                         }}
-                                        className="hover:text-brand-red transition-colors text-left"
+                                        className="hover:underline transition-colors text-left"
                                     >
                                         cmiranda@if.usp.br
                                     </button>
                                 </div>
                             </li>
-                            <li className="flex items-start gap-3 text-sm text-white/60">
-                                <span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-brand-red">email</span>
+                            <li className="flex items-start gap-3 text-sm text-white/80">
+                                <span className="material-symbols-outlined text-[20px] w-5 h-5 flex items-center justify-center flex-shrink-0 mt-0.5 text-white">email</span>
                                 <button
                                     onClick={() => {
                                         const email = "labdiv@usp.br";

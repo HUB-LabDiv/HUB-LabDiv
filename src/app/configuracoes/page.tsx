@@ -25,12 +25,16 @@ import { Share2, User, Download, Trash2, ShieldCheck, Database, Palette } from '
 import { FluxoFeedbackCard } from '@/components/feedback/FluxoFeedbackCard';
 import { CacheManager } from '@/components/cache/CacheManager';
 import { useSwipe } from '@/hooks/useSwipe';
+import Image from 'next/image';
+import { usePersonalizacaoStore } from '@/store/usePersonalizacaoStore';
+import { IFUSPLogo } from '@/components/icons/IFUSPLogo';
 
 type ConfigTab = 'conta' | 'armazenamento' | 'personalizacao';
 
 export default function ConfigPage() {
     const { user, profile, loading } = useAuth();
     const router = useRouter();
+    const { institution, setInstitution } = usePersonalizacaoStore();
     const [activeTab, setActiveTab] = useState<ConfigTab>('conta');
     const [isDeleting, setIsDeleting] = useState(false);
     const [isDeletingData, setIsDeletingData] = useState(false);
@@ -288,12 +292,174 @@ export default function ConfigPage() {
                 )}
 
                 {activeTab === 'personalizacao' && (
-                    <div className="flex flex-col items-center justify-center py-20 text-center animate-in fade-in duration-500">
-                        <Palette className="w-16 h-16 text-gray-700 mb-4" />
-                        <h2 className="text-xl font-bold text-gray-500">Em Breve</h2>
-                        <p className="text-sm text-gray-600 mt-2 max-w-md">
-                            As opções de personalização da sua interface (temas personalizados, fontes e preferências de visualização) estarão disponíveis nas próximas atualizações.
-                        </p>
+                    <div className="space-y-8 animate-in fade-in duration-500">
+                        <section className="bg-[#1E1E1E] border border-white/5 rounded-2xl p-6 md:p-8 space-y-6">
+                            <div className="space-y-1">
+                                <h2 className="text-xl font-bold text-white uppercase tracking-tight flex items-center gap-2">
+                                    <Palette className="w-5 h-5 text-brand-blue" />
+                                    Identidade Institucional (Tema)
+                                </h2>
+                                <p className="text-sm text-gray-400">
+                                    Selecione o tema da sua instituição de ensino. Isso alterará o símbolo de identificação na barra superior e as cores do notch/rodapé do HUB.
+                                </p>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {/* Option 1: IFUSP */}
+                                <button
+                                    onClick={() => {
+                                        setInstitution('ifusp');
+                                        toast.success('Tema alterado para Física USP (IFUSP)!');
+                                    }}
+                                    className={`relative flex items-center gap-5 p-6 rounded-2xl border text-left transition-all hover:bg-white/5 ${
+                                        institution === 'ifusp'
+                                            ? 'border-brand-blue bg-brand-blue/5 shadow-[0_0_20px_rgba(15,71,128,0.2)]'
+                                            : 'border-white/5 bg-transparent'
+                                    }`}
+                                >
+                                    <div className="w-16 h-16 rounded-xl bg-white/5 flex items-center justify-center border border-white/10 shrink-0">
+                                        <IFUSPLogo size={40} className="text-brand-blue" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h3 className="font-bold text-white text-base">Física USP (IFUSP)</h3>
+                                        <p className="text-xs text-gray-400">Logotipo oficial do IFUSP (Átomo Azul) e elementos no tom clássico azul espacial.</p>
+                                    </div>
+                                    {institution === 'ifusp' && (
+                                        <div className="absolute top-4 right-4 w-5 h-5 rounded-full bg-brand-blue flex items-center justify-center text-white">
+                                            <span className="material-symbols-outlined text-xs">check</span>
+                                        </div>
+                                    )}
+                                </button>
+
+                                {/* Option 2: IME-USP */}
+                                <button
+                                    onClick={() => {
+                                        setInstitution('ime');
+                                        toast.success('Tema alterado para IME-USP!');
+                                    }}
+                                    className={`relative flex items-center gap-5 p-6 rounded-2xl border text-left transition-all hover:bg-white/5 ${
+                                        institution === 'ime'
+                                            ? 'border-brand-blue bg-brand-blue/5 shadow-[0_0_20px_rgba(15,71,128,0.2)]'
+                                            : 'border-white/5 bg-transparent'
+                                    }`}
+                                >
+                                    <div className="w-16 h-16 rounded-xl bg-white/5 overflow-hidden flex items-center justify-center border border-white/10 shrink-0">
+                                        <Image
+                                            src="/instituto_de_matemtica_e_estatstica_universidade_de_so_paulo_ime_usp_logo.jpeg"
+                                            alt="IME USP Logo"
+                                            width={64}
+                                            height={64}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h3 className="font-bold text-white text-base">Matemática e Estatística (IME-USP)</h3>
+                                        <p className="text-xs text-gray-400">Logotipo oficial do IME-USP no topo e rodapé do HUB.</p>
+                                    </div>
+                                    {institution === 'ime' && (
+                                        <div className="absolute top-4 right-4 w-5 h-5 rounded-full bg-brand-blue flex items-center justify-center text-white">
+                                            <span className="material-symbols-outlined text-xs">check</span>
+                                        </div>
+                                    )}
+                                </button>
+
+                                {/* Option 3: IAG-USP */}
+                                <button
+                                    onClick={() => {
+                                        setInstitution('iag');
+                                        toast.success('Tema alterado para IAG-USP!');
+                                    }}
+                                    className={`relative flex items-center gap-5 p-6 rounded-2xl border text-left transition-all hover:bg-white/5 ${
+                                        institution === 'iag'
+                                            ? 'border-brand-blue bg-brand-blue/5 shadow-[0_0_20px_rgba(15,71,128,0.2)]'
+                                            : 'border-white/5 bg-transparent'
+                                    }`}
+                                >
+                                    <div className="w-16 h-16 rounded-xl bg-white/5 overflow-hidden flex items-center justify-center border border-white/10 shrink-0">
+                                        <Image
+                                            src="/2oj0z6xd_400x400.jpg"
+                                            alt="IAG USP Logo"
+                                            width={64}
+                                            height={64}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h3 className="font-bold text-white text-base">Astronomia e Geofísica (IAG-USP)</h3>
+                                        <p className="text-xs text-gray-400">Logotipo oficial do IAG-USP com o padrão de cores azul espacial.</p>
+                                    </div>
+                                    {institution === 'iag' && (
+                                        <div className="absolute top-4 right-4 w-5 h-5 rounded-full bg-brand-blue flex items-center justify-center text-white">
+                                            <span className="material-symbols-outlined text-xs">check</span>
+                                        </div>
+                                    )}
+                                </button>
+
+                                {/* Option 4: IGC-USP */}
+                                <button
+                                    onClick={() => {
+                                        setInstitution('igc');
+                                        toast.success('Tema alterado para IGC-USP!');
+                                    }}
+                                    className={`relative flex items-center gap-5 p-6 rounded-2xl border text-left transition-all hover:bg-white/5 ${
+                                        institution === 'igc'
+                                            ? 'border-brand-blue bg-brand-blue/5 shadow-[0_0_20px_rgba(15,71,128,0.2)]'
+                                            : 'border-white/5 bg-transparent'
+                                    }`}
+                                >
+                                    <div className="w-16 h-16 rounded-xl bg-white/5 overflow-hidden flex items-center justify-center border border-white/10 shrink-0">
+                                        <Image
+                                            src="/unnamed.jpg"
+                                            alt="IGC USP Logo"
+                                            width={64}
+                                            height={64}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h3 className="font-bold text-white text-base">Geociências (IGC-USP)</h3>
+                                        <p className="text-xs text-gray-400">Logotipo oficial do Instituto de Geociências da USP.</p>
+                                    </div>
+                                    {institution === 'igc' && (
+                                        <div className="absolute top-4 right-4 w-5 h-5 rounded-full bg-brand-blue flex items-center justify-center text-white">
+                                            <span className="material-symbols-outlined text-xs">check</span>
+                                        </div>
+                                    )}
+                                </button>
+
+                                {/* Option 5: IO-USP */}
+                                <button
+                                    onClick={() => {
+                                        setInstitution('io');
+                                        toast.success('Tema alterado para Oceanografia (IO-USP)!');
+                                    }}
+                                    className={`relative flex items-center gap-5 p-6 rounded-2xl border text-left transition-all hover:bg-white/5 ${
+                                        institution === 'io'
+                                            ? 'border-brand-blue bg-brand-blue/5 shadow-[0_0_20px_rgba(15,71,128,0.2)]'
+                                            : 'border-white/5 bg-transparent'
+                                    }`}
+                                >
+                                    <div className="w-16 h-16 rounded-xl bg-white/5 overflow-hidden flex items-center justify-center border border-white/10 shrink-0">
+                                        <Image
+                                            src="/image.png"
+                                            alt="IO USP Logo"
+                                            width={64}
+                                            height={64}
+                                            className="w-full h-full object-cover"
+                                        />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <h3 className="font-bold text-white text-base">Oceanografia (IO-USP)</h3>
+                                        <p className="text-xs text-gray-400">Logotipo oficial do Instituto Oceanográfico da USP.</p>
+                                    </div>
+                                    {institution === 'io' && (
+                                        <div className="absolute top-4 right-4 w-5 h-5 rounded-full bg-brand-blue flex items-center justify-center text-white">
+                                            <span className="material-symbols-outlined text-xs">check</span>
+                                        </div>
+                                    )}
+                                </button>
+                            </div>
+                        </section>
                     </div>
                 )}
 
