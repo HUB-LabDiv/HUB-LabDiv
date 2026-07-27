@@ -329,7 +329,7 @@ export const HomeClientView = ({
         <div 
             className="space-y-4 overflow-hidden w-full max-w-[100vw] min-h-[100dvh]"
             onTouchStart={(e) => {
-                if ((e.target as Element).closest('.overflow-x-auto, .scroll-x')) return;
+                if ((e.target as Element)?.closest?.('.overflow-x-auto, .scroll-x, .masonry-item, .no-swipe, a, button, input')) return;
                 const touch = e.touches[0];
                 if (touch) {
                     swipeStartX.current = touch.clientX;

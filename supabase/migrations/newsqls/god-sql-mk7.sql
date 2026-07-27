@@ -425,3 +425,24 @@ END;
 $$;
 
 ALTER FUNCTION public.soft_delete_user(uuid) SET search_path = public;
+
+-- TABLE: user_subject_absences
+CREATE TABLE IF NOT EXISTS public.user_subject_absences (
+    id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    subject_code text NOT NULL,
+    absences integer DEFAULT 0,
+    max_absences integer DEFAULT 15,
+    created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL,
+    UNIQUE(user_id, subject_code)
+);
+
+ALTER TABLE public.user_subject_absences ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can manage their own absences"
+    ON public.user_subject_absences
+    FOR ALL
+    USING (auth.uid() = user_id)
+    WITH CHECK (auth.uid() = user_id);
+

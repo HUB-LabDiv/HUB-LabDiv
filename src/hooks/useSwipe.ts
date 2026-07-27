@@ -19,6 +19,11 @@ export function useSwipe({ onSwipedLeft, onSwipedRight }: SwipeInput) {
     const minSwipeDistance = 50;
 
     const onTouchStart = (e: TouchEvent) => {
+        const target = e.target as HTMLElement;
+        if (target && typeof target.closest === 'function' && target.closest('.overflow-x-auto, .scroll-x, .masonry-item, .no-swipe, a, button, input')) {
+            return;
+        }
+        
         touchEndX.current = null;
         touchEndY.current = null;
         touchStartX.current = e.targetTouches[0].clientX;
