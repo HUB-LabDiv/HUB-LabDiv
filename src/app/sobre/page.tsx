@@ -9,34 +9,14 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import { fetchSubmissions } from "@/app/actions/submissions";
-import { SobreClient } from "./SobreClient";
-import { createServerSupabase } from "@/lib/supabase/server";
+import { redirect } from "next/navigation";
 
 export const metadata = {
     title: 'Sobre | Hub LabDiv',
-    description: 'Conheça o Laboratório de Divulgação Científica do IFUSP e a proposta do Hub.',
+    description: 'Redirecionamento unificado para a página oficial do LabDiv.',
 };
 
-export default async function SobrePage() {
-    const supabase = await createServerSupabase();
-    const { data: { user } } = await supabase.auth.getUser();
-
-    const [submissionsRes, profileRes] = await Promise.all([
-        fetchSubmissions({
-            page: 1,
-            limit: 4,
-            query: '',
-            categories: ['Impacto e Conquistas'],
-            sort: 'recentes'
-        }),
-        user ? supabase.from('profiles').select('*').eq('id', user.id).single() : Promise.resolve({ data: null })
-    ]);
-
-    return (
-        <SobreClient 
-            initialTestimonials={submissionsRes.items} 
-            profile={profileRes.data ? { ...profileRes.data, email: user?.email } as any : null}
-        />
-    );
+export default function SobrePage() {
+    // Unificação de /sobre com a página do LabDiv (/arquivo-labdiv)
+    redirect('/arquivo-labdiv');
 }

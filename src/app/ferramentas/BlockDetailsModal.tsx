@@ -280,7 +280,7 @@ export function BlockDetailsModal({ isOpen, onClose, onSave, onDelete, initialDa
                                     <div className="flex items-center justify-between">
                                         <div className="text-xs">
                                             <span className="text-gray-400">Você ainda pode faltar: </span>
-                                            <span className={`font-bold ${maxAbsences - absences <= 2 ? 'text-brand-red' : 'text-emerald-500'}`}>
+                                            <span className={`font-bold ${maxAbsences - absences <= 2 ? 'text-brand-red' : 'text-[#00A3FF]'}`}>
                                                 {Math.max(0, maxAbsences - absences)} vezes
                                             </span>
                                         </div>

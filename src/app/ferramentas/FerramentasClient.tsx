@@ -17,7 +17,7 @@ import { fetchUserAcademicdata } from '@/app/actions/disciplines';
 import { 
     X, Eye, Edit3, ChevronLeft, ChevronRight, Search, Plus, Trash2, Info, Loader2, BookOpen, 
     GraduationCap, CalendarDays, FileText, Table, Calendar, MessageSquareCode, Share2,
-    RefreshCw, Undo2, Settings, ChevronDown
+    RefreshCw, Undo2, Settings, ChevronDown, CalendarX
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
@@ -27,6 +27,7 @@ import { FerramentasFeedbackCard } from './FerramentasFeedbackCard';
 import { SubjectSelectorModal } from './SubjectSelectorModal';
 import { BlockDetailsModal, BlockFormData } from './BlockDetailsModal';
 import { JupiterSyncModal } from './JupiterSyncModal';
+import { AbsencesModal } from './AbsencesModal';
 
 interface CalendarEvent {
     id: string;
@@ -104,6 +105,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
     const [selectedBlockForModal, setSelectedBlockForModal] = useState<BlockFormData | null>(null);
     const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
     const [isJupiterModalOpen, setIsJupiterModalOpen] = useState(false);
+    const [isAbsencesModalOpen, setIsAbsencesModalOpen] = useState(false);
     const [newBlockName, setNewBlockName] = useState('');
     const [newBlockDuration, setNewBlockDuration] = useState(2);
     const [isUpdating, setIsUpdating] = useState<string | null>(null);
@@ -805,6 +807,14 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     <RefreshCw className="w-4 h-4 group-hover:rotate-180 transition-transform duration-500" />
                     <span className="inline">Sincronizar Júpiter</span>
                 </button>
+                <button
+                    onClick={() => setIsAbsencesModalOpen(true)}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3.5 bg-brand-red/10 text-brand-red border border-brand-red/20 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-brand-red hover:text-white transition-all disabled:opacity-50 shadow-sm group cursor-pointer"
+                    title="Gerenciar e controlar faltas das disciplinas"
+                >
+                    <CalendarX className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    <span className="inline">Controle de Faltas</span>
+                </button>
             </div>
 
 
@@ -1463,6 +1473,11 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     loadData();
                     toast.success('Grade sincronizada! Você pode desfazer se necessário.');
                 }}
+            />
+            <AbsencesModal
+                isOpen={isAbsencesModalOpen}
+                onClose={() => setIsAbsencesModalOpen(false)}
+                events={events}
             />
         </div>
     );

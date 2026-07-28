@@ -60,3 +60,35 @@ export async function updateSubjectAbsences(subjectCode: string, absences: numbe
     revalidatePath('/ferramentas');
     return { success: true, data };
 }
+
+export async function getAllUserAbsences() {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { success: false, error: 'Não autenticado' };
+
+    const { data, error } = await supabase
+        .from('user_subject_absences')
+        .select('*')
+        .eq('user_id', user.id);
+
+    if (error) return { success: false, error: error.message };
+
+    const { data: trails } = await supabase
+        .from('learning_trails')
+        .select('course_code, credits_aula');
+
+    const creditsMap: Record<string, number> = {};
+    if (trails) {
+        trails.forEach((t: any) => {
+            if (t.course_code && t.credits_aula != null) {
+                const raw = String(t.course_code).trim();
+                creditsMap[raw] = Number(t.credits_aula);
+                creditsMap[raw.toUpperCase()] = Number(t.credits_aula);
+            }
+        });
+    }
+
+    return { success: true, data: data || [], creditsMap };
+}
+

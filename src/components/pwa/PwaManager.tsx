@@ -11,15 +11,15 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { usePushNotifications } from '@/hooks/usePushNotifications';
 import { App } from '@capacitor/app';
+import { flushOfflineQueueToSupabase } from '@/lib/offlineQueueManager';
 
 export function PwaManager() {
     const [isOffline, setIsOffline] = useState(false);
-    
+
     // Inicializa os listeners de Push Notifications nativas via Capacitor
     usePushNotifications();
 
@@ -36,54 +36,47 @@ export function PwaManager() {
             }
         });
 
-        // --- INÍCIO: CACHE WARMER (Caminho 1) ---
-        // Espera 5 segundos para não travar o carregamento inicial da UI
+        // --- INÍCIO: CACHE WARMER (Primeiro uso - Baixa Grade/Trilhas/Rascunho) ---
         const warmerTimer = setTimeout(() => {
             if (typeof window !== 'undefined' && 'caches' in window) {
-                // Checa se o usuário desativou ou restringiu o cache automático (Restrito ou Off)
-                const cacheMode = localStorage.getItem('hub_cache_mode') || (localStorage.getItem('hub_auto_cache_enabled') === 'false' ? 'off' : 'full');
+                const cacheMode = localStorage.getItem('hub_cache_mode') || 'full';
                 if (cacheMode !== 'full') {
-                    console.log(`⚡ [Cache Warmer] Modo de cache [${cacheMode}]: pré-carregamento de páginas suspenso.`);
+                    console.log(`⚡ [Cache Warmer] Modo de cache [${cacheMode}]: pré-carregamento suspenso.`);
                     return;
                 }
 
                 const rotasCriticas = [
-                    '/timeline', 
-                    '/lab-pessoal', 
+                    '/ferramentas', 
                     '/ferramentas/trilhas', 
-                    '/arquivo',
+                    '/lab-pessoal', 
+                    '/arquivo-labdiv',
                     '/interacao',
                     '/offline'
                 ];
                 const rotasSecundarias = [
                     '/',
-                    '/ferramentas',
                     '/admin',
                     '/admin/perguntas',
                     '/admin/reports',
                     '/admin/profiles',
                     '/admin/drops',
-                    '/admin/cgif',
-                    '/admin/sac',
                     '/gcif',
                     '/drops',
                     '/perguntas'
                 ];
                 
-                console.log('🔥 [Cache Warmer] Iniciando pré-carregamento VIP (Críticas)...');
+                console.log('🔥 [Cache Warmer] Baixando Grade Horária, Trilhas e Rascunho para uso offline...');
                 rotasCriticas.forEach(rota => {
                     fetch(rota, { priority: 'low' }).catch(() => {}); 
                 });
 
-                // Espera mais 10s para carregar o resto sem travar a navegação inicial
                 setTimeout(() => {
-                    console.log('🔥 [Cache Warmer] Baixando rotas secundárias...');
                     rotasSecundarias.forEach(rota => {
                         fetch(rota, { priority: 'low' }).catch(() => {}); 
                     });
                 }, 10000);
             }
-        }, 5000);
+        }, 3000);
 
         return () => {
             listener.then(l => l.remove());
@@ -95,31 +88,47 @@ export function PwaManager() {
         // Handle native online/offline events
         const handleOffline = () => {
             setIsOffline(true);
-            toast.error('Sem internet. As interações das páginas em que você já navegou e interagiu serão salvas localmente.', {
+            toast.error('Sem internet. Suas alterações serão salvas na fila offline (IndexedDB) e enviadas ao reconectar.', {
                 id: 'offline-status',
                 duration: Infinity,
                 icon: '📵'
             });
         };
 
-        const handleOnline = () => {
+        const handleOnline = async () => {
             setIsOffline(false);
-            toast.success('Conexão restabelecida!', {
+            toast.success('Conexão restabelecida! Sincronizando fila offline...', {
                 id: 'offline-status',
                 duration: 4000,
                 icon: '🟢'
             });
+
+            // Processa a fila offline com limite estrito de 57 itens por batch
+            try {
+                const { processed, errors } = await flushOfflineQueueToSupabase();
+                if (processed > 0) {
+                    toast.success(`Fila offline sincronizada com o Supabase: ${processed} item(ns) salvos!`);
+                }
+                if (errors > 0) {
+                    toast.error(`Falha ao sincronizar ${errors} item(ns) da fila offline.`);
+                }
+            } catch (err) {
+                console.error('[PWA Manager] Erro ao sincronizar fila offline:', err);
+            }
         };
 
         window.addEventListener('offline', handleOffline);
         window.addEventListener('online', handleOnline);
 
-        // Check initial state
+        // Initial check
         if (typeof navigator !== 'undefined' && !navigator.onLine) {
             handleOffline();
+        } else if (typeof navigator !== 'undefined' && navigator.onLine) {
+            // Tenta processar qualquer item que sobrou da sessão anterior
+            flushOfflineQueueToSupabase().catch(() => {});
         }
 
-        // Listen for Service Worker messages (Cache Used)
+        // Listen for Service Worker messages
         const handleMessage = (event: MessageEvent) => {
             if (event.data && event.data.type === 'OFFLINE_CACHE_USED') {
                 toast('Conexão instável. Mostrando versão em cache.', {
@@ -140,7 +149,6 @@ export function PwaManager() {
             window.removeEventListener('offline', handleOffline);
             window.removeEventListener('online', handleOnline);
             navigator.serviceWorker?.removeEventListener('message', handleMessage);
-            toast.dismiss('offline-status');
         };
     }, []);
 
