@@ -28,17 +28,18 @@ import { useSwipe } from '@/hooks/useSwipe';
 interface SobreClientProps {
     initialTestimonials: MediaCardProps[];
     profile?: Profile | null;
+    initialTab?: 'sobre' | 'labdiv';
 }
 
 type PersonaType = 'visitante' | 'curioso' | 'aluno_usp' | 'pesquisador';
 
-export function SobreClient({ initialTestimonials, profile }: SobreClientProps) {
+export function SobreClient({ initialTestimonials, profile, initialTab = 'sobre' }: SobreClientProps) {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { trackEvent } = useTelemetry();
     const scrollContainerRef = React.useRef<HTMLDivElement>(null);
     const [activePersonaOverride, setActivePersonaOverride] = React.useState<PersonaType | null>(null);
-    const [activeTab, setActiveTab] = React.useState<'sobre' | 'labdiv'>('sobre');
+    const [activeTab, setActiveTab] = React.useState<'sobre' | 'labdiv'>(initialTab);
 
     // Sync state with URL
     React.useEffect(() => {
@@ -404,7 +405,7 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
                     <p className="text-gray-600 dark:text-gray-400 flex-1 leading-relaxed">
                         O coração do projeto é a construção de um grande Arquivo visual. Capturamos o cotidiano dos laboratórios, o maquinário e os bastidores das pesquisas de forma profissional. Nosso objetivo é ter um banco de imagens institucionais de alta qualidade, pronto para suprir demandas de jornalistas, designers e pesquisadores.
                     </p>
-                    <Link href="/arquivo-labdiv" className="mt-6 text-brand-yellow font-semibold hover:underline flex items-center gap-1">
+                    <Link href="/sobre?tab=labdiv" className="mt-6 text-brand-yellow font-semibold hover:underline flex items-center gap-1">
                         Explore o acervo <ArrowRight className="w-4 h-4" />
                     </Link>
                 </div>
@@ -517,7 +518,7 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
                         <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed">
                             O projeto nasceu com a ideia de apenas criar material de divulgação, mas evoluiu para uma nova categoria de plataforma digital: um <strong>Hub Acadêmico</strong> que transforma a simples divulgação em comunicação viva. Unificamos alunos, curiosos e pesquisadores através de um fluxo com dinâmicas de rede social e ferramentas que auxiliam o dia a dia, como a Wiki, as Trilhas e o Cronograma inteligente.
                         </p>
-                        <Link href="/arquivo-labdiv" className="inline-flex items-center text-brand-blue font-black hover:text-brand-blue/80 transition-colors mt-8 group uppercase text-xs tracking-widest">
+                        <Link href="/sobre?tab=labdiv" className="inline-flex items-center text-brand-blue font-black hover:text-brand-blue/80 transition-colors mt-8 group uppercase text-xs tracking-widest">
                             Conhecer o trabalho <ArrowRight className="w-5 h-5 ml-1 group-hover:translate-x-1 transition-transform" />
                         </Link>
                     </div>
@@ -570,7 +571,7 @@ export function SobreClient({ initialTestimonials, profile }: SobreClientProps) 
                     <p className="text-gray-500 text-[10px] md:text-sm leading-relaxed mb-4 md:mb-6 flex-1">
                         O núcleo criativo do Hub. Aqui você acessa o catálogo Padrão Ouro, agenda mentorias de comunicação científica, conhece o KitDiv e explora a utilização do Espaço Novo Milênio.
                     </p>
-                    <Link href="/arquivo-labdiv" className="text-[10px] font-black uppercase tracking-widest text-brand-yellow flex items-center gap-1 md:gap-2 group/link mt-auto">
+                    <Link href="/sobre?tab=labdiv" className="text-[10px] font-black uppercase tracking-widest text-brand-yellow flex items-center gap-1 md:gap-2 group/link mt-auto">
                         <span className="hidden sm:inline">Ver </span>Portfólio <ArrowRight className="size-3 group-hover/link:translate-x-1 transition-transform" />
                     </Link>
                 </div>

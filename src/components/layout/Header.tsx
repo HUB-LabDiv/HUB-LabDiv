@@ -192,7 +192,7 @@ export function Header() {
                             {[
                                 { label: 'Comunidade', href: '/', color: '#F14343' },
                                 { label: 'GCIF', href: '/gcif', color: '#1F9FCF' },
-                                { label: 'LabDiv', href: '/arquivo-labdiv', color: '#FFCC00' },
+                                { label: 'Sobre', href: '/sobre', color: '#FFCC00' },
                                 { label: 'Ferramentas', href: '/ferramentas', color: '#F14343' },
                                 { label: 'Interações', href: '/interacao', color: '#1F9FCF' },
                             ].map((tab) => {
@@ -259,26 +259,6 @@ export function Header() {
 
 
                             <div className="flex items-center gap-2">
-                                <a
-                                    href="https://labdiv.if.usp.br"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="hidden md:flex items-center gap-1.5 px-3 py-2 bg-[#0F4780]/20 text-[#00A3FF] border border-[#00A3FF]/30 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#00A3FF] hover:text-white transition-all group"
-                                    title="Ir para o site oficial do LabDiv (https://labdiv.if.usp.br)"
-                                >
-                                    <span className="material-symbols-outlined text-[16px] group-hover:scale-110 transition-transform">open_in_new</span>
-                                    <span>Site LabDiv</span>
-                                </a>
-
-                                <button
-                                    onClick={() => setCacheModalOpen(true)}
-                                    aria-label="Gerenciador de Arquivos e Cache"
-                                    className="hidden md:flex relative size-10 items-center justify-center rounded-xl bg-[#00A3FF]/10 text-[#00A3FF] hover:bg-[#00A3FF]/20 transition-all border border-[#00A3FF]/20 group"
-                                    title="Gerenciador de Arquivos & Cache HUB"
-                                >
-                                    <span className="material-symbols-outlined text-[20px] group-hover:scale-110 transition-transform">hard_drive</span>
-                                </button>
-
                                 <button
                                     onClick={() => setReportModalOpen(true)}
                                     aria-label="Reportar Erro ou Enviar Feedback"

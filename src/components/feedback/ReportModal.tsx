@@ -25,7 +25,6 @@ import {
     Loader2
 } from 'lucide-react';
 import { submitFeedback } from '@/app/actions/feedback';
-import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 import { useNavigationStore } from '@/store/useNavigationStore';
 import { offlineCrud } from '@/lib/offline-sync';
@@ -64,42 +63,7 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
         }
     };
 
-    const reportMutation = useMutation({
-        mutationFn: async (payload: { type: string; description: string; user_agent?: string; url?: string }) => {
-            try {
-                const result = await submitFeedback(payload);
-                if (!result.success) throw new Error('Erro ao enviar report.');
-                return result;
-            } catch (err: any) {
-                if (!navigator.onLine || err.message === 'Failed to fetch' || err.message.includes('Network') || err.message.includes('fetch')) {
-                    await offlineCrud.enqueueMutation({
-                        endpoint: '/api/sync',
-                        method: 'POST',
-                        payload
-                    });
-                    return { success: true, offline: true };
-                }
-                throw err;
-            }
-        },
-        onSuccess: (data: any) => {
-            if (data?.offline) {
-                toast.success('Report salvo na fila local! Será enviado quando houver rede.');
-                onClose();
-            } else {
-                setStep('success');
-                toast.success('Report enviado com sucesso!');
-            }
-        },
-        onError: () => {
-            if (navigator.onLine) {
-                toast.error('Erro ao enviar report. Tente novamente.');
-            } else {
-                toast.success('Report salvo na fila local! Será enviado quando houver rede.');
-                onClose();
-            }
-        }
-    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -115,10 +79,31 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
             url: window.location.href
         };
 
-        reportMutation.mutate(payload);
+        setIsSubmitting(true);
+        try {
+            const result = await submitFeedback(payload);
+            if (result.success) {
+                setStep('success');
+                toast.success('Report enviado com sucesso!');
+            } else {
+                throw new Error('Erro ao enviar report.');
+            }
+        } catch (err: any) {
+            if (!navigator.onLine || err.message === 'Failed to fetch' || err.message?.includes?.('Network') || err.message?.includes?.('fetch')) {
+                await offlineCrud.enqueueMutation({
+                    endpoint: '/api/sync',
+                    method: 'POST',
+                    payload
+                });
+                toast.success('Report salvo na fila local! Será enviado quando houver rede.');
+                onClose();
+            } else {
+                toast.error('Erro ao enviar report. Tente novamente.');
+            }
+        } finally {
+            setIsSubmitting(false);
+        }
     };
-    
-    const isSubmitting = reportMutation.isPending;
 
     return (
         <AnimatePresence>
