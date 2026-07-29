@@ -213,6 +213,8 @@ export const useSubmissionStore = create<SubmissionState>()(
             
             languageRegister: initialState.languageRegister,
             needsModerationHelp: initialState.needsModerationHelp,
+            docsLink: '',
+            driveLink: '',
 
             watchedValues: {},
             setWatchedValues: (values) => set({ watchedValues: values }),

@@ -44,6 +44,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         languageRegister, setLanguageRegister, needsModerationHelp, setNeedsModerationHelp, activeDraftId, setActiveDraftId, restoreMockBlocks, fluxoBlocks, arteBlocks, description, setDescription, docsLink, setDocsLink, driveLink, setDriveLink
     } = useSubmissionStore();
     const { saveDraft, drafts } = useDraftsStore();
+    const isLabDiv = category === 'Lab-Div';
     const [selectedPreviewId, setSelectedPreviewId] = React.useState<string>(previewMode === 'arte' ? 'arte' : 'fluxo');
 
     const previewData = React.useMemo(() => {

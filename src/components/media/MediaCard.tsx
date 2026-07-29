@@ -53,6 +53,7 @@ import { useInView } from 'react-intersection-observer';
 import { CardPresenceBadge } from "@/components/ui/CardPresenceBadge";
 import { supabase } from '@/lib/supabase';
 import { useNavigationStore } from '@/store/useNavigationStore';
+import toast from 'react-hot-toast';
 const CollectionManager = dynamic(() => import( "@/components/engagement/CollectionManager").then(mod => mod.CollectionManager));
 const DownloadModal = dynamic(() => import( "@/components/modals/DownloadModal").then(mod => mod.DownloadModal));
 import { MediaReaction } from "@/components/engagement/MediaReaction";

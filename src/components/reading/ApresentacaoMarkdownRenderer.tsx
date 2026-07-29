@@ -116,8 +116,8 @@ export function ApresentacaoMarkdownRenderer({ content, palavrasGeradoras, getHe
                         // Attempt to extract text to check for "Reflexão"
                         let isReflexao = false;
                         React.Children.forEach(children, (child) => {
-                            if (React.isValidElement(child) && child.props && child.props.children) {
-                                const text = String(child.props.children).toLowerCase();
+                            if (React.isValidElement(child) && (child.props as any)?.children) {
+                                const text = String((child.props as any).children).toLowerCase();
                                 if (text.includes('reflexão') || text.includes('reflexao')) {
                                     isReflexao = true;
                                 }
