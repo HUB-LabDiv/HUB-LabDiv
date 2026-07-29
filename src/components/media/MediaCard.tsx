@@ -31,6 +31,10 @@ import {
     ImageOff,
     Atom,
     Flag,
+    MoreHorizontal,
+    Edit3,
+    Trash2,
+    RotateCcw
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
 
@@ -82,6 +86,44 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
     const [showCollectionManager, setShowCollectionManager] = useState(false);
     const [showDownloadModal, setShowDownloadModal] = useState(false);
     const [showAtomAnimation, setShowAtomAnimation] = useState(false);
+    const [showAuthorMenu, setShowAuthorMenu] = useState(false);
+
+    const isAuthor = userId === post.userId;
+
+    const handleEdit = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        router.push(`/enviar?editId=${post.id}`);
+    };
+
+    const handleDelete = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if(confirm('Tem certeza que deseja apagar permanentemente esta publicação?')) {
+            const toastId = toast.loading('Apagando publicação...');
+            const { deleteOwnSubmission } = await import('@/app/actions/submissions');
+            const res = await deleteOwnSubmission(post.id);
+            if (res.error) {
+                toast.error(res.error, { id: toastId });
+            } else {
+                toast.success('Publicação apagada com sucesso!', { id: toastId });
+                window.location.reload();
+            }
+        }
+    };
+
+    const handleRevertToDraft = async (e: React.MouseEvent) => {
+        e.stopPropagation();
+        if(confirm('Tem certeza que deseja mover esta publicação para os rascunhos?')) {
+            const toastId = toast.loading('Movendo para rascunhos...');
+            const { revertSubmissionToDraft } = await import('@/app/actions/submissions');
+            const res = await revertSubmissionToDraft(post.id);
+            if (res.error) {
+                toast.error(res.error, { id: toastId });
+            } else {
+                toast.success('Movido para rascunhos!', { id: toastId });
+                window.location.reload();
+            }
+        }
+    };
 
     const hoverTimeoutRef = useRef<NodeJS.Timeout | null>(null);
     const router = useRouter();
@@ -209,35 +251,86 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            router.push(`/lab?user=${post.userId}`);
+                            router.push(`/lab-pessoal/${post.userId}`);
                         }}
                     />
                     <Link
-                        href={`/lab?user=${post.userId}`}
+                        href={`/lab-pessoal/${post.userId}`}
                         onClick={(e) => {
                             e.preventDefault();
                             e.stopPropagation();
-                            router.push(`/lab?user=${post.userId}`);
+                            router.push(`/lab-pessoal/${post.userId}`);
                         }}
                         className="text-xs font-bold text-gray-900 dark:text-gray-100 hover:text-brand-blue transition-colors truncate max-w-[120px] sm:max-w-[180px]"
                     >
                         {post.authors}
                     </Link>
                 </div>
-                {post.category !== 'Arte' && (
-                    <div className="hover:scale-105 transition-transform active:scale-95">
-                        <Link
-                            href={`/arquivo/${post.id}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className={`inline-flex items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider shadow-md transition-all hover:shadow-lg whitespace-nowrap shrink-0 ${buttonColorClass}`}
-                        >
-                            <span className="flex items-center gap-1">
-                                Página Completa
-                                <ExternalLink className="w-3 h-3" />
-                            </span>
-                        </Link>
-                    </div>
-                )}
+                <div className="flex items-center gap-2">
+                    {post.category !== 'Arte' && (
+                        <div className="hover:scale-105 transition-transform active:scale-95">
+                            <Link
+                                href={`/arquivo/${post.id}`}
+                                onClick={(e) => e.stopPropagation()}
+                                className={`inline-flex items-center justify-center gap-1 rounded-lg px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider shadow-md transition-all hover:shadow-lg whitespace-nowrap shrink-0 ${buttonColorClass}`}
+                            >
+                                <span className="flex items-center gap-1">
+                                    Página Completa
+                                    <ExternalLink className="w-3 h-3" />
+                                </span>
+                            </Link>
+                        </div>
+                    )}
+                    
+                    {isAuthor && (
+                        <div className="relative">
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowAuthorMenu(!showAuthorMenu);
+                                }}
+                                className="p-1.5 rounded-lg text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                            >
+                                <MoreHorizontal className="w-4 h-4" />
+                            </button>
+                            
+                            <AnimatePresence>
+                                {showAuthorMenu && (
+                                    <m.div
+                                        initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                                        exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                                        className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-card-dark border border-gray-100 dark:border-gray-800 rounded-xl shadow-xl z-50 overflow-hidden"
+                                    >
+                                        <div className="flex flex-col py-1">
+                                            <button
+                                                onClick={(e) => { setShowAuthorMenu(false); handleEdit(e); }}
+                                                className="w-full px-4 py-2 text-left flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                            >
+                                                <Edit3 className="w-4 h-4 text-brand-blue" />
+                                                Editar
+                                            </button>
+                                            <button
+                                                onClick={(e) => { setShowAuthorMenu(false); handleRevertToDraft(e); }}
+                                                className="w-full px-4 py-2 text-left flex items-center gap-2 text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+                                            >
+                                                <RotateCcw className="w-4 h-4 text-brand-yellow" />
+                                                Voltar p/ Rascunho
+                                            </button>
+                                            <button
+                                                onClick={(e) => { setShowAuthorMenu(false); handleDelete(e); }}
+                                                className="w-full px-4 py-2 text-left flex items-center gap-2 text-sm font-bold text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+                                            >
+                                                <Trash2 className="w-4 h-4" />
+                                                Apagar
+                                            </button>
+                                        </div>
+                                    </m.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div

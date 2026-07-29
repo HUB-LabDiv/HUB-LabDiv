@@ -20,7 +20,7 @@ import { PostDTO } from '@/dtos/media';
 import { parseMediaUrl, getYoutubeThumbnail, getOptimizedUrl } from '@/lib/media-utils';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 
-import { Grid, Star, Image as ImageIcon, FileText, Heart, MessageSquare, Info, Camera, ShieldCheck, Play, Linkedin, Github, Youtube, Instagram, Globe, Share2, GraduationCap } from 'lucide-react';
+import { Grid, Star, Image as ImageIcon, FileText, Heart, MessageSquare, Info, Camera, ShieldCheck, Play, Linkedin, Github, Youtube, Instagram, Globe, Share2, GraduationCap, Eye, Edit, BarChart2, Filter, Trash2 } from 'lucide-react';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { PerfilFeedbackCard } from './PerfilFeedbackCard';
 import { RadiationBadge } from '@/components/gamification/RadiationBadge';
@@ -34,7 +34,7 @@ import { EditSubmissionModal } from '@/components/profile/EditSubmissionModal';
 import { NetworkModal } from '@/components/profile/NetworkModal';
 import { requestPostModeration } from '@/app/actions/submissions';
 import toast from 'react-hot-toast';
-import { Edit, Trash2, BarChart2 } from 'lucide-react';
+
 import { MetricsModal } from './components/MetricsModal';
 
 interface LabClientViewProps {
@@ -553,13 +553,21 @@ export function LabClientView({
                                                 )}
 
                                                 <div className="absolute inset-0 bg-background-dark/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-4 text-white z-10">
-                                                    <div className="flex items-center gap-1.5 font-bold">
-                                                        <Heart className="w-5 h-5 fill-current" />
-                                                        <span>{sub.post.likeCount}</span>
+                                                    <div className="flex flex-col items-center gap-1 font-bold">
+                                                        <Eye className="w-5 h-5 fill-current opacity-70" />
+                                                        <span className="text-[10px]">{sub.post.views || 0}</span>
                                                     </div>
-                                                    <div className="flex items-center gap-1.5 font-bold">
-                                                        <MessageSquare className="w-5 h-5 fill-current" />
-                                                        <span>{sub.post.commentCount}</span>
+                                                    <div className="flex flex-col items-center gap-1 font-bold">
+                                                        <Heart className="w-5 h-5 fill-current text-brand-red" />
+                                                        <span className="text-[10px]">{sub.post.likeCount}</span>
+                                                    </div>
+                                                    <div className="flex flex-col items-center gap-1 font-bold">
+                                                        <Star className="w-5 h-5 fill-current text-brand-yellow" />
+                                                        <span className="text-[10px]">{sub.post.saveCount}</span>
+                                                    </div>
+                                                    <div className="flex flex-col items-center gap-1 font-bold">
+                                                        <MessageSquare className="w-5 h-5 fill-current opacity-70" />
+                                                        <span className="text-[10px]">{sub.post.commentCount}</span>
                                                     </div>
                                                 </div>
 

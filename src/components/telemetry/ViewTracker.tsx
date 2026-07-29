@@ -49,17 +49,48 @@ export function ViewTracker({ submissionId }: ViewTrackerProps) {
         window.addEventListener('scroll', handleScroll, { passive: true });
 
         if (!hasTracked.current) {
-            async function incrementView() {
-                try {
-                    const { error } = await supabase.rpc('increment_view_count', {
-                        submission_id: submissionId
-                    });
-                    if (!error) hasTracked.current = true;
-                } catch (err) {
-                    console.error('Failed to increment view count:', err);
+            const viewedKey = `viewed_${submissionId}`;
+            const alreadyViewed = localStorage.getItem(viewedKey);
+
+            if (!alreadyViewed) {
+                async function incrementView() {
+                    try {
+                        const { error } = await supabase.rpc('increment_view_count', {
+                            submission_id: submissionId
+                        });
+                        if (!error) {
+                            hasTracked.current = true;
+                            // Set a timestamp so we don't count again for a while (e.g., 24h)
+                            localStorage.setItem(viewedKey, Date.now().toString());
+                        }
+                    } catch (err) {
+                        console.error('Failed to increment view count:', err);
+                    }
+                }
+                incrementView();
+            } else {
+                // If already viewed recently (e.g. within 24h)
+                const viewedAt = parseInt(alreadyViewed, 10);
+                const TWENTY_FOUR_HOURS = 24 * 60 * 60 * 1000;
+                
+                if (Date.now() - viewedAt > TWENTY_FOUR_HOURS) {
+                    // Expired, count again and reset
+                    async function incrementViewAgain() {
+                        try {
+                            const { error } = await supabase.rpc('increment_view_count', {
+                                submission_id: submissionId
+                            });
+                            if (!error) {
+                                hasTracked.current = true;
+                                localStorage.setItem(viewedKey, Date.now().toString());
+                            }
+                        } catch (err) {}
+                    }
+                    incrementViewAgain();
+                } else {
+                    hasTracked.current = true; // Mark as tracked so we don't try again this session
                 }
             }
-            incrementView();
         }
 
         // Send analytics on unmount

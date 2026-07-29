@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { PergunteFeedbackCard } from './PergunteFeedbackCard';
+import { BetaInviteCard } from '@/components/feedback/BetaInviteCard';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-hot-toast';
 
@@ -125,7 +126,12 @@ export default function PerguntasPage() {
     return (
         <>
             <MainLayoutWrapper
-                rightSidebar={<PergunteFeedbackCard />}
+                rightSidebar={
+                    <div className="flex flex-col gap-6">
+                        <PergunteFeedbackCard />
+                        <BetaInviteCard />
+                    </div>
+                }
             >
                 {/* Page Header */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 border-b border-gray-200 dark:border-gray-800 pb-6 gap-6">
@@ -139,7 +145,10 @@ export default function PerguntasPage() {
                         </h1>
 
                         {/* Mobile Feedback Card - Pós H1 */}
-                        <PergunteFeedbackCard className="block lg:hidden mb-8" />
+                        <div className="flex flex-col gap-6 block lg:hidden mb-8">
+                            <PergunteFeedbackCard />
+                            <BetaInviteCard />
+                        </div>
 
                         <p className="text-lg text-gray-600 dark:text-gray-400">
                             Tem uma dúvida sobre ciência? Envie sua pergunta e nossos pesquisadores do IF-USP responderão!

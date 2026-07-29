@@ -13,6 +13,7 @@
 
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 import { User } from 'lucide-react';
 import { getAvatarUrl } from '@/lib/utils';
 import { getRadiationTier } from '@/lib/radiation';
@@ -26,6 +27,7 @@ interface AvatarProps {
     xp?: number;
     level?: number;
     isLabDiv?: boolean;
+    userId?: string;
     onClick?: (e: React.MouseEvent) => void;
 }
 
@@ -47,7 +49,7 @@ const badgeSizeClasses = {
     custom: 'size-4 text-[10px]',
 };
 
-export const Avatar = ({ src, name = 'Usuário', size = 'md', className = '', customSize, xp, level, isLabDiv, onClick }: AvatarProps) => {
+export const Avatar = ({ src, name = 'Usuário', size = 'md', className = '', customSize, xp, level, isLabDiv, userId, onClick }: AvatarProps) => {
     const [error, setError] = useState(false);
 
     // Tier calculations
@@ -105,13 +107,13 @@ export const Avatar = ({ src, name = 'Usuário', size = 'md', className = '', cu
         backgroundColor: '#D1D5DB' // gray-300
     };
 
-    return (
+    const content = (
         <div 
-            className={`relative shrink-0 ${sizeClass} ${className} ${onClick ? 'cursor-pointer' : ''}`}
+            className={`relative shrink-0 ${sizeClass} ${className} ${onClick || userId ? 'cursor-pointer hover:scale-105 active:scale-95 transition-transform' : ''}`}
             onClick={onClick}
         >
             {/* The Ring Container */}
-            <div
+            <div 
                 className={`w-full h-full rounded-full p-[3px] transition-all
                     ${isDarkMatter ? 'shadow-[0_0_15px_rgba(168,85,247,0.5)]' : 'shadow-md'}
                 `}
@@ -125,7 +127,7 @@ export const Avatar = ({ src, name = 'Usuário', size = 'md', className = '', cu
 
             {/* Tier Badge / Seal */}
             {tier && (
-                <div
+                <div 
                     className={`absolute bottom-0 right-0 ${badgeSize} rounded-full z-10 flex items-center justify-center shadow-xl border-2 border-white dark:border-gray-950 ${tier.bgColor} translate-x-[20%] translate-y-[20%]`}
                     title={`${tier.name} (Lvl ${level || tier.level})`}
                 >
@@ -134,4 +136,14 @@ export const Avatar = ({ src, name = 'Usuário', size = 'md', className = '', cu
             )}
         </div>
     );
+
+    if (userId && !onClick) {
+        return (
+            <Link href={`/lab-pessoal/${userId}`} className="block shrink-0">
+                {content}
+            </Link>
+        );
+    }
+
+    return content;
 };

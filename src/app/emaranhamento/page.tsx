@@ -15,6 +15,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { EmaranhamentoFeedbackCard } from './EmaranhamentoFeedbackCard';
+import { BetaInviteCard } from '@/components/feedback/BetaInviteCard';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { Header } from '@/components/layout/Header';
 import { getProfileById } from '@/app/actions/submissions';
@@ -252,12 +253,18 @@ export default function EmaranhamentoPage() {
     return (
         <MainLayoutWrapper 
             userId={userId || undefined} 
-            rightSidebar={<EmaranhamentoFeedbackCard />}
+            rightSidebar={
+                <div className="flex flex-col gap-6">
+                    <EmaranhamentoFeedbackCard />
+                    <BetaInviteCard />
+                </div>
+            }
         >
             <div className="flex flex-col lg:flex-row gap-8 py-8 h-[calc(100vh-120px)]">
                 {/* Mobile Feedback Card */}
-                <div className="lg:hidden px-4">
-                    <EmaranhamentoFeedbackCard className="mb-4" />
+                <div className="lg:hidden px-4 flex flex-col gap-6 mb-4">
+                    <EmaranhamentoFeedbackCard />
+                    <BetaInviteCard />
                 </div>
 
                 {/* Active Chat Column */}

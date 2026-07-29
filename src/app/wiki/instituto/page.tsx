@@ -17,13 +17,17 @@ import { InstitutoHistory } from '@/components/wiki/instituto/InstitutoHistory';
 import { InstitutoTimeline } from '@/components/wiki/instituto/InstitutoTimeline';
 import { HistoricalPosts } from '@/components/wiki/instituto/HistoricalPosts';
 import { WikiFeedbackCard } from '@/app/wiki/WikiFeedbackCard';
+import { BetaInviteCard } from '@/components/feedback/BetaInviteCard';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
 
 export default function WikiInstitutoPage() {
     return (
         <MainLayoutWrapper rightSidebar={
-            <WikiFeedbackCard />
+            <div className="flex flex-col gap-6">
+                <WikiFeedbackCard />
+                <BetaInviteCard />
+            </div>
         }>
             <div className="flex flex-col gap-4 w-full overflow-x-hidden pb-12">
                 {/* Breadcrumbs / Back Link */}

@@ -383,6 +383,15 @@ const pageContent: Record<string, any> = {
                 )
             },
             {
+                title: 'Comissão de Inclusão e Pertencimento (CIP)',
+                content: (
+                    <div className="space-y-4">
+                        <p>A CIP promove e acompanha políticas de inclusão, pertencimento e direitos humanos, garantindo o acolhimento para toda a comunidade do IFUSP.</p>
+                        <ActionButton label="Acessar Informações da CIP" icon={<ShieldCheck className="w-4 h-4" />} href="https://portal.if.usp.br/cip/pt-br/node/323" variant="secondary" />
+                    </div>
+                )
+            },
+            {
                 title: 'Física Acolhe',
                 content: (
                     <div className="space-y-4">

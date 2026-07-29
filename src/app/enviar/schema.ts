@@ -57,6 +57,9 @@ export const submissionSchema = z.object({
     selected_laboratories: z.array(z.string()).optional().default([]),
     selected_researchers: z.array(z.string()).optional().default([]),
     selected_research_lines: z.array(z.string()).optional().default([]),
+
+    docs_link: z.string().url('Link inválido').optional().or(z.literal('')),
+    drive_link: z.string().url('Link inválido').optional().or(z.literal('')),
 });
 
 export type SubmissionFormData = z.infer<typeof submissionSchema>;

@@ -33,12 +33,12 @@ const SendNotificationSchema = z.object({
 // Get Target User IDs
 // ============================================================
 
-async function getTargetUserIds(
+async function getTargetUsers(
     supabase: any,
     targetType: string,
     targetValue?: string,
-): Promise<string[]> {
-    let query = supabase.from('profiles').select('id');
+): Promise<{id: string, push_token: string | null}[]> {
+    let query = supabase.from('profiles').select('id, push_token');
 
     if (targetType === 'user' && targetValue) {
         query = query.eq('id', targetValue);
@@ -49,7 +49,7 @@ async function getTargetUserIds(
 
     const { data, error } = await query;
     if (error) throw new Error(`Erro ao buscar usuários: ${error.message}`);
-    return (data || []).map((p: any) => p.id);
+    return data || [];
 }
 
 // ============================================================
@@ -99,15 +99,15 @@ export async function sendAdminNotificationAction(formData: z.infer<typeof SendN
 
     // Immediate send
     try {
-        const userIds = await getTargetUserIds(supabase, targetType, targetValue);
+        const targetUsers = await getTargetUsers(supabase, targetType, targetValue);
 
-        if (userIds.length === 0) {
+        if (targetUsers.length === 0) {
             return { success: false, error: 'Nenhum usuário encontrado para o destino selecionado' };
         }
 
         // Insert individual notifications for each user
-        const notificationRows = userIds.map((userId: string) => ({
-            user_id: userId,
+        const notificationRows = targetUsers.map((user: any) => ({
+            user_id: user.id,
             type: 'admin',
             title,
             message,
@@ -130,13 +130,32 @@ export async function sendAdminNotificationAction(formData: z.infer<typeof SendN
             link: link || null,
             target_type: targetType,
             target_value: targetValue || null,
-            recipients_count: userIds.length,
+            recipients_count: targetUsers.length,
             sent_at: new Date().toISOString(),
             status: 'sent',
         });
 
+        // Send Push Notifications async in background
+        const pushTokens = targetUsers
+            .filter((u: any) => !!u.push_token)
+            .map((u: any) => u.push_token);
+
+        if (pushTokens.length > 0) {
+            // Promise.all in batches of 50 to avoid overloading the edge function concurrently
+            (async () => {
+                for (let i = 0; i < pushTokens.length; i += 50) {
+                    const batchTokens = pushTokens.slice(i, i + 50);
+                    await Promise.allSettled(batchTokens.map((token: string) => 
+                        supabase.functions.invoke('send-push-notification', {
+                            body: { title, body: message, user_token: token }
+                        })
+                    ));
+                }
+            })();
+        }
+
         revalidatePath('/admin/notificacoes');
-        return { success: true, count: userIds.length };
+        return { success: true, count: targetUsers.length };
     } catch (err: any) {
         return { success: false, error: err.message };
     }
@@ -198,10 +217,10 @@ export async function processScheduledNotifications() {
 
     for (const notif of pending) {
         try {
-            const userIds = await getTargetUserIds(supabase, notif.target_type, notif.target_value);
+            const targetUsers = await getTargetUsers(supabase, notif.target_type, notif.target_value);
 
-            const rows = userIds.map((userId: string) => ({
-                user_id: userId,
+            const rows = targetUsers.map((u: any) => ({
+                user_id: u.id,
                 type: 'admin',
                 title: notif.title,
                 message: notif.message,
@@ -214,8 +233,24 @@ export async function processScheduledNotifications() {
             }
 
             await supabase.from('admin_notifications')
-                .update({ status: 'sent', sent_at: new Date().toISOString(), recipients_count: userIds.length })
+                .update({ status: 'sent', sent_at: new Date().toISOString(), recipients_count: targetUsers.length })
                 .eq('id', notif.id);
+
+            // Send Push Notifications async in background
+            const pushTokens = targetUsers
+                .filter((u: any) => !!u.push_token)
+                .map((u: any) => u.push_token);
+
+            if (pushTokens.length > 0) {
+                for (let i = 0; i < pushTokens.length; i += 50) {
+                    const batchTokens = pushTokens.slice(i, i + 50);
+                    await Promise.allSettled(batchTokens.map((token: string) => 
+                        supabase.functions.invoke('send-push-notification', {
+                            body: { title: notif.title, body: notif.message, user_token: token }
+                        })
+                    ));
+                }
+            }
 
             processed++;
         } catch (err) {

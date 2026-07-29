@@ -75,11 +75,18 @@ export const CookieBanner = () => {
                 {/* Zero Dark Patterns: Mesma proporção e legibilidade para Aceitar e Recusar */}
                 <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
                     <button
+                        onClick={handleRejectAll}
+                        className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white font-bukra font-bold hover:bg-gray-300 dark:hover:bg-gray-700 transition-all flex items-center justify-center gap-3 active:scale-95 shadow-lg uppercase tracking-widest text-xs"
+                    >
+                        <span className="material-symbols-outlined text-[18px]">close</span>
+                        Recusar
+                    </button>
+                    <button
                         onClick={handleAcceptAll}
                         className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-[#0F4780] text-white font-bukra font-bold hover:bg-[#0c3966] transition-all flex items-center justify-center gap-3 active:scale-95 shadow-lg shadow-[#0F4780]/20 uppercase tracking-widest text-xs"
                     >
                         <span className="material-symbols-outlined text-[18px]">gpp_good</span>
-                        Aceitar Cookies Essenciais (Navegação)
+                        Aceitar Essenciais
                     </button>
                 </div>
             </div>

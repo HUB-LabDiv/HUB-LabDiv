@@ -44,6 +44,7 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FluxoFeedbackCard } from "@/components/feedback/FluxoFeedbackCard";
+import { BetaInviteCard } from "@/components/feedback/BetaInviteCard";
 import { LogsView } from '@/components/comunidade/LogsView';
 
 import { useSearch } from '@/providers/SearchProvider';
@@ -483,11 +484,19 @@ export const HomeClientView = ({
                     >
                         {activeTab === 'arte' && (
                             <div className="w-full max-w-4xl mx-auto mb-8 text-left space-y-8">
-                                <FluxoFeedbackCard 
-                                    title="Arte" 
-                                    description="Esta é a subaba de arte, onde a comunidade pode se expressar artisticamente. O que falta nesta seção dedicada à arte e criatividade na USP?" 
-                                    icon={<Palette className="w-5 h-5 text-brand-yellow" />}
-                                />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                                    <div className="w-full h-full">
+                                        <FluxoFeedbackCard 
+                                            title="Arte" 
+                                            description="Esta é a subaba de arte, onde a comunidade pode se expressar artisticamente. O que falta nesta seção dedicada à arte e criatividade na USP?" 
+                                            icon={<Palette className="w-5 h-5 text-brand-yellow" />}
+                                            className="h-full"
+                                        />
+                                    </div>
+                                    <div className="w-full h-full">
+                                        <BetaInviteCard className="h-full" />
+                                    </div>
+                                </div>
                                 <div className="flex flex-col gap-3 relative mb-8">
                                     <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-yellow/5 rounded-full blur-[60px] pointer-events-none"></div>
                                     <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-yellow flex items-center gap-4 relative z-10">
@@ -503,11 +512,19 @@ export const HomeClientView = ({
 
                         {activeTab === 'fluxo' && (
                             <div className="w-full max-w-4xl mx-auto mb-8 text-left space-y-8">
-                                <FluxoFeedbackCard 
-                                    title="Fluxo" 
-                                    description="Este é o seu feed principal. O que você gostaria de ver aqui para facilitar a exploração da nossa comunidade?" 
-                                    icon={<Zap className="w-5 h-5 text-brand-blue" />}
-                                />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                                    <div className="w-full h-full">
+                                        <FluxoFeedbackCard 
+                                            title="Fluxo" 
+                                            description="Este é o seu feed principal. O que você gostaria de ver aqui para facilitar a exploração da nossa comunidade?" 
+                                            icon={<Zap className="w-5 h-5 text-brand-blue" />}
+                                            className="h-full"
+                                        />
+                                    </div>
+                                    <div className="w-full h-full">
+                                        <BetaInviteCard className="h-full" />
+                                    </div>
+                                </div>
                                 <div className="flex flex-col gap-3 relative mb-8 outline-none focus:outline-none">
                                     <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-blue/5 rounded-full blur-[60px] pointer-events-none"></div>
                                     <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-blue flex items-center gap-4 relative z-10 outline-none focus:outline-none">

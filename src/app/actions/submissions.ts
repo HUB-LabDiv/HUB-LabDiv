@@ -249,12 +249,69 @@ export async function deleteSubmissionAdmin(id: string) {
             if (process.env.NODE_ENV === 'development') console.error("Erro ao deletar submissão do banco:", error);
             return { error: error.message };
         }
-
-        revalidatePath('/admin/pendentes');
         return { success: true };
+    } catch (e: any) {
+        return { error: e.message || "Erro desconhecido" };
+    }
+}
 
-    } catch (err: any) {
-        return { error: err.message || "Erro interno do servidor." };
+export async function deleteOwnSubmission(id: string) {
+    try {
+        const supabaseServer = await createServerSupabase();
+        const { data: { user } } = await supabaseServer.auth.getUser();
+        if (!user) return { error: "Não autenticado" };
+
+        const { data: sub } = await supabaseServer.from('submissions').select('user_id, media_url, media_type').eq('id', id).single();
+        if (!sub) return { error: "Submissão não encontrada" };
+        if (sub.user_id !== user.id) return { error: "Acesso negado: Você não é o autor deste post." };
+
+        // Deletar Arquivos Físicos do Cloudinary (se aplicável)
+        if (sub.media_url && ['image', 'pdf', 'zip', 'sdocx'].includes(sub.media_type)) {
+            try {
+                cloudinary.config({
+                    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+                    api_key: process.env.CLOUDINARY_API_KEY,
+                    api_secret: process.env.CLOUDINARY_API_SECRET,
+                });
+                let urls: string[] = [];
+                try { urls = JSON.parse(sub.media_url); } catch { urls = [sub.media_url]; }
+                for (const url of urls) {
+                    if (typeof url === 'string' && url.includes('cloudinary.com')) {
+                        const parts = url.split('/upload/');
+                        if (parts.length > 1) {
+                            let publicIdPath = parts[1].replace(/^v\d+\//, '');
+                            const publicId = publicIdPath.replace(/\.[^/.]+$/, "");
+                            const resourceType = ['image', 'pdf'].includes(sub.media_type) ? 'image' : 'raw';
+                            await cloudinary.uploader.destroy(publicId, { invalidate: true, resource_type: resourceType });
+                        }
+                    }
+                }
+            } catch (mediaErr) {}
+        }
+
+        const { error } = await supabaseServer.from('submissions').delete().eq('id', id);
+        if (error) return { error: error.message };
+        return { success: true };
+    } catch (e: any) {
+        return { error: e.message || "Erro desconhecido" };
+    }
+}
+
+export async function revertSubmissionToDraft(id: string) {
+    try {
+        const supabaseServer = await createServerSupabase();
+        const { data: { user } } = await supabaseServer.auth.getUser();
+        if (!user) return { error: "Não autenticado" };
+
+        const { data: sub } = await supabaseServer.from('submissions').select('user_id').eq('id', id).single();
+        if (!sub) return { error: "Submissão não encontrada" };
+        if (sub.user_id !== user.id) return { error: "Acesso negado: Você não é o autor deste post." };
+
+        const { error } = await supabaseServer.from('submissions').update({ status: 'rascunho' }).eq('id', id);
+        if (error) return { error: error.message };
+        return { success: true };
+    } catch (e: any) {
+        return { error: e.message || "Erro desconhecido" };
     }
 }
 

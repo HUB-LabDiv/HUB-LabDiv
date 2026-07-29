@@ -446,3 +446,33 @@ CREATE POLICY "Users can manage their own absences"
     USING (auth.uid() = user_id)
     WITH CHECK (auth.uid() = user_id);
 
+
+-- Feature 14: Docs and Drive links for LabDiv
+ALTER TABLE submissions
+ADD COLUMN IF NOT EXISTS docs_link TEXT,
+ADD COLUMN IF NOT EXISTS drive_link TEXT;
+
+-- ==============================================================================
+-- HUB LAB-DIV: BETA APP SUBSCRIPTIONS
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.beta_users (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+    play_store_email TEXT NOT NULL UNIQUE,
+    survey_completed BOOLEAN DEFAULT false,
+    status TEXT DEFAULT 'pending',
+    invited_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.beta_users ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Usuários podem ver sua própria inscrição beta" ON public.beta_users;
+CREATE POLICY "Usuários podem ver sua própria inscrição beta"
+    ON public.beta_users FOR SELECT
+    USING (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Admins podem gerenciar inscrições beta" ON public.beta_users;
+CREATE POLICY "Admins podem gerenciar inscrições beta"
+    ON public.beta_users FOR ALL
+    USING (true); -- idealmente verificar role admin

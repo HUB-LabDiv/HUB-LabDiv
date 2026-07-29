@@ -23,6 +23,8 @@ const initialState = {
     authors: '',
     year: new Date().getFullYear().toString(),
     whatsapp: '',
+    docsLink: '',
+    driveLink: '',
     blocks: [
         {
             id: 'mock-image-1',
@@ -110,6 +112,8 @@ interface SubmissionState {
     authors: string;
     year: string;
     whatsapp: string;
+    docsLink: string;
+    driveLink: string;
 
     blocks: Block[];
     fluxoBlocks: Block[];
@@ -144,6 +148,8 @@ interface SubmissionState {
     setAuthors: (authors: string) => void;
     setYear: (year: string) => void;
     setWhatsapp: (whatsapp: string) => void;
+    setDocsLink: (link: string) => void;
+    setDriveLink: (link: string) => void;
     
     setLanguageRegister: (val: string) => void;
     setNeedsModerationHelp: (val: boolean) => void;
@@ -218,6 +224,8 @@ export const useSubmissionStore = create<SubmissionState>()(
             setAuthors: (authors) => set({ authors }),
             setYear: (year) => set({ year }),
             setWhatsapp: (whatsapp) => set({ whatsapp }),
+            setDocsLink: (docsLink) => set({ docsLink }),
+            setDriveLink: (driveLink) => set({ driveLink }),
             
             setLanguageRegister: (languageRegister) => set({ languageRegister }),
             setNeedsModerationHelp: (needsModerationHelp) => set({ needsModerationHelp }),
@@ -313,6 +321,8 @@ export const useSubmissionStore = create<SubmissionState>()(
                 authors: initialState.authors,
                 year: initialState.year,
                 whatsapp: initialState.whatsapp,
+                docsLink: initialState.docsLink,
+                driveLink: initialState.driveLink,
                 blocks: initialState.blocks,
                 fluxoBlocks: initialState.blocks,
                 arteBlocks: [],

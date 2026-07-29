@@ -41,7 +41,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         authors, setAuthors, year, setYear,
         readGuide, setReadGuide, acceptedCc, setAcceptedCc, previewMode, setPreviewMode,
         category, setCategory, isHistorical, isGoldenStandard,
-        languageRegister, setLanguageRegister, needsModerationHelp, setNeedsModerationHelp, activeDraftId, setActiveDraftId, restoreMockBlocks, fluxoBlocks, arteBlocks, description, setDescription
+        languageRegister, setLanguageRegister, needsModerationHelp, setNeedsModerationHelp, activeDraftId, setActiveDraftId, restoreMockBlocks, fluxoBlocks, arteBlocks, description, setDescription, docsLink, setDocsLink, driveLink, setDriveLink
     } = useSubmissionStore();
     const { saveDraft, drafts } = useDraftsStore();
     const [selectedPreviewId, setSelectedPreviewId] = React.useState<string>(previewMode === 'arte' ? 'arte' : 'fluxo');
@@ -224,6 +224,8 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 needs_moderation_help: needsModerationHelp,
                 reflexoes: reflexoes.length > 0 ? reflexoes : undefined,
                 quiz: quizBlock ? [quizBlock.content] : undefined,
+                docs_link: docsLink || undefined,
+                drive_link: driveLink || undefined,
             };
 
             submissionMutation.mutate(payload as any, {
@@ -320,6 +322,8 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 accepted_cc: acceptedCc,
                 language_register: languageRegister,
                 needs_moderation_help: true,
+                docs_link: docsLink || undefined,
+                drive_link: driveLink || undefined,
             };
 
             submissionMutation.mutate(payload as any, {
@@ -425,6 +429,8 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 needs_moderation_help: needsModerationHelp,
                 reflexoes: reflexoes.length > 0 ? reflexoes : undefined,
                 quiz: quizBlock ? [quizBlock.content] : undefined,
+                docs_link: docsLink || undefined,
+                drive_link: driveLink || undefined,
             };
 
             updateMutation.mutate({ id: editId, payload }, {
@@ -806,6 +812,36 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                 </div>
                             </div>
 
+                            {/* Links Internos (Somente LabDiv) */}
+                            {isLabDiv && previewMode !== 'arte' && (
+                                <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mb-12 border-b border-brand-yellow/30 pb-8 bg-brand-yellow/5 p-4 rounded-xl">
+                                    <div className="flex flex-col flex-1 max-w-sm">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="text-[10px] text-brand-yellow font-bold uppercase tracking-widest">Link do Docs (Equipe)</span>
+                                        </div>
+                                        <input
+                                            type="url"
+                                            value={docsLink}
+                                            onChange={(e) => setDocsLink(e.target.value)}
+                                            placeholder="https://docs.google.com/..."
+                                            className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-yellow/50 focus:border-brand-yellow outline-none text-white text-sm font-medium transition-colors py-1 placeholder:text-gray-600"
+                                        />
+                                    </div>
+                                    <div className="flex flex-col flex-1 max-w-sm">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <span className="text-[10px] text-brand-yellow font-bold uppercase tracking-widest">Link do Drive (Equipe)</span>
+                                        </div>
+                                        <input
+                                            type="url"
+                                            value={driveLink}
+                                            onChange={(e) => setDriveLink(e.target.value)}
+                                            placeholder="https://drive.google.com/..."
+                                            className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-yellow/50 focus:border-brand-yellow outline-none text-white text-sm font-medium transition-colors py-1 placeholder:text-gray-600"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
                             {/* 3. Bloco do Objeto ou Placeholders Principais */}
                             <div className="flex flex-col gap-8 max-w-full mx-auto">
                                 {objectBlock ? (
@@ -1180,7 +1216,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             )}
 
             {/* Modais */}
-            <TargetProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)} />
+            <TargetProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)} blocks={blocks} />
         </div>
     );
 }

@@ -58,23 +58,23 @@ export async function POST(req: Request) {
       .eq('email', tokenData.guardian_email)
       .maybeSingle();
 
-    // Fallback: Perfil Anônimo (Vínculo auditável mesmo sem conta do pai no HUB)
-    const PARENT_ID = parentProfile?.id || '00000000-0000-0000-0000-000000000000';
+    // 3. Gravar o Vínculo Parental (Somente se o pai tiver conta no HUB)
+    if (parentProfile?.id) {
+        const { error: linkError } = await supabaseAdmin
+        .from('parent_child_links')
+        .upsert({
+            parent_id: parentProfile.id,
+            child_id: childId,
+            status_consentimento: 'aprovado',
+            consent_ip_encrypted: ipHash 
+        }, { onConflict: 'parent_id,child_id' });
 
-    // 3. Gravar o Vínculo Parental (Operação de Auditoria)
-    // Para BYTEA no PostgREST, o formato \xHEX é o mais seguro
-    const { error: linkError } = await supabaseAdmin
-      .from('parent_child_links')
-      .upsert({
-        parent_id: PARENT_ID,
-        child_id: childId,
-        status_consentimento: 'aprovado',
-        consent_ip_encrypted: ipHash // Hash Argon2id completo (inclui o salt para auditoria)
-      }, { onConflict: 'parent_id,child_id' });
-
-    if (linkError) {
-        console.error('[PARENTAL-CONSENT] Link Insert Error:', linkError.message);
-        return NextResponse.json({ error: 'Erro ao registrar vínculo de responsabilidade.' }, { status: 500 });
+        if (linkError) {
+            console.error('[PARENTAL-CONSENT] Link Insert Error:', linkError.message);
+            // Non-fatal, just log it. The token usage is what matters for the child.
+        }
+    } else {
+        console.log('[PARENTAL-CONSENT] Pai não possui conta no HUB. Vínculo na tabela parent_child_links ignorado.');
     }
 
     // 4. Liberar Perfil do Filho (Ponto Crítico da LGPD/ECA)

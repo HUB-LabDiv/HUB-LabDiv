@@ -13,6 +13,7 @@ import { createServerSupabase } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { FerramentasFeedbackCard } from './FerramentasFeedbackCard';
+import { BetaInviteCard } from '@/components/feedback/BetaInviteCard';
 import { ToolsSubNav } from '@/components/layout/ToolsSubNav';
 import { SwipeWrapper } from '@/components/layout/SwipeWrapper';
 
@@ -28,7 +29,12 @@ export default async function FerramentasLayout({ children }: { children: React.
         <MainLayoutWrapper
             userId={user.id}
             fullWidth={true}
-            rightSidebar={<FerramentasFeedbackCard />}
+            rightSidebar={
+                <div className="flex flex-col gap-6">
+                    <FerramentasFeedbackCard />
+                    <BetaInviteCard />
+                </div>
+            }
         >
             <SwipeWrapper routes={['/ferramentas', '/ferramentas/trilhas', '/ferramentas/match']}>
                 <div className="py-8 max-w-7xl mx-auto px-4 lg:px-8 w-full flex-1">

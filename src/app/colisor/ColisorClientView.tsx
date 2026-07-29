@@ -16,6 +16,7 @@ import React, { useState, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ColisorFeedbackCard } from './ColisorFeedbackCard';
+import { BetaInviteCard } from '@/components/feedback/BetaInviteCard';
 import { NetflixFeed } from '@/components/shared/NetflixFeed';
 import { ColisorIcon } from '@/components/icons/ColisorIcon';
 
@@ -266,7 +267,10 @@ export function ColisorClientView({ oportunidades }: ColisorClientViewProps) {
                 )}
             </div>
 
-            <ColisorFeedbackCard className="block lg:hidden mb-12" />
+            <div className="flex flex-col gap-6 block lg:hidden mb-12">
+                <ColisorFeedbackCard />
+                <BetaInviteCard />
+            </div>
 
             {/* --- SEÇÃO OPORTUNIDADES --- */}
             <section id="oportunidades">

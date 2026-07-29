@@ -34,6 +34,7 @@ interface DashboardCounts {
     reportsPendentes: number;
     logsPendentes: number;
     knowledgePendentes: number;
+    tempoMedioAprovacao: string;
 }
 
 export default function AdminDashboardOverview() {
@@ -48,6 +49,7 @@ export default function AdminDashboardOverview() {
         reportsPendentes: 0,
         logsPendentes: 0,
         knowledgePendentes: 0,
+        tempoMedioAprovacao: '-',
     });
     const [isLoading, setIsLoading] = useState(true);
 
@@ -65,6 +67,7 @@ export default function AdminDashboardOverview() {
                 reportsPendentesRes,
                 logsPendentesRes,
                 knowledgePendentesRes,
+                tempoEsperaRes,
             ] = await Promise.all([
                 supabase.from('submissions').select('*', { count: 'exact', head: true }).eq('status', 'pendente'),
                 supabase.from('submissions').select('*', { count: 'exact', head: true }).eq('status', 'aprovado'),
@@ -81,6 +84,7 @@ export default function AdminDashboardOverview() {
                 supabase.from('feedback_reports').select('*', { count: 'exact', head: true }).neq('status', 'closed'),
                 supabase.from('micro_articles').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
                 supabase.from('knowledge_suggestions').select('*', { count: 'exact', head: true }).eq('status', 'pendente'),
+                supabase.from('submissions').select('created_at, updated_at').eq('status', 'aprovado').limit(100),
             ]);
 
             // Calculate unique tags from all approved submissions
@@ -106,6 +110,26 @@ export default function AdminDashboardOverview() {
                 autoresMestres = Object.values(authorCounts).filter(c => c >= 10).length;
             }
 
+            // Calculate Tempo de Espera Médio
+            let tempoMedioStr = '-';
+            if (tempoEsperaRes.data && tempoEsperaRes.data.length > 0) {
+                let totalDiff = 0;
+                let validCount = 0;
+                tempoEsperaRes.data.forEach((s: any) => {
+                    const created = new Date(s.created_at).getTime();
+                    const updated = new Date(s.updated_at).getTime();
+                    if (updated > created) {
+                        totalDiff += (updated - created);
+                        validCount++;
+                    }
+                });
+                if (validCount > 0) {
+                    const avgMs = totalDiff / validCount;
+                    const avgHours = avgMs / (1000 * 60 * 60);
+                    tempoMedioStr = avgHours < 24 ? `${avgHours.toFixed(1)}h` : `${(avgHours / 24).toFixed(1)} dias`;
+                }
+            }
+
             setCounts({
                 pendentes: pendentesRes.count || 0,
                 aprovados: aprovadosRes.count || 0,
@@ -124,6 +148,7 @@ export default function AdminDashboardOverview() {
                 reportsPendentes: reportsPendentesRes.count || 0,
                 logsPendentes: logsPendentesRes.count || 0,
                 knowledgePendentes: knowledgePendentesRes.count || 0,
+                tempoMedioAprovacao: tempoMedioStr,
             });
 
             setIsLoading(false);
@@ -188,22 +213,31 @@ export default function AdminDashboardOverview() {
             urgent: false,
         },
         {
-            title: 'Logs do IFUSP',
-            subtitle: 'Aguardando Aprovação',
+            title: 'Log da Comunidade',
+            subtitle: 'Posts Retidos/Denunciados',
             count: counts.logsPendentes,
-            icon: 'message',
+            icon: 'list_alt',
             color: 'red' as const,
-            href: '/admin/drops',
+            href: '/admin/comunidade',
             urgent: counts.logsPendentes > 0,
         },
         {
-            title: 'Sugestões Grafo',
-            subtitle: 'Novos Laboratórios',
+            title: 'Conhecimento (Wiki)',
+            subtitle: 'Sugestões Pendentes',
             count: counts.knowledgePendentes,
-            icon: 'hub',
+            icon: 'auto_stories',
             color: 'yellow' as const,
-            href: '/admin/sugestoes',
+            href: '/admin/wiki',
             urgent: counts.knowledgePendentes > 0,
+        },
+        {
+            title: 'Tempo Médio Aprovação',
+            subtitle: 'Últimas 100 submissões',
+            count: counts.tempoMedioAprovacao,
+            icon: 'timer',
+            color: 'yellow' as const,
+            href: '#',
+            urgent: false,
         },
     ];
 

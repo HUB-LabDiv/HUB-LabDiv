@@ -815,6 +815,14 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     <CalendarX className="w-4 h-4 group-hover:scale-110 transition-transform" />
                     <span className="inline">Controle de Faltas</span>
                 </button>
+                <a
+                    href="/wiki/veteranos"
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3.5 bg-gradient-to-r from-[#17739A] to-[#115673] text-white border border-[#17739A]/40 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:opacity-90 hover:scale-105 transition-all shadow-lg shadow-[#17739A]/20 group cursor-pointer"
+                    title="Acessar Dicas e Conselhos de Veteranos"
+                >
+                    <Info className="w-4 h-4 animate-pulse" />
+                    <span className="inline">IFUSP 101 (Dicas)</span>
+                </a>
             </div>
 
 

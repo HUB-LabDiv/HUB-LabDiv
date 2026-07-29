@@ -24,6 +24,7 @@ import { toast } from 'react-hot-toast';
 import { updateProfile } from '@/app/actions/profiles';
 import { Download, FileText, ChevronDown, RefreshCw } from 'lucide-react';
 import { TrilhasFeedbackCard } from './TrilhasFeedbackCard';
+import { BetaInviteCard } from '@/components/feedback/BetaInviteCard';
 import { JupiterEvolutionModal } from './JupiterEvolutionModal';
 
 const COURSE_MAPS = [
@@ -392,7 +393,10 @@ export default function TrilhasClient({
 
     return (
         <>
-            <TrilhasFeedbackCard className="block lg:hidden mt-6 mb-8" />
+            <div className="flex flex-col gap-6 block lg:hidden mt-6 mb-8">
+                <TrilhasFeedbackCard />
+                <BetaInviteCard />
+            </div>
 
             <div className="dark:text-white text-gray-900 transition-colors">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">

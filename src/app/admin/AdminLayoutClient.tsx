@@ -45,6 +45,7 @@ export default function AdminLayoutClient({
         { name: 'Central de Anomalias', href: '/admin/reports', icon: 'bug_report' },
         { name: 'Trilhas de Aprendizagem', href: '/admin/trilhas', icon: 'route' },
         { name: 'Telemetria do Sistema', href: '/admin/telemetria', icon: 'query_stats' },
+        { name: 'Acessos Beta', href: '/admin/beta', icon: 'smartphone' },
         { name: 'Configurações Admin', href: '/admin/config', icon: 'settings', adminOnly: true },
     ];
 

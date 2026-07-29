@@ -112,14 +112,46 @@ export function ApresentacaoMarkdownRenderer({ content, palavrasGeradoras, getHe
                             </div>
                         );
                     },
-                    blockquote: ({ node, children }) => (
-                        <div className="glass-card rounded-2xl p-6 border-white/5 bg-[#11141a] my-8 shadow-xl relative overflow-hidden group transition-all hover:bg-white/5" data-block-id={`bq-${node?.position?.start.line}`}>
-                            <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-brand-blue to-brand-red opacity-50 group-hover:opacity-100 transition-opacity"></div>
-                            <div className="text-gray-300 leading-relaxed prose-p:mb-0">
-                                {children}
+                    blockquote: ({ node, children }) => {
+                        // Attempt to extract text to check for "Reflexão"
+                        let isReflexao = false;
+                        React.Children.forEach(children, (child) => {
+                            if (React.isValidElement(child) && child.props && child.props.children) {
+                                const text = String(child.props.children).toLowerCase();
+                                if (text.includes('reflexão') || text.includes('reflexao')) {
+                                    isReflexao = true;
+                                }
+                            }
+                        });
+
+                        if (isReflexao) {
+                            return (
+                                <div className="glass-card rounded-3xl p-6 border-brand-yellow/30 bg-brand-yellow/5 my-8 shadow-2xl relative overflow-hidden group transition-all hover:bg-brand-yellow/10 hover:scale-[1.01]" data-block-id={`bq-${node?.position?.start.line}`}>
+                                    <div className="absolute -top-6 -right-6 text-brand-yellow/20 group-hover:text-brand-yellow/40 transition-colors">
+                                        <span className="material-symbols-outlined text-[100px]">lightbulb</span>
+                                    </div>
+                                    <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-brand-yellow to-brand-red opacity-80 group-hover:opacity-100 transition-opacity"></div>
+                                    <div className="relative z-10 flex items-start gap-4">
+                                        <div className="w-10 h-10 rounded-full bg-brand-yellow/20 flex items-center justify-center shrink-0 mt-1">
+                                            <span className="material-symbols-outlined text-brand-yellow">psychology</span>
+                                        </div>
+                                        <div className="text-gray-300 leading-relaxed font-medium italic prose-p:mb-0">
+                                            {children}
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        }
+
+                        return (
+                            <div className="glass-card rounded-2xl p-6 border-white/5 bg-[#11141a] my-8 shadow-xl relative overflow-hidden group transition-all hover:bg-white/5" data-block-id={`bq-${node?.position?.start.line}`}>
+                                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-brand-blue to-brand-red opacity-50 group-hover:opacity-100 transition-opacity"></div>
+                                <div className="text-gray-300 leading-relaxed prose-p:mb-0 border-l-2 border-brand-blue/30 pl-4">
+                                    {children}
+                                </div>
                             </div>
-                        </div>
-                    ),
+                        );
+                    },
                     ul: ({ children, ...props }) => (
                         <ul className="space-y-3 my-6 pl-4" {...props}>
                             {children}

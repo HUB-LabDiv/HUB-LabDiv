@@ -67,36 +67,10 @@ export function useSwipe({ onSwipedLeft, onSwipedRight }: SwipeInput) {
         touchEndY.current = null;
     };
 
-    const onWheel = (e: WheelEvent) => {
-        // Cooldown of 600ms between swipes to prevent multiple triggers from a single trackpad swipe
-        if (Date.now() - lastSwipeTime.current < 600) return;
-
-        // Ensure the wheel event is primarily horizontal
-        if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) {
-            wheelAccumulator.current += e.deltaX;
-
-            if (wheelTimeout.current) clearTimeout(wheelTimeout.current);
-            wheelTimeout.current = setTimeout(() => {
-                wheelAccumulator.current = 0;
-            }, 150);
-
-            if (wheelAccumulator.current > 80) {
-                onSwipedLeft();
-                lastSwipeTime.current = Date.now();
-                wheelAccumulator.current = 0;
-            } else if (wheelAccumulator.current < -80) {
-                onSwipedRight();
-                lastSwipeTime.current = Date.now();
-                wheelAccumulator.current = 0;
-            }
-        }
-    };
-
     return {
         onTouchStart,
         onTouchMove,
-        onTouchEnd: onTouchEndHandler,
-        onWheel
+        onTouchEnd: onTouchEndHandler
     };
 }
 

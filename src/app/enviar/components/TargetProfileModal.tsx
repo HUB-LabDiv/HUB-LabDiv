@@ -9,7 +9,7 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fetchTargetProfileStats } from '@/app/actions/profiles';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Legend } from 'recharts';
@@ -17,15 +17,58 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveCo
 interface TargetProfileModalProps {
     isOpen: boolean;
     onClose: () => void;
+    blocks?: any[];
 }
 
-export function TargetProfileModal({ isOpen, onClose }: TargetProfileModalProps) {
+export function TargetProfileModal({ isOpen, onClose, blocks = [] }: TargetProfileModalProps) {
     const [stats, setStats] = useState<{
         language: { name: string; value: number }[];
         education: { name: string; value: number }[];
         course: { name: string; value: number }[];
     } | null>(null);
     const [loading, setLoading] = useState(true);
+
+    // Estimate reading time and feelings based on content
+    const contentStats = useMemo(() => {
+        let totalWords = 0;
+        let images = 0;
+        let interactive = 0;
+
+        blocks.forEach(b => {
+            if (b.type === 'text') {
+                const text = b.data?.text || '';
+                totalWords += text.split(/\s+/).filter((w: string) => w.length > 0).length;
+            } else if (b.type === 'image') {
+                images++;
+            } else if (['quiz', 'reflection'].includes(b.type)) {
+                interactive++;
+            }
+        });
+
+        // average reading speed: 200 words per minute, plus 10s per image, 30s per interactive block
+        const readingTimeMins = Math.ceil((totalWords / 200) + (images * 10 / 60) + (interactive * 30 / 60));
+
+        let feeling = 'Informativo';
+        let feelingColor = 'text-brand-blue';
+        let feelingIcon = 'menu_book';
+        if (interactive > 0) {
+            feeling = 'Reflexivo e Engajador';
+            feelingColor = 'text-brand-yellow';
+            feelingIcon = 'psychology';
+        } else if (images > totalWords / 50) {
+            feeling = 'Visual e Inspirador';
+            feelingColor = 'text-brand-red';
+            feelingIcon = 'visibility';
+        }
+
+        return {
+            readingTime: readingTimeMins === 0 ? '< 1' : readingTimeMins,
+            feeling,
+            feelingColor,
+            feelingIcon,
+            totalWords
+        };
+    }, [blocks]);
 
     useEffect(() => {
         if (isOpen) {
@@ -60,23 +103,47 @@ export function TargetProfileModal({ isOpen, onClose }: TargetProfileModalProps)
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
-                    className="bg-background-dark border border-brand-blue/30 rounded-3xl w-full max-w-3xl shadow-2xl flex flex-col overflow-hidden max-h-[80vh]"
+                    className="bg-background-dark border border-brand-blue/30 rounded-3xl w-full max-w-4xl shadow-2xl flex flex-col overflow-hidden max-h-[90vh]"
                 >
                     <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#1E1E1E]/50">
                         <div>
-                            <h3 className="text-xl font-black text-white uppercase tracking-widest">Público do HUB</h3>
-                            <p className="text-xs text-gray-400">Conheça para quem você está escrevendo</p>
+                            <h3 className="text-xl font-black text-white uppercase tracking-widest">Relatório de Impacto e Público</h3>
+                            <p className="text-xs text-gray-400">Valide para quem você está escrevendo e como será recebido</p>
                         </div>
                         <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
                             <span className="material-symbols-outlined">close</span>
                         </button>
                     </div>
 
-                    <div className="p-6 overflow-y-auto custom-scrollbar flex-1 bg-background-dark">
+                    <div className="p-6 overflow-y-auto custom-scrollbar flex-1 bg-background-dark space-y-8">
+                        {/* 1. Métrica de Leitura e Sentimento */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="bg-[#1E1E1E]/50 border border-white/5 rounded-2xl p-6 flex items-center gap-6">
+                                <div className="w-16 h-16 rounded-full bg-brand-blue/10 flex items-center justify-center border border-brand-blue/20 shrink-0">
+                                    <span className="material-symbols-outlined text-brand-blue text-3xl">timer</span>
+                                </div>
+                                <div>
+                                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Tempo de Leitura Estimado</h4>
+                                    <p className="text-3xl font-black text-white">{contentStats.readingTime} <span className="text-lg text-gray-500 font-medium">minutos</span></p>
+                                    <p className="text-[10px] text-gray-500 mt-1">Baseado em {contentStats.totalWords} palavras, imagens e elementos interativos.</p>
+                                </div>
+                            </div>
+                            <div className="bg-[#1E1E1E]/50 border border-white/5 rounded-2xl p-6 flex items-center gap-6">
+                                <div className={`w-16 h-16 rounded-full bg-white/5 flex items-center justify-center border border-white/10 shrink-0 ${contentStats.feelingColor.replace('text-', 'border-').replace('blue', 'blue/30').replace('yellow', 'yellow/30').replace('red', 'red/30')}`}>
+                                    <span className={`material-symbols-outlined text-3xl ${contentStats.feelingColor}`}>{contentStats.feelingIcon}</span>
+                                </div>
+                                <div>
+                                    <h4 className="text-xs font-black text-gray-400 uppercase tracking-widest mb-1">Impacto Emocional Previsto</h4>
+                                    <p className={`text-2xl font-black uppercase tracking-tight ${contentStats.feeling}`}>{contentStats.feeling}</p>
+                                    <p className="text-[10px] text-gray-500 mt-1">Sua composição de mídia e texto sugere esta recepção.</p>
+                                </div>
+                            </div>
+                        </div>
+
                         {loading ? (
                             <div className="flex flex-col items-center justify-center h-64 gap-4">
                                 <div className="w-8 h-8 border-4 border-brand-blue border-t-transparent rounded-full animate-spin"></div>
-                                <span className="text-gray-400 font-bold uppercase tracking-widest text-xs">Analisando Dados...</span>
+                                <span className="text-gray-400 font-bold uppercase tracking-widest text-xs">Analisando Perfil do Leitor...</span>
                             </div>
                         ) : stats ? (
                             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

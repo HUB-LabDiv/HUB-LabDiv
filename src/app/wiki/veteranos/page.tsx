@@ -14,7 +14,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, MessageSquare, ThumbsUp, Send, Loader2, X, AlertCircle, Search, Compass, BookOpen } from 'lucide-react';
+import { ArrowLeft, MessageSquare, ThumbsUp, Send, Loader2, X, AlertCircle, Search, Compass, BookOpen, Instagram } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
 import { getApprovedTips, submitTip, upvoteTip } from '@/app/actions/veterans';
@@ -122,7 +122,7 @@ export default function VeteranosPage() {
                     </div>
 
                 {/* Quick Links Grid */}
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-16">
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-16">
                     <a href="https://scholar.google.com.br" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 hover:border-white/20 transition-all text-center group">
                         <Search className="w-8 h-8 text-brand-blue mb-3 group-hover:scale-110 transition-transform" />
                         <span className="text-sm font-bold uppercase tracking-widest text-white">Google Scholar</span>
@@ -131,13 +131,18 @@ export default function VeteranosPage() {
                         <Compass className="w-8 h-8 text-brand-blue-ifusp mb-3 group-hover:scale-110 transition-transform" />
                         <span className="text-sm font-bold uppercase tracking-widest text-white">Portal do IFUSP</span>
                     </a>
-                    <a href="https://sci-hub.se" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 hover:border-white/20 transition-all text-center group">
+                    <a href="https://sci-hub.box" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-6 bg-brand-red/10 border border-brand-red/20 rounded-3xl hover:bg-brand-red/20 transition-all text-center group">
                         <BookOpen className="w-8 h-8 text-brand-red mb-3 group-hover:scale-110 transition-transform" />
-                        <span className="text-sm font-bold uppercase tracking-widest text-white">Sci-Hub</span>
+                        <span className="text-sm font-bold uppercase tracking-widest text-white mb-2">Sci-Hub</span>
+                        <span className="text-[10px] text-gray-300 font-medium italic">Conselho de Veterano: Busque sempre usando o DOI do artigo.</span>
                     </a>
                     <a href="mailto:salunosif@usp.br?subject=Dúvida&body=Olá, saudações espero que esteja bem%0D%0A%0D%0ASou aluno do IFUSP meu curso é [] e eu tenho uma duvida%0D%0A%0D%0A[seu nome] [seu NUSP]" className="flex flex-col items-center justify-center p-6 bg-white/5 border border-white/10 rounded-3xl hover:bg-white/10 hover:border-white/20 transition-all text-center group">
                         <MessageSquare className="w-8 h-8 text-brand-yellow mb-3 group-hover:scale-110 transition-transform" />
                         <span className="text-sm font-bold uppercase tracking-widest text-white">Seção de Alunos</span>
+                    </a>
+                    <a href="https://instagram.com/ifusp101" target="_blank" rel="noopener noreferrer" className="flex flex-col items-center justify-center p-6 bg-gradient-to-tr from-purple-600 via-pink-500 to-orange-400 border border-white/10 rounded-3xl hover:opacity-90 transition-all text-center group">
+                        <Instagram className="w-8 h-8 text-white mb-3 group-hover:scale-110 transition-transform" />
+                        <span className="text-sm font-bold uppercase tracking-widest text-white">IFUSP 101</span>
                     </a>
                 </div>
 

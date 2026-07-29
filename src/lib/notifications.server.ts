@@ -26,7 +26,7 @@ const transporter = nodemailer.createTransport({
 
 const adminEmails = ['hublabdiv@gmail.com'];
 
-export type NotificationType = 'submission' | 'question' | 'comment' | 'profile_update' | 'profile_creation' | 'bug_report' | 'arena_suggestion' | 'hub_improvement' | 'drop_submission' | 'thread_reply';
+export type NotificationType = 'submission' | 'question' | 'comment' | 'profile_update' | 'profile_creation' | 'bug_report' | 'arena_suggestion' | 'hub_improvement' | 'drop_submission' | 'thread_reply' | 'jupiter_sync_error' | 'beta_registration';
 
 export interface NotificationData {
     type: NotificationType;
@@ -39,6 +39,7 @@ export interface NotificationData {
     submissionTitle?: string;
     details?: string;
     url?: string;
+    targetEmail?: string;
 }
 
 export async function sendAdminNotification(data: NotificationData) {
@@ -163,15 +164,44 @@ export async function sendAdminNotification(data: NotificationData) {
             break;
 
         case 'thread_reply':
-            subject = `🧵 Hub: Novo Fio (Thread) - @${data.userName}`;
-            dashboardLink = `${baseUrl}/admin/drops`;
+            subject = `💬 Hub: Resposta na Thread por @${data.userName}`;
+            dashboardLink = `${baseUrl}/admin/logs`;
             emailTemplate = `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Nova Resposta em Fio (Thread)</h2>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">O pesquisador <strong>@${data.userName}</strong> respondeu a um log existente. A thread aguarda moderação.</p>
-                <div style="background-color: #f0f9ff; border-left: 4px solid #0F4780; padding: 20px; margin: 24px 0; border-radius: 8px; font-style: italic; color: #2d3748;">
+                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Nova Resposta (Thread)</h2>
+                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">O pesquisador <strong>@${data.userName}</strong> respondeu a um log.</p>
+                <div style="background-color: #f8fafc; border-left: 4px solid #0F4780; padding: 20px; margin: 24px 0; border-radius: 8px; font-style: italic; color: #2d3748;">
                     "${data.content}"
                 </div>`;
             break;
+
+        case 'jupiter_sync_error':
+            subject = `⚠️ Hub: Erro de Sincronização do Júpiter Web`;
+            dashboardLink = `${baseUrl}/admin`;
+            emailTemplate = `
+                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Erro no Scraper do Júpiter</h2>
+                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">O sistema tentou sincronizar a grade de um aluno, mas encontrou um erro ou não conseguiu capturar as disciplinas.</p>
+                <div style="background-color: #FEF2F2; border: 1px solid #FEE2E2; padding: 20px; margin: 24px 0; border-radius: 8px; color: #991B1B;">
+                    <strong style="display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 12px;">Detalhes do Erro:</strong>
+                    "${data.content}"
+                </div>
+                <p style="font-size: 12px; color: #718096;">Usuário Afetado: ${data.userName || 'N/A'}</p>`;
+            break;
+
+        case 'beta_registration':
+            subject = `🚀 Acesso Liberado: App HUB Lab-Div (Beta)`;
+            dashboardLink = `https://play.google.com/apps/testing/com.hublabdiv.app`; // O link do Google Play Testing
+            emailTemplate = `
+                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Você já pode baixar o App Lab-Div!</h2>
+                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">A Google aprovou o seu e-mail <strong>${data.targetEmail}</strong> para a fase de testes (Closed Beta).</p>
+                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">Para instalar no seu Android, certifique-se de que está logado no Google Play com este e-mail e clique no botão abaixo para aceitar o convite e fazer o download.</p>
+                <div style="background-color: #f8fafc; border-left: 4px solid #0F4780; padding: 20px; margin: 24px 0; border-radius: 8px; font-style: italic; color: #2d3748;">
+                    <strong>Dica:</strong> Se não conseguir baixar de primeira, aguarde alguns minutos, o Play Store pode levar um tempo para propagar a permissão.
+                </div>`;
+            break;
+
+        default:
+            subject = `Notificação do Hub: ${data.title || 'Sistema'}`;
+            emailTemplate = `<p>${data.content || 'Nenhuma informação adicional.'}</p>`;
     }
 
     const finalHtml = `
@@ -184,7 +214,7 @@ export async function sendAdminNotification(data: NotificationData) {
                 ${emailTemplate}
                 <div style="text-align: center; margin-top: 48px;">
                     <a href="${dashboardLink}" style="display: inline-block; padding: 14px 32px; background-color: #0F4780; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 15px; box-shadow: 0 4px 6px rgba(0,66,130,0.2);">
-                        Acessar Painel Admin
+                        ${data.type === 'beta_registration' ? 'Acessar no Google Play' : 'Acessar Painel Admin'}
                     </a>
                 </div>
             </div>
@@ -197,7 +227,7 @@ export async function sendAdminNotification(data: NotificationData) {
     try {
         const mailOptions = {
             from: `"Hub Lab-Div" <${GMAIL_USER}>`,
-            to: adminEmails.join(', '),
+            to: data.targetEmail || adminEmails.join(', '),
             subject: subject,
             html: finalHtml,
         };

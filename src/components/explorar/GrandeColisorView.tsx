@@ -312,6 +312,18 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                             <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">Mulheres na Física. Apoio, visibilidade e debates para as alunas do IFUSP.</p>
                             <a href="https://www.instagram.com/gnoether_/" target="_blank" className="mt-auto px-8 py-4 border border-brand-yellow/20 text-brand-yellow rounded-2xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-yellow/10 transition-colors">Acessar Instagram</a>
                         </div>
+                        {/* Noether AI Bot */}
+                        <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-brand-red/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group relative overflow-hidden">
+                            <div className="absolute top-4 right-4 px-2 py-1 bg-brand-red text-white text-[9px] font-black uppercase tracking-widest rounded">Beta</div>
+                            <div className="size-16 bg-brand-red/10 rounded-2xl flex items-center justify-center text-brand-red mb-8">
+                                <span className="material-symbols-outlined text-4xl">smart_toy</span>
+                            </div>
+                            <h3 className="text-2xl font-black italic uppercase mb-4 text-gray-900 dark:text-white">Noether (IA)</h3>
+                            <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">Nossa inteligência artificial treinada para responder dúvidas sobre a USP e o Instituto de Física.</p>
+                            <button onClick={() => alert('Noether AI Bot em breve!')} className="mt-auto px-8 py-4 bg-brand-red text-white rounded-2xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-red/90 transition-colors">
+                                Iniciar Chat
+                            </button>
+                        </div>
                     </NetflixFeed>
                 </div>
             </section>

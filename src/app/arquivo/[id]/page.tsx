@@ -241,9 +241,16 @@ export default async function ArquivoItemPage({ params }: PageProps) {
         .neq('moderation_status', 'suspended')
         .order('created_at', { ascending: false });
 
-    // Get user for history tracking — use cookie-aware server client
     const serverSupabase = await createServerSupabase();
     const { data: { user } } = await serverSupabase.auth.getUser();
+    
+    let isLabDiv = false;
+    if (user) {
+        const { data: profile } = await serverSupabase.from('profiles').select('is_labdiv').eq('id', user.id).single();
+        if (profile?.is_labdiv) {
+            isLabDiv = true;
+        }
+    }
 
     const breadcrumbItems = [
         { label: 'Arquivo Lab-Div', href: '/arquivo-labdiv' },
@@ -367,6 +374,36 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                     {co.full_name}
                                                 </span>
                                             ))}
+                                        </div>
+                                    )}
+
+                                    {/* Links Internos (Somente LabDiv) */}
+                                    {isLabDiv && (submission.docs_link || submission.drive_link) && (
+                                        <div className="flex flex-wrap gap-4 mt-4 pl-[52px]">
+                                            {submission.docs_link && (
+                                                <a
+                                                    href={submission.docs_link}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center gap-1 text-[10px] bg-brand-yellow/10 hover:bg-brand-yellow/20 px-3 py-1.5 rounded-full text-brand-yellow border border-brand-yellow/20 transition-colors uppercase tracking-widest font-black"
+                                                    title="Abrir Documento"
+                                                >
+                                                    <span className="material-symbols-outlined text-[14px]">description</span>
+                                                    Acessar Docs
+                                                </a>
+                                            )}
+                                            {submission.drive_link && (
+                                                <a
+                                                    href={submission.drive_link}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center gap-1 text-[10px] bg-brand-yellow/10 hover:bg-brand-yellow/20 px-3 py-1.5 rounded-full text-brand-yellow border border-brand-yellow/20 transition-colors uppercase tracking-widest font-black"
+                                                    title="Abrir Pasta no Drive"
+                                                >
+                                                    <span className="material-symbols-outlined text-[14px]">folder</span>
+                                                    Acessar Drive
+                                                </a>
+                                            )}
                                         </div>
                                     )}
                                 </div>

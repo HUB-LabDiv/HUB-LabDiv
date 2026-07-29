@@ -13,15 +13,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import puppeteerCore from 'puppeteer-core';
 import chromium from '@sparticuz/chromium';
 import { getLocalExecutablePath } from '@/lib/puppeteer-utils';
+import { sendAdminNotification } from '@/lib/notifications.server';
 
 export const maxDuration = 60;
 import { createServerSupabase } from '@/lib/supabase/server';
 
 export async function POST(req: NextRequest) {
     let browser;
+    let nUsp: string | undefined;
     try {
         const body = await req.json();
-        const { nUsp, password } = body;
+        const { password } = body;
+        nUsp = body.nUsp;
 
         if (!nUsp || !password) {
             return NextResponse.json({ success: false, error: 'Credenciais ausentes' }, { status: 400 });
@@ -203,6 +206,12 @@ export async function POST(req: NextRequest) {
         await browser.close();
 
         if (subjectsScraped.length === 0) {
+            await sendAdminNotification({
+                type: 'jupiter_sync_error',
+                userName: nUsp,
+                content: 'Nenhuma matéria identificada no JúpiterWeb neste semestre. O script Puppeteer navegou com sucesso, mas a extração via iframes não encontrou dados de grade.'
+            }).catch(e => console.error("Error sending admin notification", e));
+
             return NextResponse.json({ success: true, message: 'Nenhuma matéria identificada no JúpiterWeb neste semestre.', data: [] });
         }
 
@@ -312,9 +321,13 @@ export async function POST(req: NextRequest) {
     } catch (error: any) {
         if (browser) await browser.close();
         console.error('[Jupiter Sync Error]', error);
-        return NextResponse.json({ 
-            success: false, 
-            error: error.message || 'Erro ao comunicar com sistema da USP.' 
-        }, { status: 500 });
+        
+        await sendAdminNotification({
+            type: 'jupiter_sync_error',
+            userName: nUsp || 'Desconhecido',
+            content: `Erro não tratado durante a sincronização do Puppeteer: ${error.message || String(error)}`
+        }).catch(e => console.error("Error sending admin notification", e));
+
+        return NextResponse.json({ success: false, error: 'Ocorreu um erro ao sincronizar com o JúpiterWeb. Tente novamente mais tarde.' }, { status: 500 });
     }
 }
