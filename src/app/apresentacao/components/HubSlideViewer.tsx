@@ -26,13 +26,16 @@ import {
   CheckCircle2,
   Download,
   MessageSquare,
-  Palette
+  Palette,
+  Smartphone,
+  Globe,
+  Quote
 } from 'lucide-react';
 
 export interface SlideLink {
   label: string;
   url: string;
-  variant?: 'yellow' | 'blue' | 'red' | 'outline';
+  variant?: 'yellow' | 'blue' | 'red' | 'outline' | 'green';
 }
 
 export interface HubSlideItem {
@@ -58,9 +61,9 @@ export const HUB_INSTITUCIONAL_SLIDES: HubSlideItem[] = [
     description: 'Plataforma digital WebApp open source (AGPLv3) concebida por João Stangorlini sob orientação do Prof. Caetano Miranda no IFUSP.',
     showFirstSlideLogo: true,
     highlights: [
-      'Super App 100% WebApp: Acessível via navegador em qualquer dispositivo, sem necessidade de instalação.',
-      'Comunicação Dialógica: Rompe a mera "divulgação passiva" promovendo a co-construção de significado com base em Paulo Freire.',
-      'Integração Acadêmica: Une acompanhamento de disciplinas, diário discente (Logs), Wiki e Match Acadêmico.',
+      'Super App: Reúne diversas funções em um único lugar (como 99, WeChat, Mercado Livre, etc.), acessível pela PlayStore (beta fechado) ou direto pelo navegador.',
+      'Comunicação Dialógica: Rompe a mera "divulgação passiva", promovendo a co-construção de significado com base teórica em "Extensão ou Comunicação?" de Paulo Freire.',
+      'Integração Acadêmica: Une o controle do semestre e evolução no curso, uma Wiki com todas as informações do IFUSP e a aba Comunidade para interagir com colegas.',
       'Código Aberto (AGPLv3): Projeto transparente hospedado no GitHub (JoaoStangorlini/HUB-LabDiv) pronto para ser replicado.'
     ],
     notes: [
@@ -68,8 +71,9 @@ export const HUB_INSTITUCIONAL_SLIDES: HubSlideItem[] = [
       'Destacar as 3 cores da marca LabDiv (Amarelo, Azul e Vermelho).'
     ],
     links: [
-      { label: 'Repositório GitHub (AGPLv3)', url: 'https://github.com/JoaoStangorlini/HUB-LabDiv', variant: 'yellow' },
-      { label: 'Acessar Plataforma HUB', url: '/comunidade', variant: 'blue' }
+      { label: 'Acessar WebApp', url: 'https://hub-lab-div.vercel.app', variant: 'yellow' },
+      { label: 'Google PlayStore', url: 'https://play.google.com/store/apps/details?id=br.usp.ifusp.hublabdiv', variant: 'blue' },
+      { label: 'Repositório GitHub', url: 'https://github.com/JoaoStangorlini/HUB-LabDiv', variant: 'outline' }
     ]
   },
   {
@@ -199,6 +203,7 @@ export function HubSlideViewer() {
       yellow: 'bg-[#FFCC00] text-black hover:bg-[#e6b800] shadow-md shadow-brand-yellow/30 font-black',
       blue: 'bg-[#0F4780] text-white hover:bg-[#0c3866] shadow-md shadow-brand-blue/40 border border-brand-blue/50 font-black',
       red: 'bg-[#F14343] text-white hover:bg-[#d63838] shadow-md shadow-brand-red/40 border border-brand-red/50 font-black',
+      green: 'bg-emerald-600 text-white hover:bg-emerald-700 shadow-md border border-emerald-500 font-black',
       outline: 'bg-white/10 text-white hover:bg-white/20 border border-white/20 font-bold'
     }[link.variant || 'yellow'];
 
@@ -208,9 +213,15 @@ export function HubSlideViewer() {
         href={link.url}
         target={isExternal ? '_blank' : '_self'}
         rel={isExternal ? 'noopener noreferrer' : ''}
-        className={`inline-flex items-center gap-2.5 px-5 py-3 rounded-2xl text-xs uppercase tracking-wider transition-all duration-300 transform hover:scale-105 active:scale-95 ${colorClasses}`}
+        className={`inline-flex items-center gap-2.5 px-4.5 py-2.5 rounded-2xl text-xs uppercase tracking-wider transition-all duration-300 transform hover:scale-105 active:scale-95 ${colorClasses}`}
       >
-        <ExternalLink className="w-4 h-4 shrink-0" />
+        {link.label.includes('PlayStore') ? (
+          <Smartphone className="w-4 h-4 shrink-0 text-brand-yellow" />
+        ) : link.label.includes('WebApp') ? (
+          <Globe className="w-4 h-4 shrink-0" />
+        ) : (
+          <ExternalLink className="w-4 h-4 shrink-0" />
+        )}
         <span>{link.label}</span>
       </a>
     );
@@ -452,7 +463,7 @@ export function HubSlideViewer() {
                         Comunicação Dialógica
                       </span>
                       <p className="text-xs text-gray-200 leading-relaxed font-semibold">
-                        Feed principal de comunicação científica onde os posts possuem balões de reflexão (baseados na pedagogia de Paulo Freire), quizzes interativos de fixação, narração em áudio e modo foco para leitura profunda.
+                        Feed principal de comunicação científica com base teórica na obra <span className="italic text-brand-yellow font-bold">"Extensão ou Comunicação?"</span> de Paulo Freire, com balões de reflexão, quizzes interativos, modo foco e narração em áudio.
                       </p>
                     </div>
                   </div>
@@ -493,7 +504,7 @@ export function HubSlideViewer() {
               </div>
             )}
 
-            {/* Standard Slide Layouts for Slides 4 e 5 (Sem os Símbolos) */}
+            {/* Standard Slide Layouts for Slides 4 e 5 */}
             {!currentSlide.showFirstSlideLogo && !currentSlide.showThreeAxes && !currentSlide.showComunidadeDescriptions && (
               <div className="flex flex-col gap-6 text-left">
                 <div>

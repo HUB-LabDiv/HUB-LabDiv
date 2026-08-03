@@ -1,6 +1,6 @@
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
- * Script de Geração Automática da Apresentação em PowerPoint (16:9)
+ * Script de Geração Automática da Apresentação em PowerPoint (16:9 Widescreen)
  * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
  * Licença AGPLv3
  */
@@ -11,6 +11,8 @@ const fs = require('fs');
 
 async function buildHubPptx() {
   const pptx = new PptxGenJS();
+  
+  // Define Widescreen 16:9 explicit layout (10.0 x 5.625 inches)
   pptx.layout = 'LAYOUT_16x9';
 
   // Branding Palette
@@ -23,32 +25,42 @@ async function buildHubPptx() {
   const COLOR_WHITE = 'FFFFFF';
   const COLOR_GRAY = '9CA3AF';
 
-  // Slide 1: Visão Geral & Conceito do HUB LabDiv
+  const bgSlidePath = path.join(__dirname, '../public/bg-if-slide.png');
+
+  // Helper for Top 3 Brand Color Accent Lines & Background Image
+  const setupSlideBgAndBar = (slide) => {
+    if (fs.existsSync(bgSlidePath)) {
+      slide.background = { path: bgSlidePath };
+    } else {
+      slide.background = { color: COLOR_BG };
+    }
+
+    slide.addShape(pptx.shapes.RECTANGLE, { x: 0, y: 0, w: 3.33, h: 0.08, fill: { color: COLOR_YELLOW } });
+    slide.addShape(pptx.shapes.RECTANGLE, { x: 3.33, y: 0, w: 3.33, h: 0.08, fill: { color: COLOR_BLUE } });
+    slide.addShape(pptx.shapes.RECTANGLE, { x: 6.66, y: 0, w: 3.34, h: 0.08, fill: { color: COLOR_RED } });
+  };
+
+  // SLIDE 1: Visão Geral & Conceito do HUB LabDiv
   {
     const slide = pptx.addSlide();
-    slide.background = { color: COLOR_BG };
-
-    // Brand accent bar top
-    slide.addShape(pptx.shapes.RECTANGLE, { x: 0, y: 0, w: '33.3%', h: 0.1, fill: { color: COLOR_YELLOW } });
-    slide.addShape(pptx.shapes.RECTANGLE, { x: '33.3%', y: 0, w: '33.3%', h: 0.1, fill: { color: COLOR_BLUE } });
-    slide.addShape(pptx.shapes.RECTANGLE, { x: '66.6%', y: 0, w: '33.4%', h: 0.1, fill: { color: COLOR_RED } });
+    setupSlideBgAndBar(slide);
 
     // Category Badge
     slide.addText('HUB LABDIV • IFUSP | ABERTURA & CONCEITO', {
-      x: 0.8, y: 0.5, w: 8.0, h: 0.4,
-      fontFace: 'Open Sans', fontSize: 11, bold: true, color: COLOR_YELLOW,
+      x: 0.5, y: 0.25, w: 7.0, h: 0.3,
+      fontFace: 'Open Sans', fontSize: 9, bold: true, color: COLOR_YELLOW,
     });
 
     // Title
     slide.addText('Visão Geral & Conceito do HUB LabDiv', {
-      x: 0.8, y: 0.9, w: 8.5, h: 0.8,
-      fontFace: '29LT Bukra', fontSize: 26, bold: true, color: COLOR_WHITE,
+      x: 0.5, y: 0.55, w: 7.2, h: 0.55,
+      fontFace: '29LT Bukra', fontSize: 20, bold: true, color: COLOR_WHITE,
     });
 
     // Subtitle
     slide.addText('O Super App de Comunicação Científica para romper os muros da Universidade', {
-      x: 0.8, y: 1.7, w: 8.5, h: 0.5,
-      fontFace: 'Open Sans', fontSize: 14, bold: true, color: COLOR_YELLOW,
+      x: 0.5, y: 1.15, w: 7.2, h: 0.35,
+      fontFace: 'Open Sans', fontSize: 11, bold: true, color: COLOR_YELLOW,
     });
 
     // Logo Image
@@ -56,155 +68,166 @@ async function buildHubPptx() {
     if (fs.existsSync(logoPath)) {
       slide.addImage({
         path: logoPath,
-        x: 9.8, y: 0.8, w: 2.5, h: 2.5,
+        x: 8.0, y: 0.35, w: 1.5, h: 1.25,
       });
     }
 
-    // Bullet Cards Grid
+    // 4 Grid Cards
     const bullets = [
-      'Super App 100% WebApp: Acessível via navegador em qualquer dispositivo, sem necessidade de instalação.',
-      'Comunicação Dialógica: Rompe a mera "divulgação passiva" promovendo a co-construção de significado com base em Paulo Freire.',
-      'Integração Acadêmica: Une acompanhamento de disciplinas, diário discente (Logs), Wiki e Match Acadêmico.',
+      'Super App: Reúne diversas funções em um único lugar (como 99, WeChat, Mercado Livre, etc.), acessível pela PlayStore (beta fechado) ou direto pelo navegador.',
+      'Comunicação Dialógica: Rompe a mera "divulgação passiva", promovendo a co-construção de significado com base teórica em "Extensão ou Comunicação?" de Paulo Freire.',
+      'Integração Acadêmica: Une o controle do semestre e evolução no curso, uma Wiki com todas as informações do IFUSP e a aba Comunidade para interagir com colegas.',
       'Código Aberto (AGPLv3): Projeto transparente hospedado no GitHub (JoaoStangorlini/HUB-LabDiv) pronto para ser replicado.'
     ];
 
     bullets.forEach((bullet, idx) => {
       const col = idx % 2;
       const row = Math.floor(idx / 2);
-      const bx = 0.8 + col * 5.8;
-      const by = 2.5 + row * 2.2;
+      const bx = 0.5 + col * 4.6;
+      const by = 1.65 + row * 1.55;
       const cardColor = idx % 3 === 0 ? COLOR_YELLOW : idx % 3 === 1 ? COLOR_BLUE_ACCENT : COLOR_RED;
 
       slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
-        x: bx, y: by, w: 5.4, h: 1.9,
+        x: bx, y: by, w: 4.4, h: 1.45,
         fill: { color: COLOR_CARD },
         line: { color: cardColor, width: 1.5 },
       });
 
       slide.addText(bullet, {
-        x: bx + 0.3, y: by + 0.2, w: 4.8, h: 1.5,
-        fontFace: 'Open Sans', fontSize: 12, color: COLOR_WHITE,
+        x: bx + 0.2, y: by + 0.1, w: 4.0, h: 1.25,
+        fontFace: 'Open Sans', fontSize: 9.5, color: COLOR_WHITE, valign: 'top',
       });
+    });
+
+    // WebApp & PlayStore Links Bar at Bottom
+    slide.addText('WebApp: https://hub-lab-div.vercel.app  |  PlayStore: https://play.google.com/store/apps/details?id=br.usp.ifusp.hublabdiv', {
+      x: 0.5, y: 4.85, w: 9.0, h: 0.35,
+      fontFace: 'Open Sans', fontSize: 8.5, bold: true, color: COLOR_YELLOW, align: 'center',
     });
   }
 
-  // Slide 2: Divisão do HUB em 3 Eixos Principais
+  // SLIDE 2: Divisão do HUB em 3 Eixos Principais
   {
     const slide = pptx.addSlide();
-    slide.background = { color: COLOR_BG };
-
-    slide.addShape(pptx.shapes.RECTANGLE, { x: 0, y: 0, w: '33.3%', h: 0.1, fill: { color: COLOR_YELLOW } });
-    slide.addShape(pptx.shapes.RECTANGLE, { x: '33.3%', y: 0, w: '33.3%', h: 0.1, fill: { color: COLOR_BLUE } });
-    slide.addShape(pptx.shapes.RECTANGLE, { x: '66.6%', y: 0, w: '33.4%', h: 0.1, fill: { color: COLOR_RED } });
+    setupSlideBgAndBar(slide);
 
     slide.addText('ESTRUTURA DOS 3 EIXOS | HUB LABDIV', {
-      x: 0.8, y: 0.5, w: 8.0, h: 0.4,
-      fontFace: 'Open Sans', fontSize: 11, bold: true, color: COLOR_YELLOW,
+      x: 0.5, y: 0.25, w: 9.0, h: 0.3,
+      fontFace: 'Open Sans', fontSize: 9, bold: true, color: COLOR_YELLOW,
     });
 
     slide.addText('Divisão do HUB em 3 Eixos Principais', {
-      x: 0.8, y: 0.9, w: 11.5, h: 0.8,
-      fontFace: '29LT Bukra', fontSize: 26, bold: true, color: COLOR_WHITE,
+      x: 0.5, y: 0.55, w: 9.0, h: 0.55,
+      fontFace: '29LT Bukra', fontSize: 20, bold: true, color: COLOR_WHITE,
+    });
+
+    slide.addText('As 3 Frentes Fundamentais da Plataforma HUB LabDiv', {
+      x: 0.5, y: 1.15, w: 9.0, h: 0.35,
+      fontFace: 'Open Sans', fontSize: 11, bold: true, color: COLOR_YELLOW,
     });
 
     const axes = [
       { title: '1. Eixo Comunidade', tag: 'REDE SOCIAL & LOGS', desc: 'Feed de comunicação científica dialógica, quizzes, narração, galeria de Arte e Logs de vivência discente.', color: COLOR_YELLOW },
-      { title: '2. Eixo CGIF', tag: 'INFORMAÇÃO & WIKI', desc: 'Wiki institucional centralizada do IFUSP, manuais do curso, oportunidades (PUB/IC), iniciativas e mapa interativo.', color: COLOR_BLUE_ACCENT },
+      { title: '2. Eixo CGIF', tag: 'INFORMAÇÃO & WIKI', desc: 'Wiki institucional centralizada do IFUSP, manuais do curso, oportunidades (PUB/IC), iniciativas e mapa interativo com QR Code.', color: COLOR_BLUE_ACCENT },
       { title: '3. Eixo Ferramentas', tag: 'ESTUDO & PESQUISA', desc: 'Planejador de grade horária 1h:1h, acompanhamento de trilhas do curso e Match Acadêmico ("Quero uma IC").', color: COLOR_RED }
     ];
 
     axes.forEach((axis, idx) => {
-      const bx = 0.8 + idx * 3.9;
+      const bx = 0.5 + idx * 3.1;
+
       slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
-        x: bx, y: 2.0, w: 3.6, h: 4.8,
+        x: bx, y: 1.65, w: 2.8, h: 3.45,
         fill: { color: COLOR_CARD },
-        line: { color: axis.color, width: 2 },
+        line: { color: axis.color, width: 1.5 },
       });
 
       slide.addText(axis.title, {
-        x: bx + 0.3, y: 2.3, w: 3.0, h: 0.6,
-        fontFace: '29LT Bukra', fontSize: 16, bold: true, color: COLOR_WHITE,
+        x: bx + 0.2, y: 1.8, w: 2.4, h: 0.4,
+        fontFace: '29LT Bukra', fontSize: 12, bold: true, color: COLOR_WHITE,
       });
 
       slide.addText(axis.tag, {
-        x: bx + 0.3, y: 3.0, w: 3.0, h: 0.4,
-        fontFace: 'Open Sans', fontSize: 10, bold: true, color: axis.color,
+        x: bx + 0.2, y: 2.25, w: 2.4, h: 0.3,
+        fontFace: 'Open Sans', fontSize: 8.5, bold: true, color: axis.color,
       });
 
       slide.addText(axis.desc, {
-        x: bx + 0.3, y: 3.6, w: 3.0, h: 2.8,
-        fontFace: 'Open Sans', fontSize: 12, color: COLOR_WHITE,
+        x: bx + 0.2, y: 2.65, w: 2.4, h: 2.3,
+        fontFace: 'Open Sans', fontSize: 10, color: COLOR_WHITE, valign: 'top',
       });
     });
   }
 
-  // Slide 3: Aba Comunidade: Fluxo, Logs & Arte
+  // SLIDE 3: Aba Comunidade: Fluxo, Logs & Arte
   {
     const slide = pptx.addSlide();
-    slide.background = { color: COLOR_BG };
-
-    slide.addShape(pptx.shapes.RECTANGLE, { x: 0, y: 0, w: '33.3%', h: 0.1, fill: { color: COLOR_YELLOW } });
-    slide.addShape(pptx.shapes.RECTANGLE, { x: '33.3%', y: 0, w: '33.3%', h: 0.1, fill: { color: COLOR_BLUE } });
-    slide.addShape(pptx.shapes.RECTANGLE, { x: '66.6%', y: 0, w: '33.4%', h: 0.1, fill: { color: COLOR_RED } });
+    setupSlideBgAndBar(slide);
 
     slide.addText('EIXO 1 — COMUNIDADE | HUB LABDIV', {
-      x: 0.8, y: 0.5, w: 8.0, h: 0.4,
-      fontFace: 'Open Sans', fontSize: 11, bold: true, color: COLOR_YELLOW,
+      x: 0.5, y: 0.25, w: 9.0, h: 0.3,
+      fontFace: 'Open Sans', fontSize: 9, bold: true, color: COLOR_YELLOW,
     });
 
     slide.addText('Aba Comunidade: Fluxo, Logs & Arte', {
-      x: 0.8, y: 0.9, w: 11.5, h: 0.8,
-      fontFace: '29LT Bukra', fontSize: 26, bold: true, color: COLOR_WHITE,
+      x: 0.5, y: 0.55, w: 9.0, h: 0.55,
+      fontFace: '29LT Bukra', fontSize: 20, bold: true, color: COLOR_WHITE,
+    });
+
+    slide.addText('Descrição detalhada das 3 seções integradas do Eixo Comunidade', {
+      x: 0.5, y: 1.15, w: 9.0, h: 0.35,
+      fontFace: 'Open Sans', fontSize: 11, bold: true, color: COLOR_YELLOW,
     });
 
     const sections = [
-      { title: '1. Fluxo', tag: 'COMUNICAÇÃO DIALÓGICA', desc: 'Feed principal onde o conteúdo científico é compartilhado com balões de reflexão (baseados em Paulo Freire), quizzes interativos, modo foco e narração.', color: COLOR_YELLOW },
+      { title: '1. Fluxo', tag: 'COMUNICAÇÃO DIALÓGICA', desc: 'Feed principal onde o conteúdo científico é compartilhado com base teórica em "Extensão ou Comunicação?" de Paulo Freire, quizzes interativos, modo foco e narração em áudio.', color: COLOR_YELLOW },
       { title: '2. Logs', tag: 'VIVÊNCIA DISCENTE', desc: 'Espaço humanizado para diários de vivência acadêmica, trocas cotidianas e desabafos entre alunos com sistema de fios energizados que conectam a comunidade.', color: COLOR_BLUE_ACCENT },
       { title: '3. Arte', tag: 'EXPRESSÃO ARTÍSTICA', desc: 'Galeria autoral de expressão visual, fotográfica e poética integrada à ciência, transformando registros e percepções em manifestações artísticas.', color: COLOR_RED }
     ];
 
     sections.forEach((sec, idx) => {
-      const bx = 0.8 + idx * 3.9;
+      const bx = 0.5 + idx * 3.1;
+
       slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
-        x: bx, y: 2.0, w: 3.6, h: 4.8,
+        x: bx, y: 1.65, w: 2.8, h: 3.45,
         fill: { color: COLOR_CARD },
-        line: { color: sec.color, width: 2 },
+        line: { color: sec.color, width: 1.5 },
       });
 
       slide.addText(sec.title, {
-        x: bx + 0.3, y: 2.3, w: 3.0, h: 0.6,
-        fontFace: '29LT Bukra', fontSize: 16, bold: true, color: COLOR_WHITE,
+        x: bx + 0.2, y: 1.8, w: 2.4, h: 0.4,
+        fontFace: '29LT Bukra', fontSize: 12, bold: true, color: COLOR_WHITE,
       });
 
       slide.addText(sec.tag, {
-        x: bx + 0.3, y: 3.0, w: 3.0, h: 0.4,
-        fontFace: 'Open Sans', fontSize: 10, bold: true, color: sec.color,
+        x: bx + 0.2, y: 2.25, w: 2.4, h: 0.3,
+        fontFace: 'Open Sans', fontSize: 8.5, bold: true, color: sec.color,
       });
 
       slide.addText(sec.desc, {
-        x: bx + 0.3, y: 3.6, w: 3.0, h: 2.8,
-        fontFace: 'Open Sans', fontSize: 12, color: COLOR_WHITE,
+        x: bx + 0.2, y: 2.65, w: 2.4, h: 2.3,
+        fontFace: 'Open Sans', fontSize: 10, color: COLOR_WHITE, valign: 'top',
       });
     });
   }
 
-  // Slide 4: Aba CGIF
+  // SLIDE 4: Aba CGIF
   {
     const slide = pptx.addSlide();
-    slide.background = { color: COLOR_BG };
-
-    slide.addShape(pptx.shapes.RECTANGLE, { x: 0, y: 0, w: '33.3%', h: 0.1, fill: { color: COLOR_YELLOW } });
-    slide.addShape(pptx.shapes.RECTANGLE, { x: '33.3%', y: 0, w: '33.3%', h: 0.1, fill: { color: COLOR_BLUE } });
-    slide.addShape(pptx.shapes.RECTANGLE, { x: '66.6%', y: 0, w: '33.4%', h: 0.1, fill: { color: COLOR_RED } });
+    setupSlideBgAndBar(slide);
 
     slide.addText('EIXO 2 — CGIF | HUB LABDIV', {
-      x: 0.8, y: 0.5, w: 8.0, h: 0.4,
-      fontFace: 'Open Sans', fontSize: 11, bold: true, color: COLOR_BLUE_ACCENT,
+      x: 0.5, y: 0.25, w: 9.0, h: 0.3,
+      fontFace: 'Open Sans', fontSize: 9, bold: true, color: COLOR_BLUE_ACCENT,
     });
 
     slide.addText('Aba CGIF: Acesso à Informação & Wiki Institucional', {
-      x: 0.8, y: 0.9, w: 11.5, h: 0.8,
-      fontFace: '29LT Bukra', fontSize: 24, bold: true, color: COLOR_WHITE,
+      x: 0.5, y: 0.55, w: 9.0, h: 0.55,
+      fontFace: '29LT Bukra', fontSize: 18, bold: true, color: COLOR_WHITE,
+    });
+
+    slide.addText('Centralização do Conhecimento & Memória do IFUSP', {
+      x: 0.5, y: 1.15, w: 9.0, h: 0.35,
+      fontFace: 'Open Sans', fontSize: 11, bold: true, color: COLOR_BLUE_ACCENT,
     });
 
     const cgifItems = [
@@ -217,40 +240,41 @@ async function buildHubPptx() {
     cgifItems.forEach((item, idx) => {
       const col = idx % 2;
       const row = Math.floor(idx / 2);
-      const bx = 0.8 + col * 5.8;
-      const by = 2.2 + row * 2.3;
+      const bx = 0.5 + col * 4.6;
+      const by = 1.65 + row * 1.7;
       const cardColor = idx % 3 === 0 ? COLOR_YELLOW : idx % 3 === 1 ? COLOR_BLUE_ACCENT : COLOR_RED;
 
       slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
-        x: bx, y: by, w: 5.4, h: 2.0,
+        x: bx, y: by, w: 4.4, h: 1.55,
         fill: { color: COLOR_CARD },
         line: { color: cardColor, width: 1.5 },
       });
 
       slide.addText(item, {
-        x: bx + 0.3, y: by + 0.2, w: 4.8, h: 1.6,
-        fontFace: 'Open Sans', fontSize: 12, color: COLOR_WHITE,
+        x: bx + 0.2, y: by + 0.15, w: 4.0, h: 1.25,
+        fontFace: 'Open Sans', fontSize: 10.5, color: COLOR_WHITE, valign: 'top',
       });
     });
   }
 
-  // Slide 5: Aba Ferramentas
+  // SLIDE 5: Aba Ferramentas
   {
     const slide = pptx.addSlide();
-    slide.background = { color: COLOR_BG };
-
-    slide.addShape(pptx.shapes.RECTANGLE, { x: 0, y: 0, w: '33.3%', h: 0.1, fill: { color: COLOR_YELLOW } });
-    slide.addShape(pptx.shapes.RECTANGLE, { x: '33.3%', y: 0, w: '33.3%', h: 0.1, fill: { color: COLOR_BLUE } });
-    slide.addShape(pptx.shapes.RECTANGLE, { x: '66.6%', y: 0, w: '33.4%', h: 0.1, fill: { color: COLOR_RED } });
+    setupSlideBgAndBar(slide);
 
     slide.addText('EIXO 3 — FERRAMENTAS | HUB LABDIV', {
-      x: 0.8, y: 0.5, w: 8.0, h: 0.4,
-      fontFace: 'Open Sans', fontSize: 11, bold: true, color: COLOR_RED,
+      x: 0.5, y: 0.25, w: 9.0, h: 0.3,
+      fontFace: 'Open Sans', fontSize: 9, bold: true, color: COLOR_RED,
     });
 
     slide.addText('Aba Ferramentas: Apoio ao Estudo & Pesquisa', {
-      x: 0.8, y: 0.9, w: 11.5, h: 0.8,
-      fontFace: '29LT Bukra', fontSize: 24, bold: true, color: COLOR_WHITE,
+      x: 0.5, y: 0.55, w: 9.0, h: 0.55,
+      fontFace: '29LT Bukra', fontSize: 18, bold: true, color: COLOR_WHITE,
+    });
+
+    slide.addText('Produtividade acadêmica, retenção discente e aproximação com pesquisadores', {
+      x: 0.5, y: 1.15, w: 9.0, h: 0.35,
+      fontFace: 'Open Sans', fontSize: 11, bold: true, color: COLOR_RED,
     });
 
     const toolItems = [
@@ -263,26 +287,26 @@ async function buildHubPptx() {
     toolItems.forEach((item, idx) => {
       const col = idx % 2;
       const row = Math.floor(idx / 2);
-      const bx = 0.8 + col * 5.8;
-      const by = 2.2 + row * 2.3;
+      const bx = 0.5 + col * 4.6;
+      const by = 1.65 + row * 1.7;
       const cardColor = idx % 3 === 0 ? COLOR_YELLOW : idx % 3 === 1 ? COLOR_BLUE_ACCENT : COLOR_RED;
 
       slide.addShape(pptx.shapes.ROUNDED_RECTANGLE, {
-        x: bx, y: by, w: 5.4, h: 2.0,
+        x: bx, y: by, w: 4.4, h: 1.55,
         fill: { color: COLOR_CARD },
         line: { color: cardColor, width: 1.5 },
       });
 
       slide.addText(item, {
-        x: bx + 0.3, y: by + 0.2, w: 4.8, h: 1.6,
-        fontFace: 'Open Sans', fontSize: 12, color: COLOR_WHITE,
+        x: bx + 0.2, y: by + 0.15, w: 4.0, h: 1.25,
+        fontFace: 'Open Sans', fontSize: 10.5, color: COLOR_WHITE, valign: 'top',
       });
     });
   }
 
   const outputPath = path.join(__dirname, '../public/Apresentação - HUB LabDiv.pptx');
   await pptx.writeFile({ fileName: outputPath });
-  console.log(`PPTX criado com sucesso em: ${outputPath}`);
+  console.log(`PPTX 16:9 com bg-if-slide.png criado com sucesso em: ${outputPath}`);
 }
 
 buildHubPptx().catch((err) => {
