@@ -30,7 +30,8 @@ import {
   Clock,
   CheckCircle2,
   Send,
-  Compass
+  Compass,
+  Quote
 } from 'lucide-react';
 
 export interface SlideLink {
@@ -42,6 +43,7 @@ export interface SlideLink {
 export interface BookPageImage {
   src: string;
   title: string;
+  explanatoryText?: string;
 }
 
 export interface SlideItem {
@@ -50,6 +52,7 @@ export interface SlideItem {
   category: string;
   subtitle?: string;
   description: string;
+  explanatoryText?: string;
   bookImages?: BookPageImage[];
   highlights?: string[];
   timeline?: { time: string; phase: string; details: string }[];
@@ -112,6 +115,7 @@ export const PLANO_AULA_SLIDES: SlideItem[] = [
     title: 'Fotografia & Olhar Criativo no Celular',
     category: 'Expressão Visual',
     description: 'O smartphone como ferramenta de observação e portfólio autoral. Fotografia prática para encarar o mundo de outra forma.',
+    explanatoryText: 'Um pouco sobre o trabalho com fotografia e como tirar fotos pode ser uma forma muito prática de encarar o mundo de outra forma, mesmo só tendo um celular. Começar no celular é mais fácil por eliminar complicações técnicas e focar na narrativa visual.',
     bookImages: [
       { src: '/presentation/slides/image1.png', title: 'Fotografia no Celular (Exemplo 1)' },
       { src: '/presentation/slides/image2.png', title: 'Fotografia no Celular (Exemplo 2)' }
@@ -130,6 +134,7 @@ export const PLANO_AULA_SLIDES: SlideItem[] = [
     title: 'Webdesign & Código Interativo',
     category: 'Design Programado',
     description: 'HTML & CSS no CodePen como pincel digital e atmosfera. Estruturar documento simples em HTML e transformá-lo com CSS.',
+    explanatoryText: 'Aplicação de conceitos de design através da programação: em vez de usar um pincel digital em arte vetorial, o ambiente e a atmosfera são construídos com linhas de código HTML & CSS no CodePen.',
     highlights: [
       'Programação aplicada aos conceitos de design visual.',
       'Em vez de pincel digital tradicional, a atmosfera é construída com código.',
@@ -149,6 +154,7 @@ export const PLANO_AULA_SLIDES: SlideItem[] = [
     title: 'Base Teórica: Paulo Freire',
     category: 'Fundamentação',
     description: 'Introdução do dilema entre Extensão e Comunicação na obra de Paulo Freire.',
+    explanatoryText: 'Leitura de trechos selecionados da obra "Extensão ou Comunicação?" de Paulo Freire para fundamentar a arquitetura pedagógica do HUB LabDiv, mostrando como a plataforma promove a co-construção de significado.',
     bookImages: [
       { src: '/presentation/slides/image3.png', title: 'Foto da Capa / Trechos do Livro' }
     ],
@@ -166,8 +172,13 @@ export const PLANO_AULA_SLIDES: SlideItem[] = [
     title: 'Paulo Freire: A Crítica à Extensão (Pág. 12)',
     category: 'Teoria Freiriana',
     description: 'Foto da Página 12 do Livro: A crítica à transmissão descontextualizada e à divulgação passiva. Análise do termo extensão.',
+    explanatoryText: 'Esta página é uma das primeiras do livro e aborda as relações que se pode fazer ao termo extensão, o mesmo vale para a palavra divulgação. Onde o pesquisador ou aluno apenas transmite aquele objeto a alguém de fora da universidade, separando ele de seu contexto, não deixando o alvo daquela divulgação assumir um papel ativo na mesma e separando o divulgador daquele a quem o conteúdo é divulgado, sendo o mesmo privado de saber como aquele objeto foi compreendido por ele. Algo muito importante para avaliar se houve de fato um aprendizado ou não.',
     bookImages: [
-      { src: '/presentation/slides/image3.png', title: 'Foto da Página 12 do Livro' }
+      { 
+        src: '/presentation/slides/image3.png', 
+        title: 'Foto da Página 12 do Livro',
+        explanatoryText: 'Esta página é uma das primeiras do livro e aborda as relações que se pode fazer ao termo extensão, o mesmo vale para a palavra divulgação. Onde o pesquisador ou aluno apenas transmite aquele objeto a alguém de fora da universidade, separando ele de seu contexto, não deixando o alvo daquela divulgação assumir um papel ativo na mesma e separando o divulgador daquele a quem o conteúdo é divulgado, sendo o mesmo privado de saber como aquele objeto foi compreendido por ele.'
+      }
     ],
     notes: [
       'O pesquisador ou aluno apenas transmite aquele objeto a alguém fora da universidade, separando-o de seu contexto.',
@@ -183,8 +194,13 @@ export const PLANO_AULA_SLIDES: SlideItem[] = [
     title: 'Paulo Freire: Divulgar vs. Comunicar (Pág. 35)',
     category: 'Teoria Freiriana',
     description: 'Foto da Página 35 do Livro: Quadro comparativo entre Divulgar (A SOBRE B) e Comunicar (COM A SOBRE B).',
+    explanatoryText: 'Essa página ao meu ver exemplifica muito bem a diferença entre divulgar e comunicar. Divulgar representa a transmissão unilateral e depositária (uma ação de A SOBRE B). Já Comunicar é uma relação dialógica e recíproca de co-construção de significado (uma ação de COM A SOBRE B).',
     bookImages: [
-      { src: '/presentation/slides/image4.png', title: 'Foto da Página 35 do Livro' }
+      { 
+        src: '/presentation/slides/image4.png', 
+        title: 'Foto da Página 35 do Livro',
+        explanatoryText: 'Essa página exemplifica muito bem a diferença entre divulgar e comunicar: Divulgar é uma ação unilateral (A SOBRE B), enquanto Comunicar é a construção de significado em diálogo (COM A SOBRE B).'
+      }
     ],
     notes: [
       'Divulgar: relação depositária e unilateral.',
@@ -200,9 +216,18 @@ export const PLANO_AULA_SLIDES: SlideItem[] = [
     title: 'Paulo Freire: Pensar a Realidade (Págs. 48 & 50)',
     category: 'Teoria Freiriana',
     description: 'Fotos das Páginas 48 e 50 do Livro: Pensar a realidade do objeto e a capacidade transformadora.',
+    explanatoryText: 'Página 48: Pensar sobre aquele objeto é pensar na realidade daquele objeto em questão. Página 50: Neta é abordada a capacidade transformadora da realidade uma vez que seja entendido verdadeiramente um conceito, isto é, entendido em todo o seu contexto homem-homem ou homem-mundo.',
     bookImages: [
-      { src: '/presentation/slides/image5.png', title: 'Foto da Página 48' },
-      { src: '/presentation/slides/image6.png', title: 'Foto da Página 50' }
+      { 
+        src: '/presentation/slides/image5.png', 
+        title: 'Foto da Página 48 do Livro',
+        explanatoryText: 'Página 48 do PDF: Pensar sobre aquele objeto é pensar na realidade daquele objeto em questão, relacionando o conhecimento ao seu contexto concreto.' 
+      },
+      { 
+        src: '/presentation/slides/image6.png', 
+        title: 'Foto da Página 50 do Livro',
+        explanatoryText: 'Página 50 do PDF: Neta é abordada a capacidade transformadora da realidade uma vez que seja entendido verdadeiramente um conceito no contexto homem-homem ou homem-mundo.'
+      }
     ],
     notes: [
       'Pág. 48: Pensar sobre aquele objeto é pensar na realidade daquele objeto em questão.',
@@ -218,8 +243,13 @@ export const PLANO_AULA_SLIDES: SlideItem[] = [
     title: 'Paulo Freire: Práxis & Caderno do Artista (Pág. 52)',
     category: 'Teoria Freiriana',
     description: 'Foto da Página 52 do Livro: A importância da práxis e o Caderno do Artista.',
+    explanatoryText: 'Página 52: Aborda por que essa capacidade transformadora é importante. Através da práxis reflexiva, o estudante deixa de ser mero espectador passivo e assume o papel de sujeito comunicador. O Caderno do Artista no HUB funciona como registro vivo dessa caminhada científica e artística.',
     bookImages: [
-      { src: '/presentation/slides/image7.png', title: 'Foto da Página 52 do Livro' }
+      { 
+        src: '/presentation/slides/image7.png', 
+        title: 'Foto da Página 52 do Livro',
+        explanatoryText: 'Página 52 do PDF: Mostra a importância da práxis transformadora. O aluno deixa de ser espectador para se tornar sujeito comunicador. O Caderno do Artista é o registro vivo dessa caminhada.'
+      }
     ],
     notes: [
       'Por que a capacidade de transformação é fundamental.',
@@ -300,9 +330,12 @@ export function PlanoAulaSlideViewer() {
     setActiveSubImageIndex(0);
   }, [currentIndex]);
 
-  const activeImageSrc = currentSlide.bookImages && currentSlide.bookImages.length > 0
-    ? currentSlide.bookImages[activeSubImageIndex]?.src
+  const activeImageObj = currentSlide.bookImages && currentSlide.bookImages.length > 0
+    ? currentSlide.bookImages[activeSubImageIndex]
     : null;
+
+  const activeImageSrc = activeImageObj?.src || null;
+  const activeExplanatoryText = activeImageObj?.explanatoryText || currentSlide.explanatoryText;
 
   const goToNext = () => {
     setCurrentIndex((prev) => (prev < PLANO_AULA_SLIDES.length - 1 ? prev + 1 : prev));
@@ -422,11 +455,13 @@ export function PlanoAulaSlideViewer() {
         </div>
       </div>
 
-      {/* Main Slide Canvas - Transparent background allowing bg-if.svg site background to shine through */}
+      {/* Main Slide Canvas - Displays bg-if.svg in both Normal and Fullscreen modes */}
       <div 
         ref={containerRef}
-        className={`relative w-full rounded-3xl overflow-hidden bg-transparent border border-white/15 shadow-2xl flex flex-col items-center justify-center group ${
-          isFullscreen ? 'h-screen p-4 rounded-none border-none bg-black/90' : 'aspect-video max-h-[750px]'
+        className={`relative w-full rounded-3xl overflow-hidden shadow-2xl flex flex-col items-center justify-center group ${
+          isFullscreen 
+            ? 'h-screen p-6 rounded-none border-none bg-[#09090B] bg-[url("/bg-if.svg")] bg-repeat bg-center' 
+            : 'aspect-video max-h-[750px] bg-transparent border border-white/15'
         }`}
       >
         {/* Slide Canvas Inner Area */}
@@ -450,62 +485,95 @@ export function PlanoAulaSlideViewer() {
           </div>
 
           {/* SLIDE CONTENT RENDERER */}
-          <div className="my-auto w-full max-w-4xl mx-auto py-2">
+          <div className="my-auto w-full max-w-5xl mx-auto py-2">
             
             {/* If slide has Book Page Photos (Slides 4, 6, 7, 8, 9, 10) */}
             {activeImageSrc ? (
-              <div className="flex flex-col items-center justify-center gap-4">
-                <h3 className="text-2xl md:text-3xl font-extrabold text-white text-center tracking-tight mb-1">
-                  {currentSlide.title}
-                </h3>
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
                 
-                {/* Book Page Selector Tabs (if multiple images) */}
-                {currentSlide.bookImages && currentSlide.bookImages.length > 1 && (
-                  <div className="glass-card flex items-center gap-2 p-1.5 rounded-2xl border border-brand-yellow/40 shadow-xl">
-                    <span className="text-[11px] font-black uppercase text-brand-yellow px-2 flex items-center gap-1">
-                      <Layers className="w-3.5 h-3.5" />
-                      Páginas:
-                    </span>
-                    {currentSlide.bookImages.map((img, subIdx) => (
-                      <button
-                        key={subIdx}
-                        onClick={() => setActiveSubImageIndex(subIdx)}
-                        className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
-                          activeSubImageIndex === subIdx
-                            ? 'bg-brand-yellow text-black shadow'
-                            : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
-                        }`}
-                      >
-                        {img.title}
-                      </button>
-                    ))}
-                  </div>
-                )}
+                {/* Left Side: Framed Book Page Image Card */}
+                <div className="lg:col-span-7 flex flex-col items-center justify-center gap-3">
+                  <h3 className="text-xl md:text-2xl font-extrabold text-white text-center tracking-tight lg:hidden">
+                    {currentSlide.title}
+                  </h3>
+                  
+                  {/* Book Page Selector Tabs (if multiple images like Pág. 48 & 50) */}
+                  {currentSlide.bookImages && currentSlide.bookImages.length > 1 && (
+                    <div className="glass-card flex items-center gap-2 p-1.5 rounded-2xl border border-brand-yellow/40 shadow-xl">
+                      <span className="text-[11px] font-black uppercase text-brand-yellow px-2 flex items-center gap-1">
+                        <Layers className="w-3.5 h-3.5" />
+                        Páginas:
+                      </span>
+                      {currentSlide.bookImages.map((img, subIdx) => (
+                        <button
+                          key={subIdx}
+                          onClick={() => setActiveSubImageIndex(subIdx)}
+                          className={`px-3 py-1 rounded-xl text-xs font-bold transition-all ${
+                            activeSubImageIndex === subIdx
+                              ? 'bg-brand-yellow text-black shadow'
+                              : 'bg-white/10 text-gray-300 hover:bg-white/20 hover:text-white'
+                          }`}
+                        >
+                          {img.title}
+                        </button>
+                      ))}
+                    </div>
+                  )}
 
-                {/* Framed Image Display Card */}
-                <div className="glass-card relative w-full max-w-2xl h-[320px] md:h-[380px] rounded-2xl overflow-hidden border-2 border-brand-yellow/40 shadow-2xl p-2 group/img">
-                  <Image
-                    src={activeImageSrc}
-                    alt={currentSlide.title}
-                    fill
-                    priority
-                    sizes="(max-width: 1200px) 100vw, 800px"
-                    className="object-contain p-2"
-                  />
-                  <button
-                    onClick={() => setLightboxImage({
-                      src: activeImageSrc,
-                      title: currentSlide.bookImages && currentSlide.bookImages.length > 0
-                        ? currentSlide.bookImages[activeSubImageIndex]?.title || currentSlide.title
-                        : currentSlide.title
-                    })}
-                    className="absolute top-3 right-3 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/80 hover:bg-brand-yellow hover:text-black border border-white/20 text-xs font-bold text-white transition-all hover:scale-105 shadow-xl"
-                    title="Ampliar foto da página em alta resolução"
-                  >
-                    <ZoomIn className="w-4 h-4" />
-                    <span>Ampliar Foto</span>
-                  </button>
+                  {/* Framed Image Display Card */}
+                  <div className="glass-card relative w-full h-[280px] sm:h-[340px] md:h-[380px] rounded-2xl overflow-hidden border-2 border-brand-yellow/40 shadow-2xl p-2 group/img">
+                    <Image
+                      src={activeImageSrc}
+                      alt={currentSlide.title}
+                      fill
+                      priority
+                      sizes="(max-width: 1200px) 100vw, 800px"
+                      className="object-contain p-2"
+                    />
+                    <button
+                      onClick={() => setLightboxImage({
+                        src: activeImageSrc,
+                        title: currentSlide.bookImages && currentSlide.bookImages.length > 0
+                          ? currentSlide.bookImages[activeSubImageIndex]?.title || currentSlide.title
+                          : currentSlide.title
+                      })}
+                      className="absolute top-3 right-3 flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/80 hover:bg-brand-yellow hover:text-black border border-white/20 text-xs font-bold text-white transition-all hover:scale-105 shadow-xl"
+                      title="Ampliar foto da página em alta resolução"
+                    >
+                      <ZoomIn className="w-4 h-4" />
+                      <span>Ampliar Foto</span>
+                    </button>
+                  </div>
                 </div>
+
+                {/* Right Side: Complete Accompanying Explanatory Text from Plano de Aula - HUB LabDiv.md */}
+                <div className="lg:col-span-5 flex flex-col justify-center text-left gap-4">
+                  <h3 className="text-2xl md:text-3xl font-black text-white tracking-tight leading-tight hidden lg:block">
+                    {currentSlide.title}
+                  </h3>
+
+                  {activeExplanatoryText && (
+                    <div className="glass-card p-5 rounded-2xl border border-brand-yellow/30 shadow-xl bg-card-dark/95 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 p-3 opacity-10 text-brand-yellow">
+                        <Quote className="w-12 h-12" />
+                      </div>
+                      <h4 className="text-xs font-black uppercase tracking-widest text-brand-yellow mb-2.5 flex items-center gap-2">
+                        <BookOpen className="w-4 h-4" />
+                        Texto de Apoio da Página (Plano de Aula)
+                      </h4>
+                      <p className="text-sm text-gray-100 font-medium leading-relaxed italic relative z-10">
+                        "{activeExplanatoryText}"
+                      </p>
+                    </div>
+                  )}
+
+                  {currentSlide.links && currentSlide.links.length > 0 && (
+                    <div className="flex flex-wrap items-center gap-2.5 pt-2">
+                      {currentSlide.links.map((link, idx) => renderButtonLink(link, idx))}
+                    </div>
+                  )}
+                </div>
+
               </div>
             ) : (
               /* Native Dynamic Slide Layouts (Slides 1, 2, 3, 5, 11, 12, 13) */
@@ -561,8 +629,8 @@ export function PlanoAulaSlideViewer() {
               {currentSlide.description}
             </p>
 
-            {/* Clickable Action Link Buttons */}
-            {currentSlide.links && currentSlide.links.length > 0 && (
+            {/* Clickable Action Link Buttons (for non-image slides) */}
+            {!activeImageSrc && currentSlide.links && currentSlide.links.length > 0 && (
               <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
                 {currentSlide.links.map((link, idx) => renderButtonLink(link, idx))}
               </div>
@@ -735,5 +803,3 @@ export function PlanoAulaSlideViewer() {
     </div>
   );
 }
-
-
