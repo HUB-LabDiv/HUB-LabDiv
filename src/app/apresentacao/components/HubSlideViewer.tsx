@@ -28,8 +28,7 @@ import {
   MessageSquare,
   Palette,
   Smartphone,
-  Globe,
-  Quote
+  Globe
 } from 'lucide-react';
 
 export interface SlideLink {
@@ -57,13 +56,13 @@ export const HUB_INSTITUCIONAL_SLIDES: HubSlideItem[] = [
     id: 1,
     title: 'Visão Geral & Conceito do HUB LabDiv',
     subtitle: 'O Super App de Comunicação Científica para romper os muros da Universidade',
-    category: 'Abertura & Conceito',
+    category: 'HUB LABDIV • IFUSP | ABERTURA & CONCEITO',
     description: 'Plataforma digital WebApp open source (AGPLv3) concebida por João Stangorlini sob orientação do Prof. Caetano Miranda no IFUSP.',
     showFirstSlideLogo: true,
     highlights: [
-      'Super App: Reúne diversas funções em um único lugar (como 99, WeChat, Mercado Livre, etc.), acessível pela PlayStore (beta fechado) ou direto pelo navegador.',
+      'Super App: Diferente de um app padrão ele reúne diversas funções em um único lugar (como 99, WeChat, Mercado Livre, etc.), acessível pela PlayStore (beta fechado) ou direto pelo navegador.',
       'Comunicação Dialógica: Rompe a mera "divulgação passiva", promovendo a co-construção de significado com base teórica em "Extensão ou Comunicação?" de Paulo Freire.',
-      'Integração Acadêmica: Une o controle do semestre e evolução no curso, uma Wiki com todas as informações do IFUSP e a aba Comunidade para interagir com colegas.',
+      'Integração Acadêmica: Une o controle do semestre e evolução no curso, uma Wiki com todas as informações do IFUSP e a aba Comunidade para interagir com colegas em um único lugar.',
       'Código Aberto (AGPLv3): Projeto transparente hospedado no GitHub (JoaoStangorlini/HUB-LabDiv) pronto para ser replicado.'
     ],
     notes: [
@@ -80,7 +79,7 @@ export const HUB_INSTITUCIONAL_SLIDES: HubSlideItem[] = [
     id: 2,
     title: 'Divisão do HUB em 3 Eixos Principais',
     subtitle: 'As 3 Frentes Fundamentais da Plataforma HUB LabDiv',
-    category: 'Estrutura dos 3 Eixos',
+    category: 'ESTRUTURA DOS 3 EIXOS | HUB LABDIV',
     description: 'Organização da plataforma nas 3 frentes de atuação: Comunidade, CGIF e Ferramentas.',
     showThreeAxes: true,
     notes: [
@@ -91,7 +90,7 @@ export const HUB_INSTITUCIONAL_SLIDES: HubSlideItem[] = [
     id: 3,
     title: 'Aba Comunidade: Fluxo, Logs & Arte',
     subtitle: 'Descrição detalhada das 3 seções integradas do Eixo Comunidade',
-    category: 'Eixo 1 — Comunidade',
+    category: 'EIXO 1 — COMUNIDADE | HUB LABDIV',
     description: 'A aba Comunidade reúne a comunicação dialógica (Fluxo), as vivências cotidianas (Logs) e a expressão criativa (Arte).',
     showComunidadeDescriptions: true,
     notes: [
@@ -105,12 +104,12 @@ export const HUB_INSTITUCIONAL_SLIDES: HubSlideItem[] = [
     id: 4,
     title: 'Aba CGIF: Acesso à Informação & Wiki Institucional',
     subtitle: 'Centralização do Conhecimento & Memória do IFUSP',
-    category: 'Eixo 2 — CGIF',
+    category: 'EIXO 2 — CGIF | HUB LABDIV',
     description: 'A aba CGIF reúne a Wiki institucional, oportunidades de bolsa (PUB/IC), guias do curso e o mapa interativo.',
     highlights: [
-      'Wiki CGIF: Manuais do curso, Projetos Político-Pedagógicos (PPPs), rotas de circulares e protocolos acadêmicos.',
-      'Oportunidades & Iniciativas: Catálogo em tempo real de bolsas PUB, Iniciações Científicas, estágios e simpósios.',
-      'Espaços & Mapa Interativo: Conexão direta dos laboratórios físicos do IFUSP via leitura de QR Codes.',
+      'Wiki CGIF: Onde se encontram informações espalhadas por Manuais do curso, Projetos Político-Pedagógicos (PPPs), Editais, protocolos… De uma forma simples de achar e compreender.',
+      'Oportunidades & Iniciativas: Catálogo em tempo real de bolsas PUB, Iniciações Científicas, estágios, simpósios, empregos…',
+      'Espaços & Mapa Interativo: Conexão direta dos laboratórios físicos do IFUSP via leitura de QR Codes (ainda em desenvolvimento).',
       'Influenciadores & Teste de Radiação: Divulgação de criadores do IFUSP e quiz interativo de fixação da Wiki.'
     ],
     notes: [
@@ -124,12 +123,12 @@ export const HUB_INSTITUCIONAL_SLIDES: HubSlideItem[] = [
     id: 5,
     title: 'Aba Ferramentas: Apoio ao Estudo & Pesquisa',
     subtitle: 'Produtividade acadêmica, retenção discente e aproximação com pesquisadores',
-    category: 'Eixo 3 — Ferramentas',
+    category: 'EIXO 3 — FERRAMENTAS | HUB LABDIV',
     description: 'Ferramentas utilitárias para organizar o tempo de estudo (1h:1h) e conectar alunos a Iniciações Científicas.',
     highlights: [
-      'Grade Horária (1h:1h): Planejador semanal de estudos que associa 1 hora de aula a 1 hora de estudo individual.',
-      'Trilhas do Curso: Acompanhamento de disciplinas cursadas, pendências e pré-requisitos com sincronização.',
-      'Match Acadêmico ("Quero uma IC"): Aproximação entre cartas de interesse de alunos e linhas de pesquisa do IFUSP.',
+      'Grade Horária (1h:1h): Planejador semanal de estudos que associa 1 hora de aula a 1 hora de estudo individual, contador de faltas, podendo sincronizar com o Júpiter para suas matérias do semestre, adicionar outros compromissos e exportar para o seu calendário.',
+      'Trilhas do Curso: Acompanhamento de disciplinas cursadas, pendências e pré-requisitos com sincronização com o Júpiter para acompanhar o seu andamento no curso.',
+      'Match Acadêmico ("Quero uma IC"): União entre alunos interessados em iniciar uma IC com os pesquisadores que buscam por ajudantes.',
       'Como Ingressar & Observatório: Guia para vestibulandos, apoio à permanência e arena dos pesquisadores.'
     ],
     notes: [
@@ -387,7 +386,7 @@ export function HubSlideViewer() {
                   </p>
                 </div>
 
-                {/* 3 Eixos Cards Tricolores (Amarelo, Azul, Vermelho) */}
+                {/* 3 Eixos Cards Tricolores */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5 text-left my-2">
                   <div className="glass-card p-6 rounded-3xl border-2 border-brand-yellow/60 bg-gradient-to-b from-brand-yellow/15 to-black/80 shadow-2xl flex flex-col justify-between hover:scale-105 transition-all">
                     <div>
@@ -396,10 +395,10 @@ export function HubSlideViewer() {
                       </div>
                       <h4 className="text-xl font-black text-white mb-1">1. Eixo Comunidade</h4>
                       <span className="inline-block px-3 py-1 rounded-full bg-brand-yellow/20 text-brand-yellow text-xs font-black uppercase mb-3 border border-brand-yellow/40">
-                        Rede Social & Logs
+                        REDE SOCIAL
                       </span>
                       <p className="text-xs text-gray-200 leading-relaxed font-semibold">
-                        Feed de comunicação científica dialógica, quizzes, narração, galeria de Arte e Logs de vivência discente.
+                        Feed focado na comunicação científica (Fluxo), em um espaço para publicar as suas artes (arte) e pequenos relatos/informações de vivência no instituto (Logs).
                       </p>
                     </div>
                   </div>
@@ -411,10 +410,10 @@ export function HubSlideViewer() {
                       </div>
                       <h4 className="text-xl font-black text-white mb-1">2. Eixo CGIF</h4>
                       <span className="inline-block px-3 py-1 rounded-full bg-brand-blue/30 text-brand-blue-accent text-xs font-black uppercase mb-3 border border-brand-blue/50">
-                        Informação & Wiki
+                        INFORMAÇÃO & WIKI
                       </span>
                       <p className="text-xs text-gray-200 leading-relaxed font-semibold">
-                        Wiki institucional centralizada do IFUSP, manuais do curso, oportunidades (PUB/IC), iniciativas e mapa interativo.
+                        Onde você pode conhecer os espaços, iniciativas, influencers e comunidades do instituto; um mapa interativo do IFUSP (em desenvolvimento); e uma Wiki centralizada reunindo portais, manuais e editais.
                       </p>
                     </div>
                   </div>
@@ -426,10 +425,10 @@ export function HubSlideViewer() {
                       </div>
                       <h4 className="text-xl font-black text-white mb-1">3. Eixo Ferramentas</h4>
                       <span className="inline-block px-3 py-1 rounded-full bg-brand-red/20 text-brand-red text-xs font-black uppercase mb-3 border border-brand-red/40">
-                        Estudo & Pesquisa
+                        ESTUDO & PESQUISA
                       </span>
                       <p className="text-xs text-gray-200 leading-relaxed font-semibold">
-                        Planejador de grade horária 1h:1h, acompanhamento de trilhas do curso e Match Acadêmico ("Quero uma IC").
+                        Planejador de grade horária 1h:1h, acompanhamento de faltas, evolução no curso e Match Acadêmico ("Quero uma IC" e grupos de estudo).
                       </p>
                     </div>
                   </div>
@@ -449,7 +448,7 @@ export function HubSlideViewer() {
                   </p>
                 </div>
 
-                {/* 3 Section Cards (Fluxo, Logs, Arte) */}
+                {/* 3 Section Cards */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4.5 my-1">
                   
                   {/* Seção 1: Fluxo (Amarelo) */}
@@ -460,10 +459,10 @@ export function HubSlideViewer() {
                         <h4 className="text-lg font-black uppercase tracking-wider text-white">1. Fluxo</h4>
                       </div>
                       <span className="inline-block px-2.5 py-0.5 rounded-full bg-brand-yellow/20 text-brand-yellow text-[11px] font-black uppercase mb-3 border border-brand-yellow/40">
-                        Comunicação Dialógica
+                        COMUNICAÇÃO DIALÓGICA
                       </span>
                       <p className="text-xs text-gray-200 leading-relaxed font-semibold">
-                        Feed principal de comunicação científica com base teórica na obra <span className="italic text-brand-yellow font-bold">"Extensão ou Comunicação?"</span> de Paulo Freire, com balões de reflexão, quizzes interativos, modo foco e narração em áudio.
+                        Feed principal onde o conteúdo científico é compartilhado com foco em estabelecer uma relação dialógica dos usuários com o conteúdo, focando em métricas pedagógicas e não de vaidade.
                       </p>
                     </div>
                   </div>
@@ -476,10 +475,10 @@ export function HubSlideViewer() {
                         <h4 className="text-lg font-black uppercase tracking-wider text-white">2. Logs</h4>
                       </div>
                       <span className="inline-block px-2.5 py-0.5 rounded-full bg-brand-blue/30 text-brand-blue-accent text-[11px] font-black uppercase mb-3 border border-brand-blue/50">
-                        Vivência Discente
+                        VIVÊNCIA DISCENTE
                       </span>
                       <p className="text-xs text-gray-200 leading-relaxed font-semibold">
-                        Espaço humanizado para diários de vivência acadêmica, trocas cotidianas e desabafos entre os alunos, utilizando um sistema de fios energizados que conectam e fortalecem a comunidade do IFUSP.
+                        Espaço relatos/notícias/fofocas — um espaço para a vivência acadêmica, trocas cotidianas e desabafos entre alunos com sistema de fios energizados que conectam a comunidade.
                       </p>
                     </div>
                   </div>
@@ -492,10 +491,10 @@ export function HubSlideViewer() {
                         <h4 className="text-lg font-black uppercase tracking-wider text-white">3. Arte</h4>
                       </div>
                       <span className="inline-block px-2.5 py-0.5 rounded-full bg-brand-red/20 text-brand-red text-[11px] font-black uppercase mb-3 border border-brand-red/40">
-                        Expressão Artística
+                        EXPRESSÃO ARTÍSTICA
                       </span>
                       <p className="text-xs text-gray-200 leading-relaxed font-semibold">
-                        Galeria autoral de expressão visual, fotográfica e poética integrada à ciência, transformando registros científicos e percepções do cotidiano em manifestações artísticas e culturais.
+                        Galeria autoral de expressão visual, fotográfica, poética… Um espaço para mostrar que o ambiente acadêmico é feito por seres humanos.
                       </p>
                     </div>
                   </div>
