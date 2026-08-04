@@ -21,9 +21,10 @@ import { toast } from 'react-hot-toast';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { useAuth } from '@/providers/AuthProvider';
 import { useRouter } from 'next/navigation';
-import { Share2, User, Download, Trash2, ShieldCheck, Database, Palette } from 'lucide-react';
+import { Share2, User, Download, Trash2, ShieldCheck, Database, Palette, BellRing, BellOff } from 'lucide-react';
 import { FluxoFeedbackCard } from '@/components/feedback/FluxoFeedbackCard';
 import { CacheManager } from '@/components/cache/CacheManager';
+import { useWebPush } from '@/hooks/useWebPush';
 import { useSwipe } from '@/hooks/useSwipe';
 import Image from 'next/image';
 import { usePersonalizacaoStore } from '@/store/usePersonalizacaoStore';
@@ -35,6 +36,7 @@ export default function ConfigPage() {
     const { user, profile, loading } = useAuth();
     const router = useRouter();
     const { institution, setInstitution } = usePersonalizacaoStore();
+    const { isSupported, isSubscribed, subscribe, unsubscribe } = useWebPush();
     const [activeTab, setActiveTab] = useState<ConfigTab>('conta');
     const [isDeleting, setIsDeleting] = useState(false);
     const [isDeletingData, setIsDeletingData] = useState(false);
@@ -216,6 +218,39 @@ export default function ConfigPage() {
                                 Compartilhar
                             </button>
                         </div>
+                    </div>
+                </section>
+
+                {/* SEÇÃO 0.5: NOTIFICAÇÕES PUSH */}
+                <section className="bg-brand-blue/5 border border-brand-blue/10 rounded-2xl overflow-hidden">
+                    <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
+                        <div className="space-y-2 max-w-md">
+                            <div className="flex items-center gap-2 text-brand-blue">
+                                {isSubscribed ? <BellRing size={20} /> : <BellOff size={20} />}
+                                <h2 className="text-xl font-bold uppercase tracking-tight">Notificações Push</h2>
+                            </div>
+                            <p className="text-sm text-gray-400">
+                                Receba alertas de aulas, provas e lembretes da aba Ferramentas diretamente no seu dispositivo, mesmo com o HUB fechado.
+                            </p>
+                        </div>
+                        {isSupported ? (
+                            <button
+                                onClick={isSubscribed ? unsubscribe : subscribe}
+                                className={`flex items-center justify-center gap-2 px-6 py-3 font-bold rounded-xl transition-all active:scale-95 whitespace-nowrap shadow-xl border ${
+                                    isSubscribed 
+                                        ? 'bg-[#1E1E1E] text-white border-white/10 hover:bg-white/5' 
+                                        : 'bg-brand-blue text-white border-brand-blue/10 hover:bg-brand-blue-hover shadow-brand-blue/20'
+                                }`}
+                                id="btn-push-notifications"
+                            >
+                                {isSubscribed ? <BellOff size={18} /> : <BellRing size={18} />}
+                                {isSubscribed ? 'Desativar Notificações' : 'Ativar no Dispositivo'}
+                            </button>
+                        ) : (
+                            <div className="text-xs text-gray-500 font-bold bg-[#1E1E1E] px-4 py-2 rounded-lg border border-white/5">
+                                Não Suportado pelo Navegador
+                            </div>
+                        )}
                     </div>
                 </section>
 

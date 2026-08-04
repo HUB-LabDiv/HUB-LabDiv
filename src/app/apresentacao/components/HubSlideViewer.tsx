@@ -61,8 +61,8 @@ export const HUB_INSTITUCIONAL_SLIDES: HubSlideItem[] = [
     showFirstSlideLogo: true,
     highlights: [
       'Super App: Diferente de um app padrão ele reúne diversas funções em um único lugar (como 99, WeChat, Mercado Livre, etc.), acessível pela PlayStore (beta fechado) ou direto pelo navegador.',
-      'Comunicação Dialógica: Rompe a mera "divulgação passiva", promovendo a co-construção de significado com base teórica em "Extensão ou Comunicação?" de Paulo Freire.',
-      'Integração Acadêmica: Une o controle do semestre e evolução no curso, uma Wiki com todas as informações do IFUSP e a aba Comunidade para interagir com colegas em um único lugar.',
+      'Comunicação Dialógica: Rompe a mera "divulgação passiva", promovendo a co-construção de significado e compreensão do processo científico e não do saber individual, com base teórica entre outras em "Extensão ou Comunicação?" de Paulo Freire.',
+      'Integração Acadêmica: Une o controle do semestre, evolução no curso nas ferramentas, uma Wiki com todas as informações do IFUSP, seus espaços, mapa e a aba Comunidade onde você pode interagir com colegas em um único lugar.',
       'Código Aberto (AGPLv3): Projeto transparente hospedado no GitHub (JoaoStangorlini/HUB-LabDiv) pronto para ser replicado.'
     ],
     notes: [

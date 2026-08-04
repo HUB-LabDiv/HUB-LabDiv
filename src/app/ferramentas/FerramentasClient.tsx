@@ -17,7 +17,7 @@ import { fetchUserAcademicdata } from '@/app/actions/disciplines';
 import { 
     X, Eye, Edit3, ChevronLeft, ChevronRight, Search, Plus, Trash2, Info, Loader2, BookOpen, 
     GraduationCap, CalendarDays, FileText, Table, Calendar, MessageSquareCode, Share2,
-    RefreshCw, Undo2, Settings, ChevronDown, CalendarX
+    RefreshCw, Undo2, Settings, ChevronDown, CalendarX, Bell
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
@@ -28,6 +28,7 @@ import { SubjectSelectorModal } from './SubjectSelectorModal';
 import { BlockDetailsModal, BlockFormData } from './BlockDetailsModal';
 import { JupiterSyncModal } from './JupiterSyncModal';
 import { AbsencesModal } from './AbsencesModal';
+import { CustomEventModal } from './CustomEventModal';
 
 interface CalendarEvent {
     id: string;
@@ -106,6 +107,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
     const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
     const [isJupiterModalOpen, setIsJupiterModalOpen] = useState(false);
     const [isAbsencesModalOpen, setIsAbsencesModalOpen] = useState(false);
+    const [isCustomEventModalOpen, setIsCustomEventModalOpen] = useState(false);
     const [newBlockName, setNewBlockName] = useState('');
     const [newBlockDuration, setNewBlockDuration] = useState(2);
     const [isUpdating, setIsUpdating] = useState<string | null>(null);
@@ -815,6 +817,14 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     <CalendarX className="w-4 h-4 group-hover:scale-110 transition-transform" />
                     <span className="inline">Controle de Faltas</span>
                 </button>
+                <button
+                    onClick={() => setIsCustomEventModalOpen(true)}
+                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3.5 bg-brand-blue/10 text-brand-blue border border-brand-blue/20 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-brand-blue hover:text-white transition-all disabled:opacity-50 shadow-sm group cursor-pointer"
+                    title="Adicionar Eventos Manuais e Lembretes (Saúde, Lazer, Provas)"
+                >
+                    <Bell className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    <span className="inline">Lembrete Manual</span>
+                </button>
                 <a
                     href="/wiki/veteranos"
                     className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3.5 bg-gradient-to-r from-[#17739A] to-[#115673] text-white border border-[#17739A]/40 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:opacity-90 hover:scale-105 transition-all shadow-lg shadow-[#17739A]/20 group cursor-pointer"
@@ -1486,6 +1496,22 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                 isOpen={isAbsencesModalOpen}
                 onClose={() => setIsAbsencesModalOpen(false)}
                 events={events}
+            />
+            <CustomEventModal
+                isOpen={isCustomEventModalOpen}
+                onClose={() => setIsCustomEventModalOpen(false)}
+                onSave={async (eventData) => {
+                    const tempId = eventData.id || Math.random().toString();
+                    setEvents(prev => [...prev, eventData]);
+                    
+                    const res = await CalendarActions.upsertCalendarEvent(eventData);
+                    if (res.success && res.data) {
+                        setEvents(prev => prev.map(e => e.id === tempId ? { ...e, id: res.data.id } : e));
+                        toast.success('Evento salvo com sucesso!');
+                    } else {
+                        toast.error('Erro ao salvar evento no banco.');
+                    }
+                }}
             />
         </div>
     );
