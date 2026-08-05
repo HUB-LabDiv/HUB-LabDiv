@@ -1,0 +1,441 @@
+05/08/2026, 16:25
+
+LabDiv | IFUSP - Produzir Figuras
+
+LabDiv | IFUSP
+
+Início
+
+KitDiv (dicas práticas)
+
+Agendar uma mentoria
+
+Produzir Figuras
+
+Conteúdo traduzido pelo Labdiv de um artigo do MIT Electrical Engineering and Computer Science
+Communication Lab.
+Figure Design
+
+Critérios de Sucesso
+1. Sua figura deixa o público com uma mensagem principal clara em uma frase.
+2. Você fornece evidências que apoiam diretamente a mensagem principal.
+3. Sua figura contém apenas conteúdo relacionado à mensagem principal.
+4. Todas as partes da sua figura são fáceis de ler e entender pelo público.
+
+Propósito
+Figuras são qualquer forma de apresentação visual de resultados e podem aparecer em uma
+variedade de formatos. Gráficos, diagramas, fotos, desenhos, esquemas e mapas são todos
+tipos de figuras. Apesar dessa variedade, o propósito de todas as figuras é comunicar duas
+coisas:
+1. Uma mensagem principal
+2. Evidências que mostrem que sua mensagem é verdadeira
+Com exceção de algumas figuras introdutórias — por exemplo, esquemas, diagramas de
+circuitos ou fluxogramas —, uma figura que carece de qualquer um desses dois elementos está
+incompleta: uma mensagem principal sem evidências pode ser vista com desconfiança,
+enquanto dados sem uma mensagem principal podem ser mal interpretados. O objetivo de
+uma figura é comunicar o que você aprendeu ao interpretar os dados.
+https://sites.google.com/usp.br/labdiv/kitdiv/produzir-figuras?authuser=0
+
+1/13
+
+05/08/2026, 16:25
+
+LabDiv | IFUSP - Produzir Figuras
+
+LabDivSeu
+| IFUSPPúblico
+Analise
+Início
+
+KitDiv (dicas práticas)
+
+Agendar uma mentoria
+
+Entender seu público permite que você entregue sua mensagem de maneira convincente.
+Pense em quem irá visualizar esta figura. Eles são especializados na sua área ou um público
+mais geral? Dependendo do público, você deve ajustar a complexidade da mensagem e a
+quantidade de evidências apresentadas.
+Por exemplo, se sua figura for para publicação em um periódico específico da área, seu público
+provavelmente terá conhecimento prévio geral sobre o tema. Nesse caso, você pode entregar
+uma mensagem muito específica (por exemplo, "Nanofios de ZnO melhoram a eficiência de coleta
+de fotocarreadores gerados longe da interface de heterojunção plana" [Jean et al., Advanced
+Materials 2013]) e fornecer evidências detalhadas (por exemplo, espectros de eficiência
+quântica externa). Evidências insuficientes ou muito simplificadas podem gerar ceticismo em
+relação à sua mensagem. Considere ajudar seus leitores seguindo convenções básicas
+estabelecidas por artigos importantes em sua área.
+Por outro lado, se sua figura for para uma apresentação em um programa de divulgação para o
+ensino médio, o nível de conhecimento prévio do público será muito diferente. Você deve
+adaptar a mensagem para torná-la mais facilmente compreensível (por exemplo, "Nanostruturas
+podem tornar as células solares mais eficientes") e apresentar muito menos evidências (por
+exemplo, eficiência de conversão de energia). Um público geral muitas vezes fica
+sobrecarregado com muitas evidências. Eles podem não conseguir distinguir as evidências que
+apoiam sua mensagem principal de outros detalhes.
+
+https://sites.google.com/usp.br/labdiv/kitdiv/produzir-figuras?authuser=0
+
+2/13
+
+05/08/2026, 16:25
+
+LabDiv | IFUSP - Produzir Figuras
+
+LabDiv | IFUSP
+
+Início
+
+KitDiv (dicas práticas)
+
+Agendar uma mentoria
+
+Habilidades
+
+https://sites.google.com/usp.br/labdiv/kitdiv/produzir-figuras?authuser=0
+
+3/13
+
+05/08/2026, 16:25
+
+LabDiv | IFUSP - Produzir Figuras
+
+Início KitDiv
+práticas) comuniquem
+Agendar uma mentoria
+| IFUSP
+EscolhaLabDiv
+designs
+de figuras
+que(dicas
+melhor
+sua mensagem
+Assim como diferentes palavras e estruturas de frases podem ser mais ou menos eficazes para
+comunicar uma ideia, diferentes designs de figuras podem ser mais ou menos eficazes para
+transmitir uma mensagem. Ao projetar uma figura de sucesso, considere quais mídias, tipos de
+figuras e tipos de gráficos melhor destacam sua mensagem.
+Para mensagens complexas, vários painéis podem dividir a mensagem em declarações claras.
+Figuras com múltiplos painéis frequentemente utilizam uma combinação de mídias, tipos de
+figuras e tipos de gráficos. Use os pontos fortes complementares de cada elemento para
+comunicar sua mensagem.
+
+Diferentes tipos de mídia podem transmitir
+mensagens idênticas de maneiras diferentes
+Texto e discurso transmitem declarações precisas.
+Tabelas apresentam informações com pouco contexto ou interpretação.
+Figuras ilustram conclusões com evidências e são abertas a interpretações.
+Por exemplo, compare a tabela e o gráfico abaixo. Embora ambos contenham exatamente os
+mesmos dados, a figura sugere uma interpretação e ajuda o público a identificar tendências.
+
+https://sites.google.com/usp.br/labdiv/kitdiv/produzir-figuras?authuser=0
+
+4/13
+
+05/08/2026, 16:25
+
+LabDiv | IFUSP - Produzir Figuras
+
+LabDiv | IFUSP
+
+Início
+
+KitDiv (dicas práticas)
+
+https://sites.google.com/usp.br/labdiv/kitdiv/produzir-figuras?authuser=0
+
+Agendar uma mentoria
+
+5/13
+
+05/08/2026, 16:25
+
+LabDiv | IFUSP - Produzir Figuras
+
+LabDiv | IFUSP
+
+Início
+
+KitDiv (dicas práticas)
+
+https://sites.google.com/usp.br/labdiv/kitdiv/produzir-figuras?authuser=0
+
+Agendar uma mentoria
+
+6/13
+
+05/08/2026, 16:25
+
+LabDiv | IFUSP - Produzir Figuras
+
+LabDiv | IFUSP
+
+Início
+
+KitDiv (dicas práticas)
+
+Agendar uma mentoria
+
+Fonte: Jean et al., “ZnO nanowire arrays for enhanced photocurrent in PbS quantum dot solar cells,” Advanced Materials 25, 2790–2796 (2013).
+
+Compare ambas as representações com a afirmação: "Células solares de pontos quânticos
+coloidais com nanofios de ZnO são mais eficientes do que células planas" que apresenta uma
+interpretação específica válida para intensidades de luz típicas ao redor de 1 sol. Declarar essa
+interpretação tornaria claro para o leitor que a eficiência sob luz solar plena é mais importante
+aqui do que, por exemplo, a eficiência em níveis de luz extremamente baixos.
+
+Tipos de figuras apresentam diferentes formas de
+informação.
+
+📷
+
+Fotos retratam o objeto exatamente, fornecendo evidências concretas.
+
+Ilustrações relaxam a precisão, destacando um tema ou elemento escolhido.
+Gráficos exibem processos, quantidades ou comparações.
+
+📊
+
+🎨
+
+Essa figura combina um esquema (acima) e uma imagem de microscópio eletrônico de
+varredura (SEM) (abaixo) de uma célula solar, incluindo uma visão em corte transversal e uma
+vista de cima. Com os esquemas, você pode querer que o espectador se concentre na estrutura
+geral que incorpora os nanofios. Mostrar os nanofios desordenados reais poderia distrair. Você
+poderia usar um esquema como esse em uma visão geral da arquitetura do dispositivo.
+Com as imagens mais realistas de SEM, você pode discutir as dimensões reais e o alinhamento
+imperfeito dos nanofios, bem como as dificuldades práticas de infiltrar pontos quânticos em
+uma matriz de nanofios compactados.
+
+https://sites.google.com/usp.br/labdiv/kitdiv/produzir-figuras?authuser=0
+
+7/13
+
+05/08/2026, 16:25
+
+LabDiv | IFUSP - Produzir Figuras
+
+LabDiv | IFUSP
+
+Início
+
+KitDiv (dicas práticas)
+
+Agendar uma mentoria
+
+Fonte: Jean et al., “ZnO nanowire arrays for enhanced photocurrent in PbS quantum dot solar cells,” Advanced Materials 25, 2790–2796 (2013).
+
+https://sites.google.com/usp.br/labdiv/kitdiv/produzir-figuras?authuser=0
+
+8/13
+
+05/08/2026, 16:25
+
+LabDiv | IFUSP - Produzir Figuras
+
+Início KitDiv
+(dicas práticas) diferentes
+Agendar uma mentoria
+LabDiv
+| IFUSP
+Diferentes
+tipos
+de gráficos
+enfatizam
+tipos de dados.
+O que você está tentando mostrar com seus dados? Uma correlação? Uma distribuição? Um
+evento ao longo do tempo?
+Quando você tem uma distribuição em mãos, usar um resumo dos dados (como a média e o
+desvio padrão) pode ocultar informações interessantes. Por exemplo, as três distribuições
+abaixo (normal, uniforme e bimodal) têm exatamente a mesma média (5) e desvios padrão
+semelhantes (2).
+
+https://sites.google.com/usp.br/labdiv/kitdiv/produzir-figuras?authuser=0
+
+9/13
+
+05/08/2026, 16:25
+
+LabDiv | IFUSP - Produzir Figuras
+
+LabDiv | IFUSP
+
+Tentando mostrar…
+
+Início
+
+KitDiv (dicas práticas)
+
+Apresentação recomendada
+
+Agendar uma mentoria
+
+Distribuição geral dos dados
+
+Se possível, mostre o conjunto de dados completo
+
+Conjunto de dados grande
+
+Histogramas, gráficos de caixas: resuma características
+da distribuição
+
+Eventos no tempo / Evolução de uma
+variável
+
+Gráfico de linha
+
+Correlações
+
+Gráfico de dispersão
+
+https://sites.google.com/usp.br/labdiv/kitdiv/produzir-figuras?authuser=0
+
+10/13
+
+05/08/2026, 16:25
+
+LabDiv | IFUSP - Produzir Figuras
+
+Início KitDiv
+(dicas o
+práticas)
+Agendar uma mentoria
+| IFUSP
+AjusteLabDiv
+sua figura
+de acordo
+com
+contexto
+Você apresentará sua figura em um artigo acadêmico, uma apresentação de pôster, uma
+apresentação oral ou em outro formato? O formato final dita como seu público interagirá com a
+figura e quanto de informação adicional você poderá fornecer.
+A figura é
+estática ou
+dinâmica?
+
+Que informação vai para onde?
+• A figura e a legenda devem ser suficientes para que o
+leitor tire uma conclusão.
+• Leitores especialistas julgam a credibilidade e o
+impacto de artigos com base nas figuras.
+
+Artigo
+
+Estática
+• O título da legenda deve declarar a mensagem.
+• O restante da legenda não deve conter
+interpretações, apenas uma descrição em alto nível do
+que foi feito para obter os dados na figura.
+• Você estará presente e poderá complementar as
+informações impressas com explicações orais.
+• A figura deve ser precedida por um título que declare
+a mensagem.
+
+Pôster
+
+Estática
+
+• Muitas vezes, uma legenda é desnecessária: os
+espectadores podem facilmente verificar os métodos
+para ver como os dados foram obtidos.
+• O tamanho maior permite uma rotulagem mais
+detalhada e direta do que em artigos. Aproveite isso
+para tornar sua figura mais autoexplicativa.
+• O título do slide deve declarar a mensagem.
+
+Apresentação de Slides
+
+Maximize seu índice sinal-ruído
+
+https://sites.google.com/usp.br/labdiv/kitdiv/produzir-figuras?authuser=0
+
+11/13
+
+05/08/2026, 16:25
+
+LabDiv | IFUSP - Produzir Figuras
+
+Trate a mensagem
+que |
+você
+deseja comunicar
+como (dicas
+seu sinal.
+Seu objetivoAgendar
+é transmitir
+Início KitDiv
+práticas)
+uma esse
+mentoria
+LabDiv
+IFUSP
+sinal da forma mais clara possível para sua audiência. Qualquer coisa que interfira na
+comunicação de sua mensagem é ruído. Já discutimos maneiras de maximizar o sinal
+otimizando o design da figura. Aqui, falaremos sobre estratégias para minimizar o ruído.
+
+Ruído a partir das evidências
+
+😵‍💫
+
+Não afogue sua audiência em dados. Inclua apenas os dados mínimos necessários para
+fazer seu ponto. Incluir evidências que não apoiam diretamente sua mensagem distrai daquelas
+que fazem. (Certifique-se de não violar a ética científica na seleção de seus dados. Consulte um
+colega ou orientador se não tiver certeza.)
+
+Ruído a partir da apresentação
+A forma como você apresenta suas evidências escolhidas também pode desviar a atenção de
+sua mensagem. Aqui estão alguns exemplos comuns de como uma figura pode ser aprimorada
+para remover o ruído, com base na figura abaixo:
+1. Mude o título de uma descrição dos dados para uma mensagem sobre os dados.
+2. Mova as legendas para perto dos dados que descrevem, para que o leitor não precise olhar
+para frente e para trás e combinar cores.
+3. Simplifique o esquema de cores, focando em chamar a atenção para a parte relevante dos
+dados.
+4. Remova gráficos 3D desnecessários.
+
+Fonte:Trees, Maps, and Theorems, por Jean-Luc Doumont, página 99
+
+https://sites.google.com/usp.br/labdiv/kitdiv/produzir-figuras?authuser=0
+
+12/13
+
+05/08/2026, 16:25
+
+LabDiv | IFUSP - Produzir Figuras
+
+Muitos outros tipos de ruído existem. Início
+Por exemplo,
+ou rótulos
+dementoria
+eixo
+KitDivgrades
+(dicas desnecessárias
+práticas)
+Agendar
+uma
+LabDiv
+|
+IFUSP
+podem poluir uma figura. Pergunte a si mesmo o que deseja que sua audiência leve da figura e
+como pode facilitar para que eles localizem e se concentrem nas informações relevantes.
+(A metáfora de "índice sinal-ruído" vem do livro de Jean-Luc Doumont, *Trees, Maps, and
+Theorems*.)
+
+Recursos para design avançado de figuras
+Há muitos recursos úteis disponíveis sobre a estilização da comunicação visual e dados. Dois
+livros que recomendamos fortemente são The Visual Display of Quantitative Information
+(Edward Tufte) e Trees, Maps, and Theorems (Jean-Luc Doumont).
+Também recomendamos esta coleção de artigos de Bang Wong, Martin Krzywinski e seus
+colegas. Aqui você encontrará discussões detalhadas e exemplos sobre:
+Princípios de design visual e sua relação com a clareza
+O uso de cores
+Estilização de elementos de figura
+Forças e fraquezas de tipos de gráficos específicos
+Visualização de dados multidimensionais
+Uso de figuras para explorar dados
+
+Ainda precisa de ajuda? Marque um atendimento com um de nossos mentores.
+LabDiv, Ed. Novo Milênio, Instituto de Física , Universidade de São Paulo , Brasil
+Contato: labdiv@usp.br
+
+https://sites.google.com/usp.br/labdiv/kitdiv/produzir-figuras?authuser=0
+
+13/13
+
+

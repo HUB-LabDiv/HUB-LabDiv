@@ -101,15 +101,12 @@ export default function FerramentasClient({ profile }: { profile: any }) {
     const [history, setHistory] = useState<CalendarEvent[][]>([]);
     const [customBlocks, setCustomBlocks] = useState<{id: string, title: string, duration: number}[]>([]);
     const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-    const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [isBlockModalOpen, setIsBlockModalOpen] = useState(false);
     const [selectedBlockForModal, setSelectedBlockForModal] = useState<BlockFormData | null>(null);
     const [isSubjectModalOpen, setIsSubjectModalOpen] = useState(false);
     const [isJupiterModalOpen, setIsJupiterModalOpen] = useState(false);
     const [isAbsencesModalOpen, setIsAbsencesModalOpen] = useState(false);
     const [isCustomEventModalOpen, setIsCustomEventModalOpen] = useState(false);
-    const [newBlockName, setNewBlockName] = useState('');
-    const [newBlockDuration, setNewBlockDuration] = useState(2);
     const [isUpdating, setIsUpdating] = useState<string | null>(null);
     const [isResetting, setIsResetting] = useState(false);
     const [calendarStart, setCalendarStart] = useState('08:00');
@@ -516,26 +513,102 @@ export default function FerramentasClient({ profile }: { profile: any }) {
     };
 
 
+    const [isOfflineLoaded, setIsOfflineLoaded] = useState(false);
+
     const loadData = async () => {
         setIsLoading(true);
-        const [academicRes, calendarRes, blocksRes] = await Promise.all([
-            fetchUserAcademicdata(),
-            CalendarActions.getCalendarEvents(),
-            CalendarActions.getCustomBlocks()
-        ]);
+        let hasCache = false;
 
-        if (academicRes.success) {
-            setAcademicData(academicRes.data);
+        // 1. Tenta carregar dados do cache local (Instant/Offline Fallback)
+        try {
+            const cachedEvents = localStorage.getItem('hub_offline_events');
+            const cachedAcademic = localStorage.getItem('hub_offline_academic');
+            const cachedBlocks = localStorage.getItem('hub_offline_custom_blocks');
+
+            if (cachedEvents) {
+                const parsed = JSON.parse(cachedEvents);
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    setEvents(parsed.map(formatEventWithRecurrence));
+                    hasCache = true;
+                }
+            }
+            if (cachedAcademic) {
+                setAcademicData(JSON.parse(cachedAcademic));
+                hasCache = true;
+            }
+            if (cachedBlocks) {
+                setCustomBlocks(JSON.parse(cachedBlocks));
+                hasCache = true;
+            }
+
+            if (hasCache) {
+                setIsLoading(false);
+                setIsOfflineLoaded(true);
+            }
+        } catch (e) {
+            console.error('Erro ao ler cache do localStorage:', e);
         }
-        if (calendarRes.success) {
-            const verifiedEvents = (calendarRes.data as any[]).map(formatEventWithRecurrence);
-            setEvents(verifiedEvents);
+
+        // 2. Busca dados atualizados da rede (Online Sync)
+        try {
+            const academicRes = await fetchUserAcademicdata().catch(() => null);
+            const calendarRes = await CalendarActions.getCalendarEvents().catch(() => null);
+            const blocksRes = await CalendarActions.getCustomBlocks().catch(() => null);
+
+            if (academicRes && 'success' in academicRes && academicRes.success && 'data' in academicRes && academicRes.data) {
+                setAcademicData(academicRes.data);
+                try {
+                    localStorage.setItem('hub_offline_academic', JSON.stringify(academicRes.data));
+                } catch (e) {}
+            }
+
+            if (calendarRes && 'success' in calendarRes && calendarRes.success && 'data' in calendarRes && calendarRes.data) {
+                const verifiedEvents = (calendarRes.data as any[]).map(formatEventWithRecurrence);
+                setEvents(verifiedEvents);
+                try {
+                    localStorage.setItem('hub_offline_events', JSON.stringify(calendarRes.data));
+                } catch (e) {}
+            }
+
+            if (blocksRes && 'success' in blocksRes && blocksRes.success && 'data' in blocksRes && blocksRes.data) {
+                setCustomBlocks(blocksRes.data as any);
+                try {
+                    localStorage.setItem('hub_offline_custom_blocks', JSON.stringify(blocksRes.data));
+                } catch (e) {}
+            }
+
+            setIsOfflineLoaded(false);
+        } catch (err) {
+            console.warn('⚡ Modo Offline ativo. Grade horária exibida a partir da memória do dispositivo.', err);
+            if (hasCache) {
+                toast('Modo Offline: exibindo sua grade horária salva.', {
+                    icon: '📡',
+                    id: 'offline-grade-notice',
+                    duration: 5000,
+                    style: { background: '#1E1E1E', color: '#FFCC00', border: '1px solid #333' }
+                });
+            }
+        } finally {
+            setIsLoading(false);
         }
-        if (blocksRes.success) {
-            setCustomBlocks(blocksRes.data as any);
-        }
-        setIsLoading(false);
     };
+
+    // Atualiza automaticamente o cache local sempre que a grade/eventos mudarem
+    useEffect(() => {
+        if (events && events.length > 0) {
+            try {
+                localStorage.setItem('hub_offline_events', JSON.stringify(events));
+            } catch (e) {}
+        }
+    }, [events]);
+
+    useEffect(() => {
+        if (academicData) {
+            try {
+                localStorage.setItem('hub_offline_academic', JSON.stringify(academicData));
+            } catch (e) {}
+        }
+    }, [academicData]);
 
     useEffect(() => {
         loadData();
@@ -820,19 +893,11 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                 <button
                     onClick={() => setIsCustomEventModalOpen(true)}
                     className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3.5 bg-brand-blue/10 text-brand-blue border border-brand-blue/20 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:bg-brand-blue hover:text-white transition-all disabled:opacity-50 shadow-sm group cursor-pointer"
-                    title="Adicionar Eventos Manuais e Lembretes (Saúde, Lazer, Provas)"
+                    title="Adicionar Novo Evento ou Lembrete (Saúde, Lazer, Provas, Trabalho)"
                 >
-                    <Bell className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                    <span className="inline">Lembrete Manual</span>
+                    <Plus className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                    <span className="inline">Novo Evento</span>
                 </button>
-                <a
-                    href="/wiki/veteranos"
-                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-5 py-3.5 bg-gradient-to-r from-[#17739A] to-[#115673] text-white border border-[#17739A]/40 rounded-2xl font-black text-[11px] uppercase tracking-widest hover:opacity-90 hover:scale-105 transition-all shadow-lg shadow-[#17739A]/20 group cursor-pointer"
-                    title="Acessar Dicas e Conselhos de Veteranos"
-                >
-                    <Info className="w-4 h-4 animate-pulse" />
-                    <span className="inline">IFUSP 101 (Dicas)</span>
-                </a>
             </div>
 
 
@@ -854,13 +919,6 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                 >
                                     <Search className="w-3 h-3" />
                                     Buscar Turmas
-                                </button>
-                                <button
-                                    onClick={() => setIsCreateModalOpen(true)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-brand-blue text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:scale-105 transition-transform shrink-0"
-                                >
-                                    <Plus className="w-3 h-3" />
-                                    Criar Bloco
                                 </button>
                             </div>
                         </div>
@@ -1261,228 +1319,6 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                 currentEvents={events}
             />
 
-            {isCreateModalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm" onClick={() => setIsCreateModalOpen(false)} />
-                    <div className="relative bg-[#1e1e1e] border border-white/10 rounded-[32px] p-8 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200">
-                        <h3 className="text-2xl font-display font-black text-white uppercase tracking-tight mb-6">Novo Bloco</h3>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest block mb-1">Nome do Bloco</label>
-                                <input 
-                                    type="text" 
-                                    value={newBlockName}
-                                    onChange={(e) => setNewBlockName(e.target.value)}
-                                    placeholder="Ex: Almoço, Estudo Individual..."
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-brand-blue"
-                                />
-                            </div>
-                            <div>
-                                <label className="text-[10px] font-black uppercase text-gray-500 tracking-widest block mb-1">Duração (Horas)</label>
-                                <input 
-                                    type="number" 
-                                    value={newBlockDuration}
-                                    onChange={(e) => setNewBlockDuration(Number(e.target.value))}
-                                    min="0.5"
-                                    max="8"
-                                    step="0.5"
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl px-4 py-3 text-white outline-none focus:ring-2 focus:ring-brand-blue"
-                                />
-                            </div>
-                            <div className="pt-4 flex gap-3">
-                                <button onClick={() => setIsCreateModalOpen(false)} className="flex-1 py-3 bg-white/5 rounded-2xl font-bold text-xs uppercase text-gray-400">Cancelar</button>
-                                <button 
-                                    onClick={async () => {
-                                        if (newBlockName) {
-                                            const res = await CalendarActions.addCustomBlock(newBlockName, newBlockDuration);
-                                            if (res.success && res.data) {
-                                                setCustomBlocks(prev => [res.data, ...prev]);
-                                                setNewBlockName('');
-                                                setIsCreateModalOpen(false);
-                                                toast.success('Bloco criado!');
-                                            } else {
-                                                toast.error('Erro ao salvar bloco.');
-                                            }
-                                        }
-                                    }}
-                                    className="flex-1 py-3 bg-brand-blue rounded-2xl font-bold text-xs uppercase text-white shadow-lg shadow-brand-blue/20"
-                                >
-                                    Criar
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-
-            {isExportModalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm" onClick={() => setIsExportModalOpen(false)} />
-                    <div className="relative bg-[#1e1e1e] border border-white/10 rounded-[32px] p-8 max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200">
-                        <h3 className="text-2xl font-display font-black text-white uppercase tracking-tight mb-2">Exportar</h3>
-                        <p className="text-gray-400 text-xs mb-8">Escolha o formato para salvar seu cronograma.</p>
-                        <div className="grid grid-cols-1 gap-3">
-                            <button onClick={handlePrint} className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors group text-left">
-                                <div className="size-10 bg-brand-red/10 rounded-xl flex items-center justify-center text-brand-red"><FileText className="w-5 h-5" /></div>
-                                <div><div className="text-sm font-bold text-white uppercase tracking-tight">Salvar como PDF</div><div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Ideal para imprimir</div></div>
-                            </button>
-                            <button 
-                                onClick={() => {
-                                    const icsContent = ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//IFUSP//Hub LabDiv//PT',...events.map(e => ['BEGIN:VEVENT',`SUMMARY:${e.title}`,`DTSTART:${new Date(e.start).toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,`DTEND:${new Date(e.end || new Date(e.start).getTime() + 7200000).toISOString().replace(/[-:]/g, '').split('.')[0]}Z`,'END:VEVENT'].join('\n')),'END:VCALENDAR'].join('\n');
-                                    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
-                                    const url = window.URL.createObjectURL(blob);
-                                    const link = document.createElement('a');
-                                    link.href = url;
-                                    link.setAttribute('download', 'cronograma.ics');
-                                    document.body.appendChild(link);
-                                    link.click();
-                                    document.body.removeChild(link);
-                                }}
-                                className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors group text-left"
-                            >
-                                <div className="size-10 bg-brand-blue/10 rounded-xl flex items-center justify-center text-brand-blue"><CalendarDays className="w-5 h-5" /></div>
-                                <div><div className="text-sm font-bold text-white uppercase tracking-tight">Calendário (.ics)</div><div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Google Agenda / Outlook</div></div>
-                            </button>
-                            <button 
-                                onClick={() => {
-                                    const csvHeader = 'Titulo,Inicio,Fim\n';
-                                    const csvRows = events.map(e => `"${e.title}","${e.start}","${e.end || ''}"`).join('\n');
-                                    const blob = new Blob([csvHeader + csvRows], { type: 'text/csv;charset=utf-8' });
-                                    const url = window.URL.createObjectURL(blob);
-                                    const link = document.createElement('a');
-                                    link.href = url;
-                                    link.setAttribute('download', 'cronograma.csv');
-                                    document.body.appendChild(link);
-                                    link.click();
-                                    document.body.removeChild(link);
-                                }}
-                                className="flex items-center gap-4 p-4 bg-white/5 border border-white/10 rounded-2xl hover:bg-white/10 transition-colors group text-left"
-                            >
-                                <div className="size-10 bg-brand-yellow/10 rounded-xl flex items-center justify-center text-brand-yellow"><Table className="w-5 h-5" /></div>
-                                <div><div className="text-sm font-bold text-white uppercase tracking-tight">Arquivo CSV (.csv)</div><div className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Exportar para Excel</div></div>
-                            </button>
-                        </div>
-                        <button onClick={() => setIsExportModalOpen(false)} className="mt-6 w-full py-4 bg-white/5 rounded-2xl font-bold text-xs uppercase text-gray-500 hover:text-white transition-colors">Fechar</button>
-                    </div>
-                </div>
-            )}
-
-            {isHelpModalOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm" onClick={() => setIsHelpModalOpen(false)} />
-                    <div className="relative bg-[#1e1e1e] border border-white/10 rounded-[40px] p-10 max-w-lg w-full shadow-2xl animate-in zoom-in-95 duration-200">
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="size-12 rounded-2xl bg-brand-blue/10 flex items-center justify-center text-brand-blue border border-brand-blue/20">
-                                <Info className="w-6 h-6" />
-                            </div>
-                            <h3 className="text-2xl font-display font-black text-white uppercase tracking-tight">Como utilizar?</h3>
-                        </div>
-
-                        <ul className="space-y-6">
-                            <li className="flex gap-4">
-                                <div className="mt-1 size-6 rounded-full bg-brand-blue/20 text-brand-blue font-black flex items-center justify-center text-xs shrink-0 border border-brand-blue/30">1</div>
-                                <div>
-                                    <h4 className="font-bold text-white text-sm mb-1">Adicionando Materiais</h4>
-                                    <p className="text-xs text-gray-400 font-medium leading-relaxed">Suas disciplinas cursadas nas <span className="text-white">Trilhas</span> já aparecem nos blocos superiores. Arraste-as (Desktop) ou clique e depois selecione o horário (Celular) no calendário.</p>
-                                </div>
-                            </li>
-                            <li className="flex gap-4">
-                                <div className="mt-1 size-6 rounded-full bg-brand-yellow/20 text-brand-yellow font-black flex items-center justify-center text-xs shrink-0 border border-brand-yellow/30">2</div>
-                                <div>
-                                    <h4 className="font-bold text-white text-sm mb-1">Crie seus próprios Blocos</h4>
-                                    <p className="text-xs text-gray-400 font-medium leading-relaxed">Você pode criar blocos personalizados (Ex: "Pesquisa na Biblioteca", "Almoço") pelo botão "Criar Bloco" para completar sua grade.</p>
-                                </div>
-                            </li>
-                            <li className="flex gap-4">
-                                <div className="mt-1 size-6 rounded-full bg-brand-red/20 text-brand-red font-black flex items-center justify-center text-xs shrink-0 border border-brand-red/30">3</div>
-                                <div>
-                                    <h4 className="font-bold text-white text-sm mb-1">Edição Rápida</h4>
-                                    <p className="text-xs text-gray-400 font-medium leading-relaxed">Para mover o horário de um bloco no celular, clique nele e em seguida clique no horário de destino. Para remover, clique no bloco e depois no ícone da lixeira vermelha.</p>
-                                </div>
-                            </li>
-                        </ul>
-
-                        <div className="mt-8 pt-8 border-t border-white/5">
-                            <h4 className="font-bold text-white text-sm mb-4 uppercase tracking-wider">Atalhos de Teclado</h4>
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
-                                    <span className="text-[10px] font-bold text-gray-500">Deletar Bloco</span>
-                                    <kbd className="px-2 py-1 bg-white/10 rounded-md text-[9px] font-black text-white">DEL</kbd>
-                                </div>
-                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
-                                    <span className="text-[10px] font-bold text-gray-500">Duplicar (Copy)</span>
-                                    <kbd className="px-2 py-1 bg-white/10 rounded-md text-[9px] font-black text-white">CTRL+C</kbd>
-                                </div>
-                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
-                                    <span className="text-[10px] font-bold text-gray-500">Duplicar (Paste)</span>
-                                    <kbd className="px-2 py-1 bg-white/10 rounded-md text-[9px] font-black text-white">CTRL+V</kbd>
-                                </div>
-                                <div className="flex items-center justify-between p-3 bg-white/5 rounded-xl border border-white/10">
-                                    <span className="text-[10px] font-bold text-gray-500">Desfazer (Undo)</span>
-                                    <kbd className="px-2 py-1 bg-white/10 rounded-md text-[9px] font-black text-white">CTRL+Z</kbd>
-                                </div>
-                            </div>
-                        </div>
-
-                        <button onClick={() => setIsHelpModalOpen(false)} className="mt-10 w-full py-4 bg-white/5 rounded-2xl font-bold text-xs uppercase text-white hover:bg-brand-blue hover:text-white transition-colors border border-white/10">
-                            Entendi!
-                        </button>
-                    </div>
-                </div>
-            )}
-
-            {isSettingsOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    <div className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm" onClick={() => setIsSettingsOpen(false)} />
-                    <div className="relative bg-[#1e1e1e] border border-white/10 rounded-[40px] p-10 max-w-sm w-full shadow-2xl animate-in zoom-in-95 duration-200">
-                        <div className="flex items-center gap-4 mb-8">
-                            <div className="size-12 rounded-2xl bg-brand-red/10 flex items-center justify-center text-brand-red border border-brand-red/20">
-                                <Settings className="w-6 h-6" />
-                            </div>
-                            <h3 className="text-2xl font-display font-black text-white uppercase tracking-tight">Visualização</h3>
-                        </div>
-
-                        <div className="space-y-6">
-                            <div>
-                                <label className="block text-[10px] font-black uppercase text-gray-500 tracking-widest mb-3">Horário de Início</label>
-                                <select 
-                                    value={calendarStart}
-                                    onChange={(e) => setCalendarStart(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold text-sm focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
-                                >
-                                    {Array.from({ length: 24 }).map((_, i) => {
-                                        const h = i.toString().padStart(2, '0') + ':00';
-                                        return <option key={h} value={h} className="bg-[#1e1e1e]">{h}</option>;
-                                    })}
-                                </select>
-                            </div>
-
-                            <div>
-                                <label className="block text-[10px] font-black uppercase text-gray-500 tracking-widest mb-3">Horário de Término</label>
-                                <select 
-                                    value={calendarEnd}
-                                    onChange={(e) => setCalendarEnd(e.target.value)}
-                                    className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white font-bold text-sm focus:outline-none focus:border-brand-red focus:ring-1 focus:ring-brand-red"
-                                >
-                                    {Array.from({ length: 24 }).map((_, i) => {
-                                        const h = i.toString().padStart(2, '0') + ':00';
-                                        return <option key={h} value={h} className="bg-[#1e1e1e]">{h}</option>;
-                                    })}
-                                </select>
-                            </div>
-                        </div>
-
-                        <button 
-                            onClick={() => setIsSettingsOpen(false)} 
-                            className="mt-10 w-full py-4 bg-brand-red text-white rounded-2xl font-bold text-xs uppercase hover:scale-[1.02] transition-transform"
-                        >
-                            Salvar Configuração
-                        </button>
-                    </div>
-                </div>
-            )}
-
             <JupiterSyncModal 
                 isOpen={isJupiterModalOpen} 
                 onClose={() => setIsJupiterModalOpen(false)}
@@ -1510,6 +1346,19 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                         toast.success('Evento salvo com sucesso!');
                     } else {
                         toast.error('Erro ao salvar evento no banco.');
+                    }
+
+                    // Criar bloco personalizado para a lista de Turmas Disponíveis (Grade Horária)
+                    if (eventData.title && eventData.start && eventData.end) {
+                        const startMs = new Date(eventData.start).getTime();
+                        const endMs = new Date(eventData.end).getTime();
+                        const durationHours = (endMs - startMs) / (1000 * 60 * 60);
+                        const validDuration = durationHours > 0 ? parseFloat(durationHours.toFixed(1)) : 2;
+
+                        const blockRes = await CalendarActions.addCustomBlock(eventData.title, validDuration);
+                        if (blockRes.success && blockRes.data) {
+                            setCustomBlocks(prev => [blockRes.data, ...prev]);
+                        }
                     }
                 }}
             />

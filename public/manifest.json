@@ -1,27 +1,77 @@
 {
-    "name": "Hub de Comunicação Científica do LabDiv",
-    "short_name": "LabDiv Hub",
-    "description": "O hub oficial de comunicação científica do Instituto de Física da USP",
-    "start_url": "/",
-    "display": "standalone",
-    "background_color": "#121212",
-    "theme_color": "#121212",
-    "icons": [
+  "name": "Hub de Comunicação Científica do LabDiv",
+  "short_name": "LabDiv Hub",
+  "description": "O hub oficial de comunicação científica do Instituto de Física da USP",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#121212",
+  "theme_color": "#121212",
+  "icons": [
+    {
+      "src": "/icons/icon-48.webp",
+      "type": "image/png",
+      "sizes": "48x48",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-72.webp",
+      "type": "image/png",
+      "sizes": "72x72",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-96.webp",
+      "type": "image/png",
+      "sizes": "96x96",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-128.webp",
+      "type": "image/png",
+      "sizes": "128x128",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-192.webp",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-256.webp",
+      "type": "image/png",
+      "sizes": "256x256",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512.webp",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Lançar (Comunidade, CGIF, Ferramentas)",
+      "short_name": "Lançar",
+      "url": "/lancar",
+      "icons": [
         {
-            "src": "/icone-HUBLabDiv.svg",
-            "sizes": "512x512",
-            "type": "image/svg+xml"
-        },
-        {
-            "src": "/icone-HUBLabDiv.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        },
-        {
-            "src": "/icone-HUBLabDiv-white.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "maskable"
+          "src": "/icone-HUBLabDiv-bgscience.png",
+          "sizes": "192x192"
         }
-    ]
+      ]
+    },
+    {
+      "name": "Lab Pessoal",
+      "short_name": "Lab",
+      "url": "/lab",
+      "icons": [
+        {
+          "src": "/icone-HUBLabDiv-bgscience.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
 }

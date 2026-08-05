@@ -90,16 +90,21 @@ export async function getCalendarEvents() {
             sourceId = parts[1];
         }
 
+        const daysOfWeek = item.days_of_week || (item.daysOfWeek ? item.daysOfWeek : undefined);
         return {
             id: item.id,
             title: item.title,
             start: item.start_time,
             end: item.end_time,
             color: item.color,
+            daysOfWeek: daysOfWeek,
             extendedProps: {
                 trail_id: item.trail_id,
                 type: sourceType,
-                sourceId: sourceId
+                sourceId: sourceId,
+                daysOfWeek: daysOfWeek,
+                description: item.description || undefined,
+                reminder_minutes: item.reminder_minutes
             }
         };
     });
@@ -126,14 +131,17 @@ export async function upsertCalendarEvent(event: any) {
         finalType = `${finalType}:${event.extendedProps.sourceId}`;
     }
 
-    const payload = {
+    const payload: any = {
         user_id: user.id,
         title: event.title,
         start_time: event.start,
         end_time: calculatedEndTime,
         color: event.color,
         type: finalType,
-        trail_id: event.extendedProps?.trail_id || null
+        trail_id: event.extendedProps?.trail_id || null,
+        days_of_week: event.daysOfWeek || event.extendedProps?.daysOfWeek || null,
+        description: event.extendedProps?.description || null,
+        reminder_minutes: event.extendedProps?.reminder_minutes || 1440
     };
 
     if (event.id && !event.id.includes('.')) { // Simple check if it's a UUID or temp ID

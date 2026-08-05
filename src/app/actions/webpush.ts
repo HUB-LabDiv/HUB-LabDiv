@@ -62,3 +62,63 @@ export async function unsubscribeFromWebPush(endpoint: string) {
 
     return { success: true };
 }
+
+export interface NotificationPreferences {
+    notify_classes: boolean;
+    notify_exams: boolean;
+    notify_reminders: boolean;
+    notify_tips: boolean;
+}
+
+export async function getNotificationPreferences() {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { success: false, error: 'Não autenticado' };
+
+    const { data, error } = await supabase
+        .from('profiles')
+        .select('notify_classes, notify_exams, notify_reminders, notify_tips')
+        .eq('id', user.id)
+        .single();
+
+    if (error) {
+        return {
+            success: true,
+            data: {
+                notify_classes: true,
+                notify_exams: true,
+                notify_reminders: true,
+                notify_tips: true
+            }
+        };
+    }
+
+    return {
+        success: true,
+        data: {
+            notify_classes: data?.notify_classes ?? true,
+            notify_exams: data?.notify_exams ?? true,
+            notify_reminders: data?.notify_reminders ?? true,
+            notify_tips: data?.notify_tips ?? true
+        }
+    };
+}
+
+export async function updateNotificationPreferences(preferences: Partial<NotificationPreferences>) {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { success: false, error: 'Não autenticado' };
+
+    const { error } = await supabase
+        .from('profiles')
+        .update(preferences)
+        .eq('id', user.id);
+
+    if (error) {
+        return { success: false, error: error.message };
+    }
+
+    return { success: true };
+}

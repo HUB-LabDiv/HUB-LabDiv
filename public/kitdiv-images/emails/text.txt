@@ -1,0 +1,237 @@
+05/08/2026, 16:24
+
+LabDiv | IFUSP - Como escrever Emails
+
+LabDiv | IFUSP
+
+Início
+
+KitDiv (dicas práticas)
+
+Agendar uma mentoria
+
+Como escrever Emails
+Comunicação por e-mail na
+universidade
+Conteúdo traduzido pelo Labdiv de um artigo criado pelo MIT Electrical Engineering and Computer
+Science Communication Lab.
+Writing Emails
+
+Critérios de sucesso
+Um e-mail bem escrito…
+1. Tem uma linha de assunto clara e objetiva
+2. Possui saudação no início e fechamento no final
+3. Usa um nível de formalidade apropriado para a situação
+4. Ou:
+1. Solicita uma ação específica com prazo definido, ou
+2. Comunica informações de forma direta e concisa
+5. É enviado apenas para as pessoas que realmente precisam recebê-lo
+6. Contém apenas as informações necessárias
+
+Identifique seu propósito
+https://sites.google.com/usp.br/labdiv/kitdiv/como-escrever-emails?authuser=0
+
+1/5
+
+05/08/2026, 16:24
+
+LabDiv | IFUSP - Como escrever Emails
+
+Pesquisadores, estudantes e profissionais
+receber
+muitos e-mails
+todos uma
+os dias,
+Iníciocostumam
+KitDiv (dicas
+práticas)
+Agendar
+mentoria
+LabDiv
+|
+IFUSP
+além de mensagens em aplicativos como WhatsApp. Nesse cenário, um e-mail longo ou confuso
+tem grandes chances de ser ignorado.
+Antes de clicar em “enviar”, pergunte:
+Qual é o objetivo deste e-mail?
+O que você espera que o destinatário faça depois de lê-lo?
+Ter clareza sobre isso ajuda a escrever mensagens mais curtas, organizadas e eficientes.
+
+Analise seu público
+Seu público influencia:
+quanto contexto precisa ser explicado;
+qual tom usar;
+quão formal o e-mail deve ser.
+
+Se você incluir pessoas novas na conversa, forneça contexto suficiente para que todos
+entendam rapidamente o assunto.
+Além disso, adapte o tom ao destinatário. Um e-mail para um orientador, professor, secretaria
+ou possível empregador geralmente exige mais formalidade do que uma mensagem para
+colegas próximos de laboratório ou projeto. Em caso de dúvida, prefira um tom mais
+profissional.
+
+Habilidades
+
+Escreva uma linha de assunto clara
+A linha de assunto ajuda o destinatário a entender rapidamente:
+1. sobre o que é o e-mail;
+2. se existe alguma ação necessária.
+Exemplo:
+Pior
+
+Melhor
+
+Finalização do relatório SIICUSP necessária até sexta-feira
+
+SIICUSP: relatório até sexta
+
+O segundo exemplo é mais curto, mais fácil de localizar depois e funciona melhor em
+notificações no celular.
+
+https://sites.google.com/usp.br/labdiv/kitdiv/como-escrever-emails?authuser=0
+
+2/5
+
+05/08/2026, 16:24
+
+LabDiv | IFUSP - Como escrever Emails
+
+Iníciovagas
+KitDiv (dicas práticas)
+LabDivde
+| IFUSP
+Evite linhas
+assunto
+
+Agendar uma mentoria
+
+Assunto: Você viu este artigo
+Corpo: Sobre ressonância magnética
+Linhas de assunto genéricas dificultam encontrar o e-mail depois e reduzem a chance de
+leitura. Prefira assuntos específicos e informativos
+
+Use marcadores para categorizar e-mails
+Marcadores ajudam a organizar mensagens e chamar atenção quando necessário.
+Exemplos:
+[Urgente] Revisão do resumo até amanhã
+[Fapesp] Assinar formulário
+[Reunião] Horário do encontro de sexta
+[MAT0112] Data da P1?
+Evite exagerar em marcações de urgência para que elas não percam o efeito.
+
+Declare ações e prazos claramente
+Quando precisar que alguém faça algo:
+diga exatamente o que precisa ser feito;
+indique quem deve fazer;
+informe o prazo.
+Exemplo:
+João, poderia enviar a versão final das figuras até quinta-feira às 18h?
+Pedidos vagos ou direcionados a grupos muito grandes frequentemente acabam sem resposta.
+Cachorro que tem muitos donos morre de fome.
+
+https://sites.google.com/usp.br/labdiv/kitdiv/como-escrever-emails?authuser=0
+
+3/5
+
+05/08/2026, 16:24
+
+LabDiv | IFUSP - Como escrever Emails
+
+Início KitDiv (dicas
+práticas)
+Agendar uma mentoria
+LabDiv | IFUSP
+Use aberturas
+e fechamentos
+apropriados
+Uma saudação simples ajuda a estabelecer um tom educado e profissional.
+Nível
+
+Aberturas
+
+Fechamentos
+
+Formal
+
+Prezado(a) Prof(a). [nome],
+
+Atenciosamente,
+
+Semi-formal
+
+Olá [nome],
+
+Abraços,
+
+Informal
+
+Oi pessoal,
+
+Até mais,
+
+Em contextos acadêmicos e profissionais no Brasil, mensagens sem saudação podem soar
+bruscas ou impessoais.
+
+Escolha corretamente entre Para, CC e CCO
+Tipo
+
+Destinatários adequados
+
+Para:
+
+Pessoas diretamente responsáveis pela ação ou resposta esperada
+
+CC:
+
+Pessoas que precisam apenas acompanhar a conversa
+
+CCO:
+
+Pessoas cujo endereço deve permanecer oculto dos demais destinatários
+
+Evite colocar muitas pessoas em cópia sem necessidade. Isso aumenta o volume de notificações
+e dificulta identificar quem realmente precisa agir.
+
+Seja breve
+Sempre que possível, cada e-mail deve ter apenas um objetivo principal.
+Para melhorar a leitura:
+use listas;
+destaque informações importantes;
+evite blocos longos de texto;
+prefira frases curtas.
+Se houver muitos assuntos diferentes, considere enviar mensagens separadas.
+
+https://sites.google.com/usp.br/labdiv/kitdiv/como-escrever-emails?authuser=0
+
+4/5
+
+05/08/2026, 16:24
+
+LabDiv | IFUSP - Como escrever Emails
+
+Início KitDiv (dicas práticas)
+IFUSP
+ReviseLabDiv
+antes|de
+enviar
+
+Agendar uma mentoria
+
+Antes de enviar, confira:
+os destinatários;
+erros de digitação;
+datas e horários;
+anexos e links;
+o tom da mensagem.
+Isso é especialmente importante em contatos profissionais, candidaturas, pedidos formais e
+primeiras interações.
+
+Ainda precisa de ajuda? Marque um atendimento com um de nossos mentores.
+LabDiv, Ed. Novo Milênio, Instituto de Física , Universidade de São Paulo , Brasil
+Contato: labdiv@usp.br
+
+https://sites.google.com/usp.br/labdiv/kitdiv/como-escrever-emails?authuser=0
+
+5/5
+
+

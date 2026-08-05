@@ -172,13 +172,14 @@ export function SobreClient({ initialTestimonials, profile, initialTab = 'sobre'
                         </p>
 
                         <div className="flex flex-wrap gap-4">
-                            <a href="#equipe" className="px-6 py-3 bg-brand-blue text-white rounded-2xl font-bold shadow-xl shadow-brand-blue/20 flex items-center gap-2 hover:-translate-y-1 transition-transform">
+                            <a 
+                                href="https://sites.google.com/usp.br/labdiv/people?authuser=0" 
+                                target="_blank" 
+                                rel="noopener noreferrer" 
+                                className="px-6 py-3 bg-brand-blue text-white rounded-2xl font-bold shadow-xl shadow-brand-blue/20 flex items-center gap-2 hover:-translate-y-1 transition-transform"
+                            >
                                 <span className="material-symbols-outlined text-[20px]">groups</span>
                                 Conhecer a Equipe
-                            </a>
-                            <a href="#catalogo" className="px-6 py-3 bg-brand-yellow text-gray-900 rounded-2xl font-bold shadow-xl shadow-brand-yellow/20 flex items-center gap-2 hover:-translate-y-1 transition-transform">
-                                <span className="material-symbols-outlined text-[20px]">auto_awesome</span>
-                                Ver Catálogo Padrão Ouro
                             </a>
                         </div>
                     </div>
@@ -201,7 +202,7 @@ export function SobreClient({ initialTestimonials, profile, initialTab = 'sobre'
                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-8 max-w-sm">
                             Ferramentas exclusivas, templates de design, guias de linguagem e assets audiovisuais da marca do IFUSP para acelerar suas produções.
                         </p>
-                        <a href="https://labdiv.notion.site" target="_blank" rel="noopener noreferrer" className="mt-auto px-6 py-3 bg-brand-red text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform group-hover:shadow-lg group-hover:shadow-brand-red/20">
+                        <a href="https://sites.google.com/usp.br/labdiv/kitdiv?authuser=0" target="_blank" rel="noopener noreferrer" className="mt-auto px-6 py-3 bg-brand-red text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform group-hover:shadow-lg group-hover:shadow-brand-red/20">
                             Explorar Kit Div
                             <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
                         </a>
@@ -219,10 +220,10 @@ export function SobreClient({ initialTestimonials, profile, initialTab = 'sobre'
                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-8 max-w-sm relative z-10">
                             Agende reuniões individuais com Veteranos do Lab-Div para revisar roteiros, artigos, refinar a didática e traçar planos de divulgação para suas pesquisas.
                         </p>
-                        <Link href="/perguntas" className="mt-auto relative z-10 px-6 py-3 bg-brand-blue text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform group-hover:shadow-lg group-hover:shadow-brand-blue/20">
+                        <a href="https://sites.google.com/usp.br/labdiv/schedule?authuser=0" target="_blank" rel="noopener noreferrer" className="mt-auto relative z-10 px-6 py-3 bg-brand-blue text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform group-hover:shadow-lg group-hover:shadow-brand-blue/20">
                             Solicitar Mentoria
                             <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
-                        </Link>
+                        </a>
                     </div>
 
                     {/* Entrar para a Equipe CTA */}
@@ -237,7 +238,7 @@ export function SobreClient({ initialTestimonials, profile, initialTab = 'sobre'
                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-8 max-w-sm relative z-10">
                             Quer contribuir com a divulgação científica do IFUSP? Junte-se ao Lab-Div como colaborador, roteirista, designer ou desenvolvedor. Vamos construir juntos.
                         </p>
-                        <a href="#equipe" className="mt-auto relative z-10 px-6 py-3 bg-brand-yellow text-gray-900 text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform group-hover:shadow-lg group-hover:shadow-brand-yellow/20">
+                        <a href="https://sites.google.com/usp.br/labdiv/joinus?authuser=0" target="_blank" rel="noopener noreferrer" className="mt-auto relative z-10 px-6 py-3 bg-brand-yellow text-gray-900 text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform group-hover:shadow-lg group-hover:shadow-brand-yellow/20">
                             Quero Participar
                             <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
                         </a>
@@ -255,7 +256,7 @@ export function SobreClient({ initialTestimonials, profile, initialTab = 'sobre'
                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-8 max-w-sm relative z-10">
                             Um espaço multimídia do IFUSP disponível para gravações, reuniões e eventos acadêmicos. Agende a utilização e transforme suas ideias em produções profissionais.
                         </p>
-                        <a href="https://labdiv.notion.site" target="_blank" rel="noopener noreferrer" className="mt-auto relative z-10 px-6 py-3 bg-brand-red text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform group-hover:shadow-lg group-hover:shadow-brand-red/20">
+                        <a href="https://sites.google.com/usp.br/labdiv/digitalab?authuser=0" target="_blank" rel="noopener noreferrer" className="mt-auto relative z-10 px-6 py-3 bg-brand-red text-white text-sm font-bold rounded-xl flex items-center gap-2 hover:scale-105 transition-transform group-hover:shadow-lg group-hover:shadow-brand-red/20">
                             Agendar Espaço
                             <span className="material-symbols-outlined text-[16px] group-hover:translate-x-1 transition-transform">arrow_forward</span>
                         </a>

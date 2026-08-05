@@ -12,7 +12,7 @@
  */
 
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { exportUserData } from '@/app/actions/account';
 import { DeleteAccountModal } from '@/components/modals/DeleteAccountModal';
 import { DeleteSpecificDataModal } from '@/components/modals/DeleteSpecificDataModal';
@@ -29,6 +29,7 @@ import { useSwipe } from '@/hooks/useSwipe';
 import Image from 'next/image';
 import { usePersonalizacaoStore } from '@/store/usePersonalizacaoStore';
 import { IFUSPLogo } from '@/components/icons/IFUSPLogo';
+import { getNotificationPreferences, updateNotificationPreferences, NotificationPreferences } from '@/app/actions/webpush';
 
 type ConfigTab = 'conta' | 'armazenamento' | 'personalizacao';
 
@@ -42,6 +43,38 @@ export default function ConfigPage() {
     const [isDeletingData, setIsDeletingData] = useState(false);
     const [isExporting, setIsExporting] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+    const [notifPrefs, setNotifPrefs] = useState<NotificationPreferences>({
+        notify_classes: true,
+        notify_exams: true,
+        notify_reminders: true,
+        notify_tips: true
+    });
+
+    useEffect(() => {
+        async function loadPrefs() {
+            const res = await getNotificationPreferences();
+            if (res.success && res.data) {
+                setNotifPrefs(res.data);
+            }
+        }
+        if (user) {
+            loadPrefs();
+        }
+    }, [user]);
+
+    const handleTogglePref = async (key: keyof NotificationPreferences) => {
+        const newValue = !notifPrefs[key];
+        setNotifPrefs(prev => ({ ...prev, [key]: newValue }));
+        
+        const res = await updateNotificationPreferences({ [key]: newValue });
+        if (res.success) {
+            toast.success('Preferência salva!');
+        } else {
+            toast.error('Erro ao atualizar preferência.');
+            setNotifPrefs(prev => ({ ...prev, [key]: !newValue }));
+        }
+    };
 
     const tabs: ConfigTab[] = ['conta', 'armazenamento', 'personalizacao'];
     const swipeHandlers = useSwipe({
@@ -230,13 +263,13 @@ export default function ConfigPage() {
                                 <h2 className="text-xl font-bold uppercase tracking-tight">Notificações Push</h2>
                             </div>
                             <p className="text-sm text-gray-400">
-                                Receba alertas de aulas, provas e lembretes da aba Ferramentas diretamente no seu dispositivo, mesmo com o HUB fechado.
+                                Ative o dispositivo para receber alertas em tempo real e personalize exatamente quais categorias deseja receber abaixo.
                             </p>
                         </div>
                         {isSupported ? (
                             <button
                                 onClick={isSubscribed ? unsubscribe : subscribe}
-                                className={`flex items-center justify-center gap-2 px-6 py-3 font-bold rounded-xl transition-all active:scale-95 whitespace-nowrap shadow-xl border ${
+                                className={`flex items-center justify-center gap-2 px-6 py-3 font-bold rounded-xl transition-all active:scale-95 whitespace-nowrap shadow-xl border text-xs uppercase tracking-widest ${
                                     isSubscribed 
                                         ? 'bg-[#1E1E1E] text-white border-white/10 hover:bg-white/5' 
                                         : 'bg-brand-blue text-white border-brand-blue/10 hover:bg-brand-blue-hover shadow-brand-blue/20'
@@ -244,13 +277,119 @@ export default function ConfigPage() {
                                 id="btn-push-notifications"
                             >
                                 {isSubscribed ? <BellOff size={18} /> : <BellRing size={18} />}
-                                {isSubscribed ? 'Desativar Notificações' : 'Ativar no Dispositivo'}
+                                {isSubscribed ? 'Dispositivo Ativado (Desativar)' : 'Ativar no Dispositivo'}
                             </button>
                         ) : (
                             <div className="text-xs text-gray-500 font-bold bg-[#1E1E1E] px-4 py-2 rounded-lg border border-white/5">
                                 Não Suportado pelo Navegador
                             </div>
                         )}
+                    </div>
+
+                    {/* CATEGORIAS ESPECÍFICAS DE NOTIFICAÇÃO */}
+                    <div className="border-t border-brand-blue/10 p-6 md:p-8 space-y-4 bg-black/20">
+                        <div>
+                            <h3 className="text-xs font-black uppercase text-brand-blue tracking-widest mb-1">Categorias de Notificação Específicas</h3>
+                            <p className="text-xs text-gray-400">Marque apenas os tipos de alertas que você deseja receber no seu dia a dia.</p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                            {/* 1. AULAS & DISCIPLINAS */}
+                            <div className="p-4 rounded-2xl bg-[#1E1E1E] border border-white/5 flex items-center justify-between gap-4">
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-base">🎓</span>
+                                        <span className="text-xs font-bold text-white uppercase tracking-wide">Aulas & Cronograma</span>
+                                    </div>
+                                    <p className="text-[11px] text-gray-400">Alertas de início de aulas e horários de disciplinas da grade.</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => handleTogglePref('notify_classes')}
+                                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                                        notifPrefs.notify_classes ? 'bg-brand-blue' : 'bg-gray-700'
+                                    }`}
+                                >
+                                    <span
+                                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                            notifPrefs.notify_classes ? 'translate-x-5' : 'translate-x-0'
+                                        }`}
+                                    />
+                                </button>
+                            </div>
+
+                            {/* 2. PROVAS & EXAMES */}
+                            <div className="p-4 rounded-2xl bg-[#1E1E1E] border border-white/5 flex items-center justify-between gap-4">
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-base">📝</span>
+                                        <span className="text-xs font-bold text-white uppercase tracking-wide">Provas & Avaliações</span>
+                                    </div>
+                                    <p className="text-[11px] text-gray-400">Alertas e lembretes de provas e entregas acadêmicas.</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => handleTogglePref('notify_exams')}
+                                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                                        notifPrefs.notify_exams ? 'bg-brand-blue' : 'bg-gray-700'
+                                    }`}
+                                >
+                                    <span
+                                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                            notifPrefs.notify_exams ? 'translate-x-5' : 'translate-x-0'
+                                        }`}
+                                    />
+                                </button>
+                            </div>
+
+                            {/* 3. LEMBRETES MANUAIS & COMPROMISSOS */}
+                            <div className="p-4 rounded-2xl bg-[#1E1E1E] border border-white/5 flex items-center justify-between gap-4">
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-base">🔔</span>
+                                        <span className="text-xs font-bold text-white uppercase tracking-wide">Lembretes & Eventos</span>
+                                    </div>
+                                    <p className="text-[11px] text-gray-400">Alertas de eventos pessoais, saúde, estágio e obrigações.</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => handleTogglePref('notify_reminders')}
+                                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                                        notifPrefs.notify_reminders ? 'bg-brand-blue' : 'bg-gray-700'
+                                    }`}
+                                >
+                                    <span
+                                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                            notifPrefs.notify_reminders ? 'translate-x-5' : 'translate-x-0'
+                                        }`}
+                                    />
+                                </button>
+                            </div>
+
+                            {/* 4. DICAS & COMUNICADOS INSTITUCIONAIS */}
+                            <div className="p-4 rounded-2xl bg-[#1E1E1E] border border-white/5 flex items-center justify-between gap-4">
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-base">💡</span>
+                                        <span className="text-xs font-bold text-white uppercase tracking-wide">Dicas & Avisos (IFUSP)</span>
+                                    </div>
+                                    <p className="text-[11px] text-gray-400">Conselhos do IFUSP 101, novidades e avisos da comunidade.</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => handleTogglePref('notify_tips')}
+                                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                                        notifPrefs.notify_tips ? 'bg-brand-blue' : 'bg-gray-700'
+                                    }`}
+                                >
+                                    <span
+                                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                            notifPrefs.notify_tips ? 'translate-x-5' : 'translate-x-0'
+                                        }`}
+                                    />
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </section>
 

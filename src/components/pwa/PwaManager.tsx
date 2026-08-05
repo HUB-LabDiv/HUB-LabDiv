@@ -24,15 +24,30 @@ export function PwaManager() {
     usePushNotifications();
 
     useEffect(() => {
+        // Registra o Service Worker do PWA para suporte offline de assets e rotas
+        if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js').then((reg) => {
+                console.log('✅ [PWA] Service Worker ativo:', reg.scope);
+            }).catch((err) => {
+                console.warn('⚠️ [PWA] Falha ao registrar Service Worker:', err);
+            });
+        }
+
         // Intercepta Deep Links do Widget (ex: hublabdiv://trilhas)
         const listener = App.addListener('appUrlOpen', (event) => {
             const urlString = event.url;
             if (urlString.startsWith('hublabdiv://')) {
                 const path = urlString.replace('hublabdiv://', '');
                 
-                // Mapeia os caminhos
-                if (path === 'lab-pessoal') window.location.href = '/lab-pessoal';
+                // Mapeia todos os atalhos dos Widgets
+                if (path === 'comunidade') window.location.href = '/comunidade';
+                else if (path === 'gcif') window.location.href = '/gcif';
+                else if (path === 'enviar') window.location.href = '/enviar';
+                else if (path === 'ferramentas') window.location.href = '/ferramentas';
+                else if (path === 'menu') window.location.href = '/';
+                else if (path === 'lab-pessoal') window.location.href = '/autor';
                 else if (path === 'trilhas') window.location.href = '/ferramentas/trilhas';
+                else window.location.href = `/${path}`;
             }
         });
 

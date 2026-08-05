@@ -35,7 +35,29 @@
             <meta-data android:name="android.support.FILE_PROVIDER_PATHS" android:resource="@xml/file_paths" />
         </provider>
 
-        <!-- Widget Receiver -->
+        <!-- 1. Widget Navigation Pill 4x1 -->
+        <receiver
+            android:name=".HubPillWidgetProvider"
+            android:exported="true"
+            android:label="HUB LabDiv - Barra de Navegação (4x1)">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/hub_pill_widget_info" />
+        </receiver>
+
+        <!-- 2. Widget Profile Avatar 1x1 -->
+        <receiver
+            android:name=".HubProfileWidgetProvider"
+            android:exported="true"
+            android:label="HUB LabDiv - Perfil &amp; Lab (1x1)">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/hub_profile_widget_info" />
+        </receiver>
+
+        <!-- Legacy Widget Fallback -->
         <receiver android:name=".HubWidgetProvider" android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />

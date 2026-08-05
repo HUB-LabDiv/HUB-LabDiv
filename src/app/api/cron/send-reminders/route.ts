@@ -36,7 +36,7 @@ export async function GET(request: Request) {
 
         const { data: events, error: eventsError } = await supabase
             .from('user_calendar_events')
-            .select('id, user_id, title, start_time, reminder_minutes, description')
+            .select('id, user_id, title, type, start_time, reminder_minutes, description')
             .eq('is_notified', false)
             .gte('start_time', now.toISOString())
             .lte('start_time', maxFuture);
@@ -52,6 +52,24 @@ export async function GET(request: Request) {
 
             // If it's time to trigger (or past the trigger time but before the event)
             if (now >= triggerTime && now <= startTime) {
+                // Fetch user profile notification preferences
+                const { data: userProfile } = await supabase
+                    .from('profiles')
+                    .select('enable_push_notifications, notify_classes, notify_exams, notify_reminders, notify_tips')
+                    .eq('id', event.user_id)
+                    .single();
+
+                if (userProfile && userProfile.enable_push_notifications === false) {
+                    continue;
+                }
+
+                const evType = (event.type || '').toLowerCase();
+                if (userProfile) {
+                    if ((evType.includes('aula') || evType.includes('estudo')) && userProfile.notify_classes === false) continue;
+                    if (evType.includes('prova') && userProfile.notify_exams === false) continue;
+                    if ((evType.includes('custom') || evType.includes('saude') || evType.includes('lazer') || evType.includes('trabalho')) && userProfile.notify_reminders === false) continue;
+                }
+
                 // Fetch user's subscriptions
                 const { data: subscriptions, error: subError } = await supabase
                     .from('web_push_subscriptions')
