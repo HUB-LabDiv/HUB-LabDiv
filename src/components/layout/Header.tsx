@@ -133,7 +133,7 @@ export function Header() {
                                     <span className="text-gray-900 dark:text-white uppercase">HUB</span>
                                     <span className="text-gradient-brand font-black">LabDiv</span>
                                     <div className="flex flex-col items-center opacity-80">
-                                        <span className="text-[6px] sm:text-[8px] font-black px-1 sm:px-1.5 py-0.5 rounded bg-brand-blue/10 dark:bg-white/10 text-brand-blue dark:text-gray-400/80 ml-1">V3.2.0</span>
+                                        <span className="text-[6px] sm:text-[8px] font-black px-1 sm:px-1.5 py-0.5 rounded bg-brand-blue/10 dark:bg-white/10 text-brand-blue dark:text-gray-400/80 ml-1">V6.0.0</span>
                                         <span className="text-[6px] sm:text-[8px] font-black uppercase tracking-tighter ml-1 text-brand-blue dark:text-gray-500">(BETA)</span>
                                     </div>
                                 </div>

@@ -43,7 +43,7 @@ export function Footer() {
                                     <span className="font-bukra font-bold text-xl text-gray-900 dark:text-white uppercase leading-tight">HUB</span>
                                     <span className="font-bukra font-black text-xl text-gradient-brand leading-tight">LabDiv</span>
                                     <div className="flex flex-col items-center opacity-90">
-                                        <span className="text-[7px] font-black px-1.5 py-0.5 rounded bg-brand-blue/10 dark:bg-white/10 text-brand-blue dark:text-gray-400 ml-1">V3.2.0</span>
+                                        <span className="text-[7px] font-black px-1.5 py-0.5 rounded bg-brand-blue/10 dark:bg-white/10 text-brand-blue dark:text-gray-400 ml-1">V6.0.0</span>
                                         <span className="text-[8px] font-black uppercase tracking-tighter ml-1 text-brand-blue dark:text-gray-500">(BETA)</span>
                                     </div>
                                 </div>
@@ -195,7 +195,7 @@ export function Footer() {
                     </div>
                     <div className="flex items-center gap-6">
                         <div className="flex flex-col items-center">
-                            <span className="text-[10px] font-bold text-white/40 border border-white/20 px-2 py-0.5 rounded font-bukra">V3.2.0</span>
+                            <span className="text-[10px] font-bold text-white/40 border border-white/20 px-2 py-0.5 rounded font-bukra">V6.0.0</span>
                             <span className="text-[8px] font-bold text-white/30 uppercase tracking-widest mt-0.5">(BETA)</span>
                         </div>
                         <div className="flex gap-4">
