@@ -48,7 +48,9 @@ export default function ConfigPage() {
         notify_classes: true,
         notify_exams: true,
         notify_reminders: true,
-        notify_tips: true
+        notify_tips: true,
+        notify_follows_posts: true,
+        notify_dms: true
     });
 
     useEffect(() => {
