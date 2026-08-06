@@ -6,6 +6,7 @@
     android:targetCellHeight="1"
     android:updatePeriodMillis="0"
     android:initialLayout="@layout/hub_profile_widget"
-    android:resizeMode="none"
+    android:previewLayout="@layout/hub_profile_widget"
     android:previewImage="@drawable/widget_preview_profile"
+    android:resizeMode="none"
     android:widgetCategory="home_screen" />
