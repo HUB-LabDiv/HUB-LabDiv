@@ -74,3 +74,8 @@ VALUES (
     username = EXCLUDED.username;
 
 
+
+-- 5. Atualizações em Profiles (Novas Preferências de Notificação)
+ALTER TABLE public.profiles 
+ADD COLUMN IF NOT EXISTS notify_follows_posts BOOLEAN DEFAULT true,
+ADD COLUMN IF NOT EXISTS notify_dms BOOLEAN DEFAULT true;

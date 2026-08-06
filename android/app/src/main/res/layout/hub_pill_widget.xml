@@ -21,11 +21,10 @@
         android:clickable="true"
         android:focusable="true">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="👥"
-            android:textSize="16sp" />
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_widget_group" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -48,11 +47,10 @@
         android:clickable="true"
         android:focusable="true">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🎯"
-            android:textSize="16sp" />
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_widget_target" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -81,11 +79,10 @@
             android:background="@drawable/widget_rocket_btn"
             android:gravity="center">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="🚀"
-                android:textSize="18sp" />
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_widget_rocket" />
         </LinearLayout>
 
         <TextView
@@ -109,44 +106,16 @@
         android:clickable="true"
         android:focusable="true">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="🛠️"
-            android:textSize="16sp" />
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_widget_tool" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="FERRAMENTAS"
-            android:textColor="#CBD5E1"
-            android:textSize="8sp"
-            android:textStyle="bold"
-            android:layout_marginTop="2dp" />
-    </LinearLayout>
-
-    <!-- 5. Mais -->
-    <LinearLayout
-        android:id="@+id/btn_mais"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:clickable="true"
-        android:focusable="true">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="➕"
-            android:textSize="16sp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="MAIS"
-            android:textColor="#CBD5E1"
+            android:textColor="#FFCC00"
             android:textSize="8sp"
             android:textStyle="bold"
             android:layout_marginTop="2dp" />

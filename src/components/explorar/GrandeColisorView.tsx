@@ -281,7 +281,27 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                             </div>
                             <h3 className="text-2xl font-black italic uppercase mb-4 text-brand-blue">Lab-Div</h3>
                             <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">Comunicação científica inspirada no MIT. Tutoria entre pares, escrita e design.</p>
-                            <Link href="/arquivo-labdiv" className="mt-auto px-8 py-4 bg-brand-blue text-white rounded-2xl font-black uppercase tracking-widest text-[10px] text-center group-hover:scale-105 transition-transform">Explorar Acervo</Link>
+                            <Link href="/iniciativas/labdiv" className="mt-auto px-8 py-4 bg-brand-blue text-white rounded-2xl font-black uppercase tracking-widest text-[10px] text-center group-hover:scale-105 transition-transform">Explorar Acervo</Link>
+                        </div>
+
+                        {/* HUB LabDiv Card */}
+                        <div className="snap-center shrink-0 w-[300px] md:w-[400px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-brand-yellow/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none relative overflow-hidden group flex flex-col">
+                            <div className="size-20 bg-brand-yellow/10 rounded-3xl p-4 flex items-center justify-center text-brand-yellow mb-8">
+                                <span className="material-symbols-outlined text-4xl">hub</span>
+                            </div>
+                            <h3 className="text-2xl font-black italic uppercase mb-4 text-brand-yellow">HUB LabDiv</h3>
+                            <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">Entenda o funcionamento da nossa plataforma. Missão, ecossistema e comunidade.</p>
+                            <Link href="/iniciativas/hub" className="mt-auto px-8 py-4 border border-brand-yellow/20 text-brand-yellow rounded-2xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-yellow/10 transition-colors">Como Funciona</Link>
+                        </div>
+
+                        {/* Show da Física Card */}
+                        <div className="snap-center shrink-0 w-[300px] md:w-[400px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-10 border border-brand-red/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none relative overflow-hidden group flex flex-col">
+                            <div className="size-20 bg-brand-red/10 rounded-3xl p-4 flex items-center justify-center text-brand-red mb-8">
+                                <span className="material-symbols-outlined text-4xl">experiment</span>
+                            </div>
+                            <h3 className="text-2xl font-black italic uppercase mb-4 text-brand-red">Show da Física</h3>
+                            <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">Demonstrações de fenômenos físicos de maneira lúdica e interativa para todos.</p>
+                            <Link href="/iniciativas/show-da-fisica" className="mt-auto px-8 py-4 bg-brand-red text-white rounded-2xl font-black uppercase tracking-widest text-[10px] text-center group-hover:scale-105 transition-transform">Conhecer o Show</Link>
                         </div>
 
                         {/* Boletim Supernova */}

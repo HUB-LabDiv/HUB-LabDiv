@@ -68,6 +68,8 @@ export interface NotificationPreferences {
     notify_exams: boolean;
     notify_reminders: boolean;
     notify_tips: boolean;
+    notify_follows_posts: boolean;
+    notify_dms: boolean;
 }
 
 export async function getNotificationPreferences() {
@@ -78,7 +80,7 @@ export async function getNotificationPreferences() {
 
     const { data, error } = await supabase
         .from('profiles')
-        .select('notify_classes, notify_exams, notify_reminders, notify_tips')
+        .select('notify_classes, notify_exams, notify_reminders, notify_tips, notify_follows_posts, notify_dms')
         .eq('id', user.id)
         .single();
 
@@ -89,7 +91,9 @@ export async function getNotificationPreferences() {
                 notify_classes: true,
                 notify_exams: true,
                 notify_reminders: true,
-                notify_tips: true
+                notify_tips: true,
+                notify_follows_posts: true,
+                notify_dms: true
             }
         };
     }
@@ -100,7 +104,9 @@ export async function getNotificationPreferences() {
             notify_classes: data?.notify_classes ?? true,
             notify_exams: data?.notify_exams ?? true,
             notify_reminders: data?.notify_reminders ?? true,
-            notify_tips: data?.notify_tips ?? true
+            notify_tips: data?.notify_tips ?? true,
+            notify_follows_posts: data?.notify_follows_posts ?? true,
+            notify_dms: data?.notify_dms ?? true
         }
     };
 }

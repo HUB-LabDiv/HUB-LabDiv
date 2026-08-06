@@ -45,11 +45,10 @@ import { useNavigationStore } from '@/store/useNavigationStore';
 const mainLinks = [
     { name: 'Comunidade', href: '/', icon: <span className="material-symbols-outlined text-2xl">groups</span>, color: 'brand-red' },
     { name: 'GCIF', href: '/gcif', icon: <ColisorIcon className="w-6 h-6" />, color: 'brand-blue' },
-    { name: 'Sobre', href: '/sobre', icon: <span className="material-symbols-outlined text-2xl">info</span>, color: 'brand-yellow' },
 ];
 
 const categoryLinks = [
-    { name: 'Ferramentas Acadêmicas', href: '/ferramentas', icon: <span className="material-symbols-outlined text-2xl">construction</span>, color: 'brand-red', role: 'aluno_usp' },
+    { name: 'Ferramentas Acadêmicas', href: '/ferramentas', icon: <span className="material-symbols-outlined text-2xl">construction</span>, color: 'brand-yellow', role: 'aluno_usp' },
     { name: 'Como Ingressar', href: '/ingresso', icon: <span className="material-symbols-outlined text-2xl">login</span>, color: 'brand-yellow', role: 'curioso' },
     { name: 'Observatório de Pesquisa', href: '/arena', icon: <span className="material-symbols-outlined text-2xl">visibility</span>, color: 'brand-red', role: 'pesquisador' },
 ];

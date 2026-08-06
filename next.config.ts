@@ -30,7 +30,7 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ['lucide-react', 'framer-motion', 'recharts'],
+    optimizePackageImports: ['lucide-react', 'recharts'],
   },
   serverExternalPackages: ['puppeteer-core', '@sparticuz/chromium', 'nodemailer'],
   outputFileTracingIncludes: {

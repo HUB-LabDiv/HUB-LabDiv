@@ -69,9 +69,9 @@ export const metadata: Metadata = {
   },
   manifest: "/manifest.json",
   icons: {
-    icon: '/icone-HUBLabDiv-bgscience.png',
-    shortcut: '/icone-HUBLabDiv-bgscience.png',
-    apple: '/icone-HUBLabDiv-bgscience.png',
+    icon: '/icone-HUBLabDiv-circular.svg',
+    shortcut: '/icone-HUBLabDiv-circular.svg',
+    apple: '/icone-HUBLabDiv-circular.svg',
   },
   appleWebApp: {
     capable: true,

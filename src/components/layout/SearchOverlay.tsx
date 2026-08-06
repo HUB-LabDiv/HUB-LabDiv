@@ -107,7 +107,7 @@ const navRoutes = [
     { label: 'Meu Laboratório / Perfil', href: '/lab', icon: 'science', color: 'text-brand-red', desc: 'XP, conquistas e painel pessoal' },
     { label: 'Comunidade & Interações', href: '/', icon: 'forum', color: 'text-brand-red', desc: 'Mural público e networking' },
     { label: 'Submeter ou Editar Wiki', href: '/interacao', icon: 'edit_square', color: 'text-brand-blue-accent', desc: 'Colabore criando novas páginas' },
-    { label: 'Ferramentas', href: '/ferramentas', icon: 'construction', color: 'text-brand-blue-accent', desc: 'Grade, Trilhas e sincronização Júpiter' },
+    { label: 'Ferramentas', href: '/ferramentas', icon: 'construction', color: 'text-brand-yellow', desc: 'Grade, Trilhas e sincronização Júpiter' },
 ];
 
 interface SearchOverlayProps {

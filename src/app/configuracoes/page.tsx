@@ -389,6 +389,53 @@ export default function ConfigPage() {
                                     />
                                 </button>
                             </div>
+                            {/* 5. POSTS DE PERFIS SEGUIDOS */}
+                            <div className="p-4 rounded-2xl bg-[#1E1E1E] border border-white/5 flex items-center justify-between gap-4">
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-base">📢</span>
+                                        <span className="text-xs font-bold text-white uppercase tracking-wide">Novos posts de pessoas que sigo</span>
+                                    </div>
+                                    <p className="text-[11px] text-gray-400">Receba notificações quando perfis que você segue fizerem novas publicações.</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => handleTogglePref('notify_follows_posts')}
+                                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                                        notifPrefs.notify_follows_posts ? 'bg-brand-blue' : 'bg-gray-700'
+                                    }`}
+                                >
+                                    <span
+                                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                            notifPrefs.notify_follows_posts ? 'translate-x-5' : 'translate-x-0'
+                                        }`}
+                                    />
+                                </button>
+                            </div>
+
+                            {/* 6. MENSAGENS E INTERAÇÕES */}
+                            <div className="p-4 rounded-2xl bg-[#1E1E1E] border border-white/5 flex items-center justify-between gap-4">
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-base">💬</span>
+                                        <span className="text-xs font-bold text-white uppercase tracking-wide">Mensagens e interações (DMs)</span>
+                                    </div>
+                                    <p className="text-[11px] text-gray-400">Seja notificado sobre mensagens diretas e outras interações sociais.</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => handleTogglePref('notify_dms')}
+                                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
+                                        notifPrefs.notify_dms ? 'bg-brand-blue' : 'bg-gray-700'
+                                    }`}
+                                >
+                                    <span
+                                        className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
+                                            notifPrefs.notify_dms ? 'translate-x-5' : 'translate-x-0'
+                                        }`}
+                                    />
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </section>

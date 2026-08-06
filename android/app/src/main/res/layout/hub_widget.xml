@@ -3,8 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:background="@drawable/widget_bg"
-    android:padding="12dp"
+    android:background="@drawable/widget_pill_bg"
+    android:padding="16dp"
     android:gravity="center_horizontal">
 
     <!-- Header / Branding -->
@@ -13,7 +13,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingBottom="6dp">
+        android:paddingBottom="12dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -44,9 +44,9 @@
             android:layout_width="0dp"
             android:layout_height="44dp"
             android:layout_weight="1"
-            android:text="⚡ Lab Pessoal"
+            android:text="Lab Pessoal"
             android:textColor="#FFFFFF"
-            android:textSize="13sp"
+            android:textSize="12sp"
             android:textStyle="bold"
             android:background="@drawable/widget_btn_lab"
             android:backgroundTint="@null"
@@ -57,9 +57,9 @@
             android:layout_width="0dp"
             android:layout_height="44dp"
             android:layout_weight="1"
-            android:text="🎯 Grade &amp; Trilhas"
-            android:textColor="#121212"
-            android:textSize="13sp"
+            android:text="Grade &amp; Trilhas"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
             android:textStyle="bold"
             android:background="@drawable/widget_btn_trilhas"
             android:backgroundTint="@null"

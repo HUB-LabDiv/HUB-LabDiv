@@ -110,10 +110,10 @@ export function Header() {
     return (
         <>
             <header
-                className="fixed left-0 right-0 h-16 bg-white/30 dark:bg-background-dark/30 backdrop-blur-md border-b border-white/20 dark:border-white/10 z-50 transition-colors pwa-header shadow-sm"
-                style={{ top: 'env(safe-area-inset-top, 0px)' }}
+                className="fixed top-0 left-0 right-0 bg-white/30 dark:bg-background-dark/30 backdrop-blur-md border-b border-white/20 dark:border-white/10 z-50 transition-colors pwa-header shadow-sm"
+                style={{ paddingTop: 'env(safe-area-inset-top, 0px)' }}
             >
-                <div className="max-w-[1800px] mx-auto h-full px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-4">
+                <div className="max-w-[1800px] mx-auto h-16 px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-4">
                     {/* Left: Branding */}
                     <Link href="/" className="flex items-center gap-1.5 sm:gap-3 group shrink-0" onClick={closeAll}>
                         <div className="flex items-center gap-1.5 sm:gap-3">
@@ -192,8 +192,7 @@ export function Header() {
                             {[
                                 { label: 'Comunidade', href: '/', color: '#F14343' },
                                 { label: 'GCIF', href: '/gcif', color: '#1F9FCF' },
-                                { label: 'Sobre', href: '/sobre', color: '#FFCC00' },
-                                { label: 'Ferramentas', href: '/ferramentas', color: '#F14343' },
+                                { label: 'Ferramentas', href: '/ferramentas', color: '#FFCC00' },
                                 { label: 'Interações', href: '/interacao', color: '#1F9FCF' },
                             ].map((tab) => {
                                 const isActive = pathname === tab.href || (tab.href !== '/' && pathname.startsWith(tab.href));

@@ -7,30 +7,37 @@
     android:clickable="true"
     android:focusable="true">
 
-    <!-- Avatar Circle Outer Ring -->
     <RelativeLayout
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:background="@drawable/widget_profile_ring"
-        android:padding="3dp"
-        android:gravity="center">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
 
-        <ImageView
-            android:id="@+id/img_avatar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_stat_name"
-            android:scaleType="centerCrop" />
+        <!-- Avatar Circle Outer Ring -->
+        <RelativeLayout
+            android:id="@+id/avatar_container"
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            android:background="@drawable/widget_profile_ring"
+            android:padding="3dp"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/img_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/ic_stat_name"
+                android:scaleType="centerCrop" />
+        </RelativeLayout>
+
+        <!-- Online Status Badge (Bottom Right) -->
+        <View
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignBottom="@id/avatar_container"
+            android:layout_alignEnd="@id/avatar_container"
+            android:layout_marginEnd="2dp"
+            android:layout_marginBottom="2dp"
+            android:background="@drawable/widget_status_badge" />
     </RelativeLayout>
-
-    <!-- Online Status Badge (Bottom Right) -->
-    <View
-        android:layout_width="14dp"
-        android:layout_height="14dp"
-        android:layout_alignBottom="@id/btn_profile"
-        android:layout_alignEnd="@id/btn_profile"
-        android:layout_marginEnd="4dp"
-        android:layout_marginBottom="4dp"
-        android:background="@drawable/widget_status_badge" />
 
 </RelativeLayout>
