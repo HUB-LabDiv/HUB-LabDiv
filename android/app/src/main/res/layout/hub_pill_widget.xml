@@ -24,14 +24,15 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_widget_group" />
+            android:src="@drawable/ic_widget_group"
+            android:contentDescription="@null" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="COMUNIDADE"
             android:textColor="#F14343"
-            android:textSize="8sp"
+            android:textSize="10sp"
             android:textStyle="bold"
             android:layout_marginTop="2dp" />
     </LinearLayout>
@@ -50,14 +51,15 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_widget_target" />
+            android:src="@drawable/ic_widget_target"
+            android:contentDescription="@null" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="GCIF"
             android:textColor="#CBD5E1"
-            android:textSize="8sp"
+            android:textSize="10sp"
             android:textStyle="bold"
             android:layout_marginTop="2dp" />
     </LinearLayout>
@@ -82,7 +84,8 @@
             <ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
-                android:src="@drawable/ic_widget_rocket" />
+                android:src="@drawable/ic_widget_rocket"
+                android:contentDescription="@null" />
         </LinearLayout>
 
         <TextView
@@ -90,7 +93,7 @@
             android:layout_height="wrap_content"
             android:text="LANÇAR À ÓRBITA"
             android:textColor="#3B82F6"
-            android:textSize="7sp"
+            android:textSize="10sp"
             android:textStyle="bold"
             android:layout_marginTop="2dp" />
     </LinearLayout>
@@ -109,14 +112,15 @@
         <ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/ic_widget_tool" />
+            android:src="@drawable/ic_widget_tool"
+            android:contentDescription="@null" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="FERRAMENTAS"
             android:textColor="#FFCC00"
-            android:textSize="8sp"
+            android:textSize="10sp"
             android:textStyle="bold"
             android:layout_marginTop="2dp" />
     </LinearLayout>

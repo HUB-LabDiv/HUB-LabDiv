@@ -26,18 +26,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:src="@drawable/ic_stat_name"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:contentDescription="@null" />
         </RelativeLayout>
 
         <!-- Online Status Badge (Bottom Right) -->
-        <View
+        <ImageView
             android:layout_width="16dp"
             android:layout_height="16dp"
             android:layout_alignBottom="@id/avatar_container"
             android:layout_alignEnd="@id/avatar_container"
             android:layout_marginEnd="2dp"
             android:layout_marginBottom="2dp"
-            android:background="@drawable/widget_status_badge" />
+            android:background="@drawable/widget_status_badge"
+            android:contentDescription="@null" />
     </RelativeLayout>
 
 </RelativeLayout>

@@ -39,12 +39,6 @@ public class HubPillWidgetProvider extends AppWidgetProvider {
             PendingIntent piFerramentas = PendingIntent.getActivity(context, 13, intentFerramentas, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
             views.setOnClickPendingIntent(R.id.btn_ferramentas, piFerramentas);
 
-            // 5. Mais
-            Intent intentMais = new Intent(Intent.ACTION_VIEW, Uri.parse("hublabdiv://menu"));
-            intentMais.setPackage(context.getPackageName());
-            PendingIntent piMais = PendingIntent.getActivity(context, 14, intentMais, PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);
-            views.setOnClickPendingIntent(R.id.btn_mais, piMais);
-
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }
     }
