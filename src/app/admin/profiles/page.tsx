@@ -48,7 +48,7 @@ interface Profile {
     major?: string;
     available_to_mentor: boolean;
     seeking_mentor: boolean;
-    usp_proof_url?: string;
+    avatar_url?: string;
     pending_edits?: any;
     hobbies_gallery?: any[];
 }
@@ -69,8 +69,19 @@ export default function ProfileApprovalPage() {
     const [editingProfileId, setEditingProfileId] = useState<string | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+    // Verifica se o usuário logado é admin (não apenas moderador)
+    const isAdmin = typeof document !== 'undefined'
+        ? document.cookie.includes('admin_bypass=admin')
+        : false;
+    const [isAdminRole, setIsAdminRole] = useState(false);
+
     const fetchProfiles = async () => {
         setIsLoading(true);
+
+        // Determina o role do usuário logado via cookie
+        const adminBypass = document.cookie.split('; ').find(r => r.startsWith('admin_bypass='))?.split('=')[1];
+        setIsAdminRole(adminBypass === 'admin');
+
         const status = await getAutoApproveStatus();
         if (status.active) {
             setAutoApproveActive(true);
@@ -366,8 +377,13 @@ export default function ProfileApprovalPage() {
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight leading-none mb-1">{profile.full_name || 'Usuário Sem Nome'}</h3>
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-2 flex-wrap">
                                                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{profile.email}</span>
+                                                {profile.username && (
+                                                    <span className="px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20">
+                                                        @ {profile.username}{profile.use_nickname ? ' ✓ visível' : ' (oculto)'}
+                                                    </span>
+                                                )}
                                                 <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest ${profile.is_usp_member ? 'bg-brand-blue/20 text-brand-blue' : 'bg-gray-800 text-gray-500'}`}>
                                                     {profile.is_usp_member ? 'Membro USP' : 'Curioso'}
                                                 </span>
@@ -385,6 +401,34 @@ export default function ProfileApprovalPage() {
                                             </div>
 
                                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                {/* Diff de foto de perfil */}
+                                                {profile.pending_edits.pending_avatar_url && (
+                                                    <div className="col-span-full bg-white/5 p-4 rounded-2xl border border-brand-green/20 space-y-3">
+                                                        <p className="text-[10px] font-black uppercase tracking-widest text-[#0055ff] flex items-center gap-2">
+                                                            <span className="material-symbols-outlined text-[14px]">photo_camera</span>
+                                                            Foto de Perfil
+                                                        </p>
+                                                        <div className="grid grid-cols-2 gap-6">
+                                                            <div className="space-y-2 flex flex-col items-center">
+                                                                <span className="text-[8px] uppercase text-gray-500 font-bold">Foto Atual</span>
+                                                                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/10 bg-white/5 flex items-center justify-center">
+                                                                    {profile.avatar_url ? (
+                                                                        <img src={profile.avatar_url} alt="Avatar atual" className="w-full h-full object-cover" />
+                                                                    ) : (
+                                                                        <span className="text-3xl font-black text-gray-500 uppercase">{profile.full_name?.charAt(0) || '?'}</span>
+                                                                    )}
+                                                                </div>
+                                                            </div>
+                                                            <div className="space-y-2 flex flex-col items-center">
+                                                                <span className="text-[8px] uppercase text-brand-green font-bold">Nova Foto</span>
+                                                                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-brand-green/40 bg-brand-green/5 flex items-center justify-center">
+                                                                    <img src={profile.pending_edits.pending_avatar_url} alt="Nova foto" className="w-full h-full object-cover" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                )}
+
                                                 {renderDiff(profile.bio, profile.pending_edits.bio, 'Biografia')}
                                                 {renderDiff(profile.username, profile.pending_edits.username, 'Apelido (Nickname)')}
                                                 {renderDiff(profile.institute, profile.pending_edits.institute, 'Instituto / Afiliação')}
@@ -422,28 +466,26 @@ export default function ProfileApprovalPage() {
                                             </div>
                                         </div>
                                     ) : (
-                                        <div className="p-6 bg-brand-blue/5 rounded-[24px] border border-brand-blue/10 border-dashed text-center">
-                                            <p className="text-[10px] font-black text-brand-blue uppercase tracking-[0.3em]">Novo Cadastro Detectado</p>
-                                            <p className="text-[9px] text-gray-500 mt-1 uppercase">Revise as informações básicas acima antes de aprovar.</p>
+                                        <div className="p-6 bg-brand-blue/5 rounded-[24px] border border-brand-blue/10 border-dashed space-y-4">
+                                            <div className="text-center">
+                                                <p className="text-[10px] font-black text-brand-blue uppercase tracking-[0.3em]">Novo Cadastro Detectado</p>
+                                                <p className="text-[9px] text-gray-500 mt-1 uppercase">Revise as informações básicas acima antes de aprovar.</p>
+                                            </div>
+                                            {/* Apelido no novo cadastro */}
+                                            {profile.username && (
+                                                <div className="flex items-center justify-between bg-white/5 px-4 py-3 rounded-2xl border border-brand-yellow/20">
+                                                    <div className="flex flex-col">
+                                                        <span className="text-[10px] font-black uppercase tracking-widest text-brand-yellow">Apelido (Nickname)</span>
+                                                        <span className="text-xs text-white font-medium mt-0.5">@{profile.username}</span>
+                                                    </div>
+                                                    <span className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${profile.use_nickname ? 'bg-brand-blue text-white' : 'bg-gray-800 text-gray-400'}`}>
+                                                        Exibir: {profile.use_nickname ? 'SIM' : 'NÃO'}
+                                                    </span>
+                                                </div>
+                                            )}
                                         </div>
                                     )}
 
-                                </div>
-
-                                <div className="flex flex-col gap-6 shrink-0 lg:w-64 border-t lg:border-t-0 lg:border-l border-white/5 pt-6 lg:pt-0 lg:pl-8">
-                                    <div className="space-y-4">
-                                        <div className="flex items-center gap-2 pb-4 border-b border-white/5">
-                                            <span className="material-symbols-outlined text-brand-yellow text-[20px]">admin_panel_settings</span>
-                                            <h4 className="text-[10px] font-black uppercase tracking-widest text-brand-yellow">Moderação Completa</h4>
-                                        </div>
-                                        <button
-                                            onClick={() => handleEditProfile(profile.id)}
-                                            className="w-full bg-background-dark hover:bg-brand-yellow/10 border border-white/10 hover:border-brand-yellow/50 rounded-xl p-3 text-sm text-brand-yellow font-black uppercase tracking-widest transition-all flex items-center justify-center gap-2"
-                                        >
-                                            <Edit className="w-4 h-4" />
-                                            Editar Perfil
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
 

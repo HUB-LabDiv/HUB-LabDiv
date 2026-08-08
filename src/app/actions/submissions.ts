@@ -418,11 +418,13 @@ export const getUsersInOrbit = unstable_cache(
             .eq('review_status', 'approved')
             .eq('is_visible', true)
             .not('email', 'ilike', 'bento.teste%') // Esconde o perfil de teste
+            .order('is_labdiv', { ascending: false })
+            .order('created_at', { ascending: false })
             .limit(limit);
 
         return profiles?.map(p => ({
             id: p.id,
-            name: (p.use_nickname && p.username) ? p.username : (p.full_name || 'Usuário'),
+            name: (p.use_nickname && p.username) ? p.username : (p.full_name || p.username || 'Usuário'),
             handle: p.email ? `@${p.email.split('@')[0]}` : '@usuario',
             avatar: p.avatar_url,
             xp: p.xp,
@@ -430,7 +432,7 @@ export const getUsersInOrbit = unstable_cache(
             is_labdiv: p.is_labdiv
         })) || [];
     },
-    ['users-in-orbit-v3'],
+    ['users-in-orbit-v4'],
     { revalidate: 60 }
 );
 

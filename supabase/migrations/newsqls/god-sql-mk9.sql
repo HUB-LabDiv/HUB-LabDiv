@@ -40,42 +40,51 @@ ADD COLUMN IF NOT EXISTS reminder_minutes INTEGER DEFAULT 1440,
 ADD COLUMN IF NOT EXISTS is_notified BOOLEAN DEFAULT false,
 ADD COLUMN IF NOT EXISTS days_of_week INTEGER[];
 
--- 4. Perfil Oficial do LabDiv e Posts Iniciais do KitDiv
 
--- 4.1 Criação do Usuário LabDiv na tabela auth.users (ID fixo gerado para consistência)
-INSERT INTO auth.users (id, email, raw_user_meta_data, raw_app_meta_data, aud, role, encrypted_password)
-VALUES (
-    '1a8d1b11-d1b1-4f11-9a11-1a8d1b11d1b1',
-    'hublabdiv@gmail.com',
-    '{"name": "LabDiv"}',
-    '{"provider": "email", "providers": ["email"]}',
-    'authenticated',
-    'authenticated',
-    crypt('labdiv-tecla56', gen_salt('bf'))
-) ON CONFLICT (id) DO UPDATE SET 
-    email = EXCLUDED.email,
-    encrypted_password = EXCLUDED.encrypted_password;
-
--- 4.2 Criação do Perfil LabDiv
-INSERT INTO public.profiles (id, email, username, full_name, avatar_url, bio, role, is_public)
-VALUES (
-    '1a8d1b11-d1b1-4f11-9a11-1a8d1b11d1b1',
-    'hublabdiv@gmail.com',
-    'LabDiv',
-    'LabDiv',
-    '/labdiv-logo.png',
-    'Perfil oficial do LabDiv. Acompanhe nossas dicas de comunicação científica, atividades e materiais de apoio. Acesse nosso site: https://sites.google.com/usp.br/labdiv/início?authuser=0',
-    'admin',
-    true
-) ON CONFLICT (id) DO UPDATE SET
-    avatar_url = EXCLUDED.avatar_url,
-    bio = EXCLUDED.bio,
-    role = EXCLUDED.role,
-    username = EXCLUDED.username;
-
-
+-- 4. Perfil LabDiv — será criado manualmente pelo fluxo de cadastro normal.
+-- (Seções 4.1, 4.2, 4.3 removidas)
 
 -- 5. Atualizações em Profiles (Novas Preferências de Notificação)
 ALTER TABLE public.profiles 
 ADD COLUMN IF NOT EXISTS notify_follows_posts BOOLEAN DEFAULT true,
 ADD COLUMN IF NOT EXISTS notify_dms BOOLEAN DEFAULT true;
+
+-- 6. Storage bucket para avatars de perfil
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+    'avatars',
+    'avatars',
+    true,
+    5242880, -- 5MB
+    ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+) ON CONFLICT (id) DO UPDATE SET
+    public = true,
+    file_size_limit = 5242880,
+    allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+
+-- Política: usuário autenticado pode fazer upload na sua própria pasta
+DROP POLICY IF EXISTS "Usuário faz upload do próprio avatar" ON storage.objects;
+CREATE POLICY "Usuário faz upload do próprio avatar"
+    ON storage.objects FOR INSERT
+    TO authenticated
+    WITH CHECK (
+        bucket_id = 'avatars' AND
+        (storage.foldername(name))[1] = auth.uid()::text
+    );
+
+-- Política: usuário pode atualizar/deletar o próprio avatar
+DROP POLICY IF EXISTS "Usuário gerencia o próprio avatar" ON storage.objects;
+CREATE POLICY "Usuário gerencia o próprio avatar"
+    ON storage.objects FOR UPDATE
+    TO authenticated
+    USING (
+        bucket_id = 'avatars' AND
+        (storage.foldername(name))[1] = auth.uid()::text
+    );
+
+-- Política: leitura pública dos avatars
+DROP POLICY IF EXISTS "Avatars são públicos" ON storage.objects;
+CREATE POLICY "Avatars são públicos"
+    ON storage.objects FOR SELECT
+    TO public
+    USING (bucket_id = 'avatars');

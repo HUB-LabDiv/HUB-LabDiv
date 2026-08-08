@@ -1,3 +1,4 @@
+cat << 'INNEREOF' > src/app/enviar/components/blocks/LinkBlock.tsx
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
  * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
@@ -26,7 +27,6 @@ interface LinkBlockProps {
 }
 
 const BUTTON_STYLES = [
-    { value: 'solid-black', label: 'Sólido Preto' },
     { value: 'solid-yellow', label: 'Sólido Amarelo' },
     { value: 'solid-blue', label: 'Sólido Azul' },
     { value: 'solid-red', label: 'Sólido Vermelho' },
@@ -85,111 +85,85 @@ export default function LinkBlock({ block, isActive }: LinkBlockProps) {
     };
 
     const getButtonStyle = (style: string, isPreview = false, forceHoverState = false) => {
-        const baseClasses = `relative inline-flex items-center justify-center ${isPreview ? 'gap-1.5 px-3 py-2 rounded-lg text-[10px]' : 'gap-3 px-8 py-4 rounded-2xl group'} transition-all duration-300 overflow-hidden font-bold tracking-wide w-full`;
+        const baseClasses = `group relative inline-flex items-center justify-center ${isPreview ? 'gap-1.5 px-3 py-2 rounded-lg text-[10px]' : 'gap-3 px-8 py-4 rounded-2xl'} transition-all duration-300 overflow-hidden font-bold tracking-wide w-full`;
         
-        let classes = '';
+        // Se for forceHoverState (selecionado no preview), forçamos as classes do hover permanentemente
         switch (style) {
-            case 'solid-black':
-                if (forceHoverState) classes = `${baseClasses} bg-[#252525] text-white shadow-[0_10px_30px_rgba(0,0,0,0.6)] border border-white/20 -translate-y-1`;
-                else classes = `${baseClasses} bg-[#151515] text-white shadow-[0_10px_30px_rgba(0,0,0,0.4)] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] hover:bg-[#252525] border border-white/10`;
-                break;
             case 'solid-yellow':
-                if (forceHoverState) classes = `${baseClasses} bg-brand-yellow/90 text-gray-900 shadow-[0_10px_30px_rgba(255,204,0,0.4)] border border-brand-yellow -translate-y-1`;
-                else classes = `${baseClasses} bg-brand-yellow text-gray-900 shadow-[0_10px_30px_rgba(255,204,0,0.2)] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,204,0,0.4)] border border-brand-yellow`;
-                break;
+                return `${baseClasses} bg-brand-yellow text-gray-900 shadow-[0_10px_30px_rgba(255,204,0,0.2)] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,204,0,0.4)]`;
             case 'solid-blue':
-                if (forceHoverState) classes = `${baseClasses} bg-brand-blue/90 text-white shadow-[0_10px_30px_rgba(15,71,128,0.4)] border border-brand-blue -translate-y-1`;
-                else classes = `${baseClasses} bg-brand-blue text-white shadow-[0_10px_30px_rgba(15,71,128,0.2)] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(15,71,128,0.4)] border border-brand-blue`;
-                break;
+                return `${baseClasses} bg-brand-blue text-white shadow-[0_10px_30px_rgba(15,71,128,0.2)] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(15,71,128,0.4)]`;
             case 'solid-red':
-                if (forceHoverState) classes = `${baseClasses} bg-brand-red/90 text-white shadow-[0_10px_30px_rgba(241,67,67,0.4)] border border-brand-red -translate-y-1`;
-                else classes = `${baseClasses} bg-brand-red text-white shadow-[0_10px_30px_rgba(241,67,67,0.2)] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(241,67,67,0.4)] border border-brand-red`;
-                break;
+                return `${baseClasses} bg-brand-red text-white shadow-[0_10px_30px_rgba(241,67,67,0.2)] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(241,67,67,0.4)]`;
             
             case 'hover-yellow':
-                if (forceHoverState) classes = `${baseClasses} bg-brand-yellow text-gray-900 border border-brand-yellow shadow-[0_10px_30px_rgba(255,204,0,0.4)] -translate-y-1`;
-                else classes = `${baseClasses} bg-[#1E1E1E] text-white hover:text-gray-900 hover:bg-brand-yellow border border-white/10 hover:border-brand-yellow hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,204,0,0.3)]`;
-                break;
+                if (forceHoverState) return `${baseClasses} bg-brand-yellow text-gray-900 border border-brand-yellow shadow-[0_10px_30px_rgba(255,204,0,0.4)]`;
+                return `${baseClasses} bg-[#1E1E1E] text-white hover:text-gray-900 hover:bg-brand-yellow border border-white/10 hover:border-brand-yellow hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,204,0,0.3)]`;
             
             case 'hover-blue':
-                if (forceHoverState) classes = `${baseClasses} bg-brand-blue text-white border border-brand-blue shadow-[0_10px_30px_rgba(15,71,128,0.4)] -translate-y-1`;
-                else classes = `${baseClasses} bg-[#1E1E1E] text-white hover:bg-brand-blue border border-white/10 hover:border-brand-blue hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(15,71,128,0.3)]`;
-                break;
+                if (forceHoverState) return `${baseClasses} bg-brand-blue text-white border border-brand-blue shadow-[0_10px_30px_rgba(15,71,128,0.4)]`;
+                return `${baseClasses} bg-[#1E1E1E] text-white hover:bg-brand-blue border border-white/10 hover:border-brand-blue hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(15,71,128,0.3)]`;
             
             case 'hover-red':
-                if (forceHoverState) classes = `${baseClasses} bg-brand-red text-white border border-brand-red shadow-[0_10px_30px_rgba(241,67,67,0.4)] -translate-y-1`;
-                else classes = `${baseClasses} bg-[#1E1E1E] text-white hover:bg-brand-red border border-white/10 hover:border-brand-red hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(241,67,67,0.3)]`;
-                break;
+                if (forceHoverState) return `${baseClasses} bg-brand-red text-white border border-brand-red shadow-[0_10px_30px_rgba(241,67,67,0.4)]`;
+                return `${baseClasses} bg-[#1E1E1E] text-white hover:bg-brand-red border border-white/10 hover:border-brand-red hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(241,67,67,0.3)]`;
             
             case 'hover-gradient':
-                if (forceHoverState) classes = `${baseClasses} bg-gradient-to-r from-brand-blue via-brand-red to-brand-yellow text-white border-0 shadow-[0_10px_30px_rgba(255,255,255,0.3)] -translate-y-1`;
-                else classes = `${baseClasses} bg-[#1E1E1E] text-white hover:bg-gradient-to-r hover:from-brand-blue hover:via-brand-red hover:to-brand-yellow border border-white/10 hover:border-0 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,255,255,0.2)]`;
-                break;
+                if (forceHoverState) return `${baseClasses} bg-gradient-to-r from-brand-blue via-brand-red to-brand-yellow text-white border border-transparent shadow-[0_10px_30px_rgba(255,255,255,0.3)]`;
+                return `${baseClasses} bg-[#1E1E1E] text-white hover:bg-gradient-to-r hover:from-brand-blue hover:via-brand-red hover:to-brand-yellow border border-white/10 hover:border-transparent hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,255,255,0.2)]`;
             
             case 'gradient':
-                if (forceHoverState) classes = `${baseClasses} bg-gradient-to-r from-brand-blue via-brand-red to-brand-yellow text-white border-0 opacity-90 shadow-[0_10px_30px_rgba(15,71,128,0.4)] -translate-y-1`;
-                else classes = `${baseClasses} bg-gradient-to-r from-brand-blue via-brand-red to-brand-yellow text-white border-0 hover:opacity-90 shadow-[0_10px_30px_rgba(15,71,128,0.3)] hover:-translate-y-1`;
-                break;
+                return `${baseClasses} bg-gradient-to-r from-brand-blue via-brand-red to-brand-yellow text-white border border-transparent hover:opacity-90 shadow-[0_10px_30px_rgba(15,71,128,0.3)] hover:-translate-y-1`;
             
             case 'border-yellow':
-                if (forceHoverState) classes = `${baseClasses} bg-brand-yellow/10 text-brand-yellow border-2 border-brand-yellow shadow-[0_10px_30px_rgba(255,204,0,0.3)] -translate-y-1`;
-                else classes = `${baseClasses} bg-[#1E1E1E] text-brand-yellow border-2 border-brand-yellow hover:bg-brand-yellow/10 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,204,0,0.2)]`;
-                break;
+                if (forceHoverState) return `${baseClasses} bg-brand-yellow/10 text-brand-yellow border-2 border-brand-yellow shadow-[0_10px_30px_rgba(255,204,0,0.3)]`;
+                return `${baseClasses} bg-[#1E1E1E] text-brand-yellow border-2 border-brand-yellow hover:bg-brand-yellow/10 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,204,0,0.2)]`;
             
             case 'border-blue':
-                if (forceHoverState) classes = `${baseClasses} bg-brand-blue/10 text-brand-blue border-2 border-brand-blue shadow-[0_10px_30px_rgba(15,71,128,0.3)] -translate-y-1`;
-                else classes = `${baseClasses} bg-[#1E1E1E] text-brand-blue border-2 border-brand-blue hover:bg-brand-blue/10 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(15,71,128,0.2)]`;
-                break;
+                if (forceHoverState) return `${baseClasses} bg-brand-blue/10 text-brand-blue border-2 border-brand-blue shadow-[0_10px_30px_rgba(15,71,128,0.3)]`;
+                return `${baseClasses} bg-[#1E1E1E] text-brand-blue border-2 border-brand-blue hover:bg-brand-blue/10 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(15,71,128,0.2)]`;
             
             case 'border-red':
-                if (forceHoverState) classes = `${baseClasses} bg-brand-red/10 text-brand-red border-2 border-brand-red shadow-[0_10px_30px_rgba(241,67,67,0.3)] -translate-y-1`;
-                else classes = `${baseClasses} bg-[#1E1E1E] text-brand-red border-2 border-brand-red hover:bg-brand-red/10 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(241,67,67,0.2)]`;
-                break;
+                if (forceHoverState) return `${baseClasses} bg-brand-red/10 text-brand-red border-2 border-brand-red shadow-[0_10px_30px_rgba(241,67,67,0.3)]`;
+                return `${baseClasses} bg-[#1E1E1E] text-brand-red border-2 border-brand-red hover:bg-brand-red/10 hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(241,67,67,0.2)]`;
             
             default:
-                if (forceHoverState) classes = `${baseClasses} bg-[#252525] text-white border border-white/20 -translate-y-1`;
-                else classes = `${baseClasses} bg-[#1E1E1E] text-white border border-white/10 hover:-translate-y-1 hover:bg-[#252525] hover:border-white/20`;
+                return `${baseClasses} bg-[#1E1E1E] text-white border border-white/10 hover:-translate-y-1`;
         }
-
-        if (isPreview) {
-            // Em modo preview, removemos todos os hover: para que o botão interno fique 100% estático,
-            // reagindo apenas ao clique (que ativa o forceHoverState).
-            classes = classes.replace(/hover:[^\s]+/g, '');
-        }
-        return classes;
     };
 
-    const getIconClasses = (style: string, forceHoverState = false, isPreview = false) => {
-        let classes = "text-gray-400 group-hover:text-white";
-        
+    const getIconClasses = (style: string, forceHoverState = false) => {
         if (style.startsWith('solid-') && style !== 'solid-yellow') {
-            classes = "text-white";
-        } else if (style === 'solid-yellow') {
-            classes = "text-gray-900";
-        } else if (style === 'hover-yellow') {
-            if (forceHoverState) classes = "text-gray-900";
-            else classes = "text-brand-yellow hover:text-gray-900";
-        } else if (style === 'hover-blue') {
-            if (forceHoverState) classes = "text-white";
-            else classes = "text-brand-blue hover:text-white";
-        } else if (style === 'hover-red') {
-            if (forceHoverState) classes = "text-white";
-            else classes = "text-brand-red hover:text-white";
-        } else if (style === 'hover-gradient' || style === 'gradient') {
-            classes = "text-white";
-        } else if (style === 'border-yellow') {
-            classes = "text-brand-yellow";
-        } else if (style === 'border-blue') {
-            classes = "text-brand-blue";
-        } else if (style === 'border-red') {
-            classes = "text-brand-red";
+            return "text-white";
         }
-
-        if (isPreview) {
-            classes = classes.replace(/hover:[^\s]+/g, '');
-            classes = classes.replace(/group-hover:[^\s]+/g, '');
+        if (style === 'solid-yellow') {
+            return "text-gray-900";
         }
-        return classes;
+        if (style === 'hover-yellow') {
+            if (forceHoverState) return "text-gray-900";
+            return "text-brand-yellow group-hover:text-gray-900";
+        }
+        if (style === 'hover-blue') {
+            if (forceHoverState) return "text-white";
+            return "text-brand-blue group-hover:text-white";
+        }
+        if (style === 'hover-red') {
+            if (forceHoverState) return "text-white";
+            return "text-brand-red group-hover:text-white";
+        }
+        if (style === 'hover-gradient' || style === 'gradient') {
+            return "text-white";
+        }
+        if (style === 'border-yellow') {
+            return "text-brand-yellow";
+        }
+        if (style === 'border-blue') {
+            return "text-brand-blue";
+        }
+        if (style === 'border-red') {
+            return "text-brand-red";
+        }
+        return "text-gray-400 group-hover:text-white";
     };
 
     return (
@@ -230,39 +204,32 @@ export default function LinkBlock({ block, isActive }: LinkBlockProps) {
                                     </div>
                                 </div>
                                 
-                                <div className="flex flex-col gap-3 mt-2">
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                                        <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Escolha o Estilo (Cor)</label>
-                                        <div className="text-[9px] text-gray-400 font-medium bg-black/30 px-2 py-1.5 rounded border border-gray-800 flex items-center gap-1.5">
-                                            <span className="material-symbols-outlined text-[12px] text-brand-yellow">touch_app</span>
-                                            <span className="opacity-90">Ao selecionar, veja o efeito final</span>
-                                        </div>
-                                    </div>
+                                <div className="flex flex-col gap-2 mt-2">
+                                    <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Escolha o Estilo (Cor)</label>
                                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                                         {BUTTON_STYLES.map(style => {
                                             const isSelected = btn.style === style.value;
-                                            // Sempre forceHoverState = true quando selecionado, 
-                                            // assim o botão fica "travado" no estado ativado.
-                                            const forceHover = isSelected;
+                                            // Se for um botão de hover e estiver selecionado, aplicamos o hover fake
+                                            const forceHover = isSelected && style.value.includes('hover');
                                             
                                             return (
                                                 <button
                                                     key={style.value}
                                                     onClick={() => updateButtonField(btn.id, 'style', style.value)}
                                                     className={`
-                                                        relative flex flex-col items-center justify-center p-3 rounded-xl border transition-all overflow-hidden
-                                                        ${isSelected ? 'border-brand-blue bg-brand-blue/10 shadow-[0_0_15px_rgba(15,71,128,0.3)] ring-1 ring-brand-blue' : 'border-gray-800 bg-background-dark'}
+                                                        relative flex flex-col items-center justify-center p-3 rounded-xl border transition-all overflow-hidden group
+                                                        ${isSelected ? 'border-brand-blue bg-brand-blue/10 shadow-[0_0_15px_rgba(15,71,128,0.3)] ring-1 ring-brand-blue' : 'border-gray-800 bg-background-dark hover:border-gray-600'}
                                                     `}
                                                 >
                                                     {/* Mini preview */}
                                                     <div className="w-full pointer-events-none mb-3">
+                                                        {/* Passamos isSelected como forceHoverState */}
                                                         <div className={getButtonStyle(style.value, true, forceHover)}>
-                                                            <span className={`material-symbols-outlined text-[14px] ${getIconClasses(style.value, forceHover, true)}`}>hub</span>
-                                                            {/* Forçamos a cor explicitamente no span para evitar qualquer sumiço */}
-                                                            <span className={`truncate max-w-[80px] ${style.value.includes('yellow') && (style.value === 'solid-yellow' || (style.value === 'hover-yellow' && forceHover)) ? 'text-gray-900' : ''}`}>{btn.label || 'Botão'}</span>
+                                                            <span className={`material-symbols-outlined text-[14px] ${getIconClasses(style.value, forceHover)}`}>hub</span>
+                                                            <span className="truncate">Preview</span>
                                                         </div>
                                                     </div>
-                                                    <span className={`text-[10px] font-bold mt-auto text-center uppercase tracking-wider ${isSelected ? 'text-brand-blue' : 'text-gray-400'}`}>
+                                                    <span className={`text-[10px] font-bold mt-auto text-center uppercase tracking-wider ${isSelected ? 'text-brand-blue' : 'text-gray-400 group-hover:text-gray-300'}`}>
                                                         {style.label}
                                                     </span>
                                                 </button>
@@ -304,7 +271,7 @@ export default function LinkBlock({ block, isActive }: LinkBlockProps) {
                                 ) : (
                                     <span className={`material-symbols-outlined text-[20px] transition-colors ${getIconClasses(btn.style)}`}>open_in_new</span>
                                 )}
-                                <span>{btn.label || 'Botão'}</span>
+                                <span>{btn.label}</span>
                             </a>
                         );
                     })}
@@ -317,3 +284,4 @@ export default function LinkBlock({ block, isActive }: LinkBlockProps) {
         </div>
     );
 }
+INNEREOF

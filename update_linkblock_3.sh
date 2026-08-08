@@ -1,3 +1,4 @@
+cat << 'INNEREOF' > src/app/enviar/components/blocks/LinkBlock.tsx
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
  * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
@@ -26,7 +27,6 @@ interface LinkBlockProps {
 }
 
 const BUTTON_STYLES = [
-    { value: 'solid-black', label: 'Sólido Preto' },
     { value: 'solid-yellow', label: 'Sólido Amarelo' },
     { value: 'solid-blue', label: 'Sólido Azul' },
     { value: 'solid-red', label: 'Sólido Vermelho' },
@@ -89,21 +89,14 @@ export default function LinkBlock({ block, isActive }: LinkBlockProps) {
         
         let classes = '';
         switch (style) {
-            case 'solid-black':
-                if (forceHoverState) classes = `${baseClasses} bg-[#252525] text-white shadow-[0_10px_30px_rgba(0,0,0,0.6)] border border-white/20 -translate-y-1`;
-                else classes = `${baseClasses} bg-[#151515] text-white shadow-[0_10px_30px_rgba(0,0,0,0.4)] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(0,0,0,0.6)] hover:bg-[#252525] border border-white/10`;
-                break;
             case 'solid-yellow':
-                if (forceHoverState) classes = `${baseClasses} bg-brand-yellow/90 text-gray-900 shadow-[0_10px_30px_rgba(255,204,0,0.4)] border border-brand-yellow -translate-y-1`;
-                else classes = `${baseClasses} bg-brand-yellow text-gray-900 shadow-[0_10px_30px_rgba(255,204,0,0.2)] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,204,0,0.4)] border border-brand-yellow`;
+                classes = `${baseClasses} bg-brand-yellow text-gray-900 shadow-[0_10px_30px_rgba(255,204,0,0.2)] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(255,204,0,0.4)] border border-brand-yellow`;
                 break;
             case 'solid-blue':
-                if (forceHoverState) classes = `${baseClasses} bg-brand-blue/90 text-white shadow-[0_10px_30px_rgba(15,71,128,0.4)] border border-brand-blue -translate-y-1`;
-                else classes = `${baseClasses} bg-brand-blue text-white shadow-[0_10px_30px_rgba(15,71,128,0.2)] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(15,71,128,0.4)] border border-brand-blue`;
+                classes = `${baseClasses} bg-brand-blue text-white shadow-[0_10px_30px_rgba(15,71,128,0.2)] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(15,71,128,0.4)] border border-brand-blue`;
                 break;
             case 'solid-red':
-                if (forceHoverState) classes = `${baseClasses} bg-brand-red/90 text-white shadow-[0_10px_30px_rgba(241,67,67,0.4)] border border-brand-red -translate-y-1`;
-                else classes = `${baseClasses} bg-brand-red text-white shadow-[0_10px_30px_rgba(241,67,67,0.2)] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(241,67,67,0.4)] border border-brand-red`;
+                classes = `${baseClasses} bg-brand-red text-white shadow-[0_10px_30px_rgba(241,67,67,0.2)] hover:-translate-y-1 hover:shadow-[0_10px_30px_rgba(241,67,67,0.4)] border border-brand-red`;
                 break;
             
             case 'hover-yellow':
@@ -127,8 +120,7 @@ export default function LinkBlock({ block, isActive }: LinkBlockProps) {
                 break;
             
             case 'gradient':
-                if (forceHoverState) classes = `${baseClasses} bg-gradient-to-r from-brand-blue via-brand-red to-brand-yellow text-white border-0 opacity-90 shadow-[0_10px_30px_rgba(15,71,128,0.4)] -translate-y-1`;
-                else classes = `${baseClasses} bg-gradient-to-r from-brand-blue via-brand-red to-brand-yellow text-white border-0 hover:opacity-90 shadow-[0_10px_30px_rgba(15,71,128,0.3)] hover:-translate-y-1`;
+                classes = `${baseClasses} bg-gradient-to-r from-brand-blue via-brand-red to-brand-yellow text-white border-0 hover:opacity-90 shadow-[0_10px_30px_rgba(15,71,128,0.3)] hover:-translate-y-1`;
                 break;
             
             case 'border-yellow':
@@ -147,14 +139,11 @@ export default function LinkBlock({ block, isActive }: LinkBlockProps) {
                 break;
             
             default:
-                if (forceHoverState) classes = `${baseClasses} bg-[#252525] text-white border border-white/20 -translate-y-1`;
-                else classes = `${baseClasses} bg-[#1E1E1E] text-white border border-white/10 hover:-translate-y-1 hover:bg-[#252525] hover:border-white/20`;
+                classes = `${baseClasses} bg-[#1E1E1E] text-white border border-white/10 hover:-translate-y-1`;
         }
 
         if (isPreview) {
-            // Em modo preview, removemos todos os hover: para que o botão interno fique 100% estático,
-            // reagindo apenas ao clique (que ativa o forceHoverState).
-            classes = classes.replace(/hover:[^\s]+/g, '');
+            classes = classes.replaceAll('hover:', 'group-hover:');
         }
         return classes;
     };
@@ -186,8 +175,7 @@ export default function LinkBlock({ block, isActive }: LinkBlockProps) {
         }
 
         if (isPreview) {
-            classes = classes.replace(/hover:[^\s]+/g, '');
-            classes = classes.replace(/group-hover:[^\s]+/g, '');
+            classes = classes.replaceAll('hover:', 'group-hover:');
         }
         return classes;
     };
@@ -235,34 +223,32 @@ export default function LinkBlock({ block, isActive }: LinkBlockProps) {
                                         <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Escolha o Estilo (Cor)</label>
                                         <div className="text-[9px] text-gray-400 font-medium bg-black/30 px-2 py-1.5 rounded border border-gray-800 flex items-center gap-1.5">
                                             <span className="material-symbols-outlined text-[12px] text-brand-yellow">touch_app</span>
-                                            <span className="opacity-90">Ao selecionar, veja o efeito final</span>
+                                            <span className="opacity-90">Hover = Como fica ao passar o mouse por cima</span>
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                                         {BUTTON_STYLES.map(style => {
                                             const isSelected = btn.style === style.value;
-                                            // Sempre forceHoverState = true quando selecionado, 
-                                            // assim o botão fica "travado" no estado ativado.
-                                            const forceHover = isSelected;
+                                            // Se for um botão de hover e estiver selecionado, aplicamos o hover fake
+                                            const forceHover = isSelected && style.value.includes('hover');
                                             
                                             return (
                                                 <button
                                                     key={style.value}
                                                     onClick={() => updateButtonField(btn.id, 'style', style.value)}
                                                     className={`
-                                                        relative flex flex-col items-center justify-center p-3 rounded-xl border transition-all overflow-hidden
-                                                        ${isSelected ? 'border-brand-blue bg-brand-blue/10 shadow-[0_0_15px_rgba(15,71,128,0.3)] ring-1 ring-brand-blue' : 'border-gray-800 bg-background-dark'}
+                                                        relative flex flex-col items-center justify-center p-3 rounded-xl border transition-all overflow-hidden group
+                                                        ${isSelected ? 'border-brand-blue bg-brand-blue/10 shadow-[0_0_15px_rgba(15,71,128,0.3)] ring-1 ring-brand-blue' : 'border-gray-800 bg-background-dark hover:border-gray-600 hover:bg-[#151515]'}
                                                     `}
                                                 >
                                                     {/* Mini preview */}
                                                     <div className="w-full pointer-events-none mb-3">
                                                         <div className={getButtonStyle(style.value, true, forceHover)}>
                                                             <span className={`material-symbols-outlined text-[14px] ${getIconClasses(style.value, forceHover, true)}`}>hub</span>
-                                                            {/* Forçamos a cor explicitamente no span para evitar qualquer sumiço */}
-                                                            <span className={`truncate max-w-[80px] ${style.value.includes('yellow') && (style.value === 'solid-yellow' || (style.value === 'hover-yellow' && forceHover)) ? 'text-gray-900' : ''}`}>{btn.label || 'Botão'}</span>
+                                                            <span className="truncate max-w-[80px]">{btn.label || 'Botão'}</span>
                                                         </div>
                                                     </div>
-                                                    <span className={`text-[10px] font-bold mt-auto text-center uppercase tracking-wider ${isSelected ? 'text-brand-blue' : 'text-gray-400'}`}>
+                                                    <span className={`text-[10px] font-bold mt-auto text-center uppercase tracking-wider ${isSelected ? 'text-brand-blue' : 'text-gray-400 group-hover:text-gray-300'}`}>
                                                         {style.label}
                                                     </span>
                                                 </button>
@@ -317,3 +303,4 @@ export default function LinkBlock({ block, isActive }: LinkBlockProps) {
         </div>
     );
 }
+INNEREOF

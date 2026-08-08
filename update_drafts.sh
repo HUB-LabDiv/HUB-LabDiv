@@ -1,3 +1,4 @@
+cat << 'INNEREOF' > src/app/enviar/components/DraftsMenu.tsx
 import React, { useRef, useState } from 'react';
 import { useDraftsStore, Draft } from '@/store/useDraftsStore';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
@@ -193,3 +194,4 @@ export function DraftsMenu() {
         </div>
     );
 }
+INNEREOF

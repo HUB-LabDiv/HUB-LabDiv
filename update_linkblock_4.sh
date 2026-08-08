@@ -1,3 +1,4 @@
+cat << 'INNEREOF' > src/app/enviar/components/blocks/LinkBlock.tsx
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
  * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
@@ -317,3 +318,4 @@ export default function LinkBlock({ block, isActive }: LinkBlockProps) {
         </div>
     );
 }
+INNEREOF

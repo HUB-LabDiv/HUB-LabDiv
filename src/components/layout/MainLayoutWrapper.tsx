@@ -60,24 +60,27 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = false, f
         }
     }, [institution]);
 
+    // Larguras das sidebars para calcular o padding do conteúdo
+    const leftWidth = isSidebarCollapsed ? 80 : 280;
+    const rightWidth = isRightSidebarCollapsed ? 80 : 320;
+
     return (
         <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col overflow-x-clip">
             {!hideHeader && <Header />}
 
             {!focusMode ? (
-                <div className="flex-1 w-full max-w-[1920px] mx-auto flex justify-center">
-                    {/* Left Sidebar (Desktop) */}
-                    <aside className={`hidden xl:block ${isSidebarCollapsed ? 'w-20' : 'w-[280px]'} shrink-0 border-r border-gray-200 dark:border-gray-800 bg-transparent sticky top-20 mt-20 h-[calc(100vh-5rem)] self-start overflow-y-auto hidden-scrollbar transition-all duration-300`}>
+                <div className="flex-1 w-full flex relative">
+                    {/* Left Sidebar — fixada na borda esquerda do viewport */}
+                    <aside
+                        className={`hidden xl:flex flex-col fixed left-0 top-20 ${isSidebarCollapsed ? 'w-20' : 'w-[280px]'} h-[calc(100vh-5rem)] border-r border-gray-200 dark:border-gray-800 bg-transparent overflow-y-auto hidden-scrollbar transition-all duration-300 z-30`}
+                    >
                         <SidebarLeft userId={userId} />
                     </aside>
 
-                    {/* Content Area */}
-                    <main className={`flex-1 min-w-0 ${fullWidth ? 'max-w-full' : wide ? 'max-w-[1400px]' : 'max-w-[800px]'} w-full px-4 sm:px-6 pt-20 pb-8 lg:pb-12 transition-all duration-500`}>
-                        {children}
-                    </main>
-
-                    {/* Right Sidebar */}
-                    <aside className={`hidden lg:block ${isRightSidebarCollapsed ? 'w-20' : 'w-[320px]'} shrink-0 border-l border-gray-200 dark:border-gray-800 bg-transparent sticky top-20 mt-20 h-[calc(100vh-5rem)] overflow-y-auto hidden-scrollbar self-start transition-all duration-300`}>
+                    {/* Right Sidebar — fixada na borda direita do viewport */}
+                    <aside
+                        className={`hidden lg:flex flex-col fixed right-0 top-20 ${isRightSidebarCollapsed ? 'w-20' : 'w-[320px]'} h-[calc(100vh-5rem)] border-l border-gray-200 dark:border-gray-800 bg-transparent overflow-y-auto hidden-scrollbar transition-all duration-300 z-30`}
+                    >
                         <div className={`p-4 ${isRightSidebarCollapsed ? 'flex flex-col items-center' : 'lg:pt-8'}`}>
                             {/* Toggle Button for Right Sidebar */}
                             <div className={`flex items-center ${isRightSidebarCollapsed ? 'justify-center' : 'justify-start'} mb-4`}>
@@ -97,6 +100,19 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = false, f
                             )}
                         </div>
                     </aside>
+
+                    {/* Content Area — com padding lateral dinâmico para não sobrepor as sidebars */}
+                    <main
+                        className={`flex-1 min-w-0 w-full pt-20 pb-8 lg:pb-12 transition-all duration-300`}
+                        style={{
+                            paddingLeft: `calc(${leftWidth}px + 1.5rem)`,
+                            paddingRight: `calc(${rightWidth}px + 1.5rem)`,
+                        }}
+                    >
+                        <div className={`mx-auto w-full ${fullWidth ? 'max-w-full' : wide ? 'max-w-[1400px]' : 'max-w-[800px]'} px-2`}>
+                            {children}
+                        </div>
+                    </main>
                 </div>
             ) : (
                 <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">

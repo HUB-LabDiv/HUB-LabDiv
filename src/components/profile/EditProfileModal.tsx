@@ -109,6 +109,60 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
     const [selectedNetworkToAdd, setSelectedNetworkToAdd] = useState('');
     const [activeNetworks, setActiveNetworks] = useState<string[]>([]);
 
+    // Avatar upload state
+    const [avatarFile, setAvatarFile] = useState<File | null>(null);
+    const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+    const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
+    const avatarInputRef = React.useRef<HTMLInputElement>(null);
+
+    // Comprime a imagem no browser via Canvas API antes do upload
+    const compressImage = (file: File, maxSizePx = 512, quality = 0.8): Promise<File> => {
+        return new Promise((resolve, reject) => {
+            const img = new Image();
+            const objectUrl = URL.createObjectURL(file);
+            img.onload = () => {
+                URL.revokeObjectURL(objectUrl);
+                const scale = Math.min(1, maxSizePx / Math.max(img.width, img.height));
+                const w = Math.round(img.width * scale);
+                const h = Math.round(img.height * scale);
+                const canvas = document.createElement('canvas');
+                canvas.width = w;
+                canvas.height = h;
+                const ctx = canvas.getContext('2d');
+                if (!ctx) return reject(new Error('Canvas context unavailable'));
+                ctx.drawImage(img, 0, 0, w, h);
+                canvas.toBlob(
+                    (blob) => {
+                        if (!blob) return reject(new Error('Falha ao comprimir imagem'));
+                        resolve(new File([blob], 'avatar.webp', { type: 'image/webp' }));
+                    },
+                    'image/webp',
+                    quality
+                );
+            };
+            img.onerror = reject;
+            img.src = objectUrl;
+        });
+    };
+
+    const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        if (file.size > 10 * 1024 * 1024) {
+            toast.error('Imagem muito grande. Máximo: 10MB');
+            return;
+        }
+        try {
+            const compressed = await compressImage(file);
+            setAvatarFile(compressed);
+            setAvatarPreview(URL.createObjectURL(compressed));
+        } catch {
+            // Fallback sem compressão
+            setAvatarFile(file);
+            setAvatarPreview(URL.createObjectURL(file));
+        }
+    };
+
     const SOCIAL_NETWORKS = [
         { id: 'linkedin_url', label: 'LinkedIn', icon: Linkedin },
         { id: 'github_url', label: 'GitHub', icon: Github },
@@ -299,6 +353,26 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
 
         let avatarUrl = profileData?.avatar_url || null;
 
+        // Upload do novo avatar se houver
+        if (avatarFile) {
+            setIsUploadingAvatar(true);
+            const targetUserId = adminUserId || profileData?.id;
+            const ext = avatarFile.name.split('.').pop();
+            const filePath = `${targetUserId}/avatar-${Date.now()}.${ext}`;
+            const { error: uploadError } = await supabase.storage
+                .from('avatars')
+                .upload(filePath, avatarFile, { upsert: true });
+            if (uploadError) {
+                toast.error('Erro ao enviar a foto: ' + uploadError.message);
+                setIsUploadingAvatar(false);
+                setIsSaving(false);
+                return;
+            }
+            const { data: urlData } = supabase.storage.from('avatars').getPublicUrl(filePath);
+            avatarUrl = urlData.publicUrl;
+            setIsUploadingAvatar(false);
+        }
+
         // Remove new_nickname and email (read-only) and map fields to profileData
         const { new_nickname, email, artistic_interests_str, entrance_year, other_institute, education_level, external_institution, research_line, interest_area, office_room, laboratory_name, department, ...restData } = data;
 
@@ -310,7 +384,9 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
             laboratory_name,
             department,
             institute: data.institute === 'Outros' ? other_institute : data.institute,
-            avatar_url: avatarUrl,
+            // Em modo admin, aplica o avatar direto. Para usuários, mantém o avatar atual —
+            // a nova URL vai para pending_edits.avatar_url via campo separado abaixo.
+            avatar_url: adminMode ? avatarUrl : (profileData?.avatar_url || null),
             usp_proof_url: profileData?.usp_proof_url || null,
             entrance_year: entrance_year ? parseInt(entrance_year, 10) : null,
             artistic_interests: artistic_interests_str
@@ -319,6 +395,11 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
             education_level: education_level,
             external_institution: external_institution
         };
+
+        // Para usuários normais: se tiver nova foto, incluir pending_avatar_url para review
+        if (!adminMode && avatarUrl && avatarUrl !== profileData?.avatar_url) {
+            updatedProfileData.pending_avatar_url = avatarUrl;
+        }
 
         if (adminMode && adminUserId) {
             const res = await updateProfileAsAdmin(adminUserId, updatedProfileData);
@@ -372,6 +453,54 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                 </p>
                             </div>
                         )}
+
+                        {/* Avatar Upload */}
+                        <div className="flex flex-col items-center gap-3">
+                            <div className="relative group">
+                                <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-brand-blue/30 bg-white/5 flex items-center justify-center">
+                                    {avatarPreview || profileData?.avatar_url ? (
+                                        <img
+                                            src={avatarPreview || profileData?.avatar_url || ''}
+                                            alt="Avatar"
+                                            className="w-full h-full object-cover"
+                                        />
+                                    ) : (
+                                        <User className="w-10 h-10 text-gray-500" />
+                                    )}
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => avatarInputRef.current?.click()}
+                                    className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
+                                >
+                                    <span className="material-symbols-outlined text-white text-2xl">photo_camera</span>
+                                </button>
+                            </div>
+                            <input
+                                ref={avatarInputRef}
+                                type="file"
+                                accept="image/*"
+                                onChange={handleAvatarChange}
+                                className="hidden"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => avatarInputRef.current?.click()}
+                                className="text-[10px] font-black uppercase tracking-widest text-brand-blue hover:underline flex items-center gap-1"
+                            >
+                                <span className="material-symbols-outlined text-[14px]">photo_camera</span>
+                                {avatarPreview ? 'Trocar foto' : 'Adicionar foto de perfil'}
+                            </button>
+                            {avatarPreview && (
+                                <button
+                                    type="button"
+                                    onClick={() => { setAvatarFile(null); setAvatarPreview(null); }}
+                                    className="text-[9px] font-bold uppercase tracking-widest text-brand-red hover:underline"
+                                >
+                                    Cancelar alteração
+                                </button>
+                            )}
+                        </div>
 
                         {adminMode && (
                             <div className="grid grid-cols-2 gap-4 p-4 bg-brand-red/5 border border-brand-red/10 rounded-2xl">

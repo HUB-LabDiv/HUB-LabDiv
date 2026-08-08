@@ -147,15 +147,34 @@ export async function fetchSubmissionTrails(submissionId: string) {
 }
 
 export async function loginAdminBypass(login: string, senha: string) {
-    if (login === 'adm' && senha === 'nexus390') {
-        const cookieStore = await import('next/headers').then(m => m.cookies());
-        cookieStore.set('admin_bypass', 'admin', { path: '/', httpOnly: true });
+    const cookieStore = await import('next/headers').then(m => m.cookies());
+    const supabase = await createServerSupabase();
+
+    // Garante que qualquer modo impersonate anterior é encerrado
+    cookieStore.delete('admin_impersonating_id');
+
+    try {
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: login,
+            password: senha
+        });
+        if (error || !data.user) {
+            return { success: false, error: error?.message || 'Credenciais inválidas' };
+        }
+
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('id, role')
+            .eq('id', data.user.id)
+            .maybeSingle();
+
+        if (profile?.id && (profile.role === 'admin' || profile.role === 'moderator')) {
+            cookieStore.set('admin_bypass', profile.role === 'admin' ? 'admin' : 'moderator', { path: '/', httpOnly: false });
+        }
+
         return { success: true };
+    } catch (e: any) {
+        return { success: false, error: e.message || 'Erro ao autenticar' };
     }
-    if (login === 'labdiv' && senha === 'labdiv-tecla56') {
-        const cookieStore = await import('next/headers').then(m => m.cookies());
-        cookieStore.set('admin_bypass', 'moderator', { path: '/', httpOnly: true });
-        return { success: true };
-    }
-    return { success: false, error: 'Credenciais inválidas' };
 }
+

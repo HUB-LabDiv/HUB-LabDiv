@@ -728,7 +728,10 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                         </div>
 
                         {/* Editor Principal */}
-                        <div className="bg-background-dark/60 border-brand-blue/30 shadow-[0_0_50px_rgba(15,71,128,0.2)] border rounded-[32px] p-6 lg:p-12 pb-64 relative min-h-[500px] z-20">
+                        <div 
+                            className="bg-background-dark/60 border-brand-blue/30 shadow-[0_0_50px_rgba(15,71,128,0.2)] border rounded-[32px] p-6 lg:p-12 relative min-h-[500px] z-20"
+                            style={{ paddingBottom: '60vh' }}
+                        >
                             {/* 1. Warning for Mock Template */}
                             {previewMode !== 'arte' && blocks.some(b => String(b.id).startsWith('mock-')) && (
                                 <div className="w-full bg-brand-yellow/10 border border-brand-yellow/30 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">

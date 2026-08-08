@@ -17,7 +17,7 @@ export default function AdminLoginGate() {
         const res = await loginAdminBypass(login, senha);
         if (res.success) {
             toast.success('Acesso liberado!');
-            router.refresh();
+            window.location.href = '/admin';
         } else {
             toast.error(res.error || 'Erro ao validar credenciais');
         }

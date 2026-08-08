@@ -139,11 +139,18 @@ export async function approveProfile(profileId: string) {
 
     if (!profile) return { error: 'Perfil não encontrado' };
 
-    const finalData = {
-        ...(profile.pending_edits || {}),
+    const pendingEdits = profile.pending_edits || {};
+    const { pending_avatar_url, ...otherEdits } = pendingEdits;
+
+    const finalData: any = {
+        ...otherEdits,
         pending_edits: null,
         review_status: 'approved'
     };
+
+    if (pending_avatar_url) {
+        finalData.avatar_url = pending_avatar_url;
+    }
 
     const { error } = await supabase
         .from('profiles')
