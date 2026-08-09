@@ -171,8 +171,14 @@ export async function generateCloudinarySignature() {
         secure: true,
     });
 
+    // Cloudinary requer os parâmetros ordenados alfabeticamente na string a ser assinada
+    const paramsToSign = {
+        folder,
+        timestamp,
+    };
+
     const signature = cloudinary.utils.api_sign_request(
-        { timestamp, folder },
+        paramsToSign,
         process.env.CLOUDINARY_API_SECRET!
     );
 
@@ -183,4 +189,88 @@ export async function generateCloudinarySignature() {
         apiKey: process.env.CLOUDINARY_API_KEY,
         folder
     };
+}
+
+export async function uploadMediaServerAction(formData: FormData) {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: 'Usuário não autenticado.' };
+
+    const file = formData.get('file') as File;
+    const resourceType = (formData.get('resourceType') as string) || 'auto';
+    if (!file) return { error: 'Nenhum arquivo fornecido para upload.' };
+
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+    const apiKey = process.env.CLOUDINARY_API_KEY;
+    const apiSecret = process.env.CLOUDINARY_API_SECRET;
+
+    // 1. Tentar upload seguro direto pelo SDK Server-Side do Cloudinary
+    if (cloudName && apiKey && apiSecret) {
+        try {
+            cloudinary.config({
+                cloud_name: cloudName,
+                api_key: apiKey,
+                api_secret: apiSecret,
+                secure: true,
+            });
+
+            const arrayBuffer = await file.arrayBuffer();
+            const buffer = Buffer.from(arrayBuffer);
+
+            const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
+                const uploadStream = cloudinary.uploader.upload_stream(
+                    {
+                        folder: 'assets/submissions',
+                        resource_type: resourceType as any,
+                    },
+                    (error, res) => {
+                        if (error) {
+                            console.error('[Cloudinary Server Upload Error Detail]', error);
+                            reject(error);
+                        } else if (res?.secure_url) {
+                            resolve(res);
+                        } else {
+                            reject(new Error('Upload sem URL de retorno.'));
+                        }
+                    }
+                );
+                uploadStream.end(buffer);
+            });
+
+            return { url: result.secure_url };
+        } catch (err: any) {
+            console.warn('[Cloudinary Stream Upload Falhou, tentando fallback Supabase Storage]:', err?.message || err);
+        }
+    }
+
+    // 2. Fallback: Supabase Storage (bucket 'avatars' ou 'submissions')
+    try {
+        const fileExt = file.name ? (file.name.split('.').pop() || 'bin') : 'bin';
+        const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
+        const filePath = `submissions/${fileName}`;
+
+        const arrayBuffer = await file.arrayBuffer();
+        const { error: storageErr } = await supabase.storage
+            .from('avatars')
+            .upload(filePath, arrayBuffer, {
+                contentType: file.type || 'application/octet-stream',
+                upsert: true
+            });
+
+        if (!storageErr) {
+            const { data: publicUrlData } = supabase.storage
+                .from('avatars')
+                .getPublicUrl(filePath);
+
+            if (publicUrlData?.publicUrl) {
+                return { url: publicUrlData.publicUrl };
+            }
+        } else {
+            console.error('[Supabase Storage Upload Error]', storageErr);
+        }
+    } catch (supaErr) {
+        console.error('[Supabase Storage Exception]', supaErr);
+    }
+
+    return { error: 'Não foi possível realizar o upload do arquivo. Verifique sua conexão e configurações de armazenamento.' };
 }

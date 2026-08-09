@@ -60,9 +60,18 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = false, f
         }
     }, [institution]);
 
-    // Larguras das sidebars para calcular o padding do conteúdo
-    const leftWidth = isSidebarCollapsed ? 80 : 280;
-    const rightWidth = isRightSidebarCollapsed ? 80 : 320;
+    const [windowWidth, setWindowWidth] = React.useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1280);
+
+    React.useEffect(() => {
+        const handleResize = () => setWindowWidth(window.innerWidth);
+        handleResize();
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Larguras das sidebars ativas apenas onde elas estão visíveis (Left: xl >= 1280px, Right: lg >= 1024px)
+    const effectiveLeftWidth = windowWidth >= 1280 ? (isSidebarCollapsed ? 80 : 280) : 0;
+    const effectiveRightWidth = windowWidth >= 1024 ? (isRightSidebarCollapsed ? 80 : 320) : 0;
 
     return (
         <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col overflow-x-clip">
@@ -103,13 +112,13 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = false, f
 
                     {/* Content Area — com padding lateral dinâmico para não sobrepor as sidebars */}
                     <main
-                        className={`flex-1 min-w-0 w-full pt-20 pb-8 lg:pb-12 transition-all duration-300`}
+                        className={`flex-1 min-w-0 w-full pt-20 pb-8 lg:pb-12 transition-all duration-300 px-4 sm:px-6`}
                         style={{
-                            paddingLeft: `calc(${leftWidth}px + 1.5rem)`,
-                            paddingRight: `calc(${rightWidth}px + 1.5rem)`,
+                            paddingLeft: effectiveLeftWidth > 0 ? `calc(${effectiveLeftWidth}px + 1.5rem)` : undefined,
+                            paddingRight: effectiveRightWidth > 0 ? `calc(${effectiveRightWidth}px + 1.5rem)` : undefined,
                         }}
                     >
-                        <div className={`mx-auto w-full ${fullWidth ? 'max-w-full' : wide ? 'max-w-[1400px]' : 'max-w-[800px]'} px-2`}>
+                        <div className={`mx-auto w-full ${fullWidth ? 'max-w-full' : wide ? 'max-w-[1400px]' : 'max-w-[800px]'}`}>
                             {children}
                         </div>
                     </main>

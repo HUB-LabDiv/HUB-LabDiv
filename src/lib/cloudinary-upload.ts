@@ -77,6 +77,8 @@ export async function compressImageFile(file: File, maxDimension = 1920, quality
     });
 }
 
+import { uploadMediaServerAction } from '@/app/actions/media';
+
 export async function uploadFileToCloudinary(
     file: File,
     resourceType: 'auto' | 'raw' | 'image' | 'video' = 'auto'
@@ -95,35 +97,24 @@ export async function uploadFileToCloudinary(
         }
     }
 
-    const signatureData = await generateCloudinarySignature();
-    if (!signatureData) {
-        throw new Error("Server action falhou em retornar dados.");
-    }
-    if ('error' in signatureData) {
-        throw new Error("Erro do Servidor: " + signatureData.error);
-    }
-
-    const { signature, timestamp, cloudName, apiKey, folder } = signatureData;
-    
-    if (!cloudName) {
-        throw new Error("Cloud Name não está configurado no servidor.");
-    }
-
+    // 2. Envia para o Server Action seguro de upload (garante fallback e dispensa assinatura no cliente)
     const formData = new FormData();
-    formData.append('file', fileToUpload, file.name);
-    formData.append('api_key', apiKey!);
-    formData.append('timestamp', String(timestamp));
-    formData.append('signature', signature);
-    formData.append('folder', folder);
+    const uploadFileObj = fileToUpload instanceof File 
+        ? fileToUpload 
+        : new File([fileToUpload], file.name || 'upload.webp', { type: fileToUpload.type || 'image/webp' });
 
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/${resourceType}/upload`, {
-        method: 'POST',
-        body: formData,
-    });
-    const data = await res.json();
-    if (!res.ok) {
-        throw new Error(data.error?.message || 'Erro no upload do Cloudinary');
+    formData.append('file', uploadFileObj);
+    formData.append('resourceType', resourceType);
+
+    const res = await uploadMediaServerAction(formData);
+
+    if ('error' in res && res.error) {
+        throw new Error(res.error);
     }
-    
-    return data.secure_url;
+
+    if (!('url' in res) || !res.url) {
+        throw new Error('Falha ao obter URL pública do arquivo enviado.');
+    }
+
+    return res.url;
 }

@@ -13,6 +13,7 @@
 
 
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useGlossaryStore } from '@/store/useGlossaryStore';
 import { addGeneratorWord, addConstellation } from '@/app/enviar/actions/glossaryActions';
 import toast from 'react-hot-toast';
@@ -27,6 +28,11 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
     const { glossary, fetchGlossary } = useGlossaryStore();
     const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
     const [expandedWordId, setExpandedWordId] = useState<string | null>(null);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
     
     // Add new word state
     const [showAddWord, setShowAddWord] = useState(false);
@@ -51,7 +57,7 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
         }
     }, [isOpen, initialSearchTerm, fetchGlossary]);
 
-    if (!isOpen) return null;
+    if (!isOpen || !mounted) return null;
 
     const filteredWords = glossary.filter(w => w.termo.toLowerCase().includes(searchTerm.toLowerCase()));
 
@@ -120,15 +126,15 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
         }
     };
 
-    return (
-        <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-background-dark/80 backdrop-blur-sm" onClick={onClose}>
-            <div className="w-full max-w-2xl max-h-[90vh] bg-background-dark border border-brand-yellow/50 shadow-[0_0_30px_rgba(255,204,0,0.15)] rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+    return createPortal(
+        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-background-dark/85 backdrop-blur-md" onClick={onClose}>
+            <div className="w-full max-w-2xl max-h-[90vh] bg-background-dark border border-brand-yellow/50 shadow-[0_0_40px_rgba(255,204,0,0.2)] rounded-2xl flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
                 <div className="flex justify-between items-center p-3 sm:p-4 border-b border-gray-800 bg-[#1E1E1E]">
                     <div className="flex items-center gap-2 text-brand-yellow">
                         <span className="material-symbols-outlined text-2xl">menu_book</span>
                         <span className="font-bold uppercase tracking-wider">Glossário Global</span>
                     </div>
-                    <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors">
+                    <button onClick={onClose} className="text-gray-400 hover:text-white transition-colors p-1 rounded-lg hover:bg-gray-800">
                         <span className="material-symbols-outlined">close</span>
                     </button>
                 </div>
@@ -251,11 +257,10 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
                                             <option value="jovem" />
                                             <option value="nerd_geek" />
                                             <option value="artistica" />
+                                            <option value="academica" />
                                         </datalist>
-                                        <textarea value={tempTransText} onChange={e => setTempTransText(e.target.value)} placeholder="Significado nesta linguagem..." className="bg-background-dark border border-gray-700 rounded p-2 text-white min-h-[60px] outline-none focus:border-brand-blue" />
-                                        <button onClick={addTempTranslation} className="bg-brand-blue/20 text-brand-blue font-bold py-2 px-4 rounded hover:bg-brand-blue/30 transition-colors w-fit text-sm cursor-pointer">
-                                            + Adicionar Tradução
-                                        </button>
+                                        <textarea value={tempTransText} onChange={e => setTempTransText(e.target.value)} placeholder="Tradução..." className="bg-background-dark border border-gray-700 rounded p-2 text-white min-h-[60px] outline-none focus:border-brand-blue" />
+                                        <button onClick={addTempTranslation} className="px-3 py-1.5 bg-brand-blue/20 text-brand-blue font-bold rounded text-xs hover:bg-brand-blue/30 transition-colors self-start cursor-pointer">+ Adicionar Linguagem</button>
                                     </div>
                                 </div>
 
@@ -294,6 +299,7 @@ export function GlossaryModal({ isOpen, onClose, initialSearchTerm = '' }: Gloss
                     </div>
                 </div>
             </div>
-        </div>
+        </div>,
+        document.body
     );
 }
