@@ -693,28 +693,28 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                             {/* Card Horizontal: Emissão de Luz (Oculto na Arte) */}
                             {previewMode !== 'arte' && (
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <a href="/wiki/divulgacao" target="_blank" rel="noopener noreferrer" className="bg-[#1E1E1E]/90 backdrop-blur-md border border-brand-yellow/30 hover:border-brand-yellow/60 hover:shadow-[0_0_20px_rgba(255,204,0,0.25)] transition-all duration-300 rounded-2xl p-4 flex flex-col items-start justify-between gap-4 cursor-pointer group shadow-lg">
+                                    <a href="/wiki/divulgacao" target="_blank" rel="noopener noreferrer" className="bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-md border border-brand-yellow/30 hover:border-brand-yellow/60 hover:shadow-[0_0_20px_rgba(255,204,0,0.25)] transition-all duration-300 rounded-2xl p-4 flex flex-col items-start justify-between gap-4 cursor-pointer group shadow-lg">
                                         <div className="flex items-center gap-4">
                                             <div className="size-12 rounded-full bg-brand-yellow/10 flex items-center justify-center border border-brand-yellow/20 group-hover:border-brand-yellow/40 group-hover:scale-105 transition-all">
                                                 <span className="material-symbols-outlined text-2xl text-brand-yellow">tips_and_updates</span>
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-xs font-bold uppercase tracking-wider text-white">Emissão de Luz</span>
-                                                <span className="text-xs font-medium text-gray-300 mt-1">Acesse nosso guia com instruções, dicas e bases teóricas sobre comunicação</span>
+                                                <span className="text-xs font-bold uppercase tracking-wider text-gray-900 dark:text-white">Emissão de Luz</span>
+                                                <span className="text-xs font-medium text-gray-600 dark:text-gray-300 mt-1">Acesse nosso guia com instruções, dicas e bases teóricas sobre comunicação</span>
                                             </div>
                                         </div>
                                         <button className="w-full py-2.5 bg-brand-yellow hover:bg-[#E5B800] text-gray-900 text-xs font-black uppercase rounded-lg transition-colors shadow-md pointer-events-none">
                                             Ver o Guia
                                         </button>
                                     </a>
-                                    <div onClick={() => setIsProfileModalOpen(true)} className="bg-[#1E1E1E]/90 backdrop-blur-md border border-brand-red/30 hover:border-brand-red/60 hover:shadow-[0_0_20px_rgba(241,67,67,0.35)] transition-all duration-300 rounded-2xl p-4 flex flex-col items-start justify-between gap-4 cursor-pointer group shadow-lg">
+                                    <div onClick={() => setIsProfileModalOpen(true)} className="bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-md border border-brand-red/30 hover:border-brand-red/60 hover:shadow-[0_0_20px_rgba(241,67,67,0.35)] transition-all duration-300 rounded-2xl p-4 flex flex-col items-start justify-between gap-4 cursor-pointer group shadow-lg">
                                         <div className="flex items-center gap-4">
                                             <div className="size-12 rounded-full bg-brand-red/10 flex items-center justify-center border border-brand-red/20 group-hover:border-brand-red/40 group-hover:scale-105 transition-all">
                                                 <span className="material-symbols-outlined text-2xl text-brand-red">query_stats</span>
                                             </div>
                                             <div className="flex flex-col">
-                                                <span className="text-xs font-bold uppercase tracking-wider text-white">Público Alvo</span>
-                                                <span className="text-xs font-medium text-gray-300 mt-1">Estatísticas do Público do HUB</span>
+                                                <span className="text-xs font-bold uppercase tracking-wider text-gray-900 dark:text-white">Público Alvo</span>
+                                                <span className="text-xs font-medium text-gray-600 dark:text-gray-300 mt-1">Estatísticas do Público do HUB</span>
                                             </div>
                                         </div>
                                         <button className="w-full py-2.5 bg-brand-red hover:bg-[#D93030] text-white text-xs font-black uppercase rounded-lg transition-colors shadow-md pointer-events-none">
@@ -729,7 +729,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
 
                         {/* Editor Principal */}
                         <div 
-                            className="bg-background-dark/60 border-brand-blue/30 shadow-[0_0_50px_rgba(15,71,128,0.2)] border rounded-[32px] p-6 lg:p-12 relative min-h-[500px] z-20"
+                            className="bg-white/90 dark:bg-background-dark/60 border-brand-blue/30 shadow-[0_0_50px_rgba(15,71,128,0.1)] dark:shadow-[0_0_50px_rgba(15,71,128,0.2)] border rounded-[32px] p-6 lg:p-12 relative min-h-[500px] z-20"
                             style={{ paddingBottom: '60vh' }}
                         >
                             {/* 1. Warning for Mock Template */}
@@ -737,13 +737,13 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                 <div className="w-full bg-brand-yellow/10 border border-brand-yellow/30 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
                                     <div className="flex items-start gap-3">
                                         <span className="material-symbols-outlined text-[20px] text-brand-yellow shrink-0 mt-0.5">warning</span>
-                                        <p className="text-sm text-gray-300">
+                                        <p className="text-sm text-gray-700 dark:text-gray-300">
                                             <strong className="text-brand-yellow">Exemplo Didático:</strong> Você está visualizando um <strong>post pré-montado</strong> para entender como o diagrama funciona. Você pode editá-lo ou começar do zero.
                                         </p>
                                     </div>
                                     <button
                                         onClick={() => setBlocks([])}
-                                        className="shrink-0 px-4 py-2 bg-background-dark border border-white/10 hover:border-brand-blue hover:text-brand-blue rounded-lg text-xs font-bold uppercase transition-colors"
+                                        className="shrink-0 px-4 py-2 bg-gray-100 dark:bg-background-dark text-gray-800 dark:text-white border border-gray-300 dark:border-white/10 hover:border-brand-blue hover:text-brand-blue rounded-lg text-xs font-bold uppercase transition-colors"
                                     >
                                         Limpar Canvas
                                     </button>
@@ -760,11 +760,11 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                         <div className="flex justify-between items-center mb-1">
                                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Autor/Apelido <span className="text-brand-red">*</span></span>
                                         </div>
-                                        <div className="w-full bg-transparent border-b border-white/5/50 text-white text-lg font-medium py-1">
+                                        <div className="w-full bg-transparent border-b border-gray-300 dark:border-white/5/50 text-gray-900 dark:text-white text-lg font-medium py-1">
                                             {authors || user?.user_metadata?.full_name || 'Carregando...'}
                                         </div>
                                         <div className="mt-2 flex items-center">
-                                            <span className="text-[8px] text-gray-600 uppercase tracking-widest">(Gerenciar no perfil)</span>
+                                            <span className="text-[8px] text-gray-600 dark:text-gray-400 uppercase tracking-widest">(Gerenciar no perfil)</span>
                                         </div>
                                     </div>
                                 </div>
@@ -777,11 +777,11 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                                 <select
                                                     value={category}
                                                     onChange={(e) => setCategory(e.target.value)}
-                                                    className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
+                                                    className="w-full bg-transparent border-b border-gray-300 dark:border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-gray-900 dark:text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
                                                 >
-                                                    <option value="" disabled className="bg-background-dark text-gray-500">Selecione...</option>
+                                                    <option value="" disabled className="bg-white dark:bg-background-dark text-gray-500">Selecione...</option>
                                                     {CATEGORIES.map(cat => (
-                                                        <option key={cat} value={cat} className="bg-background-dark text-white">{cat}</option>
+                                                        <option key={cat} value={cat} className="bg-white dark:bg-background-dark text-gray-900 dark:text-white">{cat}</option>
                                                     ))}
                                                 </select>
                                             </div>
@@ -791,12 +791,12 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                                 <select
                                                     value={languageRegister}
                                                     onChange={(e) => setLanguageRegister(e.target.value)}
-                                                    className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-yellow/50 focus:border-brand-yellow outline-none text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
+                                                    className="w-full bg-transparent border-b border-gray-300 dark:border-white/5/50 hover:border-brand-yellow/50 focus:border-brand-yellow outline-none text-gray-900 dark:text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
                                                 >
-                                                    <option value="jovem" className="bg-background-dark text-white">Jovem</option>
-                                                    <option value="nerd_geek" className="bg-background-dark text-white">Nerd/Geek</option>
-                                                    <option value="artistica" className="bg-background-dark text-white">Artística</option>
-                                                    <option value="academica" className="bg-background-dark text-white">Acadêmica</option>
+                                                    <option value="jovem" className="bg-white dark:bg-background-dark text-gray-900 dark:text-white">Jovem</option>
+                                                    <option value="nerd_geek" className="bg-white dark:bg-background-dark text-gray-900 dark:text-white">Nerd/Geek</option>
+                                                    <option value="artistica" className="bg-white dark:bg-background-dark text-gray-900 dark:text-white">Artística</option>
+                                                    <option value="academica" className="bg-white dark:bg-background-dark text-gray-900 dark:text-white">Acadêmica</option>
                                                 </select>
                                             </div>
                                         </>
@@ -810,7 +810,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                             onChange={(e) => setYear(e.target.value)}
                                             min="1934"
                                             max={new Date().getFullYear()}
-                                            className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-white text-lg font-medium transition-colors py-1"
+                                            className="w-full bg-transparent border-b border-gray-300 dark:border-white/5/50 hover:border-brand-blue/50 focus:border-brand-blue outline-none text-gray-900 dark:text-white text-lg font-medium transition-colors py-1"
                                         />
                                     </div>
                                 </div>
@@ -828,7 +828,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                             value={docsLink}
                                             onChange={(e) => setDocsLink(e.target.value)}
                                             placeholder="https://docs.google.com/..."
-                                            className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-yellow/50 focus:border-brand-yellow outline-none text-white text-sm font-medium transition-colors py-1 placeholder:text-gray-600"
+                                            className="w-full bg-transparent border-b border-gray-300 dark:border-white/5/50 hover:border-brand-yellow/50 focus:border-brand-yellow outline-none text-gray-900 dark:text-white text-sm font-medium transition-colors py-1 placeholder:text-gray-400 dark:placeholder:text-gray-600"
                                         />
                                     </div>
                                     <div className="flex flex-col flex-1 max-w-sm">
@@ -840,7 +840,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                             value={driveLink}
                                             onChange={(e) => setDriveLink(e.target.value)}
                                             placeholder="https://drive.google.com/..."
-                                            className="w-full bg-transparent border-b border-white/5/50 hover:border-brand-yellow/50 focus:border-brand-yellow outline-none text-white text-sm font-medium transition-colors py-1 placeholder:text-gray-600"
+                                            className="w-full bg-transparent border-b border-gray-300 dark:border-white/5/50 hover:border-brand-yellow/50 focus:border-brand-yellow outline-none text-gray-900 dark:text-white text-sm font-medium transition-colors py-1 placeholder:text-gray-400 dark:placeholder:text-gray-600"
                                         />
                                     </div>
                                 </div>
@@ -882,7 +882,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                         {(showSugerida && previewMode !== 'arte' && !hasObjeto) && (
                                             <div className="w-full relative z-50 flex flex-col gap-4">
                                                 {blocks.length === 0 && <p className="text-[10px] text-gray-500 text-center uppercase tracking-widest font-black mb-2 opacity-50">Estrutura Sugerida</p>}
-                                                <div className="w-full border-2 border-dashed border-brand-yellow/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-background-dark/30 hover:bg-brand-yellow/5 transition-colors group text-center">
+                                                <div className="w-full border-2 border-dashed border-brand-yellow/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-gray-100/50 dark:bg-background-dark/30 hover:bg-brand-yellow/5 transition-colors group text-center">
                                                     <div className="w-10 h-10 rounded-full bg-brand-yellow/10 flex items-center justify-center">
                                                         <span className="material-symbols-outlined text-brand-yellow">category</span>
                                                     </div>
@@ -913,7 +913,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                         onChange={(e) => setTitle(e.target.value)}
                                         placeholder="Digite aqui o título..."
                                         maxLength={27}
-                                        className="w-full text-4xl lg:text-5xl font-black bg-transparent outline-none text-white placeholder-gray-600 tracking-tight"
+                                        className="w-full text-4xl lg:text-5xl font-black bg-transparent outline-none text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 tracking-tight"
                                     />
                                 </div>
                                 <div className="flex flex-col gap-1">
@@ -927,7 +927,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                         placeholder={previewMode === 'arte' ? "Descrição opcional..." : "Resumo da contribuição..."}
                                         maxLength={234}
                                         rows={4}
-                                        className="w-full text-sm font-medium bg-white/5 border border-white/10 rounded-xl p-4 outline-none text-white placeholder-gray-500 resize-none focus:border-brand-blue/50 transition-colors"
+                                        className="w-full text-sm font-medium bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl p-4 outline-none text-gray-900 dark:text-white placeholder-gray-500 resize-none focus:border-brand-blue/50 transition-colors"
                                     />
                                 </div>
                             </div>
@@ -935,9 +935,9 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                             {/* 5. Separador Página Completa */}
                             {previewMode !== 'arte' && (
                                 <div className="flex items-center gap-4 w-full opacity-50 my-12">
-                                    <div className="h-px bg-white/5 flex-1"></div>
+                                    <div className="h-px bg-gray-300 dark:bg-white/5 flex-1"></div>
                                     <span className="text-xs font-bold text-gray-500 uppercase tracking-[0.2em]">Visível apenas na página completa</span>
-                                    <div className="h-px bg-white/5 flex-1"></div>
+                                    <div className="h-px bg-gray-300 dark:bg-white/5 flex-1"></div>
                                 </div>
                             )}
 
@@ -963,7 +963,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                         )}
                                         
                                         {!hasElaboracao && (
-                                            <div className="w-full border-2 border-dashed border-brand-blue/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-background-dark/30 hover:bg-brand-blue/5 transition-colors group text-center">
+                                            <div className="w-full border-2 border-dashed border-brand-blue/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-gray-100/50 dark:bg-background-dark/30 hover:bg-brand-blue/5 transition-colors group text-center">
                                                 <div className="w-10 h-10 rounded-full bg-brand-blue/10 flex items-center justify-center">
                                                     <span className="material-symbols-outlined text-brand-blue">notes</span>
                                                 </div>
@@ -978,7 +978,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                         )}
 
                                         {!hasPedagogico && (
-                                            <div className="w-full border-2 border-dashed border-brand-red/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-background-dark/30 hover:bg-brand-red/5 transition-colors group text-center">
+                                            <div className="w-full border-2 border-dashed border-brand-red/30 rounded-2xl p-6 flex flex-col items-center justify-center gap-3 bg-gray-100/50 dark:bg-background-dark/30 hover:bg-brand-red/5 transition-colors group text-center">
                                                 <div className="w-10 h-10 rounded-full bg-brand-red/10 flex items-center justify-center">
                                                     <span className="material-symbols-outlined text-brand-red">psychology</span>
                                                 </div>
@@ -1000,23 +1000,23 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
 
                 {/* Seção de Aceites e Lançamento (Fim da Página) */}
                 <div className="flex flex-col gap-4 items-center w-full max-w-3xl mx-auto mt-24 mb-16">
-                    <div className="flex flex-col gap-4 bg-background-dark/40 backdrop-blur-md p-6 rounded-2xl border border-brand-blue/30 shadow-2xl w-full">
+                    <div className="flex flex-col gap-4 bg-white/80 dark:bg-background-dark/40 backdrop-blur-md p-6 rounded-2xl border border-brand-blue/30 shadow-2xl w-full">
 
                         {/* Guia de Boas Práticas */}
                         <div className="flex flex-col gap-2">
                             <span className="text-brand-blue text-[10px] font-bold uppercase tracking-wider">Documentação Legal</span>
-                            <div className="bg-[#1E1E1E]/50 border border-white/5 rounded-lg p-3">
+                            <div className="bg-gray-100 dark:bg-[#1E1E1E]/50 border border-gray-200 dark:border-white/5 rounded-lg p-3">
                                 <div className="flex items-center justify-between mb-2">
-                                    <strong className="text-gray-200 text-xs">Guia de Boas Práticas da Comunidade LabDiv *</strong>
+                                    <strong className="text-gray-800 dark:text-gray-200 text-xs">Guia de Boas Práticas da Comunidade LabDiv *</strong>
                                     <button
                                         onClick={() => setIsGuideModalOpen(true)}
-                                        className="px-3 py-1 bg-white/5 hover:bg-gray-600 text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
+                                        className="px-3 py-1 bg-gray-200 hover:bg-gray-300 dark:bg-white/5 dark:hover:bg-gray-600 text-gray-800 dark:text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
                                     >
                                         <span className="material-symbols-outlined text-[14px]">open_in_new</span>
                                         Ler em Popup
                                     </button>
                                 </div>
-                                <div className="max-h-24 overflow-y-auto text-[11px] text-gray-400 leading-relaxed custom-scrollbar pr-2">
+                                <div className="max-h-24 overflow-y-auto text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed custom-scrollbar pr-2">
                                     1. Respeito Mútuo: Mantenha um ambiente acolhedor e construtivo.<br />
                                     2. Rigor Científico: Todo conteúdo deve ser embasado e referenciado.<br />
                                     3. Acessibilidade: Evite jargões desnecessários; seja claro e didático.<br />
@@ -1025,30 +1025,30 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                 </div>
                             </div>
                             <label className="flex items-center gap-3 cursor-pointer group mt-2">
-                                <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${readGuide ? 'bg-brand-blue border-brand-blue' : 'bg-[#1E1E1E] border-brand-blue/60 group-hover:border-brand-blue'}`}>
+                                <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${readGuide ? 'bg-brand-blue border-brand-blue' : 'bg-white dark:bg-[#1E1E1E] border-gray-400 dark:border-brand-blue/60 group-hover:border-brand-blue'}`}>
                                     {readGuide && <span className="material-symbols-outlined text-white text-sm font-bold">check</span>}
                                 </div>
                                 <input type="checkbox" className="hidden" checked={readGuide} onChange={(e) => setReadGuide(e.target.checked)} />
-                                <span className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">Li e concordo com o Guia</span>
+                                <span className="text-gray-700 dark:text-gray-200 text-sm font-medium group-hover:text-gray-900 dark:group-hover:text-white transition-colors">Li e concordo com o Guia</span>
                             </label>
                         </div>
 
-                        <div className="h-px w-full bg-[#1E1E1E] my-2"></div>
+                        <div className="h-px w-full bg-gray-200 dark:bg-[#1E1E1E] my-2"></div>
 
                         {/* Licença CC-BY */}
                         <div className="flex flex-col gap-2">
-                            <div className="bg-[#1E1E1E]/50 border border-white/5 rounded-lg p-3">
+                            <div className="bg-gray-100 dark:bg-[#1E1E1E]/50 border border-gray-200 dark:border-white/5 rounded-lg p-3">
                                 <div className="flex items-center justify-between mb-2">
-                                    <strong className="text-gray-200 text-xs">Licença Creative Commons (CC BY 4.0) {previewMode === 'arte' ? '(Opcional)' : '*'}</strong>
+                                    <strong className="text-gray-800 dark:text-gray-200 text-xs">Licença Creative Commons (CC BY 4.0) {previewMode === 'arte' ? '(Opcional)' : '*'}</strong>
                                     <button
                                         onClick={() => setIsLicenseModalOpen(true)}
-                                        className="px-3 py-1 bg-white/5 hover:bg-gray-600 text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
+                                        className="px-3 py-1 bg-gray-200 hover:bg-gray-300 dark:bg-white/5 dark:hover:bg-gray-600 text-gray-800 dark:text-white text-[10px] font-bold uppercase rounded transition-colors shadow flex items-center gap-1"
                                     >
                                         <span className="material-symbols-outlined text-[14px]">open_in_new</span>
                                         Ler em Popup
                                     </button>
                                 </div>
-                                <div className="max-h-24 overflow-y-auto text-[11px] text-gray-400 leading-relaxed custom-scrollbar pr-2">
+                                <div className="max-h-24 overflow-y-auto text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed custom-scrollbar pr-2">
                                     Ao licenciar sua contribuição sob a licença CC BY, você permite que outras pessoas distribuam, remixem, adaptem e criem a partir do seu trabalho, mesmo para fins comerciais, desde que lhe atribuam o devido crédito pela criação original.<br /><br />
                                     Você é livre para:<br />
                                     - Compartilhar: copiar e redistribuir o material em qualquer suporte ou formato.<br />
@@ -1059,17 +1059,15 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                 </div>
                             </div>
                             <label className="flex items-center gap-3 cursor-pointer group mt-2">
-                                <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${acceptedCc ? 'bg-brand-red border-brand-red' : 'bg-[#1E1E1E] border-brand-red/60 group-hover:border-brand-red'}`}>
+                                <div className={`w-6 h-6 shrink-0 rounded flex items-center justify-center transition-colors border ${acceptedCc ? 'bg-brand-red border-brand-red' : 'bg-white dark:bg-[#1E1E1E] border-gray-400 dark:border-brand-red/60 group-hover:border-brand-red'}`}>
                                     {acceptedCc && <span className="material-symbols-outlined text-white text-sm font-bold">check</span>}
                                 </div>
                                 <input type="checkbox" className="hidden" checked={acceptedCc} onChange={(e) => setAcceptedCc(e.target.checked)} />
-                                <span className="text-gray-200 text-sm font-medium group-hover:text-white transition-colors">Aceito os termos da Licença CC-BY</span>
+                                <span className="text-gray-700 dark:text-gray-200 text-sm font-medium group-hover:text-gray-900 dark:group-hover:text-white transition-colors">Aceito os termos da Licença CC-BY</span>
                             </label>
                         </div>
 
-                        <div className="h-px w-full bg-[#1E1E1E] my-2"></div>
-
-
+                        <div className="h-px w-full bg-gray-200 dark:bg-[#1E1E1E] my-2"></div>
 
                     </div>
 
@@ -1077,13 +1075,13 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                         {!editId && previewMode !== 'arte' && (
                             <button
                                 onClick={handleSaveDraft}
-                                className="w-full sm:w-auto flex flex-col items-center justify-center px-6 py-2 min-h-[68px] rounded-xl bg-[#1E1E1E]/80 backdrop-blur-md border border-dashed border-gray-500/50 hover:border-brand-blue/50 hover:bg-white/5 text-gray-300 font-bold transition-all hover:scale-[1.02] active:scale-95 group shadow-lg"
+                                className="w-full sm:w-auto flex flex-col items-center justify-center px-6 py-2 min-h-[68px] rounded-xl bg-white/90 dark:bg-[#1E1E1E]/80 backdrop-blur-md border border-dashed border-gray-300 dark:border-gray-500/50 hover:border-brand-blue/50 hover:bg-gray-50 dark:hover:bg-white/5 text-gray-700 dark:text-gray-300 font-bold transition-all hover:scale-[1.02] active:scale-95 group shadow-lg"
                             >
-                                <div className="flex items-center gap-2 text-sm text-white group-hover:text-brand-blue transition-colors whitespace-nowrap">
+                                <div className="flex items-center gap-2 text-sm text-gray-900 dark:text-white group-hover:text-brand-blue transition-colors whitespace-nowrap">
                                     <span className="material-symbols-outlined text-[18px]">save</span>
                                     <span>Salvar Rascunho</span>
                                 </div>
-                                <span className="text-[9px] font-medium text-gray-500 uppercase tracking-widest mt-1 group-hover:text-gray-400 transition-colors whitespace-nowrap">
+                                <span className="text-[9px] font-medium text-gray-500 uppercase tracking-widest mt-1 group-hover:text-gray-600 dark:group-hover:text-gray-400 transition-colors whitespace-nowrap">
                                     Salvo em Cache (Máx. 3)
                                 </span>
                             </button>
@@ -1091,7 +1089,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                         {editId && (
                             <button
                                 onClick={handleUpdate}
-                                className="w-full flex items-center justify-center gap-2 px-8 py-5 rounded-xl bg-[#1E1E1E] border border-brand-blue/50 text-brand-blue font-bold text-xl hover:bg-brand-blue/10 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                                className="w-full flex items-center justify-center gap-2 px-8 py-5 rounded-xl bg-white dark:bg-[#1E1E1E] border border-brand-blue/50 text-brand-blue font-bold text-xl hover:bg-brand-blue/10 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
                                 disabled={!readGuide || (previewMode !== 'arte' && !acceptedCc) || isSubmitting}
                                 title={(!readGuide || (previewMode !== 'arte' && !acceptedCc)) ? "Você precisa aceitar os termos acima para continuar" : ""}
                             >
@@ -1110,7 +1108,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                         {!editId && (
                             <button
                                 onClick={handlePublishIdea}
-                                className="w-full flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-background-dark border border-brand-yellow/30 text-brand-yellow font-bold text-sm hover:bg-brand-yellow/10 transition-all shadow-[0_0_15px_rgba(255,204,0,0.1)] hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                                className="w-full flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-white dark:bg-background-dark border border-brand-yellow/30 text-brand-yellow font-bold text-sm hover:bg-brand-yellow/10 transition-all shadow-[0_0_15px_rgba(255,204,0,0.1)] hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
                                 disabled={!readGuide || isSubmitting}
                                 title={!readGuide ? "Você precisa aceitar os termos acima para continuar" : "Envie o material bruto e deixe que os moderadores formatem e publiquem por você."}
                             >
@@ -1125,14 +1123,14 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             {/* Coluna Direita: Pedagógico (Fixo) */}
             {previewMode === 'fluxo' && (
                 <aside className="hidden xl:flex fixed right-8 top-32 w-64 flex-col z-10">
-                    <div className="bg-background-dark/60 backdrop-blur-md border border-brand-yellow/30 rounded-2xl p-4 flex flex-col gap-4 shadow-[0_0_30px_rgba(255,204,0,0.15)]">
-                        <h3 className="text-white font-bold text-sm tracking-wider uppercase mb-2">Conexões Pedagógicas</h3>
+                    <div className="bg-white/80 dark:bg-background-dark/60 backdrop-blur-md border border-brand-yellow/30 rounded-2xl p-4 flex flex-col gap-4 shadow-[0_0_30px_rgba(255,204,0,0.15)]">
+                        <h3 className="text-gray-900 dark:text-white font-bold text-sm tracking-wider uppercase mb-2">Conexões Pedagógicas</h3>
                         <div className="grid grid-cols-1 gap-2">
-                            <ToolboxButton icon="psychology" label="Reflexão" onClick={() => addBlock('reflection')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-300" />
-                            <ToolboxButton icon="quiz" label="Quiz" onClick={() => addBlock('quiz')} colorClass="hover:bg-brand-red/20 hover:text-brand-red hover:border-brand-red/30 text-gray-300" />
-                            <ToolboxButton icon="history_edu" label="Contexto Histórico" onClick={() => addBlock('context_history')} colorClass="hover:bg-brand-yellow/20 hover:text-brand-yellow hover:border-brand-yellow/30 text-gray-300" />
-                            <ToolboxButton icon="groups" label="Contexto Social" onClick={() => addBlock('context_social')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-300" />
-                            <ToolboxButton icon="gavel" label="Contexto Político" onClick={() => addBlock('context_political')} colorClass="hover:bg-brand-red/20 hover:text-brand-red hover:border-brand-red/30 text-gray-300" />
+                            <ToolboxButton icon="psychology" label="Reflexão" onClick={() => addBlock('reflection')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-700 dark:text-gray-300" />
+                            <ToolboxButton icon="quiz" label="Quiz" onClick={() => addBlock('quiz')} colorClass="hover:bg-brand-red/20 hover:text-brand-red hover:border-brand-red/30 text-gray-700 dark:text-gray-300" />
+                            <ToolboxButton icon="history_edu" label="Contexto Histórico" onClick={() => addBlock('context_history')} colorClass="hover:bg-brand-yellow/20 hover:text-brand-yellow hover:border-brand-yellow/30 text-gray-700 dark:text-gray-300" />
+                            <ToolboxButton icon="groups" label="Contexto Social" onClick={() => addBlock('context_social')} colorClass="hover:bg-brand-blue/20 hover:text-brand-blue hover:border-brand-blue/30 text-gray-700 dark:text-gray-300" />
+                            <ToolboxButton icon="gavel" label="Contexto Político" onClick={() => addBlock('context_political')} colorClass="hover:bg-brand-red/20 hover:text-brand-red hover:border-brand-red/30 text-gray-700 dark:text-gray-300" />
                         </div>
                     </div>
                 </aside>
@@ -1141,15 +1139,15 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             {/* Modal Guia de Boas Práticas */}
             {isGuideModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background-dark/60 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-background-dark border border-brand-blue/30 rounded-2xl w-full max-w-lg shadow-[0_0_50px_rgba(15,71,128,0.2)] flex flex-col overflow-hidden animate-slide-up">
-                        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#1E1E1E]/50">
-                            <h3 className="text-lg font-bold text-white">Guia de Boas Práticas</h3>
-                            <button onClick={() => setIsGuideModalOpen(false)} className="text-gray-400 hover:text-white transition-colors">
+                    <div className="bg-white dark:bg-background-dark border border-brand-blue/30 rounded-2xl w-full max-w-lg shadow-[0_0_50px_rgba(15,71,128,0.2)] flex flex-col overflow-hidden animate-slide-up">
+                        <div className="p-6 border-b border-gray-200 dark:border-white/5 flex justify-between items-center bg-gray-50 dark:bg-[#1E1E1E]/50">
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Guia de Boas Práticas</h3>
+                            <button onClick={() => setIsGuideModalOpen(false)} className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
                                 <span className="material-symbols-outlined">close</span>
                             </button>
                         </div>
-                        <div className="p-6 text-sm text-gray-300 leading-relaxed overflow-y-auto max-h-[60vh] custom-scrollbar">
-                            <strong className="text-white block mb-4">Guia de Boas Práticas da Comunidade LabDiv</strong>
+                        <div className="p-6 text-sm text-gray-700 dark:text-gray-300 leading-relaxed overflow-y-auto max-h-[60vh] custom-scrollbar">
+                            <strong className="text-gray-900 dark:text-white block mb-4">Guia de Boas Práticas da Comunidade LabDiv</strong>
                             <ol className="list-decimal list-inside space-y-3">
                                 <li><strong>Respeito Mútuo:</strong> Mantenha um ambiente acolhedor e construtivo.</li>
                                 <li><strong>Rigor Científico:</strong> Todo conteúdo deve ser embasado e referenciado.</li>
@@ -1158,10 +1156,10 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                 <li><strong>Responsabilidade:</strong> Você é responsável pelas afirmações que publica.</li>
                             </ol>
                         </div>
-                        <div className="p-4 border-t border-white/5 bg-[#1E1E1E]/30 flex justify-end gap-3">
+                        <div className="p-4 border-t border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-[#1E1E1E]/30 flex justify-end gap-3">
                             <button
                                 onClick={() => setIsGuideModalOpen(false)}
-                                className="px-6 py-2 text-gray-400 hover:text-white text-xs font-bold uppercase rounded-lg transition-colors"
+                                className="px-6 py-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white text-xs font-bold uppercase rounded-lg transition-colors"
                             >
                                 Fechar
                             </button>
@@ -1179,32 +1177,32 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             {/* Modal Licença CC-BY */}
             {isLicenseModalOpen && (
                 <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background-dark/60 backdrop-blur-sm animate-fade-in">
-                    <div className="bg-background-dark border border-brand-red/30 rounded-2xl w-full max-w-lg shadow-[0_0_50px_rgba(241,67,67,0.2)] flex flex-col overflow-hidden animate-slide-up">
-                        <div className="p-6 border-b border-white/5 flex justify-between items-center bg-[#1E1E1E]/50">
-                            <h3 className="text-lg font-bold text-white">Licença CC BY 4.0</h3>
-                            <button onClick={() => setIsLicenseModalOpen(false)} className="text-gray-400 hover:text-white transition-colors">
+                    <div className="bg-white dark:bg-background-dark border border-brand-red/30 rounded-2xl w-full max-w-lg shadow-[0_0_50px_rgba(241,67,67,0.2)] flex flex-col overflow-hidden animate-slide-up">
+                        <div className="p-6 border-b border-gray-200 dark:border-white/5 flex justify-between items-center bg-gray-50 dark:bg-[#1E1E1E]/50">
+                            <h3 className="text-lg font-bold text-gray-900 dark:text-white">Licença CC BY 4.0</h3>
+                            <button onClick={() => setIsLicenseModalOpen(false)} className="text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
                                 <span className="material-symbols-outlined">close</span>
                             </button>
                         </div>
-                        <div className="p-6 text-sm text-gray-300 leading-relaxed overflow-y-auto max-h-[60vh] custom-scrollbar">
-                            <strong className="text-white block mb-4">Licença Creative Commons Atribuição 4.0 Internacional (CC BY 4.0)</strong>
+                        <div className="p-6 text-sm text-gray-700 dark:text-gray-300 leading-relaxed overflow-y-auto max-h-[60vh] custom-scrollbar">
+                            <strong className="text-gray-900 dark:text-white block mb-4">Licença Creative Commons Atribuição 4.0 Internacional (CC BY 4.0)</strong>
                             <p className="mb-4">
                                 Ao licenciar sua contribuição sob a licença CC BY, você permite que outras pessoas distribuam, remixem, adaptem e criem a partir do seu trabalho, mesmo para fins comerciais, desde que lhe atribuam o devido crédito pela criação original.
                             </p>
-                            <strong className="text-white block mb-2">Você é livre para:</strong>
+                            <strong className="text-gray-900 dark:text-white block mb-2">Você é livre para:</strong>
                             <ul className="list-disc list-inside space-y-2 mb-4">
                                 <li><strong>Compartilhar:</strong> copiar e redistribuir o material em qualquer suporte ou formato.</li>
                                 <li><strong>Adaptar:</strong> remixar, transformar e criar a partir do material para qualquer fim.</li>
                             </ul>
-                            <strong className="text-white block mb-2">Sob os seguintes termos:</strong>
+                            <strong className="text-gray-900 dark:text-white block mb-2">Sob os seguintes termos:</strong>
                             <ul className="list-disc list-inside space-y-2">
                                 <li><strong>Atribuição:</strong> Você deve dar o crédito apropriado, prover um link para a licença e indicar se mudanças foram feitas.</li>
                             </ul>
                         </div>
-                        <div className="p-4 border-t border-white/5 bg-[#1E1E1E]/30 flex justify-end gap-3">
+                        <div className="p-4 border-t border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-[#1E1E1E]/30 flex justify-end gap-3">
                             <button
                                 onClick={() => setIsLicenseModalOpen(false)}
-                                className="px-6 py-2 text-gray-400 hover:text-white text-xs font-bold uppercase rounded-lg transition-colors"
+                                className="px-6 py-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white text-xs font-bold uppercase rounded-lg transition-colors"
                             >
                                 Fechar
                             </button>
@@ -1229,7 +1227,7 @@ function ToolboxButton({ icon, label, onClick, colorClass }: { icon: string, lab
     return (
         <button
             onClick={onClick}
-            className={`flex items-center gap-3 w-full p-3 rounded-xl border border-transparent transition-all bg-[#1E1E1E]/30 ${colorClass}`}
+            className={`flex items-center gap-3 w-full p-3 rounded-xl border border-transparent transition-all bg-gray-100 dark:bg-[#1E1E1E]/30 border-gray-200 dark:border-transparent ${colorClass}`}
         >
             <span className="material-symbols-outlined text-xl">{icon}</span>
             <span className="font-semibold text-sm">{label}</span>
