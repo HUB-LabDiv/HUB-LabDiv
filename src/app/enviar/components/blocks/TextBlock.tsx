@@ -114,20 +114,23 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
     const colorMenuRef = useRef<HTMLDivElement>(null);
     const tableMenuRef = useRef<HTMLDivElement>(null);
 
-    // Synchronize initial content into contentEditable ONLY when block changes
-    const initializedBlockIdRef = useRef<string | null>(null);
+    // Tracks the last (blockId + isActive + localPreview) key that was initialized
+    const initializedKeyRef = useRef<string | null>(null);
 
     useEffect(() => {
-        if (editorRef.current && !localPreview) {
-            if (initializedBlockIdRef.current !== block.id) {
-                initializedBlockIdRef.current = block.id;
+        const editorVisible = isActive && !localPreview;
+        if (editorVisible && editorRef.current) {
+            const key = `${block.id}::active`;
+            if (initializedKeyRef.current !== key) {
+                initializedKeyRef.current = key;
                 editorRef.current.innerHTML = markdownToHtml(textContent);
             }
         }
-        if (localPreview) {
-            initializedBlockIdRef.current = null; // reset so re-entering edit mode loads updated store text
+        if (!editorVisible) {
+            // Reset so re-entering edit mode always reloads the latest store text
+            initializedKeyRef.current = null;
         }
-    }, [block.id, localPreview]);
+    }, [block.id, isActive, localPreview]);
 
     // Close menus on outside click
     useEffect(() => {
