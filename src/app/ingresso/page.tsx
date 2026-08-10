@@ -32,7 +32,7 @@ export default async function IngressoPage() {
 
     return (
         <MainLayoutWrapper userId={user?.id} rightSidebar={<IngressoFeedbackCard />}>
-            <div className="max-w-7xl mx-auto">
+            <div className="w-full">
                 <IngressoClient profile={profile} />
             </div>
         </MainLayoutWrapper>

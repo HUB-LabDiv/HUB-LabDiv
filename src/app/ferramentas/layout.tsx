@@ -37,7 +37,7 @@ export default async function FerramentasLayout({ children }: { children: React.
             }
         >
             <SwipeWrapper routes={['/ferramentas', '/ferramentas/trilhas', '/ferramentas/match']}>
-                <div className="py-8 max-w-7xl mx-auto px-4 lg:px-8 w-full flex-1">
+                <div className="py-8 w-full px-4 lg:px-8 flex-1">
                     <ToolsSubNav />
                     {children}
                 </div>

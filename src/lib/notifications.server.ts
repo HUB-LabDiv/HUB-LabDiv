@@ -114,18 +114,45 @@ export async function sendAdminNotification(data: NotificationData) {
                 </div>`;
             break;
 
-        case 'bug_report':
-            subject = `🚨 Hub: Report de Bug - ${data.userName || 'Anônimo'}`;
+        case 'bug_report': {
+            // details contém o tipo real: 'bug' | 'sugestao' | 'outro'
+            const reportTypeLabel = data.details === 'sugestao' ? 'Sugestão' : data.details === 'outro' ? 'Outro' : 'Falha (Bug)';
+            const reportBorderColor = data.details === 'sugestao' ? '#FFCC00' : data.details === 'outro' ? '#0F4780' : '#F14343';
+            const reportBgColor = data.details === 'sugestao' ? '#FFFBEB' : data.details === 'outro' ? '#EFF6FF' : '#FFF8F8';
+            const reportLabelColor = data.details === 'sugestao' ? '#92400E' : data.details === 'outro' ? '#1E3A5F' : '#991B1B';
+            const reportEmoji = data.details === 'sugestao' ? '💡' : data.details === 'outro' ? '💬' : '🚨';
+            subject = `${reportEmoji} Hub: ${reportTypeLabel} — Enviado por ${data.userName || 'Anônimo'}`;
             dashboardLink = `${baseUrl}/admin/reports`;
             emailTemplate = `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Anomalia Reportada (Bug/Feedback)</h2>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">Um novo report foi enviado através do módulo de emergência.</p>
-                <div style="background-color: #FEF2F2; border: 1px solid #FEE2E2; padding: 20px; margin: 24px 0; border-radius: 8px; color: #991B1B;">
-                    <strong style="display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 12px;">Descrição:</strong>
-                    "${data.content}"
+                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">${reportEmoji} ${reportTypeLabel} Recebida</h2>
+                
+                <div style="background-color: #F0F7FF; border: 1px solid #BFDBFE; padding: 16px 20px; margin: 24px 0; border-radius: 8px; display: flex; align-items: center; gap: 12px;">
+                    <div style="width: 44px; height: 44px; background-color: #0F4780; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; font-weight: 900; color: white; text-align: center; line-height: 44px;">
+                        ${(data.userName || 'A').charAt(0).toUpperCase()}
+                    </div>
+                    <div>
+                        <p style="margin: 0; font-size: 16px; font-weight: 900; color: #0F4780;">${data.userName || 'Anônimo'}</p>
+                        <p style="margin: 4px 0 0 0; font-size: 12px; color: #64748B; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;">Remetente do Report</p>
+                    </div>
                 </div>
-                <p style="font-size: 12px; color: #718096;">URL: ${data.url || 'N/A'}</p>`;
+
+                <table style="width: 100%; border-collapse: collapse; margin: 0 0 24px 0;">
+                    <tr>
+                        <td style="padding: 8px 12px; background: #F8FAFC; border: 1px solid #E2E8F0; font-size: 12px; font-weight: 700; color: #64748B; text-transform: uppercase; width: 30%;">Tipo</td>
+                        <td style="padding: 8px 12px; background: white; border: 1px solid #E2E8F0; font-size: 13px; color: #1a1a1a; font-weight: 600;">${reportTypeLabel}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 8px 12px; background: #F8FAFC; border: 1px solid #E2E8F0; font-size: 12px; font-weight: 700; color: #64748B; text-transform: uppercase;">URL</td>
+                        <td style="padding: 8px 12px; background: white; border: 1px solid #E2E8F0; font-size: 13px; color: #0F4780;">${data.url || 'N/A'}</td>
+                    </tr>
+                </table>
+
+                <div style="background-color: ${reportBgColor}; border-left: 4px solid ${reportBorderColor}; padding: 20px; border-radius: 4px;">
+                    <strong style="display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 11px; color: ${reportLabelColor}; letter-spacing: 0.1em;">Mensagem:</strong>
+                    <p style="color: #2d3748; margin: 0; line-height: 1.7; font-size: 15px;">${data.content}</p>
+                </div>`;
             break;
+        }
             
         case 'arena_suggestion':
             subject = `🏆 Arena: Nova Proposta de Desafio - ${data.title}`;

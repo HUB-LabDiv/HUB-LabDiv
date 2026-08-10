@@ -165,7 +165,11 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         const toastId = toast.loading('Processando arquivos...');
 
         try {
-            const pendingFiles = usePendingUploadsStore.getState().pendingFiles;
+            const allPendingFiles = usePendingUploadsStore.getState().pendingFiles;
+            // ✅ Filtra apenas entradas com blob: URLs válidas (ignora URLs do Cloudinary ou outras)
+            const pendingFiles = Object.fromEntries(
+                Object.entries(allPendingFiles).filter(([url]) => url.startsWith('blob:'))
+            );
             const localToPublicUrls: Record<string, string> = {};
 
             // Se houver uploads pendentes, faz primeiro
@@ -281,7 +285,11 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         const toastId = toast.loading('Processando material base...');
 
         try {
-            const pendingFiles = usePendingUploadsStore.getState().pendingFiles;
+            const allPendingFiles = usePendingUploadsStore.getState().pendingFiles;
+            // ✅ Filtra apenas entradas com blob: URLs válidas (ignora URLs do Cloudinary ou outras)
+            const pendingFiles = Object.fromEntries(
+                Object.entries(allPendingFiles).filter(([url]) => url.startsWith('blob:'))
+            );
             const localToPublicUrls: Record<string, string> = {};
 
             if (Object.keys(pendingFiles).length > 0) {
@@ -370,7 +378,11 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         const toastId = toast.loading('Processando arquivos...');
 
         try {
-            const pendingFiles = usePendingUploadsStore.getState().pendingFiles;
+            const allPendingFiles = usePendingUploadsStore.getState().pendingFiles;
+            // ✅ Filtra apenas entradas com blob: URLs válidas (ignora URLs do Cloudinary ou outras)
+            const pendingFiles = Object.fromEntries(
+                Object.entries(allPendingFiles).filter(([url]) => url.startsWith('blob:'))
+            );
             const localToPublicUrls: Record<string, string> = {};
 
             // Se houver uploads pendentes, faz primeiro

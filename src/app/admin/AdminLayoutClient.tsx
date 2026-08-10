@@ -189,13 +189,6 @@ export default function AdminLayoutClient({
 
                 <div className="p-6 border-t border-gray-800 dark:border-white/5 transition-colors relative z-10 bg-[#1e1e1e] md:bg-background-dark flex flex-col gap-2">
                     <button
-                        onClick={() => setIsAuthModalOpen(true)}
-                        className="flex items-center gap-3 px-4 py-3 w-full text-sm font-medium text-brand-yellow rounded-xl hover:bg-brand-yellow/10 transition-colors border border-brand-yellow/20 group focus:outline-none"
-                    >
-                        <span className="material-symbols-outlined text-[20px] text-brand-yellow">key</span>
-                        <span>Autenticar no adm</span>
-                    </button>
-                    <button
                         onClick={async () => {
                             await signOut('/login');
                             window.location.reload();

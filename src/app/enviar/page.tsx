@@ -17,6 +17,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
+import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 
 // Diagrammer
@@ -35,6 +36,7 @@ function SubmitPageContent() {
     const searchParams = useSearchParams();
     const { user, loading: authLoading } = useAuth();
     const { currentStep, reset, previewMode, setPreviewMode, setCategory, setTitle, setAuthors, setDescription, setBlocks } = useSubmissionStore();
+    const clearPendingFiles = usePendingUploadsStore((state) => state.clearPendingFiles);
     const { isReportModalOpen, setReportModalOpen } = useNavigationStore();
     const [isInitializing, setIsInitializing] = useState(true);
 
@@ -42,6 +44,10 @@ function SubmitPageContent() {
         const loadEditPost = async () => {
             const editId = searchParams.get('editId');
             if (editId) {
+                // ✅ Limpa arquivos pendentes de sessões anteriores para evitar
+                // tentativas de re-upload de blob: URLs expiradas
+                clearPendingFiles();
+
                 try {
                     const { data, error } = await supabase
                         .from('submissions')
@@ -60,7 +66,6 @@ function SubmitPageContent() {
                             try {
                                 const blocks = JSON.parse(data.media_url);
                                 if (Array.isArray(blocks)) {
-                                    // There's no updateBlocks in SubmissionState. We can overwrite by clearing and adding or by adding a setBlocks method. Let's add setBlocks.
                                     setBlocks(blocks);
                                 }
                             } catch (e) {
@@ -79,7 +84,7 @@ function SubmitPageContent() {
         if (user && !authLoading) {
             loadEditPost();
         }
-    }, [searchParams, user, authLoading, setTitle, setAuthors, setDescription, setCategory, setBlocks]);
+    }, [searchParams, user, authLoading, setTitle, setAuthors, setDescription, setCategory, setBlocks, clearPendingFiles]);
 
     useEffect(() => {
         const timeout = setTimeout(() => {

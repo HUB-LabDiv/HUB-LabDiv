@@ -6,7 +6,7 @@
     "dev": "next dev",
     "step-zero": "node scripts/generate-id.js",
     "prebuild": "npm run step-zero",
-    "build": "next build --webpack",
+    "build": "node scripts/update-sw-buildid.mjs && next build --webpack",
     "postbuild": "npm run audit-logs && node scripts/clean.js",
     "clean": "node scripts/clean.js",
     "audit-logs": "node scripts/audit.js",

@@ -148,18 +148,37 @@ export async function fetchSubmissionTrails(submissionId: string) {
 
 export async function loginAdminBypass(login: string, senha: string) {
     const cookieStore = await import('next/headers').then(m => m.cookies());
-    const supabase = await createServerSupabase();
 
     // Garante que qualquer modo impersonate anterior é encerrado
     cookieStore.delete('admin_impersonating_id');
 
+    // ── Bypass via variáveis de ambiente (acesso manual de emergência) ──
+    const adminEmail = process.env.ADMIN_EMAIL || '';
+    const adminPassword = process.env.ADMIN_PASSWORD || '';
+    const adminSecret = process.env.ADMIN_SECRET_KEY || '';
+
+    const loginMatchesEmail = login.trim().toLowerCase() === adminEmail.trim().toLowerCase();
+    const loginMatchesAlias = login.trim().toLowerCase() === 'adm' || login.trim().toLowerCase() === 'admin';
+    const senhaCorreta = senha === adminPassword || senha === adminSecret;
+
+    if ((loginMatchesEmail || loginMatchesAlias) && senhaCorreta && adminPassword) {
+        cookieStore.set('admin_bypass', 'admin', {
+            path: '/',
+            httpOnly: false,
+            maxAge: 60 * 60 * 8, // 8 horas
+        });
+        return { success: true };
+    }
+
+    // ── Fallback: tenta login normal pelo Supabase com email ──
     try {
+        const supabase = await createServerSupabase();
         const { data, error } = await supabase.auth.signInWithPassword({
             email: login,
             password: senha
         });
         if (error || !data.user) {
-            return { success: false, error: error?.message || 'Credenciais inválidas' };
+            return { success: false, error: 'Credenciais inválidas' };
         }
 
         const { data: profile } = await supabase
@@ -169,7 +188,11 @@ export async function loginAdminBypass(login: string, senha: string) {
             .maybeSingle();
 
         if (profile?.id && (profile.role === 'admin' || profile.role === 'moderator')) {
-            cookieStore.set('admin_bypass', profile.role === 'admin' ? 'admin' : 'moderator', { path: '/', httpOnly: false });
+            cookieStore.set('admin_bypass', profile.role === 'admin' ? 'admin' : 'moderator', {
+                path: '/',
+                httpOnly: false,
+                maxAge: 60 * 60 * 8,
+            });
         }
 
         return { success: true };

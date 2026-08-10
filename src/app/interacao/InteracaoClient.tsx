@@ -57,7 +57,7 @@ export default function InteracaoClient() {
 
     return (
         <MainLayoutWrapper fullWidth={true}>
-            <div className="py-8 max-w-7xl mx-auto px-4" {...swipeHandlers}>
+            <div className="py-8 w-full px-4" {...swipeHandlers}>
                 <div 
                     className="sticky -mt-5 z-40 flex justify-center mb-8 w-full pointer-events-none"
                     style={{ top: 'calc(76px + env(safe-area-inset-top, 0px))' }}

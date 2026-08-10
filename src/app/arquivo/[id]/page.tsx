@@ -47,6 +47,8 @@ import { PostQuiz } from '@/components/media/PostQuiz';
 import { ContentRating } from '@/components/feedback/ContentRating';
 import { ReportButton } from './ReportButton';
 import { StyledArticleView } from '@/components/reading/StyledArticleView';
+import { SdocxHtmlBlock } from '@/components/reading/SdocxHtmlBlock';
+import { SdocxHeroImage, SdocxInlineImage } from '@/components/reading/SdocxImageBlock';
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -182,6 +184,19 @@ export default async function ArquivoItemPage({ params }: PageProps) {
     }
 
     const urls = parseMediaUrl(submission.media_url);
+
+    // Para posts sdocx: extrai a primeira imagem dos blocos para usar como hero
+    let sdocxHeroImageUrl: string | null = null;
+    if (submission.media_type === 'sdocx') {
+        try {
+            const blocks = JSON.parse(submission.media_url || '[]');
+            if (Array.isArray(blocks)) {
+                const imgBlock = blocks.find((b: any) => b.type === 'image' && b.content?.url && !b.content.url.startsWith('blob:'));
+                if (imgBlock) sdocxHeroImageUrl = imgBlock.content.url;
+            }
+        } catch {}
+    }
+
     const relatedSubmissions = await getRelatedSubmissions(submission.category, submission.id);
 
     // Fetch reflections for this post
@@ -283,31 +298,37 @@ export default async function ArquivoItemPage({ params }: PageProps) {
 
                         <div className="bg-white dark:bg-card-dark rounded-2xl md:rounded-3xl overflow-hidden shadow-xl border border-gray-100 dark:border-gray-800">
 
-                            {/* Media Section - skip for text/zip/sdocx */}
-                            {submission.media_type !== 'text' && submission.media_type !== 'zip' && submission.media_type !== 'sdocx' && (
-                                <div className="bg-background-dark flex items-center justify-center min-h-[300px] md:min-h-[500px]">
-                                    {submission.media_type === 'video' ? (
-                                        <div className="w-full h-full aspect-video">
-                                            {urls.length > 0 ? (
-                                                <iframe
-                                                    src={formatYoutubeUrl(urls[0])}
-                                                    className="w-full h-full"
-                                                    allowFullScreen
-                                                    frameBorder="0"
-                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                />
-                                            ) : (
-                                                <span className="text-white">Vídeo não encontrado</span>
-                                            )}
-                                        </div>
-                                    ) : (
-                                        <ImageCarouselClient
-                                            urls={urls}
-                                            title={submission.title}
-                                            slides={submission.slides}
-                                        />
-                                    )}
-                                </div>
+                            {/* Media Section - skip for text/zip. Para sdocx, mostra hero se houver imagem */}
+                            {submission.media_type !== 'text' && submission.media_type !== 'zip' && (
+                                submission.media_type === 'sdocx' ? (
+                                    sdocxHeroImageUrl && (
+                                        <SdocxHeroImage src={sdocxHeroImageUrl} alt={submission.title} />
+                                    )
+                                ) : (
+                                    <div className="bg-background-dark flex items-center justify-center min-h-[300px] md:min-h-[500px]">
+                                        {submission.media_type === 'video' ? (
+                                            <div className="w-full h-full aspect-video">
+                                                {urls.length > 0 ? (
+                                                    <iframe
+                                                        src={formatYoutubeUrl(urls[0])}
+                                                        className="w-full h-full"
+                                                        allowFullScreen
+                                                        frameBorder="0"
+                                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                    />
+                                                ) : (
+                                                    <span className="text-white">Vídeo não encontrado</span>
+                                                )}
+                                            </div>
+                                        ) : (
+                                            <ImageCarouselClient
+                                                urls={urls}
+                                                title={submission.title}
+                                                slides={submission.slides}
+                                            />
+                                        )}
+                                    </div>
+                                )
                             )}
 
                             {/* Details Section */}
@@ -426,22 +447,22 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                 
                                                 return blocks.map((block) => {
                                                     if (block.type === 'text') {
-                                                        const showToc = !tocRendered;
-                                                        tocRendered = true;
+                                                        // TextBlock saves HTML (via contenteditable/execCommand)
+                                                        // SdocxHtmlBlock renders it safely with browser DOMParser sanitization
                                                         return (
-                                                            <div key={block.id}>
-                                                                <StyledArticleView
-                                                                    content={stripAllAlignmentMarkers(block.content.text)}
-                                                                    palavrasGeradoras={palavrasGeradoras || undefined}
-                                                                    fullTextForToc={showToc ? stripAllAlignmentMarkers(allTextContent) : undefined}
-                                                                />
+                                                            <div key={block.id} className="py-4">
+                                                                <SdocxHtmlBlock html={block.content.text || ''} />
                                                             </div>
                                                         );
                                                     } else if (block.type === 'image') {
+                                                        // Ignora a imagem hero (já exibida no topo)
+                                                        if (block.content.url === sdocxHeroImageUrl) return null;
                                                         return (
-                                                            <div key={block.id} className="relative rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 my-8 w-full flex items-center justify-center p-4">
-                                                                <img src={block.content.url} alt={block.content.altText || 'Imagem do bloco'} className="w-full h-auto max-h-[600px] object-contain rounded-lg" loading="lazy" />
-                                                            </div>
+                                                            <SdocxInlineImage
+                                                                key={block.id}
+                                                                src={block.content.url}
+                                                                altText={block.content.altText}
+                                                            />
                                                         );
                                                     } else if (block.type === 'video') {
                                                         const isGif = block.content.url?.toLowerCase().endsWith('.gif');

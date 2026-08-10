@@ -28,7 +28,7 @@ export default async function HomePage() {
   const data = await getInitialData();
 
   return (
-    <MainLayoutWrapper rightSidebar={<SidebarRight />}>
+    <MainLayoutWrapper rightSidebar={<SidebarRight />} fullWidth>
       <HomeClientView {...data} />
     </MainLayoutWrapper>
   );

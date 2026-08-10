@@ -483,7 +483,7 @@ export const HomeClientView = ({
                         transition={{ duration: 0.4 }}
                     >
                         {activeTab === 'arte' && (
-                            <div className="w-full max-w-4xl mx-auto mb-8 text-left space-y-8">
+                            <div className="w-full mb-8 text-left space-y-8">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                                     <div className="w-full h-full">
                                         <FluxoFeedbackCard 
@@ -511,7 +511,7 @@ export const HomeClientView = ({
                         )}
 
                         {activeTab === 'fluxo' && (
-                            <div className="w-full max-w-4xl mx-auto mb-8 text-left space-y-8">
+                            <div className="w-full mb-8 text-left space-y-8">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                                     <div className="w-full h-full">
                                         <FluxoFeedbackCard 

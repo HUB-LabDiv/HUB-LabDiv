@@ -67,17 +67,87 @@ export async function submitFeedback(data: { type: string; description: string; 
     // Notify Admins
     try {
         const { sendAdminNotification } = await import('@/lib/notifications.server');
+        // Buscar nome do usuário para o email
+        let displayName = email || user?.email || 'Anônimo';
+        if (user?.id) {
+            const { data: prof } = await supabase.from('profiles').select('full_name, username').eq('id', user.id).single();
+            displayName = prof?.full_name || (prof?.username ? `@${prof.username}` : displayName);
+        }
         await sendAdminNotification({
             type: 'bug_report',
-            userName: email || user?.email || 'Anônimo',
+            userName: displayName,
             content: description,
-            url: url || ''
+            url: url || '',
+            details: type, // tipo real: 'bug' | 'sugestao' | 'outro'
         });
     } catch (emailErr) {
         console.warn('[Feedback] Email notification failed, but report was saved:', emailErr);
     }
 
     return { success: true };
+}
+
+/**
+ * Busca todos os feedback reports para o painel admin.
+ * Usa Admin Client para bypassar RLS (somente chamado de Server Components/Actions autenticados).
+ */
+export async function getFeedbackReports() {
+    try {
+        const { createAdminSupabase } = await import('@/lib/supabase/admin');
+        const adminSupabase = createAdminSupabase();
+
+        const { data, error } = await adminSupabase
+            .from('feedback_reports')
+            .select('*, profiles(full_name, username, avatar_url)')
+            .order('created_at', { ascending: false });
+
+        if (error) {
+            console.error('[getFeedbackReports] Error:', error.message);
+            // Fallback: tenta sem o join de profiles (schema pode não ter FK)
+            const { data: fallback } = await adminSupabase
+                .from('feedback_reports')
+                .select('*')
+                .order('created_at', { ascending: false });
+            return { data: fallback || [], error: null };
+        }
+
+        return { data: data || [], error: null };
+    } catch (e: any) {
+        console.error('[getFeedbackReports] Exception:', e);
+        return { data: [], error: e.message };
+    }
+}
+
+/**
+ * Atualiza o status de um feedback report.
+ * Usa Admin Client para bypassar RLS.
+ */
+export async function updateFeedbackReportStatus(id: string, newStatus: string) {
+    // Valida que o usuário é admin antes de executar
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { success: false, error: 'Não autenticado' };
+
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    if (!['admin', 'moderator', 'labdiv', 'labdiv adm'].includes(profile?.role || '')) {
+        return { success: false, error: 'Acesso negado' };
+    }
+
+    try {
+        const { createAdminSupabase } = await import('@/lib/supabase/admin');
+        const adminSupabase = createAdminSupabase();
+        const { error } = await adminSupabase
+            .from('feedback_reports')
+            .update({ status: newStatus })
+            .eq('id', id);
+
+        if (error) return { success: false, error: error.message };
+
+        revalidatePath('/admin/reports');
+        return { success: true };
+    } catch (e: any) {
+        return { success: false, error: e.message };
+    }
 }
 
 export async function submitHubSuggestion(description: string) {

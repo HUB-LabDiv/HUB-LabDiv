@@ -40,7 +40,7 @@ interface MainLayoutWrapperProps {
  * Standardized structure for V4.0 Golden Master pages.
  * Ensures consistent padding, header, and footer mounting.
  */
-export function MainLayoutWrapper({ children, focusMode = false, wide = false, fullWidth = false, userId, rightSidebar, hideHeader = false }: MainLayoutWrapperProps) {
+export function MainLayoutWrapper({ children, focusMode = false, wide = true, fullWidth = false, userId, rightSidebar, hideHeader = false }: MainLayoutWrapperProps) {
     const { 
         isSidebarCollapsed, 
         isRightSidebarCollapsed, 
@@ -118,7 +118,7 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = false, f
                             paddingRight: effectiveRightWidth > 0 ? `calc(${effectiveRightWidth}px + 1.5rem)` : undefined,
                         }}
                     >
-                        <div className={`mx-auto w-full ${fullWidth ? 'max-w-full' : wide ? 'max-w-[1400px]' : 'max-w-[800px]'}`}>
+                        <div className="w-full">
                             {children}
                         </div>
                     </main>
