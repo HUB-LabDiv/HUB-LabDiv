@@ -74,11 +74,11 @@ export async function registerPostAnalytics(data: {
 export async function registerBlockInteraction(data: {
     submissionId: string;
     blockId: string;
-    interactionData: any;
+    interactionData: { type: string; response: string; question?: string };
 }) {
     try {
         const supabase = await createServerSupabase();
-        
+
         const { data: existing, error: fetchError } = await supabase
             .from('post_analytics')
             .select('*')
@@ -89,24 +89,34 @@ export async function registerBlockInteraction(data: {
             return { success: false, error: fetchError.message };
         }
 
-        const blockInteractions = existing?.block_interactions || {};
-        
-        // Save the interaction (e.g. array of answers)
+        const blockInteractions: Record<string, any> = existing?.block_interactions || {};
+
+        // Inicializa o bloco se ainda não existe
         if (!blockInteractions[data.blockId]) {
-            blockInteractions[data.blockId] = [];
+            blockInteractions[data.blockId] = {
+                type: data.interactionData.type,
+                question: data.interactionData.question || '',
+                count: 0,
+                answers: {} as Record<string, number>,
+            };
         }
-        
-        blockInteractions[data.blockId].push({
-            data: data.interactionData,
-            timestamp: new Date().toISOString()
-        });
+
+        const block = blockInteractions[data.blockId];
+        block.count = (block.count || 0) + 1;
+
+        // Agrega a resposta no dicionário answers: { "texto da resposta": N vezes }
+        const responseText = (data.interactionData.response || '').trim();
+        if (responseText) {
+            if (!block.answers) block.answers = {};
+            block.answers[responseText] = (block.answers[responseText] || 0) + 1;
+        }
 
         if (existing) {
             const { error: updateError } = await supabase
                 .from('post_analytics')
                 .update({
                     block_interactions: blockInteractions,
-                    updated_at: new Date().toISOString()
+                    updated_at: new Date().toISOString(),
                 })
                 .eq('id', existing.id);
             if (updateError) return { success: false, error: updateError.message };
@@ -116,7 +126,7 @@ export async function registerBlockInteraction(data: {
                 .insert({
                     submission_id: data.submissionId,
                     block_interactions: blockInteractions,
-                    total_reads: 0
+                    total_reads: 0,
                 });
             if (insertError) return { success: false, error: insertError.message };
         }

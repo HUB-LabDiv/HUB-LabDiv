@@ -122,40 +122,81 @@ export function MetricsModal({ isOpen, onClose, post }: MetricsModalProps) {
                                 </div>
 
                                 <div className="bg-[#1E1E1E] border border-white/10 rounded-2xl p-6 shadow-lg">
-                                    <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-4 flex items-center gap-2">
+                                    <h3 className="text-sm font-bold text-white uppercase tracking-wider mb-6 flex items-center gap-2">
                                         <span className="material-symbols-outlined text-brand-yellow">lightbulb</span>
-                                        Interações nos Blocos Pedagógicos
+                                        Respostas dos Blocos Pedagógicos
                                     </h3>
-                                    
+
                                     {Object.keys(analytics.block_interactions).length === 0 ? (
-                                        <p className="text-sm text-gray-400 italic">Nenhuma interação registrada nos blocos ainda.</p>
+                                        <div className="flex flex-col items-center gap-3 py-6 text-center">
+                                            <span className="material-symbols-outlined text-4xl text-gray-700">psychology</span>
+                                            <p className="text-sm text-gray-400 italic">Nenhuma resposta registrada ainda.</p>
+                                            <p className="text-xs text-gray-600">Quando os leitores responderem às reflexões, as respostas aparecerão aqui.</p>
+                                        </div>
                                     ) : (
-                                        <div className="flex flex-col gap-4">
-                                            {Object.entries(analytics.block_interactions).map(([blockId, blockData]: [string, any]) => (
-                                                <div key={blockId} className="bg-background-dark/40 rounded-xl p-4 border border-white/5">
-                                                    <div className="flex justify-between items-center mb-2">
-                                                        <span className="text-xs font-bold text-gray-300 uppercase">Bloco: {blockId.substring(0, 8)}...</span>
-                                                        <span className="text-[10px] bg-white/10 px-2 py-1 rounded text-gray-400">{blockData.type || 'Interação'}</span>
+                                        <div className="flex flex-col gap-6">
+                                            {Object.entries(analytics.block_interactions).map(([blockId, blockData]: [string, any]) => {
+                                                // Compatibilidade com formato antigo (array de eventos)
+                                                const isLegacy = Array.isArray(blockData);
+                                                if (isLegacy) return (
+                                                    <div key={blockId} className="bg-background-dark/40 rounded-xl p-4 border border-white/5">
+                                                        <p className="text-xs text-gray-500 italic">Dados legados — {blockData.length} interação(ões) registrada(s).</p>
                                                     </div>
-                                                    <div className="flex flex-col gap-2">
-                                                        <div className="flex justify-between text-sm">
-                                                            <span className="text-gray-400">Cliques/Respostas:</span>
-                                                            <span className="font-bold text-white">{blockData.count || 0}</span>
-                                                        </div>
-                                                        {blockData.answers && Object.keys(blockData.answers).length > 0 && (
-                                                            <div className="mt-2">
-                                                                <span className="text-xs text-gray-500 uppercase tracking-wider mb-1 block">Distribuição de Respostas:</span>
-                                                                {Object.entries(blockData.answers).map(([answer, count]: [string, any]) => (
-                                                                    <div key={answer} className="flex justify-between text-xs py-1 border-b border-white/5 last:border-0">
-                                                                        <span className="text-gray-300 line-clamp-1 flex-1 pr-2">{answer}</span>
-                                                                        <span className="font-bold text-brand-blue">{count}</span>
-                                                                    </div>
-                                                                ))}
+                                                );
+
+                                                const answers: Record<string, number> = blockData.answers || {};
+                                                const totalAnswers = Object.values(answers).reduce((sum: number, n: any) => sum + (Number(n) || 0), 0);
+                                                const typeLabel = blockData.type === 'aberta' ? 'Reflexão Aberta' : blockData.type === 'fechada' ? 'Reflexão Fechada' : (blockData.type || 'Interação');
+
+                                                return (
+                                                    <div key={blockId} className="bg-background-dark/40 rounded-2xl p-5 border border-white/5">
+                                                        {/* Header do bloco */}
+                                                        <div className="flex items-start justify-between gap-3 mb-4">
+                                                            <div className="flex-1">
+                                                                <span className="inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-brand-blue bg-brand-blue/10 px-2 py-0.5 rounded-full mb-2">
+                                                                    <span className="material-symbols-outlined text-[12px]">psychology</span>
+                                                                    {typeLabel}
+                                                                </span>
+                                                                {blockData.question && (
+                                                                    <p className="text-sm font-bold text-white leading-snug">{blockData.question}</p>
+                                                                )}
                                                             </div>
+                                                            <div className="text-right shrink-0">
+                                                                <p className="text-2xl font-black text-white">{blockData.count || 0}</p>
+                                                                <p className="text-[10px] text-gray-500 uppercase tracking-widest">respostas</p>
+                                                            </div>
+                                                        </div>
+
+                                                        {/* Distribuição de respostas */}
+                                                        {totalAnswers > 0 ? (
+                                                            <div className="flex flex-col gap-2 mt-3">
+                                                                <p className="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-1">Distribuição de Respostas</p>
+                                                                {Object.entries(answers)
+                                                                    .sort(([, a], [, b]) => (Number(b) || 0) - (Number(a) || 0))
+                                                                    .map(([answer, count]: [string, any]) => {
+                                                                        const pct = totalAnswers > 0 ? Math.round((Number(count) / totalAnswers) * 100) : 0;
+                                                                        return (
+                                                                            <div key={answer} className="flex flex-col gap-1">
+                                                                                <div className="flex justify-between items-center text-xs">
+                                                                                    <span className="text-gray-300 flex-1 pr-3 line-clamp-2 leading-snug">{answer}</span>
+                                                                                    <span className="font-black text-brand-yellow shrink-0">{count}×  <span className="text-gray-500 font-normal">({pct}%)</span></span>
+                                                                                </div>
+                                                                                <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                                                                    <div
+                                                                                        className="h-full bg-gradient-to-r from-brand-blue to-brand-yellow rounded-full transition-all"
+                                                                                        style={{ width: `${pct}%` }}
+                                                                                    />
+                                                                                </div>
+                                                                            </div>
+                                                                        );
+                                                                    })}
+                                                            </div>
+                                                        ) : (
+                                                            <p className="text-xs text-gray-600 italic mt-2">Interações sem resposta registradas.</p>
                                                         )}
                                                     </div>
-                                                </div>
-                                            ))}
+                                                );
+                                            })}
                                         </div>
                                     )}
                                 </div>

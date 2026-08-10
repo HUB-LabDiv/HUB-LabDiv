@@ -80,7 +80,7 @@ export function BalloonReflexao({
                 await registerBlockInteraction({
                     submissionId,
                     blockId: reflexaoId,
-                    interactionData: { type: tipo, response }
+                    interactionData: { type: tipo, response, question: pergunta }
                 });
             }
             
