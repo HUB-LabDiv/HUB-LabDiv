@@ -298,37 +298,31 @@ export default async function ArquivoItemPage({ params }: PageProps) {
 
                         <div className="bg-white dark:bg-card-dark rounded-2xl md:rounded-3xl overflow-hidden shadow-xl border border-gray-100 dark:border-gray-800">
 
-                            {/* Media Section - skip for text/zip. Para sdocx, mostra hero se houver imagem */}
-                            {submission.media_type !== 'text' && submission.media_type !== 'zip' && (
-                                submission.media_type === 'sdocx' ? (
-                                    sdocxHeroImageUrl && (
-                                        <SdocxHeroImage src={sdocxHeroImageUrl} alt={submission.title} />
-                                    )
-                                ) : (
-                                    <div className="bg-background-dark flex items-center justify-center min-h-[300px] md:min-h-[500px]">
-                                        {submission.media_type === 'video' ? (
-                                            <div className="w-full h-full aspect-video">
-                                                {urls.length > 0 ? (
-                                                    <iframe
-                                                        src={formatYoutubeUrl(urls[0])}
-                                                        className="w-full h-full"
-                                                        allowFullScreen
-                                                        frameBorder="0"
-                                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                                    />
-                                                ) : (
-                                                    <span className="text-white">Vídeo não encontrado</span>
-                                                )}
-                                            </div>
-                                        ) : (
-                                            <ImageCarouselClient
-                                                urls={urls}
-                                                title={submission.title}
-                                                slides={submission.slides}
-                                            />
-                                        )}
-                                    </div>
-                                )
+                            {/* Media Section - skip for text/zip/sdocx (sdocx renders hero inline after title) */}
+                            {submission.media_type !== 'text' && submission.media_type !== 'zip' && submission.media_type !== 'sdocx' && (
+                                <div className="bg-background-dark flex items-center justify-center min-h-[300px] md:min-h-[500px]">
+                                    {submission.media_type === 'video' ? (
+                                        <div className="w-full h-full aspect-video">
+                                            {urls.length > 0 ? (
+                                                <iframe
+                                                    src={formatYoutubeUrl(urls[0])}
+                                                    className="w-full h-full"
+                                                    allowFullScreen
+                                                    frameBorder="0"
+                                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                                />
+                                            ) : (
+                                                <span className="text-white">Vídeo não encontrado</span>
+                                            )}
+                                        </div>
+                                    ) : (
+                                        <ImageCarouselClient
+                                            urls={urls}
+                                            title={submission.title}
+                                            slides={submission.slides}
+                                        />
+                                    )}
+                                </div>
                             )}
 
                             {/* Details Section */}
@@ -432,6 +426,14 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                 {submission.media_type === 'sdocx' ? (
                                     <div id="submission-content" className="mt-8">
                                         <ContextPanel context={submission.contexto_hsec} />
+
+                                        {/* Hero Image inline: título → imagem → conteúdo */}
+                                        {sdocxHeroImageUrl && (
+                                            <div className="-mx-6 md:-mx-10 mb-10 overflow-hidden rounded-xl shadow-lg">
+                                                <SdocxHeroImage src={sdocxHeroImageUrl} alt={submission.title} />
+                                            </div>
+                                        )}
+
                                         <div className="flex flex-col gap-8 w-full mt-8">
                                             {(() => {
                                                 let blocks: any[] = [];

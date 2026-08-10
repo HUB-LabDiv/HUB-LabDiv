@@ -203,6 +203,14 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 };
             });
 
+            // 🛡️ Validação de segurança: garante que nenhum blob: URL residual será salvo no banco
+            const hasResidualBlobs = updatedBlocks.some(b => JSON.stringify(b.content).includes('blob:'));
+            if (hasResidualBlobs) {
+                toast.error('⚠️ Uma ou mais imagens não foram enviadas corretamente. Remova-as e adicione novamente antes de publicar.', { id: toastId, duration: 6000 });
+                setIsSubmitting(false);
+                return;
+            }
+
             toast.loading('Enviando para moderação...', { id: toastId });
 
             const reflexoesBlocks = updatedBlocks.filter(b => b.type === 'reflection');
@@ -316,6 +324,14 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 return { ...block, content: JSON.parse(updatedContentStr) };
             });
 
+            // 🛡️ Validação de segurança: garante que nenhum blob: URL residual será salvo no banco
+            const hasResidualBlobs = updatedBlocks.some(b => JSON.stringify(b.content).includes('blob:'));
+            if (hasResidualBlobs) {
+                toast.error('⚠️ Uma ou mais imagens não foram enviadas corretamente. Remova-as e adicione novamente.', { id: toastId, duration: 6000 });
+                setIsSubmitting(false);
+                return;
+            }
+
             toast.loading('Enviando para a moderação ajudá-lo...', { id: toastId });
 
             const payload = {
@@ -415,6 +431,14 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                     content: JSON.parse(updatedContentStr)
                 };
             });
+
+            // 🛡️ Validação de segurança: garante que nenhum blob: URL residual será salvo no banco
+            const hasResidualBlobs = updatedBlocks.some(b => JSON.stringify(b.content).includes('blob:'));
+            if (hasResidualBlobs) {
+                toast.error('⚠️ Uma ou mais imagens não foram enviadas corretamente. Remova-as e adicione novamente antes de atualizar.', { id: toastId, duration: 6000 });
+                setIsSubmitting(false);
+                return;
+            }
 
             toast.loading('Atualizando postagem...', { id: toastId });
 
@@ -677,14 +701,39 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                         </div>
 
                                         <div className="mt-8">
-                                            <h2 className="text-sm font-bold text-white mb-2 uppercase tracking-wide">Descrição</h2>
-                                            <div className="text-gray-400 leading-relaxed prose prose-lg prose-invert max-w-none">
-                                                <div className="flex flex-col gap-8">
-                                                    {previewData.blocks.map((block: any) => (
-                                                        <BlockRenderer key={block.id} block={block} forcePreview={true} />
-                                                    ))}
-                                                </div>
-                                            </div>
+                                            {(() => {
+                                                // Extrai o primeiro bloco de imagem para usar como hero.
+                                                const heroImgBlock = previewData.blocks.find(
+                                                    (b: any) => b.type === 'image' && b.content?.url
+                                                );
+                                                const heroImgUrl = heroImgBlock?.content?.url;
+
+                                                return (
+                                                    <>
+                                                        {/* Hero Image: título → imagem → descrição */}
+                                                        {heroImgUrl && (
+                                                            <div className="-mx-6 md:-mx-10 mb-8 overflow-hidden">
+                                                                <img
+                                                                    src={heroImgUrl}
+                                                                    alt={previewData.title || 'Imagem do post'}
+                                                                    className="w-full max-h-[500px] object-cover"
+                                                                />
+                                                            </div>
+                                                        )}
+                                                        {/* Conteúdo dos blocos (pula o hero) */}
+                                                        <div className="text-gray-400 leading-relaxed prose prose-lg prose-invert max-w-none">
+                                                            <div className="flex flex-col gap-8">
+                                                                {previewData.blocks
+                                                                    .filter((b: any) => !(b.type === 'image' && b.content?.url === heroImgUrl))
+                                                                    .map((block: any) => (
+                                                                        <BlockRenderer key={block.id} block={block} forcePreview={true} />
+                                                                    ))
+                                                                }
+                                                            </div>
+                                                        </div>
+                                                    </>
+                                                );
+                                            })()}
                                         </div>
                                     </div>
                                 </div>

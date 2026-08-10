@@ -243,15 +243,15 @@ export async function uploadMediaServerAction(formData: FormData) {
         }
     }
 
-    // 2. Fallback: Supabase Storage (bucket 'avatars' ou 'submissions')
+    // 2. Fallback: Supabase Storage (bucket 'submissions' - bucket público dedicado)
     try {
         const fileExt = file.name ? (file.name.split('.').pop() || 'bin') : 'bin';
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
-        const filePath = `submissions/${fileName}`;
+        const filePath = `media/${fileName}`;
 
         const arrayBuffer = await file.arrayBuffer();
         const { error: storageErr } = await supabase.storage
-            .from('avatars')
+            .from('submissions')
             .upload(filePath, arrayBuffer, {
                 contentType: file.type || 'application/octet-stream',
                 upsert: true
@@ -259,7 +259,7 @@ export async function uploadMediaServerAction(formData: FormData) {
 
         if (!storageErr) {
             const { data: publicUrlData } = supabase.storage
-                .from('avatars')
+                .from('submissions')
                 .getPublicUrl(filePath);
 
             if (publicUrlData?.publicUrl) {
