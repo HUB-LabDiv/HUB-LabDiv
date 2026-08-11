@@ -30,6 +30,7 @@ import { useDraftsStore } from '@/store/useDraftsStore';
 import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
 import { uploadFileToCloudinary } from '@/lib/cloudinary-upload';
 import { EnviarFeedbackCard } from '../EnviarFeedbackCard';
+import { stripMarkdownAndLatex } from '@/lib/utils';
 
 interface DiagrammerLayoutProps {
     editId?: string | null;
@@ -54,7 +55,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             return {
                 title,
                 category: category === 'Arte' ? 'Outros' : category, // Fallback
-                description: description || fb.find((b: any) => b.type === 'text')?.content?.text,
+                description: description || stripMarkdownAndLatex(fb.find((b: any) => b.type === 'text')?.content?.text),
                 mediaUrl: mediaBlock?.content?.url,
                 mediaType: mediaBlock?.type,
                 blocks: fb
@@ -66,7 +67,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             return {
                 title,
                 category: 'Arte',
-                description: description || ab.find((b: any) => b.type === 'text')?.content?.text,
+                description: description || stripMarkdownAndLatex(ab.find((b: any) => b.type === 'text')?.content?.text),
                 mediaUrl: mediaBlock?.content?.url,
                 mediaType: mediaBlock?.type,
                 blocks: ab
@@ -76,19 +77,19 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         const draft = drafts.find(d => d.id === selectedPreviewId);
         if (!draft) {
             const mediaBlock = blocks.find((b: any) => ['image', 'video'].includes(b.type));
-            return { title, category, description: blocks.find((b: any) => b.type === 'text')?.content?.text, mediaUrl: mediaBlock?.content?.url, mediaType: mediaBlock?.type, blocks };
+            return { title, category, description: description || stripMarkdownAndLatex(blocks.find((b: any) => b.type === 'text')?.content?.text), mediaUrl: mediaBlock?.content?.url, mediaType: mediaBlock?.type, blocks };
         }
         
         const mediaBlock = draft.stateSnapshot?.blocks?.find((b: any) => ['image', 'video'].includes(b.type));
         return {
             title: draft.title,
             category: draft.stateSnapshot?.category,
-            description: draft.stateSnapshot?.blocks?.find((b: any) => b.type === 'text')?.content?.text,
+            description: draft.stateSnapshot?.description || stripMarkdownAndLatex(draft.stateSnapshot?.blocks?.find((b: any) => b.type === 'text')?.content?.text),
             mediaUrl: mediaBlock?.content?.url,
             mediaType: mediaBlock?.type,
             blocks: draft.stateSnapshot?.blocks || []
         };
-    }, [selectedPreviewId, title, category, blocks, fluxoBlocks, arteBlocks, drafts, previewMode]);
+    }, [selectedPreviewId, title, category, description, blocks, fluxoBlocks, arteBlocks, drafts, previewMode]);
 
     const [pseudonyms, setPseudonyms] = React.useState<{ id: string; name: string }[]>([]);
     const [mainName, setMainName] = React.useState<string>('');
@@ -226,7 +227,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 title,
                 authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
                 category: previewMode === 'arte' ? 'Arte' : (category || 'Outros'),
-                description: description || updatedBlocks.find(b => b.type === 'text')?.content?.text || 'Contribuição construída no Diagramador.',
+                description: (description && description.trim()) ? description : (stripMarkdownAndLatex(updatedBlocks.find(b => b.type === 'text')?.content?.text) || 'Contribuição construída no Diagramador.'),
                 media_type: 'sdocx',
                 media_url: JSON.stringify(updatedBlocks),
                 event_year: previewMode === 'arte' ? new Date().getFullYear() : (year ? parseInt(year) : new Date().getFullYear()),
@@ -455,7 +456,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 title,
                 authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
                 category: previewData.category || 'Outros',
-                description: updatedBlocks.find(b => b.type === 'text')?.content?.text || 'Contribuição construída no Diagramador.',
+                description: (description && description.trim()) ? description : (stripMarkdownAndLatex(updatedBlocks.find(b => b.type === 'text')?.content?.text) || 'Contribuição construída no Diagramador.'),
                 media_type: 'sdocx',
                 media_url: JSON.stringify(updatedBlocks),
                 event_year: year ? parseInt(year) : new Date().getFullYear(),

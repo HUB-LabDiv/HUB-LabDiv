@@ -60,18 +60,15 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = true, fu
         }
     }, [institution]);
 
-    const [windowWidth, setWindowWidth] = React.useState<number>(typeof window !== 'undefined' ? window.innerWidth : 1280);
+    // Left Sidebar é oculta em < xl (1280px). Quando visível (xl+): 80px (recolhida) ou 280px (expandida)
+    const leftPaddingClass = isSidebarCollapsed 
+        ? 'xl:pl-[calc(80px+1.5rem)]' 
+        : 'xl:pl-[calc(280px+1.5rem)]';
 
-    React.useEffect(() => {
-        const handleResize = () => setWindowWidth(window.innerWidth);
-        handleResize();
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-    }, []);
-
-    // Larguras das sidebars ativas apenas onde elas estão visíveis (Left: xl >= 1280px, Right: lg >= 1024px)
-    const effectiveLeftWidth = windowWidth >= 1280 ? (isSidebarCollapsed ? 80 : 280) : 0;
-    const effectiveRightWidth = windowWidth >= 1024 ? (isRightSidebarCollapsed ? 80 : 320) : 0;
+    // Right Sidebar é oculta em < lg (1024px). Quando presente e visível (lg+): 80px (recolhida) ou 320px (expandida)
+    const rightPaddingClass = rightSidebar 
+        ? (isRightSidebarCollapsed ? 'lg:pr-[calc(80px+1.5rem)]' : 'lg:pr-[calc(320px+1.5rem)]') 
+        : '';
 
     return (
         <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col overflow-x-clip">
@@ -110,13 +107,9 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = true, fu
                         </div>
                     </aside>
 
-                    {/* Content Area — com padding lateral dinâmico para não sobrepor as sidebars */}
+                    {/* Content Area — com padding lateral responsivo CSS para não sobrepor sidebars */}
                     <main
-                        className={`flex-1 min-w-0 w-full pt-20 pb-8 lg:pb-12 transition-all duration-300 px-4 sm:px-6`}
-                        style={{
-                            paddingLeft: effectiveLeftWidth > 0 ? `calc(${effectiveLeftWidth}px + 1.5rem)` : undefined,
-                            paddingRight: effectiveRightWidth > 0 ? `calc(${effectiveRightWidth}px + 1.5rem)` : undefined,
-                        }}
+                        className={`flex-1 min-w-0 w-full pt-20 pb-8 lg:pb-12 transition-all duration-300 px-4 sm:px-6 ${leftPaddingClass} ${rightPaddingClass}`}
                     >
                         <div className="w-full">
                             {children}

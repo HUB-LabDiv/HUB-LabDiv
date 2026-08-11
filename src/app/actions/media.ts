@@ -204,6 +204,8 @@ export async function uploadMediaServerAction(formData: FormData) {
     const apiKey = process.env.CLOUDINARY_API_KEY;
     const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
+    let cloudinaryError: string | null = null;
+
     // 1. Tentar upload seguro direto pelo SDK Server-Side do Cloudinary
     if (cloudName && apiKey && apiSecret) {
         try {
@@ -239,11 +241,15 @@ export async function uploadMediaServerAction(formData: FormData) {
 
             return { url: result.secure_url };
         } catch (err: any) {
-            console.warn('[Cloudinary Stream Upload Falhou, tentando fallback Supabase Storage]:', err?.message || err);
+            cloudinaryError = err?.message || String(err);
+            console.warn('[Cloudinary Stream Upload Falhou, tentando fallback Supabase Storage]:', cloudinaryError);
         }
+    } else {
+        cloudinaryError = 'Credenciais Cloudinary (API Key/Secret) não encontradas nas variáveis de ambiente.';
     }
 
     // 2. Fallback: Supabase Storage (bucket 'submissions' - bucket público dedicado)
+    let supabaseError: string | null = null;
     try {
         const fileExt = file.name ? (file.name.split('.').pop() || 'bin') : 'bin';
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
@@ -266,11 +272,14 @@ export async function uploadMediaServerAction(formData: FormData) {
                 return { url: publicUrlData.publicUrl };
             }
         } else {
+            supabaseError = storageErr.message;
             console.error('[Supabase Storage Upload Error]', storageErr);
         }
-    } catch (supaErr) {
+    } catch (supaErr: any) {
+        supabaseError = supaErr?.message || String(supaErr);
         console.error('[Supabase Storage Exception]', supaErr);
     }
 
-    return { error: 'Não foi possível realizar o upload do arquivo. Verifique sua conexão e configurações de armazenamento.' };
+    const detailMsg = supabaseError || cloudinaryError || 'Verifique as permissões de armazenamento e conexão de rede.';
+    return { error: `Não foi possível realizar o upload do arquivo: ${detailMsg}` };
 }

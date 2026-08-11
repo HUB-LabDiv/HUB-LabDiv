@@ -20,40 +20,50 @@ export function stripMarkdownAndLatex(text: string | null | undefined): string {
 
     let clean = text;
 
-    // 1. Remove LaTeX Display Math: $$ ... $$ or \[ ... \]
+    // 1. Remove HTML tags & replace line break elements with space
+    clean = clean.replace(/<br\s*\/?>/gi, ' ');
+    clean = clean.replace(/<\/p>/gi, ' ');
+    clean = clean.replace(/<\/h[1-6]>/gi, ' ');
+    clean = clean.replace(/<[^>]*>/g, '');
+    clean = clean.replace(/&nbsp;/gi, ' ');
+    clean = clean.replace(/&amp;/gi, '&');
+    clean = clean.replace(/&lt;/gi, '<');
+    clean = clean.replace(/&gt;/gi, '>');
+
+    // 2. Remove LaTeX Display Math: $$ ... $$ or \[ ... \]
     clean = clean.replace(/\$\$[\s\S]*?\$\$/g, '');
     clean = clean.replace(/\\\[[\s\S]*?\\\]/g, '');
 
-    // 2. Remove LaTeX Inline Math: $ ... $ or \( ... \)
+    // 3. Remove LaTeX Inline Math: $ ... $ or \( ... \)
     clean = clean.replace(/\$.*?\$/g, '');
     clean = clean.replace(/\\\([\s\S]*?\\\)/g, '');
 
-    // 3. Remove LaTeX Commands: \command{...}{...} or \command[...]{...} or \command
+    // 4. Remove LaTeX Commands: \command{...}{...} or \command[...]{...} or \command
     clean = clean.replace(/\\[a-zA-Z*]+(?:\[.*?\])?(?:\{.*?\})*/g, '');
 
-    // 4. Remove Markdown Links: [text](url) -> text
+    // 5. Remove Markdown Links: [text](url) -> text
     clean = clean.replace(/\[(.*?)\]\(.*?\)/g, '$1');
 
-    // 5. Remove Markdown Formatting: **, *, __, _, ~~
+    // 6. Remove Markdown Formatting: **, *, __, _, ~~
     clean = clean.replace(/(\*\*|__)(.*?)\1/g, '$2');
     clean = clean.replace(/(\*|_)(.*?)\1/g, '$2');
     clean = clean.replace(/~~(.*?)~~/g, '$1');
 
-    // 6. Remove Markdown Headers: # Header
+    // 7. Remove Markdown Headers: # Header
     clean = clean.replace(/^#+\s+/gm, '');
 
-    // 7. Remove Markdown Images: ![alt](url)
+    // 8. Remove Markdown Images: ![alt](url)
     clean = clean.replace(/!\[.*?\]\(.*?\)/g, '');
 
-    // 8. Remove Code blocks and inline code
+    // 9. Remove Code blocks and inline code
     clean = clean.replace(/```[\s\S]*?```/g, '');
     clean = clean.replace(/`.*?`/g, '');
 
-    // 9. Remove leftover LaTeX artifacts: { }, _, ^, \
+    // 10. Remove leftover LaTeX artifacts: { }, _, ^, \
     clean = clean.replace(/[{}_\^]/g, '');
     clean = clean.replace(/\\/g, '');
 
-    // 10. Clean up extra whitespace/newlines
+    // 11. Clean up extra whitespace/newlines
     clean = clean.replace(/\n\s*\n/g, '\n').trim();
     clean = clean.replace(/[ \t]+/g, ' ');
 

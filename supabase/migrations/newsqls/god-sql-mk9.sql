@@ -101,18 +101,22 @@ VALUES (
     true,
     10485760, -- 10MB
     ARRAY[
-        'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+        'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml',
         'video/mp4', 'video/webm', 'video/quicktime',
-        'application/pdf',
+        'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp3', 'audio/m4a',
+        'application/pdf', 'application/zip', 'application/x-zip-compressed',
+        'model/gltf-binary', 'model/gltf+json',
         'application/octet-stream'
     ]
 ) ON CONFLICT (id) DO UPDATE SET
     public = true,
     file_size_limit = 10485760,
     allowed_mime_types = ARRAY[
-        'image/jpeg', 'image/png', 'image/webp', 'image/gif',
+        'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/svg+xml',
         'video/mp4', 'video/webm', 'video/quicktime',
-        'application/pdf',
+        'audio/mpeg', 'audio/wav', 'audio/ogg', 'audio/mp3', 'audio/m4a',
+        'application/pdf', 'application/zip', 'application/x-zip-compressed',
+        'model/gltf-binary', 'model/gltf+json',
         'application/octet-stream'
     ];
 
