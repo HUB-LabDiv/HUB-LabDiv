@@ -19,11 +19,10 @@ import { MediaCard } from '@/components/media/MediaCard';
 import { PostDTO } from '@/dtos/media';
 import { CATEGORIES } from '@/lib/constants';
 import { getProfileWithPseudonyms } from '@/app/actions/profiles';
-import { createSubmission } from '@/app/actions/submissions';
+import { createSubmission, updateSubmission, revertSubmissionToDraft } from '@/app/actions/submissions';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { TargetProfileModal } from './TargetProfileModal';
-import { updateSubmission } from '@/app/actions/submissions';
 import { useMutation } from '@tanstack/react-query';
 import { DraftsMenu } from './DraftsMenu';
 import { useDraftsStore } from '@/store/useDraftsStore';
@@ -496,6 +495,29 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             toast.error('Erro inesperado ao atualizar conteúdo.', { id: toastId });
         } finally {
             setIsSubmitting(false);
+        }
+    };
+
+    const handleRevertToDraft = async () => {
+        if (!editId) return;
+        if (window.confirm('Tem certeza que deseja mover esta publicação para os rascunhos? Ela deixará de ser exibida no feed até ser publicada novamente.')) {
+            setIsSubmitting(true);
+            const toastId = toast.loading('Movendo para rascunhos...');
+            try {
+                const res = await revertSubmissionToDraft(editId);
+                if (res.error) {
+                    toast.error(res.error, { id: toastId });
+                } else {
+                    toast.success('Publicação movida para os Rascunhos!', { id: toastId });
+                    usePendingUploadsStore.getState().clearPendingFiles();
+                    useSubmissionStore.getState().reset();
+                    router.push('/');
+                }
+            } catch (err: any) {
+                toast.error('Erro ao mover para rascunhos: ' + (err.message || err), { id: toastId });
+            } finally {
+                setIsSubmitting(false);
+            }
         }
     };
 
@@ -1149,14 +1171,25 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                             </button>
                         )}
                         {editId && (
-                            <button
-                                onClick={handleUpdate}
-                                className="w-full flex items-center justify-center gap-2 px-8 py-5 rounded-xl bg-white dark:bg-[#1E1E1E] border border-brand-blue/50 text-brand-blue font-bold text-xl hover:bg-brand-blue/10 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
-                                disabled={!readGuide || (previewMode !== 'arte' && !acceptedCc) || isSubmitting}
-                                title={(!readGuide || (previewMode !== 'arte' && !acceptedCc)) ? "Você precisa aceitar os termos acima para continuar" : ""}
-                            >
-                                {isSubmitting ? 'Atualizando...' : 'Atualizar Original 🔄'}
-                            </button>
+                            <>
+                                <button
+                                    onClick={handleRevertToDraft}
+                                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-5 rounded-xl bg-white dark:bg-[#1E1E1E] border border-brand-yellow/50 text-brand-yellow font-bold text-base hover:bg-brand-yellow/10 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed whitespace-nowrap shadow-md"
+                                    disabled={isSubmitting}
+                                    title="Mover esta publicação de volta para os rascunhos (ficará oculta no feed)"
+                                >
+                                    <span className="material-symbols-outlined text-[20px]">archive</span>
+                                    <span>Mover p/ Rascunho</span>
+                                </button>
+                                <button
+                                    onClick={handleUpdate}
+                                    className="w-full flex items-center justify-center gap-2 px-8 py-5 rounded-xl bg-white dark:bg-[#1E1E1E] border border-brand-blue/50 text-brand-blue font-bold text-xl hover:bg-brand-blue/10 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
+                                    disabled={!readGuide || (previewMode !== 'arte' && !acceptedCc) || isSubmitting}
+                                    title={(!readGuide || (previewMode !== 'arte' && !acceptedCc)) ? "Você precisa aceitar os termos acima para continuar" : ""}
+                                >
+                                    {isSubmitting ? 'Atualizando...' : 'Atualizar Original 🔄'}
+                                </button>
+                            </>
                         )}
                         <button
                             onClick={handlePublish}
