@@ -30,6 +30,7 @@ import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
 import { uploadFileToCloudinary } from '@/lib/cloudinary-upload';
 import { EnviarFeedbackCard } from '../EnviarFeedbackCard';
 import { stripMarkdownAndLatex } from '@/lib/utils';
+import { SdocxHeroImage } from '@/components/reading/SdocxImageBlock';
 
 interface DiagrammerLayoutProps {
     editId?: string | null;
@@ -114,7 +115,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         fetchAliases();
     }, [setAuthors]);
 
-    const { user } = useAuth();
+    const { user, profile } = useAuth();
     const router = useRouter();
     const [isSubmitting, setIsSubmitting] = React.useState(false);
 
@@ -468,6 +469,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 quiz: quizBlock ? [quizBlock.content] : undefined,
                 docs_link: docsLink || undefined,
                 drive_link: driveLink || undefined,
+                status: profile?.is_labdiv ? 'aprovado' : 'pendente',
             };
 
             updateMutation.mutate({ id: editId, payload }, {
@@ -693,8 +695,9 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
 
                                 {/* Corpo do Artigo Fictício (Post Completo) */}
                                 <div className="w-full max-w-5xl mx-auto bg-[#1E1E1E] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-white/5 pointer-events-none mt-8">
-                                    <div className="p-6 md:p-10 space-y-6">
-                                        <div className="flex flex-wrap items-center gap-2">
+                                    <div className="p-6 md:p-10 space-y-0">
+                                        {/* 1. TAGS E CATEGORIAS NO TOPO */}
+                                        <div className="flex flex-wrap items-center gap-2 mb-6">
                                             <span className="px-3 py-1 bg-white/5 border border-white/10 text-gray-300 rounded-full text-xs font-bold tracking-wide uppercase">
                                                 {previewData.category || 'Todos'}
                                             </span>
@@ -705,59 +708,101 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                             )}
                                         </div>
 
-                                        <h1 className="text-3xl md:text-4xl font-display font-bold text-white leading-tight">
-                                            {previewData.title || 'Sem Título'}
-                                        </h1>
-
-                                        <div className="flex flex-col py-4 border-y border-white/5">
-                                            <div className="flex items-center justify-between gap-4">
-                                                <div className="flex items-center gap-3">
+                                        {/* 2. AUTORES */}
+                                        <div className="flex flex-col border-b border-white/5 pb-6 mb-8">
+                                            <div className="flex items-center gap-3">
+                                                {(profile?.avatar_url || user?.user_metadata?.avatar_url) ? (
+                                                    <img
+                                                        src={profile?.avatar_url || user?.user_metadata?.avatar_url}
+                                                        alt={authors || user?.user_metadata?.full_name || 'Autor'}
+                                                        className="size-10 rounded-full object-cover shrink-0"
+                                                    />
+                                                ) : (
                                                     <div className="size-10 rounded-full bg-brand-blue/20 flex items-center justify-center text-brand-blue font-bold text-xs uppercase shrink-0">
                                                         {(authors || user?.user_metadata?.full_name || 'A').substring(0, 2)}
                                                     </div>
-                                                    <div className="flex flex-col">
-                                                        <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Autore(s)</span>
-                                                        <span className="text-sm font-bold text-white">{authors || user?.user_metadata?.full_name || 'Autor(a)'}</span>
-                                                    </div>
+                                                )}
+                                                <div className="flex flex-col">
+                                                    <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Autore(s)</span>
+                                                    <span className="text-sm font-bold text-white">{authors || user?.user_metadata?.full_name || 'Autor(a)'}</span>
                                                 </div>
                                             </div>
                                         </div>
 
-                                        <div className="mt-8">
-                                            {(() => {
-                                                // Extrai o primeiro bloco de imagem para usar como hero.
-                                                const heroImgBlock = previewData.blocks.find(
-                                                    (b: any) => b.type === 'image' && b.content?.url
-                                                );
-                                                const heroImgUrl = heroImgBlock?.content?.url;
+                                        {/* 3. TÍTULO */}
+                                        <h1 className="text-3xl md:text-4xl font-display font-bold text-white leading-tight mb-8">
+                                            {previewData.title || 'Sem Título'}
+                                        </h1>
 
-                                                return (
-                                                    <>
-                                                        {/* Hero Image: título → imagem → descrição */}
-                                                        {heroImgUrl && (
-                                                            <div className="-mx-6 md:-mx-10 mb-8 overflow-hidden">
-                                                                <img
-                                                                    src={heroImgUrl}
-                                                                    alt={previewData.title || 'Imagem do post'}
-                                                                    className="w-full max-h-[500px] object-cover"
-                                                                />
-                                                            </div>
-                                                        )}
-                                                        {/* Conteúdo dos blocos (pula o hero) */}
-                                                        <div className="text-gray-400 leading-relaxed prose prose-lg prose-invert max-w-none">
-                                                            <div className="flex flex-col gap-8">
-                                                                {previewData.blocks
-                                                                    .filter((b: any) => !(b.type === 'image' && b.content?.url === heroImgUrl))
-                                                                    .map((block: any) => (
-                                                                        <BlockRenderer key={block.id} block={block} forcePreview={true} />
-                                                                    ))
-                                                                }
+                                        {/* 4. OBJETO PRINCIPAL */}
+                                        {(() => {
+                                            // Extrai o primeiro bloco de mídia para usar como hero.
+                                            const heroBlock = previewData.blocks.find(
+                                                (b: any) => (b.type === 'image' || b.type === 'video' || b.type === 'pdf') && b.content?.url
+                                            );
+
+                                            return (
+                                                <>
+                                                    {heroBlock && heroBlock.type === 'image' && (
+                                                        <div className="-mx-6 md:-mx-10 mb-8 overflow-hidden rounded-xl shadow-lg">
+                                                            <SdocxHeroImage
+                                                                src={heroBlock.content.url}
+                                                                alt={previewData.title || 'Imagem do post'}
+                                                                allowBlob={true}
+                                                            />
+                                                        </div>
+                                                    )}
+                                                    {heroBlock && (heroBlock.type === 'video' || heroBlock.type === 'pdf') && (
+                                                        <div className="w-full bg-background-dark rounded-2xl overflow-hidden shadow-lg border border-white/5 min-h-[300px] md:min-h-[500px] flex items-center justify-center mb-8">
+                                                            <div className="w-full h-full flex flex-col items-center justify-center gap-4">
+                                                                <span className="material-symbols-outlined text-6xl text-white/20">
+                                                                    {heroBlock.type === 'video' ? 'play_circle' : 'picture_as_pdf'}
+                                                                </span>
+                                                                <span className="text-white/40 text-sm font-bold uppercase tracking-wider">
+                                                                    {heroBlock.type === 'video' ? 'Player de Vídeo' : 'Leitor de PDF'}
+                                                                </span>
                                                             </div>
                                                         </div>
-                                                    </>
-                                                );
-                                            })()}
-                                        </div>
+                                                    )}
+
+                                                    {/* 5. BOTÕES DE AÇÃO FICTÍCIOS */}
+                                                    <div className="flex items-center justify-between gap-4 py-4 border-y border-white/5 mb-8">
+                                                        <div className="flex items-center gap-2">
+                                                            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-white/10 text-gray-400">
+                                                                <span className="material-symbols-outlined text-[16px]">flag</span>
+                                                                <span className="text-xs font-bold uppercase tracking-wide">Reportar</span>
+                                                            </button>
+                                                            <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-brand-blue/10 text-brand-blue">
+                                                                <span className="material-symbols-outlined text-[16px]">picture_as_pdf</span>
+                                                                <span className="text-xs font-bold uppercase tracking-wide">Exportar PDF</span>
+                                                            </button>
+                                                            <button className="flex items-center justify-center size-8 rounded-full bg-brand-blue text-white">
+                                                                <span className="material-symbols-outlined text-[16px]">share</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    {/* 6. DESCRIÇÃO */}
+                                                    {previewData.description && (
+                                                        <div className="text-gray-400 leading-relaxed prose prose-lg prose-invert max-w-none mb-10 whitespace-pre-wrap">
+                                                            {previewData.description}
+                                                        </div>
+                                                    )}
+
+                                                    {/* 7. CONTEÚDO DOS BLOCOS */}
+                                                    <div className="text-gray-400 leading-relaxed prose prose-lg prose-invert max-w-none">
+                                                        <div className="flex flex-col gap-8">
+                                                            {previewData.blocks
+                                                                .filter((b: any) => b.id !== heroBlock?.id)
+                                                                .map((block: any) => (
+                                                                    <BlockRenderer key={block.id} block={block} forcePreview={true} />
+                                                                ))
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </>
+                                            );
+                                        })()}
                                     </div>
                                 </div>
                             </>
@@ -1172,22 +1217,24 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                         )}
                         {editId && (
                             <>
-                                <button
-                                    onClick={handleRevertToDraft}
-                                    className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-5 rounded-xl bg-white dark:bg-[#1E1E1E] border border-brand-yellow/50 text-brand-yellow font-bold text-base hover:bg-brand-yellow/10 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed whitespace-nowrap shadow-md"
-                                    disabled={isSubmitting}
-                                    title="Mover esta publicação de volta para os rascunhos (ficará oculta no feed)"
-                                >
-                                    <span className="material-symbols-outlined text-[20px]">archive</span>
-                                    <span>Mover p/ Rascunho</span>
-                                </button>
+                                {profile?.is_labdiv && (
+                                    <button
+                                        onClick={handleRevertToDraft}
+                                        className="w-full sm:w-auto flex items-center justify-center gap-2 px-6 py-5 rounded-xl bg-white dark:bg-[#1E1E1E] border border-brand-yellow/50 text-brand-yellow font-bold text-base hover:bg-brand-yellow/10 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed whitespace-nowrap shadow-md"
+                                        disabled={isSubmitting}
+                                        title="Mover esta publicação de volta para os rascunhos (ficará oculta no feed)"
+                                    >
+                                        <span className="material-symbols-outlined text-[20px]">archive</span>
+                                        <span>Mover p/ Rascunho</span>
+                                    </button>
+                                )}
                                 <button
                                     onClick={handleUpdate}
                                     className="w-full flex items-center justify-center gap-2 px-8 py-5 rounded-xl bg-white dark:bg-[#1E1E1E] border border-brand-blue/50 text-brand-blue font-bold text-xl hover:bg-brand-blue/10 transition-all hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"
                                     disabled={!readGuide || (previewMode !== 'arte' && !acceptedCc) || isSubmitting}
                                     title={(!readGuide || (previewMode !== 'arte' && !acceptedCc)) ? "Você precisa aceitar os termos acima para continuar" : ""}
                                 >
-                                    {isSubmitting ? 'Atualizando...' : 'Atualizar Original 🔄'}
+                                    {isSubmitting ? 'Enviando...' : (profile?.is_labdiv ? 'Atualizar Original 🔄' : 'Reenviar para Aprovação 🔄')}
                                 </button>
                             </>
                         )}

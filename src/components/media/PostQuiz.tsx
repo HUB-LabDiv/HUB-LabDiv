@@ -150,7 +150,7 @@ export function PostQuiz({ submissionId, quiz, authorId, currentUserId }: PostQu
 
                 <div className="space-y-10">
                     {quiz.map((q, qIndex) => (
-                        <div key={q.id} className="space-y-4">
+                        <div key={q.id || `quiz-q-${qIndex}`} className="space-y-4">
                             <h3 className="text-base font-bold text-gray-900 dark:text-white pl-4 border-l-4 border-brand-blue">
                                 {qIndex + 1}. {q.question}
                             </h3>

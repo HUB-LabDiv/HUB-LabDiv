@@ -185,16 +185,25 @@ export default async function ArquivoItemPage({ params }: PageProps) {
 
     const urls = parseMediaUrl(submission.media_url);
 
-    // Para posts sdocx: extrai a primeira imagem dos blocos para usar como hero
-    let sdocxHeroImageUrl: string | null = null;
+    // Para posts sdocx: extrai o primeiro bloco de mídia para usar como hero
+    let sdocxHeroBlock: any = null;
     if (submission.media_type === 'sdocx') {
         try {
             const blocks = JSON.parse(submission.media_url || '[]');
             if (Array.isArray(blocks)) {
-                const imgBlock = blocks.find((b: any) => b.type === 'image' && b.content?.url && !b.content.url.startsWith('blob:'));
-                if (imgBlock) sdocxHeroImageUrl = imgBlock.content.url;
+                const mediaBlock = blocks.find((b: any) => 
+                    (b.type === 'image' || b.type === 'video' || b.type === 'pdf') && 
+                    b.content?.url
+                );
+                if (mediaBlock) sdocxHeroBlock = mediaBlock;
             }
         } catch {}
+    }
+
+    let authorAvatarUrl = null;
+    if (submission.user_id) {
+        const { data: profile } = await supabase.from('profiles').select('avatar_url').eq('id', submission.user_id).single();
+        if (profile) authorAvatarUrl = profile.avatar_url;
     }
 
     const relatedSubmissions = await getRelatedSubmissions(submission.category, submission.id);
@@ -297,110 +306,107 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                         )}
 
                         <div className="bg-white dark:bg-card-dark rounded-2xl md:rounded-3xl overflow-hidden shadow-xl border border-gray-100 dark:border-gray-800">
-                            {/* Details Section */}
-                            <div className="p-6 md:p-10 space-y-8">
-                                {/* 1. TÍTULO E METADADOS DA PUBLICAÇÃO */}
-                                <div className="space-y-6">
-                                    <div className="flex flex-wrap items-center gap-2">
-                                        {submission.category && (
-                                            <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full text-xs font-bold tracking-wide uppercase">
-                                                {submission.category}
-                                            </span>
-                                        )}
-                                        {submission.is_featured && (
-                                            <span className="px-3 py-1 bg-gradient-to-r from-brand-red to-brand-yellow text-white rounded-full text-xs font-bold tracking-wide uppercase">
-                                                Destaque
-                                            </span>
-                                        )}
-                                        {associatedDepartments.map((dept: any) => (
-                                            <Link
-                                                key={dept.id}
-                                                href={`/wiki/instituto/${dept.sigla.toLowerCase()}`}
-                                                className="px-3 py-1 bg-brand-yellow/10 text-brand-yellow hover:bg-brand-yellow/20 border border-brand-yellow/20 rounded-full text-[10px] font-black transition-all flex items-center gap-1 uppercase tracking-widest"
-                                                title={`Retornar ao Departamento: ${dept.nome}`}
-                                            >
-                                                <span className="material-symbols-outlined text-[14px]">account_balance</span>
-                                                {dept.sigla}
-                                            </Link>
-                                        ))}
-                                        {submission.tags?.map((tag: string, idx: number) => (
-                                            <Link
-                                                key={idx}
-                                                href={`/?tag=${tag.replace('#', '')}`}
-                                                className="px-3 py-1 bg-gray-50 dark:bg-gray-800 text-gray-500 hover:text-brand-blue border border-gray-100 dark:border-gray-700 rounded-full text-xs font-bold transition-all"
-                                            >
-                                                #{tag.replace('#', '')}
-                                            </Link>
-                                        ))}
-                                    </div>
-
-                                    <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 dark:text-white leading-tight">
-                                        {submission.title}
-                                    </h1>
-
-                                    <div className="flex flex-col py-4 border-y border-gray-100 dark:border-gray-800">
-                                        <div className="flex items-center justify-between gap-4">
-                                            <div className="flex items-center gap-3">
-                                                <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary dark:text-brand-blue font-bold text-xs uppercase shrink-0">
-                                                    {submission.authors.substring(0, 2)}
-                                                </div>
-                                                <div className="flex flex-col">
-                                                    <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Autore(s)</span>
-                                                    <span className="text-sm font-bold text-gray-900 dark:text-white">{submission.authors}</span>
-                                                </div>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <ReportButton submissionId={submission.id} />
-                                                <ExportPDFButton />
-                                                <ShareButtons title={submission.title} id={submission.id} />
-                                            </div>
-                                        </div>
-
-                                        {submission.co_authors && Array.isArray(submission.co_authors) && submission.co_authors.length > 0 && (
-                                            <div className="flex flex-wrap gap-2 mt-3 pl-[52px]">
-                                                {submission.co_authors.map((co: any, idx: number) => (
-                                                    <span key={idx} className="text-[10px] bg-gray-50 dark:bg-gray-800/50 px-2 py-0.5 rounded text-gray-500 dark:text-gray-400 border border-gray-100 dark:border-gray-700/50">
-                                                        {co.full_name}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        )}
-
-                                        {/* Links Internos (Somente LabDiv) */}
-                                        {isLabDiv && (submission.docs_link || submission.drive_link) && (
-                                            <div className="flex flex-wrap gap-4 mt-4 pl-[52px]">
-                                                {submission.docs_link && (
-                                                    <a
-                                                        href={submission.docs_link}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="flex items-center gap-1 text-[10px] bg-brand-yellow/10 hover:bg-brand-yellow/20 px-3 py-1.5 rounded-full text-brand-yellow border border-brand-yellow/20 transition-colors uppercase tracking-widest font-black"
-                                                        title="Abrir Documento"
-                                                    >
-                                                        <span className="material-symbols-outlined text-[14px]">description</span>
-                                                        Acessar Docs
-                                                    </a>
-                                                )}
-                                                {submission.drive_link && (
-                                                    <a
-                                                        href={submission.drive_link}
-                                                        target="_blank"
-                                                        rel="noopener noreferrer"
-                                                        className="flex items-center gap-1 text-[10px] bg-brand-yellow/10 hover:bg-brand-yellow/20 px-3 py-1.5 rounded-full text-brand-yellow border border-brand-yellow/20 transition-colors uppercase tracking-widest font-black"
-                                                        title="Abrir Pasta no Drive"
-                                                    >
-                                                        <span className="material-symbols-outlined text-[14px]">folder</span>
-                                                        Acessar Drive
-                                                    </a>
-                                                )}
-                                            </div>
-                                        )}
-                                    </div>
+                            <div className="p-6 md:p-10 space-y-0">
+                                
+                                {/* 1. TAGS E CATEGORIAS NO TOPO */}
+                                <div className="flex flex-wrap items-center gap-2 mb-6">
+                                    {submission.category && (
+                                        <span className="px-3 py-1 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 rounded-full text-xs font-bold tracking-wide uppercase">
+                                            {submission.category}
+                                        </span>
+                                    )}
+                                    {submission.is_featured && (
+                                        <span className="px-3 py-1 bg-gradient-to-r from-brand-red to-brand-yellow text-white rounded-full text-xs font-bold tracking-wide uppercase">
+                                            Destaque
+                                        </span>
+                                    )}
+                                    {associatedDepartments.map((dept: any) => (
+                                        <Link
+                                            key={dept.id}
+                                            href={`/wiki/instituto/${dept.sigla.toLowerCase()}`}
+                                            className="px-3 py-1 bg-brand-yellow/10 text-brand-yellow hover:bg-brand-yellow/20 border border-brand-yellow/20 rounded-full text-[10px] font-black transition-all flex items-center gap-1 uppercase tracking-widest"
+                                            title={`Retornar ao Departamento: ${dept.nome}`}
+                                        >
+                                            <span className="material-symbols-outlined text-[14px]">account_balance</span>
+                                            {dept.sigla}
+                                        </Link>
+                                    ))}
+                                    {submission.tags?.map((tag: string, idx: number) => (
+                                        <Link
+                                            key={idx}
+                                            href={`/?tag=${tag.replace('#', '')}`}
+                                            className="px-3 py-1 bg-gray-50 dark:bg-gray-800 text-gray-500 hover:text-brand-blue border border-gray-100 dark:border-gray-700 rounded-full text-xs font-bold transition-all"
+                                        >
+                                            #{tag.replace('#', '')}
+                                        </Link>
+                                    ))}
                                 </div>
 
-                                {/* 2. OBJETO PRINCIPAL (Imagem, Vídeo, Carrossel, PDF) */}
+                                {/* 2. AUTORES */}
+                                <div className="flex flex-col border-b border-gray-100 dark:border-gray-800 pb-6 mb-8">
+                                    <div className="flex items-center gap-3">
+                                        {authorAvatarUrl ? (
+                                            <img src={authorAvatarUrl} alt={submission.authors} className="size-10 rounded-full object-cover shrink-0" />
+                                        ) : (
+                                            <div className="size-10 rounded-full bg-primary/20 flex items-center justify-center text-primary dark:text-brand-blue font-bold text-xs uppercase shrink-0">
+                                                {submission.authors.substring(0, 2)}
+                                            </div>
+                                        )}
+                                        <div className="flex flex-col">
+                                            <span className="text-[10px] text-gray-500 font-medium uppercase tracking-wider">Autore(s)</span>
+                                            <span className="text-sm font-bold text-gray-900 dark:text-white">{submission.authors}</span>
+                                        </div>
+                                    </div>
+                                    
+                                    {submission.co_authors && Array.isArray(submission.co_authors) && submission.co_authors.length > 0 && (
+                                        <div className="flex flex-wrap gap-2 mt-3 pl-[52px]">
+                                            {submission.co_authors.map((co: any, idx: number) => (
+                                                <span key={idx} className="text-[10px] bg-gray-50 dark:bg-gray-800/50 px-2 py-0.5 rounded text-gray-500 dark:text-gray-400 border border-gray-100 dark:border-gray-700/50">
+                                                    {co.full_name}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+
+                                    {/* Links Internos (Somente LabDiv) */}
+                                    {isLabDiv && (submission.docs_link || submission.drive_link) && (
+                                        <div className="flex flex-wrap gap-4 mt-4 pl-[52px]">
+                                            {submission.docs_link && (
+                                                <a
+                                                    href={submission.docs_link}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center gap-1 text-[10px] bg-brand-yellow/10 hover:bg-brand-yellow/20 px-3 py-1.5 rounded-full text-brand-yellow border border-brand-yellow/20 transition-colors uppercase tracking-widest font-black"
+                                                    title="Abrir Documento"
+                                                >
+                                                    <span className="material-symbols-outlined text-[14px]">description</span>
+                                                    Acessar Docs
+                                                </a>
+                                            )}
+                                            {submission.drive_link && (
+                                                <a
+                                                    href={submission.drive_link}
+                                                    target="_blank"
+                                                    rel="noopener noreferrer"
+                                                    className="flex items-center gap-1 text-[10px] bg-brand-yellow/10 hover:bg-brand-yellow/20 px-3 py-1.5 rounded-full text-brand-yellow border border-brand-yellow/20 transition-colors uppercase tracking-widest font-black"
+                                                    title="Abrir Pasta no Drive"
+                                                >
+                                                    <span className="material-symbols-outlined text-[14px]">folder</span>
+                                                    Acessar Drive
+                                                </a>
+                                            )}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* 3. TÍTULO */}
+                                <h1 className="text-3xl md:text-4xl font-display font-bold text-gray-900 dark:text-white leading-tight mb-8">
+                                    {submission.title}
+                                </h1>
+
+                                {/* 4. OBJETO PRINCIPAL */}
                                 {submission.media_type !== 'text' && submission.media_type !== 'zip' && submission.media_type !== 'sdocx' && urls.length > 0 && (
-                                    <div className="w-full bg-background-dark rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-800 min-h-[300px] md:min-h-[500px] flex items-center justify-center">
+                                    <div className="w-full bg-background-dark rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-800 min-h-[300px] md:min-h-[500px] flex items-center justify-center mb-8">
                                         {submission.media_type === 'video' ? (
                                             <div className="w-full h-full aspect-video">
                                                 <iframe
@@ -420,18 +426,53 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                         )}
                                     </div>
                                 )}
-
-                                {/* 3. DESCRIÇÃO E CONTEÚDO DA PUBLICAÇÃO */}
-                                {submission.media_type === 'sdocx' ? (
-                                    <div id="submission-content" className="mt-8">
-                                        <ContextPanel context={submission.contexto_hsec} />
-
-                                        {/* Hero Image inline: título → imagem → conteúdo */}
-                                        {sdocxHeroImageUrl && (
-                                            <div className="-mx-6 md:-mx-10 mb-10 overflow-hidden rounded-xl shadow-lg">
-                                                <SdocxHeroImage src={sdocxHeroImageUrl} alt={submission.title} />
+                                {submission.media_type === 'sdocx' && sdocxHeroBlock && (
+                                    <>
+                                        {sdocxHeroBlock.type === 'image' && (
+                                            <div className="-mx-6 md:-mx-10 mb-8 overflow-hidden rounded-xl shadow-lg">
+                                                <SdocxHeroImage src={sdocxHeroBlock.content.url} alt={submission.title} allowBlob={true} />
                                             </div>
                                         )}
+                                        {(sdocxHeroBlock.type === 'video' || sdocxHeroBlock.type === 'pdf') && (
+                                            <div className="w-full bg-background-dark rounded-2xl overflow-hidden shadow-lg border border-gray-100 dark:border-gray-800 min-h-[300px] md:min-h-[500px] flex items-center justify-center mb-8">
+                                                <div className="w-full h-full flex flex-col items-center justify-center gap-4">
+                                                    <span className="material-symbols-outlined text-6xl text-brand-blue/40">
+                                                        {sdocxHeroBlock.type === 'video' ? 'play_circle' : 'picture_as_pdf'}
+                                                    </span>
+                                                    <span className="text-brand-blue/60 text-sm font-bold uppercase tracking-wider">
+                                                        {sdocxHeroBlock.type === 'video' ? 'Player de Vídeo' : 'Leitor de PDF'}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </>
+                                )}
+
+                                {/* 5. BOTÕES DE AÇÃO */}
+                                <div className="flex items-center justify-between gap-4 py-4 border-y border-gray-100 dark:border-gray-800 mb-8">
+                                    <div className="flex items-center gap-2">
+                                        <ReportButton submissionId={submission.id} />
+                                        <ExportPDFButton />
+                                        <ShareButtons title={submission.title} id={submission.id} />
+                                    </div>
+                                </div>
+
+                                {/* 6. DESCRIÇÃO */}
+                                {submission.description && (
+                                    <div className="mb-10">
+                                        {submission.media_type !== 'sdocx' && <ContextPanel context={submission.contexto_hsec} />}
+                                        <StyledArticleView
+                                            content={submission.description}
+                                            palavrasGeradoras={palavrasGeradoras || undefined}
+                                            fullTextForToc={submission.description}
+                                        />
+                                    </div>
+                                )}
+
+                                {/* 7. CONTEÚDO E BLOCOS (SDOCX) */}
+                                {submission.media_type === 'sdocx' && (
+                                    <div id="submission-content">
+                                        <ContextPanel context={submission.contexto_hsec} />
 
                                         <div className="flex flex-col gap-8 w-full mt-8">
                                             {(() => {
@@ -456,8 +497,8 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                             </div>
                                                         );
                                                     } else if (block.type === 'image') {
-                                                        // Ignora a imagem hero (já exibida no topo)
-                                                        if (block.content.url === sdocxHeroImageUrl) return null;
+                                                        // Ignora o bloco hero (já exibido no topo)
+                                                        if (sdocxHeroBlock && (block.id === sdocxHeroBlock.id || block.content?.url === sdocxHeroBlock.content?.url)) return null;
                                                         return (
                                                             <SdocxInlineImage
                                                                 key={block.id}
@@ -520,17 +561,6 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                 });
                                             })()}
                                         </div>
-                                    </div>
-                                ) : submission.description && (
-                                    <div id="submission-content" className="mt-8">
-                                        {/* Componente A: Contexto HSEC */}
-                                        <ContextPanel context={submission.contexto_hsec} />
-
-                                        <StyledArticleView
-                                            content={submission.description}
-                                            palavrasGeradoras={palavrasGeradoras || undefined}
-                                            fullTextForToc={submission.description}
-                                        />
                                     </div>
                                 )}
 
