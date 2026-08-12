@@ -187,15 +187,34 @@ export default async function ArquivoItemPage({ params }: PageProps) {
 
     // Para posts sdocx: extrai o primeiro bloco de mídia para usar como hero
     let sdocxHeroBlock: any = null;
+    let sdocxHeroUrl: string | null = null;
     if (submission.media_type === 'sdocx') {
         try {
-            const blocks = JSON.parse(submission.media_url || '[]');
+            let blocks = [];
+            if (typeof submission.media_url === 'string') {
+                blocks = JSON.parse(submission.media_url || '[]');
+            } else if (Array.isArray(submission.media_url)) {
+                blocks = submission.media_url;
+            }
             if (Array.isArray(blocks)) {
-                const mediaBlock = blocks.find((b: any) => 
-                    (b.type === 'image' || b.type === 'video' || b.type === 'pdf') && 
-                    b.content?.url
-                );
-                if (mediaBlock) sdocxHeroBlock = mediaBlock;
+                const mediaBlock = blocks.find((b: any) => {
+                    if (!b || !b.type) return false;
+                    if (b.type === 'image' || b.type === 'video' || b.type === 'pdf') {
+                        return Boolean(b.content?.url || b.content?.src);
+                    }
+                    if (b.type === 'carousel' && Array.isArray(b.content?.items) && b.content.items.length > 0) {
+                        return Boolean(b.content.items[0]?.url || b.content.items[0]?.src);
+                    }
+                    return false;
+                });
+                if (mediaBlock) {
+                    sdocxHeroBlock = mediaBlock;
+                    if (mediaBlock.type === 'carousel') {
+                        sdocxHeroUrl = mediaBlock.content.items[0]?.url || mediaBlock.content.items[0]?.src || null;
+                    } else {
+                        sdocxHeroUrl = mediaBlock.content?.url || mediaBlock.content?.src || null;
+                    }
+                }
             }
         } catch {}
     }
@@ -426,11 +445,11 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                         )}
                                     </div>
                                 )}
-                                {submission.media_type === 'sdocx' && sdocxHeroBlock && (
+                                {submission.media_type === 'sdocx' && sdocxHeroBlock && sdocxHeroUrl && (
                                     <>
-                                        {sdocxHeroBlock.type === 'image' && (
+                                        {(sdocxHeroBlock.type === 'image' || sdocxHeroBlock.type === 'carousel') && (
                                             <div className="-mx-6 md:-mx-10 mb-8 overflow-hidden rounded-xl shadow-lg">
-                                                <SdocxHeroImage src={sdocxHeroBlock.content.url} alt={submission.title} allowBlob={true} />
+                                                <SdocxHeroImage src={sdocxHeroUrl} alt={submission.title} allowBlob={true} />
                                             </div>
                                         )}
                                         {(sdocxHeroBlock.type === 'video' || sdocxHeroBlock.type === 'pdf') && (

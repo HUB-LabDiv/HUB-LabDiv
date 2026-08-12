@@ -14,30 +14,40 @@ interface SdocxHeroImageProps {
     allowBlob?: boolean;
 }
 
-/** Hero image para posts sdocx — client-side para suportar onError. */
-export function SdocxHeroImage({ src, alt, allowBlob = false }: SdocxHeroImageProps) {
+/** Hero image para posts sdocx — client-side com carregamento fluido e onError. */
+export function SdocxHeroImage({ src, alt, allowBlob = true }: SdocxHeroImageProps) {
     const [failed, setFailed] = useState(false);
+    const [loaded, setLoaded] = useState(false);
     const imgRef = useRef<HTMLImageElement>(null);
 
     useEffect(() => {
-        if (imgRef.current && imgRef.current.complete && imgRef.current.naturalHeight === 0) {
-            setFailed(true);
+        if (imgRef.current?.complete && imgRef.current?.naturalHeight > 0) {
+            setLoaded(true);
         }
     }, [src]);
 
     if (failed || !src || (!allowBlob && src.startsWith('blob:'))) return null;
 
     return (
-        <div className="bg-background-dark flex items-center justify-center min-h-[300px] md:min-h-[500px] relative overflow-hidden">
+        <div className="bg-background-dark flex items-center justify-center min-h-[300px] md:min-h-[500px] relative overflow-hidden rounded-xl">
+            {/* Loading Skeleton */}
+            {!loaded && (
+                <div className="absolute inset-0 bg-gray-800 animate-pulse flex items-center justify-center">
+                    <span className="material-symbols-outlined text-4xl text-gray-600 animate-spin">progress_activity</span>
+                </div>
+            )}
+
             <img
                 ref={imgRef}
                 src={src}
                 alt={alt}
-                className="w-full h-full object-cover absolute inset-0"
+                className="w-full h-full object-cover absolute inset-0 z-10"
+                onLoad={() => setLoaded(true)}
                 onError={() => setFailed(true)}
             />
+            
             {/* Gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-t from-background-dark/80 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-background-dark/80 via-transparent to-transparent pointer-events-none z-20" />
         </div>
     );
 }
@@ -47,14 +57,15 @@ interface SdocxInlineImageProps {
     altText?: string;
 }
 
-/** Imagem inline dentro de blocos sdocx — client-side para suportar onError. */
+/** Imagem inline dentro de blocos sdocx — client-side com suporte a erro e loading. */
 export function SdocxInlineImage({ src, altText }: SdocxInlineImageProps) {
     const [failed, setFailed] = useState(false);
+    const [loaded, setLoaded] = useState(false);
     const imgRef = useRef<HTMLImageElement>(null);
 
     useEffect(() => {
-        if (imgRef.current && imgRef.current.complete && imgRef.current.naturalHeight === 0) {
-            setFailed(true);
+        if (imgRef.current?.complete && imgRef.current?.naturalHeight > 0) {
+            setLoaded(true);
         }
     }, [src]);
 
@@ -68,18 +79,21 @@ export function SdocxInlineImage({ src, altText }: SdocxInlineImageProps) {
     }
 
     return (
-        <div className="relative rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 my-8 w-full flex flex-col items-center justify-center p-4">
+        <div className="relative rounded-xl overflow-hidden bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 my-8 w-full flex flex-col items-center justify-center p-4 min-h-[200px]">
+            {!loaded && (
+                <div className="absolute inset-0 bg-gray-100 dark:bg-gray-800 animate-pulse flex items-center justify-center">
+                    <span className="material-symbols-outlined text-3xl text-gray-400 animate-spin">progress_activity</span>
+                </div>
+            )}
             <img
                 ref={imgRef}
                 src={src}
                 alt={altText || 'Imagem do bloco'}
-                className="w-full h-auto max-h-[600px] object-contain rounded-lg"
+                className="w-full h-auto max-h-[600px] object-contain rounded-lg relative z-10"
                 loading="lazy"
+                onLoad={() => setLoaded(true)}
                 onError={() => setFailed(true)}
             />
-            {altText && (
-                <p className="text-xs text-gray-400 mt-3 text-center italic">{altText}</p>
-            )}
         </div>
     );
 }
