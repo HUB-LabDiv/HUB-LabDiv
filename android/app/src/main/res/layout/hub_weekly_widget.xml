@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_weekly_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:background="@drawable/widget_bg"
+    android:padding="12dp">
+
+    <!-- Left Side: Stacked Action Buttons [E], [T], [+] -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingEnd="12dp">
+
+        <TextView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="#FFCC00"
+            android:gravity="center"
+            android:text="E"
+            android:textColor="#121212"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="#A855F7"
+            android:gravity="center"
+            android:text="T"
+            android:textColor="#FFFFFF"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="8dp" />
+
+        <TextView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="#3B82F6"
+            android:gravity="center"
+            android:text="+"
+            android:textColor="#FFFFFF"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:background="#2A2A2A"
+        android:layout_marginEnd="8dp" />
+
+    <!-- Main Area: 1 Single Week (7 Days D 9 -> S 15) -->
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        android:weightSum="7">
+
+        <!-- D 9 -->
+        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal" android:padding="2dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="D" android:textColor="#94A3B8" android:textSize="9sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="9" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold" />
+            <View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:background="#262626" android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- S 10 -->
+        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal" android:padding="2dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="S" android:textColor="#94A3B8" android:textSize="9sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="10" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold" />
+            <View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:background="#262626" android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- T 11 -->
+        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal" android:padding="2dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="T" android:textColor="#94A3B8" android:textSize="9sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="11" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold" />
+            <View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:background="#262626" android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- Q 12 -->
+        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal" android:padding="2dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Q" android:textColor="#94A3B8" android:textSize="9sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold" />
+            <View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:background="#262626" android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- Q 13 -->
+        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal" android:padding="2dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Q" android:textColor="#A855F7" android:textSize="9sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="13" android:textColor="#A855F7" android:textSize="12sp" android:textStyle="bold" />
+            <View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:background="#2D223B" android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- S 14 -->
+        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal" android:padding="2dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="S" android:textColor="#94A3B8" android:textSize="9sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="14" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold" />
+            <View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:background="#262626" android:layout_marginTop="4dp" />
+        </LinearLayout>
+
+        <!-- S 15 -->
+        <LinearLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:orientation="vertical" android:gravity="center_horizontal" android:padding="2dp">
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="S" android:textColor="#94A3B8" android:textSize="9sp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="15" android:textColor="#FFFFFF" android:textSize="12sp" android:textStyle="bold" />
+            <View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:background="#262626" android:layout_marginTop="4dp" />
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

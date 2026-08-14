@@ -57,6 +57,50 @@
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/hub_profile_widget_info" />
         </receiver>
 
+        <!-- 3. Widget Global (4x3) -->
+        <receiver
+            android:name=".HubGlobalWidgetProvider"
+            android:exported="true"
+            android:label="HUB LabDiv - Widget Global (4x3)">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/hub_global_widget_info" />
+        </receiver>
+
+        <!-- 4. Widget Calendário (3x3) -->
+        <receiver
+            android:name=".HubCalendarWidgetProvider"
+            android:exported="true"
+            android:label="HUB LabDiv - Calendário Mensal (3x3)">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/hub_calendar_widget_info" />
+        </receiver>
+
+        <!-- 5. Widget Agenda (2x3) -->
+        <receiver
+            android:name=".HubAgendaWidgetProvider"
+            android:exported="true"
+            android:label="HUB LabDiv - Agenda &amp; Tarefas (2x3)">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/hub_agenda_widget_info" />
+        </receiver>
+
+        <!-- 6. Widget Semanal (4x2) -->
+        <receiver
+            android:name=".HubWeeklyWidgetProvider"
+            android:exported="true"
+            android:label="HUB LabDiv - Visão Semanal (4x2)">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/hub_weekly_widget_info" />
+        </receiver>
+
         <!-- Legacy Widget Fallback -->
         <receiver android:name=".HubWidgetProvider" android:exported="true">
             <intent-filter>

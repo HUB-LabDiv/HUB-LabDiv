@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_agenda_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/widget_bg"
+    android:padding="12dp">
+
+    <!-- Header Bar -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="10dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:text="Dimensões ▾"
+            android:textColor="#E2E8F0"
+            android:textSize="13sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:background="#FFCC00"
+                android:gravity="center"
+                android:text="E"
+                android:textColor="#121212"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:background="#A855F7"
+                android:gravity="center"
+                android:text="T"
+                android:textColor="#FFFFFF"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="6dp" />
+
+            <TextView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:background="#3B82F6"
+                android:gravity="center"
+                android:text="+"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- Agenda Content -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sem data"
+            android:textColor="#E2E8F0"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp" />
+
+        <!-- Item 1 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#2D223B"
+            android:padding="10dp"
+            android:layout_marginBottom="8dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dermatologista"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Dia inteiro"
+                android:textColor="#94A3B8"
+                android:textSize="10sp" />
+        </LinearLayout>
+
+        <!-- Item 2 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="feedback por email ✎"
+            android:textColor="#FFCC00"
+            android:textSize="11sp"
+            android:background="#262626"
+            android:padding="8dp"
+            android:layout_marginBottom="6dp" />
+
+        <!-- Item 3 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="opcao no menu... ✎"
+            android:textColor="#FFCC00"
+            android:textSize="11sp"
+            android:background="#262626"
+            android:padding="8dp"
+            android:layout_marginBottom="6dp" />
+
+        <!-- Item 4 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="minimo de status... ✎"
+            android:textColor="#FFCC00"
+            android:textSize="11sp"
+            android:background="#262626"
+            android:padding="8dp"
+            android:layout_marginBottom="6dp" />
+
+        <!-- Item 5 -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="abrir eventos p... ✎"
+            android:textColor="#FFCC00"
+            android:textSize="11sp"
+            android:background="#262626"
+            android:padding="8dp" />
+    </LinearLayout>
+
+</LinearLayout>
