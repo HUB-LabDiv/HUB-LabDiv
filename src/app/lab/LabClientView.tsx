@@ -77,7 +77,7 @@ export function LabClientView({
     const [adoptionStatus, setAdoptionStatus] = useState<'pending' | 'approved' | null>(initialAdoptionStatus);
     
     // Auto-open Edit Profile Modal if critical info is missing
-    const isViewingOwn = currentUser.id === viewedProfile?.id;
+    const isViewingOwn = !viewedProfile || currentUser.id === viewedProfile?.id;
     
     const isUspMember = viewedProfile?.email?.endsWith('@usp.br') || viewedProfile?.email?.endsWith('@if.usp.br');
     const isResearcher = viewedProfile?.user_category === 'pesquisador' || viewedProfile?.user_category === 'docente_pesquisador';
@@ -185,7 +185,9 @@ export function LabClientView({
 
                             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-6 pt-1">
                                 <div className="text-center sm:text-left">
-                                    <span className="block text-lg font-bold text-gray-900 dark:text-white">{submissions.length}</span>
+                                    <span className="block text-lg font-bold text-gray-900 dark:text-white">
+                                        {submissions.filter(s => s.post.status !== 'deleted' && s.post.status !== 'deletado' && (isViewingOwn || s.post.status === 'aprovado')).length}
+                                    </span>
                                     <span className="text-sm text-gray-500 dark:text-gray-400">publicações</span>
                                 </div>
                                 <div className="text-center sm:text-left hidden sm:block">
@@ -491,7 +493,11 @@ export function LabClientView({
 
                 <div className="animate-in fade-in duration-500 max-w-4xl mx-auto border-t-0">
                     {(activeTab === 'fluxo' || activeTab === 'artes') && (() => {
-                        const filteredSubmissions = submissions.filter(sub => activeTab === 'artes' ? sub.post.category === 'Arte' : sub.post.category !== 'Arte');
+                        const filteredSubmissions = submissions.filter(sub => {
+                            if (sub.post.status === 'deleted' || sub.post.status === 'deletado') return false;
+                            if (!isViewingOwn && sub.post.status !== 'aprovado') return false;
+                            return activeTab === 'artes' ? sub.post.category === 'Arte' : sub.post.category !== 'Arte';
+                        });
                         return (
                         <div>
                             {filteredSubmissions.length > 0 ? (

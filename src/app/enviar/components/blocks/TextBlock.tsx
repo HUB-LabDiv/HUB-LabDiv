@@ -73,6 +73,13 @@ const ALIGN_OPTIONS: { value: TextAlign; command: string; icon: string; label: s
     { value: 'justify', command: 'justifyFull', icon: 'format_align_justify', label: 'Justificado' },
 ];
 
+const MARGIN_OPTIONS = [
+    { value: 'normal', label: 'Margem Padrão', desc: 'Espaçamento normal (24px)', icon: 'crop_free' },
+    { value: 'compact', label: 'Margem Compacta', desc: 'Espaço reduzido (12px)', icon: 'compress' },
+    { value: 'wide', label: 'Margem Ampla', desc: 'Espaço expandido (48px)', icon: 'expand' },
+    { value: 'none', label: 'Sem Margem', desc: 'Largura total (0px)', icon: 'border_outer' },
+];
+
 function markdownToHtml(md: string): string {
     if (!md) return '';
     if (/<[a-z][\s\S]*>/i.test(md)) return md;
@@ -103,6 +110,7 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
     const [showLatexMenu, setShowLatexMenu] = useState(false);
     const [showColorMenu, setShowColorMenu] = useState(false);
     const [showTableMenu, setShowTableMenu] = useState(false);
+    const [showMarginMenu, setShowMarginMenu] = useState(false);
 
     const [tableRows, setTableRows] = useState(3);
     const [tableCols, setTableCols] = useState(3);
@@ -113,6 +121,7 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
     const latexMenuRef = useRef<HTMLDivElement>(null);
     const colorMenuRef = useRef<HTMLDivElement>(null);
     const tableMenuRef = useRef<HTMLDivElement>(null);
+    const marginMenuRef = useRef<HTMLDivElement>(null);
 
     // Tracks the last (blockId + isActive + localPreview) key that was initialized
     const initializedKeyRef = useRef<string | null>(null);
@@ -146,6 +155,9 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
             }
             if (tableMenuRef.current && !tableMenuRef.current.contains(e.target as Node)) {
                 setShowTableMenu(false);
+            }
+            if (marginMenuRef.current && !marginMenuRef.current.contains(e.target as Node)) {
+                setShowMarginMenu(false);
             }
         };
         document.addEventListener('mousedown', handleClickOutside);
@@ -220,13 +232,19 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
 
     const btnClass = "px-2.5 py-1.5 flex items-center gap-1.5 text-[10px] font-bold text-gray-400 hover:text-white hover:bg-gray-800 rounded-lg transition-colors uppercase tracking-widest whitespace-nowrap shrink-0";
     const dropdownBtnClass = "w-full px-2.5 py-1.5 flex items-center gap-2 text-xs text-gray-300 hover:text-white hover:bg-gray-700/60 rounded-md transition-colors text-left";
+    const currentPadding = (block.content as any)?.padding || 'normal';
+    const paddingClass = {
+        none: 'px-0 py-2',
+        compact: 'px-3 py-2 sm:px-4 sm:py-3',
+        normal: 'px-4 py-3 sm:px-6 sm:py-4',
+        wide: 'px-6 py-4 sm:px-12 sm:py-6'
+    }[currentPadding as string] || 'px-4 py-3 sm:px-6 sm:py-4';
 
     return (
-        <div className="flex flex-col gap-2 relative">
+        <div className="flex flex-col gap-2 relative w-full max-w-full overflow-hidden">
             {isActive && (
                 <div 
-                    className="sticky z-30 bg-gray-900/95 backdrop-blur-md pt-2 pb-1 mb-2 border-b border-gray-800/80 w-full transition-all rounded-t-lg shadow-lg relative"
-                    style={{ top: 'calc(9.5rem + env(safe-area-inset-top, 0px))' }}
+                    className="relative z-20 bg-gray-900/95 backdrop-blur-md pt-2 pb-2 mb-3 border-b border-gray-800/80 w-full rounded-t-lg shadow-sm"
                 >
                     {/* Barra de Ferramentas com rolagem horizontal limpa */}
                     <div className="flex items-center gap-1 overflow-x-auto pb-2 px-1 w-full shrink-0 scrollbar-thin scrollbar-thumb-gray-700/60 scrollbar-track-transparent">
@@ -253,7 +271,7 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
 
                         {/* ── Botão: Formatação ── */}
                         <button
-                            onClick={() => { setShowFormattingMenu(!showFormattingMenu); setShowLatexMenu(false); setShowColorMenu(false); }}
+                            onClick={() => { setShowFormattingMenu(!showFormattingMenu); setShowLatexMenu(false); setShowColorMenu(false); setShowTableMenu(false); setShowMarginMenu(false); }}
                             className={`${btnClass} ${showFormattingMenu ? 'text-brand-yellow bg-brand-yellow/10 border border-brand-yellow/30' : ''}`}
                         >
                             <span className="material-symbols-outlined text-[15px]">title</span>
@@ -265,13 +283,32 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
 
                         {/* ── Botão: Cor IDV ── */}
                         <button
-                            onClick={() => { setShowColorMenu(!showColorMenu); setShowFormattingMenu(false); setShowLatexMenu(false); }}
+                            onClick={() => { setShowColorMenu(!showColorMenu); setShowFormattingMenu(false); setShowLatexMenu(false); setShowTableMenu(false); setShowMarginMenu(false); }}
                             className={`${btnClass} ${showColorMenu ? 'text-brand-yellow bg-brand-yellow/10 border border-brand-yellow/30' : ''}`}
                             title="Cores da Identidade Visual"
                         >
                             <span className="material-symbols-outlined text-[15px]">palette</span>
                             Cor IDV
                             <span className="material-symbols-outlined text-[12px]">{showColorMenu ? 'expand_less' : 'expand_more'}</span>
+                        </button>
+
+                        <div className="w-px h-4 bg-gray-700/50 mx-0.5 shrink-0"></div>
+
+                        {/* ── Botão: Margens ── */}
+                        <button
+                            onClick={() => {
+                                setShowMarginMenu(!showMarginMenu);
+                                setShowFormattingMenu(false);
+                                setShowColorMenu(false);
+                                setShowTableMenu(false);
+                                setShowLatexMenu(false);
+                            }}
+                            className={`${btnClass} ${showMarginMenu ? 'text-brand-yellow bg-brand-yellow/10 border border-brand-yellow/30' : ''}`}
+                            title="Configurar Margens e Recuo"
+                        >
+                            <span className="material-symbols-outlined text-[15px]">space_dashboard</span>
+                            Margens
+                            <span className="material-symbols-outlined text-[12px]">{showMarginMenu ? 'expand_less' : 'expand_more'}</span>
                         </button>
 
                         <div className="w-px h-4 bg-gray-700/50 mx-0.5 shrink-0"></div>
@@ -283,6 +320,7 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
                                 setShowFormattingMenu(false);
                                 setShowColorMenu(false);
                                 setShowLatexMenu(false);
+                                setShowMarginMenu(false);
                             }}
                             className={`${btnClass} ${showTableMenu ? 'text-brand-yellow bg-brand-yellow/10 border border-brand-yellow/30' : ''}`} 
                             title="Configurar e Inserir Tabela Visual"
@@ -296,7 +334,7 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
 
                         {/* ── Botão: LaTeX ── */}
                         <button
-                            onClick={() => { setShowLatexMenu(!showLatexMenu); setShowFormattingMenu(false); setShowColorMenu(false); setShowTableMenu(false); }}
+                            onClick={() => { setShowLatexMenu(!showLatexMenu); setShowFormattingMenu(false); setShowColorMenu(false); setShowTableMenu(false); setShowMarginMenu(false); }}
                             className={`${btnClass} ${showLatexMenu ? 'text-brand-yellow bg-brand-yellow/10 border border-brand-yellow/30' : ''}`}
                         >
                             <span className="material-symbols-outlined text-[15px]">functions</span>
@@ -411,6 +449,54 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
                         </div>
                     )}
 
+                    {showMarginMenu && (
+                        <div ref={marginMenuRef} className="absolute left-2 sm:left-48 top-full mt-1 w-64 max-w-[90vw] bg-gray-900 border border-gray-700/80 rounded-xl shadow-2xl z-50 p-2.5 animate-in fade-in slide-in-from-top-1 duration-150">
+                            <div className="px-2 py-1 text-[9px] font-black text-gray-500 uppercase tracking-[0.15em] border-b border-gray-800 mb-1.5 flex items-center justify-between">
+                                <span>Margens &amp; Recuo</span>
+                            </div>
+                            <div className="flex flex-col gap-1">
+                                {MARGIN_OPTIONS.map((opt) => (
+                                    <button
+                                        key={opt.value}
+                                        onClick={() => {
+                                            updateBlock(block.id, { padding: opt.value });
+                                            setShowMarginMenu(false);
+                                        }}
+                                        className={`${dropdownBtnClass} ${currentPadding === opt.value ? 'bg-brand-yellow/10 text-brand-yellow font-bold' : ''}`}
+                                    >
+                                        <span className="material-symbols-outlined text-[16px] text-gray-400">
+                                            {currentPadding === opt.value ? 'check_circle' : opt.icon}
+                                        </span>
+                                        <div className="flex flex-col text-left">
+                                            <span className="text-xs">{opt.label}</span>
+                                            <span className="text-[10px] text-gray-500">{opt.desc}</span>
+                                        </div>
+                                    </button>
+                                ))}
+                                <div className="border-t border-gray-800 my-1"></div>
+                                <div className="px-2 py-1 text-[9px] font-black text-gray-500 uppercase tracking-[0.15em]">Recuo de Linha</div>
+                                <div className="grid grid-cols-2 gap-1">
+                                    <button
+                                        onClick={() => { execCmd('outdent'); }}
+                                        className={dropdownBtnClass}
+                                        title="Diminuir Recuo"
+                                    >
+                                        <span className="material-symbols-outlined text-[16px] text-gray-400">format_indent_decrease</span>
+                                        <span className="text-xs">Diminuir</span>
+                                    </button>
+                                    <button
+                                        onClick={() => { execCmd('indent'); }}
+                                        className={dropdownBtnClass}
+                                        title="Aumentar Recuo"
+                                    >
+                                        <span className="material-symbols-outlined text-[16px] text-gray-400">format_indent_increase</span>
+                                        <span className="text-xs">Aumentar</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {showTableMenu && (
                         <div ref={tableMenuRef} className="absolute left-2 sm:left-64 top-full mt-1 w-72 max-w-[90vw] bg-gray-900 border border-gray-700/80 rounded-xl shadow-2xl z-50 p-3 animate-in fade-in slide-in-from-top-1 duration-150">
                             <div className="text-[9px] font-black text-gray-500 uppercase tracking-[0.15em] border-b border-gray-800 pb-1.5 mb-2.5 flex items-center justify-between">
@@ -455,8 +541,8 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
 
                             <div className="border-t border-gray-800 my-2"></div>
 
-                            {/* Ajuste Numérico de Linhas e Colunas */}
-                            <div className="flex flex-col gap-2 mb-3">
+                            {/* Ajustes Numéricos Manuais */}
+                            <div className="flex flex-col gap-2 mb-3 bg-gray-800/20 p-2 rounded-lg border border-gray-800">
                                 <div className="flex items-center justify-between text-xs text-gray-300">
                                     <span className="font-semibold">Linhas:</span>
                                     <div className="flex items-center gap-1.5 bg-gray-800 border border-gray-700 rounded-lg p-0.5">
@@ -543,12 +629,30 @@ export default function TextBlock({ block, isActive }: TextBlockProps) {
                     onInput={handleInput}
                     onBlur={handleInput}
                     suppressContentEditableWarning={true}
-                    className="w-full min-h-[150px] bg-transparent text-gray-200 outline-none placeholder-gray-600 font-sans leading-relaxed prose prose-sm dark:prose-invert max-w-none prose-headings:text-white prose-p:text-gray-300 prose-strong:text-white prose-code:text-brand-yellow prose-code:bg-gray-800 prose-code:px-1 prose-code:rounded prose-blockquote:border-brand-blue prose-blockquote:text-gray-400 prose-hr:border-gray-700 prose-table:border prose-table:border-gray-700 prose-th:bg-gray-800 prose-th:p-2 prose-td:p-2 prose-td:border prose-td:border-gray-700 flex-1"
+                    style={{
+                        wordBreak: 'break-word',
+                        overflowWrap: 'anywhere',
+                        whiteSpace: 'pre-wrap',
+                        maxWidth: '100%',
+                        minWidth: 0,
+                        boxSizing: 'border-box'
+                    }}
+                    className={`w-full max-w-full min-w-0 min-h-[150px] bg-transparent text-gray-200 outline-none placeholder-gray-600 font-sans leading-relaxed prose prose-sm dark:prose-invert max-w-none break-words prose-headings:break-words prose-headings:max-w-full prose-headings:text-white prose-headings:m-0 prose-headings:mb-3 prose-p:text-gray-300 prose-p:break-words prose-p:max-w-full prose-p:m-0 prose-p:mb-2 prose-strong:text-white prose-code:text-brand-yellow prose-code:bg-gray-800 prose-code:px-1 prose-code:rounded prose-blockquote:border-brand-blue prose-blockquote:text-gray-400 prose-hr:border-gray-700 prose-ol:pl-6 prose-ul:pl-6 prose-table:w-full prose-table:border prose-table:border-gray-700 prose-th:bg-gray-800 prose-th:p-2 prose-td:p-2 prose-td:border prose-td:border-gray-700 flex-1 ${paddingClass}`}
                 />
             ) : (
-                <div className={`w-full min-h-[50px] font-sans leading-relaxed ${textContent ? 'text-gray-200' : 'text-gray-600'}`}>
+                <div 
+                    style={{
+                        wordBreak: 'break-word',
+                        overflowWrap: 'anywhere',
+                        whiteSpace: 'pre-wrap',
+                        maxWidth: '100%',
+                        minWidth: 0,
+                        boxSizing: 'border-box'
+                    }}
+                    className={`w-full max-w-full min-w-0 min-h-[50px] font-sans leading-relaxed break-words overflow-x-auto ${paddingClass} ${textContent ? 'text-gray-200' : 'text-gray-600'}`}
+                >
                     {textContent ? (
-                        <div className="prose prose-sm dark:prose-invert max-w-none prose-headings:text-white prose-p:text-gray-300 prose-strong:text-white prose-code:text-brand-yellow prose-code:bg-gray-800 prose-code:px-1 prose-code:rounded prose-blockquote:border-brand-blue prose-blockquote:text-gray-400 prose-hr:border-gray-700 prose-table:border prose-table:border-gray-700 prose-th:bg-gray-800 prose-th:p-2 prose-td:p-2 prose-td:border prose-td:border-gray-700">
+                        <div className="prose prose-sm dark:prose-invert max-w-none break-words prose-headings:break-words prose-headings:max-w-full prose-headings:text-white prose-headings:m-0 prose-headings:mb-3 prose-p:text-gray-300 prose-p:break-words prose-p:m-0 prose-p:mb-2 prose-strong:text-white prose-code:text-brand-yellow prose-code:bg-gray-800 prose-code:px-1 prose-code:rounded prose-blockquote:border-brand-blue prose-blockquote:text-gray-400 prose-hr:border-gray-700 prose-ol:pl-6 prose-ul:pl-6 prose-table:border prose-table:border-gray-700 prose-th:bg-gray-800 prose-th:p-2 prose-td:p-2 prose-td:border prose-td:border-gray-700">
                             {/<[a-z][\s\S]*>/i.test(textContent) ? (
                                 <ReactMarkdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeRaw, rehypeKatex]}>
                                     {textContent}

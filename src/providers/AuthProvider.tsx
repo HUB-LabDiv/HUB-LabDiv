@@ -125,8 +125,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         loadAuth();
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(() => {
-            loadAuth();
+        const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+            if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+                loadAuth();
+            }
         });
 
         return () => subscription.unsubscribe();

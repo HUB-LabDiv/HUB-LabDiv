@@ -130,12 +130,21 @@ export default async function LabPage({ searchParams }: LabPageProps) {
         await Promise.all(parallelTasks);
     }
 
+    // Filter visible submissions (exclude deleted; if external visitor, show only approved)
+    const visibleSubmissions = (userSubs || []).filter(sub => {
+        if (sub.post.status === 'deleted' || sub.post.status === 'deletado') return false;
+        if (targetUserId !== currentUser.id) {
+            return sub.post.status === 'aprovado';
+        }
+        return true;
+    });
+
     return (
         <LabClientView
             currentUser={currentUser}
             initialCurrentUserProfile={currProfile}
             initialViewedProfile={profileData}
-            submissions={userSubs || []}
+            submissions={visibleSubmissions}
             savedPosts={savedPosts}
             followStats={stats}
             userLogs={userLogs || []}

@@ -870,9 +870,16 @@ export async function fetchUserSubmissions(userId: string): Promise<{ post: Post
 
     if (error || !submissions) return [];
 
-    return submissions.map(sub => ({
-        post: mapToPostDTO(sub)
-    }));
+    return submissions
+        .filter(sub => 
+            sub.status !== 'deleted' && 
+            sub.status !== 'deletado' && 
+            sub.moderation_status !== 'suspended' && 
+            sub.moderation_status !== 'deleted'
+        )
+        .map(sub => ({
+            post: mapToPostDTO(sub)
+        }));
 }
 
 export async function updateSubmissionAdmin(id: string, updates: AdminUpdate) {

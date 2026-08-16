@@ -12,7 +12,7 @@
  */
 
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState, useRef } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AnimatePresence, motion } from 'framer-motion';
 import Image from 'next/image';
@@ -39,52 +39,60 @@ function SubmitPageContent() {
     const clearPendingFiles = usePendingUploadsStore((state) => state.clearPendingFiles);
     const { isReportModalOpen, setReportModalOpen } = useNavigationStore();
     const [isInitializing, setIsInitializing] = useState(true);
+    const loadedEditIdRef = useRef<string | null>(null);
 
     useEffect(() => {
-        const loadEditPost = async () => {
-            const editId = searchParams.get('editId');
-            if (editId) {
-                // ✅ Limpa arquivos pendentes de sessões anteriores para evitar
-                // tentativas de re-upload de blob: URLs expiradas
-                clearPendingFiles();
+        const editId = searchParams.get('editId');
+        if (!editId) {
+            loadedEditIdRef.current = null;
+            return;
+        }
 
-                try {
-                    const { data, error } = await supabase
-                        .from('submissions')
-                        .select('*')
-                        .eq('id', editId)
-                        .single();
-                        
-                    if (data && !error) {
-                        setTitle(data.title);
-                        setAuthors(data.authors);
-                        setDescription(data.description);
-                        setCategory(data.category);
-                        
-                        // Populate diagrammer blocks if sdocx
-                        if (data.media_type === 'sdocx' && data.media_url) {
-                            try {
-                                const blocks = JSON.parse(data.media_url);
-                                if (Array.isArray(blocks)) {
-                                    setBlocks(blocks);
-                                }
-                            } catch (e) {
-                                console.error('Error parsing blocks', e);
+        // Se já carregamos este post para edição, não recarregue do banco para não sobrescrever o que o usuário está digitando
+        if (loadedEditIdRef.current === editId) {
+            return;
+        }
+
+        const loadEditPost = async () => {
+            clearPendingFiles();
+
+            try {
+                const { data, error } = await supabase
+                    .from('submissions')
+                    .select('*')
+                    .eq('id', editId)
+                    .single();
+                    
+                if (data && !error) {
+                    loadedEditIdRef.current = editId;
+                    setTitle(data.title);
+                    setAuthors(data.authors);
+                    setDescription(data.description);
+                    setCategory(data.category);
+                    
+                    // Populate diagrammer blocks if sdocx
+                    if (data.media_type === 'sdocx' && data.media_url) {
+                        try {
+                            const blocks = JSON.parse(data.media_url);
+                            if (Array.isArray(blocks)) {
+                                setBlocks(blocks);
                             }
+                        } catch (e) {
+                            console.error('Error parsing blocks', e);
                         }
-                        
-                        toast.success('Projeto carregado para edição!');
                     }
-                } catch (e) {
-                    console.error('Error loading edit post:', e);
+                    
+                    toast.success('Projeto carregado para edição!');
                 }
+            } catch (e) {
+                console.error('Error loading edit post:', e);
             }
         };
 
         if (user && !authLoading) {
             loadEditPost();
         }
-    }, [searchParams, user, authLoading, setTitle, setAuthors, setDescription, setCategory, setBlocks, clearPendingFiles]);
+    }, [searchParams, user?.id, authLoading, setTitle, setAuthors, setDescription, setCategory, setBlocks, clearPendingFiles]);
 
     useEffect(() => {
         const timeout = setTimeout(() => {

@@ -861,6 +861,55 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                             className="bg-white/90 dark:bg-background-dark/60 border-brand-blue/30 shadow-[0_0_50px_rgba(15,71,128,0.1)] dark:shadow-[0_0_50px_rgba(15,71,128,0.2)] border rounded-[32px] p-6 lg:p-12 relative min-h-[500px] z-20"
                             style={{ paddingBottom: '60vh' }}
                         >
+                            {/* Barra de Ações Rápidas do Canvas */}
+                            <div className="w-full flex items-center justify-between pb-4 mb-6 border-b border-gray-200 dark:border-white/5 flex-wrap gap-3">
+                                <div className="flex items-center gap-2">
+                                    <span className="material-symbols-outlined text-brand-blue text-lg">space_dashboard</span>
+                                    <span className="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                                        Prancheta de Diagramação {blocks.length > 0 && <span className="text-gray-500 font-normal">({blocks.length} {blocks.length === 1 ? 'bloco' : 'blocos'})</span>}
+                                    </span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    {blocks.length > 0 && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                if (window.confirm('Tem certeza que deseja limpar todo o canvas? Todos os blocos serão removidos.')) {
+                                                    setBlocks([]);
+                                                    toast.success('Canvas limpo com sucesso!');
+                                                }
+                                            }}
+                                            className="px-3 py-1.5 bg-gray-100 dark:bg-[#1E1E1E] text-gray-700 dark:text-gray-300 border border-gray-300 dark:border-white/10 hover:border-brand-red/60 hover:text-brand-red dark:hover:text-brand-red hover:bg-brand-red/5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm"
+                                            title="Remover todos os blocos do canvas"
+                                        >
+                                            <span className="material-symbols-outlined text-[16px]">delete_sweep</span>
+                                            Limpar Canvas
+                                        </button>
+                                    )}
+                                    {previewMode !== 'arte' && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                if (blocks.length > 0) {
+                                                    if (window.confirm('Restaurar o post pré-montado substituirá os blocos atuais. Deseja continuar?')) {
+                                                        restoreMockBlocks();
+                                                        toast.success('Post pré-montado restaurado!');
+                                                    }
+                                                } else {
+                                                    restoreMockBlocks();
+                                                    toast.success('Post pré-montado carregado!');
+                                                }
+                                            }}
+                                            className="px-3 py-1.5 bg-brand-yellow/10 border border-brand-yellow/30 text-brand-yellow hover:bg-brand-yellow/20 rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5"
+                                            title="Carregar modelo de post didático"
+                                        >
+                                            <span className="material-symbols-outlined text-[16px]">restart_alt</span>
+                                            {blocks.length === 0 ? 'Carregar Post Pré-Montado' : 'Restaurar Modelo'}
+                                        </button>
+                                    )}
+                                </div>
+                            </div>
+
                             {/* 1. Warning for Mock Template */}
                             {previewMode !== 'arte' && blocks.some(b => String(b.id).startsWith('mock-')) && (
                                 <div className="w-full bg-brand-yellow/10 border border-brand-yellow/30 p-4 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4 mb-8">
@@ -871,7 +920,10 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                         </p>
                                     </div>
                                     <button
-                                        onClick={() => setBlocks([])}
+                                        onClick={() => {
+                                            setBlocks([]);
+                                            toast.success('Canvas limpo com sucesso!');
+                                        }}
                                         className="shrink-0 px-4 py-2 bg-gray-100 dark:bg-background-dark text-gray-800 dark:text-white border border-gray-300 dark:border-white/10 hover:border-brand-blue hover:text-brand-blue rounded-lg text-xs font-bold uppercase transition-colors"
                                     >
                                         Limpar Canvas
@@ -989,9 +1041,13 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                         <div className="mt-8 mb-4 w-full flex flex-col items-center gap-6">
                                             {previewMode !== 'arte' && blocks.length === 0 && (
                                                 <button
-                                                    onClick={() => restoreMockBlocks()}
-                                                    className="px-4 py-2 bg-brand-yellow text-gray-900 font-black text-xs uppercase tracking-widest rounded-lg hover:bg-[#E5B800] transition-colors shadow-lg"
+                                                    onClick={() => {
+                                                        restoreMockBlocks();
+                                                        toast.success('Post pré-montado carregado!');
+                                                    }}
+                                                    className="px-4 py-2 bg-brand-yellow text-gray-900 font-black text-xs uppercase tracking-widest rounded-lg hover:bg-[#E5B800] transition-colors shadow-lg flex items-center gap-2"
                                                 >
+                                                    <span className="material-symbols-outlined text-[18px]">restart_alt</span>
                                                     Voltar ao Post Pré-Montado
                                                 </button>
                                             )}

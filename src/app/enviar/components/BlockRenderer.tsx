@@ -102,13 +102,13 @@ export function BlockRenderer({ block, forcePreview = false }: BlockRendererProp
     return (
         <div 
             onClick={handleWrapperClick}
-            className={`relative group mb-8 mt-10 transition-all duration-300 rounded-2xl border p-1 
+            className={`relative group mb-8 mt-10 transition-all duration-300 rounded-2xl border p-1 w-full max-w-full min-w-0
             ${isActive 
                 ? 'border-brand-yellow/50 bg-gray-800/80 shadow-lg shadow-brand-yellow/5' 
                 : 'border-transparent hover:border-gray-700/50 hover:bg-gray-800/30'}`}
         >
             {/* Bloco de Conteúdo */}
-            <div className="w-full h-full bg-background-dark/50 backdrop-blur-md rounded-xl p-4 border border-gray-800/50">
+            <div className="w-full max-w-full min-w-0 h-full bg-background-dark/50 backdrop-blur-md rounded-xl p-4 border border-gray-800/50 overflow-hidden break-words box-border">
                 {renderBlockContent()}
             </div>
 
