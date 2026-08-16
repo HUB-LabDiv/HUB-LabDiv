@@ -512,6 +512,11 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                             {post.category}
                         </span>
                     )}
+                    {post.institute && post.institute.toLowerCase() !== 'ifusp' && (
+                        <span className="px-2 py-0.5 text-[10px] font-black rounded-md uppercase tracking-wide bg-brand-blue/20 text-brand-blue dark:text-brand-yellow border border-brand-blue/30 dark:border-brand-yellow/30">
+                            {post.institute.toUpperCase()}
+                        </span>
+                    )}
                     {post.isGoldenStandard && (
                         <span className="relative overflow-hidden px-2.5 py-1 bg-gradient-to-r from-brand-yellow via-brand-yellow/80 to-brand-yellow text-gray-900 text-[10px] font-black rounded-lg uppercase tracking-wider shadow-[0_0_15px_rgba(255,204,0,0.5)] animate-metallic-shine">
                             <span className="relative z-10 flex items-center gap-1">

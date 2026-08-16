@@ -27,6 +27,19 @@ export const CATEGORIES = [
 
 export type Category = (typeof CATEGORIES)[number];
 
+export const INSTITUTES = [
+    { id: 'ifusp', name: 'IFUSP', fullName: 'Física USP (IFUSP)' },
+    { id: 'ime', name: 'IME', fullName: 'Matemática e Estatística (IME-USP)' },
+    { id: 'iag', name: 'IAG', fullName: 'Astronomia e Geofísica (IAG-USP)' },
+    { id: 'igc', name: 'IGC', fullName: 'Geociências (IGC-USP)' },
+    { id: 'io', name: 'IO', fullName: 'Oceanográfico (IO-USP)' },
+    { id: 'outro', name: 'Outro', fullName: 'Outros Institutos' }
+] as const;
+
+export type InstituteId = (typeof INSTITUTES)[number]['id'];
+
+export const INSTITUTE_FILTER_OPTIONS = ['Todos', 'IFUSP', 'IME', 'IAG', 'IGC', 'IO', 'Outro'] as const;
+
 export const CATEGORY_STYLES: Record<string, {
     bg: string;
     hover: string;

@@ -21,6 +21,7 @@ export interface PostDTO {
     authors: string;
     description: string;
     category?: string;
+    institute?: string;
     mediaType: MediaType;
     mediaUrl: string | string[];
     isFeatured: boolean;
@@ -94,6 +95,7 @@ export function mapToPostDTO(submission: any, counts?: { likes?: number, saves?:
         authors: submission.authors,
         description: submission.description,
         category: submission.category,
+        institute: (submission.institute && String(submission.institute).trim()) ? String(submission.institute).toLowerCase() : 'ifusp',
         mediaType: submission.media_type,
         mediaUrl: submission.media_url,
         isFeatured: submission.is_featured,

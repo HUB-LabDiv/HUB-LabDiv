@@ -13,10 +13,14 @@ import React from 'react';
 import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
 import { CloudinaryUploader } from './CloudinaryUploader';
+import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
 
 export default function Model3DBlock({ block, isActive }: { block: Block; isActive: boolean }) {
     const { updateBlock } = useSubmissionStore();
+    const pendingFiles = usePendingUploadsStore((state) => state.pendingFiles);
     const modelUrl = block.content.url || '';
+
+    const isOrphaned = modelUrl.startsWith('blob:') && !pendingFiles[modelUrl];
 
     return (
         <div className="flex flex-col gap-4 w-full">
@@ -48,8 +52,39 @@ export default function Model3DBlock({ block, isActive }: { block: Block; isActi
                     />
                 </div>
             ) : (
-                <div className="relative group rounded-xl overflow-hidden bg-gray-900 border border-brand-yellow/30 p-2 flex flex-col items-center justify-center min-h-[400px]">
-                    <div className="absolute top-4 right-4 flex gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                <div className="flex flex-col gap-2 w-full">
+                    {/* Alerta de Modelo 3D Expirado */}
+                    {isOrphaned && (
+                        <div className="p-3 bg-brand-red/15 border border-brand-red/60 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-pulse">
+                            <div className="flex items-center gap-2.5">
+                                <span className="material-symbols-outlined text-brand-red text-2xl shrink-0">error</span>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-black text-brand-red uppercase tracking-wider">Modelo 3D Expirado / Erro de Envio</span>
+                                    <span className="text-[11px] text-gray-200">O arquivo 3D local expirou da sessão. Reenvie o arquivo para publicar.</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                <div className="scale-90 origin-right">
+                                    <CloudinaryUploader 
+                                        accept=".glb,.gltf"
+                                        label="Reenviar 3D"
+                                        icon="sync"
+                                        onUploadSuccess={(url) => updateBlock(block.id, { url })}
+                                    />
+                                </div>
+                                <button
+                                    onClick={() => updateBlock(block.id, { url: '' })}
+                                    className="px-2.5 py-1.5 bg-brand-red/20 hover:bg-brand-red text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1"
+                                    title="Remover Modelo 3D"
+                                >
+                                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className={`relative group rounded-xl overflow-hidden bg-gray-900 border ${isOrphaned ? 'border-brand-red ring-2 ring-brand-red/30' : 'border-brand-yellow/30'} p-2 flex flex-col items-center justify-center min-h-[400px]`}>
+                        <div className="absolute top-4 right-4 flex gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                         <button
                             onClick={(e) => {
                                 e.stopPropagation();
@@ -90,6 +125,7 @@ export default function Model3DBlock({ block, isActive }: { block: Block; isActi
                             </model-viewer>
                         </div>
                     )}
+                    </div>
                 </div>
             )}
         </div>

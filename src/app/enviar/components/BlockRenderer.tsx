@@ -29,9 +29,13 @@ import WebGameBlock from './blocks/WebGameBlock';
 import WebPageBlock from './blocks/WebPageBlock';
 import LinkBlock from './blocks/LinkBlock';
 
+import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
+import { validateBlockMedia } from '../utils/mediaValidation';
+
 interface BlockRendererProps {
     block: Block;
     forcePreview?: boolean;
+    blockIndex?: number;
 }
 
 const getBlockTip = (type: string) => {
@@ -59,10 +63,14 @@ const getBlockTip = (type: string) => {
     }
 };
 
-export function BlockRenderer({ block, forcePreview = false }: BlockRendererProps) {
+export function BlockRenderer({ block, forcePreview = false, blockIndex }: BlockRendererProps) {
     const { activeBlockId, setActiveBlock, removeBlock, moveBlock, previewMode: storePreviewMode } = useSubmissionStore();
+    const pendingFiles = usePendingUploadsStore((state) => state.pendingFiles);
     const actualPreviewMode = forcePreview ? 'preview' : storePreviewMode;
     const isActive = !forcePreview && activeBlockId === block.id;
+
+    const mediaError = validateBlockMedia(block, pendingFiles, actualPreviewMode === 'arte' ? 'arte' : 'fluxo', blockIndex);
+    const hasError = !!mediaError;
 
     const handleWrapperClick = (e: React.MouseEvent) => {
         // Evitar que cliques dentro do bloco também fechem-no
@@ -101,14 +109,42 @@ export function BlockRenderer({ block, forcePreview = false }: BlockRendererProp
 
     return (
         <div 
+            id={`block-wrapper-${block.id}`}
             onClick={handleWrapperClick}
             className={`relative group mb-8 mt-10 transition-all duration-300 rounded-2xl border p-1 w-full max-w-full min-w-0
-            ${isActive 
-                ? 'border-brand-yellow/50 bg-gray-800/80 shadow-lg shadow-brand-yellow/5' 
-                : 'border-transparent hover:border-gray-700/50 hover:bg-gray-800/30'}`}
+            ${hasError
+                ? 'border-brand-red ring-4 ring-brand-red/20 bg-brand-red/5 shadow-[0_0_30px_rgba(241,67,67,0.3)]'
+                : isActive 
+                    ? 'border-brand-yellow/50 bg-gray-800/80 shadow-lg shadow-brand-yellow/5' 
+                    : 'border-transparent hover:border-gray-700/50 hover:bg-gray-800/30'}`}
         >
             {/* Bloco de Conteúdo */}
-            <div className="w-full max-w-full min-w-0 h-full bg-background-dark/50 backdrop-blur-md rounded-xl p-4 border border-gray-800/50 overflow-hidden break-words box-border">
+            <div className="w-full max-w-full min-w-0 h-full bg-background-dark/50 backdrop-blur-md rounded-xl p-4 border border-gray-800/50 overflow-visible break-words box-border">
+                {/* Banner de Erro no Topo do Bloco */}
+                {hasError && (
+                    <div className="mb-4 p-3.5 bg-brand-red/20 border border-brand-red/60 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-pulse">
+                        <div className="flex items-center gap-2.5">
+                            <span className="material-symbols-outlined text-brand-red text-2xl shrink-0">error</span>
+                            <div>
+                                <span className="text-xs font-black text-brand-red uppercase tracking-wider block">
+                                    Atenção: {mediaError?.label} com Erro de Envio
+                                </span>
+                                <span className="text-[11px] text-gray-200">
+                                    {mediaError?.errorMessage}
+                                </span>
+                            </div>
+                        </div>
+                        <button
+                            onClick={(e) => { e.stopPropagation(); removeBlock(block.id); }}
+                            className="px-3 py-1.5 bg-brand-red hover:bg-[#D93B3B] text-white text-[10px] font-bold uppercase rounded-lg transition-colors flex items-center gap-1 shadow-lg shrink-0 self-end sm:self-center"
+                            title="Remover este bloco problemático"
+                        >
+                            <span className="material-symbols-outlined text-[14px]">delete</span>
+                            Excluir Bloco
+                        </button>
+                    </div>
+                )}
+
                 {renderBlockContent()}
             </div>
 

@@ -146,3 +146,20 @@ CREATE POLICY "Submissões são públicas"
     ON storage.objects FOR SELECT
     TO public
     USING (bucket_id = 'submissions');
+
+-- ==============================================================================
+-- 8. Suporte a Identificação Institucional (IFUSP, IME, IAG, IGC, IO, etc.)
+-- ==============================================================================
+
+-- 8.1 Adicionar coluna institute na tabela submissions
+ALTER TABLE public.submissions 
+ADD COLUMN IF NOT EXISTS institute TEXT DEFAULT 'ifusp';
+
+-- 8.2 Garantir que todas as publicações existentes pertençam ao IFUSP
+UPDATE public.submissions 
+SET institute = 'ifusp' 
+WHERE institute IS NULL OR institute = '';
+
+-- 8.3 Índice de performance para consultas filtradas por instituto
+CREATE INDEX IF NOT EXISTS idx_submissions_institute ON public.submissions(institute);
+

@@ -17,7 +17,7 @@ import { InlineAddMenu } from './InlineAddMenu';
 import { useAuth } from '@/providers/AuthProvider';
 import { MediaCard } from '@/components/media/MediaCard';
 import { PostDTO } from '@/dtos/media';
-import { CATEGORIES } from '@/lib/constants';
+import { CATEGORIES, INSTITUTES } from '@/lib/constants';
 import { getProfileWithPseudonyms } from '@/app/actions/profiles';
 import { createSubmission, updateSubmission, revertSubmissionToDraft } from '@/app/actions/submissions';
 import toast from 'react-hot-toast';
@@ -31,6 +31,7 @@ import { uploadFileToCloudinary } from '@/lib/cloudinary-upload';
 import { EnviarFeedbackCard } from '../EnviarFeedbackCard';
 import { stripMarkdownAndLatex } from '@/lib/utils';
 import { SdocxHeroImage } from '@/components/reading/SdocxImageBlock';
+import { findBlocksWithMediaErrors, validateBlockMedia, BlockMediaErrorInfo } from '../utils/mediaValidation';
 
 interface DiagrammerLayoutProps {
     editId?: string | null;
@@ -41,12 +42,46 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         blocks, addBlock, setActiveBlock, activeBlockId, title, setTitle, setBlocks,
         authors, setAuthors, year, setYear,
         readGuide, setReadGuide, acceptedCc, setAcceptedCc, previewMode, setPreviewMode,
-        category, setCategory, isHistorical, isGoldenStandard,
+        category, setCategory, institute, setInstitute, isHistorical, isGoldenStandard,
         languageRegister, setLanguageRegister, needsModerationHelp, setNeedsModerationHelp, activeDraftId, setActiveDraftId, restoreMockBlocks, fluxoBlocks, arteBlocks, description, setDescription, docsLink, setDocsLink, driveLink, setDriveLink
     } = useSubmissionStore();
     const { saveDraft, drafts } = useDraftsStore();
+    const pendingFiles = usePendingUploadsStore((state) => state.pendingFiles);
     const isLabDiv = category === 'Lab-Div';
     const [selectedPreviewId, setSelectedPreviewId] = React.useState<string>(previewMode === 'arte' ? 'arte' : 'fluxo');
+
+    // Validação de mídias e detecção de erros em tempo real
+    const fluxoErrors = React.useMemo(() => {
+        const targetBlocks = previewMode === 'fluxo' ? blocks : fluxoBlocks;
+        return findBlocksWithMediaErrors(targetBlocks, pendingFiles, 'fluxo');
+    }, [blocks, fluxoBlocks, pendingFiles, previewMode]);
+
+    const arteErrors = React.useMemo(() => {
+        const targetBlocks = previewMode === 'arte' ? blocks : arteBlocks;
+        return findBlocksWithMediaErrors(targetBlocks, pendingFiles, 'arte');
+    }, [blocks, arteBlocks, pendingFiles, previewMode]);
+
+    const allMediaErrors = React.useMemo(() => {
+        return [...fluxoErrors, ...arteErrors];
+    }, [fluxoErrors, arteErrors]);
+
+    // Função de navegação e rolagem suave até o bloco com erro
+    const scrollToBlock = React.useCallback((blockId: string, tab: 'fluxo' | 'arte' = 'fluxo') => {
+        if (previewMode !== tab) {
+            setPreviewMode(tab);
+        }
+        setActiveBlock(blockId);
+        setTimeout(() => {
+            const el = document.getElementById(`block-wrapper-${blockId}`);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                el.classList.add('ring-8', 'ring-brand-red/60');
+                setTimeout(() => {
+                    el.classList.remove('ring-8', 'ring-brand-red/60');
+                }, 2500);
+            }
+        }, 250);
+    }, [previewMode, setPreviewMode, setActiveBlock]);
 
     const previewData = React.useMemo(() => {
         if (selectedPreviewId === 'fluxo') {
@@ -207,7 +242,17 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             // 🛡️ Validação de segurança: garante que nenhum blob: URL residual será salvo no banco
             const hasResidualBlobs = updatedBlocks.some(b => JSON.stringify(b.content).includes('blob:'));
             if (hasResidualBlobs) {
-                toast.error('⚠️ Uma ou mais imagens não foram enviadas corretamente. Remova-as e adicione novamente antes de publicar.', { id: toastId, duration: 6000 });
+                const residualErrors = updatedBlocks
+                    .map((b, idx) => validateBlockMedia(b, {}, previewMode === 'arte' ? 'arte' : 'fluxo', idx))
+                    .filter(Boolean) as BlockMediaErrorInfo[];
+
+                if (residualErrors.length > 0) {
+                    const firstErr = residualErrors[0];
+                    scrollToBlock(firstErr.blockId, firstErr.tab);
+                    toast.error(`⚠️ Erro nas imagens de: ${residualErrors.map(e => e.label).join(', ')}. Marcamos os blocos em vermelho para você corrigir.`, { id: toastId, duration: 8000 });
+                } else {
+                    toast.error('⚠️ Uma ou mais imagens não foram enviadas corretamente. Remova-as e adicione novamente antes de publicar.', { id: toastId, duration: 6000 });
+                }
                 setIsSubmitting(false);
                 return;
             }
@@ -227,6 +272,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 title,
                 authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
                 category: previewMode === 'arte' ? 'Arte' : (category || 'Outros'),
+                institute: (institute && String(institute).trim()) ? String(institute).toLowerCase() : 'ifusp',
                 description: (description && description.trim()) ? description : (stripMarkdownAndLatex(updatedBlocks.find(b => b.type === 'text')?.content?.text) || 'Contribuição construída no Diagramador.'),
                 media_type: 'sdocx',
                 media_url: JSON.stringify(updatedBlocks),
@@ -328,7 +374,17 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             // 🛡️ Validação de segurança: garante que nenhum blob: URL residual será salvo no banco
             const hasResidualBlobs = updatedBlocks.some(b => JSON.stringify(b.content).includes('blob:'));
             if (hasResidualBlobs) {
-                toast.error('⚠️ Uma ou mais imagens não foram enviadas corretamente. Remova-as e adicione novamente.', { id: toastId, duration: 6000 });
+                const residualErrors = updatedBlocks
+                    .map((b, idx) => validateBlockMedia(b, {}, 'fluxo', idx))
+                    .filter(Boolean) as BlockMediaErrorInfo[];
+
+                if (residualErrors.length > 0) {
+                    const firstErr = residualErrors[0];
+                    scrollToBlock(firstErr.blockId, firstErr.tab);
+                    toast.error(`⚠️ Erro nas imagens de: ${residualErrors.map(e => e.label).join(', ')}. Marcamos os blocos em vermelho para você corrigir.`, { id: toastId, duration: 8000 });
+                } else {
+                    toast.error('⚠️ Uma ou mais imagens não foram enviadas corretamente. Remova-as e adicione novamente.', { id: toastId, duration: 6000 });
+                }
                 setIsSubmitting(false);
                 return;
             }
@@ -339,6 +395,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 title,
                 authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
                 category: category || 'Outros',
+                institute: (institute && String(institute).trim()) ? String(institute).toLowerCase() : 'ifusp',
                 description: description || 'Contribuição baseada em material bruto.',
                 media_type: 'sdocx',
                 media_url: JSON.stringify(updatedBlocks),
@@ -436,7 +493,17 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
             // 🛡️ Validação de segurança: garante que nenhum blob: URL residual será salvo no banco
             const hasResidualBlobs = updatedBlocks.some(b => JSON.stringify(b.content).includes('blob:'));
             if (hasResidualBlobs) {
-                toast.error('⚠️ Uma ou mais imagens não foram enviadas corretamente. Remova-as e adicione novamente antes de atualizar.', { id: toastId, duration: 6000 });
+                const residualErrors = updatedBlocks
+                    .map((b, idx) => validateBlockMedia(b, {}, previewMode === 'arte' ? 'arte' : 'fluxo', idx))
+                    .filter(Boolean) as BlockMediaErrorInfo[];
+
+                if (residualErrors.length > 0) {
+                    const firstErr = residualErrors[0];
+                    scrollToBlock(firstErr.blockId, firstErr.tab);
+                    toast.error(`⚠️ Erro nas imagens de: ${residualErrors.map(e => e.label).join(', ')}. Marcamos os blocos em vermelho para você corrigir.`, { id: toastId, duration: 8000 });
+                } else {
+                    toast.error('⚠️ Uma ou mais imagens não foram enviadas corretamente. Remova-as e adicione novamente antes de atualizar.', { id: toastId, duration: 6000 });
+                }
                 setIsSubmitting(false);
                 return;
             }
@@ -456,6 +523,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 title,
                 authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
                 category: previewData.category || 'Outros',
+                institute: (institute && String(institute).trim()) ? String(institute).toLowerCase() : 'ifusp',
                 description: (description && description.trim()) ? description : (stripMarkdownAndLatex(updatedBlocks.find(b => b.type === 'text')?.content?.text) || 'Contribuição construída no Diagramador.'),
                 media_type: 'sdocx',
                 media_url: JSON.stringify(updatedBlocks),
@@ -602,27 +670,88 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                     <div className="bg-background-dark/80 backdrop-blur-md p-2 rounded-2xl border border-white/5 flex items-center justify-center gap-2 shadow-lg w-fit mx-auto">
                         <button
                             onClick={() => setPreviewMode('fluxo')}
-                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all ${previewMode === 'fluxo' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all flex items-center gap-1.5 ${previewMode === 'fluxo' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
                         >
-                            Fluxo
+                            <span>Fluxo</span>
+                            {fluxoErrors.length > 0 && (
+                                <span className="bg-brand-red text-white text-[10px] font-black px-1.5 py-0.5 rounded-full animate-pulse flex items-center gap-0.5" title={`${fluxoErrors.length} erro(s) em imagens/mídias nesta aba`}>
+                                    <span className="material-symbols-outlined text-[12px]">warning</span>
+                                    {fluxoErrors.length}
+                                </span>
+                            )}
                         </button>
                         <button
                             onClick={() => setPreviewMode('arte')}
-                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all ${previewMode === 'arte' ? 'bg-brand-yellow text-gray-900 shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all flex items-center gap-1.5 ${previewMode === 'arte' ? 'bg-brand-yellow text-gray-900 shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
                         >
-                            Arte
+                            <span>Arte</span>
+                            {arteErrors.length > 0 && (
+                                <span className="bg-brand-red text-white text-[10px] font-black px-1.5 py-0.5 rounded-full animate-pulse flex items-center gap-0.5" title={`${arteErrors.length} erro(s) em imagens/mídias nesta aba`}>
+                                    <span className="material-symbols-outlined text-[12px]">warning</span>
+                                    {arteErrors.length}
+                                </span>
+                            )}
                         </button>
                         <button
                             onClick={() => {
                                 setSelectedPreviewId(previewMode === 'arte' ? 'arte' : 'fluxo');
                                 setPreviewMode('preview');
                             }}
-                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all ${previewMode === 'preview' ? 'bg-brand-red text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                            className={`px-6 py-2 rounded-lg text-xs font-bold uppercase transition-all flex items-center gap-1.5 ${previewMode === 'preview' ? 'bg-brand-red text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
                         >
-                            Preview
+                            <span>Preview</span>
+                            {allMediaErrors.length > 0 && (
+                                <span className="bg-brand-red text-white text-[10px] font-black px-1.5 py-0.5 rounded-full animate-pulse flex items-center gap-0.5" title={`${allMediaErrors.length} erro(s) de mídia no post`}>
+                                    <span className="material-symbols-outlined text-[12px]">warning</span>
+                                    {allMediaErrors.length}
+                                </span>
+                            )}
                         </button>
                     </div>
                 </div>
+
+                {/* Banner Global de Navegação de Erros de Mídia */}
+                {allMediaErrors.length > 0 && (
+                    <div className="w-full max-w-4xl mx-auto px-4 animate-fade-in-up">
+                        <div className="w-full bg-brand-red/15 border-2 border-brand-red/60 p-4 sm:p-5 rounded-2xl flex flex-col gap-3 shadow-[0_0_30px_rgba(241,67,67,0.25)]">
+                            <div className="flex items-start sm:items-center justify-between gap-3 flex-wrap">
+                                <div className="flex items-center gap-3">
+                                    <div className="size-10 rounded-full bg-brand-red/20 flex items-center justify-center text-brand-red shrink-0 ring-2 ring-brand-red/40">
+                                        <span className="material-symbols-outlined text-[24px]">warning</span>
+                                    </div>
+                                    <div>
+                                        <h4 className="text-sm font-black text-brand-red uppercase tracking-wider">
+                                            {allMediaErrors.length === 1 
+                                                ? '1 Imagem/Mídia com Erro de Envio Detectada' 
+                                                : `${allMediaErrors.length} Imagens/Mídias com Erro de Envio Detectadas`}
+                                        </h4>
+                                        <p className="text-xs text-gray-300 mt-0.5">
+                                            Arquivos temporários expiraram da sessão e precisam ser reenviados antes de publicar.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-2 pt-3 border-t border-brand-red/30">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-400">Clique para ir e corrigir:</span>
+                                {allMediaErrors.map((err, i) => (
+                                    <button
+                                        key={`${err.tab}-${err.blockId}-${i}`}
+                                        onClick={(e) => { e.stopPropagation(); scrollToBlock(err.blockId, err.tab); }}
+                                        className="px-3 py-1.5 bg-brand-red/25 hover:bg-brand-red text-white text-xs font-bold rounded-xl transition-all border border-brand-red/50 hover:scale-105 flex items-center gap-1.5 shadow-sm cursor-pointer"
+                                        title={`Ir para ${err.label} na aba ${err.tab.toUpperCase()}`}
+                                    >
+                                        <span className="material-symbols-outlined text-[14px]">my_location</span>
+                                        <span>{err.label}</span>
+                                        <span className="text-[10px] opacity-80 font-mono uppercase bg-black/30 px-1.5 py-0.5 rounded">
+                                            {err.tab}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* 
                   ========== MODO PREVIEW ==========
@@ -980,6 +1109,21 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                                     <option value="academica" className="bg-white dark:bg-background-dark text-gray-900 dark:text-white">Acadêmica</option>
                                                 </select>
                                             </div>
+
+                                            <div className="flex flex-col max-w-[150px] w-full">
+                                                <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Instituto <span className="text-brand-red">*</span></span>
+                                                <select
+                                                    value={institute || 'ifusp'}
+                                                    onChange={(e) => setInstitute(e.target.value)}
+                                                    className="w-full bg-transparent border-b border-gray-300 dark:border-white/5/50 hover:border-brand-red/50 focus:border-brand-red outline-none text-gray-900 dark:text-white text-lg font-medium transition-colors py-1 appearance-none cursor-pointer"
+                                                >
+                                                    {INSTITUTES.map(inst => (
+                                                        <option key={inst.id} value={inst.id} className="bg-white dark:bg-background-dark text-gray-900 dark:text-white">
+                                                            {inst.name}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </div>
                                         </>
                                     )}
 
@@ -1032,7 +1176,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                 {objectBlock ? (
                                     <React.Fragment key={objectBlock.id}>
                                         <div className="w-full">
-                                            <BlockRenderer block={objectBlock} />
+                                            <BlockRenderer block={objectBlock} blockIndex={blocks.findIndex(b => b.id === objectBlock.id)} />
                                         </div>
                                     </React.Fragment>
                                 ) : (
@@ -1128,15 +1272,15 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
 
                             {/* 6. Blocos Secundários e Placeholders Restantes */}
                             <div className="flex flex-col gap-8 max-w-full mx-auto">
-                                {objectBlock && objectBlock.type !== 'link' && (
+                                {objectBlock && (
                                     <InlineAddMenu insertAfterId={objectBlock.id} />
                                 )}
                                 {bottomBlocks.map((block) => (
                                     <React.Fragment key={block.id}>
                                         <div className="w-full">
-                                            <BlockRenderer block={block} />
+                                            <BlockRenderer block={block} blockIndex={blocks.findIndex(b => b.id === block.id)} />
                                         </div>
-                                        {block.type !== 'link' && <InlineAddMenu insertAfterId={block.id} />}
+                                        <InlineAddMenu insertAfterId={block.id} />
                                     </React.Fragment>
                                 ))}
 
@@ -1255,6 +1399,35 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                         <div className="h-px w-full bg-gray-200 dark:bg-[#1E1E1E] my-2"></div>
 
                     </div>
+
+                    {/* Alerta de Erros de Mídia no Rodapé */}
+                    {allMediaErrors.length > 0 && (
+                        <div className="w-full p-4 sm:p-5 bg-brand-red/15 border-2 border-brand-red/60 rounded-2xl flex flex-col gap-3 animate-pulse">
+                            <div className="flex items-center gap-2.5 text-brand-red font-black text-xs uppercase tracking-wider">
+                                <span className="material-symbols-outlined text-[22px]">error</span>
+                                <span>Atenção: Não é possível publicar com {allMediaErrors.length} mídia(s) com erro</span>
+                            </div>
+                            <p className="text-xs text-gray-200">
+                                Fotos ou arquivos temporários expiraram da sessão. Clique nos botões abaixo para ir direto aos blocos problemáticos e substituí-los:
+                            </p>
+                            <div className="flex flex-wrap gap-2 mt-1">
+                                {allMediaErrors.map((err, i) => (
+                                    <button
+                                        key={`footer-err-${err.tab}-${err.blockId}-${i}`}
+                                        onClick={(e) => { e.stopPropagation(); scrollToBlock(err.blockId, err.tab); }}
+                                        className="px-3 py-1.5 bg-brand-red hover:bg-[#D93B3B] text-white text-xs font-bold rounded-xl transition-all flex items-center gap-1.5 shadow-md cursor-pointer"
+                                        title={`Ir para ${err.label}`}
+                                    >
+                                        <span className="material-symbols-outlined text-[14px]">my_location</span>
+                                        <span>{err.label}</span>
+                                        <span className="text-[10px] opacity-80 font-mono uppercase bg-black/30 px-1.5 py-0.5 rounded">
+                                            {err.tab}
+                                        </span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
 
                     <div className="flex flex-col sm:flex-row items-center gap-4 w-full mt-4">
                         {!editId && previewMode !== 'arte' && (

@@ -13,6 +13,7 @@ import React from 'react';
 import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
 import { CloudinaryUploader } from './CloudinaryUploader';
+import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
 import Image from 'next/image';
 
 interface ImageBlockProps {
@@ -22,8 +23,11 @@ interface ImageBlockProps {
 
 export default function ImageBlock({ block, isActive }: ImageBlockProps) {
     const { updateBlock } = useSubmissionStore();
+    const pendingFiles = usePendingUploadsStore((state) => state.pendingFiles);
     const imageUrl = block.content.url || '';
     const altText = block.content.altText || '';
+
+    const isOrphaned = imageUrl.startsWith('blob:') && !pendingFiles[imageUrl];
 
     return (
         <div className="flex flex-col gap-4">
@@ -55,35 +59,76 @@ export default function ImageBlock({ block, isActive }: ImageBlockProps) {
                     />
                 </div>
             ) : (
-                <div className="relative group rounded-xl overflow-hidden bg-gray-900 border border-gray-800">
-                    {imageUrl.includes('drive.google') ? (
-                        <div className="w-full h-48 flex flex-col items-center justify-center text-gray-400 bg-gray-800/30">
-                            <span className="material-symbols-outlined text-4xl mb-2 text-gray-200">folder_zip</span>
-                            <span className="text-sm font-bold uppercase tracking-widest text-gray-200 mb-2">Pasta do Google Drive</span>
-                            <a href={imageUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-brand-blue underline-offset-4">Acessar Materiais (Upload &gt; 10MB)</a>
-                        </div>
-                    ) : (
-                        <div className="relative w-full h-[400px] min-h-[200px] bg-gray-900/50 flex items-center justify-center">
-                            <Image 
-                                src={imageUrl} 
-                                alt={altText || 'Imagem'} 
-                                fill 
-                                className="object-contain"
-                                unoptimized={imageUrl.includes('drive.google')}
-                            />
+                <div className="flex flex-col gap-2">
+                    {/* Alerta de Imagem com Erro / Expirada */}
+                    {isOrphaned && (
+                        <div className="p-3 bg-brand-red/15 border border-brand-red/60 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-pulse">
+                            <div className="flex items-center gap-2.5">
+                                <span className="material-symbols-outlined text-brand-red text-2xl shrink-0">error</span>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-black text-brand-red uppercase tracking-wider">Imagem Expirada / Erro de Envio</span>
+                                    <span className="text-[11px] text-gray-200">O arquivo temporário desta imagem expirou da sessão. Reenvie o arquivo para publicar.</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                <div className="scale-90 origin-right">
+                                    <CloudinaryUploader 
+                                        accept="image/*"
+                                        label="Reenviar Foto"
+                                        icon="sync"
+                                        onUploadSuccess={(url) => updateBlock(block.id, { url })}
+                                    />
+                                </div>
+                                <button
+                                    onClick={() => updateBlock(block.id, { url: '' })}
+                                    className="px-2.5 py-1.5 bg-brand-red/20 hover:bg-brand-red text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1"
+                                    title="Remover Imagem"
+                                >
+                                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                                </button>
+                            </div>
                         </div>
                     )}
-                    
-                    {isActive && (
-                        <div className="absolute inset-0 bg-background-dark/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <button 
-                                onClick={() => updateBlock(block.id, { url: '' })}
-                                className="px-4 py-2 bg-brand-red text-white rounded-lg font-medium shadow-lg hover:bg-brand-red transition-colors"
-                            >
-                                Substituir Imagem
-                            </button>
-                        </div>
-                    )}
+
+                    <div className={`relative group rounded-xl overflow-hidden bg-gray-900 border ${isOrphaned ? 'border-brand-red ring-2 ring-brand-red/30' : 'border-gray-800'}`}>
+                        {imageUrl.includes('drive.google') ? (
+                            <div className="w-full h-48 flex flex-col items-center justify-center text-gray-400 bg-gray-800/30">
+                                <span className="material-symbols-outlined text-4xl mb-2 text-gray-200">folder_zip</span>
+                                <span className="text-sm font-bold uppercase tracking-widest text-gray-200 mb-2">Pasta do Google Drive</span>
+                                <a href={imageUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-brand-blue underline-offset-4">Acessar Materiais (Upload &gt; 10MB)</a>
+                            </div>
+                        ) : (
+                            <div className="relative w-full h-[400px] min-h-[200px] bg-gray-900/50 flex items-center justify-center">
+                                <Image 
+                                    src={imageUrl} 
+                                    alt={altText || 'Imagem'} 
+                                    fill 
+                                    className="object-contain"
+                                    unoptimized={imageUrl.includes('drive.google') || imageUrl.startsWith('blob:')}
+                                />
+                            </div>
+                        )}
+                        
+                        {isActive && (
+                            <div className="absolute inset-0 bg-background-dark/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                                <div className="scale-95">
+                                    <CloudinaryUploader 
+                                        accept="image/*"
+                                        label="Substituir Imagem"
+                                        icon="refresh"
+                                        onUploadSuccess={(url) => updateBlock(block.id, { url })}
+                                    />
+                                </div>
+                                <button 
+                                    onClick={() => updateBlock(block.id, { url: '' })}
+                                    className="px-4 py-2 bg-brand-red text-white text-sm rounded-lg font-bold shadow-lg hover:bg-[#D93B3B] transition-colors flex items-center gap-1"
+                                >
+                                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                                    Remover
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
 

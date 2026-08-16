@@ -52,6 +52,7 @@ export interface FetchParams {
     query: string;
     categories?: string[];
     excludeCategories?: string[];
+    institutes?: string[];
     mediaTypes?: string[];
     sort: 'recentes' | 'antigas';
     author?: string;
@@ -61,7 +62,7 @@ export interface FetchParams {
     years?: number[];
 }
 
-export async function fetchSubmissions({ page, limit, query, categories, excludeCategories, mediaTypes, sort, author, is_featured: featured, years, is_golden_standard, is_historical }: FetchParams): Promise<{ items: { post: PostDTO }[], hasMore: boolean }> {
+export async function fetchSubmissions({ page, limit, query, categories, excludeCategories, institutes, mediaTypes, sort, author, is_featured: featured, years, is_golden_standard, is_historical }: FetchParams): Promise<{ items: { post: PostDTO }[], hasMore: boolean }> {
     const supabaseServer = await createServerSupabase();
     let queryBuilder = supabaseServer
         .from('submissions')
@@ -73,6 +74,12 @@ export async function fetchSubmissions({ page, limit, query, categories, exclude
     if (is_golden_standard !== undefined) queryBuilder = queryBuilder.eq('is_golden_standard', is_golden_standard);
     if (is_historical !== undefined) queryBuilder = queryBuilder.eq('is_historical', is_historical);
     if (categories && categories.length > 0) queryBuilder = queryBuilder.in('category', categories);
+    if (institutes && institutes.length > 0) {
+        const cleanInstitutes = institutes.map(i => i.toLowerCase()).filter(i => i !== 'todos');
+        if (cleanInstitutes.length > 0) {
+            queryBuilder = queryBuilder.in('institute', cleanInstitutes);
+        }
+    }
     if (excludeCategories && excludeCategories.length > 0) {
         // Unfortunately Supabase JS .not('category', 'in', excludeCategories) might be tricky if it's an array, 
         // but we can loop or use filter. Actually, .not('category', 'in', `(${excludeCategories.join(',')})`) works.
@@ -115,27 +122,29 @@ export async function fetchSubmissions({ page, limit, query, categories, exclude
     return { items, hasMore };
 }
 
-export const fetchTrendingSubmissions = unstable_cache(
-    async (): Promise<{ post: PostDTO }[]> => {
-        const supabaseServer = await createSupabaseStatic();
-        const { data: submissions, error } = await supabaseServer
-            .from('submissions')
-            .select('*, profiles(avatar_url, xp, level, is_labdiv), like_count')
-            .eq('status', 'aprovado')
-            .neq('moderation_status', 'suspended')
-            .neq('category', 'Arte')
-            .order('views', { ascending: false })
-            .limit(6);
+export async function fetchTrendingSubmissions(institute?: string): Promise<{ post: PostDTO }[]> {
+    const supabaseServer = await createSupabaseStatic();
+    let queryBuilder = supabaseServer
+        .from('submissions')
+        .select('*, profiles(avatar_url, xp, level, is_labdiv), like_count')
+        .eq('status', 'aprovado')
+        .neq('moderation_status', 'suspended')
+        .neq('category', 'Arte');
 
-        if (error || !submissions) return [];
+    if (institute && institute.trim() && institute.toLowerCase() !== 'todos') {
+        queryBuilder = queryBuilder.eq('institute', institute.toLowerCase());
+    }
 
-        return submissions.map(sub => ({
-            post: mapToPostDTO(sub)
-        }));
-    },
-    ['trending-submissions-v2'],
-    { revalidate: 60 }
-);
+    const { data: submissions, error } = await queryBuilder
+        .order('views', { ascending: false })
+        .limit(6);
+
+    if (error || !submissions) return [];
+
+    return submissions.map(sub => ({
+        post: mapToPostDTO(sub)
+    }));
+}
 
 export const getFeaturedSubmissions = unstable_cache(
     async (limit: number = 10): Promise<{ post: PostDTO }[]> => {
@@ -808,7 +817,7 @@ export async function updateSubmission(id: string, formData: any) {
     }
 
     const {
-        title, authors, category, description, media_type, media_url,
+        title, authors, category, institute, description, media_type, media_url,
         event_year, is_historical, is_golden_standard, accepted_cc,
         language_register, needs_moderation_help, reflexoes, quiz
     } = formData;
@@ -819,6 +828,7 @@ export async function updateSubmission(id: string, formData: any) {
         title,
         authors,
         category,
+        institute: (institute && String(institute).trim()) ? String(institute).toLowerCase() : 'ifusp',
         description,
         media_type,
         media_url,

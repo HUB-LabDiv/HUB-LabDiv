@@ -123,6 +123,7 @@ export interface Submission {
     authors: string;
     description: string;
     category?: string;
+    institute?: string;
     media_type: MediaType;
     media_url: string;
     status: SubmissionStatus;

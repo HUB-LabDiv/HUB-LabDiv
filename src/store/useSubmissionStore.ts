@@ -19,6 +19,7 @@ const initialState = {
     step: 'category' as SubmissionStep,
     description: '',
     category: '',
+    institute: 'ifusp',
     title: 'Exemplo de Título',
     authors: '',
     year: new Date().getFullYear().toString(),
@@ -106,6 +107,7 @@ interface SubmissionState {
     currentStep: SubmissionStep;
     description: string;
     category: string;
+    institute: string;
 
     // Metadados básicos
     title: string;
@@ -143,6 +145,7 @@ interface SubmissionState {
     setStep: (step: SubmissionStep) => void;
     setDescription: (description: string) => void;
     setCategory: (category: string) => void;
+    setInstitute: (institute: string) => void;
 
     setTitle: (title: string) => void;
     setAuthors: (authors: string) => void;
@@ -190,6 +193,7 @@ export const useSubmissionStore = create<SubmissionState>()(
             currentStep: 'diagrammer',
             description: initialState.description,
             category: initialState.category,
+            institute: initialState.institute,
             title: initialState.title,
             authors: initialState.authors,
             year: initialState.year,
@@ -221,6 +225,7 @@ export const useSubmissionStore = create<SubmissionState>()(
             setStep: (step) => set({ currentStep: step }),
             setDescription: (description) => set({ description }),
             setCategory: (category) => set({ category }),
+            setInstitute: (institute) => set({ institute }),
 
             setTitle: (title) => set({ title }),
             setAuthors: (authors) => set({ authors }),
@@ -319,6 +324,7 @@ export const useSubmissionStore = create<SubmissionState>()(
                 currentStep: 'diagrammer',
                 description: initialState.description,
                 category: initialState.category,
+                institute: initialState.institute,
                 title: initialState.title,
                 authors: initialState.authors,
                 year: initialState.year,
@@ -348,6 +354,7 @@ export const useSubmissionStore = create<SubmissionState>()(
                 currentStep: state.currentStep,
                 description: state.description,
                 category: state.category,
+                institute: state.institute,
                 blocks: state.blocks,
                 title: state.title,
                 readGuide: state.readGuide,

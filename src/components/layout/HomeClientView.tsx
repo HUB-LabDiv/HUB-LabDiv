@@ -12,7 +12,7 @@
  */
 
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { MediaCard, MediaCardProps } from "@/components/media/MediaCard";
@@ -48,7 +48,8 @@ import { BetaInviteCard } from "@/components/feedback/BetaInviteCard";
 import { LogsView } from '@/components/comunidade/LogsView';
 
 import { useSearch } from '@/providers/SearchProvider';
-import { CATEGORIES as CATEGORY_LIST, CATEGORY_STYLES, DEFAULT_STYLE } from '@/lib/constants';
+import { CATEGORIES as CATEGORY_LIST, CATEGORY_STYLES, DEFAULT_STYLE, INSTITUTES, INSTITUTE_FILTER_OPTIONS } from '@/lib/constants';
+import { usePersonalizacaoStore } from '@/store/usePersonalizacaoStore';
 import { useTelemetry } from '@/hooks/useTelemetry';
 
 interface HomeClientViewProps {
@@ -122,7 +123,9 @@ export const HomeClientView = ({
     }, []);
 
     const { user } = useAuth();
+    const { institution } = usePersonalizacaoStore();
     const [selectedCategories, setSelectedCategories] = useState<string[]>([initialCategory]);
+    const [selectedInstitutes, setSelectedInstitutes] = useState<string[]>(['Todos']);
     const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
     const [selectedYears, setSelectedYears] = useState<string[]>(['Todos']);
     const [activePageIndex, setActivePageIndex] = useState(0);
@@ -133,6 +136,24 @@ export const HomeClientView = ({
     const wheelAccumulator = useRef<number>(0);
     const lastWheelTime = useRef<number>(0);
     const wheelCooldown = useRef<boolean>(false);
+
+    const currentInstitutionInfo = useMemo(() => {
+        return INSTITUTES.find(i => i.id === institution) || INSTITUTES[0];
+    }, [institution]);
+
+    const orbitItems = useMemo(() => {
+        const activeInstId = institution ? institution.toLowerCase() : 'ifusp';
+        const filtered = trendingItems.filter(item => {
+            const postInst = (item.post.institute || 'ifusp').toLowerCase();
+            return postInst === activeInstId;
+        });
+        if (filtered.length > 0) return filtered;
+        const fallback = items.filter(item => {
+            const postInst = (item.post.institute || 'ifusp').toLowerCase();
+            return postInst === activeInstId;
+        });
+        return fallback.slice(0, 6);
+    }, [trendingItems, items, institution]);
 
     // Trending Scroll State
     const trendingScrollRef = useRef<HTMLDivElement>(null);
@@ -157,12 +178,10 @@ export const HomeClientView = ({
             carousel.addEventListener('scroll', checkScroll);
             checkScroll();
         }
-        window.addEventListener('resize', checkScroll);
         return () => {
             if (carousel) carousel.removeEventListener('scroll', checkScroll);
-            window.removeEventListener('resize', checkScroll);
         };
-    }, [trendingItems]);
+    }, [trendingItems, orbitItems]);
 
     // Fetch user likes and saves on client side to populate hearts and stars
     useEffect(() => {
@@ -196,27 +215,21 @@ export const HomeClientView = ({
         fetchInteractions();
     }, [user, items, trendingItems, featuredItems]);
 
-    // Removed duplicate client-side useEffect for performance
-
     const scrollTrending = (direction: 'left' | 'right') => {
         if (trendingScrollRef.current) {
-            const scrollAmount = window.innerWidth > 768 ? 600 : 300;
-            trendingScrollRef.current.scrollBy({
-                left: direction === 'left' ? -scrollAmount : scrollAmount,
-                behavior: 'smooth'
-            });
+            const offset = direction === 'left' ? -350 : 350;
+            trendingScrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
         }
     };
 
-    const categories = ['Todos', 'Lab-Div', 'Mentorados Lab-Div', 'Laboratórios', 'Pesquisadores', 'Bastidores da Ciência', 'Eventos', 'Nossa História', 'Uso Didático', 'Convivência', 'Central de Anotações', 'Mural do Deu Ruim', 'Outros'];
-    const currentYear = 2026; // Fixed for Hub 3.1.5 context
+    const categories = CATEGORY_LIST;
+    const currentYear = new Date().getFullYear();
     const years = ['Todos', ...Array.from({ length: currentYear - 1934 + 1 }, (_, i) => (currentYear - i).toString())];
 
     const mediaTypeOptions = [
-        { label: 'Fotos', value: 'image', icon: ImageIcon, color: 'brand-blue' },
+        { label: 'Imagens', value: 'image', icon: ImageIcon, color: 'brand-blue' },
         { label: 'Vídeos', value: 'video', icon: Video, color: 'brand-red' },
-        { label: 'PDF', value: 'pdf', icon: FileText, color: 'brand-yellow' },
-        { label: 'ZIP', value: 'zip', icon: FolderArchive, color: 'brand-blue' },
+        { label: 'Docs (PDF)', value: 'pdf', icon: FolderArchive, color: 'brand-yellow' },
         { label: 'Notes', value: 'sdocx', icon: Edit3, color: 'brand-red' },
         { label: 'Texto', value: 'text', icon: FileText, color: 'brand-blue' },
         { label: 'Outros', value: 'other', icon: Sparkles, color: 'gray-500' },
@@ -238,6 +251,7 @@ export const HomeClientView = ({
                     limit: 12,
                     query: debouncedQuery,
                     categories: selectedCategories.filter(c => c !== 'Todos'),
+                    institutes: selectedInstitutes.includes('Todos') ? undefined : selectedInstitutes,
                     mediaTypes: selectedMediaTypes,
                     years: selectedYears.includes('Todos') ? undefined : selectedYears.map(y => parseInt(y)),
                     sort: 'recentes'
@@ -258,14 +272,20 @@ export const HomeClientView = ({
         }
 
         // Don't run on mount if we already have initialItems and no custom filters
-        if (debouncedQuery === '' && selectedCategories.length === 1 && selectedCategories[0] === 'Todos' && selectedMediaTypes.length === 0 && selectedYears.length === 1 && selectedYears[0] === 'Todos') {
+        if (
+            debouncedQuery === '' &&
+            selectedCategories.length === 1 && selectedCategories[0] === 'Todos' &&
+            selectedInstitutes.length === 1 && selectedInstitutes[0] === 'Todos' &&
+            selectedMediaTypes.length === 0 &&
+            selectedYears.length === 1 && selectedYears[0] === 'Todos'
+        ) {
             setItems(initialItems);
             setHasMore(initialHasMore);
             return;
         }
 
         fetchFiltered();
-    }, [debouncedQuery, selectedCategories, selectedMediaTypes, selectedYears]);
+    }, [debouncedQuery, selectedCategories, selectedInstitutes, selectedMediaTypes, selectedYears]);
 
     const loadItems = async (pageNumber: number, append = false, forceCategory = 'Todos') => {
         try {
@@ -293,7 +313,8 @@ export const HomeClientView = ({
                     limit: 12,
                     query: searchQuery,
                     sort: 'recentes',
-                    categories: forceCategory === 'Todos' ? [] : [forceCategory],
+                    categories: forceCategory === 'Todos' ? (selectedCategories.includes('Todos') ? [] : selectedCategories) : [forceCategory],
+                    institutes: selectedInstitutes.includes('Todos') ? undefined : selectedInstitutes,
                     excludeCategories: ['Arte']
                 });
 
@@ -608,6 +629,37 @@ export const HomeClientView = ({
                         </div>
                     </div>
 
+                    {/* Instituto */}
+                    <div className="flex items-center gap-4">
+                        <span className="text-[10px] uppercase tracking-widest text-gray-400 shrink-0">Instituto:</span>
+                        <div className="flex flex-wrap gap-2 grow">
+                            {INSTITUTE_FILTER_OPTIONS.map((inst, idx) => {
+                                const isActive = selectedInstitutes.includes(inst);
+                                const filterColors = ['brand-blue', 'brand-yellow', 'brand-red'];
+                                const activeColor = inst === 'Todos' ? 'brand-blue' : filterColors[idx % filterColors.length];
+                                return (
+                                    <button
+                                        key={inst}
+                                        onClick={() => {
+                                            setSelectedInstitutes(prev => {
+                                                if (inst === 'Todos') return ['Todos'];
+                                                const filtered = prev.filter(item => item !== 'Todos');
+                                                if (isActive) {
+                                                    const next = filtered.filter(item => item !== inst);
+                                                    return next.length === 0 ? ['Todos'] : next;
+                                                }
+                                                return [...filtered, inst];
+                                            });
+                                        }}
+                                        className={`px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest transition-all border-2 shrink-0 ${isActive ? `bg-${activeColor} text-white border-${activeColor} shadow-lg ring-2 ring-${activeColor}/20` : 'bg-white dark:bg-white/5 text-gray-500 border-gray-100 dark:border-white/10 hover:border-brand-blue/30'}`}
+                                    >
+                                        {inst}
+                                    </button>
+                                );
+                            })}
+                        </div>
+                    </div>
+
                     {/* Ano */}
                     <div className="flex items-center gap-4">
                         <span className="text-[10px] uppercase tracking-widest text-gray-400 shrink-0">Ano:</span>
@@ -650,17 +702,17 @@ export const HomeClientView = ({
             </section>
             )}
 
-            {/* EM ÓRBITA NO IFUSP (Trending Horizontal - Mover abaixo dos filtros) */}
-            {activeTab === 'fluxo' && !debouncedQuery && selectedCategories.includes('Todos') && trendingItems.length > 0 && (
+            {/* EM ÓRBITA NO [INSTITUTO] (Trending Horizontal dinâmico) */}
+            {activeTab === 'fluxo' && !debouncedQuery && selectedCategories.includes('Todos') && selectedInstitutes.includes('Todos') && orbitItems.length > 0 && (
                 <section className="w-full py-8 bg-white dark:bg-card-dark rounded-[40px] border border-gray-100 dark:border-gray-800/50 shadow-sm mb-12">
                     <div className="px-8">
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex flex-col">
                                 <h2 className="text-xl font-black uppercase tracking-widest text-gray-900 dark:text-white flex items-center gap-2">
                                     <Satellite className="w-5 h-5 text-brand-blue" />
-                                    Em Órbita no <span className="text-brand-blue">IFUSP</span>
+                                    Em Órbita no <span className="text-brand-blue">{currentInstitutionInfo.name}</span>
                                 </h2>
-                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter mt-1">Contribuições em destaque na comunidade</p>
+                                <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter mt-1">Contribuições em destaque na comunidade do {currentInstitutionInfo.name}</p>
                             </div>
 
                             <div className="flex items-center gap-4">
@@ -701,7 +753,7 @@ export const HomeClientView = ({
                             ref={trendingScrollRef}
                             className="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory scroll-smooth"
                         >
-                            {trendingItems.map((item, index) => (
+                            {orbitItems.map((item, index) => (
                                 <div
                                     key={item.post.id}
                                     className="min-w-[280px] md:min-w-[320px] snap-start"

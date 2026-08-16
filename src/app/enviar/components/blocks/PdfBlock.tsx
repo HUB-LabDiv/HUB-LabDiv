@@ -13,11 +13,15 @@ import React, { useState } from 'react';
 import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
 import { CloudinaryUploader } from './CloudinaryUploader';
+import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
 import { getPdfViewerUrl, getPdfEmbedUrl } from '@/lib/media-utils';
 
 export default function PdfBlock({ block, isActive }: { block: Block; isActive: boolean }) {
     const { updateBlock } = useSubmissionStore();
+    const pendingFiles = usePendingUploadsStore((state) => state.pendingFiles);
     const pdfUrl = block.content.url || '';
+
+    const isOrphaned = pdfUrl.startsWith('blob:') && !pendingFiles[pdfUrl];
 
     /** URL processada (corrige transformações Cloudinary, extensão, etc.) */
     const viewerUrl = getPdfViewerUrl(pdfUrl);
@@ -54,14 +58,46 @@ export default function PdfBlock({ block, isActive }: { block: Block; isActive: 
                     />
                 </div>
             ) : (
-                <div className="relative group rounded-xl overflow-hidden bg-gray-900 border border-gray-800 h-[500px]">
-                    {pdfUrl.includes('drive.google') ? (
-                        <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 bg-gray-800/30">
-                            <span className="material-symbols-outlined text-4xl mb-2 text-gray-200">folder_zip</span>
-                            <span className="text-sm font-bold uppercase tracking-widest text-gray-200 mb-2">Pasta do Google Drive</span>
-                            <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-brand-red underline-offset-4">Acessar Materiais (Upload &gt; 10MB)</a>
+                <div className="flex flex-col gap-2">
+                    {/* Alerta de PDF Expirado */}
+                    {isOrphaned && (
+                        <div className="p-3 bg-brand-red/15 border border-brand-red/60 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-pulse">
+                            <div className="flex items-center gap-2.5">
+                                <span className="material-symbols-outlined text-brand-red text-2xl shrink-0">error</span>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-black text-brand-red uppercase tracking-wider">PDF Expirado / Erro de Envio</span>
+                                    <span className="text-[11px] text-gray-200">O arquivo PDF local expirou da sessão. Reenvie o arquivo para publicar.</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                <div className="scale-90 origin-right">
+                                    <CloudinaryUploader 
+                                        accept=".pdf,application/pdf"
+                                        label="Reenviar PDF"
+                                        icon="sync"
+                                        resourceType="image"
+                                        onUploadSuccess={(url) => updateBlock(block.id, { url })}
+                                    />
+                                </div>
+                                <button
+                                    onClick={() => updateBlock(block.id, { url: '' })}
+                                    className="px-2.5 py-1.5 bg-brand-red/20 hover:bg-brand-red text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1"
+                                    title="Remover PDF"
+                                >
+                                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                                </button>
+                            </div>
                         </div>
-                    ) : (
+                    )}
+
+                    <div className={`relative group rounded-xl overflow-hidden bg-gray-900 border ${isOrphaned ? 'border-brand-red ring-2 ring-brand-red/30' : 'border-gray-800'} h-[500px]`}>
+                        {pdfUrl.includes('drive.google') ? (
+                            <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 bg-gray-800/30">
+                                <span className="material-symbols-outlined text-4xl mb-2 text-gray-200">folder_zip</span>
+                                <span className="text-sm font-bold uppercase tracking-widest text-gray-200 mb-2">Pasta do Google Drive</span>
+                                <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-brand-red underline-offset-4">Acessar Materiais (Upload &gt; 10MB)</a>
+                            </div>
+                        ) : (
                         <iframe 
                             src={embedUrl} 
                             className="w-full h-full"
@@ -69,26 +105,27 @@ export default function PdfBlock({ block, isActive }: { block: Block; isActive: 
                         />
                     )}
 
-                    {/* Barra inferior com ações */}
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
-                        <a
-                            href={viewerUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800/80 hover:bg-gray-700 text-gray-300 hover:text-white text-xs font-bold rounded-lg transition-colors uppercase tracking-wider"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            <span className="material-symbols-outlined text-[14px]">open_in_new</span>
-                            Abrir PDF
-                        </a>
-                        {isActive && (
-                            <button 
-                                onClick={() => updateBlock(block.id, { url: '' })}
-                                className="px-3 py-1.5 bg-brand-red/80 hover:bg-brand-red text-white text-xs font-bold rounded-lg transition-colors uppercase tracking-wider"
+                        {/* Barra inferior com ações */}
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+                            <a
+                                href={viewerUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-1.5 px-3 py-1.5 bg-gray-800/80 hover:bg-gray-700 text-gray-300 hover:text-white text-xs font-bold rounded-lg transition-colors uppercase tracking-wider"
+                                onClick={(e) => e.stopPropagation()}
                             >
-                                Remover
-                            </button>
-                        )}
+                                <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                                Abrir PDF
+                            </a>
+                            {isActive && (
+                                <button 
+                                    onClick={() => updateBlock(block.id, { url: '' })}
+                                    className="px-3 py-1.5 bg-brand-red/80 hover:bg-brand-red text-white text-xs font-bold rounded-lg transition-colors uppercase tracking-wider"
+                                >
+                                    Remover
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
             )}

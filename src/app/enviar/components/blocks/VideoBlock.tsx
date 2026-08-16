@@ -27,6 +27,8 @@ export default function VideoBlock({ block, isActive }: { block: Block; isActive
 
     const isYouTube = videoUrl.includes('youtube.com') || videoUrl.includes('youtu.be');
 
+    const isOrphaned = videoUrl.startsWith('blob:') && !pendingFile;
+
     return (
         <div className="flex flex-col gap-4">
             {!videoUrl ? (
@@ -58,39 +60,72 @@ export default function VideoBlock({ block, isActive }: { block: Block; isActive
                     />
                 </div>
             ) : (
-                <div className="relative group rounded-xl overflow-hidden bg-background-dark border border-gray-800">
-                    {isGif ? (
-                        <div className="w-full flex justify-center bg-gray-950 p-2">
-                            <img 
-                                src={videoUrl} 
-                                alt="GIF Animado" 
-                                className="w-full max-h-[500px] object-contain rounded-lg animate-fade-in" 
+                <div className="flex flex-col gap-2">
+                    {/* Alerta de GIF/Vídeo Expirado */}
+                    {isOrphaned && (
+                        <div className="p-3 bg-brand-red/15 border border-brand-red/60 rounded-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 animate-pulse">
+                            <div className="flex items-center gap-2.5">
+                                <span className="material-symbols-outlined text-brand-red text-2xl shrink-0">error</span>
+                                <div className="flex flex-col">
+                                    <span className="text-xs font-black text-brand-red uppercase tracking-wider">GIF Expirado / Erro de Envio</span>
+                                    <span className="text-[11px] text-gray-200">O arquivo GIF local expirou da sessão. Reenvie o arquivo para publicar.</span>
+                                </div>
+                            </div>
+                            <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                                <div className="scale-90 origin-right">
+                                    <CloudinaryUploader 
+                                        accept="image/gif"
+                                        label="Reenviar GIF"
+                                        icon="sync"
+                                        resourceType="image"
+                                        onUploadSuccess={(url) => updateBlock(block.id, { url })}
+                                    />
+                                </div>
+                                <button
+                                    onClick={() => updateBlock(block.id, { url: '' })}
+                                    className="px-2.5 py-1.5 bg-brand-red/20 hover:bg-brand-red text-white text-xs font-bold rounded-lg transition-colors flex items-center gap-1"
+                                    title="Remover Conteúdo"
+                                >
+                                    <span className="material-symbols-outlined text-[16px]">delete</span>
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    <div className={`relative group rounded-xl overflow-hidden bg-background-dark border ${isOrphaned ? 'border-brand-red ring-2 ring-brand-red/30' : 'border-gray-800'}`}>
+                        {isGif ? (
+                            <div className="w-full flex justify-center bg-gray-950 p-2">
+                                <img 
+                                    src={videoUrl} 
+                                    alt="GIF Animado" 
+                                    className="w-full max-h-[500px] object-contain rounded-lg animate-fade-in" 
+                                />
+                            </div>
+                        ) : isYouTube ? (
+                            <iframe 
+                                className="w-full aspect-video"
+                                src={videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/')}
+                                allowFullScreen
                             />
-                        </div>
-                    ) : isYouTube ? (
-                        <iframe 
-                            className="w-full aspect-video"
-                            src={videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/')}
-                            allowFullScreen
-                        />
-                    ) : (
-                        <div className="w-full h-48 flex flex-col items-center justify-center text-gray-400 bg-gray-800/30 p-6 text-center">
-                            <span className="material-symbols-outlined text-4xl mb-2 text-brand-red">warning</span>
-                            <span className="text-sm font-bold uppercase tracking-widest text-brand-red mb-2">Formato Inválido</span>
-                            <span className="text-xs text-gray-400">Por favor, cole um link do YouTube ou envie um arquivo GIF.</span>
-                        </div>
-                    )}
-                    
-                    {isActive && (
-                        <div className="absolute inset-0 bg-background-dark/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                            <button 
-                                onClick={() => updateBlock(block.id, { url: '' })}
-                                className="px-4 py-2 bg-brand-red text-white rounded-lg font-medium shadow-lg hover:bg-brand-red transition-colors"
-                            >
-                                Substituir Conteúdo
-                            </button>
-                        </div>
-                    )}
+                        ) : (
+                            <div className="w-full h-48 flex flex-col items-center justify-center text-gray-400 bg-gray-800/30 p-6 text-center">
+                                <span className="material-symbols-outlined text-4xl mb-2 text-brand-red">warning</span>
+                                <span className="text-sm font-bold uppercase tracking-widest text-brand-red mb-2">Formato Inválido</span>
+                                <span className="text-xs text-gray-400">Por favor, cole um link do YouTube ou envie um arquivo GIF.</span>
+                            </div>
+                        )}
+                        
+                        {isActive && (
+                            <div className="absolute inset-0 bg-background-dark/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                <button 
+                                    onClick={() => updateBlock(block.id, { url: '' })}
+                                    className="px-4 py-2 bg-brand-red text-white rounded-lg font-medium shadow-lg hover:bg-brand-red transition-colors"
+                                >
+                                    Substituir Conteúdo
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
         </div>

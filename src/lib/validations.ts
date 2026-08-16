@@ -15,6 +15,7 @@ export const SubmissionSchema = z.object({
     title: z.string().min(1, 'Título é obrigatório'),
     authors: z.string().min(1, 'Autor é obrigatório'),
     category: z.string().min(1, 'Categoria é obrigatória'),
+    institute: z.string().optional().default('ifusp'),
     description: z.string().min(1, 'Descrição é obrigatória'),
     media_type: z.enum(['image', 'video', 'pdf', 'text', 'link', 'zip', 'sdocx']),
     media_url: z.string().optional(),
