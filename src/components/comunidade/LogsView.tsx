@@ -18,8 +18,6 @@ import { supabase } from "@/lib/supabase";
 import { FilePenLine, Send, Atom, Clock, Star, Hash, GitCommit, Loader2, Zap, ArrowUp, ArrowDown, Radio } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
-import { LogsFeedbackCard } from '@/app/drops/LogsFeedbackCard';
-import { BetaInviteCard } from '@/components/feedback/BetaInviteCard';
 import { fetchThreads, createDrop, reactToDrop } from '@/app/actions/drops';
 
 export interface Drop {
@@ -161,15 +159,6 @@ export function LogsView() {
 
     return (
         <div className="max-w-4xl mx-auto space-y-12 pb-20 pt-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full mb-8">
-                <div className="w-full h-full">
-                    <LogsFeedbackCard className="block h-full" />
-                </div>
-                <div className="w-full h-full">
-                    <BetaInviteCard className="h-full" />
-                </div>
-            </div>
-
             <div className="flex flex-col gap-3 relative mb-6">
                 <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-red/5 rounded-full blur-[60px] pointer-events-none"></div>
                 <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-red flex items-center gap-4 relative z-10">

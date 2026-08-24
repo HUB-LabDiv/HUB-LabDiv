@@ -12,17 +12,11 @@
  */
 
 import { MatchAcademicoTab } from '@/components/profile/MatchAcademicoTab';
-import { MatchFeedbackCard } from './MatchFeedbackCard';
 import { Profile } from '@/types';
 
 export function MatchPageClient({ profile }: { profile: Profile }) {
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            {/* Feedback Card — primeiro elemento */}
-            <div className="max-w-4xl mx-auto w-full">
-                <MatchFeedbackCard className="w-full" />
-            </div>
-
             {/* Título e descrição */}
             <header className="space-y-2 text-center md:text-left">
                 <h1 className="text-4xl font-display font-black text-white uppercase tracking-tighter">

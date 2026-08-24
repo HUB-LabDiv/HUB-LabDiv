@@ -24,7 +24,6 @@ import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { DiagrammerLayout } from './components/DiagrammerLayout';
 import { ReportModal } from '@/components/feedback/ReportModal';
 import { useNavigationStore } from '@/store/useNavigationStore';
-import { EnviarFeedbackCard } from './EnviarFeedbackCard';
 import Link from 'next/link';
 
 import { useAuth } from '@/providers/AuthProvider';
@@ -126,7 +125,7 @@ function SubmitPageContent() {
     }
 
     return (
-        <MainLayoutWrapper focusMode={true} rightSidebar={<EnviarFeedbackCard />}>
+        <MainLayoutWrapper focusMode={true}>
             <div className="relative min-h-screen font-sans text-gray-900 dark:text-gray-100 overflow-x-clip">
                 {/* Background Decorative Elements */}
                 <div className="fixed inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] dark:bg-[radial-gradient(#1f2937_1px,transparent_1px)] [background-size:32px_32px] opacity-30 -z-20"></div>

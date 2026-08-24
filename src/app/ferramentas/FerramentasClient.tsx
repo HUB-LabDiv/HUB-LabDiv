@@ -23,7 +23,6 @@ import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
 import * as CalendarActions from '@/app/actions/calendar';
 import { resetUserAcademicData } from '@/app/actions/calendar';
-import { FerramentasFeedbackCard } from './FerramentasFeedbackCard';
 import { SubjectSelectorModal } from './SubjectSelectorModal';
 import { BlockDetailsModal, BlockFormData } from './BlockDetailsModal';
 import { JupiterSyncModal } from './JupiterSyncModal';
@@ -841,8 +840,6 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                     #grade-horaria-actions { display: none !important; }
                 }
             `}</style>
-
-            <FerramentasFeedbackCard className="block lg:hidden mb-6" />
 
             <header className="flex flex-col md:flex-row items-center justify-between gap-6 print:hidden">
                 <div className="space-y-2">

@@ -25,9 +25,6 @@ import { updateProfile } from '@/app/actions/profiles';
 type Tab = 'challenges' | 'suggestions' | 'match';
 import { MatchAcademicoTab } from '@/components/profile/MatchAcademicoTab';
 
-import { ArenaFeedbackCard } from './ArenaFeedbackCard';
-import { MatchFeedbackCard } from './MatchFeedbackCard';
-
 export default function ArenaClient({ profile }: { profile: any }) {
     const [activeTab, setActiveTab] = useState<Tab>('challenges');
     const [challenges, setChallenges] = useState<any[]>([]);
@@ -205,8 +202,6 @@ export default function ArenaClient({ profile }: { profile: any }) {
                 </div>
             </header>
 
-            <ArenaFeedbackCard className="lg:hidden mt-4" />
-
             {/* Navigation Tabs */}
             <div className="flex items-center gap-2 border-b border-white/5 pb-px overflow-x-auto no-scrollbar">
                 <button
@@ -344,9 +339,6 @@ export default function ArenaClient({ profile }: { profile: any }) {
                     
                     {activeTab === 'match' && (
                         <div className="animate-in fade-in duration-700 space-y-8">
-                            <div className="max-w-4xl mx-auto w-full">
-                                <MatchFeedbackCard className="w-full" />
-                            </div>
                             <header className="space-y-2 text-center md:text-left">
                                 <h2 className="text-3xl font-display font-black text-white uppercase tracking-tight">
                                     Match <span className="text-brand-yellow">Acadêmico</span>

@@ -22,7 +22,6 @@ import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { useAuth } from '@/providers/AuthProvider';
 import { useRouter } from 'next/navigation';
 import { Share2, User, Download, Trash2, ShieldCheck, Database, Palette, BellRing, BellOff } from 'lucide-react';
-import { FluxoFeedbackCard } from '@/components/feedback/FluxoFeedbackCard';
 import { CacheManager } from '@/components/cache/CacheManager';
 import { useWebPush } from '@/hooks/useWebPush';
 import { useSwipe } from '@/hooks/useSwipe';
@@ -191,16 +190,7 @@ export default function ConfigPage() {
                     </button>
                 </div>
 
-                {/* 2. CARD DE FEEDBACK */}
-                <div className="max-w-4xl mb-6">
-                    <FluxoFeedbackCard 
-                        title="Configurações do HUB" 
-                        description="Aqui você tem controle total sobre seus dados, armazenamento e preferências. O Hub LabDiv tem o compromisso de garantir transparência, proteção e autonomia para todos os usuários." 
-                        icon={<ShieldCheck className="w-5 h-5 text-brand-blue" />}
-                    />
-                </div>
-
-                {/* 3. TÍTULO DA PÁGINA */}
+                {/* TÍTULO DA PÁGINA */}
                 <header className="space-y-3">
                     <h1 className="text-3xl font-bukra font-black tracking-tight text-white flex items-center gap-3 outline-none focus:outline-none">
                         <span className="material-symbols-outlined text-brand-blue text-4xl">

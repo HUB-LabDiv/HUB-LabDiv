@@ -16,9 +16,6 @@ import React from 'react';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { motion } from 'framer-motion';
 import { GrandeColisorView } from './GrandeColisorView';
-import { ColisorFeedbackCard } from '@/app/colisor/ColisorFeedbackCard';
-import { FluxoFeedbackCard } from '@/components/feedback/FluxoFeedbackCard';
-import { Atom } from 'lucide-react';
 
 interface ExplorarClientProps {
     mapItems: any[];
@@ -29,7 +26,6 @@ interface ExplorarClientProps {
 export function ExplorarClient({ mapItems, oportunidades, glossario }: ExplorarClientProps) {
     return (
         <MainLayoutWrapper 
-            rightSidebar={<ColisorFeedbackCard />}
             fullWidth={true}
         >
             <div className="min-h-screen py-6 px-4 max-w-7xl mx-auto overflow-x-hidden">
@@ -38,14 +34,6 @@ export function ExplorarClient({ mapItems, oportunidades, glossario }: ExplorarC
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
                 >
-                    <div className="max-w-4xl mx-auto mb-12">
-                        <FluxoFeedbackCard 
-                            title="CGIF - Grande Colisor do IF" 
-                            description="Esta é a aba onde ficam reunidas todo tipo de informações sobre o instituto de física da USP retiradas do portal do IF, editais, jupiterweb... Porem pode e provavelmente há informações erradas nessa pagina, viu alguma?" 
-                            icon={<Atom className="w-5 h-5 text-brand-blue" />}
-                        />
-                    </div>
-
                     <GrandeColisorView 
                         oportunidades={oportunidades} 
                         mapItems={mapItems} 

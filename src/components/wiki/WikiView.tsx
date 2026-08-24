@@ -34,7 +34,6 @@ import {
     BookOpen,
     Search
 } from 'lucide-react';
-import { WikiFeedbackCard } from '@/app/wiki/WikiFeedbackCard';
 import { SacSection } from '@/components/sac/SacSection';
 
 // --- DATA STRUCTURE (O Síncrotron) ---

@@ -40,8 +40,6 @@ const IngressOption = ({ title, icon, description, items, color }: any) => (
     </div>
 );
 
-import { IngressoFeedbackCard } from './IngressoFeedbackCard';
-
 export default function IngressoClient({ profile }: { profile: any }) {
     return (
         <div className="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-1000">
@@ -56,8 +54,6 @@ export default function IngressoClient({ profile }: { profile: any }) {
                 <p className="text-gray-400 text-lg font-medium italic">
                     Descubra os caminhos para ingressar em um dos maiores centros de física do mundo.
                 </p>
-                
-                <IngressoFeedbackCard className="lg:hidden mt-8" />
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">

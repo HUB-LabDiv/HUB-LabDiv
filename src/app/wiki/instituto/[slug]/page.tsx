@@ -15,7 +15,6 @@
 import React, { useState, useEffect } from 'react';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { institutoData, Department } from '@/data/institutoData';
-import { WikiFeedbackCard } from '@/app/wiki/WikiFeedbackCard';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -64,7 +63,7 @@ export default function DepartmentWikiPage({ params }: { params: Promise<{ slug:
     }
 
     return (
-        <MainLayoutWrapper rightSidebar={<WikiFeedbackCard />}>
+        <MainLayoutWrapper>
             <div className="flex flex-col w-full pb-20">
                 {/* 1. Header & Breadcrumbs */}
                 <div className="mb-8">

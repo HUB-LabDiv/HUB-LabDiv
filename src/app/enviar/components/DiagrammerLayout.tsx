@@ -28,7 +28,6 @@ import { DraftsMenu } from './DraftsMenu';
 import { useDraftsStore } from '@/store/useDraftsStore';
 import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
 import { uploadFileToCloudinary } from '@/lib/cloudinary-upload';
-import { EnviarFeedbackCard } from '../EnviarFeedbackCard';
 import { stripMarkdownAndLatex } from '@/lib/utils';
 import { SdocxHeroImage } from '@/components/reading/SdocxImageBlock';
 import { findBlocksWithMediaErrors, validateBlockMedia, BlockMediaErrorInfo } from '../utils/mediaValidation';
@@ -656,9 +655,8 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 className={`w-full transition-all duration-500 mt-0 flex flex-col gap-8`}
                 onClick={handleCanvasClick}
             >
-                {/* Feedback Card + Título Global da Ferramenta */}
+                {/* Título Global da Ferramenta */}
                 <div className="flex flex-col items-center justify-center text-center gap-4 animate-fade-in-up mt-8 max-w-4xl mx-auto w-full px-4">
-                    <EnviarFeedbackCard className="w-full" />
                     <h2 className="text-3xl font-black text-white uppercase tracking-tight">Plataforma de Lançamento</h2>
                     <p className="text-sm text-gray-400">Aqui você pode diagramar seu post.</p>
                 </div>

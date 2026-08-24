@@ -13,7 +13,6 @@ import { createServerSupabase } from '@/lib/supabase/server';
 import IngressoClient from './IngressoClient';
 import { redirect } from 'next/navigation';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
-import { IngressoFeedbackCard } from './IngressoFeedbackCard';
 
 export default async function IngressoPage() {
     const supabase = await createServerSupabase();
@@ -31,7 +30,7 @@ export default async function IngressoPage() {
     }
 
     return (
-        <MainLayoutWrapper userId={user?.id} rightSidebar={<IngressoFeedbackCard />}>
+        <MainLayoutWrapper userId={user?.id}>
             <div className="w-full">
                 <IngressoClient profile={profile} />
             </div>

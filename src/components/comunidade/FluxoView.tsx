@@ -36,7 +36,6 @@ import {
     Atom
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FluxoFeedbackCard } from "@/components/feedback/FluxoFeedbackCard";
 import { useSearch } from '@/providers/SearchProvider';
 import { CATEGORIES as CATEGORY_LIST, CATEGORY_STYLES, DEFAULT_STYLE } from '@/lib/constants';
 import { useTelemetry } from '@/hooks/useTelemetry';
@@ -248,16 +247,7 @@ export const FluxoView = ({
 
     return (
         <div className="max-w-4xl mx-auto space-y-8 pt-8">
-            {/* 1. Feedback Card FIRST */}
-            <div className="w-full mb-6">
-                <FluxoFeedbackCard 
-                    title="Fluxo" 
-                    description="Esta é a subaba Fluxo. Aqui você acompanha a timeline principal de publicações, onde a comunicação científica pode ter o máximo de interação." 
-                    icon={<Zap className="w-5 h-5 text-brand-blue" />}
-                />
-            </div>
-
-            {/* 2. Header (H1 Title + Description) */}
+            {/* Header (H1 Title + Description) */}
             <div className="flex flex-col gap-3 relative mb-8 outline-none focus:outline-none">
                 <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-blue/5 rounded-full blur-[60px] pointer-events-none"></div>
                 <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-blue flex items-center gap-4 relative z-10 outline-none focus:outline-none">
@@ -269,7 +259,7 @@ export const FluxoView = ({
                 </p>
             </div>
 
-            <section className="z-40 bg-transparent py-4 -mx-4 px-4 border-b border-gray-100 dark:border-gray-800/50 mb-8 overflow-x-hidden">
+            <section className="relative z-10 bg-transparent py-4 -mx-4 px-4 border-b border-gray-100 dark:border-gray-800/50 mb-8 overflow-x-hidden">
                 <div className="flex flex-col gap-6">
                     <div className="flex items-center gap-4">
                         <span className="text-[10px] uppercase tracking-widest text-gray-400 shrink-0">Formato:</span>
@@ -278,11 +268,19 @@ export const FluxoView = ({
                                 const isActive = selectedMediaTypes.includes(option.value);
                                 const Icon = option.icon;
                                 const activeColor = option.color;
+                                const activeBgClass = 
+                                    activeColor === 'brand-yellow' 
+                                        ? 'bg-brand-yellow text-black border-brand-yellow shadow-lg ring-2 ring-brand-yellow/20' 
+                                        : activeColor === 'brand-red' 
+                                        ? 'bg-brand-red text-white border-brand-red shadow-lg ring-2 ring-brand-red/20' 
+                                        : activeColor === 'brand-blue'
+                                        ? 'bg-brand-blue text-white border-brand-blue shadow-lg ring-2 ring-brand-blue/20'
+                                        : 'bg-gray-500 text-white border-gray-500 shadow-lg ring-2 ring-gray-500/20';
                                 return (
                                     <button
                                         key={option.label}
                                         onClick={() => setSelectedMediaTypes(isActive ? prev => prev.filter(t => t !== option.value) : prev => [...prev, option.value])}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest transition-all border-2 shrink-0 ${isActive ? `bg-${activeColor} text-white border-${activeColor} shadow-lg ring-2 ring-${activeColor}/20` : 'bg-white dark:bg-white/5 text-gray-500 border-gray-100 dark:border-white/10 hover:border-brand-blue/30'}`}
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest transition-all border-2 shrink-0 ${isActive ? activeBgClass : 'bg-white dark:bg-card-dark text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-brand-blue/30'}`}
                                     >
                                         <Icon className="w-3.5 h-3.5" />
                                         {option.label}
@@ -319,7 +317,7 @@ export const FluxoView = ({
                             })}
                             <button
                                 onClick={() => setShowAllCategories(!showAllCategories)}
-                                className="px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest bg-gray-100 dark:bg-white/10 text-gray-500 hover:text-brand-blue transition-all flex items-center gap-1 border-2 border-transparent"
+                                className="px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest bg-white dark:bg-card-dark text-gray-600 dark:text-gray-300 hover:text-brand-blue transition-all flex items-center gap-1 border-2 border-gray-200 dark:border-gray-700"
                             >
                                 {showAllCategories ? <Minus className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
                                 {showAllCategories ? 'Menos' : 'Mais'}
@@ -334,6 +332,12 @@ export const FluxoView = ({
                                 const isActive = selectedYears.includes(y);
                                 const filterColors = ['brand-blue', 'brand-yellow', 'brand-red'];
                                 const activeColor = y === 'Todos' ? 'brand-blue' : filterColors[idx % filterColors.length];
+                                const activeBgClass = 
+                                    activeColor === 'brand-yellow' 
+                                        ? 'bg-brand-yellow text-black border-brand-yellow shadow-lg ring-2 ring-brand-yellow/20' 
+                                        : activeColor === 'brand-red' 
+                                        ? 'bg-brand-red text-white border-brand-red shadow-lg ring-2 ring-brand-red/20' 
+                                        : 'bg-brand-blue text-white border-brand-blue shadow-lg ring-2 ring-brand-blue/20';
                                 return (
                                     <button
                                         key={y}
@@ -348,7 +352,7 @@ export const FluxoView = ({
                                                 return [...filtered, y];
                                             });
                                         }}
-                                        className={`px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest transition-all border-2 shrink-0 ${isActive ? `bg-${activeColor} text-white border-${activeColor} shadow-lg ring-2 ring-${activeColor}/20` : 'bg-white dark:bg-white/5 text-gray-500 border-gray-100 dark:border-white/10 hover:border-brand-blue/30'}`}
+                                        className={`px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest transition-all border-2 shrink-0 ${isActive ? activeBgClass : 'bg-white dark:bg-card-dark text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-brand-blue/30'}`}
                                     >
                                         {y}
                                     </button>
@@ -356,7 +360,7 @@ export const FluxoView = ({
                             })}
                             <button
                                 onClick={() => setShowAllYears(!showAllYears)}
-                                className="px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest bg-gray-100 dark:bg-white/10 text-gray-500 hover:text-brand-blue transition-all flex items-center gap-1 border-2 border-transparent"
+                                className="px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest bg-white dark:bg-card-dark text-gray-600 dark:text-gray-300 hover:text-brand-blue transition-all flex items-center gap-1 border-2 border-gray-200 dark:border-gray-700"
                             >
                                 {showAllYears ? <Minus className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
                                 {showAllYears ? 'Menos' : 'Mais'}

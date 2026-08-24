@@ -22,7 +22,6 @@ import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 
 import { Grid, Star, Image as ImageIcon, FileText, Heart, MessageSquare, Info, Camera, ShieldCheck, Play, Linkedin, Github, Youtube, Instagram, Globe, Share2, GraduationCap, Eye, Edit, BarChart2, Filter, Trash2 } from 'lucide-react';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
-import { PerfilFeedbackCard } from './PerfilFeedbackCard';
 import { RadiationBadge } from '@/components/gamification/RadiationBadge';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
 import { RadiationTab } from '@/components/gamification/RadiationTab';
@@ -160,7 +159,6 @@ export function LabClientView({
             userId={currentUser.id}
         >
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-                <PerfilFeedbackCard className="w-full max-w-3xl mx-auto mb-8" />
                 <div className="bg-white dark:bg-background-dark rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-800 mb-8">
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 sm:gap-12 max-w-3xl mx-auto">
                         <div className="relative shrink-0">

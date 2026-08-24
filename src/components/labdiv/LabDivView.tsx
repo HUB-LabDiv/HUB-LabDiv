@@ -16,16 +16,10 @@ import React from 'react';
 import { LabDivCatalogExplorer } from "@/components/labdiv/LabDivCatalogExplorer";
 import { LabDivTeam } from "@/components/labdiv/LabDivTeam";
 import Link from "next/link";
-import { LabDivFeedbackCard } from "./LabDivFeedbackCard";
 
 export function LabDivView() {
     return (
         <div className="flex-1 w-full animate-in fade-in duration-700 pt-8 pb-12">
-            
-            <div className="max-w-4xl mx-auto mb-12">
-                <LabDivFeedbackCard />
-            </div>
-
             {/* Hero */}
             <section className="relative overflow-hidden py-16 bg-gradient-to-br from-brand-blue/10 via-white to-brand-red/5 dark:from-brand-blue/20 dark:via-background-dark dark:to-brand-red/10 border border-gray-200 dark:border-gray-800 rounded-3xl mb-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center gap-8">

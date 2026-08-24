@@ -10,11 +10,10 @@
  */
 
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
-import { PerfilFeedbackCard } from './PerfilFeedbackCard';
 
 export default function LabLoading() {
     return (
-        <MainLayoutWrapper rightSidebar={<PerfilFeedbackCard />}>
+        <MainLayoutWrapper>
             <div className="animate-in fade-in duration-500 w-full w-full max-w-4xl mx-auto mt-4 sm:mt-8">
                 <div className="bg-white dark:bg-background-dark rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-800 mb-8 mx-auto">
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 sm:gap-12 w-full">

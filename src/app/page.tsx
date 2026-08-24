@@ -16,7 +16,6 @@ import { HomeClientView } from "@/components/layout/HomeClientView";
 import { getInitialData } from "../lib/data-fetching";
 
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
-import { FluxoFeedbackCard } from "@/components/feedback/FluxoFeedbackCard";
 import { 
     fetchSubmissions, 
     fetchTrendingSubmissions, 

@@ -15,21 +15,20 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
+import { motion, AnimatePresence } from 'framer-motion';
 import { LabTabContent } from './LabTabContent';
 import { PerguntasTabContent } from './PerguntasTabContent';
 import { EmaranhamentoTabContent } from './EmaranhamentoTabContent';
-import { FluxoFeedbackCard } from '@/components/feedback/FluxoFeedbackCard';
-import { Users, HelpCircle } from 'lucide-react';
 import { useSwipe } from '@/hooks/useSwipe';
 
 export default function InteracaoClient() {
     const searchParams = useSearchParams();
     const initialTab = searchParams.get('tab') || 'emaranhamento';
-    const [activeTab, setActiveTab ] = useState(initialTab);
+    const [activeTab, setActiveTab] = useState(initialTab);
 
     useEffect(() => {
         const tab = searchParams.get('tab');
-        if (tab && tab !== activeTab) {
+        if (tab && (tab === 'emaranhamento' || tab === 'perguntas') && tab !== activeTab) {
             setActiveTab(tab);
         }
     }, [searchParams, activeTab]);
@@ -52,54 +51,65 @@ export default function InteracaoClient() {
             if (currentIndex > 0) {
                 handleTabChange(tabs[currentIndex - 1]);
             }
-        }
+        },
+        minDistance: 40,
+        wheelThreshold: 75
     });
+
+    const tabConfig = [
+        { id: 'emaranhamento', label: 'Emaranhamento', icon: 'hub' },
+        { id: 'perguntas', label: 'Pergunte a um Cientista', icon: 'quiz' },
+    ];
 
     return (
         <MainLayoutWrapper fullWidth={true}>
-            <div className="py-8 w-full px-4" {...swipeHandlers}>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full min-h-[calc(100vh-80px)] flex flex-col flex-1 pb-16" {...swipeHandlers}>
+                {/* Top Navigation Pill Bar */}
+                <div className="h-16" aria-hidden="true" />
                 <div 
-                    className="sticky -mt-5 z-40 flex justify-center mb-8 w-full pointer-events-none"
-                    style={{ top: 'calc(76px + env(safe-area-inset-top, 0px))' }}
+                    className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none"
+                    style={{ top: 'calc(5rem + env(safe-area-inset-top, 0px))' }}
                 >
-                    <div className="flex gap-0.5 sm:gap-2 p-1 bg-white/90 dark:bg-white/5 backdrop-blur-xl border border-gray-200 dark:border-white/10 shadow-lg rounded-[20px] w-fit overflow-hidden max-w-[calc(100vw-6rem)] pointer-events-auto">
-                        {[
-                            { id: 'emaranhamento', label: 'Emaranhamento', icon: 'hub' },
-                            { id: 'perguntas', label: 'Pergunte a um Cientista', icon: 'quiz' },
-                        ].map((tab) => (
-                            <button
-                                key={tab.id}
-                                onClick={() => handleTabChange(tab.id)}
-                                className={`flex items-center justify-center gap-1 sm:gap-3 px-1.5 py-1 sm:px-6 sm:py-3 rounded-[16px] text-[7px] sm:text-[10px] font-black tracking-[0.1em] transition-all whitespace-nowrap overflow-hidden text-ellipsis ${activeTab === tab.id
-                                    ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20'
-                                    : 'text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
+                    <div className="flex p-1.5 bg-white/50 dark:bg-background-dark/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
+                        {tabConfig.map((tab) => {
+                            const isActive = activeTab === tab.id;
+                            return (
+                                <button
+                                    key={tab.id}
+                                    onClick={() => handleTabChange(tab.id)}
+                                    className={`relative flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-black font-bukra uppercase tracking-widest transition-all ${
+                                        isActive
+                                            ? 'text-white'
+                                            : 'text-gray-500 hover:text-brand-blue'
                                     }`}
-                            >
-                                <span className="material-symbols-outlined text-[12px] sm:text-[18px] shrink-0">{tab.icon}</span>
-                                <span className="truncate">{tab.label.toUpperCase()}</span>
-                            </button>
-                        ))}
+                                >
+                                    {isActive && (
+                                        <motion.div
+                                            layoutId="activeTabInteracao"
+                                            className="absolute inset-0 bg-brand-blue rounded-xl shadow-lg shadow-brand-blue/20"
+                                            transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                                        />
+                                    )}
+                                    <span className="relative z-10 flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-[16px] sm:text-[18px] shrink-0">
+                                            {tab.icon}
+                                        </span>
+                                        <span className="truncate font-bukra">
+                                            {tab.label}
+                                        </span>
+                                    </span>
+                                </button>
+                            );
+                        })}
                     </div>
                 </div>
 
-                <div className="max-w-4xl mb-8">
-                    <FluxoFeedbackCard 
-                        title={activeTab === 'emaranhamento' ? "Emaranhamento" : "Pergunte a um Cientista"} 
-                        description={
-                            activeTab === 'emaranhamento'
-                                ? "Onde a física individual se torna inteligência coletiva. Aqui você constrói sua rede de contatos no Instituto, navega pelo diretório para encontrar alunos, professores e técnicos com interesses similares e cria grupos de estudo."
-                                : "Sua linha direta com a ciência. Faça perguntas sobre física ou sobre a vida acadêmica e conte com a equipe do LabDiv e pesquisadores parceiros para responder."
-                        } 
-                        icon={activeTab === 'emaranhamento' ? <Users className="w-5 h-5 text-brand-blue" /> : <HelpCircle className="w-5 h-5 text-brand-blue" />}
-                    />
-                </div>
-
-                <header className="mb-12">
+                <header className="mb-12 pt-4">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 border border-brand-blue/20 text-brand-blue text-[10px] font-black uppercase tracking-widest mb-4">
                         <span className="material-symbols-outlined text-sm">hub</span>
                         Central de Colaboração
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black text-gray-900 dark:text-white uppercase tracking-tighter leading-none">
+                    <h1 className="text-4xl md:text-5xl font-black font-bukra text-gray-900 dark:text-white uppercase tracking-tighter leading-none">
                         Central de <span className="text-brand-blue">Interações</span>
                     </h1>
                     <p className="text-gray-500 dark:text-gray-400 mt-4 text-sm font-medium max-w-2xl leading-relaxed">
@@ -107,11 +117,21 @@ export default function InteracaoClient() {
                     </p>
                 </header>
 
-                <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
-                    <Suspense fallback={<div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-brand-blue border-t-transparent rounded-full animate-spin" /></div>}>
-                        {activeTab === 'perguntas' && <PerguntasTabContent />}
-                        {activeTab === 'emaranhamento' && <EmaranhamentoTabContent />}
-                    </Suspense>
+                <div className="flex-1 w-full">
+                    <AnimatePresence mode="wait">
+                        <motion.div
+                            key={activeTab}
+                            initial={{ opacity: 0, y: 15 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -15 }}
+                            transition={{ duration: 0.3 }}
+                        >
+                            <Suspense fallback={<div className="flex justify-center py-20"><div className="w-8 h-8 border-2 border-brand-blue border-t-transparent rounded-full animate-spin" /></div>}>
+                                {activeTab === 'perguntas' && <PerguntasTabContent />}
+                                {activeTab === 'emaranhamento' && <EmaranhamentoTabContent />}
+                            </Suspense>
+                        </motion.div>
+                    </AnimatePresence>
                 </div>
             </div>
         </MainLayoutWrapper>
