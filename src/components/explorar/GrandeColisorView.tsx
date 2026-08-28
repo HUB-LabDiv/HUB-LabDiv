@@ -183,6 +183,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                     return (
                         <button
                             key={item.label}
+                            data-tour={`cgif-nav-${item.id}`}
                             onClick={() => {
                                 setActiveSection(item.id);
                                 document.querySelector(item.href)?.scrollIntoView({ behavior: 'smooth' });

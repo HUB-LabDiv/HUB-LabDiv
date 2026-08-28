@@ -31,7 +31,7 @@ export default async function IngressoPage() {
 
     return (
         <MainLayoutWrapper userId={user?.id}>
-            <div className="w-full">
+            <div data-tour="ingresso-content" className="w-full">
                 <IngressoClient profile={profile} />
             </div>
         </MainLayoutWrapper>

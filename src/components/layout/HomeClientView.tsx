@@ -347,7 +347,7 @@ export const HomeClientView = ({
 
     return (
         <div 
-            className="space-y-4 overflow-hidden w-full max-w-[100vw] min-h-[100dvh]"
+            className="w-full max-w-[100vw] min-h-[100dvh]"
             onTouchStart={(e) => {
                 if ((e.target as Element)?.closest?.('.overflow-x-auto, .scroll-x, .masonry-item, .no-swipe, a, button, input')) return;
                 const touch = e.touches[0];
@@ -415,12 +415,11 @@ export const HomeClientView = ({
                 }
             }}
         >
-            <div className="h-16" aria-hidden="true" />
             <div 
-                className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none"
-                style={{ top: 'calc(5rem + env(safe-area-inset-top, 0px))' }}
+                className="sticky z-40 flex justify-center mb-6 pointer-events-none"
+                style={{ top: 'calc(4.5rem + env(safe-area-inset-top, 0px))' }}
             >
-                <div className="flex p-1.5 bg-white/50 dark:bg-background-dark/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
+                <div data-tour="comunidade-subnav" className="flex p-1.5 bg-white/50 dark:bg-background-dark/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
                     <button
                         onClick={() => handleTabChange('logs')}
                         className={`relative flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-black font-bukra uppercase tracking-widest transition-all ${
@@ -532,14 +531,14 @@ export const HomeClientView = ({
 
             {/* DESTAQUES (V8.0 optimized) */}
             {activeTab === 'fluxo' && featuredItems.length > 0 && !debouncedQuery && selectedCategories.includes('Todos') && (
-                <section className="mb-8">
+                <section data-tour="comunidade-em-orbita" className="mb-8">
                     <FeaturedCarousel items={featuredItems} highlightQuery={searchQuery} hideTitle={true} />
                 </section>
             )}
 
             {/* FILTROS (Restaurados) */}
             {activeTab === 'fluxo' && (
-                <section className="relative z-10 bg-transparent py-4 -mx-4 px-4 border-b border-gray-100 dark:border-gray-800/50 mb-8">
+                <section data-tour="comunidade-filtros" className="relative z-10 bg-transparent py-4 -mx-4 px-4 border-b border-gray-100 dark:border-gray-800/50 mb-8">
                 <div className="flex flex-col gap-6">
                     {/* Formato */}
                     <div className="flex items-center gap-4">
@@ -693,7 +692,7 @@ export const HomeClientView = ({
 
             {/* EM ÓRBITA NO [INSTITUTO] (Trending Horizontal dinâmico) */}
             {activeTab === 'fluxo' && !debouncedQuery && selectedCategories.includes('Todos') && selectedInstitutes.includes('Todos') && orbitItems.length > 0 && (
-                <section className="w-full py-8 bg-white dark:bg-card-dark rounded-[40px] border border-gray-100 dark:border-gray-800/50 shadow-sm mb-12">
+                <section data-tour="comunidade-em-orbita" className="w-full py-8 bg-white dark:bg-card-dark rounded-[40px] border border-gray-100 dark:border-gray-800/50 shadow-sm mb-12">
                     <div className="px-8">
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex flex-col">
@@ -756,7 +755,7 @@ export const HomeClientView = ({
             )}
 
             {/* FEED PRINCIPAL */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 min-h-[600px]">
+            <div data-tour="comunidade-feed-vertical" className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 min-h-[600px]">
                 {(activeTab === 'arte' ? arteItems : items).length > 0 ? (
                     (activeTab === 'arte' ? arteItems : items).map((item, index) => {
                         const isAboveFold = index < 2;

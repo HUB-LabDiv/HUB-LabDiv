@@ -447,7 +447,7 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
             </div>
 
             <div className="flex flex-col p-4 md:p-6 pt-3 md:pt-4 cursor-default">
-                <div className="flex items-center justify-between mb-2">
+                <div data-tour="media-card-interactions" className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-4" onClick={(e) => e.stopPropagation()}>
                         <MediaReaction
                             isActive={liked}

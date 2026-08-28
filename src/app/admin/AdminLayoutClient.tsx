@@ -158,7 +158,7 @@ export default function AdminLayoutClient({
                             </div>
                             <div className="flex flex-col overflow-hidden">
                                 <h1 className="text-white text-lg font-bold leading-tight truncate">Admin<span className="text-brand-yellow">Panel</span></h1>
-                                <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mt-0.5">Lab-Div v6.0.0</p>
+                                <p className="text-[10px] text-gray-400 uppercase tracking-widest font-semibold mt-0.5">Lab-Div (BETA)</p>
                             </div>
                         </Link>
                     </div>

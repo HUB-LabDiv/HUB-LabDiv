@@ -65,12 +65,11 @@ export default function InteracaoClient() {
         <MainLayoutWrapper fullWidth={true}>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full min-h-[calc(100vh-80px)] flex flex-col flex-1 pb-16" {...swipeHandlers}>
                 {/* Top Navigation Pill Bar */}
-                <div className="h-16" aria-hidden="true" />
                 <div 
-                    className="fixed left-0 right-0 z-40 flex justify-center pointer-events-none"
-                    style={{ top: 'calc(5rem + env(safe-area-inset-top, 0px))' }}
+                    className="sticky z-40 flex justify-center mb-6 pointer-events-none"
+                    style={{ top: 'calc(4.5rem + env(safe-area-inset-top, 0px))' }}
                 >
-                    <div className="flex p-1.5 bg-white/50 dark:bg-background-dark/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
+                    <div data-tour="interacao-subnav" className="flex p-1.5 bg-white/50 dark:bg-background-dark/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
                         {tabConfig.map((tab) => {
                             const isActive = activeTab === tab.id;
                             return (
@@ -117,7 +116,7 @@ export default function InteracaoClient() {
                     </p>
                 </header>
 
-                <div className="flex-1 w-full">
+                <div data-tour="interacao-content" className="flex-1 w-full">
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={activeTab}

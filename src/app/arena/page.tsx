@@ -35,7 +35,7 @@ export default async function ArenaPage() {
 
     return (
         <MainLayoutWrapper userId={user.id}>
-            <div className="w-full space-y-8">
+            <div data-tour="arena-content" className="w-full space-y-8">
                 <header className="px-4 sm:px-6 lg:px-8">
                     <h1 className="text-4xl md:text-6xl font-black tracking-tight dark:text-white">
                         Observatório de Pesquisa

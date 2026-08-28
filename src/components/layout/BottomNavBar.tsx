@@ -12,17 +12,13 @@
  */
 
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useNavigationStore } from '@/store/useNavigationStore';
-import { NavItem, AppRoutes } from '@/types/navigation';
-import FocusLock from 'react-focus-lock';
-import { useAuth } from '@/providers/AuthProvider';
-import { supabase } from '@/lib/supabase';
+import { AppRoutes } from '@/types/navigation';
 import { ColisorIcon } from '../icons/ColisorIcon';
-
-
+import { useUserRoleNavigation } from '@/hooks/useUserRoleNavigation';
 
 /**
  * V8.0 BottomNavBar - Fort Knox Edition
@@ -30,55 +26,21 @@ import { ColisorIcon } from '../icons/ColisorIcon';
  */
 export const BottomNavBar = () => {
     const pathname = usePathname();
-    const { user: authUser } = useAuth();
     const { closeAll } = useNavigationStore();
-    const [userCategory, setUserCategory] = React.useState<'aluno_usp' | 'pesquisador' | 'curioso'>('curioso');
-    const [isAdult, setIsAdult] = React.useState<boolean>(false);
-
-    // V8.0 Role-Based Navigation Protocol
-    useEffect(() => {
-        const fetchCategory = async () => {
-            if (!authUser) {
-                setUserCategory('curioso');
-                return;
-            }
-
-            const { data: profile } = await supabase
-                .from('profiles')
-                .select('user_category, is_usp_member, is_adult')
-                .eq('id', authUser.id)
-                .single();
-
-            const isUspMember = profile?.is_usp_member || authUser.email?.endsWith('@usp.br') || authUser.email?.endsWith('@if.usp.br');
-            const category = profile?.user_category;
-            setIsAdult(profile?.is_adult === true);
-
-            if (['pesquisador', 'docente_pesquisador'].includes(category)) {
-                setUserCategory('pesquisador');
-            } else if (isUspMember || ['aluno_usp', 'licenciatura', 'bacharelado', 'pos_graduacao'].includes(category)) {
-                setUserCategory('aluno_usp');
-            } else {
-                setUserCategory('curioso');
-            }
-        };
-
-        fetchCategory();
-    }, [authUser]);
+    const { bottomNavThirdAxis, isAdult, userCategory, isLoggedIn } = useUserRoleNavigation();
 
     const dynamicNavItems = [
-        { name: 'Comunidade', href: '/', icon: 'groups', color: 'brand-red' },
-        { name: 'GCIF', href: '/gcif', icon: 'colisor', color: 'brand-blue' },
-        ...( (isAdult || userCategory === 'pesquisador') ? [{ name: 'Lançar à Órbita', href: AppRoutes.ENVAR, icon: 'rocket_launch', isAction: true, color: 'brand-blue' }] : []),
-        ...(userCategory === 'pesquisador' 
-            ? [{ name: 'Pesquisa', href: '/arena', icon: 'visibility', color: 'brand-red' }]
-            : userCategory === 'aluno_usp'
-            ? [{ name: 'Ferramentas', href: '/ferramentas', icon: 'construction', color: 'brand-yellow' }]
-            : [{ name: 'Ingressar', href: '/ingresso', icon: 'login', color: 'brand-yellow' }]
+        { name: 'Comunidade', href: '/', icon: 'groups', color: 'brand-red', dataTour: 'mobile-eixo-comunidade' },
+        { name: 'GCIF', href: '/gcif', icon: 'colisor', color: 'brand-blue', dataTour: 'mobile-eixo-cgif' },
+        ...(isLoggedIn
+            ? ((isAdult || userCategory === 'pesquisador')
+                ? [{ name: 'Lançar à Órbita', href: AppRoutes.ENVAR, icon: 'rocket_launch', isAction: true, color: 'brand-blue' }]
+                : [])
+            : [{ name: 'Login', href: '/login', icon: 'login', isAction: true, color: 'brand-blue' }]
         ),
-        { name: 'Interações', href: '/interacao?tab=emaranhamento', icon: 'hub', color: 'brand-blue' },
+        bottomNavThirdAxis,
+        { name: 'Interações', href: '/interacao?tab=emaranhamento', icon: 'hub', color: 'brand-blue', dataTour: 'mobile-eixo-interacoes' },
     ];
-
-
 
     // Close on route change
     useEffect(() => {
@@ -95,10 +57,10 @@ export const BottomNavBar = () => {
             >
                 <nav className="max-w-md mx-auto h-16 bg-white/60 dark:bg-gray-900/60 backdrop-blur-3xl rounded-[32px] border border-white/30 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-around px-1 pointer-events-auto overflow-visible">
                     {dynamicNavItems.map((item) => {
-                        const isActive = pathname === item.href;
+                        const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
                         const activeColor = item.color || 'brand-blue';
 
-                        {/* Central rocket button */ }
+                        {/* Central action button (Rocket for authenticated adults/researchers, Login for unauthenticated) */ }
                         if (item.isAction) {
                             return (
                                 <Link
@@ -106,10 +68,10 @@ export const BottomNavBar = () => {
                                     href={item.href}
                                     className="group relative -top-6 flex flex-col items-center"
                                 >
-                                    <div className={`size-14 bg-${activeColor} rounded-2xl flex items-center justify-center text-white shadow-xl shadow-${activeColor}/30 transform transition-transform active:scale-90 group-hover:-translate-y-1 border-4 border-white dark:border-gray-900`}>
-                                        <span className="material-symbols-outlined text-3xl font-black">rocket_launch</span>
+                                    <div className="size-14 bg-brand-blue rounded-2xl flex items-center justify-center text-white shadow-xl shadow-brand-blue/30 transform transition-transform active:scale-90 group-hover:-translate-y-1 border-4 border-white dark:border-gray-900">
+                                        <span className="material-symbols-outlined text-3xl font-black">{item.icon}</span>
                                     </div>
-                                    <span className={`text-[8px] font-black uppercase tracking-tighter text-${activeColor} mt-0.5`}>{item.name}</span>
+                                    <span className="text-[8px] font-black uppercase tracking-tighter text-brand-blue mt-0.5">{item.name}</span>
                                 </Link>
                             );
                         }
@@ -121,6 +83,7 @@ export const BottomNavBar = () => {
                             <Link
                                 key={item.name}
                                 href={item.href}
+                                data-tour={item.dataTour}
                                 className={`flex flex-col items-center justify-center gap-0.5 p-2 rounded-2xl transition-all relative ${isActive ? `text-${activeColor}` : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
                             >
                                 <div className="size-[22px] flex items-center justify-center">
@@ -128,7 +91,7 @@ export const BottomNavBar = () => {
                                         <ColisorIcon className="w-full h-full" animate={isActive} />
                                     ) : (
                                         <span className={`material-symbols-outlined text-[22px] ${isActive ? 'filled' : ''}`}>
-                                            {item.icon}
+                                            {item.icon === 'capelo' ? 'school' : item.icon}
                                         </span>
                                     )}
                                 </div>

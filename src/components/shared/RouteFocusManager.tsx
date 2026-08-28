@@ -23,6 +23,29 @@ import { usePathname } from "next/navigation";
 export function RouteFocusManager() {
   const pathname = usePathname();
 
+  // ⌨️ Detecta quando o usuário está ativamente usando a tecla TAB para navegação
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Tab") {
+        document.body.classList.add("user-is-tabbing");
+      }
+    };
+
+    const handlePointerInteraction = () => {
+      document.body.classList.remove("user-is-tabbing");
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("mousedown", handlePointerInteraction);
+    window.addEventListener("touchstart", handlePointerInteraction, { passive: true });
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("mousedown", handlePointerInteraction);
+      window.removeEventListener("touchstart", handlePointerInteraction);
+    };
+  }, []);
+
   useEffect(() => {
     // Timeout de 100ms para garantir que a renderização do DOM do Next.js terminou
     const timeoutId = setTimeout(() => {

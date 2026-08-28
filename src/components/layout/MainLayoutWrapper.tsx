@@ -25,6 +25,7 @@ import { ContentReportModal } from '../modals/ContentReportModal';
 import { ReportModal } from '../feedback/ReportModal';
 
 import { usePersonalizacaoStore } from '@/store/usePersonalizacaoStore';
+import { OnboardingBanner } from '../onboarding/OnboardingBanner';
 
 interface MainLayoutWrapperProps {
     children: React.ReactNode;
@@ -83,46 +84,52 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = true, fu
                         <SidebarLeft userId={userId} />
                     </aside>
 
-                    {/* Right Sidebar — fixada na borda direita do viewport */}
-                    <aside
-                        className={`hidden lg:flex flex-col fixed right-0 top-20 ${isRightSidebarCollapsed ? 'w-20' : 'w-[320px]'} h-[calc(100vh-5rem)] border-l border-gray-200 dark:border-gray-800 bg-transparent overflow-y-auto hidden-scrollbar transition-all duration-300 z-30`}
-                    >
-                        <div className={`p-4 ${isRightSidebarCollapsed ? 'flex flex-col items-center' : 'lg:pt-8'}`}>
-                            {/* Toggle Button for Right Sidebar */}
-                            <div className={`flex items-center ${isRightSidebarCollapsed ? 'justify-center' : 'justify-start'} mb-4`}>
-                                <button
-                                    onClick={() => setRightSidebarCollapsed(!isRightSidebarCollapsed)}
-                                    className="p-1.5 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-gray-400 hover:text-brand-blue transition-all shadow-sm group"
-                                    title={isRightSidebarCollapsed ? "Expandir" : "Recolher"}
-                                >
-                                    {isRightSidebarCollapsed ? <ChevronLeft size={16} className="group-hover:scale-110 transition-transform" /> : <ChevronRight size={16} className="group-hover:scale-110 transition-transform" />}
-                                </button>
-                            </div>
-
-                            {!isRightSidebarCollapsed && (
-                                <div className="py-2">
-                                    {rightSidebar}
+                    {/* Right Sidebar — fixada na borda direita do viewport apenas se rightSidebar for fornecido */}
+                    {Boolean(rightSidebar) && (
+                        <aside
+                            className={`hidden lg:flex flex-col fixed right-0 top-20 ${isRightSidebarCollapsed ? 'w-20' : 'w-[320px]'} h-[calc(100vh-5rem)] border-l border-gray-200 dark:border-gray-800 bg-transparent overflow-y-auto hidden-scrollbar transition-all duration-300 z-30`}
+                        >
+                            <div className={`p-4 ${isRightSidebarCollapsed ? 'flex flex-col items-center' : 'lg:pt-8'}`}>
+                                {/* Toggle Button for Right Sidebar */}
+                                <div className={`flex items-center ${isRightSidebarCollapsed ? 'justify-center' : 'justify-start'} mb-4`}>
+                                    <button
+                                        onClick={() => setRightSidebarCollapsed(!isRightSidebarCollapsed)}
+                                        className="p-1.5 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-gray-400 hover:text-brand-blue transition-all shadow-sm group"
+                                        title={isRightSidebarCollapsed ? "Expandir" : "Recolher"}
+                                    >
+                                        {isRightSidebarCollapsed ? <ChevronLeft size={16} className="group-hover:scale-110 transition-transform" /> : <ChevronRight size={16} className="group-hover:scale-110 transition-transform" />}
+                                    </button>
                                 </div>
-                            )}
-                        </div>
-                    </aside>
+
+                                {!isRightSidebarCollapsed && (
+                                    <div className="py-2">
+                                        {rightSidebar}
+                                    </div>
+                                )}
+                            </div>
+                        </aside>
+                    )}
 
                     {/* Content Area — com padding lateral responsivo CSS para não sobrepor sidebars */}
                     <main
                         className={`flex-1 min-w-0 w-full pt-20 pb-8 lg:pb-12 transition-all duration-300 px-4 sm:px-6 ${leftPaddingClass} ${rightPaddingClass}`}
                     >
-                        <div className="w-full">
-                            {children}
+                        <div className="w-full flex flex-col min-h-full">
+                            <OnboardingBanner />
+                            <div className="flex-1">
+                                {children}
+                            </div>
+                            <Footer />
                         </div>
                     </main>
                 </div>
             ) : (
                 <main className="flex-1 w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                    <OnboardingBanner />
                     {children}
                 </main>
             )}
 
-            {!focusMode && <Footer />}
             <BottomNavBar />
 
             {/* Nova Submissão FAB (Desktop Only — xl+) */}

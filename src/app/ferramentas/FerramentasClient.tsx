@@ -852,7 +852,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
             </header>
 
             {/* Action Buttons - Premium Refined Layout */}
-            <div id="grade-horaria-actions" className="flex flex-wrap items-center gap-3 py-4 border-t border-gray-100 dark:border-white/5">
+            <div id="grade-horaria-actions" data-tour="ferramentas-actions" className="flex flex-wrap items-center gap-3 py-4 border-t border-gray-100 dark:border-white/5">
                 <button
                     onClick={handleReset}
                     disabled={isResetting}
@@ -1144,7 +1144,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                             </div>
                         </div>
                 
-                        <div className="bg-white dark:bg-background-dark p-6 rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden print:overflow-visible transition-all">
+                        <div data-tour="ferramentas-grade" className="bg-white dark:bg-background-dark p-6 rounded-3xl border border-gray-100 dark:border-white/5 overflow-hidden print:overflow-visible transition-all">
                             <div className="overflow-x-auto custom-scrollbar pb-4">
                                 <table className="w-full text-left border-collapse min-w-[800px]">
                                     <thead>

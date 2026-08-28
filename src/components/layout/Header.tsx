@@ -31,6 +31,7 @@ import { useTelemetry } from '@/hooks/useTelemetry';
 import { IFUSPLogo } from '../icons/IFUSPLogo';
 import { usePersonalizacaoStore } from '@/store/usePersonalizacaoStore';
 import { CacheManagerModal } from '../pwa/CacheManagerModal';
+import { useUserRoleNavigation } from '@/hooks/useUserRoleNavigation';
 
 /**
  * V8.0 Header - Fort Knox Edition
@@ -53,6 +54,7 @@ export function Header() {
 
     const [user, setUser] = useState<UserMinimalDTO | null>(null);
     const { user: authUser } = useAuth();
+    const { navbarThirdAxis } = useUserRoleNavigation();
     const [isSearchOverlayOpen, setSearchOverlayOpen] = useState(false);
     const [isCacheModalOpen, setCacheModalOpen] = useState(false);
 
@@ -115,7 +117,7 @@ export function Header() {
             >
                 <div className="max-w-[1800px] mx-auto h-16 px-3 sm:px-4 flex items-center justify-between gap-2 sm:gap-4">
                     {/* Left: Branding */}
-                    <Link href="/" className="flex items-center gap-1.5 sm:gap-3 group shrink-0" onClick={closeAll}>
+                    <Link href="/" data-tour="logo-home" className="flex items-center gap-1.5 sm:gap-3 group shrink-0" onClick={closeAll}>
                         <div className="flex items-center gap-1.5 sm:gap-3">
                             <div className="relative w-7 h-7 sm:w-9 sm:h-9 flex-shrink-0 group-hover:scale-110 transition-transform duration-500">
                                 <div className="absolute -inset-1 bg-gradient-brand rounded-lg blur opacity-0 group-hover:opacity-40 transition-opacity animate-premium-glow"></div>
@@ -132,9 +134,8 @@ export function Header() {
                                 <div className="text-base sm:text-xl font-bukra font-bold tracking-tight flex items-baseline gap-1 sm:gap-1.5 leading-tight">
                                     <span className="text-gray-900 dark:text-white uppercase">HUB</span>
                                     <span className="text-gradient-brand font-black">LabDiv</span>
-                                    <div className="flex flex-col items-center opacity-80">
-                                        <span className="text-[6px] sm:text-[8px] font-black px-1 sm:px-1.5 py-0.5 rounded bg-brand-blue/10 dark:bg-white/10 text-brand-blue dark:text-gray-400/80 ml-1">V6.0.0</span>
-                                        <span className="text-[6px] sm:text-[8px] font-black uppercase tracking-tighter ml-1 text-brand-blue dark:text-gray-500">(BETA)</span>
+                                    <div className="hidden sm:flex items-center opacity-90">
+                                        <span className="text-[7px] sm:text-[9px] font-black uppercase tracking-wider px-1.5 py-0.5 rounded bg-brand-blue/10 dark:bg-white/10 text-brand-blue dark:text-gray-400 ml-1">BETA</span>
                                     </div>
                                 </div>
                                 <span className="text-[6px] sm:text-[9px] font-bukra font-bold text-gray-400 uppercase tracking-widest whitespace-nowrap">
@@ -190,10 +191,10 @@ export function Header() {
                     <div className="hidden xl:flex absolute left-1/2 -translate-x-1/2 top-0 z-50">
                         <div className="bg-[#0F4780] rounded-b-[24px] px-8 py-3 flex items-center gap-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-x border-b border-white/10 backdrop-blur-xl transition-colors duration-300">
                             {[
-                                { label: 'Comunidade', href: '/', color: '#F14343' },
-                                { label: 'GCIF', href: '/gcif', color: '#1F9FCF' },
-                                { label: 'Ferramentas', href: '/ferramentas', color: '#FFCC00' },
-                                { label: 'Interações', href: '/interacao', color: '#1F9FCF' },
+                                { label: 'Comunidade', href: '/', color: '#F14343', dataTour: 'navbar-eixo-comunidade' },
+                                { label: 'GCIF', href: '/gcif', color: '#1F9FCF', dataTour: 'navbar-eixo-cgif' },
+                                navbarThirdAxis,
+                                { label: 'Interações', href: '/interacao', color: '#1F9FCF', dataTour: 'navbar-eixo-interacoes' },
                             ].map((tab) => {
                                 const isActive = pathname === tab.href || (tab.href !== '/' && pathname.startsWith(tab.href));
                                 
@@ -201,6 +202,7 @@ export function Header() {
                                     <Link
                                         key={tab.href}
                                         href={tab.href}
+                                        data-tour={tab.dataTour}
                                         className={`px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl transition-all whitespace-nowrap relative group/tab border border-transparent ${
                                             isActive
                                                 ? `text-white bg-white/10 border-white/10 ring-1 ring-inset ${tab.color === 'white' ? 'ring-white/30' : `ring-[${tab.color}]/50`}`
@@ -208,9 +210,6 @@ export function Header() {
                                         }`}
                                         style={{ 
                                             color: isActive ? tab.color : undefined,
-                                            // Apply color on hover using a CSS variable or direct style if needed, 
-                                            // but React doesn't support hover in inline styles easily without state.
-                                            // However, we can use a clever trick with CSS variables.
                                             ['--tab-hover-color' as any]: tab.color
                                         }}
                                         onMouseEnter={(e) => {
@@ -233,6 +232,7 @@ export function Header() {
     
                             {/* Global Search Trigger (Adjusted for Notch) */}
                             <button
+                                data-tour="global-search"
                                 onClick={() => setSearchOverlayOpen(true)}
                                 className="ml-4 flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs text-white/50 hover:text-[#FFCC00] hover:border-[#FFCC00]/50 hover:bg-[#FFCC00]/10 transition-all group"
                             >
@@ -247,6 +247,7 @@ export function Header() {
                     <div className="flex items-center gap-1 sm:gap-4 shrink-0">
                         {/* Mobile Search Toggle */}
                         <button
+                            data-tour="global-search-mobile"
                             onClick={() => setSearchOverlayOpen(true)}
                             className="xl:hidden flex-shrink-0 size-10 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/5 text-gray-500 hover:text-brand-yellow transition-all border border-gray-200 dark:border-white/10"
                             aria-label="Abrir Busca"
@@ -259,6 +260,7 @@ export function Header() {
 
                             <div className="flex items-center gap-2">
                                 <button
+                                    data-tour="report-button"
                                     onClick={() => setReportModalOpen(true)}
                                     aria-label="Reportar Erro ou Enviar Feedback"
                                     className="hidden md:flex relative size-10 items-center justify-center rounded-xl bg-brand-red/10 text-red-700 dark:text-brand-red hover:bg-brand-red/20 transition-all border border-brand-red/20 group animate-pulse hover:animate-none"
@@ -270,11 +272,28 @@ export function Header() {
 
                                 <NotificationBell userId={user?.id} />
 
+                                <button
+                                    data-tour="theme-toggle"
+                                    onClick={toggleTheme}
+                                    aria-label="Alternar Tema Claro e Escuro"
+                                    className="hidden md:flex relative w-10 h-10 items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/20 transition-colors"
+                                >
+                                    <div className="relative size-full flex items-center justify-center">
+                                        <span
+                                            key={theme}
+                                            className={`material-symbols-outlined absolute text-[20px] transition-all duration-300 transform ${theme === 'dark' ? 'opacity-100 rotate-0' : 'opacity-100 rotate-0'}`}
+                                        >
+                                            {theme === 'dark' ? 'light_mode' : 'dark_mode'}
+                                        </span>
+                                    </div>
+                                </button>
+
                                 {user ? (
-                                    <div className="relative" id="profile-menu-container">
+                                    <div className="relative" id="profile-menu-container" data-tour="user-profile-menu">
                                         <button
                                             onClick={() => setProfileMenuOpen(!isProfileMenuOpen)}
                                             className="relative flex items-center justify-center group"
+                                            aria-label="Menu do Perfil"
                                         >
                                             <Avatar
                                                 src={user.avatar_url}
@@ -328,27 +347,27 @@ export function Header() {
                                         </div>
                                     </div>
                                 ) : (
-                                    <Link href="/login" className="flex items-center gap-2 text-gray-500 dark:text-gray-400 hover:text-brand-blue font-semibold px-4 py-2 transition-colors">
-                                        <span className="material-symbols-outlined">login</span>
-                                        <span className="hidden sm:inline">Entrar</span>
-                                    </Link>
+                                    <div className="flex items-center gap-1.5 sm:gap-2.5">
+                                        <Link
+                                            href="/configuracoes"
+                                            data-tour="header-settings"
+                                            className="size-9 sm:size-10 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/5 text-gray-500 hover:text-brand-blue hover:bg-gray-200 dark:hover:bg-white/10 transition-all border border-gray-200 dark:border-white/10 shrink-0"
+                                            title="Configurações"
+                                            aria-label="Abrir Configurações"
+                                        >
+                                            <span className="material-symbols-outlined text-[18px] sm:text-[20px]">settings</span>
+                                        </Link>
+                                        <Link
+                                            href="/login"
+                                            className="hidden xl:flex items-center gap-1.5 sm:gap-2 bg-brand-blue hover:bg-brand-blue-hover text-white font-bukra font-bold px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs sm:text-sm shadow-md shadow-brand-blue/30 hover:shadow-lg hover:shadow-brand-blue/40 border border-white/10 active:scale-95 transition-all shrink-0"
+                                            title="Fazer Login no HUB"
+                                        >
+                                            <span className="material-symbols-outlined text-[18px] sm:text-[20px]">account_circle</span>
+                                            <span className="tracking-wider uppercase text-[10px] sm:text-xs">Login</span>
+                                        </Link>
+                                    </div>
                                 )}
                             </div>
-
-                            <button
-                                onClick={toggleTheme}
-                                aria-label="Alternar Tema Claro e Escuro"
-                                className="hidden md:flex relative w-10 h-10 items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-white/20 transition-colors"
-                            >
-                                <div className="relative size-full flex items-center justify-center">
-                                    <span
-                                        key={theme}
-                                        className={`material-symbols-outlined absolute text-[20px] transition-all duration-300 transform ${theme === 'dark' ? 'opacity-100 rotate-0' : 'opacity-100 rotate-0'}`}
-                                    >
-                                        {theme === 'dark' ? 'light_mode' : 'dark_mode'}
-                                    </span>
-                                </div>
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -356,6 +375,7 @@ export function Header() {
 
             {/* Mobile Floating Action Buttons (FABs) */}
             <button
+                data-tour="theme-toggle-mobile"
                 onClick={toggleTheme}
                 aria-label="Alternar Tema Claro e Escuro"
                 className="md:hidden fixed left-2 z-[50] size-9 flex items-center justify-center rounded-full bg-white dark:bg-[#282828] border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 shadow-md dark:shadow-lg dark:shadow-black/50 transition-colors active:scale-95"
@@ -367,6 +387,7 @@ export function Header() {
             </button>
 
             <button
+                data-tour="report-button-mobile"
                 onClick={() => setReportModalOpen(true)}
                 aria-label="Reportar Erro ou Enviar Feedback"
                 className="md:hidden fixed right-2 z-[50] size-9 flex items-center justify-center rounded-full bg-brand-red text-white shadow-md shadow-brand-red/30 transition-transform active:scale-95"

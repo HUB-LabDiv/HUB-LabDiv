@@ -28,7 +28,7 @@ export function ExplorarClient({ mapItems, oportunidades, glossario }: ExplorarC
         <MainLayoutWrapper 
             fullWidth={true}
         >
-            <div className="min-h-screen py-6 px-4 max-w-7xl mx-auto overflow-x-hidden">
+            <div data-tour="cgif-content" className="min-h-screen py-6 px-4 max-w-7xl mx-auto overflow-x-hidden">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}

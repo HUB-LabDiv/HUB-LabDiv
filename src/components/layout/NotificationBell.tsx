@@ -108,8 +108,10 @@ export const NotificationBell = ({ userId }: { userId: string | undefined }) => 
     return (
         <div className="relative">
             <button
+                data-tour="notifications-bell"
                 onClick={() => setIsOpen(!isOpen)}
                 className="relative p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all"
+                aria-label="Notificações"
             >
                 <span className="material-symbols-outlined text-[26px]">notifications</span>
                 {unreadCount > 0 && (

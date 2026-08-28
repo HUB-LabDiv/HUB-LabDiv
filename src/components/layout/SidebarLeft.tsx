@@ -41,16 +41,11 @@ import { supabase } from '@/lib/supabase';
 import { useTelemetry } from '@/hooks/useTelemetry';
 import { ColisorIcon } from '../icons/ColisorIcon';
 import { useNavigationStore } from '@/store/useNavigationStore';
+import { useUserRoleNavigation } from '@/hooks/useUserRoleNavigation';
 
 const mainLinks = [
-    { name: 'Comunidade', href: '/', icon: <span className="material-symbols-outlined text-2xl">groups</span>, color: 'brand-red' },
-    { name: 'GCIF', href: '/gcif', icon: <ColisorIcon className="w-6 h-6" />, color: 'brand-blue' },
-];
-
-const categoryLinks = [
-    { name: 'Ferramentas Acadêmicas', href: '/ferramentas', icon: <span className="material-symbols-outlined text-2xl">construction</span>, color: 'brand-yellow', role: 'aluno_usp' },
-    { name: 'Como Ingressar', href: '/ingresso', icon: <span className="material-symbols-outlined text-2xl">login</span>, color: 'brand-yellow', role: 'curioso' },
-    { name: 'Observatório de Pesquisa', href: '/arena', icon: <span className="material-symbols-outlined text-2xl">visibility</span>, color: 'brand-red', role: 'pesquisador' },
+    { name: 'Comunidade', href: '/', icon: <span className="material-symbols-outlined text-2xl">groups</span>, color: 'brand-red', dataTour: 'sidebar-eixo-comunidade' },
+    { name: 'GCIF', href: '/gcif', icon: <ColisorIcon className="w-6 h-6" />, color: 'brand-blue', dataTour: 'sidebar-eixo-cgif' },
 ];
 
 const secondaryLinks = [
@@ -61,13 +56,11 @@ const secondaryLinks = [
 export const SidebarLeft = ({ userId }: { userId?: string }) => {
     const pathname = usePathname();
     const { isSidebarCollapsed, setSidebarCollapsed } = useNavigationStore();
+    const { sidebarThirdAxis, userCategory, isLoading: isRoleLoading, isLoggedIn, isAdult } = useUserRoleNavigation();
     const [recentEntanglements, setRecentEntanglements] = React.useState<any[]>([]);
     const [isLoading, setIsLoading] = React.useState(true);
-    const [userCategory, setUserCategory] = React.useState<string | null>(null);
-    const [isLoggedIn, setIsLoggedIn] = React.useState(false);
     const { trackEvent } = useTelemetry();
     const [mounted, setMounted] = React.useState(false);
-    const [isAdult, setIsAdult] = React.useState<boolean>(false);
 
     React.useEffect(() => {
         setMounted(true);
@@ -79,35 +72,6 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
             // Fetch entanglements independently
             const entanglements = await fetchRecentEntanglements();
             setRecentEntanglements(entanglements);
-
-            // Robust Profile Fetching
-            const { data: { session } } = await supabase.auth.getSession();
-            const currentUserId = userId || session?.user.id;
-            const userEmail = session?.user.email;
-
-            if (currentUserId) {
-                setIsLoggedIn(true);
-                const { data: profileData } = await supabase.from('profiles')
-                    .select('user_category, is_usp_member, is_adult')
-                    .eq('id', currentUserId)
-                    .single();
-                
-                const category = profileData?.user_category;
-                const isUspMember = profileData?.is_usp_member || userEmail?.endsWith('@usp.br') || userEmail?.endsWith('@if.usp.br');
-                setIsAdult(profileData?.is_adult === true);
-                
-                if (['pesquisador', 'docente_pesquisador'].includes(category)) {
-                    setUserCategory('pesquisador');
-                } else if (isUspMember || ['aluno_usp', 'licenciatura', 'bacharelado', 'pos_graduacao'].includes(category)) {
-                    setUserCategory('aluno_usp');
-                } else {
-                    setUserCategory('curioso');
-                }
-            } else {
-                // Visitante deslogado -> Pode ver ingresso ou curioso
-                setIsLoggedIn(false);
-                setUserCategory('curioso');
-            }
         } catch (error) {
             console.error('[Sidebar] Failed to load data:', error);
         } finally {
@@ -166,6 +130,7 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                         <Link
                             key={link.href}
                             href={link.href}
+                            data-tour={link.dataTour}
                             onClick={() => trackEvent('TAB_CHANGE', { tab: link.name, href: link.href })}
                             className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-4 px-6'} py-3 transition-all group border-l-[3px] rounded-r-xl ${isActive
                                 ? `${c.bg} ${c.text} ${c.border}`
@@ -184,47 +149,38 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                     );
                 })}
 
-                {/* Category-Specific Links - Optimistic Rendering for SSR */}
-                {categoryLinks
-                    .filter(l => {
-                        // Always show if it's the active path (prevents layout jump during hydration)
-                        if (pathname.startsWith(l.href)) return true;
-                        // During loading, we don't know the role, so we hide non-active ones to avoid "flashing" incorrect roles
-                        if (isLoading) return false;
-                        // Finally, show if role matches
-                        return l.role === userCategory;
-                    })
-                    .map((link) => {
-                        const isActive = pathname === link.href || pathname.startsWith(link.href + '/');
-                        const isGuest = !isLoggedIn;
-                        const displayName = (isGuest && link.role === 'curioso') ? 'Acesso ao Hub' : link.name;
-                        const displayHref = (isGuest && link.role === 'curioso') ? '/login' : link.href;
-                        const c = colorMap[link.color] || colorMap['brand-blue'];
+                {/* 3º Eixo Dinâmico (Ferramentas Acadêmicas / Como Ingressar / Observatório de Pesquisa) */}
+                {(() => {
+                    const isActive = pathname === sidebarThirdAxis.href || (sidebarThirdAxis.href !== '/' && pathname.startsWith(sidebarThirdAxis.href));
+                    const c = colorMap[sidebarThirdAxis.color] || colorMap['brand-yellow'];
 
-                        return (
-                            <Link
-                                key={link.href}
-                                href={displayHref}
-                                onClick={() => trackEvent('TAB_CHANGE', { tab: displayName, href: displayHref })}
-                                className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-4 px-6'} py-3 transition-all group border-l-[3px] rounded-r-xl ${isActive
-                                    ? `${c.bg} ${c.text} ${c.border}`
-                                    : `border-l-transparent ${c.hoverBorder} text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white`
-                                    }`}
-                            >
-                                <span className={`transition-transform group-hover:scale-110 ${isActive ? c.text : ''}`}>
-                                    {link.icon}
+                    return (
+                        <Link
+                            key={sidebarThirdAxis.href}
+                            href={sidebarThirdAxis.href}
+                            data-tour={sidebarThirdAxis.dataTour}
+                            onClick={() => trackEvent('TAB_CHANGE', { tab: sidebarThirdAxis.name, href: sidebarThirdAxis.href })}
+                            className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-4 px-6'} py-3 transition-all group border-l-[3px] rounded-r-xl ${isActive
+                                ? `${c.bg} ${c.text} ${c.border}`
+                                : `border-l-transparent ${c.hoverBorder} text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white`
+                                }`}
+                        >
+                            <span className={`transition-transform group-hover:scale-110 ${isActive ? c.text : ''}`}>
+                                <span className="material-symbols-outlined text-2xl">
+                                    {sidebarThirdAxis.iconName === 'capelo' ? 'school' : sidebarThirdAxis.iconName}
                                 </span>
-                                {!isSidebarCollapsed && (
-                                    <span className={`font-bold text-base ${isActive ? 'text-gray-900 dark:text-white' : ''}`}>
-                                        {displayName}
-                                    </span>
-                                )}
-                            </Link>
-                        );
-                    })}
+                            </span>
+                            {!isSidebarCollapsed && (
+                                <span className={`font-bold text-base ${isActive ? 'text-gray-900 dark:text-white' : ''}`}>
+                                    {sidebarThirdAxis.name}
+                                </span>
+                            )}
+                        </Link>
+                    );
+                })()}
 
-                {/* Loading Skeleton if profile is still being determined */}
-                {isLoading && (
+                {/* Loading Skeleton if role is still being determined */}
+                {isRoleLoading && (
                     <div className={`flex flex-col gap-1 mt-1 ${isSidebarCollapsed ? 'px-0' : 'px-4'}`}>
                         <div className={`${isSidebarCollapsed ? 'h-10 w-10' : 'h-10 w-full'} bg-gray-200 dark:bg-white/5 rounded-xl animate-pulse`} />
                     </div>
@@ -237,6 +193,7 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
             <div className={`mt-4 flex flex-col gap-1 ${isSidebarCollapsed ? 'items-center' : ''}`}>
                 <Link
                     href="/interacao?tab=emaranhamento"
+                    data-tour="sidebar-interacoes"
                     onClick={() => trackEvent('TAB_CHANGE', { tab: 'Central de Interações', hub: 'sidebar' })}
                     className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-4 px-6'} py-3 transition-all group border-l-[3px] rounded-r-xl ${pathname.startsWith('/interacao') 
                         ? 'bg-brand-blue/10 text-brand-blue border-l-brand-blue' 
