@@ -118,11 +118,11 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
     const navItems = [
         { id: 'oportunidades', label: 'Oportunidades', href: '#oportunidades', icon: 'campaign', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
         { id: 'iniciativas', label: 'Iniciativas', href: '#iniciativas', icon: 'groups', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
-        { id: 'mapa', label: 'Mapa', href: '#mapa', icon: 'map', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'espaços', label: 'Espaços', href: '#espaços', icon: 'location_city', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'influenciadores', label: 'Influenciadores', href: '#influenciadores', icon: 'record_voice_over', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
-        { id: 'wiki-hub-section', label: 'Wiki', href: '#wiki-hub-section', icon: 'hub', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
+        { id: 'mapa', label: 'Mapa', href: '#mapa', icon: 'map', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'constelacoes', label: 'Glossário', href: '#constelacoes', icon: 'menu_book', activeClass: 'text-brand-yellow bg-brand-yellow/10 border-brand-yellow/30', hoverClass: 'hover:text-brand-yellow hover:bg-brand-yellow/5' },
+        { id: 'wiki-hub-section', label: 'Wiki', href: '#wiki-hub-section', icon: 'hub', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'teste-radiacao', label: 'Teste', href: '#teste-radiacao', icon: 'quiz', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
         { id: 'sac-section', label: 'SAC', href: '#sac-section', icon: 'support_agent', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
     ];
@@ -201,7 +201,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                 })}
             </nav>
             {/* 2. Oportunidades Section */}
-            <section id="oportunidades" className="space-y-12">
+            <section id="oportunidades" data-tour="cgif-section-oportunidades" className="space-y-12 scroll-mt-28">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-brand-red/10 rounded-2xl text-brand-red">
                         <ColisorIcon size={32} animate={false} />
@@ -256,7 +256,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
             </section>
 
             {/* 3. Iniciativas Section */}
-            <section id="iniciativas" className="space-y-16">
+            <section id="iniciativas" data-tour="cgif-section-iniciativas" className="space-y-16 scroll-mt-28">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-brand-blue/10 rounded-2xl text-brand-blue">
                         <Workflow className="w-8 h-8" />
@@ -352,7 +352,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
 
 
             {/* 4. Espaços Section */}
-            <section id="espaços" className="space-y-16">
+            <section id="espaços" data-tour="cgif-section-espacos" className="space-y-16 scroll-mt-28">
                 <div className="space-y-20">
                     <NetflixFeed 
                         title="Espaços do IF" 
@@ -417,7 +417,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
             </section>
 
             {/* 5. Influenciadores Feed */}
-            <section id="influenciadores">
+            <section id="influenciadores" data-tour="cgif-section-influenciadores" className="scroll-mt-28">
                 <NetflixFeed 
                 title="Influenciadores do IF" 
                 icon={<div className="p-3 bg-brand-red/10 rounded-2xl text-brand-red"><Sparkles className="w-8 h-8" /></div>}
@@ -441,7 +441,7 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
             </section>
 
             {/* NEW: Mapa Interativo Section */}
-            <section id="mapa" className="space-y-12 mb-32">
+            <section id="mapa" data-tour="cgif-section-mapa" className="space-y-12 mb-32 scroll-mt-28">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-brand-blue/10 rounded-2xl text-brand-blue">
                         <span className="material-symbols-outlined text-3xl">map</span>
@@ -457,13 +457,8 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                 </div>
             </section>
 
-            {/* 6. Wiki Hub Section */}
-            <div id="wiki-hub-section" ref={wikiRef} className="scroll-mt-32">
-                <WikiView />
-            </div>
-
             {/* NEW: Constelações Linguísticas Section */}
-            <section id="constelacoes" className="space-y-12">
+            <section id="constelacoes" data-tour="cgif-section-constelacoes" className="space-y-12 scroll-mt-28">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-brand-yellow/10 rounded-2xl text-brand-yellow">
                         <span className="material-symbols-outlined text-3xl">menu_book</span>
@@ -481,6 +476,11 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                     </div>
                 )}
             </section>
+
+            {/* 6. Wiki Hub Section */}
+            <div id="wiki-hub-section" data-tour="cgif-section-wiki" ref={wikiRef} className="scroll-mt-32">
+                <WikiView />
+            </div>
         </div>
     );
 }

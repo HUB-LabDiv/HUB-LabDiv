@@ -33,7 +33,7 @@ export function SacSection() {
     }, []);
 
     return (
-        <div id="sac-section" className="mt-24 mb-16 scroll-mt-32 w-full">
+        <div id="sac-section" data-tour="cgif-section-sac" className="mt-24 mb-16 scroll-mt-32 w-full">
             <div className="flex flex-col md:flex-row gap-8 items-start justify-between mb-8">
                 <div>
                     <h2 className="text-4xl font-black italic text-gray-900 dark:text-white uppercase tracking-tighter flex items-center gap-3">

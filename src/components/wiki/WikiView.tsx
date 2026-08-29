@@ -426,6 +426,7 @@ export function WikiView() {
                 {/* 3. Horizontal Quiz Banner (Bottom) */}
                 <motion.div
                     id="teste-radiacao"
+                    data-tour="cgif-section-teste-radiacao"
                     initial={{ opacity: 0, y: 40 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.8, delay: 0.6 }}

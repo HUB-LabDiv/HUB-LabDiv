@@ -434,87 +434,87 @@ export const COMUNIDADE_TOUR_STEPS: TourStepConfig[] = [
     }
 ];
 
-// Tutorial do CGIF (Os 9 Módulos do Grande Colisor)
+// Tutorial do CGIF (Os 9 Módulos do Grande Colisor - Seção por Seção)
 export const CGIF_TOUR_STEPS: TourStepConfig[] = [
     {
-        element: '[data-tour="cgif-nav-oportunidades"], #oportunidades',
+        element: '[data-tour="cgif-section-oportunidades"], #oportunidades',
         popover: {
             title: '1. Oportunidades Ativas',
             description: 'Mural atualizado de bolsas de estudo (PUB, IC, monitoria), estágios, simpósios, colóquios e vagas acadêmicas no IFUSP.',
-            side: 'bottom',
-            align: 'start',
+            side: 'top',
+            align: 'center',
         }
     },
     {
-        element: '[data-tour="cgif-nav-iniciativas"], #iniciativas',
+        element: '[data-tour="cgif-section-iniciativas"], #iniciativas',
         popover: {
             title: '2. Iniciativas Acadêmicas',
             description: 'Conheça coletivos, entidades estudantis, o Centro de Estudos de Física (CEF), empresas juniores e projetos de extensão.',
-            side: 'bottom',
-            align: 'start',
-        }
-    },
-    {
-        element: '[data-tour="cgif-nav-mapa"], #mapa',
-        popover: {
-            title: '3. Mapa Interativo do IFUSP',
-            description: 'Navegue geograficamente pelos edifícios, blocos de aula, laboratórios didáticos, oficinas e auditórios do Instituto de Física.',
-            side: 'bottom',
+            side: 'top',
             align: 'center',
         }
     },
     {
-        element: '[data-tour="cgif-nav-espacos"], [data-tour="cgif-nav-espaços"], #espaços',
+        element: '[data-tour="cgif-section-espacos"], [data-tour="cgif-section-espaços"], #espaços, #espacos',
         popover: {
-            title: '4. Espaços do Instituto',
+            title: '3. Espaços do Instituto',
             description: 'Catálogo detalhado dos locais de estudo, biblioteca, laboratórios de pesquisa, secretarias e ambientes de vivência.',
-            side: 'bottom',
+            side: 'top',
             align: 'center',
         }
     },
     {
-        element: '[data-tour="cgif-nav-influenciadores"], #influenciadores',
+        element: '[data-tour="cgif-section-influenciadores"], #influenciadores',
         popover: {
-            title: '5. Influenciadores & Divulgadores',
+            title: '4. Influenciadores & Divulgadores',
             description: 'Descubra canais no YouTube, perfis no Instagram e criadores de conteúdo que divulgam a física e a ciência da USP.',
-            side: 'bottom',
+            side: 'top',
             align: 'center',
         }
     },
     {
-        element: '[data-tour="cgif-nav-wiki-hub-section"], #wiki-hub-section',
+        element: '[data-tour="cgif-section-mapa"], #mapa',
         popover: {
-            title: '6. Wiki Centralizada',
-            description: 'A enciclopédia oficial do curso: manuais de formação (Bacharelado e Licenciatura), guias curriculares, editais e portais da USP.',
-            side: 'bottom',
+            title: '5. Mapa Interativo do IFUSP',
+            description: 'Navegue geograficamente pelos edifícios, blocos de aula, laboratórios didáticos, oficinas e auditórios do Instituto de Física.',
+            side: 'top',
             align: 'center',
         }
     },
     {
-        element: '[data-tour="cgif-nav-constelacoes"], #constelacoes',
+        element: '[data-tour="cgif-section-constelacoes"], #constelacoes',
         popover: {
-            title: '7. Glossário & Constelações',
+            title: '6. Glossário & Constelações',
             description: 'Dicionário interativo de termos científicos, jargões universitários e conceitos fundamentais para facilitar os estudos.',
-            side: 'bottom',
-            align: 'end',
+            side: 'top',
+            align: 'center',
         }
     },
     {
-        element: '[data-tour="cgif-nav-teste-radiacao"], #teste-radiacao',
+        element: '[data-tour="cgif-section-wiki"], #wiki-hub-section',
+        popover: {
+            title: '7. Wiki Centralizada',
+            description: 'A enciclopédia oficial do curso: manuais de formação (Bacharelado e Licenciatura), guias curriculares, editais e portais da USP.',
+            side: 'top',
+            align: 'center',
+        }
+    },
+    {
+        element: '[data-tour="cgif-section-teste-radiacao"], #teste-radiacao',
         popover: {
             title: '8. Teste Interativo de Radiação',
             description: 'Quizzes dinâmicos para testar conhecimentos de física com perguntas práticas e pontuação imediata.',
-            side: 'bottom',
-            align: 'end',
+            side: 'top',
+            align: 'center',
         }
     },
     {
-        element: '[data-tour="cgif-nav-sac-section"], #sac-section',
+        element: '[data-tour="cgif-section-sac"], #sac-section',
         popover: {
             title: '9. SAC & Ouvidoria Discente',
             description: 'Central de atendimento: tire dúvidas frequentes, envie feedback institucional e acerte contatos com os canais oficiais do CGIF.',
-            side: 'bottom',
-            align: 'end',
+            side: 'top',
+            align: 'center',
         }
     }
 ];
