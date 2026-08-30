@@ -24,8 +24,23 @@ export function PwaManager() {
     usePushNotifications();
 
     useEffect(() => {
-        // Registra o Service Worker do PWA para suporte offline de assets e rotas
+        // Registra o Service Worker do PWA apenas em produção (em localhost, desregistra para evitar loops de reload)
         if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+            const isLocalhost = Boolean(
+                window.location.hostname === 'localhost' ||
+                window.location.hostname === '[::1]' ||
+                window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
+            );
+
+            if (process.env.NODE_ENV === 'development' || isLocalhost) {
+                navigator.serviceWorker.getRegistrations().then((registrations) => {
+                    for (const registration of registrations) {
+                        registration.unregister();
+                    }
+                }).catch(() => {});
+                return;
+            }
+
             const buildId = process.env.NEXT_PUBLIC_BUILD_ID || 'v6.1-gold';
             navigator.serviceWorker.register(`/sw.js?id=${buildId}`).then((reg) => {
                 console.log('✅ [PWA] Service Worker ativo:', reg.scope);
@@ -88,6 +103,7 @@ export function PwaManager() {
 
         // --- INÍCIO: CACHE WARMER (Primeiro uso - Baixa Grade/Trilhas/Rascunho) ---
         const warmerTimer = setTimeout(() => {
+            if (process.env.NODE_ENV === 'development') return;
             if (typeof window !== 'undefined' && 'caches' in window) {
                 const cacheMode = localStorage.getItem('hub_cache_mode') || 'full';
                 if (cacheMode !== 'full') {
