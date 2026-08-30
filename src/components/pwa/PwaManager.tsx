@@ -26,13 +26,48 @@ export function PwaManager() {
     useEffect(() => {
         // Registra o Service Worker do PWA para suporte offline de assets e rotas
         if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/sw.js').then((reg) => {
+            const buildId = process.env.NEXT_PUBLIC_BUILD_ID || 'v6-gold';
+            navigator.serviceWorker.register(`/sw.js?id=${buildId}`).then((reg) => {
                 console.log('✅ [PWA] Service Worker ativo:', reg.scope);
+                // Força verificação imediata de atualizações no deploy
+                reg.update().catch(() => {});
             }).catch((err) => {
                 console.warn('⚠️ [PWA] Falha ao registrar Service Worker:', err);
             });
-        }
 
+            // Recarrega automaticamente de forma suave quando o novo SW assume o controle (novo deploy)
+            let refreshing = false;
+            const handleControllerChange = () => {
+                if (refreshing) return;
+                refreshing = true;
+                toast.success('✨ Nova versão do HUB LabDiv instalada! Atualizando...', {
+                    id: 'pwa-update-toast',
+                    duration: 3000,
+                    icon: '🚀'
+                });
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            };
+
+            navigator.serviceWorker.addEventListener('controllerchange', handleControllerChange);
+
+            // Checa atualizações quando a aba volta ao foco
+            const handleVisibilityChange = () => {
+                if (document.visibilityState === 'visible') {
+                    navigator.serviceWorker.getRegistration().then(reg => reg?.update()).catch(() => {});
+                }
+            };
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+
+            return () => {
+                navigator.serviceWorker.removeEventListener('controllerchange', handleControllerChange);
+                document.removeEventListener('visibilitychange', handleVisibilityChange);
+            };
+        }
+    }, []);
+
+    useEffect(() => {
         // Intercepta Deep Links do Widget (ex: hublabdiv://trilhas)
         const listener = App.addListener('appUrlOpen', (event) => {
             const urlString = event.url;
@@ -81,7 +116,7 @@ export function PwaManager() {
                     '/perguntas'
                 ];
                 
-                console.log('🔥 [Cache Warmer] Baixando Grade Horária, Trilhas e Rascunho para uso offline...');
+                console.log('🔥 [Cache Warmer] Pré-carregando rotas para uso offline...');
                 rotasCriticas.forEach(rota => {
                     fetch(rota, { priority: 'low' }).catch(() => {}); 
                 });

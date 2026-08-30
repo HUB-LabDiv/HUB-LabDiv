@@ -1,7 +1,15 @@
+/*!
+ * Hub de Comunicação Científica Lab-Div V3.0
+ * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
+ * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
+ * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
+ * publicada pela Free Software Foundation.
+ */
+
 const BUILD_ID = 'self.__BUILD_ID__';
 /**
- * Hub de Comunicação Científica - V3.0 Release Candidate
- * Estratégia de Cache Híbrida: Performance vs. Frescor de Dados
+ * Hub de Comunicação Científica - V6.0
+ * Estratégia de Cache Otimizada: Network-First para Páginas & RSC, Cache-First para Assets
  */
 
 const CACHE_NAME = `labdiv-hub-${BUILD_ID}`;
@@ -41,9 +49,11 @@ try {
 
     self.addEventListener('fetch', (event) => {
         const { request } = event;
+        if (request.method !== 'GET') return;
+
         const url = new URL(request.url);
 
-        // 1. NETWORK-ONLY: Admin & API (With Offline Fallback for resilience)
+        // 1. NETWORK-ONLY: Admin, Auth & Rotas de Bypass
         if (BYPASS_ROUTES.some(route => url.pathname.startsWith(route))) {
             if (request.mode === 'navigate') {
                 event.respondWith(
@@ -53,48 +63,74 @@ try {
             return;
         }
 
-        // 2. CACHE-FIRST: Assets (JS/CSS/Fonts)
-        const isAsset = ASSET_EXTENSIONS.some(ext => url.pathname.endsWith(ext));
-        if (isAsset && request.method === 'GET') {
+        // 2. NETWORK-FIRST: Navegações HTML e Dados Dinâmicos do Next.js (RSC)
+        // Garante que novos deploys e novidades apareçam imediatamente aos usuários online
+        const isNavigate = request.mode === 'navigate';
+        const isRscData = url.searchParams.has('_rsc') || url.pathname.startsWith('/_next/data/');
+
+        if (isNavigate || isRscData) {
+            event.respondWith(
+                fetch(request)
+                    .then((networkResponse) => {
+                        if (networkResponse && networkResponse.ok) {
+                            const cacheCopy = networkResponse.clone();
+                            caches.open(CACHE_NAME).then(cache => cache.put(request, cacheCopy));
+                        }
+                        return networkResponse;
+                    })
+                    .catch(async () => {
+                        const cached = await caches.match(request);
+                        if (cached) return cached;
+                        if (isNavigate) {
+                            const offlinePage = await caches.match(OFFLINE_URL);
+                            if (offlinePage) return offlinePage;
+                        }
+                        throw new Error('Falha de rede e sem cache disponível.');
+                    })
+            );
+            return;
+        }
+
+        // 3. CACHE-FIRST: Assets Estáticos Imutáveis (_next/static, fontes, scripts com hash)
+        const isStaticAsset = url.pathname.startsWith('/_next/static/') || 
+                              ASSET_EXTENSIONS.some(ext => url.pathname.endsWith(ext));
+
+        if (isStaticAsset) {
             event.respondWith(
                 caches.match(request).then((cachedResponse) => {
-                    const networkFetch = fetch(request).then((networkResponse) => {
-                        if (networkResponse.ok) {
+                    if (cachedResponse) return cachedResponse;
+                    return fetch(request).then((networkResponse) => {
+                        if (networkResponse && networkResponse.ok) {
                             const cacheCopy = networkResponse.clone();
                             caches.open(CACHE_NAME).then(cache => cache.put(request, cacheCopy));
                         }
                         return networkResponse;
                     });
-                    return cachedResponse || networkFetch;
                 })
             );
             return;
         }
 
-        // 3. STALE-WHILE-REVALIDATE: Images & General GETs
-        if (request.method === 'GET') {
+        // 4. STALE-WHILE-REVALIDATE: Imagens, Logos e Mídias Gerais
+        const isImage = IMAGE_EXTENSIONS.some(ext => url.pathname.endsWith(ext));
+        if (isImage) {
             event.respondWith(
                 caches.open(CACHE_NAME).then(async (cache) => {
                     const cachedResponse = await cache.match(request);
-
                     const networkFetch = fetch(request).then((networkResponse) => {
-                        if (networkResponse.ok) {
+                        if (networkResponse && networkResponse.ok) {
                             cache.put(request, networkResponse.clone());
                         }
                         return networkResponse;
-                    }).catch((err) => {
-                        if (!cachedResponse && request.mode === 'navigate') {
-                            return caches.match(OFFLINE_URL);
-                        }
-                        throw err;
-                    });
+                    }).catch(() => null);
 
                     return cachedResponse || networkFetch;
                 }).catch(() => fetch(request))
             );
+            return;
         }
     });
 
 } catch (error) {
-    console.error('🔴 [V3.0 RC SW] ERRO CRÍTICO NA INICIALIZAÇÃO:', error);
+    console.error('🔴 [SW] Erro na inicialização do Service Worker:', error);
 }
