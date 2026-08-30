@@ -10,7 +10,7 @@
  */
 
 import { createServerSupabase } from '@/lib/supabase/server';
-import TrilhasClient from '@/app/trilhas/TrilhasClient';
+import TrilhasClient from '@/components/trilhas/TrilhasClient';
 
 export const revalidate = 0;
 

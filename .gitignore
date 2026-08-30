@@ -91,3 +91,10 @@ android/app/build/
 *.apk
 *.aab
 
+# Debug logs & dumps
+debug/*.log
+debug/*.html
+debug/*.txt
+!debug/README_FOLDER.txt
+
+

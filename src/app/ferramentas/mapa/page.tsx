@@ -9,8 +9,7 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import React from 'react';
-import MapClient from '@/app/mapa/MapClient';
+import { MapClient } from '@/components/mapa/MapClient';
 import { fetchSubmissions } from '@/app/actions/submissions';
 
 export const metadata = {

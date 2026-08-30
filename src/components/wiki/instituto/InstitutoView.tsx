@@ -18,7 +18,7 @@ import { DepartmentGrid } from './DepartmentGrid';
 import { InstitutoHistory } from './InstitutoHistory';
 import { InstitutoTimeline } from './InstitutoTimeline';
 import { HistoricalPosts } from './HistoricalPosts';
-import MapClient from '@/app/mapa/MapClient';
+import { MapClient } from '@/components/mapa/MapClient';
 import { HelpCircle } from 'lucide-react';
 
 interface InstitutoViewProps {

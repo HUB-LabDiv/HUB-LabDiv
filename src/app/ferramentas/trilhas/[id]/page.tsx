@@ -11,7 +11,7 @@
 
 import { createServerSupabase } from '@/lib/supabase/server';
 import { notFound } from 'next/navigation';
-import TrailDetailsClient from '@/app/trilhas/TrailDetailsClient';
+import TrailDetailsClient from '@/components/trilhas/TrailDetailsClient';
 
 export const revalidate = 0;
 

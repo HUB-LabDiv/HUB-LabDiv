@@ -41,7 +41,7 @@ import { MarkdownImage } from '@/components/reading/MarkdownImageLightbox';
 import { ViewTracker } from "@/components/telemetry/ViewTracker";
 import { ReadingExperienceProvider } from '@/components/reading/ReadingExperienceProvider';
 import { ReadingViewManager } from '@/components/reading/ReadingViewManager';
-import { ReadingHistoryTracker } from '@/components/history/ReadingHistoryTracker';
+import { ReadingHistoryTracker } from '@/components/reading/ReadingHistoryTracker';
 import { FollowTagButton } from '@/components/engagement/FollowTagButton';
 import { PostQuiz } from '@/components/media/PostQuiz';
 import { ContentRating } from '@/components/feedback/ContentRating';

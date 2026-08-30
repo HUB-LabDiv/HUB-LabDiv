@@ -30,7 +30,7 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ['lucide-react', 'recharts'],
+    optimizePackageImports: ['lucide-react', 'recharts', 'framer-motion', 'date-fns', 'clsx', 'tailwind-merge'],
   },
   serverExternalPackages: ['puppeteer-core', '@sparticuz/chromium', 'nodemailer'],
   outputFileTracingIncludes: {
@@ -41,9 +41,15 @@ const nextConfig: NextConfig = {
     return [
       { source: '/perfil', destination: '/lab', permanent: true },
       { source: '/dms', destination: '/emaranhamento', permanent: true },
-      { source: '/timeline', destination: '/fluxo', permanent: true },
+      { source: '/timeline', destination: '/', permanent: true },
       { source: '/guia', destination: '/manual', permanent: true },
       { source: '/labdiv', destination: '/sobre', permanent: true },
+      { source: '/colisor', destination: '/gcif', permanent: true },
+      { source: '/fluxo', destination: '/', permanent: true },
+      { source: '/comunidade', destination: '/', permanent: true },
+      { source: '/drops', destination: '/?tab=updates', permanent: true },
+      { source: '/trilhas', destination: '/ferramentas/trilhas', permanent: true },
+      { source: '/trilhas/:id', destination: '/ferramentas/trilhas/:id', permanent: true },
     ];
   },
   async headers() {
