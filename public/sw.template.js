@@ -53,6 +53,11 @@ try {
 
         const url = new URL(request.url);
 
+        // Ignora qualquer interceptação em localhost/dev para nunca interferir no ambiente de desenvolvimento
+        if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+            return;
+        }
+
         // 1. NETWORK-ONLY: Admin, Auth & Rotas de Bypass
         if (BYPASS_ROUTES.some(route => url.pathname.startsWith(route))) {
             if (request.mode === 'navigate') {
