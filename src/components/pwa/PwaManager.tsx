@@ -26,7 +26,7 @@ export function PwaManager() {
     useEffect(() => {
         // Registra o Service Worker do PWA para suporte offline de assets e rotas
         if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
-            const buildId = process.env.NEXT_PUBLIC_BUILD_ID || 'v6-gold';
+            const buildId = process.env.NEXT_PUBLIC_BUILD_ID || 'v6.1-gold';
             navigator.serviceWorker.register(`/sw.js?id=${buildId}`).then((reg) => {
                 console.log('✅ [PWA] Service Worker ativo:', reg.scope);
                 // Força verificação imediata de atualizações no deploy
