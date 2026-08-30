@@ -10,8 +10,8 @@ android {
         applicationId "br.usp.ifusp.hublabdiv"
         minSdkVersion 24
         targetSdkVersion 36
-        versionCode 7
-        versionName "6.1"
+        versionCode 8
+        versionName "6.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.
@@ -25,13 +25,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    
+}
+
+base {
+    archivesName.set("HUBLabDiv")
 }
 
 androidComponents {
     onVariants(selector().all()) { variant ->
         variant.outputs.each { output ->
-            output.outputFileName.set("HUB-LabDiv-${variant.name}.apk")
+            output.outputFileName.set("HUBLabDiv-${variant.name}.apk")
         }
     }
 }
