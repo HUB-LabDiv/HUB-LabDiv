@@ -40,7 +40,12 @@ import {
     Satellite,
     Atom,
     MessageSquare,
-    Palette
+    Palette,
+    SlidersHorizontal,
+    Tag,
+    Building2,
+    Calendar,
+    RotateCcw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LogsView } from '@/components/comunidade/LogsView';
@@ -126,6 +131,8 @@ export const HomeClientView = ({
     const [selectedInstitutes, setSelectedInstitutes] = useState<string[]>(['Todos']);
     const [selectedMediaTypes, setSelectedMediaTypes] = useState<string[]>([]);
     const [selectedYears, setSelectedYears] = useState<string[]>(['Todos']);
+    const [isFilterExpanded, setIsFilterExpanded] = useState(false);
+    const [activeFilterGroup, setActiveFilterGroup] = useState<'formato' | 'categoria' | 'instituto' | 'ano' | null>(null);
     const [activePageIndex, setActivePageIndex] = useState(0);
     const [showAllCategories, setShowAllCategories] = useState(false);
     const [showAllYears, setShowAllYears] = useState(false);
@@ -134,6 +141,21 @@ export const HomeClientView = ({
     const wheelAccumulator = useRef<number>(0);
     const lastWheelTime = useRef<number>(0);
     const wheelCooldown = useRef<boolean>(false);
+
+    const totalActiveFilters = useMemo(() => {
+        let count = 0;
+        if (selectedMediaTypes.length > 0) count += selectedMediaTypes.length;
+        if (!selectedCategories.includes('Todos') || selectedCategories.length > 1) {
+            count += selectedCategories.filter(c => c !== 'Todos').length;
+        }
+        if (!selectedInstitutes.includes('Todos') || selectedInstitutes.length > 1) {
+            count += selectedInstitutes.filter(i => i !== 'Todos').length;
+        }
+        if (!selectedYears.includes('Todos') || selectedYears.length > 1) {
+            count += selectedYears.filter(y => y !== 'Todos').length;
+        }
+        return count;
+    }, [selectedMediaTypes, selectedCategories, selectedInstitutes, selectedYears]);
 
     const currentInstitutionInfo = useMemo(() => {
         return INSTITUTES.find(i => i.id === institution) || INSTITUTES[0];
@@ -313,6 +335,8 @@ export const HomeClientView = ({
                     sort: 'recentes',
                     categories: forceCategory === 'Todos' ? (selectedCategories.includes('Todos') ? [] : selectedCategories) : [forceCategory],
                     institutes: selectedInstitutes.includes('Todos') ? undefined : selectedInstitutes,
+                    mediaTypes: selectedMediaTypes,
+                    years: selectedYears.includes('Todos') ? undefined : selectedYears.map(y => parseInt(y)),
                     excludeCategories: ['Arte']
                 });
 
@@ -536,158 +560,328 @@ export const HomeClientView = ({
                 </section>
             )}
 
-            {/* FILTROS (Restaurados) */}
+            {/* FILTROS MULTIDIMENSIONAIS (Hierárquico & Expansível) */}
             {activeTab === 'fluxo' && (
-                <section data-tour="comunidade-filtros" className="relative z-10 bg-transparent py-4 -mx-4 px-4 border-b border-gray-100 dark:border-gray-800/50 mb-8">
-                <div className="flex flex-col gap-6">
-                    {/* Formato */}
-                    <div className="flex items-center gap-4">
-                        <span className="text-[10px] uppercase tracking-widest text-gray-400 shrink-0">Formato:</span>
-                        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-                            {mediaTypeOptions.map((option, idx) => {
-                                const isActive = selectedMediaTypes.includes(option.value);
-                                const Icon = option.icon;
-                                const activeColor = option.color;
-                                const activeBgClass = 
-                                    activeColor === 'brand-yellow' 
-                                        ? 'bg-brand-yellow text-black border-brand-yellow shadow-lg ring-2 ring-brand-yellow/20' 
-                                        : activeColor === 'brand-red' 
-                                        ? 'bg-brand-red text-white border-brand-red shadow-lg ring-2 ring-brand-red/20' 
-                                        : activeColor === 'brand-blue'
-                                        ? 'bg-brand-blue text-white border-brand-blue shadow-lg ring-2 ring-brand-blue/20'
-                                        : 'bg-gray-500 text-white border-gray-500 shadow-lg ring-2 ring-gray-500/20';
-                                return (
+                <section data-tour="comunidade-filtros" className="relative z-10 bg-transparent py-3 mb-8">
+                    {/* Linha 1: Botão Principal de Filtros e Categorias de Filtro */}
+                    <div className="flex flex-wrap items-center gap-2">
+                        {/* Botão Gatilho Principal: [ Filtros ] */}
+                        <button
+                            onClick={() => {
+                                setIsFilterExpanded(prev => {
+                                    const next = !prev;
+                                    if (!next) setActiveFilterGroup(null);
+                                    return next;
+                                });
+                            }}
+                            className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-black font-bukra uppercase tracking-wider transition-all border cursor-pointer ${
+                                isFilterExpanded || totalActiveFilters > 0
+                                    ? 'bg-brand-blue text-white border-brand-blue shadow-lg shadow-brand-blue/20 ring-2 ring-brand-blue/20'
+                                    : 'bg-white dark:bg-[#1E1E1E] text-gray-700 dark:text-gray-200 border-gray-200 dark:border-white/10 hover:border-brand-blue/40 shadow-sm'
+                            }`}
+                        >
+                            <SlidersHorizontal className="w-4 h-4" />
+                            <span>Filtros</span>
+                            {totalActiveFilters > 0 && (
+                                <span className="flex items-center justify-center size-5 rounded-full bg-brand-yellow text-gray-900 text-[10px] font-black font-sans ml-0.5">
+                                    {totalActiveFilters}
+                                </span>
+                            )}
+                            <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isFilterExpanded ? 'rotate-180' : ''}`} />
+                        </button>
+
+                        {/* Grupos de Filtros (Aparecem quando o botão Filtros é expandido) */}
+                        <AnimatePresence>
+                            {isFilterExpanded && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.95, x: -10 }}
+                                    animate={{ opacity: 1, scale: 1, x: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95, x: -10 }}
+                                    transition={{ duration: 0.2 }}
+                                    className="flex flex-wrap items-center gap-2"
+                                >
+                                    {/* 1. Formato */}
                                     <button
-                                        key={option.label}
-                                        onClick={() => setSelectedMediaTypes(isActive ? prev => prev.filter(t => t !== option.value) : prev => [...prev, option.value])}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest transition-all border-2 shrink-0 ${isActive ? activeBgClass : 'bg-white dark:bg-card-dark text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-brand-blue/30'}`}
+                                        onClick={() => setActiveFilterGroup(prev => prev === 'formato' ? null : 'formato')}
+                                        className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-[11px] font-bold font-bukra uppercase tracking-wide transition-all border cursor-pointer ${
+                                            activeFilterGroup === 'formato'
+                                                ? 'bg-brand-blue/15 text-brand-blue border-brand-blue/40 shadow-sm'
+                                                : selectedMediaTypes.length > 0
+                                                ? 'bg-brand-blue/10 text-brand-blue border-brand-blue/20'
+                                                : 'bg-white/80 dark:bg-[#1E1E1E]/80 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-white/10 hover:border-brand-blue/30'
+                                        }`}
                                     >
-                                        <Icon className="w-3.5 h-3.5" />
-                                        {option.label}
+                                        <Video className="w-3.5 h-3.5 text-brand-blue" />
+                                        <span>Formato</span>
+                                        {selectedMediaTypes.length > 0 && (
+                                            <span className="px-1.5 py-0.5 rounded-full bg-brand-blue text-white text-[9px] font-black">
+                                                {selectedMediaTypes.length}
+                                            </span>
+                                        )}
+                                        <ChevronDown className={`w-3 h-3 transition-transform ${activeFilterGroup === 'formato' ? 'rotate-180' : ''}`} />
                                     </button>
-                                );
-                            })}
-                        </div>
+
+                                    {/* 2. Categorias */}
+                                    <button
+                                        onClick={() => setActiveFilterGroup(prev => prev === 'categoria' ? null : 'categoria')}
+                                        className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-[11px] font-bold font-bukra uppercase tracking-wide transition-all border cursor-pointer ${
+                                            activeFilterGroup === 'categoria'
+                                                ? 'bg-brand-red/15 text-brand-red border-brand-red/40 shadow-sm'
+                                                : selectedCategories.filter(c => c !== 'Todos').length > 0
+                                                ? 'bg-brand-red/10 text-brand-red border-brand-red/20'
+                                                : 'bg-white/80 dark:bg-[#1E1E1E]/80 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-white/10 hover:border-brand-red/30'
+                                        }`}
+                                    >
+                                        <Tag className="w-3.5 h-3.5 text-brand-red" />
+                                        <span>Categorias</span>
+                                        {selectedCategories.filter(c => c !== 'Todos').length > 0 && (
+                                            <span className="px-1.5 py-0.5 rounded-full bg-brand-red text-white text-[9px] font-black">
+                                                {selectedCategories.filter(c => c !== 'Todos').length}
+                                            </span>
+                                        )}
+                                        <ChevronDown className={`w-3 h-3 transition-transform ${activeFilterGroup === 'categoria' ? 'rotate-180' : ''}`} />
+                                    </button>
+
+                                    {/* 3. Instituto */}
+                                    <button
+                                        onClick={() => setActiveFilterGroup(prev => prev === 'instituto' ? null : 'instituto')}
+                                        className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-[11px] font-bold font-bukra uppercase tracking-wide transition-all border cursor-pointer ${
+                                            activeFilterGroup === 'instituto'
+                                                ? 'bg-brand-yellow/20 text-brand-yellow border-brand-yellow/40 shadow-sm'
+                                                : selectedInstitutes.filter(i => i !== 'Todos').length > 0
+                                                ? 'bg-brand-yellow/10 text-brand-yellow border-brand-yellow/20'
+                                                : 'bg-white/80 dark:bg-[#1E1E1E]/80 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-white/10 hover:border-brand-yellow/30'
+                                        }`}
+                                    >
+                                        <Building2 className="w-3.5 h-3.5 text-brand-yellow" />
+                                        <span>Instituto</span>
+                                        {selectedInstitutes.filter(i => i !== 'Todos').length > 0 && (
+                                            <span className="px-1.5 py-0.5 rounded-full bg-brand-yellow text-gray-900 text-[9px] font-black">
+                                                {selectedInstitutes.filter(i => i !== 'Todos').length}
+                                            </span>
+                                        )}
+                                        <ChevronDown className={`w-3 h-3 transition-transform ${activeFilterGroup === 'instituto' ? 'rotate-180' : ''}`} />
+                                    </button>
+
+                                    {/* 4. Ano */}
+                                    <button
+                                        onClick={() => setActiveFilterGroup(prev => prev === 'ano' ? null : 'ano')}
+                                        className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-[11px] font-bold font-bukra uppercase tracking-wide transition-all border cursor-pointer ${
+                                            activeFilterGroup === 'ano'
+                                                ? 'bg-brand-blue/15 text-brand-blue border-brand-blue/40 shadow-sm'
+                                                : selectedYears.filter(y => y !== 'Todos').length > 0
+                                                ? 'bg-brand-blue/10 text-brand-blue border-brand-blue/20'
+                                                : 'bg-white/80 dark:bg-[#1E1E1E]/80 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-white/10 hover:border-brand-blue/30'
+                                        }`}
+                                    >
+                                        <Calendar className="w-3.5 h-3.5 text-brand-blue" />
+                                        <span>Ano</span>
+                                        {selectedYears.filter(y => y !== 'Todos').length > 0 && (
+                                            <span className="px-1.5 py-0.5 rounded-full bg-brand-blue text-white text-[9px] font-black">
+                                                {selectedYears.filter(y => y !== 'Todos').length}
+                                            </span>
+                                        )}
+                                        <ChevronDown className={`w-3 h-3 transition-transform ${activeFilterGroup === 'ano' ? 'rotate-180' : ''}`} />
+                                    </button>
+
+                                    {/* Botão Limpar Filtros se houver algum ativo */}
+                                    {totalActiveFilters > 0 && (
+                                        <button
+                                            onClick={() => {
+                                                setSelectedMediaTypes([]);
+                                                setSelectedCategories(['Todos']);
+                                                setSelectedInstitutes(['Todos']);
+                                                setSelectedYears(['Todos']);
+                                            }}
+                                            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-[10px] font-bold font-bukra uppercase tracking-wider text-gray-500 hover:text-brand-red hover:bg-brand-red/10 transition-all border border-transparent hover:border-brand-red/20 cursor-pointer"
+                                            title="Limpar todos os filtros ativos"
+                                        >
+                                            <RotateCcw className="w-3 h-3" />
+                                            <span>Limpar</span>
+                                        </button>
+                                    )}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
 
-                    {/* Categoria */}
-                    <div className="flex items-center gap-4">
-                        <span className="text-[10px] uppercase tracking-widest text-gray-400 shrink-0">Categorias:</span>
-                        <div className="flex flex-wrap gap-2">
-                            {(showAllCategories ? categories : categories.slice(0, 6)).map((c, idx) => {
-                                const isActive = selectedCategories.includes(c);
-                                return (
-                                    <button
-                                        key={c}
-                                        onClick={() => {
-                                            setSelectedCategories(prev => {
-                                                if (c === 'Todos') return ['Todos'];
-                                                const filtered = prev.filter(item => item !== 'Todos');
-                                                if (isActive) {
-                                                    const next = filtered.filter(item => item !== c);
-                                                    return next.length === 0 ? ['Todos'] : next;
-                                                }
-                                                return [...filtered, c];
-                                            });
-                                        }}
-                                        className={`px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest transition-all border-2 ${isActive ? (CATEGORY_STYLES[c]?.filterActive || DEFAULT_STYLE.filterActive) : (CATEGORY_STYLES[c]?.filterInactive || DEFAULT_STYLE.filterInactive)}`}
-                                    >
-                                        {c}
-                                    </button>
-                                );
-                            })}
-                            <button
-                                onClick={() => setShowAllCategories(!showAllCategories)}
-                                className="px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest bg-white dark:bg-card-dark text-gray-600 dark:text-gray-300 hover:text-brand-blue transition-all flex items-center gap-1 border-2 border-gray-200 dark:border-gray-700"
+                    {/* Linha 2: Gaveta com as Opções do Grupo Ativo Selecionado */}
+                    <AnimatePresence>
+                        {isFilterExpanded && activeFilterGroup && (
+                            <motion.div
+                                key={activeFilterGroup}
+                                initial={{ opacity: 0, height: 0, y: -8 }}
+                                animate={{ opacity: 1, height: 'auto', y: 0 }}
+                                exit={{ opacity: 0, height: 0, y: -8 }}
+                                transition={{ duration: 0.22, ease: 'easeOut' }}
+                                className="overflow-hidden mt-3 p-4 bg-white/80 dark:bg-[#1E1E1E]/90 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/10 shadow-lg"
                             >
-                                {showAllCategories ? <Minus className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
-                                {showAllCategories ? 'Menos' : 'Mais'}
-                            </button>
-                        </div>
-                    </div>
+                                {/* Opções: FORMATO */}
+                                {activeFilterGroup === 'formato' && (
+                                    <div className="flex flex-col gap-2">
+                                        <span className="text-[10px] font-bukra font-bold uppercase tracking-widest text-brand-blue">
+                                            Selecione o Formato de Mídia:
+                                        </span>
+                                        <div className="flex flex-wrap gap-2 pt-1">
+                                            {mediaTypeOptions.map((option) => {
+                                                const isActive = selectedMediaTypes.includes(option.value);
+                                                const Icon = option.icon;
+                                                const activeColor = option.color;
+                                                const activeBgClass = 
+                                                    activeColor === 'brand-yellow' 
+                                                        ? 'bg-brand-yellow text-black border-brand-yellow shadow-md ring-2 ring-brand-yellow/20 font-black' 
+                                                        : activeColor === 'brand-red' 
+                                                        ? 'bg-brand-red text-white border-brand-red shadow-md ring-2 ring-brand-red/20 font-black' 
+                                                        : activeColor === 'brand-blue'
+                                                        ? 'bg-brand-blue text-white border-brand-blue shadow-md ring-2 ring-brand-blue/20 font-black'
+                                                        : 'bg-gray-500 text-white border-gray-500 shadow-md ring-2 ring-gray-500/20 font-black';
+                                                return (
+                                                    <button
+                                                        key={option.label}
+                                                        onClick={() => setSelectedMediaTypes(isActive ? prev => prev.filter(t => t !== option.value) : prev => [...prev, option.value])}
+                                                        className={`flex items-center gap-2 px-3.5 py-2 rounded-xl text-[10px] font-bukra uppercase tracking-wider transition-all border cursor-pointer ${isActive ? activeBgClass : 'bg-white dark:bg-card-dark text-gray-600 dark:text-gray-300 border-gray-200 dark:border-white/10 hover:border-brand-blue/40'}`}
+                                                    >
+                                                        <Icon className="w-3.5 h-3.5" />
+                                                        {option.label}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
 
-                    {/* Instituto */}
-                    <div className="flex items-center gap-4">
-                        <span className="text-[10px] uppercase tracking-widest text-gray-400 shrink-0">Instituto:</span>
-                        <div className="flex flex-wrap gap-2 grow">
-                            {INSTITUTE_FILTER_OPTIONS.map((inst, idx) => {
-                                const isActive = selectedInstitutes.includes(inst);
-                                const filterColors = ['brand-blue', 'brand-yellow', 'brand-red'];
-                                const activeColor = inst === 'Todos' ? 'brand-blue' : filterColors[idx % filterColors.length];
-                                const activeBgClass = 
-                                    activeColor === 'brand-yellow' 
-                                        ? 'bg-brand-yellow text-black border-brand-yellow shadow-lg ring-2 ring-brand-yellow/20' 
-                                        : activeColor === 'brand-red' 
-                                        ? 'bg-brand-red text-white border-brand-red shadow-lg ring-2 ring-brand-red/20' 
-                                        : 'bg-brand-blue text-white border-brand-blue shadow-lg ring-2 ring-brand-blue/20';
-                                return (
-                                    <button
-                                        key={inst}
-                                        onClick={() => {
-                                            setSelectedInstitutes(prev => {
-                                                if (inst === 'Todos') return ['Todos'];
-                                                const filtered = prev.filter(item => item !== 'Todos');
-                                                if (isActive) {
-                                                    const next = filtered.filter(item => item !== inst);
-                                                    return next.length === 0 ? ['Todos'] : next;
-                                                }
-                                                return [...filtered, inst];
-                                            });
-                                        }}
-                                        className={`px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest transition-all border-2 shrink-0 ${isActive ? activeBgClass : 'bg-white dark:bg-card-dark text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-brand-blue/30'}`}
-                                    >
-                                        {inst}
-                                    </button>
-                                );
-                            })}
-                        </div>
-                    </div>
+                                {/* Opções: CATEGORIAS */}
+                                {activeFilterGroup === 'categoria' && (
+                                    <div className="flex flex-col gap-2">
+                                        <span className="text-[10px] font-bukra font-bold uppercase tracking-widest text-brand-red">
+                                            Selecione as Categorias:
+                                        </span>
+                                        <div className="flex flex-wrap gap-2 pt-1">
+                                            {(showAllCategories ? categories : categories.slice(0, 8)).map((c) => {
+                                                const isActive = selectedCategories.includes(c);
+                                                return (
+                                                    <button
+                                                        key={c}
+                                                        onClick={() => {
+                                                            setSelectedCategories(prev => {
+                                                                if (c === 'Todos') return ['Todos'];
+                                                                const filtered = prev.filter(item => item !== 'Todos');
+                                                                if (isActive) {
+                                                                    const next = filtered.filter(item => item !== c);
+                                                                    return next.length === 0 ? ['Todos'] : next;
+                                                                }
+                                                                return [...filtered, c];
+                                                            });
+                                                        }}
+                                                        className={`px-3.5 py-2 rounded-xl text-[10px] font-bukra uppercase tracking-wider transition-all border cursor-pointer ${isActive ? (CATEGORY_STYLES[c]?.filterActive || DEFAULT_STYLE.filterActive) : (CATEGORY_STYLES[c]?.filterInactive || DEFAULT_STYLE.filterInactive)}`}
+                                                    >
+                                                        {c}
+                                                    </button>
+                                                );
+                                            })}
+                                            <button
+                                                onClick={() => setShowAllCategories(!showAllCategories)}
+                                                className="px-3.5 py-2 rounded-xl text-[10px] font-bukra uppercase tracking-wider bg-white dark:bg-card-dark text-gray-600 dark:text-gray-300 hover:text-brand-blue transition-all flex items-center gap-1 border border-gray-200 dark:border-white/10 cursor-pointer"
+                                            >
+                                                {showAllCategories ? <Minus className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                                                {showAllCategories ? 'Menos' : 'Mais'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
 
-                    {/* Ano */}
-                    <div className="flex items-center gap-4">
-                        <span className="text-[10px] uppercase tracking-widest text-gray-400 shrink-0">Ano:</span>
-                        <div className="flex flex-wrap gap-2 grow">
-                            {(showAllYears ? years : years.slice(0, 10)).map((y, idx) => {
-                                const isActive = selectedYears.includes(y);
-                                const filterColors = ['brand-blue', 'brand-yellow', 'brand-red'];
-                                const activeColor = y === 'Todos' ? 'brand-blue' : filterColors[idx % filterColors.length];
-                                const activeBgClass = 
-                                    activeColor === 'brand-yellow' 
-                                        ? 'bg-brand-yellow text-black border-brand-yellow shadow-lg ring-2 ring-brand-yellow/20' 
-                                        : activeColor === 'brand-red' 
-                                        ? 'bg-brand-red text-white border-brand-red shadow-lg ring-2 ring-brand-red/20' 
-                                        : 'bg-brand-blue text-white border-brand-blue shadow-lg ring-2 ring-brand-blue/20';
-                                return (
-                                    <button
-                                        key={y}
-                                        onClick={() => {
-                                            setSelectedYears(prev => {
-                                                if (y === 'Todos') return ['Todos'];
-                                                const filtered = prev.filter(item => item !== 'Todos');
-                                                if (isActive) {
-                                                    const next = filtered.filter(item => item !== y);
-                                                    return next.length === 0 ? ['Todos'] : next;
-                                                }
-                                                return [...filtered, y];
-                                            });
-                                        }}
-                                        className={`px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest transition-all border-2 shrink-0 ${isActive ? activeBgClass : 'bg-white dark:bg-card-dark text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-brand-blue/30'}`}
-                                    >
-                                        {y}
-                                    </button>
-                                );
-                            })}
-                            <button
-                                onClick={() => setShowAllYears(!showAllYears)}
-                                className="px-4 py-2 rounded-xl text-[10px] uppercase tracking-widest bg-white dark:bg-card-dark text-gray-600 dark:text-gray-300 hover:text-brand-blue transition-all flex items-center gap-1 border-2 border-gray-200 dark:border-gray-700"
-                            >
-                                {showAllYears ? <Minus className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
-                                {showAllYears ? 'Menos' : 'Mais'}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </section>
+                                {/* Opções: INSTITUTO */}
+                                {activeFilterGroup === 'instituto' && (
+                                    <div className="flex flex-col gap-2">
+                                        <span className="text-[10px] font-bukra font-bold uppercase tracking-widest text-brand-yellow">
+                                            Selecione o Instituto:
+                                        </span>
+                                        <div className="flex flex-wrap gap-2 pt-1">
+                                            {INSTITUTE_FILTER_OPTIONS.map((inst, idx) => {
+                                                const isActive = selectedInstitutes.includes(inst);
+                                                const filterColors = ['brand-blue', 'brand-yellow', 'brand-red'];
+                                                const activeColor = inst === 'Todos' ? 'brand-blue' : filterColors[idx % filterColors.length];
+                                                const activeBgClass = 
+                                                    activeColor === 'brand-yellow' 
+                                                        ? 'bg-brand-yellow text-black border-brand-yellow shadow-md ring-2 ring-brand-yellow/20 font-black' 
+                                                        : activeColor === 'brand-red' 
+                                                        ? 'bg-brand-red text-white border-brand-red shadow-md ring-2 ring-brand-red/20 font-black' 
+                                                        : 'bg-brand-blue text-white border-brand-blue shadow-md ring-2 ring-brand-blue/20 font-black';
+                                                return (
+                                                    <button
+                                                        key={inst}
+                                                        onClick={() => {
+                                                            setSelectedInstitutes(prev => {
+                                                                if (inst === 'Todos') return ['Todos'];
+                                                                const filtered = prev.filter(item => item !== 'Todos');
+                                                                if (isActive) {
+                                                                    const next = filtered.filter(item => item !== inst);
+                                                                    return next.length === 0 ? ['Todos'] : next;
+                                                                }
+                                                                return [...filtered, inst];
+                                                            });
+                                                        }}
+                                                        className={`px-3.5 py-2 rounded-xl text-[10px] font-bukra uppercase tracking-wider transition-all border cursor-pointer ${isActive ? activeBgClass : 'bg-white dark:bg-card-dark text-gray-600 dark:text-gray-300 border-gray-200 dark:border-white/10 hover:border-brand-yellow/40'}`}
+                                                    >
+                                                        {inst}
+                                                    </button>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Opções: ANO */}
+                                {activeFilterGroup === 'ano' && (
+                                    <div className="flex flex-col gap-2">
+                                        <span className="text-[10px] font-bukra font-bold uppercase tracking-widest text-brand-blue">
+                                            Selecione o Ano de Publicação:
+                                        </span>
+                                        <div className="flex flex-wrap gap-2 pt-1">
+                                            {(showAllYears ? years : years.slice(0, 10)).map((y, idx) => {
+                                                const isActive = selectedYears.includes(y);
+                                                const filterColors = ['brand-blue', 'brand-yellow', 'brand-red'];
+                                                const activeColor = y === 'Todos' ? 'brand-blue' : filterColors[idx % filterColors.length];
+                                                const activeBgClass = 
+                                                    activeColor === 'brand-yellow' 
+                                                        ? 'bg-brand-yellow text-black border-brand-yellow shadow-md ring-2 ring-brand-yellow/20 font-black' 
+                                                        : activeColor === 'brand-red' 
+                                                        ? 'bg-brand-red text-white border-brand-red shadow-md ring-2 ring-brand-red/20 font-black' 
+                                                        : 'bg-brand-blue text-white border-brand-blue shadow-md ring-2 ring-brand-blue/20 font-black';
+                                                return (
+                                                    <button
+                                                        key={y}
+                                                        onClick={() => {
+                                                            setSelectedYears(prev => {
+                                                                if (y === 'Todos') return ['Todos'];
+                                                                const filtered = prev.filter(item => item !== 'Todos');
+                                                                if (isActive) {
+                                                                    const next = filtered.filter(item => item !== y);
+                                                                    return next.length === 0 ? ['Todos'] : next;
+                                                                }
+                                                                return [...filtered, y];
+                                                            });
+                                                        }}
+                                                        className={`px-3.5 py-2 rounded-xl text-[10px] font-bukra uppercase tracking-wider transition-all border cursor-pointer ${isActive ? activeBgClass : 'bg-white dark:bg-card-dark text-gray-600 dark:text-gray-300 border-gray-200 dark:border-white/10 hover:border-brand-blue/40'}`}
+                                                    >
+                                                        {y}
+                                                    </button>
+                                                );
+                                            })}
+                                            <button
+                                                onClick={() => setShowAllYears(!showAllYears)}
+                                                className="px-3.5 py-2 rounded-xl text-[10px] font-bukra uppercase tracking-wider bg-white dark:bg-card-dark text-gray-600 dark:text-gray-300 hover:text-brand-blue transition-all flex items-center gap-1 border border-gray-200 dark:border-white/10 cursor-pointer"
+                                            >
+                                                {showAllYears ? <Minus className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                                                {showAllYears ? 'Menos' : 'Mais'}
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
+                </section>
             )}
 
             {/* EM ÓRBITA NO [INSTITUTO] (Trending Horizontal dinâmico) */}

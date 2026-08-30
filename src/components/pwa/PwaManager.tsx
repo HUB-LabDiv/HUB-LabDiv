@@ -62,6 +62,7 @@ export function PwaManager() {
 
                 const rotasCriticas = [
                     '/ferramentas', 
+                    '/ferramentas/anotacoes',
                     '/ferramentas/trilhas', 
                     '/lab-pessoal', 
                     '/arquivo-labdiv',

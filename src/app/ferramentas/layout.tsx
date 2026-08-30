@@ -28,7 +28,7 @@ export default async function FerramentasLayout({ children }: { children: React.
             userId={user.id}
             fullWidth={true}
         >
-            <SwipeWrapper routes={['/ferramentas', '/ferramentas/trilhas', '/ferramentas/match']}>
+            <SwipeWrapper routes={['/ferramentas', '/ferramentas/trilhas', '/ferramentas/match', '/ferramentas/anotacoes']}>
                 <div className="py-8 w-full px-4 lg:px-8 flex-1">
                     <ToolsSubNav />
                     {children}

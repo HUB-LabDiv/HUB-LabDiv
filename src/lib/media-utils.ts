@@ -138,3 +138,167 @@ export const getOptimizedUrl = (url: string, width = 800, quality = 70, category
 
     return url;
 };
+
+/**
+ * Detecta todos os formatos de mídia presentes em uma publicação,
+ * analisando media_type, URLs, blocos de SDOCX (imagens, vídeos, pdfs, html),
+ * links incorporados e texto descritivo.
+ */
+export function getPostMediaFormats(post: {
+    media_type?: string;
+    mediaType?: string;
+    media_url?: any;
+    mediaUrl?: any;
+    description?: string;
+}): Set<string> {
+    const formats = new Set<string>();
+    const rawType = (post.media_type || post.mediaType || '').toLowerCase().trim();
+    if (rawType) {
+        formats.add(rawType);
+    }
+
+    const rawMedia = post.media_url ?? post.mediaUrl;
+    const desc = (post.description || '').toLowerCase();
+
+    // Verificação na descrição (links do YouTube, markdown images, etc.)
+    if (desc.includes('youtube.com') || desc.includes('youtu.be') || desc.includes('vimeo.com') || desc.includes('.mp4')) {
+        formats.add('video');
+    }
+    if (desc.includes('![') || desc.includes('.jpg') || desc.includes('.png') || desc.includes('.webp')) {
+        formats.add('image');
+    }
+    if (desc.trim().length > 15) {
+        formats.add('text');
+    }
+
+    const checkUrl = (url: string) => {
+        if (!url || typeof url !== 'string') return;
+        const low = url.toLowerCase();
+        if (
+            low.includes('youtube.com') ||
+            low.includes('youtu.be') ||
+            low.includes('vimeo.com') ||
+            low.includes('tiktok.com') ||
+            low.endsWith('.mp4') ||
+            low.endsWith('.webm') ||
+            low.endsWith('.mov')
+        ) {
+            formats.add('video');
+        }
+        if (
+            low.endsWith('.jpg') ||
+            low.endsWith('.jpeg') ||
+            low.endsWith('.png') ||
+            low.endsWith('.webp') ||
+            low.endsWith('.gif') ||
+            low.endsWith('.svg') ||
+            low.includes('cloudinary.com') ||
+            low.includes('unsplash.com')
+        ) {
+            formats.add('image');
+        }
+        if (low.endsWith('.pdf') || low.includes('/pdf/')) {
+            formats.add('pdf');
+        }
+        if (low.endsWith('.zip') || low.endsWith('.rar')) {
+            formats.add('zip');
+            formats.add('other');
+        }
+    };
+
+    const inspectBlock = (block: any) => {
+        if (!block || typeof block !== 'object') return;
+        const type = (block.type || '').toLowerCase();
+        if (type === 'image') {
+            formats.add('image');
+            if (block.content?.url) checkUrl(block.content.url);
+            if (block.content?.src) checkUrl(block.content.src);
+        } else if (type === 'video') {
+            formats.add('video');
+            if (block.content?.url) checkUrl(block.content.url);
+            if (block.content?.src) checkUrl(block.content.src);
+        } else if (type === 'carousel') {
+            formats.add('image');
+            if (Array.isArray(block.content?.items)) {
+                block.content.items.forEach((it: any) => {
+                    if (it?.url) checkUrl(it.url);
+                    if (it?.src) checkUrl(it.src);
+                    if (it?.type === 'video') formats.add('video');
+                });
+            }
+        } else if (type === 'pdf') {
+            formats.add('pdf');
+            if (block.content?.url) checkUrl(block.content.url);
+            if (block.content?.src) checkUrl(block.content.src);
+        } else if (type === 'html' || type === 'text' || type === 'heading' || type === 'quote' || type === 'callout' || type === 'latex') {
+            formats.add('text');
+            formats.add('sdocx');
+            const htmlStr = typeof block.content === 'string' ? block.content : (block.content?.html || '');
+            if (htmlStr) {
+                if (htmlStr.includes('<iframe') || htmlStr.includes('youtube.com') || htmlStr.includes('youtu.be') || htmlStr.includes('<video')) {
+                    formats.add('video');
+                }
+                if (htmlStr.includes('<img') || htmlStr.includes('.jpg') || htmlStr.includes('.png') || htmlStr.includes('.webp')) {
+                    formats.add('image');
+                }
+            }
+        } else if (type === 'sdocx') {
+            formats.add('sdocx');
+            formats.add('text');
+        }
+    };
+
+    if (rawMedia) {
+        if (Array.isArray(rawMedia)) {
+            rawMedia.forEach(item => {
+                if (typeof item === 'string') {
+                    checkUrl(item);
+                } else if (item && typeof item === 'object') {
+                    inspectBlock(item);
+                }
+            });
+        } else if (typeof rawMedia === 'string') {
+            const trimmed = rawMedia.trim();
+            if ((trimmed.startsWith('[') && trimmed.endsWith(']')) || (trimmed.startsWith('{') && trimmed.endsWith('}'))) {
+                try {
+                    const parsed = JSON.parse(trimmed);
+                    if (Array.isArray(parsed)) {
+                        parsed.forEach(item => {
+                            if (typeof item === 'string') {
+                                checkUrl(item);
+                            } else if (item && typeof item === 'object') {
+                                inspectBlock(item);
+                            }
+                        });
+                    } else if (parsed && typeof parsed === 'object') {
+                        inspectBlock(parsed);
+                    }
+                } catch {
+                    checkUrl(trimmed);
+                }
+            } else {
+                checkUrl(trimmed);
+            }
+        }
+    }
+
+    // Se é do tipo sdocx, é também um documento com texto
+    if (rawType === 'sdocx') {
+        formats.add('sdocx');
+        formats.add('text');
+    }
+
+    return formats;
+}
+
+/**
+ * Retorna se um post contém PELO MENOS UM dos formatos selecionados.
+ */
+export function postMatchesMediaTypes(
+    post: { media_type?: string; mediaType?: string; media_url?: any; mediaUrl?: any; description?: string },
+    selectedMediaTypes: string[]
+): boolean {
+    if (!selectedMediaTypes || selectedMediaTypes.length === 0) return true;
+    const formats = getPostMediaFormats(post);
+    return selectedMediaTypes.some(type => formats.has(type.toLowerCase()));
+}

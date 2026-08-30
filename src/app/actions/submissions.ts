@@ -18,6 +18,7 @@ import { unstable_cache, revalidatePath } from 'next/cache';
 import { SubmissionSchema } from '@/lib/validations';
 import { z } from 'zod';
 import { sendAutomaticNotification } from './notifications';
+import { postMatchesMediaTypes } from '@/lib/media-utils';
 
 export interface AdminUpdate {
     status?: string;
@@ -81,12 +82,45 @@ export async function fetchSubmissions({ page, limit, query, categories, exclude
         }
     }
     if (excludeCategories && excludeCategories.length > 0) {
-        // Unfortunately Supabase JS .not('category', 'in', excludeCategories) might be tricky if it's an array, 
-        // but we can loop or use filter. Actually, .not('category', 'in', `(${excludeCategories.join(',')})`) works.
         queryBuilder = queryBuilder.not('category', 'in', `(${excludeCategories.join(',')})`);
     }
     if (author) queryBuilder = queryBuilder.eq('authors', author);
-    if (mediaTypes && mediaTypes.length > 0) queryBuilder = queryBuilder.in('media_type', mediaTypes);
+
+    if (mediaTypes && mediaTypes.length > 0) {
+        // Busca ampla no banco de dados para cobrir tanto o tipo raiz quanto posts compostos (SDOCX / blocos múltiplos)
+        const orClauses: string[] = [];
+        orClauses.push(`media_type.in.(${mediaTypes.join(',')})`);
+        orClauses.push(`media_type.eq.sdocx`);
+
+        if (mediaTypes.includes('video')) {
+            orClauses.push(`media_url.ilike.%youtube%`);
+            orClauses.push(`media_url.ilike.%youtu.be%`);
+            orClauses.push(`media_url.ilike.%vimeo%`);
+            orClauses.push(`media_url.ilike.%"type":"video"%`);
+            orClauses.push(`media_url.ilike.%.mp4%`);
+            orClauses.push(`description.ilike.%youtube.com%`);
+            orClauses.push(`description.ilike.%youtu.be%`);
+        }
+        if (mediaTypes.includes('image')) {
+            orClauses.push(`media_url.ilike.%"type":"image"%`);
+            orClauses.push(`media_url.ilike.%"type":"carousel"%`);
+            orClauses.push(`media_url.ilike.%.jpg%`);
+            orClauses.push(`media_url.ilike.%.png%`);
+            orClauses.push(`media_url.ilike.%.webp%`);
+            orClauses.push(`media_url.ilike.%cloudinary.com%`);
+        }
+        if (mediaTypes.includes('pdf')) {
+            orClauses.push(`media_url.ilike.%.pdf%`);
+            orClauses.push(`media_url.ilike.%"type":"pdf"%`);
+        }
+        if (mediaTypes.includes('text') || mediaTypes.includes('sdocx')) {
+            orClauses.push(`media_type.eq.text`);
+            orClauses.push(`media_type.eq.sdocx`);
+            orClauses.push(`media_url.ilike.%"type":"html"%`);
+        }
+
+        queryBuilder = queryBuilder.or(orClauses.join(','));
+    }
 
     if (years && years.length > 0) {
         const orConditions = years.map(y => `and(event_date.gte.${y}-01-01T00:00:00Z,event_date.lte.${y}-12-31T23:59:59Z)`).join(',');
@@ -114,7 +148,12 @@ export async function fetchSubmissions({ page, limit, query, categories, exclude
     }
     if (!submissions) return { items: [], hasMore: false };
 
-    const items = submissions.map(sub => ({
+    // Análise profunda de todos os elementos e blocos do post
+    const matchedSubs = (mediaTypes && mediaTypes.length > 0)
+        ? submissions.filter(sub => postMatchesMediaTypes(sub, mediaTypes))
+        : submissions;
+
+    const items = matchedSubs.map(sub => ({
         post: mapToPostDTO(sub, undefined, (sub as any).profiles?.avatar_url)
     }));
 

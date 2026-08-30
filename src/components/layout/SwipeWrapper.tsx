@@ -13,15 +13,33 @@ export function SwipeWrapper({ children, routes }: SwipeWrapperProps) {
     const router = useRouter();
     const pathname = usePathname();
 
+    const findCurrentRouteIndex = () => {
+        const exact = routes.indexOf(pathname);
+        if (exact !== -1) return exact;
+
+        // Longest matching prefix for nested routes
+        let bestIndex = -1;
+        let maxLen = 0;
+        routes.forEach((r, idx) => {
+            if (pathname === r || pathname.startsWith(r + '/')) {
+                if (r.length > maxLen) {
+                    maxLen = r.length;
+                    bestIndex = idx;
+                }
+            }
+        });
+        return bestIndex;
+    };
+
     const swipeHandlers = useSwipe({
         onSwipedLeft: () => {
-            const currentIndex = routes.indexOf(pathname);
+            const currentIndex = findCurrentRouteIndex();
             if (currentIndex !== -1 && currentIndex < routes.length - 1) {
                 router.push(routes[currentIndex + 1]);
             }
         },
         onSwipedRight: () => {
-            const currentIndex = routes.indexOf(pathname);
+            const currentIndex = findCurrentRouteIndex();
             if (currentIndex !== -1 && currentIndex > 0) {
                 router.push(routes[currentIndex - 1]);
             }
