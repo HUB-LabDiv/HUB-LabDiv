@@ -96,12 +96,12 @@ export function GcifSubNav() {
                     ? 'xl:-translate-x-[calc((80px+1.5rem)/2)]' 
                     : 'xl:-translate-x-[calc((280px+1.5rem)/2)]'
             }`}>
-                <div className="relative max-w-full flex items-center">
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2 max-w-full">
                     {/* Left Scroll Arrow */}
                     {canScrollLeft && (
                         <button
                             onClick={handleScrollLeft}
-                            className="absolute -left-3 sm:-left-4 z-10 p-1 sm:p-1.5 rounded-full bg-[#1E1E1E]/95 border border-white/20 text-brand-yellow hover:text-white shadow-lg hover:scale-110 active:scale-95 transition-all backdrop-blur-md"
+                            className="shrink-0 p-1.5 sm:p-2 rounded-full bg-white/90 dark:bg-[#1E1E1E]/95 border border-gray-200 dark:border-white/20 text-brand-yellow hover:text-black dark:hover:text-white shadow-lg hover:scale-110 active:scale-95 transition-all backdrop-blur-md cursor-pointer"
                             title="Ver abas anteriores"
                             aria-label="Rolar para a esquerda"
                         >
@@ -139,11 +139,11 @@ export function GcifSubNav() {
                         })}
                     </div>
 
-                    {/* Right Scroll Arrow */}
+                    {/* Right Scroll Arrow - Posicionada à direita do switch pílula */}
                     {canScrollRight && (
                         <button
                             onClick={handleScrollRight}
-                            className="absolute -right-3 sm:-right-4 z-10 p-1 sm:p-1.5 rounded-full bg-[#1E1E1E]/95 border border-white/20 text-brand-yellow hover:text-white shadow-lg hover:scale-110 active:scale-95 transition-all backdrop-blur-md animate-pulse"
+                            className="shrink-0 p-1.5 sm:p-2 rounded-full bg-white/90 dark:bg-[#1E1E1E]/95 border border-gray-200 dark:border-white/20 text-brand-yellow hover:text-black dark:hover:text-white shadow-lg hover:scale-110 active:scale-95 transition-all backdrop-blur-md animate-pulse cursor-pointer"
                             title="Ver mais abas"
                             aria-label="Rolar para a direita"
                         >

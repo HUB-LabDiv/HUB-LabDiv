@@ -11,10 +11,16 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import { redirect } from 'next/navigation';
+import React from 'react';
+import { GcifWikiView } from '@/components/gcif/GcifWikiView';
+
+export const metadata = {
+    title: 'Grande Colisor do IF (GCIF) | IFUSP Ciência',
+    description: 'Central de conhecimento, espaços, iniciativas e ferramentas interativas do Instituto de Física da USP.',
+};
 
 export const dynamic = 'force-dynamic';
 
 export default function GcifRootPage() {
-    redirect('/gcif/wiki');
+    return <GcifWikiView />;
 }

@@ -49,7 +49,8 @@ import {
     ExternalLink,
     AlertCircle,
     Info,
-    Landmark
+    Landmark,
+    Search
 } from 'lucide-react';
 
 // --- TECHNICAL DATA SHARD ---
@@ -577,6 +578,55 @@ const pageContent: Record<string, any> = {
         ],
         dates: [],
         actions: []
+    },
+    'metodologia': {
+        title: 'Como Pesquisar & Metodologia',
+        subtitle: 'Biblioteca do IFUSP, Google Scholar & Acesso Remoto',
+        icon: <Search className="w-12 h-12" />,
+        color: 'brand-blue',
+        sections: [
+            {
+                title: 'Biblioteca do Instituto de Física (IFUSP)',
+                content: 'Criada na década de 1970, conta com mais de 200 mil itens. Empréstimos para alunos de graduação permitem até 10 livros por 10 dias, com até 3 renovações online no PBI (buscaintegrada.usp.br). Possui caixa de devolução 24h na portaria central do prédio principal e locais de estudo na Biblioteca e Sala 1001 (Pró-Aluno).'
+            },
+            {
+                title: 'Google Scholar & FullText@USP',
+                content: 'Configure os Links de Biblioteca no Google Scholar (Configurações > Links de biblioteca > Universidade de São Paulo) para baixar artigos científicos pagos gratuitamente pelo convênio institucional da USP com editoras como Elsevier, APS, Springer e Nature.'
+            },
+            {
+                title: 'Acesso Remoto via VPN USP & CAFe',
+                content: 'Utilize a VPN USP ou login institucional CAFe no Portal de Periódicos CAPES (periodicos.capes.gov.br) para acessar todo o acervo digital internacional diretamente da sua casa com seu Número USP e Senha Única.'
+            },
+            {
+                title: 'Pré-prints no arXiv.org & Zotero',
+                content: 'Em Física, a maioria das publicações inovadoras é disponibilizada antes no arXiv.org em formato aberto. Utilize o Zotero para gerenciar seus papers e exportar citações em BibTeX direto para o Overleaf.'
+            }
+        ],
+        dates: [],
+        actions: [
+            { label: 'Acessar Guia Completo', icon: <ExternalLink className="w-4 h-4" />, href: '/wiki/metodologia' },
+            { label: 'Google Scholar', icon: <Search className="w-4 h-4" />, href: 'https://scholar.google.com.br' }
+        ]
+    },
+    'como-pesquisar': {
+        title: 'Como Pesquisar & Metodologia',
+        subtitle: 'Biblioteca do IFUSP, Google Scholar & Acesso Remoto',
+        icon: <Search className="w-12 h-12" />,
+        color: 'brand-blue',
+        sections: [
+            {
+                title: 'Biblioteca do Instituto de Física (IFUSP)',
+                content: 'Criada na década de 1970, conta com mais de 200 mil itens. Empréstimos para alunos de graduação permitem até 10 livros por 10 dias, com até 3 renovações online no PBI (buscaintegrada.usp.br). Possui caixa de devolução 24h na portaria central do prédio principal.'
+            },
+            {
+                title: 'Google Scholar & FullText@USP',
+                content: 'Configure os Links de Biblioteca no Google Scholar (Configurações > Links de biblioteca > Universidade de São Paulo) para baixar artigos científicos pagos gratuitamente pelo convênio institucional da USP.'
+            }
+        ],
+        dates: [],
+        actions: [
+            { label: 'Acessar Guia Completo', icon: <ExternalLink className="w-4 h-4" />, href: '/wiki/metodologia' }
+        ]
     }
 };
 
