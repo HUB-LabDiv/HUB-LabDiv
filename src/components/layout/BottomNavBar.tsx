@@ -66,6 +66,7 @@ export const BottomNavBar = () => {
                                 <Link
                                     key={item.name}
                                     href={item.href}
+                                    data-tour="mobile-action-launch"
                                     className="group relative -top-6 flex flex-col items-center"
                                 >
                                     <div className="size-14 bg-brand-blue rounded-2xl flex items-center justify-center text-white shadow-xl shadow-brand-blue/30 transform transition-transform active:scale-90 group-hover:-translate-y-1 border-4 border-white dark:border-gray-900">

@@ -136,6 +136,7 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = true, fu
             {!focusMode && (profile?.is_adult === true || profile?.user_category === 'pesquisador' || profile?.user_category === 'docente_pesquisador') && (
                 <Link
                     href="/enviar"
+                    data-tour="desktop-fab-enviar"
                     className="hidden xl:flex fixed bottom-8 right-8 z-[60] bg-brand-blue hover:bg-brand-blue-hover text-white px-6 h-14 rounded-full shadow-2xl items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all group border border-white/10"
                     title="Lançar à Órbita"
                 >

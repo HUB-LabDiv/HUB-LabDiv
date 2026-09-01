@@ -218,6 +218,30 @@ export function getDesktopGlobalTourSteps(role: UserRoleCategory = detectUserRol
         );
     }
 
+    // 13. Plataforma de Lançamento & Login (Desktop)
+    const isLoggedInDesktop = typeof document !== 'undefined' ? !!document.querySelector('[data-tour="user-profile-menu"]') : false;
+    if (isLoggedInDesktop) {
+        steps.push({
+            element: '[data-tour="desktop-fab-enviar"], [data-tour="user-profile-menu"]',
+            popover: {
+                title: '13. Plataforma de Lançamento (Lançar à Órbita)',
+                description: '<b>CENTRO DE PROPULSÃO CIENTÍFICA:</b> Clique no botão <b>Lançar à Órbita</b> para publicar seus resumos, artigos, podcasts, modelos 3D, notas e quizzes no HUB. Suas publicações entram no Feed da Comunidade e geram pontos de Radiação/XP para seu perfil acadêmico!',
+                side: 'top',
+                align: 'end',
+            }
+        });
+    } else {
+        steps.push({
+            element: '[data-tour="header-login"], [data-tour="header-settings"], [data-tour="logo-home"]',
+            popover: {
+                title: '13. Login & Plataforma de Lançamento',
+                description: '<b>ACESSO & PUBLICAÇÃO:</b> Clique em <b>Login</b> para entrar com sua conta USP ou Google. O login desbloqueia a <b>Plataforma de Lançamento</b> (para você enviar seus próprios trabalhos científicos e didáticos), permite participar do chat do <b>Emaranhamento Quântico</b> e evoluir seu <b>Laboratório Pessoal</b>!',
+                side: 'bottom',
+                align: 'end',
+            }
+        });
+    }
+
     return steps;
 }
 
@@ -332,6 +356,30 @@ export function getMobileGlobalTourSteps(role: UserRoleCategory = detectUserRole
             popover: {
                 title: '10. Eixo Adaptativo: Como Ingressar',
                 description: '<b>EIXO VARIÁVEL:</b> Guia completo de portas de entrada no IFUSP (Fuvest, ENEM-USP, Provão Paulista, Olimpíadas).',
+                side: 'top',
+                align: 'center',
+            }
+        });
+    }
+
+    // 11. Botão Central de Ação: Lançar à Órbita / Login (Mobile)
+    const isLoggedInMobile = typeof document !== 'undefined' ? !!document.querySelector('[data-tour="user-profile-menu"]') : false;
+    if (isLoggedInMobile) {
+        steps.push({
+            element: '[data-tour="mobile-action-launch"], [data-tour="desktop-fab-enviar"]',
+            popover: {
+                title: '11. Plataforma de Lançamento (Lançar à Órbita)',
+                description: '<b>CENTRO DE PROPULSÃO CIENTÍFICA:</b> O botão central com ícone de foguete permite publicar resumos, podcasts, PDFs, modelos 3D e quizzes gamificados. Suas criações entram no Feed da Comunidade e aumentam seu nível de Radiação/XP!',
+                side: 'top',
+                align: 'center',
+            }
+        });
+    } else {
+        steps.push({
+            element: '[data-tour="mobile-action-launch"], [data-tour="header-settings"], [data-tour="user-profile-menu"]',
+            popover: {
+                title: '11. Login & Plataforma de Lançamento',
+                description: '<b>ACESSO & PUBLICAÇÃO:</b> Toque no botão central de <b>Login</b> para entrar com sua conta USP ou Google. Ao entrar, você desbloqueia a <b>Plataforma de Lançamento</b> para enviar materiais, entra no chat do <b>Emaranhamento Quântico</b> e personaliza seu <b>Laboratório</b>!',
                 side: 'top',
                 align: 'center',
             }
