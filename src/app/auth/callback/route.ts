@@ -72,10 +72,8 @@ export async function GET(request: NextRequest) {
                 .update(profileUpdate)
                 .eq('id', session.user.id);
 
-            if (process.env.NODE_ENV === 'development') {
-                console.log(`Auth Success: Redirecting to ${next} via ${publicOrigin}`);
-            }
-            const redirectUrl = new URL(next, publicOrigin);
+            const target = (!next || next === '/login' || next.startsWith('/login')) ? '/' : next;
+            const redirectUrl = new URL(target, publicOrigin);
             return NextResponse.redirect(redirectUrl.toString());
         }
         if (process.env.NODE_ENV === 'development') {

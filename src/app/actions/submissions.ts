@@ -363,6 +363,107 @@ export async function revertSubmissionToDraft(id: string) {
     }
 }
 
+export async function saveDraftForShare(payload: {
+    title: string;
+    authors?: string;
+    category?: string;
+    institute?: string;
+    description?: string;
+    media_url?: string;
+    media_type?: string;
+    quiz?: any;
+    reflexoes?: any;
+    docs_link?: string;
+    drive_link?: string;
+    draftId?: string;
+}) {
+    try {
+        const supabaseServer = await createServerSupabase();
+        const { data: { user } } = await supabaseServer.auth.getUser();
+        
+        const dataToSave: any = {
+            title: payload.title || 'Rascunho Sem Título',
+            authors: payload.authors || user?.user_metadata?.full_name || 'Autor(a)',
+            category: payload.category || 'Outros',
+            institute: (payload.institute && String(payload.institute).trim()) ? String(payload.institute).toLowerCase() : 'ifusp',
+            description: payload.description || '',
+            media_type: payload.media_type || 'sdocx',
+            media_url: payload.media_url || '[]',
+            quiz: payload.quiz || null,
+            docs_link: payload.docs_link || null,
+            drive_link: payload.drive_link || null,
+            status: 'rascunho',
+            updated_at: new Date().toISOString()
+        };
+
+        if (user) {
+            dataToSave.user_id = user.id;
+        }
+
+        let targetId = payload.draftId;
+
+        // Se houver um draftId fornecido válido, tenta atualizar
+        if (targetId && targetId !== 'new') {
+            const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(targetId);
+            if (isUUID) {
+                const { data: existing } = await supabaseServer
+                    .from('submissions')
+                    .select('id, user_id')
+                    .eq('id', targetId)
+                    .maybeSingle();
+
+                if (existing) {
+                    const { error: updateError } = await supabaseServer
+                        .from('submissions')
+                        .update(dataToSave)
+                        .eq('id', targetId);
+
+                    if (!updateError) {
+                        return { success: true, draftId: targetId };
+                    }
+                }
+            }
+        }
+
+        // Caso contrário, insere um novo rascunho
+        const { data: newDraft, error: insertError } = await supabaseServer
+            .from('submissions')
+            .insert([dataToSave])
+            .select('id')
+            .single();
+
+        if (insertError) {
+            return { error: insertError.message };
+        }
+
+        return { success: true, draftId: newDraft.id };
+    } catch (e: any) {
+        return { error: e.message || "Erro ao salvar rascunho para compartilhamento" };
+    }
+}
+
+export async function getDraftSubmission(id: string) {
+    try {
+        const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id);
+        if (!isUUID) return { error: "ID de rascunho inválido" };
+
+        const supabaseServer = await createServerSupabase();
+        const { data, error } = await supabaseServer
+            .from('submissions')
+            .select('*, profiles(avatar_url, xp, level, is_labdiv)')
+            .eq('id', id)
+            .single();
+
+        if (error || !data) {
+            return { error: "Rascunho não encontrado ou expirado" };
+        }
+
+        return { success: true, data };
+    } catch (e: any) {
+        return { error: e.message || "Erro ao carregar rascunho" };
+    }
+}
+
 export async function createPseudonym(name: string) {
     const serverSupabase = await createServerSupabase();
     const { data: { user } } = await serverSupabase.auth.getUser();

@@ -52,10 +52,13 @@ export const BottomNavBar = () => {
     return (
         <>
             <div
-                className="xl:hidden fixed bottom-0 left-0 right-0 z-[100] px-4 pb-6 pt-2 h-24 bg-gradient-to-t from-white/90 dark:from-background-dark/90 via-white/40 dark:via-background-dark/40 to-transparent pointer-events-none"
-                style={{ touchAction: 'pan-y' }} // V8.0 Native Scroll Performance
+                className="xl:hidden fixed bottom-0 left-0 right-0 z-[100] px-4 pt-2 bg-gradient-to-t from-white/95 dark:from-background-dark/95 via-white/60 dark:via-background-dark/60 to-transparent pointer-events-none transition-all duration-300"
+                style={{ 
+                    touchAction: 'pan-y',
+                    paddingBottom: 'max(1.25rem, calc(0.75rem + env(safe-area-inset-bottom, 0px)))'
+                }} // V8.0 Native Scroll & Safe-Area Performance
             >
-                <nav className="max-w-md mx-auto h-16 bg-white/60 dark:bg-gray-900/60 backdrop-blur-3xl rounded-[32px] border border-white/30 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.3)] flex items-center justify-around px-1 pointer-events-auto overflow-visible">
+                <nav className="max-w-md mx-auto h-16 bg-white/70 dark:bg-[#1E1E1E]/80 backdrop-blur-3xl rounded-[32px] border border-white/30 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.35)] flex items-center justify-around px-1 pointer-events-auto overflow-visible">
                     {dynamicNavItems.map((item) => {
                         const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
                         const activeColor = item.color || 'brand-blue';

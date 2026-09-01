@@ -14,6 +14,7 @@ import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
 import { CloudinaryUploader } from './CloudinaryUploader';
 import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
+import { BlockAccessibilityFields } from './BlockAccessibilityFields';
 import Image from 'next/image';
 
 interface CarouselBlockProps {
@@ -25,6 +26,7 @@ export default function CarouselBlock({ block, isActive }: CarouselBlockProps) {
     const { updateBlock } = useSubmissionStore();
     const pendingFiles = usePendingUploadsStore((state) => state.pendingFiles);
     const urls: string[] = block.content.urls || [];
+    const caption = block.content.caption || '';
     const altText = block.content.altText || '';
     const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -249,19 +251,18 @@ export default function CarouselBlock({ block, isActive }: CarouselBlockProps) {
                 </div>
             )}
 
-            {(isActive || altText) && (
-                <div className="flex flex-col gap-1">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Texto Alternativo (Acessibilidade)</label>
-                    <input
-                        type="text"
-                        value={altText}
-                        onChange={(e) => updateBlock(block.id, { altText: e.target.value })}
-                        placeholder="Descreva as imagens para leitores de tela..."
-                        className="w-full bg-transparent border-b border-gray-700 focus:border-brand-yellow text-gray-300 outline-none py-1 text-sm transition-colors"
-                        disabled={!isActive}
-                    />
-                </div>
-            )}
+            {/* Painel Padronizado de Acessibilidade e Legenda para o Carrossel */}
+            <BlockAccessibilityFields
+                caption={caption}
+                altText={altText}
+                onCaptionChange={(val) => updateBlock(block.id, { caption: val })}
+                onAltTextChange={(val) => updateBlock(block.id, { altText: val })}
+                captionLabel="Legenda / Descrição do Carrossel"
+                captionPlaceholder="Ex: Sequência de imagens demonstrando as etapas da síntese química..."
+                altTextLabel="Texto Alternativo (Acessibilidade / Leitores de Tela)"
+                altTextPlaceholder="Descreva a sequência de imagens para pessoas com deficiência visual..."
+                isActive={isActive}
+            />
         </div>
     );
 }

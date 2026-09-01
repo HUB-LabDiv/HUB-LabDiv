@@ -49,6 +49,7 @@ import { ReportButton } from './ReportButton';
 import { StyledArticleView } from '@/components/reading/StyledArticleView';
 import { SdocxHtmlBlock } from '@/components/reading/SdocxHtmlBlock';
 import { SdocxHeroImage, SdocxInlineImage } from '@/components/reading/SdocxImageBlock';
+import { RelatedMaterialCard } from '@/components/media/RelatedMaterialCard';
 
 interface PageProps {
     params: Promise<{ id: string }>;
@@ -551,6 +552,52 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                                 <iframe src={getPdfEmbedUrl(block.content.url)} className="w-full h-full border-none" />
                                                             </div>
                                                         );
+                                                    } else if (block.type === '3d_object') {
+                                                         const modelUrl = block.content?.url || '';
+                                                         const caption = block.content?.caption || '';
+                                                         const altText = block.content?.altText || '';
+                                                         return (
+                                                             <figure key={block.id} className="w-full my-8 flex flex-col items-center gap-2">
+                                                                 <div className="w-full h-[450px] bg-background-dark/30 rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 shadow-xl flex items-center justify-center relative">
+                                                                     {modelUrl.includes('drive.google') ? (
+                                                                         <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 bg-gray-800/30">
+                                                                             <span className="material-symbols-outlined text-5xl mb-2 text-brand-yellow">folder_zip</span>
+                                                                             <span className="text-sm font-bold uppercase tracking-widest text-gray-200 mb-2">Pasta do Google Drive</span>
+                                                                             <a href={modelUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-brand-yellow underline-offset-4">Acessar Modelo 3D no Drive</a>
+                                                                         </div>
+                                                                     ) : modelUrl.includes('sketchfab.com') ? (
+                                                                         <iframe 
+                                                                             title={caption || altText || "Sketchfab 3D Model"}
+                                                                             src={modelUrl.includes('/embed') ? modelUrl : `${modelUrl}/embed`}
+                                                                             className="w-full h-full border-0"
+                                                                             allow="autoplay; fullscreen; xr-spatial-tracking"
+                                                                             allowFullScreen
+                                                                         />
+                                                                     ) : (
+                                                                         // @ts-ignore
+                                                                         <model-viewer 
+                                                                             src={modelUrl} 
+                                                                             alt={altText || caption || 'Modelo 3D Interativo'}
+                                                                             aria-label={altText || caption || 'Visualizador de Modelo 3D Interativo'}
+                                                                             auto-rotate="true" 
+                                                                             camera-controls="true" 
+                                                                             ar="true"
+                                                                             style={{ width: '100%', height: '100%' }}
+                                                                         >
+                                                                         {/* @ts-ignore */}
+                                                                         </model-viewer>
+                                                                     )}
+                                                                 </div>
+                                                                 {caption && (
+                                                                     <figcaption className="text-xs text-gray-500 dark:text-gray-400 text-center italic mt-1 font-sans">
+                                                                         {caption}
+                                                                     </figcaption>
+                                                                 )}
+                                                                 {altText && (
+                                                                     <span className="sr-only">{altText}</span>
+                                                                 )}
+                                                             </figure>
+                                                         );
                                                     } else if (block.type === 'reflection') {
                                                         return (
                                                             <div key={block.id} className="my-10">
@@ -644,31 +691,9 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                 </div>
 
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {relatedSubmissions.map(rel => {
-                                        const relUrls = parseMediaUrl(rel.media_url);
-                                        const thumb = rel.media_type === 'video' ? formatYoutubeUrl(relUrls[0] || '') : (relUrls[0] || ''); // fallback
-                                        return (
-                                            <a key={rel.id} href={`/arquivo/${rel.id}`} className="group block bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden shadow-sm hover:shadow-xl transition-all hover:-translate-y-1">
-                                                <div className="aspect-video bg-gray-100 dark:bg-gray-800 overflow-hidden relative">
-                                                    {rel.media_type === 'video' ? (
-                                                        <div className="w-full h-full flex items-center justify-center bg-background-dark">
-                                                            <span className="material-symbols-outlined text-4xl text-white/50">play_circle</span>
-                                                        </div>
-                                                    ) : rel.media_type === 'text' ? (
-                                                        <div className="w-full h-full flex items-center justify-center bg-blue-50 dark:bg-blue-900/20">
-                                                            <span className="material-symbols-outlined text-4xl text-brand-blue/50">article</span>
-                                                        </div>
-                                                    ) : (
-                                                        <img src={typeof thumb === 'string' && thumb ? thumb.replace(/\.pdf$/i, '.jpg') : '/placeholder.jpg'} alt={rel.alt_text || rel.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
-                                                    )}
-                                                </div>
-                                                <div className="p-4">
-                                                    <h4 className="font-bold text-gray-900 dark:text-white line-clamp-1 group-hover:text-brand-blue transition-colors">{rel.title}</h4>
-                                                    <p className="text-xs text-gray-500 mt-1 uppercase tracking-wide truncate">{rel.authors}</p>
-                                                </div>
-                                            </a>
-                                        )
-                                    })}
+                                    {relatedSubmissions.map(rel => (
+                                        <RelatedMaterialCard key={rel.id} submission={rel} />
+                                    ))}
                                 </div>
                             </div>
                         )}

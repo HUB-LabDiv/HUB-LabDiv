@@ -302,3 +302,68 @@ export function postMatchesMediaTypes(
     const formats = getPostMediaFormats(post);
     return selectedMediaTypes.some(type => formats.has(type.toLowerCase()));
 }
+
+/**
+ * Extrai a melhor URL de miniatura disponível para uma submissão
+ * suportando blocos SDOCX, vídeos do YouTube, PDFs, imagens e carrosséis.
+ */
+export function extractSubmissionThumbnail(item: {
+    media_type?: string | null;
+    media_url?: string | string[] | null;
+    thumbnail_url?: string | null;
+}): string | null {
+    if (!item) return null;
+
+    if (item.thumbnail_url && typeof item.thumbnail_url === 'string' && item.thumbnail_url.trim().startsWith('http')) {
+        return item.thumbnail_url.trim();
+    }
+
+    if (item.media_type === 'video') {
+        const raw = Array.isArray(item.media_url) ? item.media_url[0] : item.media_url;
+        if (typeof raw === 'string' && raw.trim()) {
+            return getYoutubeThumbnail(raw.trim());
+        }
+    }
+
+    if (!item.media_url) return null;
+
+    // SDOCX JSON block parsing
+    if (typeof item.media_url === 'string' && item.media_url.trim().startsWith('[')) {
+        try {
+            const blocks = JSON.parse(item.media_url);
+            if (Array.isArray(blocks)) {
+                for (const b of blocks) {
+                    if (typeof b === 'string' && b.startsWith('http')) return b;
+                    if (b && typeof b === 'object') {
+                        if (b.type === 'image' && b.content?.url && typeof b.content.url === 'string') {
+                            return b.content.url;
+                        }
+                        if (b.type === 'carousel' && Array.isArray(b.content?.images) && b.content.images[0]?.url) {
+                            return b.content.images[0].url;
+                        }
+                        if (b.type === 'video' && b.content?.url && typeof b.content.url === 'string') {
+                            return getYoutubeThumbnail(b.content.url);
+                        }
+                        if (b.type === 'pdf' && b.content?.url && typeof b.content.url === 'string') {
+                            return b.content.url.replace(/\.pdf$/i, '.jpg');
+                        }
+                    }
+                }
+            }
+        } catch {
+            // Silently ignore JSON parse errors
+        }
+    }
+
+    const urls = parseMediaUrl(item.media_url);
+    if (urls.length > 0 && typeof urls[0] === 'string' && urls[0].trim().startsWith('http')) {
+        let url = urls[0].trim();
+        if (item.media_type === 'pdf' && url.toLowerCase().endsWith('.pdf')) {
+            return url.replace(/\.pdf$/i, '.jpg');
+        }
+        return url;
+    }
+
+    return null;
+}
+

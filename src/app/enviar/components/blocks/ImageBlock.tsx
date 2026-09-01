@@ -1,10 +1,12 @@
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
  * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
- * * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
+ *
+ * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
  * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
  * publicada pela Free Software Foundation.
- * * Este programa é distribuído na esperança de que seja útil, mas SEM
+ *
+ * Este programa é distribuído na esperança de que seja útil, mas SEM
  * QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
@@ -14,6 +16,7 @@ import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
 import { CloudinaryUploader } from './CloudinaryUploader';
 import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
+import { BlockAccessibilityFields } from './BlockAccessibilityFields';
 import Image from 'next/image';
 
 interface ImageBlockProps {
@@ -25,6 +28,7 @@ export default function ImageBlock({ block, isActive }: ImageBlockProps) {
     const { updateBlock } = useSubmissionStore();
     const pendingFiles = usePendingUploadsStore((state) => state.pendingFiles);
     const imageUrl = block.content.url || '';
+    const caption = block.content.caption || '';
     const altText = block.content.altText || '';
 
     const isOrphaned = imageUrl.startsWith('blob:') && !pendingFiles[imageUrl];
@@ -101,7 +105,7 @@ export default function ImageBlock({ block, isActive }: ImageBlockProps) {
                             <div className="relative w-full h-[400px] min-h-[200px] bg-gray-900/50 flex items-center justify-center">
                                 <Image 
                                     src={imageUrl} 
-                                    alt={altText || 'Imagem'} 
+                                    alt={altText || caption || 'Imagem'} 
                                     fill 
                                     className="object-contain"
                                     unoptimized={imageUrl.includes('drive.google') || imageUrl.startsWith('blob:')}
@@ -129,22 +133,27 @@ export default function ImageBlock({ block, isActive }: ImageBlockProps) {
                             </div>
                         )}
                     </div>
+
+                    {caption && !isActive && (
+                        <p className="text-xs text-gray-400 text-center italic mt-1 font-sans">
+                            {caption}
+                        </p>
+                    )}
                 </div>
             )}
 
-            {(isActive || altText) && (
-                <div className="flex flex-col gap-1">
-                    <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Texto Alternativo (Acessibilidade)</label>
-                    <input
-                        type="text"
-                        value={altText}
-                        onChange={(e) => updateBlock(block.id, { altText: e.target.value })}
-                        placeholder="Descreva a imagem para leitores de tela..."
-                        className="w-full bg-transparent border-b border-gray-700 focus:border-brand-yellow text-gray-300 outline-none py-1 text-sm transition-colors"
-                        disabled={!isActive}
-                    />
-                </div>
-            )}
+            {/* Painel Padronizado de Acessibilidade e Legenda para Imagem */}
+            <BlockAccessibilityFields
+                caption={caption}
+                altText={altText}
+                onCaptionChange={(val) => updateBlock(block.id, { caption: val })}
+                onAltTextChange={(val) => updateBlock(block.id, { altText: val })}
+                captionLabel="Legenda / Descrição da Imagem"
+                captionPlaceholder="Ex: Fotografia de microscópio da estrutura cristalina..."
+                altTextLabel="Texto Alternativo (Acessibilidade / Leitores de Tela)"
+                altTextPlaceholder="Descreva os elementos da imagem para pessoas com deficiência visual..."
+                isActive={isActive}
+            />
         </div>
     );
 }

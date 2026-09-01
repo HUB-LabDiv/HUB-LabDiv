@@ -146,9 +146,9 @@ export function Footer() {
                             </Link>
                         </li>
                         <li>
-                            <Link href="/iniciativas/hub" className="flex items-center gap-2 text-xs text-white/80 hover:text-white transition-colors">
-                                <span className="material-symbols-outlined text-[16px] w-4 h-4 flex items-center justify-center flex-shrink-0 text-white/90">info</span>
-                                Sobre o HUB
+                            <Link href="/wiki" className="flex items-center gap-2 text-xs text-white/80 hover:text-white transition-colors">
+                                <span className="material-symbols-outlined text-[16px] w-4 h-4 flex items-center justify-center flex-shrink-0 text-white/90">menu_book</span>
+                                Wiki Centralizada
                             </Link>
                         </li>
                     </ul>

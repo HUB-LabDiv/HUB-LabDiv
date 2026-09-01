@@ -1,10 +1,12 @@
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
  * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
- * * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
+ *
+ * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
  * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
  * publicada pela Free Software Foundation.
- * * Este programa é distribuído na esperança de que seja útil, mas SEM
+ *
+ * Este programa é distribuído na esperança de que seja útil, mas SEM
  * QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
@@ -15,11 +17,14 @@ import { useSubmissionStore } from '@/store/useSubmissionStore';
 import { CloudinaryUploader } from './CloudinaryUploader';
 import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
 import { getPdfViewerUrl, getPdfEmbedUrl } from '@/lib/media-utils';
+import { BlockAccessibilityFields } from './BlockAccessibilityFields';
 
 export default function PdfBlock({ block, isActive }: { block: Block; isActive: boolean }) {
     const { updateBlock } = useSubmissionStore();
     const pendingFiles = usePendingUploadsStore((state) => state.pendingFiles);
     const pdfUrl = block.content.url || '';
+    const caption = block.content.caption || '';
+    const altText = block.content.altText || '';
 
     const isOrphaned = pdfUrl.startsWith('blob:') && !pendingFiles[pdfUrl];
 
@@ -31,7 +36,7 @@ export default function PdfBlock({ block, isActive }: { block: Block; isActive: 
         <div className="flex flex-col gap-4">
             {!pdfUrl ? (
                 <div className="w-full min-h-[12rem] border-2 border-dashed border-brand-red/30 rounded-xl flex flex-col items-center justify-center text-gray-300 transition-colors bg-brand-red/10 p-6">
-                    <span className="material-symbols-outlined text-4xl mb-2">picture_as_pdf</span>
+                    <span className="material-symbols-outlined text-4xl mb-2 text-brand-red">picture_as_pdf</span>
                     <span className="text-sm font-medium mb-4">Adicione um PDF</span>
                     
                     <CloudinaryUploader 
@@ -51,7 +56,7 @@ export default function PdfBlock({ block, isActive }: { block: Block; isActive: 
                     <input 
                         type="url" 
                         placeholder="Cole o link do PDF, ou link de pasta do Drive (se arquivo > 10MB)..."
-                        className="mt-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-brand-red text-white text-sm w-3/4 text-center transition-colors hover:border-brand-red/50"
+                        className="mt-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-brand-red text-white text-sm w-3/4 text-center transition-colors hover:border-brand-red/50 font-sans"
                         value={pdfUrl}
                         onChange={(e) => updateBlock(block.id, { url: e.target.value })}
                         onClick={(e) => e.stopPropagation()}
@@ -98,12 +103,12 @@ export default function PdfBlock({ block, isActive }: { block: Block; isActive: 
                                 <a href={pdfUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-brand-red underline-offset-4">Acessar Materiais (Upload &gt; 10MB)</a>
                             </div>
                         ) : (
-                        <iframe 
-                            src={embedUrl} 
-                            className="w-full h-full"
-                            title="PDF Viewer"
-                        />
-                    )}
+                            <iframe 
+                                src={embedUrl} 
+                                className="w-full h-full"
+                                title={caption || altText || "PDF Viewer"}
+                            />
+                        )}
 
                         {/* Barra inferior com ações */}
                         <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
@@ -127,8 +132,27 @@ export default function PdfBlock({ block, isActive }: { block: Block; isActive: 
                             )}
                         </div>
                     </div>
+
+                    {caption && !isActive && (
+                        <p className="text-xs text-gray-400 text-center italic mt-1 font-sans">
+                            {caption}
+                        </p>
+                    )}
                 </div>
             )}
+
+            {/* Painel Padronizado de Acessibilidade e Legenda para PDF */}
+            <BlockAccessibilityFields
+                caption={caption}
+                altText={altText}
+                onCaptionChange={(val) => updateBlock(block.id, { caption: val })}
+                onAltTextChange={(val) => updateBlock(block.id, { altText: val })}
+                captionLabel="Legenda / Identificação do Documento PDF"
+                captionPlaceholder="Ex: Relatório técnico completo sobre o método de medição..."
+                altTextLabel="Resumo de Acessibilidade (Leitores de Tela)"
+                altTextPlaceholder="Resuma os tópicos principais e conclusões do PDF para pessoas com deficiência..."
+                isActive={isActive}
+            />
         </div>
     );
 }

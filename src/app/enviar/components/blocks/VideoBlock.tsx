@@ -1,10 +1,12 @@
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
  * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
- * * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
+ *
+ * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
  * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
  * publicada pela Free Software Foundation.
- * * Este programa é distribuído na esperança de que seja útil, mas SEM
+ *
+ * Este programa é distribuído na esperança de que seja útil, mas SEM
  * QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
@@ -14,10 +16,13 @@ import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
 import { CloudinaryUploader } from './CloudinaryUploader';
 import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
+import { BlockAccessibilityFields } from './BlockAccessibilityFields';
 
 export default function VideoBlock({ block, isActive }: { block: Block; isActive: boolean }) {
     const { updateBlock } = useSubmissionStore();
     const videoUrl = block.content.url || '';
+    const caption = block.content.caption || '';
+    const altText = block.content.altText || '';
 
     // Verifica se é GIF ou YouTube
     const pendingFile = usePendingUploadsStore((state) => state.pendingFiles[videoUrl]);
@@ -53,7 +58,7 @@ export default function VideoBlock({ block, isActive }: { block: Block; isActive
                     <input 
                         type="url" 
                         placeholder="Cole o link do vídeo do YouTube (ex: https://www.youtube.com/watch?v=...) "
-                        className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-brand-red text-white text-sm w-3/4 text-center transition-colors hover:border-brand-red/50"
+                        className="px-4 py-2.5 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-brand-red text-white text-sm w-3/4 text-center transition-colors hover:border-brand-red/50 font-sans"
                         value={videoUrl}
                         onChange={(e) => updateBlock(block.id, { url: e.target.value })}
                         onClick={(e) => e.stopPropagation()}
@@ -97,13 +102,14 @@ export default function VideoBlock({ block, isActive }: { block: Block; isActive
                             <div className="w-full flex justify-center bg-gray-950 p-2">
                                 <img 
                                     src={videoUrl} 
-                                    alt="GIF Animado" 
+                                    alt={altText || caption || "GIF Animado"} 
                                     className="w-full max-h-[500px] object-contain rounded-lg animate-fade-in" 
                                 />
                             </div>
                         ) : isYouTube ? (
                             <iframe 
                                 className="w-full aspect-video"
+                                title={caption || altText || "Vídeo"}
                                 src={videoUrl.replace('watch?v=', 'embed/').replace('youtu.be/', 'www.youtube.com/embed/')}
                                 allowFullScreen
                             />
@@ -126,8 +132,27 @@ export default function VideoBlock({ block, isActive }: { block: Block; isActive
                             </div>
                         )}
                     </div>
+
+                    {caption && !isActive && (
+                        <p className="text-xs text-gray-400 text-center italic mt-1 font-sans">
+                            {caption}
+                        </p>
+                    )}
                 </div>
             )}
+
+            {/* Painel Padronizado de Acessibilidade e Legenda para Vídeo/GIF */}
+            <BlockAccessibilityFields
+                caption={caption}
+                altText={altText}
+                onCaptionChange={(val) => updateBlock(block.id, { caption: val })}
+                onAltTextChange={(val) => updateBlock(block.id, { altText: val })}
+                captionLabel="Legenda / Descrição do Vídeo ou GIF"
+                captionPlaceholder="Ex: Demonstração da simulação de ondas gravitacionais..."
+                altTextLabel="Texto Alternativo / Audiodescrição (Acessibilidade)"
+                altTextPlaceholder="Descreva as ações, movimentos e conteúdo visual do vídeo/GIF para quem não pode enxergar..."
+                isActive={isActive}
+            />
         </div>
     );
 }

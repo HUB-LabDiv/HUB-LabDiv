@@ -26,10 +26,22 @@ import { App as CapacitorApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 
 
+import { useAuth } from '@/providers/AuthProvider';
+
 function LoginContent() {
     const [isLoading, setIsLoading] = useState(false);
     const searchParams = useSearchParams();
     const router = useRouter();
+    const { user, loading: authLoading } = useAuth();
+
+    // Redireciona imediatamente se já autenticado
+    useEffect(() => {
+        if (!authLoading && user) {
+            const rawNext = searchParams.get('next') || '/';
+            const target = (!rawNext || rawNext === '/login' || rawNext.startsWith('/login')) ? '/' : rawNext;
+            router.replace(target);
+        }
+    }, [user, authLoading, router, searchParams]);
 
     const handleOneTapResponse = async (response: any) => {
         setIsLoading(true);
@@ -40,8 +52,9 @@ function LoginContent() {
             });
             if (error) throw error;
             
-            const next = searchParams.get('next') || '/';
-            router.push(next);
+            const rawNext = searchParams.get('next') || '/';
+            const target = (!rawNext || rawNext === '/login' || rawNext.startsWith('/login')) ? '/' : rawNext;
+            router.replace(target);
             toast.success("Login automático realizado com sucesso!");
         } catch (error: any) {
             console.error('One Tap Error:', error.message);
@@ -52,7 +65,8 @@ function LoginContent() {
 
     const triggerOAuthLogin = async (track: 'usp' | 'external', category?: 'aluno_usp' | 'pesquisador') => {
         const isNative = typeof window !== 'undefined' && Capacitor.isNativePlatform();
-        const next = searchParams.get('next') || '/';
+        const rawNext = searchParams.get('next') || '/';
+        const next = (!rawNext || rawNext === '/login' || rawNext.startsWith('/login')) ? '/' : rawNext;
         
         let redirectTo = isNative
             ? `hublabdiv://auth/callback?next=${encodeURIComponent(next)}&track=${track}`
@@ -123,22 +137,13 @@ function LoginContent() {
         if (choice === 'switch') {
             handleLogin('usp');
         } else {
-            const next = searchParams.get('next') || '/';
+            const rawNext = searchParams.get('next') || '/';
+            const next = (!rawNext || rawNext === '/login' || rawNext.startsWith('/login')) ? '/' : rawNext;
             router.push(`/onboarding?track=external&next=${encodeURIComponent(next)}`);
         }
     };
 
     useEffect(() => {
-        try {
-            Object.keys(localStorage).forEach((key) => {
-                if (key.startsWith('sb-') && key.endsWith('-auth-token')) {
-                    localStorage.removeItem(key);
-                }
-            });
-        } catch (error) {
-            console.error('Failed to clear local storage:', error);
-        }
-
         const tryInitGoogle = () => {
             if (typeof window !== 'undefined' && (window as any).google && process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
                 try {
@@ -172,15 +177,49 @@ function LoginContent() {
     useEffect(() => {
         if (typeof window !== 'undefined' && Capacitor.isNativePlatform()) {
             const listener = CapacitorApp.addListener('appUrlOpen', async (data: any) => {
-                if (data.url.startsWith('hublabdiv://')) {
+                if (data.url && (data.url.startsWith('hublabdiv://') || data.url.includes('auth/callback'))) {
                     try {
                         await Browser.close();
                     } catch (e) {
                         console.error('Failed to close browser', e);
                     }
                     
-                    const path = data.url.replace('hublabdiv://', '/');
-                    window.location.href = path;
+                    try {
+                        const cleanUrl = data.url.replace('hublabdiv://', 'https://hub-lab-div.vercel.app/');
+                        const urlObj = new URL(cleanUrl);
+                        const rawNext = urlObj.searchParams.get('next') || '/';
+                        const target = (!rawNext || rawNext === '/login' || rawNext.startsWith('/login')) ? '/' : rawNext;
+                        
+                        // Hash tokens (#access_token=...&refresh_token=...)
+                        if (urlObj.hash && urlObj.hash.includes('access_token')) {
+                            const hashParams = new URLSearchParams(urlObj.hash.replace(/^#/, ''));
+                            const accessToken = hashParams.get('access_token');
+                            const refreshToken = hashParams.get('refresh_token');
+                            if (accessToken && refreshToken) {
+                                await supabase.auth.setSession({
+                                    access_token: accessToken,
+                                    refresh_token: refreshToken
+                                });
+                                window.location.href = target;
+                                return;
+                            }
+                        }
+
+                        // PKCE code
+                        const code = urlObj.searchParams.get('code');
+                        if (code) {
+                            const { data: sessionData, error } = await supabase.auth.exchangeCodeForSession(code);
+                            if (!error && sessionData?.session) {
+                                window.location.href = target;
+                                return;
+                            }
+                        }
+
+                        window.location.href = target;
+                    } catch (err) {
+                        console.error('Error handling deep link:', err);
+                        window.location.href = '/';
+                    }
                 }
             });
             return () => {

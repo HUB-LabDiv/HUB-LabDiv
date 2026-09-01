@@ -12,6 +12,7 @@
 import React from 'react';
 import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
+import { BlockAccessibilityFields } from './BlockAccessibilityFields';
 
 interface WebPageBlockProps {
     block: Block;
@@ -22,6 +23,8 @@ export default function WebPageBlock({ block, isActive }: WebPageBlockProps) {
     const { updateBlock } = useSubmissionStore();
     const url = block.content.url || '';
     const height = block.content.height || 400;
+    const caption = block.content.caption || '';
+    const altText = block.content.altText || '';
 
     // Convert Drive link to preview link if needed
     const getEmbedUrl = (rawUrl: string) => {
@@ -46,7 +49,7 @@ export default function WebPageBlock({ block, isActive }: WebPageBlockProps) {
                         <input
                             type="text"
                             value={url}
-                            onChange={(e) => updateBlock(block.id, { url: e.target.value, height })}
+                            onChange={(e) => updateBlock(block.id, { url: e.target.value, height, caption, altText })}
                             placeholder="https://..."
                             className="w-full bg-background-dark/40 border border-gray-700/50 rounded-xl px-4 py-3 text-sm outline-none focus:border-brand-blue/50 text-white placeholder-gray-600 transition-colors"
                         />
@@ -62,7 +65,7 @@ export default function WebPageBlock({ block, isActive }: WebPageBlockProps) {
                             max="600"
                             step="50"
                             value={height}
-                            onChange={(e) => updateBlock(block.id, { url, height: parseInt(e.target.value) })}
+                            onChange={(e) => updateBlock(block.id, { url, height: parseInt(e.target.value), caption, altText })}
                             className="w-full accent-brand-blue"
                         />
                     </div>
@@ -74,17 +77,34 @@ export default function WebPageBlock({ block, isActive }: WebPageBlockProps) {
                     <iframe 
                         src={embedUrl} 
                         className="w-full h-full border-0"
-                        title="Embedded Web Page"
+                        title={caption || altText || "Embedded Web Page"}
                         allowFullScreen
                     />
                 </div>
             ) : (
-                <div className="flex flex-col items-center justify-center h-32 text-gray-400 border-2 border-dashed border-brand-blue/30 bg-brand-blue/5 rounded-xl transition-all">
-                    <span className="material-symbols-outlined text-3xl mb-1 text-gray-200">language</span>
-                    <span className="text-sm font-bold text-gray-200">Web Page Vazia</span>
-                    <p className="text-xs mt-1 text-gray-500">Insira a URL para incorporar.</p>
+                <div className="w-full h-32 flex flex-col items-center justify-center text-gray-500 border-2 border-dashed border-gray-800 rounded-xl">
+                    <span className="material-symbols-outlined text-3xl mb-1">web</span>
+                    <span className="text-xs">Nenhuma URL configurada</span>
                 </div>
             )}
+
+            {caption && !isActive && (
+                <p className="text-xs text-gray-400 text-center italic font-sans">
+                    {caption}
+                </p>
+            )}
+
+            <BlockAccessibilityFields
+                caption={caption}
+                altText={altText}
+                onCaptionChange={(val) => updateBlock(block.id, { caption: val })}
+                onAltTextChange={(val) => updateBlock(block.id, { altText: val })}
+                captionLabel="Legenda / Identificação da Página Incorporada"
+                captionPlaceholder="Ex: Ferramenta interativa do laboratório para simulação..."
+                altTextLabel="Texto Alternativo (Acessibilidade)"
+                altTextPlaceholder="Descreva o conteúdo e o objetivo da página web incorporada..."
+                isActive={isActive}
+            />
         </div>
     );
 }

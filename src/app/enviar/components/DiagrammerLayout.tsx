@@ -19,7 +19,8 @@ import { MediaCard } from '@/components/media/MediaCard';
 import { PostDTO } from '@/dtos/media';
 import { CATEGORIES, INSTITUTES } from '@/lib/constants';
 import { getProfileWithPseudonyms } from '@/app/actions/profiles';
-import { createSubmission, updateSubmission, revertSubmissionToDraft } from '@/app/actions/submissions';
+import { createSubmission, updateSubmission, revertSubmissionToDraft, saveDraftForShare } from '@/app/actions/submissions';
+import { ShareDraftModal } from './ShareDraftModal';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { TargetProfileModal } from './TargetProfileModal';
@@ -64,22 +65,49 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
         return [...fluxoErrors, ...arteErrors];
     }, [fluxoErrors, arteErrors]);
 
-    // Função de navegação e rolagem suave até o bloco com erro
+    // Função de navegação e rolagem suave até o bloco com erro com retry e foco
     const scrollToBlock = React.useCallback((blockId: string, tab: 'fluxo' | 'arte' = 'fluxo') => {
+        // 1. Troca para a aba correta se necessário
         if (previewMode !== tab) {
             setPreviewMode(tab);
         }
         setActiveBlock(blockId);
-        setTimeout(() => {
+
+        let attempts = 0;
+        const maxAttempts = 30;
+
+        const executeScroll = () => {
+            attempts++;
             const el = document.getElementById(`block-wrapper-${blockId}`);
-            if (el) {
-                el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                el.classList.add('ring-8', 'ring-brand-red/60');
+            
+            // Garante que o elemento existe e já está renderizado visivelmente no DOM
+            if (el && el.offsetParent !== null) {
+                // Abre o bloco para edição/correção
+                setActiveBlock(blockId);
+
+                // Rolagem suave centralizada única para evitar colisão de animações no Chromium/Opera
+                el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+
+                // Foco no primeiro campo ou botão de upload do bloco
+                const interactive = el.querySelector('button, input, textarea') as HTMLElement | null;
+                if (interactive) {
+                    try {
+                        interactive.focus({ preventScroll: true });
+                    } catch (e) {}
+                }
+
+                // Efeito visual imediato com ring vermelho pulsante
+                el.classList.add('ring-8', 'ring-brand-red', 'animate-pulse');
                 setTimeout(() => {
-                    el.classList.remove('ring-8', 'ring-brand-red/60');
-                }, 2500);
+                    el.classList.remove('ring-8', 'ring-brand-red', 'animate-pulse');
+                }, 3500);
+            } else if (attempts < maxAttempts) {
+                setTimeout(executeScroll, 60);
             }
-        }, 250);
+        };
+
+        // Delay inicial para dar tempo do ciclo de render do React completar a troca de abas
+        setTimeout(executeScroll, 100);
     }, [previewMode, setPreviewMode, setActiveBlock]);
 
     const previewData = React.useMemo(() => {
@@ -130,7 +158,52 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
     const [isGuideModalOpen, setIsGuideModalOpen] = React.useState(false);
     const [isLicenseModalOpen, setIsLicenseModalOpen] = React.useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = React.useState(false);
+    const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
     const fetchedRef = React.useRef(false);
+
+    const handleGenerateSharePreview = async (): Promise<string | null> => {
+        const toastId = toast.loading('Salvando rascunho na nuvem...');
+        try {
+            const reflexoesBlocks = blocks.filter(b => b.type === 'reflection');
+            const reflexoes = reflexoesBlocks.map(b => ({
+                ancora_paragrafo: b.id,
+                pergunta_provocadora: b.content.question || 'Reflexão',
+                tipo_reflexao: 'aberta'
+            }));
+            const quizBlock = blocks.find(b => b.type === 'quiz');
+
+            const payload = {
+                title: title || 'Rascunho Sem Título',
+                authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
+                category: previewMode === 'arte' ? 'Arte' : (category || 'Outros'),
+                institute: (institute && String(institute).trim()) ? String(institute).toLowerCase() : 'ifusp',
+                description: description || stripMarkdownAndLatex(blocks.find(b => b.type === 'text')?.content?.text) || '',
+                media_type: 'sdocx',
+                media_url: JSON.stringify(blocks),
+                quiz: quizBlock ? [quizBlock.content] : undefined,
+                reflexoes: reflexoes.length > 0 ? reflexoes : undefined,
+                docs_link: docsLink || undefined,
+                drive_link: driveLink || undefined,
+                draftId: editId || activeDraftId || undefined
+            };
+
+            const res = await saveDraftForShare(payload);
+            if (res.error) {
+                toast.error(res.error, { id: toastId });
+                return null;
+            }
+
+            toast.success('Rascunho salvo e link de prévia pronto!', { id: toastId });
+            if (res.draftId) {
+                setActiveDraftId(res.draftId);
+            }
+            return res.draftId || null;
+        } catch (err: any) {
+            console.error('Erro ao gerar prévia:', err);
+            toast.error('Erro ao salvar rascunho.', { id: toastId });
+            return null;
+        }
+    };
 
     React.useEffect(() => {
         if (fetchedRef.current) return;
@@ -735,7 +808,12 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                 {allMediaErrors.map((err, i) => (
                                     <button
                                         key={`${err.tab}-${err.blockId}-${i}`}
-                                        onClick={(e) => { e.stopPropagation(); scrollToBlock(err.blockId, err.tab); }}
+                                        type="button"
+                                        onClick={(e) => { 
+                                            e.preventDefault(); 
+                                            e.stopPropagation(); 
+                                            scrollToBlock(err.blockId, err.tab); 
+                                        }}
                                         className="px-3 py-1.5 bg-brand-red/25 hover:bg-brand-red text-white text-xs font-bold rounded-xl transition-all border border-brand-red/50 hover:scale-105 flex items-center gap-1.5 shadow-sm cursor-pointer"
                                         title={`Ir para ${err.label} na aba ${err.tab.toUpperCase()}`}
                                     >
@@ -809,6 +887,31 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                     status: 'published'
                                 } as PostDTO}
                             />
+                        </div>
+
+                        {/* Banner de Ação de Compartilhamento da Prévia */}
+                        <div className="w-full max-w-2xl mx-auto p-5 sm:p-6 bg-white/5 border border-brand-yellow/40 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-md animate-fade-in">
+                            <div className="flex items-center gap-3.5 text-left">
+                                <div className="size-12 rounded-2xl bg-brand-yellow/20 border border-brand-yellow/40 flex items-center justify-center text-brand-yellow shrink-0">
+                                    <span className="material-symbols-outlined text-2xl">share</span>
+                                </div>
+                                <div>
+                                    <h4 className="text-sm font-bukra font-bold text-white uppercase tracking-wide">
+                                        Compartilhar Pré-Visualização
+                                    </h4>
+                                    <p className="text-xs text-gray-400 font-sans mt-0.5">
+                                        Envie o link desta prévia para orientadores, colegas ou revisores antes de publicar no feed.
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setIsShareModalOpen(true)}
+                                className="w-full sm:w-auto px-6 py-3 bg-brand-yellow hover:bg-[#E5B800] text-gray-950 font-bukra font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 shrink-0 hover:scale-105 cursor-pointer"
+                            >
+                                <span className="material-symbols-outlined text-[18px]">link</span>
+                                <span>Gerar Link</span>
+                            </button>
                         </div>
 
                         {previewData.category !== 'Arte' && (
@@ -1588,6 +1691,13 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
 
             {/* Modais */}
             <TargetProfileModal isOpen={isProfileModalOpen} onClose={() => setIsProfileModalOpen(false)} blocks={blocks} />
+            <ShareDraftModal
+                isOpen={isShareModalOpen}
+                onClose={() => setIsShareModalOpen(false)}
+                draftId={editId || activeDraftId}
+                title={title}
+                onSaveAndGenerate={handleGenerateSharePreview}
+            />
         </div>
     );
 }

@@ -15,6 +15,9 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { User } from '@supabase/supabase-js';
+import { Capacitor } from '@capacitor/core';
+import { App as CapacitorApp } from '@capacitor/app';
+import { Browser } from '@capacitor/browser';
 
 interface AuthContextType {
     user: User | null;
@@ -131,7 +134,62 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
         });
 
-        return () => subscription.unsubscribe();
+        // Handler global para deep links no Capacitor
+        let appListener: any = null;
+        if (typeof window !== 'undefined' && Capacitor.isNativePlatform()) {
+            appListener = CapacitorApp.addListener('appUrlOpen', async (data: any) => {
+                if (data.url && (data.url.startsWith('hublabdiv://') || data.url.includes('auth/callback'))) {
+                    try {
+                        await Browser.close();
+                    } catch {}
+
+                    try {
+                        const cleanUrl = data.url.replace('hublabdiv://', 'https://hub-lab-div.vercel.app/');
+                        const urlObj = new URL(cleanUrl);
+                        const rawNext = urlObj.searchParams.get('next') || '/';
+                        const target = (!rawNext || rawNext === '/login' || rawNext.startsWith('/login')) ? '/' : rawNext;
+
+                        if (urlObj.hash && urlObj.hash.includes('access_token')) {
+                            const hashParams = new URLSearchParams(urlObj.hash.replace(/^#/, ''));
+                            const accessToken = hashParams.get('access_token');
+                            const refreshToken = hashParams.get('refresh_token');
+                            if (accessToken && refreshToken) {
+                                await supabase.auth.setSession({
+                                    access_token: accessToken,
+                                    refresh_token: refreshToken
+                                });
+                                await loadAuth();
+                                window.location.href = target;
+                                return;
+                            }
+                        }
+
+                        const code = urlObj.searchParams.get('code');
+                        if (code) {
+                            const { data: sessionData, error } = await supabase.auth.exchangeCodeForSession(code);
+                            if (!error && sessionData?.session) {
+                                await loadAuth();
+                                window.location.href = target;
+                                return;
+                            }
+                        }
+
+                        await loadAuth();
+                        window.location.href = target;
+                    } catch (err) {
+                        console.error('Error in AuthProvider deep link handler:', err);
+                        window.location.href = '/';
+                    }
+                }
+            });
+        }
+
+        return () => {
+            subscription.unsubscribe();
+            if (appListener) {
+                appListener.then((l: any) => l.remove());
+            }
+        };
     }, []);
 
     return (

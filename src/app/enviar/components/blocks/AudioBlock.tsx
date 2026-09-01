@@ -1,10 +1,12 @@
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
  * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
- * * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
+ *
+ * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
  * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
  * publicada pela Free Software Foundation.
- * * Este programa é distribuído na esperança de que seja útil, mas SEM
+ *
+ * Este programa é distribuído na esperança de que seja útil, mas SEM
  * QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
@@ -14,11 +16,14 @@ import { Block } from '@/app/enviar/schema';
 import { useSubmissionStore } from '@/store/useSubmissionStore';
 import { CloudinaryUploader } from './CloudinaryUploader';
 import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
+import { BlockAccessibilityFields } from './BlockAccessibilityFields';
 
 export default function AudioBlock({ block, isActive }: { block: Block; isActive: boolean }) {
     const { updateBlock } = useSubmissionStore();
     const pendingFiles = usePendingUploadsStore((state) => state.pendingFiles);
     const audioUrl = block.content.url || '';
+    const caption = block.content.caption || '';
+    const altText = block.content.altText || '';
 
     const isOrphaned = audioUrl.startsWith('blob:') && !pendingFiles[audioUrl];
 
@@ -26,7 +31,7 @@ export default function AudioBlock({ block, isActive }: { block: Block; isActive
         <div className="flex flex-col gap-4">
             {!audioUrl ? (
                 <div className="w-full min-h-[12rem] border-2 border-dashed border-brand-yellow/30 rounded-xl flex flex-col items-center justify-center text-gray-300 transition-colors bg-brand-yellow/10 p-6">
-                    <span className="material-symbols-outlined text-4xl mb-2">mic</span>
+                    <span className="material-symbols-outlined text-4xl mb-2 text-brand-yellow">mic</span>
                     <span className="text-sm font-medium mb-4">Adicione um Áudio</span>
                     
                     <CloudinaryUploader 
@@ -45,7 +50,7 @@ export default function AudioBlock({ block, isActive }: { block: Block; isActive
                     <input 
                         type="url" 
                         placeholder="Cole o link direto do Áudio, ou link de pasta do Drive (se arquivo > 10MB)..."
-                        className="mt-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-brand-yellow text-white text-sm w-3/4 text-center transition-colors hover:border-brand-yellow/50"
+                        className="mt-4 px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg outline-none focus:border-brand-yellow text-white text-sm w-3/4 text-center transition-colors hover:border-brand-yellow/50 font-sans"
                         value={audioUrl}
                         onChange={(e) => updateBlock(block.id, { url: e.target.value })}
                         onClick={(e) => e.stopPropagation()}
@@ -112,8 +117,27 @@ export default function AudioBlock({ block, isActive }: { block: Block; isActive
                             </div>
                         )}
                     </div>
+
+                    {caption && !isActive && (
+                        <p className="text-xs text-gray-400 text-center italic mt-1 font-sans">
+                            {caption}
+                        </p>
+                    )}
                 </div>
             )}
+
+            {/* Painel Padronizado de Acessibilidade e Transcrição/Legenda para Áudio */}
+            <BlockAccessibilityFields
+                caption={caption}
+                altText={altText}
+                onCaptionChange={(val) => updateBlock(block.id, { caption: val })}
+                onAltTextChange={(val) => updateBlock(block.id, { altText: val })}
+                captionLabel="Legenda / Identificação do Áudio"
+                captionPlaceholder="Ex: Gravação de depoimento do pesquisador sobre a descoberta..."
+                altTextLabel="Transcrição / Descrição de Acessibilidade (Leitores de Tela)"
+                altTextPlaceholder="Forneça um resumo transcrito ou descrição do conteúdo sonoro para pessoas com deficiência auditiva..."
+                isActive={isActive}
+            />
         </div>
     );
 }
