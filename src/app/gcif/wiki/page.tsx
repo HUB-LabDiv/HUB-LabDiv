@@ -11,10 +11,16 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import { redirect } from 'next/navigation';
+import React from 'react';
+import { GcifWikiView } from '@/components/gcif/GcifWikiView';
+
+export const metadata = {
+    title: 'Wiki do IFUSP | Grande Colisor do IF',
+    description: 'O Síncrotron de Conhecimento do IFUSP. Repositório para sobrevivência, ética e divulgação científica.',
+};
 
 export const dynamic = 'force-dynamic';
 
-export default function GcifRootPage() {
-    redirect('/gcif/wiki');
+export default function GcifWikiPage() {
+    return <GcifWikiView />;
 }

@@ -13,25 +13,20 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import React, { useState } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import {
-    Heart,
     ExternalLink,
     ArrowRight,
     Sparkles,
     ShieldCheck,
     Laptop,
-    Code2,
     CheckCircle2,
-    Users,
     Layers,
     BookOpen
 } from 'lucide-react';
 import { AcademicSoftware } from '@/types/softwares';
-import { toggleSoftwareUpvote } from '@/app/actions/softwares';
-import { toast } from 'react-hot-toast';
 
 interface SoftwareCardProps {
     software: AcademicSoftware;
@@ -39,49 +34,6 @@ interface SoftwareCardProps {
 }
 
 export function SoftwareCard({ software, currentUserId }: SoftwareCardProps) {
-    const [upvoted, setUpvoted] = useState(software.has_upvoted ?? false);
-    const [upvotesCount, setUpvotesCount] = useState(software.upvotes_count || 0);
-    const [isLiking, setIsLiking] = useState(false);
-
-    const handleUpvote = async (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-
-        if (!currentUserId) {
-            toast.error('Faça login para curtir softwares!');
-            return;
-        }
-
-        if (isLiking) return;
-        setIsLiking(true);
-
-        const previousUpvoted = upvoted;
-        const previousCount = upvotesCount;
-
-        // Optimistic UI
-        setUpvoted(!previousUpvoted);
-        setUpvotesCount(previousUpvoted ? previousCount - 1 : previousCount + 1);
-
-        try {
-            const res = await toggleSoftwareUpvote(software.id);
-            if (!res.success) {
-                setUpvoted(previousUpvoted);
-                setUpvotesCount(previousCount);
-                toast.error(res.error || 'Erro ao curtir software.');
-            } else {
-                if (res.upvoted) {
-                    toast.success('Adicionado aos favoritos!', { icon: '❤️' });
-                }
-            }
-        } catch {
-            setUpvoted(previousUpvoted);
-            setUpvotesCount(previousCount);
-            toast.error('Erro de conexão ao curtir.');
-        } finally {
-            setIsLiking(false);
-        }
-    };
-
     const isComunitario = software.software_type === 'comunitario';
 
     return (
@@ -106,7 +58,7 @@ export function SoftwareCard({ software, currentUserId }: SoftwareCardProps) {
             )}
 
             <div>
-                {/* Header: Badges & Upvote */}
+                {/* Header: Badges */}
                 <div className="flex items-start justify-between gap-3 mb-4">
                     <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
                         {isComunitario ? (
@@ -125,22 +77,6 @@ export function SoftwareCard({ software, currentUserId }: SoftwareCardProps) {
                             {software.category}
                         </span>
                     </div>
-
-                    <button
-                        onClick={handleUpvote}
-                        disabled={isLiking}
-                        className={`
-                            flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold transition-all duration-200
-                            ${upvoted
-                                ? 'bg-brand-red/20 text-brand-red border border-brand-red/40 shadow-sm shadow-brand-red/20 scale-105'
-                                : 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border border-white/10'
-                            }
-                        `}
-                        title="Curtir e salvar nos favoritos"
-                    >
-                        <Heart className={`w-3.5 h-3.5 transition-transform ${upvoted ? 'fill-brand-red text-brand-red' : ''}`} />
-                        <span>{upvotesCount}</span>
-                    </button>
                 </div>
 
                 {/* Title & Author */}

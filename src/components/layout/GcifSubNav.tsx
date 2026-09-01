@@ -3,33 +3,29 @@
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
  * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
- * * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
+ *
+ * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
  * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
  * publicada pela Free Software Foundation.
- * * Este programa é distribuído na esperança de que seja útil, mas SEM
+ *
+ * Este programa é distribuído na esperança de que seja útil, mas SEM
  * QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Calendar, Route, UserSearch, BookOpen, Laptop, ChevronLeft, ChevronRight } from 'lucide-react';
+import { BookOpen, Landmark, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useNavigationStore } from '@/store/useNavigationStore';
 
-interface ToolsSubNavProps {
-    hasSoftwaresAccess?: boolean;
-}
-
-const baseTools = [
-    { name: 'Grade Horária', href: '/ferramentas', icon: Calendar, exact: true },
-    { name: 'Trilhas', href: '/ferramentas/trilhas', icon: Route, exact: false },
-    { name: 'Match Acadêmico', href: '/ferramentas/match', icon: UserSearch, exact: true },
-    { name: 'Central de Anotações', href: '/ferramentas/anotacoes', icon: BookOpen, exact: false },
+const gcifTabs = [
+    { name: 'Wiki', href: '/gcif/wiki', icon: BookOpen },
+    { name: 'Instituto', href: '/gcif/instituto', icon: Landmark },
+    { name: 'Interativo', href: '/gcif/interativo', icon: Sparkles },
 ];
 
-export function ToolsSubNav({ hasSoftwaresAccess = false }: ToolsSubNavProps) {
+export function GcifSubNav() {
     const pathname = usePathname();
     const { isSidebarCollapsed } = useNavigationStore();
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -37,16 +33,9 @@ export function ToolsSubNav({ hasSoftwaresAccess = false }: ToolsSubNavProps) {
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
 
-    const tools = hasSoftwaresAccess
-        ? [
-            ...baseTools,
-            { name: 'Softwares', href: '/ferramentas/softwares', icon: Laptop, exact: false }
-        ]
-        : baseTools;
-
-    const isActive = (href: string, exact: boolean) => {
-        if (exact) return pathname === href;
-        return pathname.startsWith(href);
+    const isActive = (href: string) => {
+        if (pathname === '/gcif' && href === '/gcif/wiki') return true;
+        return pathname === href || pathname.startsWith(href + '/');
     };
 
     const checkScroll = useCallback(() => {
@@ -70,7 +59,7 @@ export function ToolsSubNav({ hasSoftwaresAccess = false }: ToolsSubNavProps) {
             el.removeEventListener('scroll', checkScroll);
             window.removeEventListener('resize', checkScroll);
         };
-    }, [checkScroll, tools]);
+    }, [checkScroll]);
 
     // Auto-scroll para centralizar a aba ativa em telas menores
     useEffect(() => {
@@ -124,15 +113,15 @@ export function ToolsSubNav({ hasSoftwaresAccess = false }: ToolsSubNavProps) {
                         ref={scrollContainerRef}
                         className="flex gap-1.5 sm:gap-2 p-1 bg-white/80 dark:bg-[#1e1e1e]/80 backdrop-blur-xl border border-gray-200 dark:border-white/10 rounded-[20px] w-fit overflow-x-auto scrollbar-hide max-w-full shadow-lg scroll-smooth"
                     >
-                        {tools.map((tool) => {
-                            const active = isActive(tool.href, tool.exact);
+                        {gcifTabs.map((tab) => {
+                            const active = isActive(tab.href);
                             return (
                                 <Link
-                                    key={tool.href}
+                                    key={tab.href}
                                     ref={active ? activeTabRef : null}
-                                    href={tool.href}
+                                    href={tab.href}
                                     className={`
-                                        flex items-center gap-1.5 sm:gap-2 px-2.5 py-1.5 sm:px-4 sm:py-2.5 rounded-[16px] text-[8px] sm:text-[9px] font-black uppercase tracking-widest
+                                        flex items-center gap-1.5 sm:gap-2.5 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-[16px] text-[8px] sm:text-[9px] font-black uppercase tracking-widest
                                         transition-all duration-300 whitespace-nowrap shrink-0
                                         ${active
                                             ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20'
@@ -140,14 +129,14 @@ export function ToolsSubNav({ hasSoftwaresAccess = false }: ToolsSubNavProps) {
                                         }
                                     `}
                                 >
-                                    <tool.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                                    <span>{tool.name}</span>
+                                    <tab.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                    <span>{tab.name}</span>
                                 </Link>
                             );
                         })}
                     </div>
 
-                    {/* Right Scroll Arrow with Indicator */}
+                    {/* Right Scroll Arrow */}
                     {canScrollRight && (
                         <button
                             onClick={handleScrollRight}
@@ -163,5 +152,3 @@ export function ToolsSubNav({ hasSoftwaresAccess = false }: ToolsSubNavProps) {
         </nav>
     );
 }
-
-

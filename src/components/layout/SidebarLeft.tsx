@@ -124,7 +124,7 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
             <nav className={`flex flex-col gap-1 ${isSidebarCollapsed ? 'items-center' : ''}`}>
                 {/* Main Links - Rendered instantly (SSR Friendly) */}
                 {mainLinks.map((link) => {
-                    const isActive = pathname === link.href;
+                    const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
                     const c = colorMap[link.color] || colorMap['brand-blue'];
                     return (
                         <Link
