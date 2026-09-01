@@ -14,6 +14,7 @@ import { redirect } from 'next/navigation';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { ToolsSubNav } from '@/components/layout/ToolsSubNav';
 import { SwipeWrapper } from '@/components/layout/SwipeWrapper';
+import { isUserAllowedSoftwaresTab } from '@/constants/softwares';
 
 export default async function FerramentasLayout({ children }: { children: React.ReactNode }) {
     const supabase = await createServerSupabase();
@@ -23,14 +24,24 @@ export default async function FerramentasLayout({ children }: { children: React.
         redirect('/login');
     }
 
+    const hasSoftwaresAccess = isUserAllowedSoftwaresTab(user.id);
+
+    const routes = [
+        '/ferramentas',
+        '/ferramentas/trilhas',
+        '/ferramentas/match',
+        '/ferramentas/anotacoes',
+        ...(hasSoftwaresAccess ? ['/ferramentas/softwares'] : [])
+    ];
+
     return (
         <MainLayoutWrapper
             userId={user.id}
             fullWidth={true}
         >
-            <SwipeWrapper routes={['/ferramentas', '/ferramentas/trilhas', '/ferramentas/match', '/ferramentas/anotacoes']}>
+            <SwipeWrapper routes={routes}>
                 <div className="py-8 w-full px-4 lg:px-8 flex-1">
-                    <ToolsSubNav />
+                    <ToolsSubNav hasSoftwaresAccess={hasSoftwaresAccess} />
                     {children}
                 </div>
             </SwipeWrapper>
