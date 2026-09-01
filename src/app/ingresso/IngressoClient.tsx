@@ -43,7 +43,7 @@ const IngressOption = ({ title, icon, description, items, color }: any) => (
 export default function IngressoClient({ profile }: { profile: any }) {
     return (
         <div className="space-y-16 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            <header className="max-w-3xl mx-auto text-center space-y-4">
+            <header data-tour="ingresso-header" className="max-w-3xl mx-auto text-center space-y-4">
                 <div className="inline-flex items-center gap-2 px-3 py-1 bg-brand-blue/10 rounded-full border border-brand-blue/20 mb-4 scale-90">
                     <Sparkles className="w-3 h-3 text-brand-blue" />
                     <span className="text-[9px] font-black text-brand-blue uppercase tracking-widest">Portal do Curioso</span>
@@ -56,7 +56,7 @@ export default function IngressoClient({ profile }: { profile: any }) {
                 </p>
             </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div data-tour="ingresso-portas" className="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <IngressOption 
                         title="Graduação"
                         icon={<BookOpen className="w-8 h-8 text-brand-blue" />}
@@ -80,7 +80,7 @@ export default function IngressoClient({ profile }: { profile: any }) {
                     />
                 </div>
 
-                <div className="glass-card rounded-[40px] border border-white/5 p-8 md:p-12 relative overflow-hidden group">
+                <div data-tour="ingresso-faq" className="glass-card rounded-[40px] border border-white/5 p-8 md:p-12 relative overflow-hidden group">
                     <div className="absolute top-0 right-0 w-96 h-96 bg-brand-blue/5 rounded-full blur-3xl -mr-48 -mt-48 transition-all group-hover:bg-brand-blue/10 duration-700"></div>
                     <div className="relative z-10 flex flex-col items-center gap-12 w-full">
                         <div className="w-full space-y-6">

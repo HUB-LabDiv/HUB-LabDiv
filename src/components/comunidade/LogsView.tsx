@@ -159,7 +159,7 @@ export function LogsView() {
 
     return (
         <div className="max-w-4xl mx-auto space-y-12 pb-20 pt-8">
-            <div className="flex flex-col gap-3 relative mb-6">
+            <div data-tour="logs-header" className="flex flex-col gap-3 relative mb-6">
                 <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-red/5 rounded-full blur-[60px] pointer-events-none"></div>
                 <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-red flex items-center gap-4 relative z-10">
                     <FilePenLine className="w-12 h-12" />
@@ -170,7 +170,7 @@ export function LogsView() {
                 </p>
             </div>
 
-            <form onSubmit={handleSubmit} className="relative glass-card p-8 rounded-[40px] border-brand-red/10 bg-gradient-to-br from-brand-red/10 via-transparent to-transparent shadow-2xl overflow-hidden group">
+            <form data-tour="logs-form" onSubmit={handleSubmit} className="relative glass-card p-8 rounded-[40px] border-brand-red/10 bg-gradient-to-br from-brand-red/10 via-transparent to-transparent shadow-2xl overflow-hidden group">
                 <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                     <Hash size={80} />
                 </div>
@@ -197,7 +197,7 @@ export function LogsView() {
                 </div>
             </form>
 
-            <div className="space-y-12">
+            <div data-tour="logs-feed" className="space-y-12">
                 {featuredDrops.length > 0 && (
                     <FeedSection title="Logs Destacados" icon={<Star className="w-4 h-4 fill-yellow-500" />} color="yellow">
                         {featuredDrops.map(drop => <ThreadNode key={drop.id} drop={drop} level={0} onRefresh={fetchDrops} setIsSyncing={setIsSyncing} />)}

@@ -455,4 +455,37 @@ ON CONFLICT (slug) DO UPDATE SET
     is_featured = EXCLUDED.is_featured,
     updated_at = timezone('utc'::text, now());
 
+-- ==============================================================================
+-- 10. Mural Comunitário de Oportunidades (GCIF Interativo)
+-- ==============================================================================
 
+CREATE TABLE IF NOT EXISTS public.oportunidades (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    titulo TEXT NOT NULL,
+    descricao TEXT NOT NULL,
+    tipo TEXT NOT NULL DEFAULT 'vaga', -- 'vaga', 'palestra', 'evento', 'bolsa'
+    data TEXT,
+    local TEXT,
+    link TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.oportunidades ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Oportunidades são públicas para leitura" ON public.oportunidades;
+CREATE POLICY "Oportunidades são públicas para leitura"
+    ON public.oportunidades FOR SELECT
+    TO public
+    USING (true);
+
+DROP POLICY IF EXISTS "Qualquer usuário pode submeter oportunidades" ON public.oportunidades;
+CREATE POLICY "Qualquer usuário pode submeter oportunidades"
+    ON public.oportunidades FOR INSERT
+    TO authenticated
+    WITH CHECK (true);
+
+DROP POLICY IF EXISTS "Admins podem gerenciar oportunidades" ON public.oportunidades;
+CREATE POLICY "Admins podem gerenciar oportunidades"
+    ON public.oportunidades FOR ALL
+    TO authenticated
+    USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('admin', 'moderator')));

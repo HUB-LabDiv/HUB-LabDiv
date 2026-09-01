@@ -104,7 +104,7 @@ export function GcifWikiView() {
             </div>
 
             {/* Wiki Matrix Grid (Síncrotron) */}
-            <div className="space-y-6">
+            <div data-tour="gcif-wiki-sincrotron" className="space-y-6">
                 <div className="flex items-center justify-between">
                     <h2 className="text-xl sm:text-2xl font-black text-white font-bukra flex items-center gap-2">
                         <Atom className="w-6 h-6 text-brand-blue" />
@@ -192,7 +192,7 @@ export function GcifWikiView() {
             </div>
 
             {/* Banners em Destaque: IFUSP 101 & Como Pesquisar */}
-            <div className="space-y-6 pt-6 border-t border-white/10">
+            <div data-tour="gcif-wiki-guias" className="space-y-6 pt-6 border-t border-white/10">
                 <div>
                     <h2 className="text-xl sm:text-2xl font-black text-white font-bukra flex items-center gap-2">
                         <ShieldCheck className="w-6 h-6 text-brand-yellow" />

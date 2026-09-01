@@ -129,6 +129,7 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
 
             {/* 1. Card / Hub do Instituto de Física */}
             <motion.div
+                data-tour="gcif-instituto-card"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -162,7 +163,7 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
             </motion.div>
 
             {/* 2. Iniciativas de Impacto */}
-            <div className="space-y-6">
+            <div data-tour="gcif-instituto-iniciativas" className="space-y-6">
                 <NetflixFeed 
                     title="Iniciativas de Impacto" 
                     icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><ColisorIcon size={20} animate={false} /></div>}
@@ -242,7 +243,7 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
             </div>
 
             {/* 3. Espaços do IF */}
-            <div className="space-y-6">
+            <div data-tour="gcif-instituto-espacos" className="space-y-6">
                 <NetflixFeed 
                     title="Espaços de Convivência & Criação" 
                     icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><Info className="w-5 h-5" /></div>}
@@ -312,7 +313,7 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
             </div>
 
             {/* 4. Influenciadores do IF */}
-            <div className="space-y-6">
+            <div data-tour="gcif-instituto-influenciadores" className="space-y-6">
                 <NetflixFeed 
                     title="Canais de Divulgação" 
                     icon={<div className="p-2 bg-brand-red/10 rounded-xl text-brand-red"><Sparkles className="w-5 h-5" /></div>}
@@ -336,7 +337,7 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
             </div>
 
             {/* 5. Campus Interativo & Mapa */}
-            <div className="space-y-6">
+            <div data-tour="gcif-instituto-mapa" className="space-y-6">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-brand-blue/10 rounded-2xl text-brand-blue">
                         <MapPin className="w-6 h-6" />

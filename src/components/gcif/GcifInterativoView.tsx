@@ -61,7 +61,7 @@ export function GcifInterativoView({ oportunidades, glossario }: GcifInterativoV
             </div>
 
             {/* 1. Oportunidades Ativas */}
-            <div className="space-y-6">
+            <div data-tour="gcif-interativo-oportunidades" className="space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-4">
                         <div className="p-3 bg-brand-red/10 rounded-2xl text-brand-red">
@@ -148,6 +148,7 @@ export function GcifInterativoView({ oportunidades, glossario }: GcifInterativoV
 
             {/* 2. Teste de Radiação (Quiz) Banner */}
             <motion.div
+                data-tour="gcif-interativo-quiz"
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
@@ -181,12 +182,12 @@ export function GcifInterativoView({ oportunidades, glossario }: GcifInterativoV
             </motion.div>
 
             {/* 3. SAC (Serviço de Atendimento / Canal de Suporte) */}
-            <div className="pt-6 border-t border-white/10">
+            <div data-tour="gcif-interativo-sac" className="pt-6 border-t border-white/10">
                 <SacSection />
             </div>
 
             {/* 4. Glossário Translacional & Constelações Linguísticas */}
-            <div className="pt-6 border-t border-white/10">
+            <div data-tour="gcif-interativo-glossario" className="pt-6 border-t border-white/10">
                 {glossario && glossario.length > 0 ? (
                     <ConstelacoesLinguisticas glossario={glossario} />
                 ) : (

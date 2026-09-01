@@ -87,6 +87,7 @@ export function GcifSubNav() {
 
     return (
         <nav 
+            data-tour="gcif-subnav"
             className="w-full mb-6 sticky z-40 py-2 pointer-events-none"
             style={{ top: 'calc(4rem + env(safe-area-inset-top, 0px))' }}
         >
@@ -115,11 +116,13 @@ export function GcifSubNav() {
                     >
                         {gcifTabs.map((tab) => {
                             const active = isActive(tab.href);
+                            const tabTourKey = tab.href.split('/').pop();
                             return (
                                 <Link
                                     key={tab.href}
                                     ref={active ? activeTabRef : null}
                                     href={tab.href}
+                                    data-tour={`gcif-tab-${tabTourKey}`}
                                     className={`
                                         flex items-center gap-1.5 sm:gap-2.5 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-[16px] text-[8px] sm:text-[9px] font-black uppercase tracking-widest
                                         transition-all duration-300 whitespace-nowrap shrink-0

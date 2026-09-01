@@ -169,7 +169,7 @@ export default function ConfigPage() {
         <MainLayoutWrapper userId={user?.id}>
             <div {...swipeHandlers} className="max-w-3xl mx-auto p-4 md:p-8 space-y-10 animate-in fade-in slide-in-from-top-4 duration-500">
                 {/* 1. SWITCH DE ABA */}
-                <div className="flex flex-wrap justify-center sm:justify-start gap-2 p-1 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[24px] mb-6 w-fit mx-auto sm:mx-0">
+                <div data-tour="config-subnav" className="flex flex-wrap justify-center sm:justify-start gap-2 p-1 bg-white/5 backdrop-blur-xl border border-white/10 rounded-[24px] mb-6 w-fit mx-auto sm:mx-0">
                     <button
                         onClick={() => setActiveTab('gerais')}
                         className={`flex items-center gap-2.5 px-6 py-3 rounded-[20px] text-[10px] font-black uppercase tracking-widest transition-all ${
@@ -225,7 +225,7 @@ export default function ConfigPage() {
                 {activeTab === 'gerais' && (
                     <div className="space-y-10 animate-in fade-in duration-500">
                         {/* SEÇÃO 1: INTERFACE DO USUÁRIO */}
-                        <section className="bg-brand-blue/5 border border-brand-blue/10 rounded-2xl overflow-hidden p-6 md:p-8 space-y-6">
+                        <section data-tour="config-interface" className="bg-brand-blue/5 border border-brand-blue/10 rounded-2xl overflow-hidden p-6 md:p-8 space-y-6">
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2 text-brand-blue">
                                     <Sparkles size={22} className="text-brand-blue animate-pulse" />
@@ -463,7 +463,7 @@ export default function ConfigPage() {
                         </section>
 
                         {/* SEÇÃO 2: IDENTIDADE INSTITUCIONAL */}
-                        <section className="bg-[#1E1E1E] border border-white/5 rounded-2xl p-6 md:p-8 space-y-6">
+                        <section data-tour="config-instituto" className="bg-[#1E1E1E] border border-white/5 rounded-2xl p-6 md:p-8 space-y-6">
                             <div className="space-y-1">
                                 <div className="flex items-center gap-2 text-brand-blue">
                                     <Palette size={22} />
@@ -635,7 +635,7 @@ export default function ConfigPage() {
 
                 {/* ABA 2: ARMAZENAMENTO & CACHE */}
                 {activeTab === 'armazenamento' && (
-                    <div className="space-y-10 animate-in fade-in duration-500">
+                    <div data-tour="config-cache" className="space-y-10 animate-in fade-in duration-500">
                         <CacheManager />
                     </div>
                 )}
@@ -693,7 +693,7 @@ export default function ConfigPage() {
                         </section>
 
                         {/* SEÇÃO 1: PORTABILIDADE DE DADOS */}
-                        <section className="bg-[#1E1E1E] border border-white/5 rounded-2xl overflow-hidden">
+                        <section data-tour="config-takeout" className="bg-[#1E1E1E] border border-white/5 rounded-2xl overflow-hidden">
                             <div className="p-6 md:p-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
                                 <div className="space-y-2 max-w-md">
                                     <div className="flex items-center gap-2 text-brand-yellow">
@@ -716,7 +716,7 @@ export default function ConfigPage() {
                         </section>
 
                         {/* SEÇÃO 2: GERENCIAMENTO DE DADOS E CONTA */}
-                        <section className="bg-red-500/5 border border-red-500/10 rounded-2xl overflow-hidden p-6 md:p-8 space-y-6">
+                        <section data-tour="config-danger" className="bg-red-500/5 border border-red-500/10 rounded-2xl overflow-hidden p-6 md:p-8 space-y-6">
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-brand-red">
                                     <Trash2 size={20} />

@@ -523,7 +523,7 @@ export const HomeClientView = ({
                         transition={{ duration: 0.4 }}
                     >
                         {activeTab === 'arte' && (
-                            <div className="w-full mb-8 text-left space-y-8">
+                            <div data-tour="arte-header" className="w-full mb-8 text-left space-y-8">
                                 <div className="flex flex-col gap-3 relative mb-8">
                                     <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-yellow/5 rounded-full blur-[60px] pointer-events-none"></div>
                                     <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-yellow flex items-center gap-4 relative z-10">
@@ -538,7 +538,7 @@ export const HomeClientView = ({
                         )}
 
                         {activeTab === 'fluxo' && (
-                            <div className="w-full mb-8 text-left space-y-8">
+                            <div data-tour="fluxo-header" className="w-full mb-8 text-left space-y-8">
                                 <div className="flex flex-col gap-3 relative mb-8 outline-none focus:outline-none">
                                     <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-blue/5 rounded-full blur-[60px] pointer-events-none"></div>
                                     <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-blue flex items-center gap-4 relative z-10 outline-none focus:outline-none">

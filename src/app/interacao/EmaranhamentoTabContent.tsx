@@ -280,14 +280,14 @@ export function EmaranhamentoTabContent() {
         return (
             <div className="space-y-12 pb-20">
                 {/* Search & Intro */}
-                <div className="flex flex-col items-center text-center max-w-lg mx-auto">
+                <div data-tour="emaranhamento-header" className="flex flex-col items-center text-center max-w-lg mx-auto">
                     <div className="size-16 rounded-full bg-brand-blue/10 flex items-center justify-center mb-6 shadow-2xl shadow-brand-blue/10 border border-brand-blue/20">
                         <span className="material-symbols-outlined text-4xl text-brand-blue">hub</span>
                     </div>
                     <h2 className="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tighter mb-2">Nexus de Emaranhamento</h2>
                     <p className="text-[10px] text-gray-500 uppercase tracking-[0.2em] leading-relaxed max-w-xs">Inicie conexões síncronas entre membros da rede Lab-Div.</p>
                     
-                    <div className="w-full mt-10 relative group">
+                    <div data-tour="emaranhamento-busca" className="w-full mt-10 relative group">
                          <Search className="absolute left-5 top-1/2 -translate-y-1/2 size-4 text-gray-500 group-focus-within:text-brand-blue transition-colors" />
                          <input 
                             value={searchQuery} 

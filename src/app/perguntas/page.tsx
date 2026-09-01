@@ -125,7 +125,7 @@ export default function PerguntasPage() {
         <>
             <MainLayoutWrapper>
                 {/* Page Header */}
-                <div className="flex flex-col md:flex-row md:items-end justify-between mb-12 border-b border-gray-200 dark:border-gray-800 pb-6 gap-6">
+                <div data-tour="perguntas-header" className="flex flex-col md:flex-row md:items-end justify-between mb-12 border-b border-gray-200 dark:border-gray-800 pb-6 gap-6">
                     <div className="max-w-3xl">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 dark:bg-brand-blue/20 border border-brand-blue/20 text-brand-blue text-xs font-bold uppercase tracking-wide mb-4">
                             <span className="material-symbols-outlined text-[14px]">quiz</span>
@@ -140,6 +140,7 @@ export default function PerguntasPage() {
                         </p>
                     </div>
                     <button
+                        data-tour="perguntas-btn-enviar"
                         onClick={() => setShowModal(true)}
                         className="group relative overflow-hidden rounded-xl bg-brand-blue hover:bg-brand-darkBlue text-white px-6 py-3.5 font-bold shadow-lg shadow-brand-blue/25 transition-all hover:-translate-y-0.5 flex items-center gap-2 whitespace-nowrap shrink-0"
                     >
@@ -149,59 +150,61 @@ export default function PerguntasPage() {
                 </div>
 
                 {/* Q&A Feed */}
-                {isLoading ? (
-                    <div className="flex flex-col items-center justify-center py-20 text-gray-500 dark:text-gray-400 bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-gray-800">
-                        <span className="material-symbols-outlined text-4xl animate-spin text-brand-blue mb-4">progress_activity</span>
-                        <p className="font-medium animate-pulse">Carregando perguntas respondidas...</p>
-                    </div>
-                ) : perguntas.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-20 text-gray-500 dark:text-gray-400 bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-gray-800">
-                        <span className="material-symbols-outlined text-5xl text-gray-300 dark:text-gray-600 mb-3">forum</span>
-                        <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300">Nenhuma pergunta respondida ainda</h3>
-                        <p className="text-gray-500 mt-2">Seja o primeiro a perguntar! 🧪</p>
-                    </div>
-                ) : (
-                    <div className="space-y-6">
-                        {perguntas.map((p) => (
-                            <div
-                                key={p.id}
-                                className="bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden hover:shadow-lg transition-shadow"
-                            >
-                                {/* Question */}
-                                <div className="p-6 border-b border-gray-100 dark:border-gray-800">
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-10 h-10 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center shrink-0 font-bold text-sm uppercase">
-                                            {p.nome.substring(0, 2)}
-                                        </div>
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className="font-bold text-gray-900 dark:text-white text-sm">{p.nome}</span>
-                                                <span className="text-xs text-gray-400">perguntou</span>
+                <div data-tour="perguntas-feed">
+                    {isLoading ? (
+                        <div className="flex flex-col items-center justify-center py-20 text-gray-500 dark:text-gray-400 bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-gray-800">
+                            <span className="material-symbols-outlined text-4xl animate-spin text-brand-blue mb-4">progress_activity</span>
+                            <p className="font-medium animate-pulse">Carregando perguntas respondidas...</p>
+                        </div>
+                    ) : perguntas.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center py-20 text-gray-500 dark:text-gray-400 bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-gray-800">
+                            <span className="material-symbols-outlined text-5xl text-gray-300 dark:text-gray-600 mb-3">forum</span>
+                            <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300">Nenhuma pergunta respondida ainda</h3>
+                            <p className="text-gray-500 mt-2">Seja o primeiro a perguntar! 🧪</p>
+                        </div>
+                    ) : (
+                        <div className="space-y-6">
+                            {perguntas.map((p) => (
+                                <div
+                                    key={p.id}
+                                    className="bg-white dark:bg-card-dark rounded-2xl border border-gray-100 dark:border-gray-800 shadow-sm overflow-hidden hover:shadow-lg transition-shadow"
+                                >
+                                    {/* Question */}
+                                    <div className="p-6 border-b border-gray-100 dark:border-gray-800">
+                                        <div className="flex items-start gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-brand-blue/10 text-brand-blue flex items-center justify-center shrink-0 font-bold text-sm uppercase">
+                                                {p.nome.substring(0, 2)}
                                             </div>
-                                            <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{p.pergunta}</p>
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="font-bold text-gray-900 dark:text-white text-sm">{p.nome}</span>
+                                                    <span className="text-xs text-gray-400">perguntou</span>
+                                                </div>
+                                                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{p.pergunta}</p>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
 
-                                {/* Answer */}
-                                <div className="p-6 bg-brand-blue/5 dark:bg-brand-blue/10">
-                                    <div className="flex items-start gap-4">
-                                        <div className="w-10 h-10 rounded-full bg-brand-yellow/20 text-brand-yellow flex items-center justify-center shrink-0">
-                                            <span className="material-symbols-outlined text-xl">science</span>
-                                        </div>
-                                        <div className="flex-1">
-                                            <div className="flex items-center gap-2 mb-1">
-                                                <span className="font-bold text-gray-900 dark:text-white text-sm">{p.respondido_por || 'Cientista IF-USP'}</span>
-                                                <span className="px-2 py-0.5 bg-brand-blue/10 text-brand-blue rounded-full text-[10px] font-bold uppercase tracking-wider">Resposta</span>
+                                    {/* Answer */}
+                                    <div className="p-6 bg-brand-blue/5 dark:bg-brand-blue/10">
+                                        <div className="flex items-start gap-4">
+                                            <div className="w-10 h-10 rounded-full bg-brand-yellow/20 text-brand-yellow flex items-center justify-center shrink-0">
+                                                <span className="material-symbols-outlined text-xl">science</span>
                                             </div>
-                                            <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{p.resposta}</p>
+                                            <div className="flex-1">
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="font-bold text-gray-900 dark:text-white text-sm">{p.respondido_por || 'Cientista IF-USP'}</span>
+                                                    <span className="px-2 py-0.5 bg-brand-blue/10 text-brand-blue rounded-full text-[10px] font-bold uppercase tracking-wider">Resposta</span>
+                                                </div>
+                                                <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">{p.resposta}</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))}
-                    </div>
-                )}
+                            ))}
+                        </div>
+                    )}
+                </div>
             </MainLayoutWrapper>
             {/* Submit Question Modal */}
             {

@@ -159,7 +159,7 @@ export function LabClientView({
             userId={currentUser.id}
         >
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-                <div className="bg-white dark:bg-background-dark rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-800 mb-8">
+                <div data-tour="lab-profile-header" className="bg-white dark:bg-background-dark rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-800 mb-8">
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 sm:gap-12 max-w-3xl mx-auto">
                         <div className="relative shrink-0">
                             <Avatar
@@ -178,7 +178,11 @@ export function LabClientView({
                                 <span className="text-xs font-black uppercase text-brand-blue bg-brand-blue/10 px-2 py-1 rounded">
                                     {viewedProfile?.id === currentUser.id ? 'Laboratório Pessoal' : 'Laboratório Externo'}
                                 </span>
-                                {viewedProfile && <RadiationBadge xp={viewedProfile.xp || 0} level={viewedProfile.level || 1} size="md" showTierName />}
+                                {viewedProfile && (
+                                    <span data-tour="lab-radiation-badge">
+                                        <RadiationBadge xp={viewedProfile.xp || 0} level={viewedProfile.level || 1} size="md" showTierName />
+                                    </span>
+                                )}
                             </h1>
 
                             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-6 pt-1">
@@ -210,7 +214,7 @@ export function LabClientView({
                                 </div>
 
                                 {isViewingOwn ? (
-                                    <div className="flex flex-wrap items-center gap-2 sm:ml-4">
+                                    <div data-tour="lab-actions" className="flex flex-wrap items-center gap-2 sm:ml-4">
                                         <button
                                             onClick={() => setIsEditModalOpen(true)}
                                             className="px-4 py-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
@@ -261,7 +265,7 @@ export function LabClientView({
                                 )}
                             </div>
 
-                            <div className="pt-2 text-sm text-gray-600 dark:text-gray-300 font-medium">
+                            <div data-tour="lab-academic-info" className="pt-2 text-sm text-gray-600 dark:text-gray-300 font-medium">
                                 {isViewingOwn && <p>{currentUser.email}</p>}
                                 <div className="mt-1 flex flex-wrap gap-2">
                                     {topInterest && (
@@ -453,7 +457,7 @@ export function LabClientView({
                     </div>
                 )}
 
-                <div className="flex justify-center border-t border-gray-200 dark:border-gray-800 mb-8 max-w-3xl mx-auto flex-wrap">
+                <div data-tour="lab-subnav" className="flex justify-center border-t border-gray-200 dark:border-gray-800 mb-8 max-w-3xl mx-auto flex-wrap">
                     {[
                         { id: 'fluxo', label: 'FLUXO', icon: <Grid className={`w-4 h-4 ${activeTab === 'fluxo' ? 'text-brand-blue' : ''}`} /> },
                         { id: 'artes', label: 'ARTE', icon: <ImageIcon className={`w-4 h-4 ${activeTab === 'artes' ? 'text-brand-yellow' : ''}`} /> },

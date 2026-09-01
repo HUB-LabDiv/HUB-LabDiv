@@ -13,7 +13,7 @@
 
 import { driver, DriveStep } from 'driver.js';
 import 'driver.js/dist/driver.css';
-import { TourStepConfig, getPageTourInfo, getGlobalTourSteps, UserRoleCategory } from './tour-data';
+import { TourStepConfig, getPageTourInfo, getEixoTourInfo, getGlobalTourSteps, UserRoleCategory } from './tour-data';
 
 function removeScreenGesture() {
     if (typeof document === 'undefined') return;
@@ -140,6 +140,8 @@ export function runCustomTour(steps: TourStepConfig[], onFinish?: () => void) {
 
     if (validSteps.length === 0) return;
 
+    let cleanupKeyHandler: (() => void) | null = null;
+
     const driverObj = driver({
         showProgress: true,
         animate: true,
@@ -150,7 +152,8 @@ export function runCustomTour(steps: TourStepConfig[], onFinish?: () => void) {
         prevBtnText: '← Anterior',
         doneBtnText: 'Concluir ✨',
         showButtons: ['next', 'previous', 'close'],
-        allowClose: false,
+        allowClose: true,
+        allowKeyboardControl: true,
         onHighlightStarted: () => {
             removeScreenGesture();
         },
@@ -159,6 +162,7 @@ export function runCustomTour(steps: TourStepConfig[], onFinish?: () => void) {
         },
         onDestroyStarted: () => {
             removeScreenGesture();
+            if (cleanupKeyHandler) cleanupKeyHandler();
             if (onFinish) onFinish();
             driverObj.destroy();
         },
@@ -185,6 +189,23 @@ export function runCustomTour(steps: TourStepConfig[], onFinish?: () => void) {
         }))
     });
 
+    // Saída rápida com ESC (captura direta e imediata de teclado)
+    const handleKeyDown = (e: KeyboardEvent) => {
+        if (e.key === 'Escape' || e.code === 'Escape') {
+            removeScreenGesture();
+            if (cleanupKeyHandler) cleanupKeyHandler();
+            driverObj.destroy();
+            if (onFinish) onFinish();
+        }
+    };
+
+    cleanupKeyHandler = () => {
+        window.removeEventListener('keydown', handleKeyDown, true);
+        cleanupKeyHandler = null;
+    };
+
+    window.addEventListener('keydown', handleKeyDown, true);
+
     driverObj.drive();
 }
 
@@ -205,9 +226,27 @@ export function runGlobalTour(
     runCustomTour(steps, finishCallback);
 }
 
-export function runPageTour(pathname: string, onFinish?: () => void) {
-    const pageTour = getPageTourInfo(pathname);
-    runCustomTour(pageTour.steps, onFinish);
+export function runEixoTour(pathname: string, onFinish?: () => void) {
+    const eixoTour = getEixoTourInfo(pathname);
+    runCustomTour(eixoTour.steps, onFinish);
+}
+
+export function runPageTour(
+    pathname: string,
+    searchParamsOrOnFinish?: URLSearchParams | null | (() => void),
+    onFinish?: () => void
+) {
+    let searchParams: URLSearchParams | null | undefined;
+    let finishCallback: (() => void) | undefined = onFinish;
+
+    if (typeof searchParamsOrOnFinish === 'function') {
+        finishCallback = searchParamsOrOnFinish;
+    } else {
+        searchParams = searchParamsOrOnFinish;
+    }
+
+    const pageTour = getPageTourInfo(pathname, searchParams);
+    runCustomTour(pageTour.steps, finishCallback);
 }
 
 // Compatibilidade retroativa

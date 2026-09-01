@@ -123,12 +123,13 @@ export function PerguntasTabContent() {
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Header / Action */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-white/5 p-8 rounded-3xl border border-gray-200 dark:border-white/10 shadow-sm dark:shadow-none">
+            <div data-tour="perguntas-header" className="flex flex-col md:flex-row md:items-center justify-between gap-6 bg-white dark:bg-white/5 p-8 rounded-3xl border border-gray-200 dark:border-white/10 shadow-sm dark:shadow-none">
                 <div className="max-w-xl">
                     <h2 className="text-2xl font-black text-gray-900 dark:text-white uppercase tracking-tight mb-2">Pergunte a um <span className="text-brand-blue">Cientista</span></h2>
                     <p className="text-sm text-gray-500 dark:text-gray-400">Tem uma dúvida sobre ciência? Envie sua pergunta e nossos pesquisadores do IF-USP responderão!</p>
                 </div>
                 <button
+                    data-tour="perguntas-btn-enviar"
                     onClick={() => setShowModal(true)}
                     className="px-6 py-4 bg-brand-blue text-white rounded-2xl font-black uppercase text-xs tracking-widest hover:opacity-90 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
                 >
@@ -138,19 +139,20 @@ export function PerguntasTabContent() {
             </div>
 
             {/* Q&A Feed */}
-            {isLoading ? (
-                <div className="flex flex-col items-center justify-center py-20 opacity-50">
-                    <Loader2 className="w-8 h-8 animate-spin text-brand-blue mb-4" />
-                    <p className="text-[10px] uppercase font-black tracking-widest">Acessando banco de dados científico...</p>
-                </div>
-            ) : perguntas.length === 0 ? (
-                <div className="text-center py-20 opacity-40">
-                    <p className="text-xs uppercase font-black tracking-widest italic">Nenhuma pergunta respondida ainda.</p>
-                </div>
-            ) : (
-                <div className="space-y-6">
-                    {perguntas.map((p) => (
-                        <div key={p.id} className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 rounded-3xl overflow-hidden transition-all group shadow-sm dark:shadow-none">
+            <div data-tour="perguntas-feed">
+                {isLoading ? (
+                    <div className="flex flex-col items-center justify-center py-20 opacity-50">
+                        <Loader2 className="w-8 h-8 animate-spin text-brand-blue mb-4" />
+                        <p className="text-[10px] uppercase font-black tracking-widest">Acessando banco de dados científico...</p>
+                    </div>
+                ) : perguntas.length === 0 ? (
+                    <div className="text-center py-20 opacity-40">
+                        <p className="text-xs uppercase font-black tracking-widest italic">Nenhuma pergunta respondida ainda.</p>
+                    </div>
+                ) : (
+                    <div className="space-y-6">
+                        {perguntas.map((p) => (
+                            <div key={p.id} className="bg-white dark:bg-white/5 border border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/10 rounded-3xl overflow-hidden transition-all group shadow-sm dark:shadow-none">
                             {/* Question Container */}
                             <div className="p-8 pb-4">
                                 <div className="flex items-start gap-4">
@@ -185,6 +187,7 @@ export function PerguntasTabContent() {
                     ))}
                 </div>
             )}
+            </div>
 
             {/* Modal */}
             {showModal && (
