@@ -32,6 +32,7 @@ import { uploadFileToCloudinary } from '@/lib/cloudinary-upload';
 import { stripMarkdownAndLatex } from '@/lib/utils';
 import { SdocxHeroImage } from '@/components/reading/SdocxImageBlock';
 import { findBlocksWithMediaErrors, validateBlockMedia, BlockMediaErrorInfo } from '../utils/mediaValidation';
+import { persistPendingUploadsToCloudinary } from '../utils/mediaPersistence';
 
 interface DiagrammerLayoutProps {
     editId?: string | null;
@@ -67,28 +68,33 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
 
     // Função de navegação e rolagem suave até o bloco com erro com retry e foco
     const scrollToBlock = React.useCallback((blockId: string, tab: 'fluxo' | 'arte' = 'fluxo') => {
-        // 1. Troca para a aba correta se necessário
-        if (previewMode !== tab) {
+        // 1. Troca imediatamente para a aba correta se não estiver nela
+        if (useSubmissionStore.getState().previewMode !== tab) {
             setPreviewMode(tab);
         }
         setActiveBlock(blockId);
 
         let attempts = 0;
-        const maxAttempts = 30;
+        const maxAttempts = 35;
 
         const executeScroll = () => {
             attempts++;
             const el = document.getElementById(`block-wrapper-${blockId}`);
             
-            // Garante que o elemento existe e já está renderizado visivelmente no DOM
-            if (el && el.offsetParent !== null) {
-                // Abre o bloco para edição/correção
+            // Garante que o elemento existe e está no DOM
+            if (el && document.body.contains(el)) {
                 setActiveBlock(blockId);
 
-                // Rolagem suave centralizada única para evitar colisão de animações no Chromium/Opera
-                el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+                // Centraliza o bloco na visão imediatamente
+                try {
+                    el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+                } catch {
+                    const rect = el.getBoundingClientRect();
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0;
+                    window.scrollTo({ top: Math.max(0, rect.top + scrollTop - 120), behavior: 'smooth' });
+                }
 
-                // Foco no primeiro campo ou botão de upload do bloco
+                // Foco no primeiro campo ou botão interativo do bloco
                 const interactive = el.querySelector('button, input, textarea') as HTMLElement | null;
                 if (interactive) {
                     try {
@@ -97,18 +103,18 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 }
 
                 // Efeito visual imediato com ring vermelho pulsante
-                el.classList.add('ring-8', 'ring-brand-red', 'animate-pulse');
+                el.classList.add('ring-4', 'ring-brand-red', 'animate-pulse');
                 setTimeout(() => {
-                    el.classList.remove('ring-8', 'ring-brand-red', 'animate-pulse');
+                    el.classList.remove('ring-4', 'ring-brand-red', 'animate-pulse');
                 }, 3500);
             } else if (attempts < maxAttempts) {
-                setTimeout(executeScroll, 60);
+                setTimeout(executeScroll, 50);
             }
         };
 
-        // Delay inicial para dar tempo do ciclo de render do React completar a troca de abas
-        setTimeout(executeScroll, 100);
-    }, [previewMode, setPreviewMode, setActiveBlock]);
+        // Delay para sincronizar com a montagem dos blocos na troca de abas
+        setTimeout(executeScroll, 50);
+    }, [setPreviewMode, setActiveBlock]);
 
     const previewData = React.useMemo(() => {
         if (selectedPreviewId === 'fluxo') {
@@ -159,27 +165,87 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
     const [isLicenseModalOpen, setIsLicenseModalOpen] = React.useState(false);
     const [isProfileModalOpen, setIsProfileModalOpen] = React.useState(false);
     const [isShareModalOpen, setIsShareModalOpen] = React.useState(false);
+    const [isSavingMedia, setIsSavingMedia] = React.useState(false);
     const fetchedRef = React.useRef(false);
 
-    const handleGenerateSharePreview = async (): Promise<string | null> => {
-        const toastId = toast.loading('Salvando rascunho na nuvem...');
+    const handleSaveDraftAndMedia = async () => {
+        setIsSavingMedia(true);
+        const toastId = toast.loading('Salvando mídias no Cloudinary e persistindo rascunho...');
         try {
-            const reflexoesBlocks = blocks.filter(b => b.type === 'reflection');
-            const reflexoes = reflexoesBlocks.map(b => ({
+            const persistRes = await persistPendingUploadsToCloudinary();
+            if (!persistRes.success) {
+                toast.error(persistRes.error || 'Erro ao persistir mídias.', { id: toastId });
+                return;
+            }
+
+            const currentBlocks = persistRes.updatedBlocks;
+            const reflexoesBlocks = currentBlocks.filter((b: any) => b.type === 'reflection');
+            const reflexoes = reflexoesBlocks.map((b: any) => ({
                 ancora_paragrafo: b.id,
-                pergunta_provocadora: b.content.question || 'Reflexão',
+                pergunta_provocadora: b.content?.question || 'Reflexão',
                 tipo_reflexao: 'aberta'
             }));
-            const quizBlock = blocks.find(b => b.type === 'quiz');
+            const quizBlock = currentBlocks.find((b: any) => b.type === 'quiz');
 
             const payload = {
                 title: title || 'Rascunho Sem Título',
                 authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
                 category: previewMode === 'arte' ? 'Arte' : (category || 'Outros'),
                 institute: (institute && String(institute).trim()) ? String(institute).toLowerCase() : 'ifusp',
-                description: description || stripMarkdownAndLatex(blocks.find(b => b.type === 'text')?.content?.text) || '',
+                description: description || stripMarkdownAndLatex(currentBlocks.find((b: any) => b.type === 'text')?.content?.text) || '',
                 media_type: 'sdocx',
-                media_url: JSON.stringify(blocks),
+                media_url: JSON.stringify(currentBlocks),
+                quiz: quizBlock ? [quizBlock.content] : undefined,
+                reflexoes: reflexoes.length > 0 ? reflexoes : undefined,
+                docs_link: docsLink || undefined,
+                drive_link: driveLink || undefined,
+                draftId: editId || activeDraftId || undefined
+            };
+
+            const res = await saveDraftForShare(payload);
+            if (res.error) {
+                toast.error(res.error, { id: toastId });
+                return;
+            }
+
+            if (res.draftId) {
+                setActiveDraftId(res.draftId);
+            }
+
+            const msg = persistRes.uploadedCount > 0 
+                ? `✅ Rascunho e ${persistRes.uploadedCount} mídia(s) salvos no Cloudinary! Suas imagens não vão quebrar.`
+                : `✅ Rascunho salvo com sucesso na nuvem!`;
+            toast.success(msg, { id: toastId, duration: 4000 });
+        } catch (err: any) {
+            console.error('Erro ao salvar rascunho e mídias:', err);
+            toast.error('Erro ao salvar rascunho.', { id: toastId });
+        } finally {
+            setIsSavingMedia(false);
+        }
+    };
+
+    const handleGenerateSharePreview = async (): Promise<string | null> => {
+        const toastId = toast.loading('Sincronizando mídias e rascunho na nuvem...');
+        try {
+            const persistRes = await persistPendingUploadsToCloudinary();
+            const currentBlocks = persistRes.updatedBlocks || blocks;
+
+            const reflexoesBlocks = currentBlocks.filter((b: any) => b.type === 'reflection');
+            const reflexoes = reflexoesBlocks.map((b: any) => ({
+                ancora_paragrafo: b.id,
+                pergunta_provocadora: b.content?.question || 'Reflexão',
+                tipo_reflexao: 'aberta'
+            }));
+            const quizBlock = currentBlocks.find((b: any) => b.type === 'quiz');
+
+            const payload = {
+                title: title || 'Rascunho Sem Título',
+                authors: authors || user?.user_metadata?.full_name || 'Autor(a)',
+                category: previewMode === 'arte' ? 'Arte' : (category || 'Outros'),
+                institute: (institute && String(institute).trim()) ? String(institute).toLowerCase() : 'ifusp',
+                description: description || stripMarkdownAndLatex(currentBlocks.find((b: any) => b.type === 'text')?.content?.text) || '',
+                media_type: 'sdocx',
+                media_url: JSON.stringify(currentBlocks),
                 quiz: quizBlock ? [quizBlock.content] : undefined,
                 reflexoes: reflexoes.length > 0 ? reflexoes : undefined,
                 docs_link: docsLink || undefined,
@@ -193,7 +259,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                 return null;
             }
 
-            toast.success('Rascunho salvo e link de prévia pronto!', { id: toastId });
+            toast.success('Rascunho e mídias salvos! Link de prévia pronto.', { id: toastId });
             if (res.draftId) {
                 setActiveDraftId(res.draftId);
             }
@@ -834,31 +900,36 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                   Mostra Miniatura no topo + Página Completa logo abaixo 
                 */}
                     {/* Preview Content */}
-                    <div className={`flex-col gap-16 w-full max-w-4xl mx-auto items-center animate-fade-in-up ${previewMode === 'preview' ? 'flex' : 'hidden'} overflow-y-auto custom-scrollbar pb-32`}>
-                        {/* Seletor de Preview */}
-                        <div className="w-fit flex items-center justify-center gap-2 mb-4 bg-background-dark/80 backdrop-blur-md p-2 rounded-2xl border border-white/5 mx-auto shadow-lg">
-                            
-                            <button
-                                onClick={() => setSelectedPreviewId('fluxo')}
-                                className={`px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all ${selectedPreviewId === 'fluxo' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
-                            >
-                                Fluxo Atual
-                            </button>
-                            <button
-                                onClick={() => setSelectedPreviewId('arte')}
-                                className={`px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all ${selectedPreviewId === 'arte' ? 'bg-brand-yellow text-gray-900 shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
-                            >
-                                Arte Atual
-                            </button>
-                            {drafts.length > 0 && drafts.map(d => (
+                    <div className={`flex-col gap-10 w-full max-w-4xl mx-auto items-center animate-fade-in-up ${previewMode === 'preview' ? 'flex' : 'hidden'} overflow-y-auto custom-scrollbar pb-32`}>
+                        {/* Seletor de Preview & Rascunhos */}
+                        <div className="w-full max-w-3xl flex flex-col items-center gap-3 mb-2">
+                            <div className="w-full flex flex-wrap items-center justify-center gap-2 bg-background-dark/90 backdrop-blur-md p-2.5 rounded-2xl border border-white/10 shadow-lg">
                                 <button
-                                    key={d.id}
-                                    onClick={() => setSelectedPreviewId(d.id)}
-                                    className={`px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all ${selectedPreviewId === d.id ? 'bg-brand-red text-white shadow-md' : 'text-gray-500 hover:text-gray-300'}`}
+                                    onClick={() => setSelectedPreviewId('fluxo')}
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all flex items-center gap-1.5 ${selectedPreviewId === 'fluxo' ? 'bg-brand-blue text-white shadow-md' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                                 >
-                                    Rascunho: {d.title.slice(0, 15)}...
+                                    <span className="size-2 rounded-full bg-brand-blue-accent" />
+                                    <span>Fluxo Atual</span>
                                 </button>
-                            ))}
+                                <button
+                                    onClick={() => setSelectedPreviewId('arte')}
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all flex items-center gap-1.5 ${selectedPreviewId === 'arte' ? 'bg-brand-yellow text-gray-900 shadow-md' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                                >
+                                    <span className="size-2 rounded-full bg-brand-yellow" />
+                                    <span>Arte Atual</span>
+                                </button>
+                                {drafts.length > 0 && drafts.map((d, idx) => (
+                                    <button
+                                        key={d.id}
+                                        onClick={() => setSelectedPreviewId(d.id)}
+                                        className={`px-3.5 py-2 rounded-xl text-xs font-bold uppercase transition-all flex items-center gap-1.5 ${selectedPreviewId === d.id ? 'bg-brand-red text-white shadow-md' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                                        title={d.title || `Rascunho ${idx + 1}`}
+                                    >
+                                        <span className="material-symbols-outlined text-[14px]">drafts</span>
+                                        <span>Rascunho #{idx + 1}: {d.title ? (d.title.length > 12 ? d.title.slice(0, 12) + '...' : d.title) : 'Sem título'}</span>
+                                    </button>
+                                ))}
+                            </div>
                         </div>
 
                         {/* Miniatura do Feed (Card Real Renderizado com Mock) */}
@@ -890,9 +961,9 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                         </div>
 
                         {/* Banner de Ação de Compartilhamento da Prévia */}
-                        <div className="w-full max-w-2xl mx-auto p-5 sm:p-6 bg-white/5 border border-brand-yellow/40 rounded-3xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-md animate-fade-in">
+                        <div className="w-full max-w-2xl mx-auto p-4 sm:p-5 bg-[#1A1A1A]/90 border border-brand-yellow/40 rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4 shadow-[0_10px_30px_rgba(0,0,0,0.5)] backdrop-blur-md animate-fade-in">
                             <div className="flex items-center gap-3.5 text-left">
-                                <div className="size-12 rounded-2xl bg-brand-yellow/20 border border-brand-yellow/40 flex items-center justify-center text-brand-yellow shrink-0">
+                                <div className="size-11 rounded-xl bg-brand-yellow/15 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow shrink-0">
                                     <span className="material-symbols-outlined text-2xl">share</span>
                                 </div>
                                 <div>
@@ -900,14 +971,14 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                         Compartilhar Pré-Visualização
                                     </h4>
                                     <p className="text-xs text-gray-400 font-sans mt-0.5">
-                                        Envie o link desta prévia para orientadores, colegas ou revisores antes de publicar no feed.
+                                        Envie o link desta prévia (válido por 15 dias) para orientadores, colegas ou revisores.
                                     </p>
                                 </div>
                             </div>
                             <button
                                 type="button"
                                 onClick={() => setIsShareModalOpen(true)}
-                                className="w-full sm:w-auto px-6 py-3 bg-brand-yellow hover:bg-[#E5B800] text-gray-950 font-bukra font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 shrink-0 hover:scale-105 cursor-pointer"
+                                className="w-full sm:w-auto px-6 py-2.5 bg-brand-yellow hover:bg-[#E5B800] text-gray-950 font-bukra font-black text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg flex items-center justify-center gap-2 shrink-0 hover:scale-105 cursor-pointer"
                             >
                                 <span className="material-symbols-outlined text-[18px]">link</span>
                                 <span>Gerar Link</span>
@@ -1099,7 +1170,20 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                         Prancheta de Diagramação {blocks.length > 0 && <span className="text-gray-500 font-normal">({blocks.length} {blocks.length === 1 ? 'bloco' : 'blocos'})</span>}
                                     </span>
                                 </div>
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    <button
+                                        type="button"
+                                        onClick={handleSaveDraftAndMedia}
+                                        disabled={isSavingMedia}
+                                        className="px-3 py-1.5 bg-brand-blue/15 border border-brand-blue/40 text-brand-blue-accent hover:bg-brand-blue/25 hover:border-brand-blue rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
+                                        title="Envia fotos/vídeos/PDFs para o Cloudinary e salva o rascunho para não expirar ao recarregar a página"
+                                    >
+                                        <span className={`material-symbols-outlined text-[16px] ${isSavingMedia ? 'animate-spin' : ''}`}>
+                                            {isSavingMedia ? 'progress_activity' : 'cloud_upload'}
+                                        </span>
+                                        {isSavingMedia ? 'Salvando Mídias...' : 'Salvar Mídias / Nuvem 💾'}
+                                    </button>
+
                                     {blocks.length > 0 && (
                                         <button
                                             type="button"
@@ -1568,6 +1652,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                 </button>
                             </>
                         )}
+
                         <button
                             onClick={handlePublish}
                             className="w-full flex items-center justify-center gap-2 px-8 py-5 rounded-xl bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red text-white font-bold text-xl hover:opacity-90 transition-all shadow-[0_0_30px_rgba(255,204,0,0.3)] hover:scale-105 disabled:opacity-50 disabled:hover:scale-100 disabled:cursor-not-allowed"

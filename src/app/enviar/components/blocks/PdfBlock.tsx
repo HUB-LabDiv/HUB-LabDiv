@@ -43,7 +43,7 @@ export default function PdfBlock({ block, isActive }: { block: Block; isActive: 
                         accept=".pdf,application/pdf"
                         label="Upload de PDF"
                         icon="upload_file"
-                        resourceType="image"
+                        resourceType="raw"
                         onUploadSuccess={(url) => updateBlock(block.id, { url })}
                     />
                     
@@ -80,7 +80,7 @@ export default function PdfBlock({ block, isActive }: { block: Block; isActive: 
                                         accept=".pdf,application/pdf"
                                         label="Reenviar PDF"
                                         icon="sync"
-                                        resourceType="image"
+                                        resourceType="raw"
                                         onUploadSuccess={(url) => updateBlock(block.id, { url })}
                                     />
                                 </div>

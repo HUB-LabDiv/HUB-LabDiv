@@ -489,3 +489,44 @@ CREATE POLICY "Admins podem gerenciar oportunidades"
     ON public.oportunidades FOR ALL
     TO authenticated
     USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role IN ('admin', 'moderator')));
+
+-- ==============================================================================
+-- 11. Rascunhos Compartilhados para Pré-Visualização Pública
+-- ==============================================================================
+
+CREATE TABLE IF NOT EXISTS public.shared_drafts (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    title TEXT NOT NULL,
+    authors TEXT,
+    category TEXT,
+    institute TEXT DEFAULT 'ifusp',
+    description TEXT,
+    media_type TEXT DEFAULT 'sdocx',
+    media_url TEXT NOT NULL,
+    quiz JSONB,
+    reflexoes JSONB,
+    docs_link TEXT,
+    drive_link TEXT,
+    expires_at TIMESTAMP WITH TIME ZONE DEFAULT (timezone('utc'::text, now()) + INTERVAL '15 days') NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- Garante a coluna expires_at caso a tabela já tenha sido criada anteriormente sem ela
+ALTER TABLE public.shared_drafts ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP WITH TIME ZONE DEFAULT (timezone('utc'::text, now()) + INTERVAL '15 days') NOT NULL;
+
+ALTER TABLE public.shared_drafts ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Qualquer um pode visualizar rascunhos compartilhados" ON public.shared_drafts;
+CREATE POLICY "Qualquer um pode visualizar rascunhos compartilhados"
+    ON public.shared_drafts FOR SELECT
+    TO public
+    USING (expires_at > timezone('utc'::text, now()));
+
+DROP POLICY IF EXISTS "Qualquer um pode criar ou atualizar rascunhos compartilhados" ON public.shared_drafts;
+CREATE POLICY "Qualquer um pode criar ou atualizar rascunhos compartilhados"
+    ON public.shared_drafts FOR ALL
+    TO public
+    USING (true)
+    WITH CHECK (true);

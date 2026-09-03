@@ -197,7 +197,10 @@ export async function uploadMediaServerAction(formData: FormData) {
     if (!user) return { error: 'Usuário não autenticado.' };
 
     const file = formData.get('file') as File;
-    const resourceType = (formData.get('resourceType') as string) || 'auto';
+    const rawResourceType = (formData.get('resourceType') as string) || 'auto';
+    const isPdf = file.type === 'application/pdf' || file.name?.toLowerCase().endsWith('.pdf');
+    const effectiveResourceType = isPdf ? 'raw' : rawResourceType;
+
     if (!file) return { error: 'Nenhum arquivo fornecido para upload.' };
 
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
@@ -219,12 +222,17 @@ export async function uploadMediaServerAction(formData: FormData) {
             const arrayBuffer = await file.arrayBuffer();
             const buffer = Buffer.from(arrayBuffer);
 
+            const uploadOptions: any = {
+                folder: 'assets/submissions',
+                resource_type: effectiveResourceType as any,
+            };
+            if (isPdf) {
+                uploadOptions.format = 'pdf';
+            }
+
             const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
                 const uploadStream = cloudinary.uploader.upload_stream(
-                    {
-                        folder: 'assets/submissions',
-                        resource_type: resourceType as any,
-                    },
+                    uploadOptions,
                     (error, res) => {
                         if (error) {
                             console.error('[Cloudinary Server Upload Error Detail]', error);

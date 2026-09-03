@@ -118,6 +118,16 @@ export function BlockRenderer({ block, forcePreview = false, blockIndex }: Block
                     ? 'border-brand-yellow/50 bg-gray-800/80 shadow-lg shadow-brand-yellow/5' 
                     : 'border-transparent hover:border-gray-700/50 hover:bg-gray-800/30'}`}
         >
+            {/* Indicador de Numeração do Bloco */}
+            {actualPreviewMode !== 'preview' && typeof blockIndex === 'number' && (
+                <div className="absolute left-4 -top-3.5 z-10 px-3 py-0.5 bg-[#181818] border border-brand-yellow/40 rounded-full flex items-center gap-1.5 shadow-md">
+                    <span className="size-1.5 rounded-full bg-brand-yellow" />
+                    <span className="text-[10px] font-bukra font-bold text-brand-yellow uppercase tracking-wider">
+                        Bloco #{blockIndex + 1}
+                    </span>
+                </div>
+            )}
+
             {/* Bloco de Conteúdo */}
             <div className="w-full max-w-full min-w-0 h-full bg-background-dark/50 backdrop-blur-md rounded-xl p-4 border border-gray-800/50 overflow-visible break-words box-border">
                 {/* Banner de Erro no Topo do Bloco */}

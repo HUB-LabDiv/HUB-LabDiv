@@ -381,6 +381,12 @@ export async function saveDraftForShare(payload: {
         const supabaseServer = await createServerSupabase();
         const { data: { user } } = await supabaseServer.auth.getUser();
         
+        let client: any = supabaseServer;
+        try {
+            const { createAdminSupabase } = await import('@/lib/supabase/admin');
+            client = createAdminSupabase();
+        } catch {}
+
         const dataToSave: any = {
             title: payload.title || 'Rascunho Sem Título',
             authors: payload.authors || user?.user_metadata?.full_name || 'Autor(a)',
@@ -390,9 +396,10 @@ export async function saveDraftForShare(payload: {
             media_type: payload.media_type || 'sdocx',
             media_url: payload.media_url || '[]',
             quiz: payload.quiz || null,
+            reflexoes: payload.reflexoes || null,
             docs_link: payload.docs_link || null,
             drive_link: payload.drive_link || null,
-            status: 'rascunho',
+            expires_at: new Date(Date.now() + 15 * 24 * 60 * 60 * 1000).toISOString(),
             updated_at: new Date().toISOString()
         };
 
@@ -402,41 +409,82 @@ export async function saveDraftForShare(payload: {
 
         let targetId = payload.draftId;
 
-        // Se houver um draftId fornecido válido, tenta atualizar
+        // 1. Tenta salvar / atualizar na tabela shared_drafts
+        try {
+            if (targetId && targetId !== 'new') {
+                const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(targetId);
+                if (isUUID) {
+                    const { data: existing } = await client
+                        .from('shared_drafts')
+                        .select('id')
+                        .eq('id', targetId)
+                        .maybeSingle();
+
+                    if (existing) {
+                        const { error: updateError } = await client
+                            .from('shared_drafts')
+                            .update(dataToSave)
+                            .eq('id', targetId);
+
+                        if (!updateError) {
+                            return { success: true, draftId: targetId };
+                        }
+                    }
+                }
+            }
+
+            const { data: newShared, error: insertSharedError } = await client
+                .from('shared_drafts')
+                .insert([dataToSave])
+                .select('id')
+                .single();
+
+            if (!insertSharedError && newShared?.id) {
+                return { success: true, draftId: newShared.id };
+            }
+        } catch (sharedErr) {
+            console.warn('Fallback para submissions ao salvar draft compartilhado:', sharedErr);
+        }
+
+        // 2. Fallback de contingência para submissions caso a tabela shared_drafts ainda não tenha sido executada
+        const subData: any = {
+            ...dataToSave,
+            status: 'pendente'
+        };
+
         if (targetId && targetId !== 'new') {
             const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(targetId);
             if (isUUID) {
-                const { data: existing } = await supabaseServer
+                const { data: existingSub } = await client
                     .from('submissions')
-                    .select('id, user_id')
+                    .select('id')
                     .eq('id', targetId)
                     .maybeSingle();
 
-                if (existing) {
-                    const { error: updateError } = await supabaseServer
+                if (existingSub) {
+                    const { error: updateSubErr } = await client
                         .from('submissions')
-                        .update(dataToSave)
+                        .update(subData)
                         .eq('id', targetId);
 
-                    if (!updateError) {
+                    if (!updateSubErr) {
                         return { success: true, draftId: targetId };
                     }
                 }
             }
         }
 
-        // Caso contrário, insere um novo rascunho
-        const { data: newDraft, error: insertError } = await supabaseServer
+        const { data: newSub, error: insertSubErr } = await client
             .from('submissions')
-            .insert([dataToSave])
+            .insert([subData])
             .select('id')
             .single();
 
-        if (insertError) {
-            return { error: insertError.message };
+        if (insertSubErr) {
+            return { error: insertSubErr.message };
         }
 
-        return { success: true, draftId: newDraft.id };
+        return { success: true, draftId: newSub.id };
     } catch (e: any) {
         return { error: e.message || "Erro ao salvar rascunho para compartilhamento" };
     }
@@ -448,17 +496,57 @@ export async function getDraftSubmission(id: string) {
         if (!isUUID) return { error: "ID de rascunho inválido" };
 
         const supabaseServer = await createServerSupabase();
-        const { data, error } = await supabaseServer
+        let client: any = supabaseServer;
+        try {
+            const { createAdminSupabase } = await import('@/lib/supabase/admin');
+            client = createAdminSupabase();
+        } catch {}
+
+        // 1. Tenta buscar em shared_drafts
+        try {
+            const { data: sharedDraft, error: sharedErr } = await client
+                .from('shared_drafts')
+                .select('*')
+                .eq('id', id)
+                .maybeSingle();
+
+            if (sharedDraft && !sharedErr) {
+                // Checa se a prévia expirou (15 dias)
+                if (sharedDraft.expires_at && new Date(sharedDraft.expires_at).getTime() < Date.now()) {
+                    return { error: "Este link de pré-visualização expirou (limite de 15 dias). Peça ao autor para gerar um novo link de prévia." };
+                }
+
+                if (sharedDraft.user_id) {
+                    try {
+                        const { data: prof } = await client
+                            .from('profiles')
+                            .select('avatar_url, xp, level, is_labdiv')
+                            .eq('id', sharedDraft.user_id)
+                            .maybeSingle();
+                        if (prof) {
+                            sharedDraft.profiles = prof;
+                        }
+                    } catch {}
+                }
+
+                return { success: true, data: sharedDraft };
+            }
+        } catch (e) {
+            console.error('Erro ao buscar em shared_drafts:', e);
+        }
+
+        // 2. Tenta buscar em submissions
+        const { data: subData, error: subErr } = await client
             .from('submissions')
             .select('*, profiles(avatar_url, xp, level, is_labdiv)')
             .eq('id', id)
-            .single();
+            .maybeSingle();
 
-        if (error || !data) {
-            return { error: "Rascunho não encontrado ou expirado" };
+        if (subData && !subErr) {
+            return { success: true, data: subData };
         }
 
-        return { success: true, data };
+        return { error: "Rascunho não encontrado ou indisponível" };
     } catch (e: any) {
         return { error: e.message || "Erro ao carregar rascunho" };
     }

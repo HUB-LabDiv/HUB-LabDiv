@@ -13,9 +13,9 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Copy, Check, ExternalLink, Share2, Eye, Sparkles, X, MessageCircle } from 'lucide-react';
+import { Copy, Check, ExternalLink, Share2, Eye, Sparkles, X, MessageCircle, RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface ShareDraftModalProps {
@@ -34,14 +34,36 @@ export function ShareDraftModal({
     onSaveAndGenerate
 }: ShareDraftModalProps) {
     const [isGenerating, setIsGenerating] = useState(false);
-    const [currentDraftId, setCurrentDraftId] = useState<string | null>(draftId);
+    const [currentDraftId, setCurrentDraftId] = useState<string | null>(null);
     const [copied, setCopied] = useState(false);
 
-    React.useEffect(() => {
-        if (draftId) {
-            setCurrentDraftId(draftId);
-        }
-    }, [draftId]);
+    // Auto-generate cloud link when modal opens
+    useEffect(() => {
+        if (!isOpen) return;
+
+        const autoGenerate = async () => {
+            if (onSaveAndGenerate) {
+                setIsGenerating(true);
+                try {
+                    const newId = await onSaveAndGenerate();
+                    if (newId) {
+                        setCurrentDraftId(newId);
+                    }
+                } catch (err) {
+                    console.error('Erro ao gerar link de prévia:', err);
+                } finally {
+                    setIsGenerating(false);
+                }
+            } else if (draftId) {
+                const isUUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(draftId);
+                if (isUUID) {
+                    setCurrentDraftId(draftId);
+                }
+            }
+        };
+
+        autoGenerate();
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
@@ -55,7 +77,7 @@ export function ShareDraftModal({
             const newId = await onSaveAndGenerate();
             if (newId) {
                 setCurrentDraftId(newId);
-                toast.success('Link de prévia gerado com sucesso!');
+                toast.success('Link de prévia atualizado com sucesso!');
             }
         } catch (err) {
             console.error('Erro ao gerar prévia:', err);
@@ -129,11 +151,33 @@ export function ShareDraftModal({
                             </span>
                         </div>
 
-                        {previewUrl ? (
+                        {isGenerating ? (
+                            <div className="p-8 bg-brand-yellow/5 border border-brand-yellow/20 rounded-2xl flex flex-col items-center justify-center gap-3 text-center">
+                                <div className="size-8 border-3 border-brand-yellow border-t-transparent rounded-full animate-spin" />
+                                <p className="text-xs font-bukra font-bold text-brand-yellow uppercase tracking-wider">
+                                    Sincronizando rascunho na nuvem...
+                                </p>
+                                <p className="text-[11px] text-gray-400 font-sans">
+                                    Gerando link protegido para visualização
+                                </p>
+                            </div>
+                        ) : previewUrl ? (
                             <div className="space-y-3">
-                                <label className="text-[11px] font-bold uppercase tracking-wider text-gray-400 pl-1 block">
-                                    Link Único de Compartilhamento:
-                                </label>
+                                <div className="flex items-center justify-between pl-1">
+                                    <label className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
+                                        Link Único de Compartilhamento:
+                                    </label>
+                                    <button
+                                        type="button"
+                                        onClick={handleGenerate}
+                                        disabled={isGenerating}
+                                        className="text-[10px] font-bold text-brand-blue-accent hover:text-white transition-colors flex items-center gap-1 uppercase"
+                                        title="Atualizar rascunho na nuvem com as alterações mais recentes"
+                                    >
+                                        <RefreshCw className="w-3 h-3" />
+                                        <span>Atualizar Link</span>
+                                    </button>
+                                </div>
                                 <div className="flex items-center gap-2 bg-[#121212] border border-white/10 rounded-2xl p-2 pl-4 focus-within:border-brand-yellow/50 transition-colors">
                                     <input
                                         type="text"
@@ -171,32 +215,23 @@ export function ShareDraftModal({
                                 <button
                                     onClick={handleGenerate}
                                     disabled={isGenerating}
-                                    className="px-6 py-3 bg-brand-yellow hover:bg-[#E5B800] text-gray-950 font-bukra font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg hover:scale-105 disabled:opacity-50 flex items-center justify-center gap-2 mx-auto"
+                                    className="px-6 py-3 bg-brand-yellow hover:bg-[#E5B800] text-gray-950 font-bukra font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg hover:scale-105 disabled:opacity-50 flex items-center justify-center gap-2 mx-auto cursor-pointer"
                                 >
-                                    {isGenerating ? (
-                                        <>
-                                            <div className="size-4 border-2 border-gray-950 border-t-transparent rounded-full animate-spin" />
-                                            <span>Gerando Prévia...</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Share2 className="w-4 h-4" />
-                                            <span>Gerar Link de Prévia</span>
-                                        </>
-                                    )}
+                                    <Share2 className="w-4 h-4" />
+                                    <span>Gerar Link de Prévia</span>
                                 </button>
                             </div>
                         )}
                     </div>
 
                     {/* Ações Inferiores */}
-                    {previewUrl && (
+                    {previewUrl && !isGenerating && (
                         <div className="flex flex-col sm:flex-row items-center gap-2 pt-2 border-t border-white/5 relative z-10">
                             <a
                                 href={previewUrl}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="w-full sm:w-1/2 px-4 py-3 bg-white/5 hover:bg-white/10 text-white text-xs font-bold rounded-xl transition-all border border-white/10 flex items-center justify-center gap-2 text-center"
+                                className="w-full sm:w-1/2 px-4 py-3 bg-white/5 hover:bg-white/10 text-white text-xs font-bold rounded-xl transition-all border border-white/10 flex items-center justify-center gap-2 text-center cursor-pointer"
                             >
                                 <ExternalLink className="w-4 h-4 text-brand-blue" />
                                 <span>Visualizar Agora</span>
@@ -204,7 +239,7 @@ export function ShareDraftModal({
 
                             <button
                                 onClick={handleWhatsAppShare}
-                                className="w-full sm:w-1/2 px-4 py-3 bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#25D366] text-xs font-bold rounded-xl transition-all border border-[#25D366]/40 flex items-center justify-center gap-2"
+                                className="w-full sm:w-1/2 px-4 py-3 bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#25D366] text-xs font-bold rounded-xl transition-all border border-[#25D366]/40 flex items-center justify-center gap-2 cursor-pointer"
                             >
                                 <MessageCircle className="w-4 h-4" />
                                 <span>Enviar no WhatsApp</span>

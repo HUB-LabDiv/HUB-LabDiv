@@ -39,19 +39,20 @@ export const parseMediaUrl = (mediaUrl: string | string[]): string[] => {
     return parsedUrls.filter(Boolean);
 };
 
-export const formatYoutubeUrl = (url: string) => {
+export const formatYoutubeUrl = (url?: string | null) => {
+    if (!url || typeof url !== 'string' || !url.trim()) return '';
     if (url.includes('/embed/')) return url;
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
-    const videoId = (match && match[2].length === 11) ? match[2] : null;
+    const videoId = (match && match[2]?.length === 11) ? match[2] : null;
     return videoId ? `https://www.youtube.com/embed/${videoId}` : url;
 };
 
-export const getYoutubeThumbnail = (url: string) => {
-    if (!url) return "https://images.unsplash.com/photo-1616423640778-28d1b53229bd?auto=format&fit=crop&q=80&w=800";
+export const getYoutubeThumbnail = (url?: string | null) => {
+    if (!url || typeof url !== 'string' || !url.trim()) return "https://images.unsplash.com/photo-1616423640778-28d1b53229bd?auto=format&fit=crop&q=80&w=800";
     const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
     const match = url.match(regExp);
-    const videoId = (match && match[2].length === 11) ? match[2] : null;
+    const videoId = (match && match[2]?.length === 11) ? match[2] : null;
     return videoId ? `https://img.youtube.com/vi/${videoId}/maxresdefault.jpg` : "https://images.unsplash.com/photo-1616423640778-28d1b53229bd?auto=format&fit=crop&q=80&w=800";
 };
 
@@ -81,9 +82,9 @@ export const getDownloadUrl = (url: string) => {
     return url;
 };
 
-export const getPdfViewerUrl = (url: string) => {
-    if (!url || typeof url !== 'string') return '';
-    let viewerUrl = url;
+export const getPdfViewerUrl = (url?: string | null) => {
+    if (!url || typeof url !== 'string' || !url.trim()) return '';
+    let viewerUrl = url.trim();
 
     // Remover transformações Cloudinary (ex: /upload/w_800,q_70/v123/...)
     if (viewerUrl.includes('/upload/')) {
@@ -96,10 +97,23 @@ export const getPdfViewerUrl = (url: string) => {
     return viewerUrl;
 };
 
-export const getPdfEmbedUrl = (url: string) => {
+export const getPdfEmbedUrl = (url?: string | null) => {
     const rawPdfUrl = getPdfViewerUrl(url);
     if (!rawPdfUrl) return '';
-    return `${rawPdfUrl}#toolbar=0`;
+
+    // 1. Se for blob local, o iframe do navegador renderiza nativamente
+    if (rawPdfUrl.startsWith('blob:') || rawPdfUrl.startsWith('data:')) {
+        return `${rawPdfUrl}#toolbar=0`;
+    }
+
+    // 2. Se for link do Google Drive
+    if (rawPdfUrl.includes('drive.google.com')) {
+        return rawPdfUrl.replace(/\/view(\?.*)?$/, '/preview');
+    }
+
+    // 3. Se for URL remota (Cloudinary, Supabase, etc.):
+    // Usamos o Google Docs Viewer para contornar bloqueios de CORS / Content-Disposition nos iframes
+    return `https://docs.google.com/viewer?url=${encodeURIComponent(rawPdfUrl)}&embedded=true`;
 };
 export const getOptimizedUrl = (url: string, width = 800, quality = 70, category?: string, type?: string) => {
     if (!url || typeof url !== 'string') return '';

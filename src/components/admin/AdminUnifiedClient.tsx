@@ -33,6 +33,7 @@ import {
 import { DeleteUserModal } from '@/components/admin/DeleteUserModal';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
 import { TelemetryManager } from './settings/TelemetryManager';
+import { CloudinaryCleanupCard } from '@/components/admin/CloudinaryCleanupCard';
 import { useSwipe } from '@/hooks/useSwipe';
 
 interface Profile {
@@ -438,7 +439,10 @@ export function AdminUnifiedClient() {
                     )}
                 </section>
             ) : activeTab === 'perigo' ? (
-                <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
+                    {/* Painel de Limpeza de Armazenamento Cloudinary */}
+                    <CloudinaryCleanupCard />
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Reset Nuclear */}
                         <section className="p-8 bg-red-950/10 border border-red-900/30 rounded-[32px] relative overflow-hidden group">
