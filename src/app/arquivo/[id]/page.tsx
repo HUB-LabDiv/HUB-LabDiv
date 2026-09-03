@@ -604,9 +604,25 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                                 <BalloonReflexao reflexaoId={block.id} ancoraId={`reflexao-${block.id}`} pergunta={block.content.question} tipo="aberta" />
                                                             </div>
                                                         );
-                                                    } else if (['reference', 'notes', 'context_history', 'context_social', 'context_political'].includes(block.type)) {
-                                                        const titles: Record<string, string> = { reference: 'Referências', notes: 'Notas da Autoria', context_history: 'Contexto Histórico', context_social: 'Contexto Social', context_political: 'Contexto Político' };
-                                                        const icons: Record<string, string> = { reference: 'menu_book', notes: 'edit_note', context_history: 'history_edu', context_social: 'groups', context_political: 'gavel' };
+                                                    } else if (['reference', 'notes', 'context_history', 'context_social', 'context_political', 'context_world_object', 'context_object_world'].includes(block.type)) {
+                                                        const titles: Record<string, string> = { 
+                                                            reference: 'Referências', 
+                                                            notes: 'Notas da Autoria', 
+                                                            context_history: 'Contexto Histórico', 
+                                                            context_social: 'Contexto Social', 
+                                                            context_political: 'Contexto Político',
+                                                            context_world_object: 'Mundo → Objeto',
+                                                            context_object_world: 'Objeto → Mundo'
+                                                        };
+                                                        const icons: Record<string, string> = { 
+                                                            reference: 'menu_book', 
+                                                            notes: 'edit_note', 
+                                                            context_history: 'history_edu', 
+                                                            context_social: 'groups', 
+                                                            context_political: 'gavel',
+                                                            context_world_object: 'travel_explore',
+                                                            context_object_world: 'public'
+                                                        };
                                                         return (
                                                             <div key={block.id} className="p-6 bg-gray-50 dark:bg-gray-800/40 rounded-2xl border border-gray-100 dark:border-gray-800 my-8 shadow-sm">
                                                                 <h3 className="text-sm font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-4 flex items-center gap-2">
@@ -620,6 +636,99 @@ export default async function ArquivoItemPage({ params }: PageProps) {
                                                                         </div>
                                                                     ))}
                                                                 </div>
+                                                            </div>
+                                                        );
+                                                    } else if (block.type === 'link') {
+                                                        let buttons = block.content?.buttons;
+                                                        if (!buttons || !Array.isArray(buttons)) {
+                                                            if (block.content?.url) {
+                                                                buttons = [{ id: '1', label: block.content.label || 'Acessar Link', url: block.content.url, style: 'solid-yellow' }];
+                                                            } else {
+                                                                buttons = [];
+                                                            }
+                                                        }
+                                                        if (buttons.length === 0) return null;
+                                                        return (
+                                                            <div key={block.id} className="w-full py-3 flex flex-col sm:flex-row justify-center items-stretch sm:items-center gap-4 my-6">
+                                                                {buttons.map((btn: any, btnIdx: number) => {
+                                                                    if (!btn.url && !btn.label) return null;
+                                                                    const isInternal = btn.url?.includes('hublabdiv') || btn.url?.startsWith('/') || btn.url?.includes('localhost');
+                                                                    return (
+                                                                        <a
+                                                                            key={btn.id || btnIdx}
+                                                                            href={btn.url || '#'}
+                                                                            target={isInternal ? '_self' : '_blank'}
+                                                                            rel={isInternal ? '' : 'noopener noreferrer'}
+                                                                            className="px-6 py-3.5 bg-brand-yellow text-gray-950 hover:bg-[#E5B800] rounded-xl font-bold text-xs uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md"
+                                                                        >
+                                                                            <span className="material-symbols-outlined text-[18px]">
+                                                                                {isInternal ? 'hub' : 'open_in_new'}
+                                                                            </span>
+                                                                            <span>{btn.label || 'Acessar Link'}</span>
+                                                                        </a>
+                                                                    );
+                                                                })}
+                                                            </div>
+                                                        );
+                                                    } else if (block.type === 'web_page') {
+                                                        const rawUrl = block.content?.url || '';
+                                                        const caption = block.content?.caption || '';
+                                                        const altText = block.content?.altText || '';
+                                                        const height = block.content?.height || 400;
+
+                                                        let embedUrl = rawUrl;
+                                                        if (rawUrl.includes('drive.google.com/file/d/')) {
+                                                            const match = rawUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+                                                            if (match && match[1]) {
+                                                                embedUrl = `https://drive.google.com/file/d/${match[1]}/preview`;
+                                                            }
+                                                        }
+                                                        if (!embedUrl) return null;
+
+                                                        return (
+                                                            <figure key={block.id} className="w-full flex flex-col gap-2 my-6">
+                                                                <div className="w-full rounded-2xl overflow-hidden border border-gray-200 dark:border-gray-800 bg-black/40 shadow-xl" style={{ height: `${height}px` }}>
+                                                                    <iframe
+                                                                        src={embedUrl}
+                                                                        className="w-full h-full border-0"
+                                                                        title={caption || altText || 'Página Web Incorporada'}
+                                                                        allowFullScreen
+                                                                    />
+                                                                </div>
+                                                                {caption && (
+                                                                    <figcaption className="text-xs text-gray-500 dark:text-gray-400 text-center italic mt-1 font-sans">
+                                                                        {caption}
+                                                                    </figcaption>
+                                                                )}
+                                                            </figure>
+                                                        );
+                                                    } else if (block.type === 'drive') {
+                                                        const driveUrl = block.content?.url || '';
+                                                        if (!driveUrl) return null;
+                                                        return (
+                                                            <div key={block.id} className="p-5 sm:p-6 bg-brand-yellow/10 border border-brand-yellow/30 rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 my-6 shadow-sm">
+                                                                <div className="flex items-center gap-3">
+                                                                    <div className="size-11 rounded-xl bg-brand-yellow/20 text-brand-yellow flex items-center justify-center shrink-0">
+                                                                        <span className="material-symbols-outlined text-2xl">folder_zip</span>
+                                                                    </div>
+                                                                    <div>
+                                                                        <h5 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wide">
+                                                                            Pasta do Google Drive
+                                                                        </h5>
+                                                                        <p className="text-xs text-gray-500 dark:text-gray-400 font-sans mt-0.5">
+                                                                            Roteiros, background e materiais complementares
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                                <a
+                                                                    href={driveUrl}
+                                                                    target="_blank"
+                                                                    rel="noopener noreferrer"
+                                                                    className="px-4 py-2 bg-brand-yellow text-gray-950 hover:bg-[#E5B800] rounded-xl text-xs font-bold uppercase tracking-wider transition-all flex items-center gap-1.5 shrink-0 shadow"
+                                                                >
+                                                                    <span>Acessar Drive</span>
+                                                                    <span className="material-symbols-outlined text-sm">open_in_new</span>
+                                                                </a>
                                                             </div>
                                                         );
                                                     }

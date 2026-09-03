@@ -18,12 +18,8 @@ import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import { getDraftSubmission } from '@/app/actions/submissions';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
-import { StyledArticleView } from '@/components/reading/StyledArticleView';
-import { SdocxHtmlBlock } from '@/components/reading/SdocxHtmlBlock';
-import { SdocxHeroImage, SdocxInlineImage } from '@/components/reading/SdocxImageBlock';
-import { ImageCarouselClient } from '@/app/arquivo/[id]/ImageCarouselClient';
-import { PostQuiz } from '@/components/media/PostQuiz';
-import { formatYoutubeUrl, getPdfEmbedUrl } from '@/lib/media-utils';
+import { SdocxHeroImage } from '@/components/reading/SdocxImageBlock';
+import { SdocxArticleRenderer } from '@/components/reading/SdocxArticleRenderer';
 import { Eye, Copy, Check, Share2, Edit3, MessageCircle, AlertTriangle, ArrowLeft, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -241,179 +237,25 @@ export default function DraftPreviewPage() {
                         )}
                     </div>
 
-                    {/* Imagem de Destaque / Hero (se houver) */}
+                    {/* Imagem de Destaque / Hero (se houver mídia no primeiro bloco de mídia) */}
                     {heroImageBlock && (
                         <div className="rounded-2xl overflow-hidden border border-white/10 shadow-xl">
                             <SdocxHeroImage
                                 src={heroImageBlock.content.url}
-                                alt={heroImageBlock.content.caption || 'Hero Image'}
+                                alt={heroImageBlock.content.caption || submission.title || 'Imagem de Destaque'}
                             />
                         </div>
                     )}
 
-                    {/* Renderização dos Blocos Secundários */}
-                    {inlineBlocks.length > 0 ? (
-                        <div className="space-y-8 pt-4">
-                            {inlineBlocks.map((block, index) => {
-                                switch (block.type) {
-                                    case 'text':
-                                        return (
-                                            <div key={block.id || index} className="prose dark:prose-invert max-w-none">
-                                                <StyledArticleView content={block.content?.text || ''} />
-                                            </div>
-                                        );
-                                    case 'image':
-                                        return (
-                                            <div key={block.id || index} className="rounded-2xl overflow-hidden border border-white/10">
-                                                <SdocxInlineImage
-                                                    src={block.content?.url}
-                                                    altText={block.content?.caption}
-                                                />
-                                            </div>
-                                        );
-                                    case 'carousel':
-                                        return (
-                                            <figure key={block.id || index} className="w-full flex flex-col gap-2">
-                                                <div className="rounded-2xl overflow-hidden border border-white/10">
-                                                    <ImageCarouselClient
-                                                        urls={block.content?.urls || []}
-                                                        title={submission.title || 'Carrossel'}
-                                                    />
-                                                </div>
-                                                {block.content?.caption && (
-                                                    <figcaption className="text-xs text-gray-400 text-center italic mt-1 font-sans">
-                                                        {block.content.caption}
-                                                    </figcaption>
-                                                )}
-                                                {block.content?.altText && (
-                                                    <span className="sr-only">{block.content.altText}</span>
-                                                )}
-                                            </figure>
-                                        );
-                                    case 'video':
-                                        return (
-                                            <figure key={block.id || index} className="w-full flex flex-col gap-2">
-                                                <div className="rounded-2xl overflow-hidden border border-white/10 aspect-video bg-black">
-                                                    <iframe
-                                                        src={formatYoutubeUrl(block.content?.url)}
-                                                        className="w-full h-full"
-                                                        allowFullScreen
-                                                    />
-                                                </div>
-                                                {block.content?.caption && (
-                                                    <figcaption className="text-xs text-gray-400 text-center italic mt-1 font-sans">
-                                                        {block.content.caption}
-                                                    </figcaption>
-                                                )}
-                                                {block.content?.altText && (
-                                                    <span className="sr-only">{block.content.altText}</span>
-                                                )}
-                                            </figure>
-                                        );
-                                    case 'audio':
-                                        return (
-                                            <figure key={block.id || index} className="w-full p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-2">
-                                                <span className="text-xs font-bold text-brand-red uppercase tracking-wider">Áudio de Apoio</span>
-                                                <audio controls src={block.content?.url} className="w-full" />
-                                                {block.content?.caption && (
-                                                    <figcaption className="text-xs text-gray-400 italic mt-1 font-sans">
-                                                        {block.content.caption}
-                                                    </figcaption>
-                                                )}
-                                                {block.content?.altText && (
-                                                    <span className="sr-only">{block.content.altText}</span>
-                                                )}
-                                            </figure>
-                                        );
-                                    case 'pdf':
-                                        return (
-                                            <figure key={block.id || index} className="w-full p-4 bg-white/5 border border-white/10 rounded-2xl flex flex-col gap-3">
-                                                <span className="text-xs font-bold text-brand-yellow uppercase tracking-wider">Documento PDF Anexo</span>
-                                                <iframe src={getPdfEmbedUrl(block.content?.url)} className="w-full h-96 rounded-xl" />
-                                                {block.content?.caption && (
-                                                    <figcaption className="text-xs text-gray-400 italic mt-1 font-sans">
-                                                        {block.content.caption}
-                                                    </figcaption>
-                                                )}
-                                                {block.content?.altText && (
-                                                    <span className="sr-only">{block.content.altText}</span>
-                                                )}
-                                            </figure>
-                                        );
-                                    case '3d_object': {
-                                        const modelUrl = block.content?.url || '';
-                                        const caption = block.content?.caption || '';
-                                        const altText = block.content?.altText || '';
-                                        return (
-                                            <figure key={block.id || index} className="w-full my-6 flex flex-col items-center gap-2">
-                                                <div className="w-full h-[450px] bg-background-dark/40 rounded-2xl overflow-hidden border border-white/10 shadow-xl flex items-center justify-center relative">
-                                                    {modelUrl.includes('drive.google') ? (
-                                                        <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 bg-gray-800/30">
-                                                            <span className="material-symbols-outlined text-5xl mb-2 text-brand-yellow">folder_zip</span>
-                                                            <span className="text-sm font-bold uppercase tracking-widest text-gray-200 mb-2">Pasta do Google Drive</span>
-                                                            <a href={modelUrl} target="_blank" rel="noopener noreferrer" className="text-xs hover:text-white transition-colors underline decoration-brand-yellow underline-offset-4">Acessar Modelo 3D no Drive</a>
-                                                        </div>
-                                                    ) : modelUrl.includes('sketchfab.com') ? (
-                                                        <iframe 
-                                                            title={caption || altText || "Sketchfab 3D Model"}
-                                                            src={modelUrl.includes('/embed') ? modelUrl : `${modelUrl}/embed`}
-                                                            className="w-full h-full border-0"
-                                                            allow="autoplay; fullscreen; xr-spatial-tracking"
-                                                            allowFullScreen
-                                                        />
-                                                    ) : (
-                                                        // @ts-ignore
-                                                        <model-viewer 
-                                                            src={modelUrl} 
-                                                            alt={altText || caption || 'Modelo 3D Interativo'}
-                                                            aria-label={altText || caption || 'Visualizador de Modelo 3D Interativo'}
-                                                            auto-rotate="true" 
-                                                            camera-controls="true" 
-                                                            ar="true"
-                                                            style={{ width: '100%', height: '100%' }}
-                                                        >
-                                                        {/* @ts-ignore */}
-                                                        </model-viewer>
-                                                    )}
-                                                </div>
-                                                {caption && (
-                                                    <figcaption className="text-xs text-gray-400 text-center italic mt-1 font-sans">
-                                                        {caption}
-                                                    </figcaption>
-                                                )}
-                                                {altText && (
-                                                    <span className="sr-only">{altText}</span>
-                                                )}
-                                            </figure>
-                                        );
-                                    }
-                                    case 'quiz':
-                                        return (
-                                            <div key={block.id || index}>
-                                                <PostQuiz quiz={[block.content]} submissionId={id} />
-                                            </div>
-                                        );
-                                    case 'reflection':
-                                        return (
-                                            <div key={block.id || index} className="p-5 bg-brand-yellow/10 border-l-4 border-brand-yellow rounded-r-2xl space-y-2">
-                                                <span className="text-xs font-black uppercase tracking-wider text-brand-yellow font-bukra block">
-                                                    💡 Reflexão Provocativa
-                                                </span>
-                                                <p className="text-sm text-gray-200 font-sans">
-                                                    {block.content?.question}
-                                                </p>
-                                            </div>
-                                        );
-                                    default:
-                                        return null;
-                                }
-                            })}
-                        </div>
-                    ) : (
-                        <div className="p-8 text-center text-gray-500 font-sans text-sm italic">
-                            Nenhum bloco de texto ou mídia adicional foi inserido neste rascunho ainda.
-                        </div>
-                    )}
+                    {/* Renderização Universal de Todos os Blocos SDOCX */}
+                    <div className="pt-2">
+                        <SdocxArticleRenderer
+                            blocks={inlineBlocks}
+                            submissionId={id}
+                            submissionTitle={submission.title}
+                            isPreview={true}
+                        />
+                    </div>
                 </article>
 
                 {/* ============================================================== */}

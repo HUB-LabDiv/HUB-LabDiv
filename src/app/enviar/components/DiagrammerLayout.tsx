@@ -31,6 +31,7 @@ import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';
 import { uploadFileToCloudinary } from '@/lib/cloudinary-upload';
 import { stripMarkdownAndLatex } from '@/lib/utils';
 import { SdocxHeroImage } from '@/components/reading/SdocxImageBlock';
+import { SdocxArticleRenderer } from '@/components/reading/SdocxArticleRenderer';
 import { findBlocksWithMediaErrors, validateBlockMedia, BlockMediaErrorInfo } from '../utils/mediaValidation';
 import { persistPendingUploadsToCloudinary } from '../utils/mediaPersistence';
 
@@ -995,7 +996,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                 </div>
 
                                 {/* Corpo do Artigo Fictício (Post Completo) */}
-                                <div className="w-full max-w-5xl mx-auto bg-[#1E1E1E] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-white/5 pointer-events-none mt-8">
+                                <div className="w-full max-w-5xl mx-auto bg-[#1E1E1E] rounded-2xl md:rounded-3xl overflow-hidden shadow-2xl border border-white/5 mt-8">
                                     <div className="p-6 md:p-10 space-y-0">
                                         {/* 1. TAGS E CATEGORIAS NO TOPO */}
                                         <div className="flex flex-wrap items-center gap-2 mb-6">
@@ -1090,16 +1091,14 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                                         </div>
                                                     )}
 
-                                                    {/* 7. CONTEÚDO DOS BLOCOS */}
-                                                    <div className="text-gray-400 leading-relaxed prose prose-lg prose-invert max-w-none">
-                                                        <div className="flex flex-col gap-8">
-                                                            {previewData.blocks
-                                                                .filter((b: any) => b.id !== heroBlock?.id)
-                                                                .map((block: any) => (
-                                                                    <BlockRenderer key={block.id} block={block} forcePreview={true} />
-                                                                ))
-                                                            }
-                                                        </div>
+                                                    {/* 7. CONTEÚDO DOS BLOCOS (Renderizador Universal Idêntico à Prévia Compartilhada) */}
+                                                    <div className="w-full pt-4">
+                                                        <SdocxArticleRenderer
+                                                            blocks={previewData.blocks.filter((b: any) => b.id !== heroBlock?.id)}
+                                                            submissionId={activeDraftId || 'preview'}
+                                                            submissionTitle={previewData.title}
+                                                            isPreview={true}
+                                                        />
                                                     </div>
                                                 </>
                                             );
