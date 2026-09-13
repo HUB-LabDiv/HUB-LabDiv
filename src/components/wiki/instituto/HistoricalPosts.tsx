@@ -63,7 +63,7 @@ const archivePosts = [
         year: '1971',
         title: 'Edifícios Principais na Cidade Universitária',
         description: 'Inauguração do campus do IFUSP no Butantã, incluindo os edifícios Ala I, Ala II e o Edifício Principal.',
-        image: 'https://portal.if.usp.br/ifusp/sites/portal.if.usp.br.ifusp/files/styles/media_gallery_thumbnail/public/Mapa%20IFUSP_2025_0.jpg?itok=1sXmy9vt',
+        image: '/mapa-ifusp-2025.jpg',
         tag: 'Acervo Histórico',
         category: 'Campus'
     },

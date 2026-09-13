@@ -17,7 +17,7 @@ import Link from 'next/link';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 
 /**
- * 🏛️ Transparency Panel V6.0 (WCAG 2.1 & Transparency Act)
+ * 🏛️ Transparency Panel V3.0 (WCAG 2.1 & Transparency Act)
  * Página centralizadora de normas, licenciamento e governança do HUB.
  */
 export default function TransparenciaPage() {
@@ -69,7 +69,7 @@ export default function TransparenciaPage() {
                         </div>
                         <div className="prose prose-slate dark:prose-invert max-w-none">
                             <p>
-                                Todo conteúdo científico submetido ao HUB Lab-Div (artigos, micro-artigos e submissões do Fluxo) é regido pela licença 
+                                Todo conteúdo científico e interações de comunidade submetidos ao HUB Lab-Div V3.0 (artigos, wikis, quizzes, artes, dicas de veteranos e softwares) são regidos pela licença 
                                 <strong> Creative Commons Attribution 4.0 International (CC BY 4.0)</strong>.
                             </p>
                             <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 list-none pl-0">
@@ -114,13 +114,13 @@ export default function TransparenciaPage() {
                                         <li>Plágio acadêmico nítido.</li>
                                         <li>Desinformação anticientífica.</li>
                                         <li>Conteúdo inapropriado para menores.</li>
+                                        <li>Interações não construtivas (em comentários ou avaliações).</li>
                                     </ul>
                                 </div>
                                 <div>
                                     <h4 className="font-bold text-gray-900 dark:text-white mb-2 italic">Fluxo de Análise:</h4>
                                     <ol className="text-sm space-y-2 list-decimal pl-5 opacity-90">
                                         <li>Denúncia recebida via HUB.</li>
-                                        <li>Item ocultado após 5 reports automáticos.</li>
                                         <li>Revisão humana por curadores do IFUSP.</li>
                                         <li>Veredito final (Manter, Editar ou Excluir).</li>
                                     </ol>
@@ -129,36 +129,36 @@ export default function TransparenciaPage() {
                         </div>
                     </section>
 
-                    {/* Seção 3: Acessibilidade Digital */}
-                    <section id="acessibilidade" className="scroll-mt-24 p-8 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-[32px]">
+                    {/* Seção 3: Políticas de Privacidade */}
+                    <section id="privacidade" className="scroll-mt-24 p-8 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-[32px]">
                         <div className="flex items-center gap-4 mb-6">
-                            <span className="p-3 bg-brand-blue-accent/10 rounded-xl">
-                                <span className="material-symbols-outlined text-brand-blue-accent">accessibility_new</span>
+                            <span className="p-3 bg-brand-yellow/10 rounded-xl">
+                                <span className="material-symbols-outlined text-brand-yellow">policy</span>
                             </span>
-                            <h2 className="text-2xl font-bukra font-bold text-gray-900 dark:text-white">Acessibilidade Digital (WCAG 2.1)</h2>
+                            <h2 className="text-2xl font-bukra font-bold text-gray-900 dark:text-white">Políticas de Privacidade</h2>
                         </div>
                         <div className="space-y-4 text-gray-600 dark:text-gray-300">
-                            <p>
-                                O HUB Lab-Div utiliza tecnologias de ponta para garantir que o conhecimento chegue a todos:
+                            <p className="leading-relaxed">
+                                A sua privacidade é levada a sério no HUB Lab-Div. Estamos em conformidade com as diretrizes da LGPD (Lei Geral de Proteção de Dados) para garantir a segurança das suas informações.
                             </p>
-                            <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 list-none pl-0">
-                                <li className="flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-brand-yellow">verified</span>
-                                    <span>Nível AA de contraste e tamanhos de fonte.</span>
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-brand-yellow">verified</span>
-                                    <span>Integração com VLibras para tradução automática.</span>
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-brand-yellow">verified</span>
-                                    <span>Navegação via teclado aprimorada.</span>
-                                </li>
-                                <li className="flex items-center gap-2">
-                                    <span className="material-symbols-outlined text-brand-yellow">verified</span>
-                                    <span>Suporte semântico para leitores de tela.</span>
-                                </li>
-                            </ul>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">
+                                <div>
+                                    <h4 className="font-bold text-gray-900 dark:text-white mb-2 italic">Coleta de Dados:</h4>
+                                    <ul className="text-sm space-y-2 list-disc pl-5 opacity-90">
+                                        <li>Armazenamos apenas os dados essenciais para o funcionamento da plataforma.</li>
+                                        <li>Cookies são usados exclusivamente para manter a sua sessão ativa e preferências de uso.</li>
+                                        <li>Não vendemos nem compartilhamos seus dados com empresas terceiras para fins publicitários.</li>
+                                    </ul>
+                                </div>
+                                <div>
+                                    <h4 className="font-bold text-gray-900 dark:text-white mb-2 italic">Seus Direitos:</h4>
+                                    <ul className="text-sm space-y-2 list-disc pl-5 opacity-90">
+                                        <li>Você pode exportar todos os seus dados pela página de Configurações (Portabilidade/Takeout).</li>
+                                        <li>É possível apagar o seu histórico ou encerrar a sua conta a qualquer momento na Zona de Risco.</li>
+                                        <li>Você decide se deseja ou não receber notificações no seu dispositivo.</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </section>
 

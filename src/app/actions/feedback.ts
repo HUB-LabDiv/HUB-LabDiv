@@ -151,6 +151,33 @@ export async function updateFeedbackReportStatus(id: string, newStatus: string) 
     }
 }
 
+export async function deleteFeedbackReport(id: string) {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { success: false, error: 'Não autenticado' };
+
+    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+    if (!['admin', 'moderator', 'labdiv', 'labdiv adm'].includes(profile?.role || '')) {
+        return { success: false, error: 'Acesso negado' };
+    }
+
+    try {
+        const { createAdminSupabase } = await import('@/lib/supabase/admin');
+        const adminSupabase = createAdminSupabase();
+        const { error } = await adminSupabase
+            .from('feedback_reports')
+            .delete()
+            .eq('id', id);
+
+        if (error) return { success: false, error: error.message };
+
+        revalidatePath('/admin/reports');
+        return { success: true };
+    } catch (e: any) {
+        return { success: false, error: e.message };
+    }
+}
+
 export async function submitHubSuggestion(description: string) {
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();

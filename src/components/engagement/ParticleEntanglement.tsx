@@ -3,20 +3,39 @@
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
  * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
- * * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
+ *
+ * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
  * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
  * publicada pela Free Software Foundation.
- * * Este programa é distribuído na esperança de que seja útil, mas SEM
+ *
+ * Este programa é distribuído na esperança de que seja útil, mas SEM
  * QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-
 import React, { useState, useEffect, useRef } from 'react';
 import { m, AnimatePresence } from 'framer-motion';
-import { fetchParticlePreview, sendMessage, fetchMessages, getCurrentUserId } from '@/app/actions/submissions';
+import { fetchParticlePreview, fetchMessages, getCurrentUserId } from '@/app/actions/submissions';
+import { 
+    getEntanglementConnection, 
+    sendEntanglementMessage, 
+    respondEntanglementRequest, 
+    EntanglementConnectionStatus 
+} from '@/app/actions/entanglements';
+import { ReportChatMessageModal } from './ReportChatMessageModal';
 import { toast } from 'react-hot-toast';
-import { Loader2 } from 'lucide-react';
+import { 
+    Loader2, 
+    Flag, 
+    Check, 
+    X, 
+    ShieldAlert, 
+    UserCheck, 
+    Lock, 
+    Clock, 
+    Sparkles, 
+    AlertCircle 
+} from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 
 interface ParticleReference {
@@ -29,9 +48,16 @@ interface ParticleReference {
 
 interface ParticleEntanglementProps {
     recipientId?: string;
+    recipientProfile?: {
+        id?: string;
+        name?: string;
+        full_name?: string;
+        avatar?: string;
+        avatar_url?: string;
+    } | null;
 }
 
-export const ParticleEntanglement = ({ recipientId }: ParticleEntanglementProps) => {
+export const ParticleEntanglement = ({ recipientId, recipientProfile }: ParticleEntanglementProps) => {
     const [message, setMessage] = useState('');
     const [messages, setMessages] = useState<any[]>([]);
     const [attachment, setAttachment] = useState<ParticleReference | null>(null);
@@ -39,7 +65,20 @@ export const ParticleEntanglement = ({ recipientId }: ParticleEntanglementProps)
     const [isSending, setIsSending] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+    const [connectionStatus, setConnectionStatus] = useState<EntanglementConnectionStatus>('none');
+    const [isRespondingConnection, setIsRespondingConnection] = useState(false);
+    
+    // Modal de Denúncia de Mensagem
+    const [reportingMessage, setReportingMessage] = useState<{
+        id: string;
+        content: string;
+        senderId: string;
+        senderName?: string;
+    } | null>(null);
+
     const scrollRef = useRef<HTMLDivElement>(null);
+
+    const peerName = recipientProfile?.name || recipientProfile?.full_name || 'Usuário';
 
     const scrollToBottom = () => {
         if (scrollRef.current) {
@@ -59,18 +98,28 @@ export const ParticleEntanglement = ({ recipientId }: ParticleEntanglementProps)
         fetchUser();
     }, []);
 
+    // Carregar status da conexão e mensagens
     useEffect(() => {
         if (recipientId && currentUserId) {
-            const loadMessages = async () => {
+            const loadConnectionAndMessages = async () => {
                 setIsLoading(true);
-                const data = await fetchMessages(recipientId);
-                setMessages(data);
-                setIsLoading(false);
+                try {
+                    const [conn, data] = await Promise.all([
+                        getEntanglementConnection(recipientId),
+                        fetchMessages(recipientId)
+                    ]);
+                    setConnectionStatus(conn.status);
+                    setMessages(data || []);
+                } catch (e) {
+                    console.error('Error loading chat:', e);
+                } finally {
+                    setIsLoading(false);
+                }
             };
-            loadMessages();
+            loadConnectionAndMessages();
 
-            // Realtime setup
-            const channel = supabase
+            // Realtime para novas mensagens
+            const chatChannel = supabase
                 .channel(`chat:${recipientId}`)
                 .on('postgres_changes', {
                     event: 'INSERT',
@@ -78,7 +127,6 @@ export const ParticleEntanglement = ({ recipientId }: ParticleEntanglementProps)
                     table: 'messages'
                 }, (payload) => {
                     const newMessage = payload.new;
-                    // Strict filter: belongs to this specific pair of users
                     const isRelevant =
                         (newMessage.sender_id === recipientId && newMessage.recipient_id === currentUserId) ||
                         (newMessage.sender_id === currentUserId && newMessage.recipient_id === recipientId);
@@ -88,12 +136,27 @@ export const ParticleEntanglement = ({ recipientId }: ParticleEntanglementProps)
                             if (prev.find(m => m.id === newMessage.id)) return prev;
                             return [...prev, newMessage];
                         });
+                        // Atualiza status se estava em primeiro contato
+                        getEntanglementConnection(recipientId).then(res => setConnectionStatus(res.status));
                     }
                 })
                 .subscribe();
 
+            // Realtime para conexão (aceite/recusa)
+            const connChannel = supabase
+                .channel(`entanglement_conn:${recipientId}`)
+                .on('postgres_changes', {
+                    event: '*',
+                    schema: 'public',
+                    table: 'entanglement_connections'
+                }, () => {
+                    getEntanglementConnection(recipientId).then(res => setConnectionStatus(res.status));
+                })
+                .subscribe();
+
             return () => {
-                supabase.removeChannel(channel);
+                supabase.removeChannel(chatChannel);
+                supabase.removeChannel(connChannel);
             };
         }
     }, [recipientId, currentUserId]);
@@ -115,7 +178,7 @@ export const ParticleEntanglement = ({ recipientId }: ParticleEntanglementProps)
     };
 
     const handleSend = async () => {
-        if (!recipientId || !message.trim()) return;
+        if (!recipientId || (!message.trim() && !attachment)) return;
 
         setIsSending(true);
         const currentMessage = message;
@@ -124,22 +187,93 @@ export const ParticleEntanglement = ({ recipientId }: ParticleEntanglementProps)
         setMessage('');
         setAttachment(null);
 
-        const res = await sendMessage(recipientId, currentMessage, currentAttachment?.id);
+        const res = await sendEntanglementMessage(recipientId, currentMessage, currentAttachment?.id);
 
-        if (!res.success) {
-            toast.error(res.error || "Falha na conexão neural.");
+        if (res.success) {
+            if (res.connectionStatus) {
+                setConnectionStatus(res.connectionStatus);
+            }
+            if (res.connectionStatus === 'pending_outgoing') {
+                toast.success('Convite de emaranhamento enviado! Aguardando aprovação.', {
+                    icon: '🛰️',
+                });
+            }
+            // Recarrega mensagens
+            const data = await fetchMessages(recipientId);
+            setMessages(data || []);
+        } else {
+            toast.error(res.error || 'Falha na transmissão da mensagem.');
             setMessage(currentMessage);
             setAttachment(currentAttachment);
         }
         setIsSending(false);
     };
 
+    const handleRespondConnection = async (action: 'accept' | 'reject') => {
+        if (!recipientId) return;
+        setIsRespondingConnection(true);
+
+        try {
+            const res = await respondEntanglementRequest(recipientId, action);
+            if (res.success) {
+                if (action === 'accept') {
+                    setConnectionStatus('accepted');
+                    toast.success('Conexão aceita! Chat liberado para conversas.', {
+                        icon: '✨',
+                    });
+                } else {
+                    setConnectionStatus('rejected');
+                    toast('Solicitação de conexão recusada.', {
+                        icon: '🚫',
+                    });
+                }
+            } else {
+                toast.error(res.error || 'Erro ao processar resposta.');
+            }
+        } catch {
+            toast.error('Erro de conexão.');
+        } finally {
+            setIsRespondingConnection(false);
+        }
+    };
+
     return (
-        <div className="flex flex-col h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-[32px] overflow-hidden">
+        <div className="flex flex-col h-full bg-white/5 backdrop-blur-xl border border-white/10 rounded-[32px] overflow-hidden relative">
             {/* Header */}
             <div className="p-4 border-b border-white/10 flex items-center justify-between">
-                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400">Emaranhamento</h3>
-                <span className="material-symbols-outlined text-brand-blue text-sm">hub</span>
+                <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-brand-blue text-sm">hub</span>
+                    <h3 className="text-xs font-black uppercase tracking-[0.2em] text-gray-400 font-bukra">
+                        Emaranhamento
+                    </h3>
+                </div>
+
+                {/* Badge de Status de Conexão */}
+                <div>
+                    {connectionStatus === 'accepted' && (
+                        <span className="px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[9px] font-black uppercase tracking-wider flex items-center gap-1">
+                            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                            Canal Ativo
+                        </span>
+                    )}
+                    {connectionStatus === 'pending_outgoing' && (
+                        <span className="px-2.5 py-1 rounded-full bg-brand-yellow/10 border border-brand-yellow/30 text-brand-yellow text-[9px] font-black uppercase tracking-wider flex items-center gap-1">
+                            <Clock className="size-3" />
+                            Aguardando Aceite
+                        </span>
+                    )}
+                    {connectionStatus === 'pending_incoming' && (
+                        <span className="px-2.5 py-1 rounded-full bg-brand-blue/15 border border-brand-blue/30 text-brand-blue text-[9px] font-black uppercase tracking-wider flex items-center gap-1">
+                            <Sparkles className="size-3" />
+                            Convite Recebido
+                        </span>
+                    )}
+                    {connectionStatus === 'none' && (
+                        <span className="px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-gray-300 text-[9px] font-black uppercase tracking-wider">
+                            1º Contato (Convite)
+                        </span>
+                    )}
+                </div>
             </div>
 
             {/* Chat Area */}
@@ -154,34 +288,77 @@ export const ParticleEntanglement = ({ recipientId }: ParticleEntanglementProps)
                         return (
                             <div
                                 key={msg.id}
-                                className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} animate-in fade-in slide-in-from-bottom-2 duration-300`}
+                                className={`flex flex-col ${isMine ? 'items-end' : 'items-start'} group relative animate-in fade-in slide-in-from-bottom-2 duration-300`}
                             >
-                                <div className={`p-3 rounded-2xl max-w-[85%] text-xs border ${isMine
-                                    ? 'bg-brand-blue/20 border-brand-blue/30 text-white rounded-tr-none'
-                                    : 'bg-white/5 border-white/5 text-gray-300 rounded-tl-none'
-                                    }`}>
-                                    {msg.content}
-                                    {msg.attachment_id && (
-                                        <a
-                                            href={`/arquivo/${msg.attachment_id}`}
-                                            onClick={(e) => e.stopPropagation()}
-                                            className="mt-2 p-2 bg-background-dark/20 rounded-lg flex items-center gap-2 border border-white/5 hover:bg-brand-blue/20 hover:border-brand-blue/30 transition-colors cursor-pointer"
+                                <div className="flex items-center gap-2 max-w-[90%]">
+                                    {/* Botão de Denúncia (para mensagens do interlocutor ou qualquer mensagem) */}
+                                    {!isMine && (
+                                        <button
+                                            onClick={() => setReportingMessage({
+                                                id: msg.id,
+                                                content: msg.content,
+                                                senderId: msg.sender_id,
+                                                senderName: peerName
+                                            })}
+                                            title="Denunciar esta mensagem aos moderadores"
+                                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg text-gray-500 hover:text-brand-red hover:bg-brand-red/10 cursor-pointer order-last"
                                         >
-                                            <span className="material-symbols-outlined text-[10px] text-brand-blue">link</span>
-                                            <span className="text-[10px] font-bold uppercase truncate">Artigo Anexado</span>
-                                        </a>
+                                            <Flag className="size-3.5" />
+                                        </button>
+                                    )}
+
+                                    <div
+                                        className={`p-3 rounded-2xl text-xs border ${
+                                            isMine
+                                                ? 'bg-brand-blue/20 border-brand-blue/30 text-white rounded-tr-none'
+                                                : 'bg-white/5 border-white/5 text-gray-300 rounded-tl-none'
+                                        }`}
+                                    >
+                                        <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+
+                                        {msg.attachment_id && (
+                                            <a
+                                                href={`/arquivo/${msg.attachment_id}`}
+                                                onClick={(e) => e.stopPropagation()}
+                                                className="mt-2 p-2 bg-background-dark/20 rounded-lg flex items-center gap-2 border border-white/5 hover:bg-brand-blue/20 hover:border-brand-blue/30 transition-colors cursor-pointer"
+                                            >
+                                                <span className="material-symbols-outlined text-[10px] text-brand-blue">link</span>
+                                                <span className="text-[10px] font-bold uppercase truncate">Artigo Anexado</span>
+                                            </a>
+                                        )}
+                                    </div>
+
+                                    {isMine && (
+                                        <button
+                                            onClick={() => setReportingMessage({
+                                                id: msg.id,
+                                                content: msg.content,
+                                                senderId: msg.sender_id,
+                                                senderName: 'Você'
+                                            })}
+                                            title="Denunciar ou registrar infração nesta mensagem"
+                                            className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg text-gray-500 hover:text-brand-red hover:bg-brand-red/10 cursor-pointer order-first"
+                                        >
+                                            <Flag className="size-3.5" />
+                                        </button>
                                     )}
                                 </div>
-                                <span className="text-[8px] text-gray-600 mt-1 uppercase font-bold tracking-widest">
+
+                                <span className="text-[8px] text-gray-600 mt-1 uppercase font-bold tracking-widest flex items-center gap-1">
                                     {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                 </span>
                             </div>
                         );
                     })
                 ) : (
-                    <div className="flex flex-col items-center justify-center py-10 text-center opacity-50">
-                        <span className="material-symbols-outlined text-3xl mb-2">bubble_chart</span>
-                        <p className="text-[10px] uppercase font-black tracking-widest">Inicie o emaranhamento de ideias</p>
+                    <div className="flex flex-col items-center justify-center py-10 text-center opacity-50 space-y-2">
+                        <span className="material-symbols-outlined text-3xl text-brand-blue">bubble_chart</span>
+                        <p className="text-[10px] uppercase font-black tracking-widest text-gray-300">
+                            Inicie o emaranhamento de ideias
+                        </p>
+                        <p className="text-[9px] text-gray-500 max-w-xs">
+                            No 1º contato, envie uma mensagem de apresentação. A conversa contínua será liberada após o aceite.
+                        </p>
                     </div>
                 )}
             </div>
@@ -224,41 +401,136 @@ export const ParticleEntanglement = ({ recipientId }: ParticleEntanglementProps)
                 )}
             </AnimatePresence>
 
-            {/* Input Area */}
-            <div className="p-4 bg-background-dark/20">
-                <div className="flex items-end gap-2">
-                    <button
-                        onClick={() => setIsSelectorOpen(!isSelectorOpen)}
-                        className="p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"
-                        title="[🔗 Anexar Partícula] - Referenciar conteúdo técnico"
-                    >
-                        <span className="material-symbols-outlined text-gray-400 text-[20px]">link</span>
-                    </button>
+            {/* Barra de Consentimento no 1º Contato (Incoming Request) */}
+            {connectionStatus === 'pending_incoming' && (
+                <div className="p-4 bg-brand-blue/10 border-t border-brand-blue/20 backdrop-blur-md animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                        <div className="flex items-center gap-2.5">
+                            <div className="size-8 rounded-full bg-brand-blue/20 flex items-center justify-center text-brand-blue shrink-0">
+                                <UserCheck className="size-4" />
+                            </div>
+                            <div className="text-left">
+                                <p className="text-xs font-bold text-white font-bukra">
+                                    {peerName} enviou um convite de emaranhamento.
+                                </p>
+                                <p className="text-[10px] text-gray-400 font-open-sans">
+                                    Aceite para liberar a troca contínua de mensagens.
+                                </p>
+                            </div>
+                        </div>
 
-                    <textarea
-                        value={message}
-                        onChange={(e) => setMessage(e.target.value)}
-                        placeholder="Mensagem emaranhada..."
-                        className="flex-1 bg-white/5 border border-white/5 rounded-2xl p-3 text-xs outline-none focus:border-brand-blue/30 transition-all resize-none max-h-24 h-10"
-                    />
-
-                    <button
-                        onClick={handleSend}
-                        disabled={(!message.trim() && !attachment) || isSending}
-                        className="p-2 bg-brand-blue text-white rounded-xl shadow-lg shadow-brand-blue/20 disabled:opacity-50 min-w-[40px] flex items-center justify-center"
-                    >
-                        {isSending ? (
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                        ) : (
-                            <span className="material-symbols-outlined text-[20px]">send</span>
-                        )}
-                    </button>
+                        <div className="flex items-center gap-2 w-full sm:w-auto">
+                            <button
+                                onClick={() => handleRespondConnection('reject')}
+                                disabled={isRespondingConnection}
+                                className="flex-1 sm:flex-initial px-3.5 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-bold border border-white/10 transition-all font-bukra flex items-center justify-center gap-1.5 disabled:opacity-50"
+                            >
+                                <X className="size-3.5 text-gray-400" />
+                                Recusar
+                            </button>
+                            <button
+                                onClick={() => handleRespondConnection('accept')}
+                                disabled={isRespondingConnection}
+                                className="flex-1 sm:flex-initial px-4 py-2 rounded-xl bg-brand-blue hover:bg-brand-blue/90 text-white text-xs font-bold shadow-lg shadow-brand-blue/20 transition-all font-bukra flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-50"
+                            >
+                                {isRespondingConnection ? (
+                                    <Loader2 className="size-3.5 animate-spin" />
+                                ) : (
+                                    <Check className="size-3.5" />
+                                )}
+                                Aceitar Conexão
+                            </button>
+                        </div>
+                    </div>
                 </div>
+            )}
 
-                <p className="mt-2 text-[9px] text-gray-500 uppercase font-black tracking-widest text-center">
-                    (Use o ícone de elo para anexar um artigo técnico)
-                </p>
-            </div>
+            {/* Aviso de Espera (Outgoing Pending) */}
+            {connectionStatus === 'pending_outgoing' && (
+                <div className="p-4 bg-brand-yellow/10 border-t border-brand-yellow/20 backdrop-blur-md animate-in fade-in slide-in-from-bottom-2 duration-300">
+                    <div className="flex items-center gap-3">
+                        <div className="size-8 rounded-full bg-brand-yellow/20 flex items-center justify-center text-brand-yellow shrink-0">
+                            <Clock className="size-4" />
+                        </div>
+                        <div className="text-left flex-1">
+                            <p className="text-xs font-bold text-brand-yellow font-bukra">
+                                Solicitação de Emaranhamento Enviada
+                            </p>
+                            <p className="text-[10px] text-gray-300 font-open-sans">
+                                Aguardando {peerName} aceitar o convite para liberar o envio de novas mensagens.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Aviso de Recusado */}
+            {connectionStatus === 'rejected' && (
+                <div className="p-4 bg-brand-red/10 border-t border-brand-red/20 backdrop-blur-md">
+                    <div className="flex items-center gap-3 text-brand-red">
+                        <Lock className="size-5 shrink-0" />
+                        <p className="text-xs font-bold font-bukra">
+                            Conexão não disponível. A solicitação de emaranhamento foi recusada.
+                        </p>
+                    </div>
+                </div>
+            )}
+
+            {/* Input Area (Disponível quando connectionStatus === 'none' ou 'accepted') */}
+            {(connectionStatus === 'none' || connectionStatus === 'accepted') && (
+                <div className="p-4 bg-background-dark/20 border-t border-white/5">
+                    {connectionStatus === 'none' && (
+                        <div className="mb-2 px-3 py-1.5 rounded-xl bg-brand-blue/10 border border-brand-blue/20 flex items-center gap-2 text-[10px] text-brand-blue font-open-sans">
+                            <Sparkles className="size-3 shrink-0" />
+                            <span><strong>Primeiro contato:</strong> você pode enviar 1 mensagem de apresentação para solicitar o emaranhamento.</span>
+                        </div>
+                    )}
+
+                    <div className="flex items-end gap-2">
+                        <button
+                            onClick={() => setIsSelectorOpen(!isSelectorOpen)}
+                            className="p-2 bg-white/5 rounded-xl hover:bg-white/10 transition-colors"
+                            title="[🔗 Anexar Partícula] - Referenciar conteúdo técnico"
+                        >
+                            <span className="material-symbols-outlined text-gray-400 text-[20px]">link</span>
+                        </button>
+
+                        <textarea
+                            value={message}
+                            onChange={(e) => setMessage(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter' && !e.shiftKey) {
+                                    e.preventDefault();
+                                    handleSend();
+                                }
+                            }}
+                            placeholder={
+                                connectionStatus === 'none'
+                                    ? `Mensagem de apresentação para ${peerName}...`
+                                    : 'Mensagem emaranhada...'
+                            }
+                            className="flex-1 bg-white/5 border border-white/5 rounded-2xl p-3 text-xs outline-none focus:border-brand-blue/30 transition-all resize-none max-h-24 h-10 text-white placeholder:text-gray-500"
+                        />
+
+                        <button
+                            onClick={handleSend}
+                            disabled={(!message.trim() && !attachment) || isSending}
+                            className="p-2 bg-brand-blue hover:bg-brand-blue/90 text-white rounded-xl shadow-lg shadow-brand-blue/20 disabled:opacity-50 min-w-[40px] flex items-center justify-center transition-all active:scale-95"
+                            title="Enviar Mensagem"
+                        >
+                            {isSending ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                <span className="material-symbols-outlined text-[20px]">send</span>
+                            )}
+                        </button>
+                    </div>
+
+                    <p className="mt-2 text-[9px] text-gray-500 uppercase font-black tracking-widest text-center font-open-sans">
+                        (Pressione Enter para enviar • Use o ícone de elo para anexar artigo)
+                    </p>
+                </div>
+            )}
 
             {/* Attachment Selector */}
             <AnimatePresence>
@@ -269,17 +541,19 @@ export const ParticleEntanglement = ({ recipientId }: ParticleEntanglementProps)
                         exit={{ opacity: 0, scale: 0.95 }}
                         className="absolute bottom-24 left-4 right-4 bg-gray-900 border border-white/10 rounded-2xl p-4 shadow-2xl z-50"
                     >
-                        <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3">Selecionar Recurso</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 font-bukra">
+                            Selecionar Recurso
+                        </h4>
                         <div className="space-y-2">
                             <button
                                 onClick={() => handleAttach('1')}
-                                className="w-full text-left p-2 bg-white/5 rounded-lg text-[10px] font-bold hover:bg-white/10"
+                                className="w-full text-left p-2 bg-white/5 rounded-lg text-[10px] font-bold hover:bg-white/10 text-gray-300"
                             >
                                 🔬 Grande Colisor: Artigo Exemplo
                             </button>
                             <button
                                 onClick={() => handleAttach('2')}
-                                className="w-full text-left p-2 bg-white/5 rounded-lg text-[10px] font-bold hover:bg-white/10"
+                                className="w-full text-left p-2 bg-white/5 rounded-lg text-[10px] font-bold hover:bg-white/10 text-gray-300"
                             >
                                 🌌 Fluxo: Partícula Exemplo
                             </button>
@@ -287,6 +561,13 @@ export const ParticleEntanglement = ({ recipientId }: ParticleEntanglementProps)
                     </m.div>
                 )}
             </AnimatePresence>
+
+            {/* Modal de Denúncia de Mensagem Individual */}
+            <ReportChatMessageModal
+                isOpen={Boolean(reportingMessage)}
+                onClose={() => setReportingMessage(null)}
+                messageData={reportingMessage}
+            />
         </div>
     );
 };

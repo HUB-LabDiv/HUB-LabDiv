@@ -180,17 +180,6 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
                         <Link href="/iniciativas/labdiv" className="mt-auto px-6 py-3 bg-brand-blue text-white rounded-xl font-black uppercase tracking-widest text-[10px] text-center group-hover:scale-105 transition-transform">Explorar Acervo</Link>
                     </div>
 
-                    {/* HUB LabDiv Card */}
-                    <div className="snap-center shrink-0 w-[300px] md:w-[400px] bg-[#1E1E1E] rounded-[40px] p-8 border border-brand-yellow/20 shadow-xl relative overflow-hidden group flex flex-col justify-between">
-                        <div>
-                            <div className="size-16 bg-brand-yellow/10 rounded-2xl p-3 flex items-center justify-center text-brand-yellow mb-6">
-                                <span className="material-symbols-outlined text-4xl">hub</span>
-                            </div>
-                            <h3 className="text-xl font-black italic uppercase mb-2 text-brand-yellow font-bukra">HUB LabDiv</h3>
-                            <p className="text-xs text-gray-400 font-open-sans leading-relaxed mb-6">Entenda o funcionamento da nossa plataforma. Missão, ecossistema e comunidade.</p>
-                        </div>
-                        <Link href="/iniciativas/hub" className="mt-auto px-6 py-3 border border-brand-yellow/30 text-brand-yellow rounded-xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-yellow/10 transition-colors">Como Funciona</Link>
-                    </div>
 
                     {/* Show da Física Card */}
                     <div className="snap-center shrink-0 w-[300px] md:w-[400px] bg-[#1E1E1E] rounded-[40px] p-8 border border-brand-red/20 shadow-xl relative overflow-hidden group flex flex-col justify-between">

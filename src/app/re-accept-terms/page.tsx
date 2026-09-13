@@ -77,7 +77,7 @@ export default function ReAcceptTermsPage() {
         e.preventDefault();
         
         if (!termsAccepted) {
-            toast.error('Você deve ler e aceitar os Termos de Uso e a Política de Privacidade (v2.0).');
+            toast.error('Você deve ler e aceitar os Termos de Uso e a Política de Privacidade (v3.0).');
             return;
         }
 
@@ -147,7 +147,7 @@ export default function ReAcceptTermsPage() {
                     </h1>
                     <p className="text-gray-500 dark:text-gray-400 text-sm max-w-xl mx-auto leading-relaxed font-open-sans">
                         Para garantir total transparência e conformidade com a <strong>LGPD, ECA e Marco Civil da Internet</strong>, 
-                        você deve aceitar os novos <strong className="text-gray-900 dark:text-gray-100 italic">Termos de Uso e Política de Privacidade (v2.0)</strong>, 
+                        você deve aceitar os novos <strong className="text-gray-900 dark:text-gray-100 italic">Termos de Uso e Política de Privacidade (v3.0)</strong>, 
                         incluindo a licença <strong className="text-gray-900 dark:text-gray-100">(CC BY 4.0)</strong> e realizar nossa verificação demográfica via BrasilAPI.
                     </p>
                 </div>

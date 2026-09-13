@@ -530,3 +530,126 @@ CREATE POLICY "Qualquer um pode criar ou atualizar rascunhos compartilhados"
     TO public
     USING (true)
     WITH CHECK (true);
+
+-- ==============================================================================
+-- 9. Propostas e Complementos de Tópicos da Wiki (Eixo de Informação)
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.wiki_topic_proposals (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    author_name TEXT NOT NULL,
+    author_email TEXT,
+    proposal_type TEXT NOT NULL DEFAULT 'new_topic', -- 'new_topic', 'complement', 'related_topic'
+    target_topic_id TEXT, -- e.g. 'calouro', 'bolsas', etc.
+    target_topic_title TEXT, -- e.g. 'Manual do Calouro & Sobrevivência'
+    title TEXT NOT NULL,
+    category TEXT NOT NULL,
+    description TEXT NOT NULL,
+    justification TEXT,
+    status TEXT NOT NULL DEFAULT 'pending', -- 'pending', 'approved', 'rejected'
+    admin_feedback TEXT,
+    reviewed_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    reviewed_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.wiki_topic_proposals ENABLE ROW LEVEL SECURITY;
+
+-- Usuários autenticados ou anônimos podem submeter propostas/complementos
+DROP POLICY IF EXISTS "Qualquer um pode propor ou complementar tópicos wiki" ON public.wiki_topic_proposals;
+CREATE POLICY "Qualquer um pode propor ou complementar tópicos wiki"
+    ON public.wiki_topic_proposals FOR INSERT
+    TO public
+    WITH CHECK (true);
+
+-- Usuários podem visualizar suas próprias propostas e administradores visualizam todas
+DROP POLICY IF EXISTS "Usuários e admins visualizam propostas wiki" ON public.wiki_topic_proposals;
+CREATE POLICY "Usuários e admins visualizam propostas wiki"
+    ON public.wiki_topic_proposals FOR SELECT
+    TO authenticated
+    USING (
+        auth.uid() = user_id OR 
+        EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin')
+    );
+
+-- Administradores podem atualizar status e feedback
+DROP POLICY IF EXISTS "Admins podem moderar propostas wiki" ON public.wiki_topic_proposals;
+CREATE POLICY "Admins podem moderar propostas wiki"
+    ON public.wiki_topic_proposals FOR UPDATE
+    TO authenticated
+    USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'))
+    WITH CHECK (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
+
+-- Administradores podem deletar propostas
+DROP POLICY IF EXISTS "Admins podem excluir propostas wiki" ON public.wiki_topic_proposals;
+CREATE POLICY "Admins podem excluir propostas wiki"
+    ON public.wiki_topic_proposals FOR DELETE
+    TO authenticated
+    USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
+
+-- ==============================================================================
+-- 10. Políticas RLS para Moderação de Denúncias de Conteúdo (reports)
+-- ==============================================================================
+DROP POLICY IF EXISTS "Admins podem visualizar todas as denúncias" ON public.reports;
+CREATE POLICY "Admins podem visualizar todas as denúncias"
+    ON public.reports FOR SELECT
+    TO authenticated
+    USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
+
+DROP POLICY IF EXISTS "Admins podem atualizar status de denúncias" ON public.reports;
+CREATE POLICY "Admins podem atualizar status de denúncias"
+    ON public.reports FOR UPDATE
+    TO authenticated
+    USING (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'))
+    WITH CHECK (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'admin'));
+
+-- ==============================================================================
+-- 11. Suporte Multi-Instituto para USP 101 (dicas_veteranos)
+-- ==============================================================================
+ALTER TABLE public.dicas_veteranos ADD COLUMN IF NOT EXISTS instituto TEXT DEFAULT 'geral';
+
+-- ==============================================================================
+-- 12. Suporte a Denúncias de Mensagens do Emaranhamento (public.reports)
+-- ==============================================================================
+ALTER TABLE public.reports DROP CONSTRAINT IF EXISTS reports_item_type_check;
+ALTER TABLE public.reports ADD CONSTRAINT reports_item_type_check 
+    CHECK (item_type IN ('submission', 'micro_article', 'comment', 'pergunta', 'emaranhamento_message', 'message'));
+ALTER TABLE public.reports ADD COLUMN IF NOT EXISTS metadata JSONB DEFAULT '{}'::jsonb;
+
+-- ==============================================================================
+-- 13. Tabela de Conexões e Consentimento do Emaranhamento (Chat 1-to-1)
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.entanglement_connections (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    requester_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    recipient_id UUID NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'rejected', 'blocked')),
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    updated_at TIMESTAMPTZ DEFAULT NOW(),
+    CONSTRAINT unique_entanglement_pair UNIQUE (requester_id, recipient_id)
+);
+
+CREATE INDEX IF NOT EXISTS idx_entanglement_conn_users 
+ON public.entanglement_connections (requester_id, recipient_id, status);
+
+ALTER TABLE public.entanglement_connections ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Usuários podem ver suas próprias conexões" ON public.entanglement_connections;
+CREATE POLICY "Usuários podem ver suas próprias conexões"
+    ON public.entanglement_connections FOR SELECT
+    TO authenticated
+    USING (auth.uid() = requester_id OR auth.uid() = recipient_id);
+
+DROP POLICY IF EXISTS "Usuários podem criar pedidos de conexão" ON public.entanglement_connections;
+CREATE POLICY "Usuários podem criar pedidos de conexão"
+    ON public.entanglement_connections FOR INSERT
+    TO authenticated
+    WITH CHECK (auth.uid() = requester_id);
+
+DROP POLICY IF EXISTS "Destinatários podem responder conexões" ON public.entanglement_connections;
+CREATE POLICY "Destinatários podem responder conexões"
+    ON public.entanglement_connections FOR UPDATE
+    TO authenticated
+    USING (auth.uid() = recipient_id OR auth.uid() = requester_id)
+    WITH CHECK (auth.uid() = recipient_id OR auth.uid() = requester_id);

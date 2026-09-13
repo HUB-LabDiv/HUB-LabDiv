@@ -9,6 +9,7 @@
  */
 
 import React from 'react';
+import Link from 'next/link';
 import { MainLayoutWrapper } from "@/components/layout/MainLayoutWrapper";
 import { ArrowRight } from 'lucide-react';
 import { PostDTO } from '@/dtos/media';
@@ -33,12 +34,28 @@ export function LabdivClient({ posts }: LabdivClientProps) {
                                 É um laboratório de divulgação científica que produz, reúne e ajuda a criar material de divulgação científica para melhorar a divulgação científica do IF.
                             </p>
 
-                            <div className="flex flex-wrap gap-4">
+                            <div className="flex flex-wrap gap-4 mt-8">
+                                <Link 
+                                    href="/iniciativas/hub" 
+                                    className="px-6 py-3 bg-brand-yellow text-[#121212] rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-xl shadow-brand-yellow/20 flex items-center gap-2 hover:-translate-y-1 transition-transform"
+                                >
+                                    <span className="material-symbols-outlined text-[20px]">hub</span>
+                                    Sobre o HUB
+                                </Link>
+                                <a 
+                                    href="https://sites.google.com/usp.br/labdiv/in%C3%ADcio" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="px-6 py-3 bg-white/10 dark:bg-white/5 border border-brand-blue/30 text-brand-blue rounded-2xl font-black uppercase tracking-widest text-[11px] backdrop-blur-md flex items-center gap-2 hover:-translate-y-1 transition-transform"
+                                >
+                                    <span className="material-symbols-outlined text-[20px]">language</span>
+                                    Site Oficial
+                                </a>
                                 <a 
                                     href="https://sites.google.com/usp.br/labdiv/people?authuser=0" 
                                     target="_blank" 
                                     rel="noopener noreferrer" 
-                                    className="px-6 py-3 bg-brand-blue text-white rounded-2xl font-bold shadow-xl shadow-brand-blue/20 flex items-center gap-2 hover:-translate-y-1 transition-transform"
+                                    className="px-6 py-3 bg-brand-blue text-white rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-xl shadow-brand-blue/20 flex items-center gap-2 hover:-translate-y-1 transition-transform"
                                 >
                                     <span className="material-symbols-outlined text-[20px]">groups</span>
                                     Conhecer a Equipe
@@ -59,9 +76,29 @@ export function LabdivClient({ posts }: LabdivClientProps) {
                             <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white uppercase italic tracking-tighter">
                                 O Papel do <span className="text-brand-blue">Lab-Div</span>
                             </h2>
-                            <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-6">
+                            <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
                                 O Laboratório de Divulgação Científica do IFUSP atua como o motor técnico e curatorial desta plataforma. Inspirado no modelo do <strong>MIT Comm Lab</strong>, nosso trabalho se estende da produção de conteúdo "Padrão Ouro" à moderação, suporte e mentoria contínua para garantir a qualidade da comunicação.
                             </p>
+                            <div className="flex flex-wrap gap-4">
+                                <a 
+                                    href="https://sites.google.com/usp.br/labdiv/in%C3%ADcio" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="px-6 py-3 bg-brand-blue text-white rounded-xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-brand-blue/20 flex items-center gap-2 hover:scale-105 transition-transform"
+                                >
+                                    <span className="material-symbols-outlined text-[18px]">launch</span>
+                                    Conferir o Site
+                                </a>
+                                <a 
+                                    href="https://sites.google.com/usp.br/labdiv/joinus?authuser=0" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="px-6 py-3 bg-brand-red text-white rounded-xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-brand-red/20 flex items-center gap-2 hover:scale-105 transition-transform"
+                                >
+                                    <span className="material-symbols-outlined text-[18px]">person_add</span>
+                                    Venha fazer parte
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>

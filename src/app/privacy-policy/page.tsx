@@ -51,7 +51,7 @@ export default function PrivacyPolicy() {
                             <strong className="text-gray-900 dark:text-white">Se você navega de fininho (Anônimo):</strong> Não coletamos <strong>NADA</strong> que te identifique. Ferramentas de rastreio de comportamento (Telemetria) ficam paradas, como estátuas.
                         </p>
                         <p>
-                            <strong className="text-gray-900 dark:text-white">Quando você faz Check-in (Login):</strong> Para você participar ativamente do Laboratório de Divulgação (postando dúvidas, artigos e lendo PDFs), armazenamos o seu <em>Nickname</em>, seu <em>Avatar</em> e as suas perguntas/interações (que são propriedade sua licenciadas sob CC BY 4.0).
+                            <strong className="text-gray-900 dark:text-white">Quando você faz Check-in (Login):</strong> Para você participar ativamente do Laboratório de Divulgação (postando dúvidas, artigos e lendo PDFs), armazenamos o seu <em>Nickname</em>, seu <em>Avatar</em> e as suas perguntas/interações (que são propriedade sua licenciadas sob CC BY 4.0). Além disso, suas interações no ecossistema (Dicas, Artes, Softwares e Reports) geram métricas de Gamificação e XP atreladas anonimamente ao seu ID público.
                         </p>
                     </div>
                 </details>

@@ -218,15 +218,19 @@ export function EmaranhamentoTabContent() {
             return (
                 <div className="flex flex-col gap-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
                      <div className="flex items-center gap-4 p-4 bg-white dark:bg-white/5 rounded-2xl border border-gray-200 dark:border-white/10">
-                        {targetProfile.avatar_url || targetProfile.avatar ? <img src={targetProfile.avatar_url || targetProfile.avatar} className="size-10 rounded-full object-cover" /> : <div className="size-10 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue font-black uppercase">{targetProfile.full_name?.[0] || targetProfile.name?.[0]}</div>}
+                        <Avatar
+                            src={targetProfile.avatar || targetProfile.avatar_url}
+                            name={targetProfile.name || targetProfile.full_name}
+                            size="md"
+                        />
                         <div className="flex flex-col">
-                            <h3 className="text-xs font-black uppercase text-gray-900 dark:text-white tracking-widest">{targetProfile.full_name || targetProfile.name}</h3>
+                            <h3 className="text-xs font-black uppercase text-gray-900 dark:text-white tracking-widest">{targetProfile.name || targetProfile.full_name}</h3>
                             <span className="text-[10px] text-brand-blue font-black uppercase">Conexão Ativa</span>
                         </div>
                         <button onClick={() => setTargetProfile(null)} className="ml-auto text-gray-500 hover:text-gray-900 dark:text-white transition-colors"><X className="size-4" /></button>
                     </div>
                     <div className="h-[600px] bg-white dark:bg-white/5 rounded-3xl border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none overflow-hidden">
-                        <ParticleEntanglement recipientId={targetProfile.id} />
+                        <ParticleEntanglement recipientId={targetProfile.id} recipientProfile={targetProfile} />
                     </div>
                 </div>
             );
@@ -303,7 +307,7 @@ export function EmaranhamentoTabContent() {
                         <div className="w-full mt-4 space-y-2 max-h-[250px] overflow-y-auto pr-2 scrollbar-hide">
                             {searchResults.map(user => (
                                 <button key={user.id} onClick={() => setTargetProfile({ id: user.id, full_name: user.full_name, avatar_url: user.avatar_url })} className="w-full flex items-center gap-3 p-4 bg-white dark:bg-white/5 hover:bg-brand-blue/20 rounded-2xl border border-gray-200 dark:border-white/5 shadow-sm dark:shadow-none transition-all group text-left">
-                                    <div className="size-10 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue font-black uppercase text-xs border border-brand-blue/20">{user.full_name?.[0]}</div>
+                                    <Avatar src={user.avatar_url} name={user.full_name} size="md" />
                                     <div className="flex flex-col">
                                         <span className="text-[11px] font-black uppercase text-gray-900 dark:text-white group-hover:text-brand-blue transition-colors">{user.full_name}</span>
                                         <span className="text-[8px] text-gray-500 font-bold uppercase tracking-widest">{user.username ? `@${user.username}` : 'Membro'}</span>

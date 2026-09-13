@@ -24,7 +24,9 @@ import {
     Calendar,
     MapPin,
     Radio,
-    Plus
+    Plus,
+    Compass,
+    MessageSquare
 } from 'lucide-react';
 import { ColisorIcon } from '@/components/icons/ColisorIcon';
 import { SacSection } from '@/components/sac/SacSection';
@@ -146,7 +148,47 @@ export function GcifInterativoView({ oportunidades, glossario }: GcifInterativoV
                 )}
             </div>
 
-            {/* 2. Teste de Radiação (Quiz) Banner */}
+            {/* 2. USP 101: Conselhos de Veteranos (Multi-Instituto) */}
+            <motion.div
+                data-tour="gcif-interativo-usp101"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="relative group w-full"
+            >
+                <div className="absolute -inset-0.5 bg-brand-yellow/25 rounded-[32px] blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                <Link
+                    href="/wiki/veteranos"
+                    className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-[#1E1E1E] border border-white/10 hover:border-brand-yellow/60 transition-all overflow-hidden text-left shadow-2xl"
+                >
+                    <div className="absolute top-0 right-0 w-80 h-80 bg-brand-yellow/5 rounded-full blur-[100px] pointer-events-none" />
+                    <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
+                        <div className="size-20 bg-brand-yellow/10 text-brand-yellow rounded-[28px] flex items-center justify-center ring-1 ring-brand-yellow/30 group-hover:scale-110 transition-transform shadow-2xl shrink-0">
+                            <Compass className="w-10 h-10 text-brand-yellow" />
+                        </div>
+                        <div className="text-center md:text-left">
+                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/15 border border-brand-yellow/30 text-brand-yellow text-[10px] font-black uppercase tracking-wider mb-2">
+                                <Sparkles className="w-3 h-3" />
+                                Todos os Institutos da USP • Vivência & Sobrevivência
+                            </div>
+                            <h3 className="text-2xl sm:text-4xl font-black text-white font-bukra italic uppercase tracking-tighter mb-2 group-hover:text-brand-yellow transition-colors">
+                                USP 101 & Dicas de Veteranos
+                            </h3>
+                            <p className="text-xs sm:text-sm text-gray-300 font-open-sans max-w-xl leading-relaxed">
+                                Central colaborativa de conselhos transgeracionais. Encontre ou envie macetes acadêmicos para a USP como um todo ou direcionados para o seu instituto (IFUSP, Poli, IME, IQ, FFLCH e outros).
+                            </p>
+                        </div>
+                    </div>
+                    <div className="mt-8 md:mt-0 relative z-10 shrink-0">
+                        <div className="px-8 py-4 bg-brand-yellow text-gray-950 font-black rounded-2xl group-hover:scale-105 active:scale-95 transition-all text-xs uppercase tracking-widest flex items-center gap-3 shadow-xl shadow-brand-yellow/20">
+                            <span>Explorar USP 101</span>
+                            <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                    </div>
+                </Link>
+            </motion.div>
+
+            {/* 3. Teste de Radiação (Quiz) Banner */}
             <motion.div
                 data-tour="gcif-interativo-quiz"
                 initial={{ opacity: 0, y: 20 }}

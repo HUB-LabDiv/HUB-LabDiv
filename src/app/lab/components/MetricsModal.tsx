@@ -14,6 +14,7 @@ import { PostDTO } from '@/dtos/media';
 import { X, Clock, MousePointer2, Target, BarChart2 } from 'lucide-react';
 import { getPostAnalytics } from '@/app/actions/analytics';
 import { AnimatePresence, motion } from 'framer-motion';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 
 interface MetricsModalProps {
     isOpen: boolean;
@@ -66,8 +67,9 @@ export function MetricsModal({ isOpen, onClose, post }: MetricsModalProps) {
     };
 
     return (
-        <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-background-dark/80 backdrop-blur-sm">
+        <ModalPortal>
+            <AnimatePresence>
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-background-dark/80 backdrop-blur-sm">
                 <motion.div
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -206,5 +208,6 @@ export function MetricsModal({ isOpen, onClose, post }: MetricsModalProps) {
                 </motion.div>
             </div>
         </AnimatePresence>
+    </ModalPortal>
     );
 }

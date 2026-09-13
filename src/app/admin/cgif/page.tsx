@@ -28,7 +28,7 @@ export default function AdminCGIFHubPage() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 
-                {/* IFUSP 101 */}
+                {/* USP 101 */}
                 <Link href="/admin/dicas" className="group p-8 rounded-3xl bg-white dark:bg-card-dark border border-gray-100 dark:border-white/5 hover:border-brand-blue transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all">
                         <MessageSquare className="w-32 h-32 text-brand-blue" />
@@ -37,8 +37,8 @@ export default function AdminCGIFHubPage() {
                         <div className="p-4 bg-brand-blue/10 rounded-2xl w-max mb-6">
                             <MessageSquare className="w-8 h-8 text-brand-blue" />
                         </div>
-                        <h2 className="text-xl font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-2">IFUSP 101</h2>
-                        <p className="text-sm text-gray-500 mb-8 flex-grow">Moderação de dicas, conselhos e informações transgeracionais enviadas por veteranos.</p>
+                        <h2 className="text-xl font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-2">USP 101</h2>
+                        <p className="text-sm text-gray-500 mb-8 flex-grow">Moderação de dicas, conselhos e informações transgeracionais para todos os institutos da USP.</p>
                         <div className="flex items-center gap-2 text-brand-blue font-bold text-xs uppercase tracking-widest">
                             Acessar Painel <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </div>
@@ -87,6 +87,23 @@ export default function AdminCGIFHubPage() {
                         </div>
                         <h2 className="text-xl font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-2">Oportunidades</h2>
                         <p className="text-sm text-gray-500 mb-8 flex-grow">Gerencie murais de bolsas, vagas de IC e demais oportunidades acadêmicas.</p>
+                        <div className="flex items-center gap-2 text-brand-blue font-bold text-xs uppercase tracking-widest">
+                            Acessar Painel <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                    </div>
+                </Link>
+
+                {/* Tópicos da Wiki */}
+                <Link href="/admin/wiki" className="group p-8 rounded-3xl bg-white dark:bg-card-dark border border-gray-100 dark:border-white/5 hover:border-brand-blue transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all">
+                        <BookOpen className="w-32 h-32 text-brand-blue" />
+                    </div>
+                    <div className="flex flex-col h-full relative z-10">
+                        <div className="p-4 bg-brand-blue/10 rounded-2xl w-max mb-6">
+                            <BookOpen className="w-8 h-8 text-brand-blue" />
+                        </div>
+                        <h2 className="text-xl font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-2">Tópicos da Wiki</h2>
+                        <p className="text-sm text-gray-500 mb-8 flex-grow">Avalie, aprove ou responda sugestões de novos tópicos, complementos e ramificações enviadas por estudantes.</p>
                         <div className="flex items-center gap-2 text-brand-blue font-bold text-xs uppercase tracking-widest">
                             Acessar Painel <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </div>

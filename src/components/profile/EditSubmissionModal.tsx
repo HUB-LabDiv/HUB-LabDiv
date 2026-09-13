@@ -17,6 +17,7 @@ import { PostDTO } from '@/dtos/media';
 import { X, Save, AlertCircle } from 'lucide-react';
 import { requestPostModeration } from '@/app/actions/submissions';
 import toast from 'react-hot-toast';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 
 interface EditSubmissionModalProps {
     isOpen: boolean;
@@ -54,17 +55,18 @@ export function EditSubmissionModal({ isOpen, onClose, post }: EditSubmissionMod
     };
 
     return (
-        <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-background-dark/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-background-dark rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800 flex flex-col max-h-[90vh]">
-                <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
-                    <div>
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">Solicitar Edição</h2>
-                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Seu pedido será revisado por um admin</p>
+        <ModalPortal>
+            <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-background-dark/60 backdrop-blur-sm animate-in fade-in duration-300">
+                <div className="bg-white dark:bg-background-dark rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-800 flex flex-col max-h-[90vh]">
+                    <div className="px-6 py-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center">
+                        <div>
+                            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Solicitar Edição</h2>
+                            <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Seu pedido será revisado por um admin</p>
+                        </div>
+                        <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors">
+                            <X className="w-6 h-6" />
+                        </button>
                     </div>
-                    <button onClick={onClose} className="text-gray-400 hover:text-gray-600 dark:hover:text-white transition-colors">
-                        <X className="w-6 h-6" />
-                    </button>
-                </div>
 
                 <div className="p-6 overflow-y-auto space-y-6">
                     <form id="edit-post-form" onSubmit={handleSave} className="space-y-6">
@@ -134,7 +136,8 @@ export function EditSubmissionModal({ isOpen, onClose, post }: EditSubmissionMod
                         <Save className="w-4 h-4" />
                     </button>
                 </div>
+                </div>
             </div>
-        </div>
+        </ModalPortal>
     );
 }

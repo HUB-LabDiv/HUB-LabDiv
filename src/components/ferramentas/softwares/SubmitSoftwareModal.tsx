@@ -25,9 +25,14 @@ import {
     Send,
     Sparkles,
     CheckCircle2,
-    BookOpen
+    BookOpen,
+    ImagePlus,
+    Trash2,
+    Mail
 } from 'lucide-react';
 import { submitSoftware } from '@/app/actions/softwares';
+import { uploadFileToCloudinary } from '@/lib/cloudinary-upload';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 import { SOFTWARE_CATEGORIES, SOFTWARE_PLATFORMS } from '@/constants/softwares';
 import { toast } from 'react-hot-toast';
 
@@ -55,9 +60,21 @@ export function SubmitSoftwareModal({
     const [guideMarkdown, setGuideMarkdown] = useState('');
     const [tagsInput, setTagsInput] = useState('');
     const [pricingType, setPricingType] = useState('Gratuito / Open Source');
+    const [images, setImages] = useState<File[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     if (!isOpen) return null;
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            const newFiles = Array.from(e.target.files);
+            setImages(prev => [...prev, ...newFiles].slice(0, 3)); // Máx 3 imgs
+        }
+    };
+
+    const removeImage = (index: number) => {
+        setImages(prev => prev.filter((_, i) => i !== index));
+    };
 
     const togglePlatform = (plat: string) => {
         if (selectedPlatforms.includes(plat)) {
@@ -84,6 +101,12 @@ export function SubmitSoftwareModal({
 
         setIsSubmitting(true);
         try {
+            const screenshots: string[] = [];
+            for (const img of images) {
+                const url = await uploadFileToCloudinary(img, 'image');
+                screenshots.push(url);
+            }
+
             const res = await submitSoftware({
                 title: title.trim(),
                 tagline: tagline.trim(),
@@ -97,7 +120,8 @@ export function SubmitSoftwareModal({
                 repository_url: repositoryUrl.trim() || undefined,
                 guide_markdown: guideMarkdown.trim() || undefined,
                 tags,
-                target_audience: ['Graduação', 'Iniciação Científica']
+                target_audience: ['Graduação', 'Iniciação Científica'],
+                screenshots
             });
 
             if (!res.success) {
@@ -115,9 +139,10 @@ export function SubmitSoftwareModal({
     };
 
     return (
-        <AnimatePresence>
-            <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-                <motion.div
+        <ModalPortal>
+            <AnimatePresence>
+                <div className="fixed inset-0 z-[110] bg-black/80 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
+                    <motion.div
                     initial={{ opacity: 0, scale: 0.95, y: 20 }}
                     animate={{ opacity: 1, scale: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -274,7 +299,7 @@ export function SubmitSoftwareModal({
 
                             <div>
                                 <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5">
-                                    Repositório GitHub (Opcional)
+                                    Repositório / Link do Drive (Opcional)
                                 </label>
                                 <input
                                     type="url"
@@ -329,6 +354,48 @@ export function SubmitSoftwareModal({
                             />
                         </div>
 
+                        {/* Images Upload */}
+                        <div>
+                            <label className="block text-xs font-bold uppercase tracking-wider text-gray-300 mb-1.5">
+                                Screenshots / Imagens (Máx 3)
+                            </label>
+                            
+                            <div className="flex flex-wrap gap-4 mt-2">
+                                {images.map((img, i) => (
+                                    <div key={i} className="relative w-24 h-24 rounded-xl overflow-hidden border border-white/10 group">
+                                        <img src={URL.createObjectURL(img)} alt="Preview" className="w-full h-full object-cover" />
+                                        <button 
+                                            type="button"
+                                            onClick={() => removeImage(i)}
+                                            className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                        >
+                                            <Trash2 className="w-5 h-5 text-brand-red" />
+                                        </button>
+                                    </div>
+                                ))}
+                                
+                                {images.length < 3 && (
+                                    <label className="w-24 h-24 rounded-xl border border-dashed border-white/20 hover:border-brand-yellow/50 bg-white/5 flex flex-col items-center justify-center cursor-pointer hover:bg-white/10 transition-colors">
+                                        <ImagePlus className="w-6 h-6 text-gray-400" />
+                                        <span className="text-[9px] font-bold uppercase text-gray-400 mt-2 text-center leading-tight">Adicionar<br/>Imagem</span>
+                                        <input type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
+                                    </label>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* Contato & Processo */}
+                        <div className="bg-brand-blue/10 border border-brand-blue/20 rounded-xl p-4 mt-6">
+                            <h4 className="flex items-center gap-2 text-brand-blue text-sm font-bold mb-2">
+                                <Mail className="w-4 h-4" /> Análise e Dúvidas
+                            </h4>
+                            <p className="text-xs text-brand-blue/80 leading-relaxed">
+                                Seu envio entrará em status <strong>Pendente</strong> e será analisado pela nossa moderação. 
+                                Caso precise enviar vídeos, manuais muito grandes ou tenha alguma dúvida técnica sobre a plataforma, 
+                                entre em contato diretamente pelo e-mail: <strong>hublabdiv@gmail.com</strong>
+                            </p>
+                        </div>
+
                         {/* Actions */}
                         <div className="flex justify-end gap-3 pt-4 border-t border-white/10">
                             <button
@@ -348,14 +415,15 @@ export function SubmitSoftwareModal({
                                 ) : (
                                     <>
                                         <Send className="w-4 h-4" />
-                                        <span>Publicar Software</span>
+                                        <span>Enviar para Análise</span>
                                     </>
                                 )}
                             </button>
                         </div>
                     </form>
                 </motion.div>
-            </div>
-        </AnimatePresence>
+                </div>
+            </AnimatePresence>
+        </ModalPortal>
     );
 }

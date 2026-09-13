@@ -25,6 +25,7 @@ import { getUserPseudonyms, createPseudonym } from '@/app/actions/submissions';
 import { createServerSupabase } from '@/lib/supabase/server';
 import { supabase } from '@/lib/supabase';
 import { Profile } from '@/types';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 
 const profileSchema = z.object({
     email: z.string().optional(),
@@ -426,8 +427,9 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background-dark/60 backdrop-blur-sm animate-in fade-in duration-300">
-            <div className="bg-white dark:bg-[#1E1E1E] w-full max-w-lg rounded-[32px] overflow-hidden shadow-2xl border border-gray-100 dark:border-white/5 animate-in zoom-in-95 duration-300">
+        <ModalPortal>
+            <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4 bg-background-dark/60 backdrop-blur-sm animate-in fade-in duration-300">
+                <div className="bg-white dark:bg-[#1E1E1E] w-full max-w-lg rounded-[32px] overflow-hidden shadow-2xl border border-gray-100 dark:border-white/5 animate-in zoom-in-95 duration-300">
                 {/* Header */}
                 <div className="px-8 py-6 border-b border-gray-50 dark:border-white/5 flex items-center justify-between bg-gray-50/50 dark:bg-white/[0.02]">
                     <div>
@@ -1067,6 +1069,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                     </form>
                 )}
             </div>
-        </div>
+            </div>
+        </ModalPortal>
     );
 }

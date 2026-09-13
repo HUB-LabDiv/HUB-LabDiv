@@ -22,6 +22,7 @@ import { searchUsersByName } from '@/app/actions/profiles';
 import { createEntangledGroup, fetchMyGroups, fetchGroupMessages, sendGroupMessage, fetchOfficialGroups, joinGroup } from '@/app/actions/groups';
 import { getUserInterest } from '@/app/actions/recommendations';
 import { ParticleEntanglement } from '@/components/engagement/ParticleEntanglement';
+import { Avatar } from '@/components/ui/Avatar';
 import { User, Loader2, Search, X, Users, Plus, Send } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
@@ -264,20 +265,14 @@ export default function EmaranhamentoPage() {
                             /* ====== 1-TO-1 CHAT ====== */
                             <div className="flex-1 flex flex-col min-h-0 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                 <div className="mb-4 flex items-center gap-4 px-6 py-4 bg-white/5 rounded-[24px] border border-white/5">
-                                    {targetProfile.avatar ? (
-                                        <img src={targetProfile.avatar} className="size-12 rounded-full object-cover border-2 border-brand-blue" />
-                                    ) : (
-                                        <div className="size-12 rounded-full bg-brand-blue/10 flex items-center justify-center text-brand-blue">
-                                            <User className="w-6 h-6" />
-                                        </div>
-                                    )}
+                                    <Avatar src={targetProfile.avatar} name={targetProfile.name} size="md" />
                                     <div className="flex flex-col">
                                         <h2 className="text-sm font-black text-gray-900 dark:text-white uppercase tracking-widest">{targetProfile.name}</h2>
                                         <span className="text-[10px] text-brand-blue font-bold uppercase tracking-widest">Conexão Ativa</span>
                                     </div>
                                 </div>
                                 <div className="flex-1 min-h-0">
-                                    <ParticleEntanglement recipientId={targetProfile.id} />
+                                    <ParticleEntanglement recipientId={targetProfile.id} recipientProfile={targetProfile} />
                                 </div>
                             </div>
 

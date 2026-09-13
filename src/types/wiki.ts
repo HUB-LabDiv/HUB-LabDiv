@@ -41,3 +41,39 @@ export interface SemanticConnection {
     from: string;
     to: string;
 }
+
+export type WikiProposalType = 'new_topic' | 'complement' | 'related_topic';
+export type WikiProposalStatus = 'pending' | 'approved' | 'rejected';
+
+export interface WikiTopicProposal {
+    id: string;
+    user_id?: string | null;
+    author_name: string;
+    author_email?: string | null;
+    proposal_type: WikiProposalType;
+    target_topic_id?: string | null;
+    target_topic_title?: string | null;
+    title: string;
+    category: string;
+    description: string;
+    justification?: string | null;
+    status: WikiProposalStatus;
+    admin_feedback?: string | null;
+    reviewed_by?: string | null;
+    reviewed_at?: string | null;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface CreateWikiProposalDTO {
+    author_name: string;
+    author_email?: string;
+    proposal_type: WikiProposalType;
+    target_topic_id?: string;
+    target_topic_title?: string;
+    title: string;
+    category: string;
+    description: string;
+    justification?: string;
+}
+

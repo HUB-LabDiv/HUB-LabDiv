@@ -52,59 +52,209 @@ import {
     Search,
     Landmark,
     Flag,
-    Info
+    Info,
+    Palette,
+    MessageSquare,
+    Sparkles,
+    ArrowRight,
+    Edit3,
+    GitBranch
 } from 'lucide-react';
+import { ProposeWikiTopicModal } from '@/components/wiki/ProposeWikiTopicModal';
+import { WikiProposalType } from '@/types/wiki';
 
 // --- TECHNICAL DATA SHARD ---
 const pageContent: Record<string, any> = {
     'guia-de-boas-praticas': {
-        title: 'Guia de Boas Práticas',
-        subtitle: 'Produção, Créditos e Qualidade Hub',
+        title: 'Guia de Produção & Boas Práticas',
+        subtitle: 'Padrões de Qualidade, Créditos e Formatos',
         icon: <ShieldCheck className="w-12 h-12" />,
         color: 'brand-blue',
         sections: [
             {
-                title: 'Estrutura em 4 Etapas',
-                content: 'Para tornar o envio menos exaustivo e mais organizado, dividimos o formulário em 4 etapas: [1] Categoria, [2] Formato, [3] Detalhes Básicos (obrigatórios) e [4] Detalhes Complementares (opcionais).'
+                title: 'Estrutura de Submissão nos 3 Feeds',
+                fullWidth: true,
+                content: (
+                    <div className="glass-card p-6 sm:p-8 rounded-[40px] border border-black/5 dark:border-white/10 shadow-2xl space-y-8 relative">
+                        <div>
+                            <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium leading-relaxed">
+                                Para tornar o compartilhamento intuitivo e respeitar as diferentes linguagens da divulgação científica, o HUB organiza as publicações da comunidade em <strong className="text-brand-blue dark:text-sky-400 font-bold">3 feeds complementares</strong> no Eixo Social. Cada feed possui um propósito comunicativo próprio e uma estrutura de envio adaptada:
+                            </p>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            {/* Feed Fluxo */}
+                            <div className="p-6 rounded-3xl border border-[#0F4780]/30 bg-[#0F4780]/5 hover:border-[#0F4780]/60 transition-all flex flex-col justify-between group">
+                                <div>
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="p-2.5 rounded-2xl bg-[#0F4780]/20 text-brand-blue border border-[#0F4780]/30">
+                                            <Zap className="w-5 h-5 text-brand-blue" />
+                                        </div>
+                                        <div>
+                                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-blue">Eixo Social • Principal</span>
+                                            <h4 className="text-gray-900 dark:text-white font-black font-bukra uppercase italic text-base">Feed Fluxo</h4>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+                                        Destinado a <strong>artigos aprofundados, vídeos, podcasts, infográficos e conteúdos estruturados</strong> de divulgação científica.
+                                    </p>
+                                    <div className="space-y-2 text-[11px] text-gray-600 dark:text-gray-300 mb-6 bg-black/5 dark:bg-white/5 p-3.5 rounded-2xl">
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-brand-blue font-bold">1.</span>
+                                            <span><strong>Acesso:</strong> Botão <em>Lançar à Órbita</em> no menu ou rota <code>/enviar</code> (modo Fluxo).</span>
+                                        </div>
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-brand-blue font-bold">2.</span>
+                                            <span><strong>Metadados:</strong> Título, Instituto, Autores/Coautores, Categoria temática e Registro Linguístico.</span>
+                                        </div>
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-brand-blue font-bold">3.</span>
+                                            <span><strong>Diagramador SDOCX:</strong> Blocos de texto rico, equações LaTeX, vídeos, áudios, PDFs, links externos/Drive e Mini Quiz gamificado.</span>
+                                        </div>
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-brand-blue font-bold">4.</span>
+                                            <span><strong>Curadoria:</strong> Passa por moderação acadêmica para atribuição do selo <em>Padrão Ouro</em>.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="pt-2 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-[11px] font-bold text-brand-blue">
+                                    <span>Padrão Ouro & Revisão</span>
+                                    <Link href="/enviar" className="hover:underline flex items-center gap-1">
+                                        Submeter <ArrowRight className="w-3 h-3" />
+                                    </Link>
+                                </div>
+                            </div>
+
+                            {/* Feed Arte */}
+                            <div className="p-6 rounded-3xl border border-[#FFCC00]/30 bg-[#FFCC00]/5 hover:border-[#FFCC00]/60 transition-all flex flex-col justify-between group">
+                                <div>
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="p-2.5 rounded-2xl bg-[#FFCC00]/20 text-brand-yellow border border-[#FFCC00]/30">
+                                            <Palette className="w-5 h-5 text-brand-yellow" />
+                                        </div>
+                                        <div>
+                                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-yellow">Galeria Visual</span>
+                                            <h4 className="text-gray-900 dark:text-white font-black font-bukra uppercase italic text-base">Feed Arte</h4>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+                                        Dedicado a <strong>tirinhas, ilustrações científicas, fotografias do campus, charges, poemas e memes educativos</strong>.
+                                    </p>
+                                    <div className="space-y-2 text-[11px] text-gray-600 dark:text-gray-300 mb-6 bg-black/5 dark:bg-white/5 p-3.5 rounded-2xl">
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-brand-yellow font-bold">1.</span>
+                                            <span><strong>Acesso:</strong> Botão <em>Lançar à Órbita</em> em <code>/enviar</code> selecionando o modo ou categoria <em>Arte</em>.</span>
+                                        </div>
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-brand-yellow font-bold">2.</span>
+                                            <span><strong>Upload Visual:</strong> Imagens em alta resolução com compressão automática inteligente (Cloudinary/WebP).</span>
+                                        </div>
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-brand-yellow font-bold">3.</span>
+                                            <span><strong>Metadados Artísticos:</strong> Título da obra, autores/ilustradores, técnica empregada ou contexto explicativo.</span>
+                                        </div>
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-brand-yellow font-bold">4.</span>
+                                            <span><strong>Exibição:</strong> Layout em cards estilo galeria com foco na contemplação estética e visual.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="pt-2 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-[11px] font-bold text-brand-yellow">
+                                    <span>Creative Commons CC-BY-SA</span>
+                                    <Link href="/enviar" className="hover:underline flex items-center gap-1">
+                                        Submeter <ArrowRight className="w-3 h-3" />
+                                    </Link>
+                                </div>
+                            </div>
+
+                            {/* Feed Logs */}
+                            <div className="p-6 rounded-3xl border border-[#F14343]/30 bg-[#F14343]/5 hover:border-[#F14343]/60 transition-all flex flex-col justify-between group">
+                                <div>
+                                    <div className="flex items-center gap-3 mb-4">
+                                        <div className="p-2.5 rounded-2xl bg-[#F14343]/20 text-brand-red border border-[#F14343]/30">
+                                            <MessageSquare className="w-5 h-5 text-brand-red" />
+                                        </div>
+                                        <div>
+                                            <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-red">Micro-Posts Ágeis</span>
+                                            <h4 className="text-gray-900 dark:text-white font-black font-bukra uppercase italic text-base">Feed Logs</h4>
+                                        </div>
+                                    </div>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
+                                        Voltado para <strong>relatos de bancada, diários de laboratório, dúvidas rápidas para veteranos e avisos instantâneos</strong>.
+                                    </p>
+                                    <div className="space-y-2 text-[11px] text-gray-600 dark:text-gray-300 mb-6 bg-black/5 dark:bg-white/5 p-3.5 rounded-2xl">
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-brand-red font-bold">1.</span>
+                                            <span><strong>Acesso Direto:</strong> Campo de publicação rápida no topo da aba <em>Logs</em> no feed da comunidade.</span>
+                                        </div>
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-brand-red font-bold">2.</span>
+                                            <span><strong>Formato Conciso:</strong> Drops curtos (até 500 caracteres), direto ao ponto e sem burocracia.</span>
+                                        </div>
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-brand-red font-bold">3.</span>
+                                            <span><strong>Hashtags & Menções:</strong> Uso de #tags para categorização e conexão direta entre estudantes.</span>
+                                        </div>
+                                        <div className="flex items-start gap-2">
+                                            <span className="text-brand-red font-bold">4.</span>
+                                            <span><strong>Interatividade:</strong> Respostas encadeadas em threads, reações up/down e visibilidade imediata.</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="pt-2 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-[11px] font-bold text-brand-red">
+                                    <span>Tempo Real & Sem Fricção</span>
+                                    <Link href="/?tab=logs" className="hover:underline flex items-center gap-1">
+                                        Ver Logs <ArrowRight className="w-3 h-3" />
+                                    </Link>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Banner de Boas Práticas */}
+                        <div className="p-4 rounded-2xl bg-gradient-to-r from-brand-blue/10 via-brand-yellow/10 to-brand-red/10 border border-black/5 dark:border-white/5 flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <div className="flex items-center gap-3">
+                                <Sparkles className="w-5 h-5 text-brand-yellow shrink-0" />
+                                <span className="text-xs text-gray-600 dark:text-gray-300">
+                                    <strong>Dica de Ouro:</strong> Escolha o feed de acordo com o ritmo do seu conteúdo: <strong>Fluxo</strong> para artigos completos, <strong>Arte</strong> para mídias visuais e <strong>Logs</strong> para reflexões rápidas.
+                                </span>
+                            </div>
+                            <Link
+                                href="/enviar"
+                                className="px-4 py-2 rounded-xl bg-brand-blue hover:bg-brand-blue/80 text-white text-xs font-black uppercase tracking-wider transition-all shrink-0 flex items-center gap-1.5 shadow-lg shadow-brand-blue/20"
+                            >
+                                <Zap className="w-3.5 h-3.5" />
+                                Lançar à Órbita
+                            </Link>
+                        </div>
+                    </div>
+                )
             },
             {
-                title: 'Etapa 3: Detalhes Básicos (Obrigatórios)',
-                content: 'Aqui você define o título (impactante e específico), o autor principal (seu nome real ou apelido acadêmico), o ano do trabalho e a descrição principal. Se o formato exigir, é nesta etapa que você faz o upload dos arquivos (máx 10MB) ou insere o link do YouTube.'
+                title: 'Interações e Gamificação',
+                content: 'O novo HUB possui diversas mecânicas de interação, como avaliações de impacto, reflexões e comentários nos murais dos artigos. Toda interação de qualidade rende XP e moedas virtuais. Lembre-se de utilizar a funcionalidade de Mini Quiz na etapa 4 da sua submissão para recompensar a comunidade pela atenção.'
             },
             {
-                title: 'Etapa 4: Detalhes Complementares (Opcionais)',
-                content: 'Esta nova etapa permite enriquecer sua contribuição sem pressa. Você pode adicionar WhatsApp para contato, Tags para facilitar a busca, Coautores que participaram do projeto, Links Externos (Drive, GitHub, Notion), Detalhes Técnicos (ISO, Câmera, Software) e um Depoimento pessoal sobre o trabalho.'
+                title: 'Dicas de Veteranos',
+                content: 'Nossa plataforma valoriza o conhecimento repassado de aluno para aluno. Na seção "Dicas de Veteranos", você encontra conselhos reais, avisos sobre disciplinas e macetes de sobrevivência na USP. Contribua com a sua sabedoria após passar pelos perrengues das matérias!'
             },
             {
-                title: 'Por que preencher o opcional?',
-                content: 'Campos como "Detalhes Técnicos" ajudam outros alunos a aprenderem seu método. "Tags" aumentam a visibilidade da sua pesquisa no Hub. "Coautores" garantem que todos os envolvidos recebam o devido crédito técnico e acadêmico.'
+                title: 'Compartilhamento de Softwares',
+                content: 'Desenvolveu um script útil para laboratório, um simulador web, ou um app que ajuda nos estudos? Publique na seção de "Softwares". A comunidade pode testar, sugerir melhorias e se inspirar no seu código. Recomendamos hospedar repositórios no GitHub e deixar o link na submissão.'
             },
             {
-                title: 'Apelidos e Identidade',
-                content: 'No passo 3, você pode optar por usar um Apelido Acadêmico. Ele será seu nome de exibição público. Nomes ofensivos ou que tentem se passar por entidades oficiais não são permitidos. A integridade da comunidade vem em primeiro lugar.'
-            },
-            {
-                title: 'Links Externos e Grandes Arquivos',
-                content: 'O limite de upload direto é 10MB. Para datasets pesados, PDFs extensos ou códigos, utilize o campo "Link Externo" na Etapa 4, apontando para Google Drive, GitHub ou similares. Certifique-se de que os links tenham permissão de leitura.'
-            },
-            {
-                title: 'Mini Quiz: Gamificação e Engajamento',
-                content: 'Na Etapa 4, você pode criar um Mini Quiz (até 2 perguntas) sobre o seu conteúdo. Leitores que acertarem as respostas ganham XP no Hub. É uma ótima forma de garantir que sua mensagem foi compreendida e de recompensar a comunidade pela atenção.'
-            },
-            {
-                title: 'Creative Commons',
-                content: 'Todo conteúdo no Hub é, por padrão, CC-BY-SA. Isso garante que o conhecimento circule livremente, mantendo os créditos devidos aos autores originais. Você confirma essa adesão na Etapa 3.'
+                title: 'Creative Commons e Moderação',
+                content: 'Todo conteúdo no Hub é, por padrão, CC-BY-SA. Isso garante que o conhecimento circule livremente, mantendo os créditos devidos aos autores originais. Nossa moderação preza pela integridade, rejeitando conteúdos inapropriados. Apelidos e identidades de brincadeira são permitidos, desde que respeitem as normas de convívio.'
             }
         ],
         dates: [],
         actions: [
             { label: 'Por em Prática', icon: <Zap className="w-4 h-4" />, href: '/enviar' },
-            { label: 'Ver Exemplos', icon: <Telescope className="w-4 h-4" />, href: '/arquivo-labdiv#catalogo' }
+            { label: 'Políticas e Termos', icon: <FileText className="w-4 h-4" />, href: '/transparencia' }
         ]
     },
     'calouro': {
-        title: 'Iniciação de Partículas',
-        subtitle: 'Manual de Sobrevivência na USP',
+        title: 'Manual do Calouro & Sobrevivência',
+        subtitle: 'Guia Prático da USP e do IFUSP',
         icon: <Zap className="w-12 h-12" />,
         color: 'brand-yellow',
         sections: [
@@ -162,8 +312,8 @@ const pageContent: Record<string, any> = {
         ]
     },
     'ifusp': {
-        title: 'Estrutura da Matéria',
-        subtitle: 'Evolução Acadêmica e Estágios',
+        title: 'Cursos, Grades & Graduação IFUSP',
+        subtitle: 'Bacharelado, Licenciatura, PPPs e Comissões',
         icon: <Atom className="w-12 h-12" />,
         color: 'brand-red',
         sections: [
@@ -177,8 +327,8 @@ const pageContent: Record<string, any> = {
         actions: []
     },
     'bolsas': {
-        title: 'Energia de Permanência',
-        subtitle: 'Bolsas e Auxílios Completos',
+        title: 'Bolsas & Auxílios de Permanência',
+        subtitle: 'PAPFE, PUB, Monitoria e Moradia',
         icon: <Coins className="w-12 h-12" />,
         color: 'brand-red',
         sections: [
@@ -334,8 +484,8 @@ const pageContent: Record<string, any> = {
         ]
     },
     'divulgacao': {
-        title: 'Emissão de Luz',
-        subtitle: 'Mini-curso de Criação LabDiv',
+        title: 'Divulgação Científica & Mídia',
+        subtitle: 'Toolkit LabDiv, Posters e Design Visual',
         icon: <Telescope className="w-12 h-12" />,
         color: 'brand-blue',
         sections: [
@@ -371,8 +521,8 @@ const pageContent: Record<string, any> = {
         ]
     },
     'protecao': {
-        title: 'Protocolos de Proteção',
-        subtitle: 'Saúde Mental e Acolhimento',
+        title: 'Saúde Mental & Apoio Estudantil',
+        subtitle: 'Inclusão, Acolhimento e Suporte',
         icon: <HeartHandshake className="w-12 h-12" />,
         color: 'brand-yellow',
         sections: [
@@ -439,8 +589,8 @@ const pageContent: Record<string, any> = {
         actions: []
     },
     'extensao': {
-        title: 'Interações de Fronteira',
-        subtitle: 'Mapa da Integração IFUSP',
+        title: 'Extensão Universitária & Cultura',
+        subtitle: 'Grupos de Extensão, Eventos e Projetos',
         icon: <Network className="w-12 h-12" />,
         color: 'brand-blue',
         sections: [
@@ -639,6 +789,9 @@ export default function WikiSubPage() {
     const highlightTerm = searchParams.get('hl')?.toLowerCase();
     const content = pageContent[slug];
     const { setReportModalOpen } = useNavigationStore();
+
+    const [isProposalModalOpen, setIsProposalModalOpen] = React.useState(false);
+    const [proposalModalType, setProposalModalType] = React.useState<WikiProposalType>('complement');
     
     // Telemetry Sensors
     const wordCount = React.useMemo(() => {
@@ -822,10 +975,65 @@ export default function WikiSubPage() {
                                             </ContentSection>
                                         </motion.div>
                                     ))}
+                                </div>
+
+                                {/* Seção de Co-Criação e Colaboração no Fim do Tópico (Full Width) */}
+                                <div className="mt-12 p-6 sm:p-8 rounded-[36px] bg-gradient-to-br from-[#1E1E1E] via-[#161616] to-[#121212] border border-white/10 shadow-2xl relative overflow-hidden w-full">
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-brand-yellow/5 rounded-full blur-3xl pointer-events-none" />
+                                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-blue/5 rounded-full blur-3xl pointer-events-none" />
+
+                                    <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                                        <div className="max-w-xl">
+                                            <span className="text-[10px] font-black uppercase tracking-[0.25em] text-brand-yellow">
+                                                Co-Criação & Atualização
+                                            </span>
+                                            <h3 className="text-xl sm:text-2xl font-black font-bukra text-white italic uppercase tracking-tight mt-1">
+                                                Colabore com este Tópico
+                                            </h3>
+                                            <p className="text-xs sm:text-sm text-gray-400 font-open-sans mt-2 leading-relaxed">
+                                                Conhece novos detalhes, mudanças de regras, atualizações de editais ou quer sugerir um novo tópico conectado a este? Envie para a moderação da Wiki no Eixo de Informação.
+                                            </p>
+                                        </div>
+
+                                        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto shrink-0">
+                                            <button
+                                                onClick={() => {
+                                                    setProposalModalType('complement');
+                                                    setIsProposalModalOpen(true);
+                                                }}
+                                                className="px-5 py-3 rounded-2xl bg-brand-yellow hover:bg-brand-yellow/80 text-gray-900 font-black text-xs uppercase tracking-wider shadow-lg shadow-brand-yellow/20 flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
+                                            >
+                                                <Edit3 className="w-4 h-4 shrink-0" />
+                                                Complementar este Tópico
+                                            </button>
+
+                                            <button
+                                                onClick={() => {
+                                                    setProposalModalType('related_topic');
+                                                    setIsProposalModalOpen(true);
+                                                }}
+                                                className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-wider border border-white/10 flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
+                                            >
+                                                <GitBranch className="w-4 h-4 text-brand-blue shrink-0" />
+                                                Sugerir Tópico Relacionado
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Modal de Proposta / Complemento */}
+                                <ProposeWikiTopicModal
+                                    isOpen={isProposalModalOpen}
+                                    onClose={() => setIsProposalModalOpen(false)}
+                                    initialType={proposalModalType}
+                                    initialTopicId={slug}
+                                    initialTopicTitle={content.title}
+                                />
+
                                 {/* Feedback & Content Rating */}
-                        <div className="mt-12 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-                            <ContentRating postId={content.id} contentFormat="text" />
-                        </div>        </div>
+                                <div className="mt-8 mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000 w-full">
+                                    <ContentRating postId={content.id} contentFormat="text" />
+                                </div>
                             </motion.div>
                         </div>
 

@@ -38,7 +38,7 @@ export default function AdminDicasPage() {
         setIsLoading(false);
     };
 
-    const handleUpdateStatus = async (id: string, status: string) => {
+    const handleUpdateStatus = async (id: string, status: 'pending' | 'approved' | 'rejected') => {
         setIsUpdating(true);
         const res = await updateTipStatus(id, status);
         if (res.success) {
@@ -55,9 +55,9 @@ export default function AdminDicasPage() {
             <div className="mb-8">
                 <h1 className="text-3xl font-black italic uppercase text-gray-900 dark:text-white flex items-center gap-3">
                     <MessageSquare className="w-8 h-8 text-brand-blue" />
-                    Moderação IFUSP 101
+                    Moderação USP 101
                 </h1>
-                <p className="text-gray-500 mt-2">Aprove, rejeite e gerencie as dicas enviadas pelos veteranos.</p>
+                <p className="text-gray-500 mt-2">Aprove, rejeite e gerencie os conselhos enviados por veteranos para todos os institutos da USP.</p>
             </div>
 
             {/* Abas de Filtro */}
@@ -91,7 +91,10 @@ export default function AdminDicasPage() {
                     {tips.map(tip => (
                         <div key={tip.id} className="bg-white dark:bg-card-dark p-6 rounded-3xl border border-gray-100 dark:border-white/5 flex flex-col md:flex-row gap-6">
                             <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-2">
+                                <div className="flex flex-wrap items-center gap-2 mb-2">
+                                    <span className="px-3 py-1 bg-brand-yellow/15 text-brand-yellow border border-brand-yellow/30 text-[10px] font-black uppercase rounded-full tracking-widest font-mono">
+                                        {tip.instituto ? tip.instituto.toUpperCase() : 'GERAL'}
+                                    </span>
                                     <span className="px-3 py-1 bg-brand-blue/10 text-brand-blue text-[10px] font-black uppercase rounded-full tracking-widest">
                                         {tip.categoria}
                                     </span>

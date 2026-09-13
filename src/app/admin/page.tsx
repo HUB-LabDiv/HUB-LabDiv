@@ -195,10 +195,10 @@ export default function AdminDashboardOverview() {
             urgent: false,
         },
         {
-            title: 'Anomalias',
+            title: 'Denúncias & Reports',
             subtitle: 'Aguardando Análise',
             count: counts.reportsPendentes,
-            icon: 'bug_report',
+            icon: 'flag',
             color: 'red' as const,
             href: '/admin/reports',
             urgent: counts.reportsPendentes > 0,

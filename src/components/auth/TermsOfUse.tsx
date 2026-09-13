@@ -23,17 +23,17 @@ export function TermsOfUse({ onAccept, acceptedVersion }: TermsOfUseProps) {
         <h3 className="text-lg font-bold text-[#0F4780] dark:text-brand-blue uppercase tracking-tight">
           Termos de Uso e LGPD (HUB Lab-Div)
         </h3>
-        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-1 italic">Versão: v2.0</p>
+        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-1 italic">Versão: v3.0</p>
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-6 text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
         <section>
           <h4 className="font-semibold text-gray-900 dark:text-gray-100 text-base mb-2">
-            1. Consentimento e Privacidade (LGPD, ECA & Marco Civil)
+            1. Consentimento e Interações no HUB v3.0
           </h4>
           <p>
-            O acesso a ferramentas de pesquisa por menores de idade requer, impreterivelmente, a validação de um responsável legal. O processamento de dados do HUB Lab-Div obedece estritamente à <strong>Lei Geral de Proteção de Dados (LGPD)</strong>, ao <strong>Estatuto da Criança e do Adolescente (ECA)</strong> e ao <strong>Marco Civil da Internet</strong>.
-            Nenhum dado pessoal de acesso/autenticação, como CPF, é armazenado em texto claro, passando por irreversíveis processos de hashing em memória.
+            O acesso a ferramentas de pesquisa por menores de idade requer validação. O processamento de dados obedece à <strong>LGPD</strong>, <strong>ECA</strong> e <strong>Marco Civil da Internet</strong>.
+            Nesta nova versão do HUB, interações como Avaliações, Comentários, Reports e Dicas de Veteranos geram XP (Gamificação). Você concorda que suas interações públicas fazem parte do ecossistema educacional colaborativo.
           </p>
         </section>
 
@@ -87,10 +87,10 @@ export function TermsOfUse({ onAccept, acceptedVersion }: TermsOfUseProps) {
         <div className="p-4 bg-gray-50 dark:bg-background-dark border-t border-gray-100 dark:border-gray-800 flex justify-end">
           <button 
             onClick={onAccept}
-            disabled={acceptedVersion === 'v2.0'}
+            disabled={acceptedVersion === 'v3.0'}
             className="px-6 py-2 bg-[#0F4780] hover:bg-[#0c3966] text-white rounded-md font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {acceptedVersion === 'v2.0' ? 'Termos Já Aceitos' : 'Li, Entendi e Aceito (v2.0)'}
+            {acceptedVersion === 'v3.0' ? 'Termos Já Aceitos' : 'Li, Entendi e Aceito (v3.0)'}
           </button>
         </div>
       )}

@@ -37,155 +37,188 @@ import {
 import { SacSection } from '@/components/sac/SacSection';
 
 // --- DATA STRUCTURE (O Síncrotron) ---
-export const wikiCells = [
-    // --- Blue Group (Produção e Comunicação) ---
+export const WIKI_CATEGORIES = [
     {
-        id: 'guia-de-boas-praticas',
-        title: 'Guia de Boas Práticas',
-        subtitle: 'Produção, Créditos e Qualidade.',
-        icon: <ShieldCheck className="w-8 h-8" />,
-        color: 'brand-blue',
-        href: '/wiki/guia-de-boas-praticas',
-        description: 'Diretrizes oficiais para produção de mídia: como fotografar, filmar e creditar colaboradores no Hub.',
-        details: [
-            'Co-autoria e Créditos: Como marcar sua equipe',
-            'Fotografia e Vídeo: Padrões de iluminação e enquadramento',
-            'Padrões Técnicos: Tamanhos de arquivos e categorias'
-        ],
-        keywords: ['guia', 'boas práticas', 'manual', 'foto', 'vídeo', 'créditos', 'qualidade', 'padrões'],
-        cta: 'Ver Guia de Produção'
+        id: 'vida-universitaria',
+        name: 'Vida Universitária & Apoio',
+        shortName: 'Vida Universitária',
+        color: 'brand-yellow',
+        description: 'Tudo o que você precisa para navegar pelo campus, acessar auxílios de permanência e cuidar do seu bem-estar.'
     },
     {
-        id: 'divulgacao',
-        title: 'Emissão de Luz',
-        subtitle: 'Toolkit de Divulgação LabDiv.',
-        icon: <Telescope className="w-8 h-8" />,
-        color: 'brand-blue',
-        href: '/wiki/divulgacao',
-        description: 'Metodologia e ferramentas para transformar dados técnicos em impacto visual.',
-        details: [
-            'Mapeamento 360°, VR e vídeos imersivos',
-            'Guia Visual LabDiv (Azul Elétrico) e MIT Style',
-            'Toolkit de design para posters e redes sociais'
-        ],
-        keywords: ['divulgação', 'design', 'labdiv', '360', 'vr', 'poster', 'mídia', 'comunicação', 'impacto', 'toolkit'],
-        cta: 'Gerar Impacto'
+        id: 'formacao-pesquisa',
+        name: 'Formação Acadêmica & Pesquisa',
+        shortName: 'Formação & Pesquisa',
+        color: 'brand-red',
+        description: 'Guias essenciais sobre o currículo do IFUSP, ingresso na Iniciação Científica e planejamento de carreira.'
     },
     {
-        id: 'extensao',
-        title: 'Interações de Fronteira',
-        subtitle: 'Cultura, Eventos e Grupos.',
-        icon: <Network className="w-8 h-8" />,
+        id: 'divulgacao-extensao',
+        name: 'Divulgação Científica & Extensão',
+        shortName: 'Divulgação & Extensão',
         color: 'brand-blue',
-        href: '/wiki/extensao',
-        description: 'Catálogo de grupos de extensão, eventos "Física para Todos" e projetos de cultura.',
-        details: [
-            'Catálogo de Grupos de Extensão IFUSP',
-            'Eventos: Física para Todos e Palestras',
-            'Projetos de Cultura e Proposição de Ações'
-        ],
-        keywords: ['extensão', 'cultura', 'eventos', 'física para todos', 'grupos', 'projetos'],
-        cta: 'Explorar Fronteiras'
-    },
+        description: 'Padrões de produção de mídia, design visual do LabDiv e catálogo de grupos de extensão ativos.'
+    }
+] as const;
 
-    // --- Yellow Group (Vivência e Suporte) ---
+export const wikiCells = [
+    // --- Categoria 1: Vida Universitária & Apoio (Amarelo) ---
     {
         id: 'calouro',
-        title: 'Iniciação de Partículas',
-        subtitle: 'Guia de Sobrevivência USP/IF.',
+        title: 'Manual do Calouro & Sobrevivência',
+        subtitle: 'Guia Prático da USP e do IFUSP.',
+        category: 'vida-universitaria',
         icon: <Zap className="w-8 h-8" />,
         color: 'brand-yellow',
         href: '/wiki/calouro',
-        description: 'Logística do campus, serviços essenciais e moradia estudantil para novos ingressantes.',
+        description: 'Tudo sobre bandejão, moradia no CRUSP, JúpiterWeb, rotas de circulares, prédios e serviços essenciais do campus.',
         details: [
             'Localização: Edifício Principal, Ala Central e Didática',
             'Bandejão (SAS), Júpiter Web e e-mail institucional',
-            'Moradia: CRUSP (Blocos A a G) e Vida no Campus'
+            'Moradia: CRUSP (Blocos A a G) e Circulares BUSP'
         ],
         keywords: ['bandejão', 'crusp', 'matão', 'sobrevivência', 'calouro', 'ajuda', 'logística', 'jupiter', 'sas'],
-        cta: 'Iniciar Trajetória'
+        cta: 'Ver Guia do Calouro'
+    },
+    {
+        id: 'bolsas',
+        title: 'Bolsas & Auxílios de Permanência',
+        subtitle: 'PAPFE, PUB, Monitoria e Moradia.',
+        category: 'vida-universitaria',
+        icon: <Coins className="w-8 h-8" />,
+        color: 'brand-yellow',
+        href: '/wiki/bolsas',
+        description: 'Programas de apoio financeiro, bolsas de ensino e pesquisa, auxílios moradia e alimentação (PAPFE/PRIP) e editais abertos.',
+        details: [
+            'PAPFE: Auxílio Permanência e Alimentação (PRIP)',
+            'Editais 2026: Monitoria, Pró-Aluno, PUB e IC',
+            'Inclusão: Apoio a grupos vulneráveis e moradia'
+        ],
+        keywords: ['bolsas', 'papfe', 'permanência', 'monitoria', 'ic', 'iniciação científica', 'dinheiro', 'editais', 'auxílio', 'prip'],
+        cta: 'Ver Bolsas e Auxílios'
     },
     {
         id: 'protecao',
-        title: 'Protocolos de Proteção',
-        subtitle: 'Inclusão, Saúde Mental e Apoio.',
+        title: 'Saúde Mental & Apoio Estudantil',
+        subtitle: 'Inclusão, Acolhimento e Suporte.',
+        category: 'vida-universitaria',
         icon: <HeartHandshake className="w-8 h-8" />,
         color: 'brand-yellow',
         href: '/wiki/protecao',
-        description: 'Políticas de permanência, suporte a neurodiversidade (TEA) e canais de acolhimento.',
+        description: 'Políticas de permanência humanizada, rotas de atendimento em saúde mental, apoio à neurodiversidade (TEA) e acolhimento.',
         details: [
             'Neurodiversidade: Guia Portaria PRIP 059/2024 (TEA)',
             'Apoio Psicológico: Rotas de acolhimento (IP-USP)',
             'Canais de Escuta e Grupos de Afinidade IFUSP'
         ],
         keywords: ['proteção', 'saúde mental', 'tea', 'neurodiversidade', 'acolhimento', 'prip', 'suporte', 'ajuda', 'inclusão', 'bem-estar', 'pcd'],
-        cta: 'Solicitar Suporte'
-    },
-    {
-        id: 'carreira',
-        title: 'Vetores de Carreira',
-        subtitle: 'O Futuro Pós-IFUSP.',
-        icon: <Compass className="w-8 h-8" />,
-        color: 'brand-yellow',
-        href: '/wiki/carreira',
-        description: 'Trajetórias acadêmicas e profissionais: Academia, Indústria, Física Médica e Educação.',
-        details: [
-            'Pós-Graduação: Mestrado e Doutorado',
-            'Mercado de Trabalho e Inovação',
-            'Física Médica, Ensino e Setor Privado'
-        ],
-        keywords: ['carreira', 'futuro', 'trabalho', 'indústria', 'academia', 'pós-graduação', 'ensino', 'vagas'],
-        cta: 'Mapear Futuro'
+        cta: 'Acessar Rede de Apoio'
     },
 
-    // --- Red Group (Institucional e Acadêmico) ---
-    {
-        id: 'pesquisa',
-        title: 'Sistemas de Pesquisa',
-        subtitle: 'Iniciação Científica e Labs.',
-        icon: <Microscope className="w-8 h-8" />,
-        color: 'brand-red',
-        href: '/wiki/pesquisa',
-        description: 'Guia de Iniciação Científica, Laboratórios do IFUSP e navegação no sistema Ateneu.',
-        details: [
-            'Como encontrar um orientador de IC',
-            'Laboratórios de Pesquisa e Infraestrutura',
-            'Sistema Ateneu: Cadastro e Relatórios'
-        ],
-        keywords: ['pesquisa', 'ic', 'iniciação científica', 'laboratório', 'ateneu', 'orientador', 'ciência'],
-        cta: 'Descobrir Labs'
-    },
-    {
-        id: 'bolsas',
-        title: 'Energia de Permanência',
-        subtitle: 'Auxílios e Retenção Estudantil.',
-        icon: <Coins className="w-8 h-8" />,
-        color: 'brand-red',
-        href: '/wiki/bolsas',
-        description: 'Informações sobre programas de permanência, editais ativos e suporte estudantil.',
-        details: [
-            'PAPFE: Auxílio Permanência (PRIP)',
-            'Editais 2026: Monitoria, Pró-Aluno e IC',
-            'Inclusão: Apoio a grupos vulneráveis e PCDs'
-        ],
-        keywords: ['bolsas', 'papfe', 'permanência', 'monitoria', 'ic', 'iniciação científica', 'dinheiro', 'editais', 'auxílio', 'prip'],
-        cta: 'Ver Editais Ativos'
-    },
+    // --- Categoria 2: Formação Acadêmica & Pesquisa (Vermelho) ---
     {
         id: 'ifusp',
-        title: 'Estrutura da Matéria',
-        subtitle: 'Cursos, PPPs e Departamentos.',
+        title: 'Cursos, Grades & Graduação IFUSP',
+        subtitle: 'Bacharelado, Licenciatura, PPPs e Comissões.',
+        category: 'formacao-pesquisa',
         icon: <Atom className="w-8 h-8" />,
         color: 'brand-red',
         href: '/wiki/ifusp',
-        description: 'Guia acadêmico sobre os cursos, governança e estrutura curricular do instituto.',
+        description: 'Estrutura curricular, regras de transição de PPP, disciplinas eletivas/optativas, comissões de graduação (CG/CoCs) e formação.',
         details: [
             'Bacharelado, Licenciatura e Física Médica (PPP 2025)',
-            'Governança: Papel da CG e CoCs',
-            'Grade: Optativas, Eletivas e ATPAs'
+            'Governança: Papel da CG e CoCs do Instituto',
+            'Grade: Optativas, Eletivas e Atividades de Extensão'
         ],
         keywords: ['ppp', 'bacharelado', 'licenciatura', 'física médica', 'grade', 'optativas', 'atpa', 'comissão', 'cg', 'coc'],
-        cta: 'Explorar Currículo'
+        cta: 'Ver Estrutura Curricular'
+    },
+    {
+        id: 'pesquisa',
+        title: 'Iniciação Científica & Laboratórios',
+        subtitle: 'Como Conseguir IC, Orientadores e Labs.',
+        category: 'formacao-pesquisa',
+        icon: <Microscope className="w-8 h-8" />,
+        color: 'brand-red',
+        href: '/wiki/pesquisa',
+        description: 'Guia prático para conseguir Iniciação Científica (IC), mapa dos laboratórios de pesquisa do IFUSP e uso do Sistema Ateneu.',
+        details: [
+            'Como encontrar e contatar um orientador de IC',
+            'Laboratórios de Pesquisa e Infraestrutura Científica',
+            'Sistema Ateneu: Cadastro, Bolsas e Relatórios'
+        ],
+        keywords: ['pesquisa', 'ic', 'iniciação científica', 'laboratório', 'ateneu', 'orientador', 'ciência'],
+        cta: 'Explorar Pesquisa e Labs'
+    },
+    {
+        id: 'carreira',
+        title: 'Carreira & Mercado de Trabalho',
+        subtitle: 'Pós-Graduação, Indústria e Docência.',
+        category: 'formacao-pesquisa',
+        icon: <Compass className="w-8 h-8" />,
+        color: 'brand-red',
+        href: '/wiki/carreira',
+        description: 'Caminhos profissionais para graduandos: pós-graduação acadêmica, física médica, transição para inovação, dados e docência.',
+        details: [
+            'Pós-Graduação: Mestrado, Doutorado e Exame Unificado',
+            'Mercado de Trabalho: Ciência de Dados, Finanças e Indústria',
+            'Física Médica, Ensino de Física e Setor Tecnológico'
+        ],
+        keywords: ['carreira', 'futuro', 'trabalho', 'indústria', 'academia', 'pós-graduação', 'ensino', 'vagas'],
+        cta: 'Explorar Carreiras'
+    },
+
+    // --- Categoria 3: Divulgação Científica & Extensão (Azul) ---
+    {
+        id: 'guia-de-boas-praticas',
+        title: 'Guia de Produção & Boas Práticas',
+        subtitle: 'Padrões de Mídia, Créditos e Formatos.',
+        category: 'divulgacao-extensao',
+        icon: <ShieldCheck className="w-8 h-8" />,
+        color: 'brand-blue',
+        href: '/wiki/guia-de-boas-praticas',
+        description: 'Diretrizes oficiais para produção de artigos, fotos, vídeos, ilustrações e atribuição correta de coautorias no HUB.',
+        details: [
+            'Co-autoria e Créditos: Como marcar sua equipe',
+            'Fotografia e Vídeo: Padrões de iluminação e enquadramento',
+            'Submissão nos 3 Feeds: Fluxo, Arte e Logs'
+        ],
+        keywords: ['guia', 'boas práticas', 'manual', 'foto', 'vídeo', 'créditos', 'qualidade', 'padrões'],
+        cta: 'Ver Guia de Boas Práticas'
+    },
+    {
+        id: 'divulgacao',
+        title: 'Divulgação Científica & Mídia',
+        subtitle: 'Toolkit LabDiv, Posters e Design Visual.',
+        category: 'divulgacao-extensao',
+        icon: <Telescope className="w-8 h-8" />,
+        color: 'brand-blue',
+        href: '/wiki/divulgacao',
+        description: 'Metodologias, manuais de design e recursos visuais para transformar pesquisas complexas em comunicação de alto impacto.',
+        details: [
+            'Mapeamento 360°, VR e vídeos imersivos',
+            'Guia Visual LabDiv (Azul Elétrico) e MIT Style',
+            'Toolkit de design para posters e redes sociais'
+        ],
+        keywords: ['divulgação', 'design', 'labdiv', '360', 'vr', 'poster', 'mídia', 'comunicação', 'impacto', 'toolkit'],
+        cta: 'Ver Toolkit de Divulgação'
+    },
+    {
+        id: 'extensao',
+        title: 'Extensão Universitária & Cultura',
+        subtitle: 'Grupos de Extensão, Eventos e Projetos.',
+        category: 'divulgacao-extensao',
+        icon: <Network className="w-8 h-8" />,
+        color: 'brand-blue',
+        href: '/wiki/extensao',
+        description: 'Catálogo de grupos de extensão do IFUSP, projetos como Física para Todos e oportunidades de integração com a sociedade.',
+        details: [
+            'Catálogo de Grupos de Extensão do IFUSP',
+            'Eventos: Física para Todos, Mostras e Palestras',
+            'Projetos de Cultura e Proposição de Ações Estudantis'
+        ],
+        keywords: ['extensão', 'cultura', 'eventos', 'física para todos', 'grupos', 'projetos'],
+        cta: 'Ver Grupos de Extensão'
     }
 ];
 

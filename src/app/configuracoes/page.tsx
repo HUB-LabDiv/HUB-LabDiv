@@ -630,6 +630,25 @@ export default function ConfigPage() {
                                 </button>
                             </div>
                         </section>
+
+                        {/* SEÇÃO 3: INFORMAÇÕES DO HUB */}
+                        <section className="bg-[#1E1E1E] border border-white/5 rounded-2xl p-6 md:p-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                            <div className="space-y-1 max-w-md">
+                                <div className="flex items-center gap-2 text-brand-blue">
+                                    <ShieldCheck size={22} />
+                                    <h2 className="text-xl font-bold uppercase tracking-tight font-bukra">Informações da Plataforma</h2>
+                                </div>
+                                <p className="text-sm text-gray-400 font-sans">
+                                    Acesse o portal de transparência para saber mais sobre as regras e diretrizes do ecossistema LabDiv.
+                                </p>
+                            </div>
+                            <Link
+                                href="/transparencia"
+                                className="flex items-center justify-center px-6 py-3 bg-brand-blue text-white font-bold rounded-xl hover:bg-brand-blue-hover transition-all text-xs uppercase tracking-widest font-bukra shrink-0 border border-white/10 shadow-lg shadow-brand-blue/20"
+                            >
+                                Portal de Transparência
+                            </Link>
+                        </section>
                     </div>
                 )}
 
@@ -712,6 +731,40 @@ export default function ConfigPage() {
                                     <Download size={18} />
                                     {isExporting ? 'Exportando...' : 'Exportar Meus Dados'}
                                 </button>
+                            </div>
+                        </section>
+
+                        {/* SEÇÃO 3: TRANSPARÊNCIA E POLÍTICAS */}
+                        <section className="bg-[#1E1E1E] border border-white/5 rounded-2xl overflow-hidden p-6 md:p-8 space-y-6">
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2 text-brand-blue">
+                                    <ShieldCheck size={20} />
+                                    <h2 className="text-xl font-bold uppercase tracking-tight font-bukra">Transparência & Políticas</h2>
+                                </div>
+                                <p className="text-sm text-gray-400 font-sans">
+                                    Acesse rapidamente nossas diretrizes de uso, políticas de privacidade e transparência do projeto.
+                                </p>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-4 pt-2">
+                                <Link
+                                    href="/transparencia"
+                                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-brand-blue/10 border border-brand-blue/30 hover:bg-brand-blue/20 text-brand-blue font-bold rounded-xl transition-all active:scale-95 text-xs uppercase tracking-widest font-bukra"
+                                >
+                                    Portal de Transparência
+                                </Link>
+                                <Link
+                                    href="/privacy-policy"
+                                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold rounded-xl transition-all active:scale-95 text-xs uppercase tracking-widest font-bukra"
+                                >
+                                    Privacidade
+                                </Link>
+                                <Link
+                                    href="/re-accept-terms"
+                                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold rounded-xl transition-all active:scale-95 text-xs uppercase tracking-widest font-bukra"
+                                >
+                                    Termos de Uso
+                                </Link>
                             </div>
                         </section>
 

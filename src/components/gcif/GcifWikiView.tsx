@@ -24,9 +24,15 @@ import {
     Zap,
     Atom,
     CheckCircle2,
-    Flag
+    Flag,
+    PlusCircle,
+    Edit3,
+    Layers,
+    Sparkles
 } from 'lucide-react';
-import { wikiCells } from '@/components/wiki/WikiView';
+import { wikiCells, WIKI_CATEGORIES } from '@/components/wiki/WikiView';
+import { ProposeWikiTopicModal } from '@/components/wiki/ProposeWikiTopicModal';
+import { WikiProposalType } from '@/types/wiki';
 import { useNavigationStore } from '@/store/useNavigationStore';
 
 const colorVariants: Record<string, {
@@ -86,6 +92,17 @@ const colorVariants: Record<string, {
 export function GcifWikiView() {
     const { setReportModalOpen } = useNavigationStore();
 
+    const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
+    const [isProposalModalOpen, setIsProposalModalOpen] = React.useState(false);
+    const [proposalModalType, setProposalModalType] = React.useState<WikiProposalType>('new_topic');
+    const [targetTopicId, setTargetTopicId] = React.useState<string | undefined>();
+    const [targetTopicTitle, setTargetTopicTitle] = React.useState<string | undefined>();
+
+    const filteredCells = React.useMemo(() => {
+        if (selectedCategory === 'all') return wikiCells;
+        return wikiCells.filter((c: any) => c.category === selectedCategory);
+    }, [selectedCategory]);
+
     return (
         <div className="w-full space-y-12 pb-16">
             {/* Header Hero */}
@@ -109,19 +126,62 @@ export function GcifWikiView() {
 
             {/* Wiki Matrix Grid (Síncrotron) */}
             <div data-tour="gcif-wiki-sincrotron" className="space-y-6">
-                <div className="flex items-center justify-between">
-                    <h2 className="text-xl sm:text-2xl font-black text-white font-bukra flex items-center gap-2">
-                        <Atom className="w-6 h-6 text-brand-blue" />
-                        Células de Conhecimento
-                    </h2>
-                    <span className="text-xs text-gray-400 font-bold">
-                        {wikiCells.length} seções disponíveis
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                    <div>
+                        <h2 className="text-xl sm:text-2xl font-black text-white font-bukra flex items-center gap-2">
+                            <Atom className="w-6 h-6 text-brand-blue" />
+                            Tópicos de Conhecimento
+                        </h2>
+                        <p className="text-xs sm:text-sm text-gray-400 font-open-sans mt-1.5 max-w-2xl leading-relaxed">
+                            Base de conhecimento viva do IFUSP dividida em 3 eixos essenciais. Navegue por sobrevivência universitária, formação científica e divulgação acadêmica.
+                        </p>
+                    </div>
+                    <span className="text-xs text-gray-400 font-bold shrink-0">
+                        {filteredCells.length} de {wikiCells.length} tópicos
                     </span>
+                </div>
+
+                {/* Filtro por Categorias */}
+                <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+                    <button
+                        onClick={() => setSelectedCategory('all')}
+                        className={`px-4 py-2 rounded-xl text-xs font-bold font-bukra uppercase tracking-wider transition-all shrink-0 ${
+                            selectedCategory === 'all'
+                                ? 'bg-white/15 text-white border border-white/20 shadow-md'
+                                : 'bg-white/5 text-gray-400 hover:text-white border border-transparent'
+                        }`}
+                    >
+                        Todos ({wikiCells.length})
+                    </button>
+                    {WIKI_CATEGORIES.map(cat => {
+                        const count = wikiCells.filter((c: any) => c.category === cat.id).length;
+                        const isSelected = selectedCategory === cat.id;
+                        return (
+                            <button
+                                key={cat.id}
+                                onClick={() => setSelectedCategory(cat.id)}
+                                className={`px-4 py-2 rounded-xl text-xs font-bold font-bukra uppercase tracking-wider transition-all shrink-0 flex items-center gap-2 ${
+                                    isSelected
+                                        ? cat.color === 'brand-yellow'
+                                            ? 'bg-brand-yellow/20 text-brand-yellow border border-brand-yellow/40'
+                                            : cat.color === 'brand-red'
+                                            ? 'bg-brand-red/20 text-brand-red border border-brand-red/40'
+                                            : 'bg-brand-blue/20 text-brand-blue border border-brand-blue/40'
+                                        : 'bg-white/5 text-gray-400 hover:text-white border border-transparent'
+                                }`}
+                            >
+                                <span className={`w-2 h-2 rounded-full ${
+                                    cat.color === 'brand-yellow' ? 'bg-brand-yellow' : cat.color === 'brand-red' ? 'bg-brand-red' : 'bg-brand-blue'
+                                }`} />
+                                {cat.name} ({count})
+                            </button>
+                        );
+                    })}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <AnimatePresence mode="popLayout">
-                        {wikiCells.map((cell: any, idx: number) => {
+                        {filteredCells.map((cell: any, idx: number) => {
                             const colors = colorVariants[cell.color] || colorVariants['brand-blue'];
                             return (
                                 <motion.div
@@ -206,73 +266,64 @@ export function GcifWikiView() {
                         })}
                     </AnimatePresence>
                 </div>
+
+                {/* Card Final: Escrever / Propor Novo Tópico para a Wiki */}
+                <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-brand-blue/10 via-[#1E1E1E] to-[#121212] border-2 border-dashed border-brand-blue/30 hover:border-brand-blue transition-all shadow-xl group mt-8">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
+                        <div className="flex items-center gap-4">
+                            <div className="w-14 h-14 rounded-2xl bg-brand-blue/20 border border-brand-blue/40 text-brand-blue flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                <PlusCircle className="w-7 h-7" />
+                            </div>
+                            <div>
+                                <span className="text-[10px] font-black uppercase tracking-widest text-brand-blue">
+                                    Colabore com a Comunidade
+                                </span>
+                                <h3 className="text-xl sm:text-2xl font-black font-bukra text-white uppercase italic tracking-tight">
+                                    Escrever ou Propor Novo Tópico
+                                </h3>
+                                <p className="text-xs sm:text-sm text-gray-300 font-open-sans mt-1 max-w-xl leading-relaxed">
+                                    Sentiu falta de algum guia, laboratório, conselho ou conteúdo essencial? Envie sua proposta para a moderação da Wiki no Eixo de Informação.
+                                </p>
+                            </div>
+                        </div>
+                        <button
+                            onClick={() => {
+                                setProposalModalType('new_topic');
+                                setTargetTopicId(undefined);
+                                setTargetTopicTitle(undefined);
+                                setIsProposalModalOpen(true);
+                            }}
+                            className="px-6 py-3 rounded-2xl bg-brand-blue hover:bg-brand-blue/80 text-white text-xs font-black uppercase tracking-wider shadow-lg shadow-brand-blue/25 flex items-center gap-2 transition-all shrink-0 hover:scale-105 active:scale-95"
+                        >
+                            <Edit3 className="w-4 h-4" />
+                            Escrever Tópico
+                        </button>
+                    </div>
+                </div>
             </div>
 
-            {/* Banners em Destaque: IFUSP 101 & Como Pesquisar */}
+            {/* Modal de Proposta / Complemento */}
+            <ProposeWikiTopicModal
+                isOpen={isProposalModalOpen}
+                onClose={() => setIsProposalModalOpen(false)}
+                initialType={proposalModalType}
+                initialTopicId={targetTopicId}
+                initialTopicTitle={targetTopicTitle}
+            />
+
+            {/* Banner em Destaque: Como Pesquisar & Metodologia Científica */}
             <div data-tour="gcif-wiki-guias" className="space-y-6 pt-6 border-t border-white/10">
                 <div>
                     <h2 className="text-xl sm:text-2xl font-black text-white font-bukra flex items-center gap-2">
-                        <ShieldCheck className="w-6 h-6 text-brand-yellow" />
-                        Guias Essenciais & Metodologia
+                        <Sparkles className="w-6 h-6 text-brand-blue" />
+                        Guia Metodológico em Destaque
                     </h2>
                     <p className="text-xs sm:text-sm text-gray-400 font-open-sans mt-1">
-                        Conselhos práticos de sobrevivência acadêmica e técnicas de pesquisa científica.
+                        Técnicas de pesquisa científica e ferramentas avançadas de busca bibliográfica.
                     </p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6">
-                    {/* 1. Card Grande: IFUSP 101 & Dicas de Veteranos */}
-                    <motion.div
-                        initial={{ opacity: 0, y: 20 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.5 }}
-                        className="relative group w-full"
-                    >
-                        <div className="absolute -inset-0.5 bg-brand-yellow/20 rounded-[32px] blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                        <Link
-                            href="/wiki/veteranos"
-                            className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-10 rounded-[32px] bg-[#1E1E1E] border border-white/10 hover:border-brand-yellow/60 transition-all overflow-hidden text-left shadow-2xl group"
-                        >
-                            <div className="absolute top-0 right-0 w-80 h-80 bg-brand-yellow/5 rounded-full blur-[100px] pointer-events-none" />
-                            <div className="flex flex-col md:flex-row items-center gap-6 md:gap-8 relative z-10">
-                                <div className="size-20 bg-brand-yellow/10 text-brand-yellow rounded-[28px] flex items-center justify-center ring-1 ring-brand-yellow/30 group-hover:scale-110 transition-transform shadow-2xl shrink-0">
-                                    <Zap className="w-10 h-10 text-brand-yellow" />
-                                </div>
-                                <div className="text-center md:text-left">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/15 border border-brand-yellow/30 text-brand-yellow text-[10px] font-black uppercase tracking-wider">
-                                            Sobrevivência & Vivência Acadêmica
-                                        </div>
-                                        <button
-                                            onClick={(e) => {
-                                                e.preventDefault();
-                                                e.stopPropagation();
-                                                setReportModalOpen(true, 'outro', { id: 'veteranos', titulo: 'IFUSP 101', local: 'Guia Interativo' });
-                                            }}
-                                            title="Sugerir Alteração / Reportar Erro"
-                                            className="text-gray-500 hover:text-brand-red transition-colors p-1 bg-black/20 rounded-full"
-                                        >
-                                            <Flag size={14} />
-                                        </button>
-                                    </div>
-                                    <h3 className="text-2xl sm:text-3xl font-black text-white font-bukra italic uppercase tracking-tighter mb-2 group-hover:text-brand-yellow transition-colors">
-                                        IFUSP 101 & Dicas de Veteranos
-                                    </h3>
-                                    <p className="text-xs sm:text-sm text-gray-400 font-open-sans max-w-2xl leading-relaxed">
-                                        Conselhos essenciais passados de geração em geração, atalhos do campus, links rápidos para Scholar/Portal e tudo o que você precisa saber para navegar no IFUSP sem sustos.
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="mt-6 md:mt-0 relative z-10 shrink-0">
-                                <div className="px-8 py-4 bg-brand-yellow text-gray-900 font-black rounded-2xl group-hover:scale-105 active:scale-95 transition-all text-xs uppercase tracking-widest flex items-center gap-3 shadow-xl shadow-brand-yellow/20">
-                                    <span>Conferir o IFUSP 101</span>
-                                    <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                                </div>
-                            </div>
-                        </Link>
-                    </motion.div>
-
                     {/* 2. Card Grande: Como Pesquisar & Metodologia Científica */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}

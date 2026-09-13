@@ -35,17 +35,13 @@ export default function AdminLayoutClient({
 
     const navLinks = [
         { name: 'Torre de Controle', href: '/admin', icon: 'security' },
-        { name: 'Moderação da Comunidade', href: '/admin/moderacao', icon: 'verified_user' },
-        { name: 'Moderação do CGIF', href: '/admin/cgif', icon: 'admin_panel_settings' },
+        { name: 'Moderação do Eixo Social', href: '/admin/moderacao', icon: 'verified_user' },
+        { name: 'Moderação do Eixo de Informação', href: '/admin/cgif', icon: 'admin_panel_settings' },
+        { name: 'Moderação do Eixo de Ferramentas', href: '/admin/ferramentas', icon: 'construction' },
         { name: 'Central de Notificações', href: '/admin/notificacoes', icon: 'notifications' },
-        { name: 'Moderação do Observatório', href: '/admin/observatorio', icon: 'emoji_events' },
         { name: 'Aprovação de Perfis', href: '/admin/profiles', icon: 'manage_accounts' },
-        { name: 'Validação do Match', href: '/admin/adocoes', icon: 'favorite' },
-        { name: 'Pergunte a um Cientista', href: '/admin/perguntas', icon: 'quiz' },
-        { name: 'Central de Anomalias', href: '/admin/reports', icon: 'bug_report' },
-        { name: 'Trilhas de Aprendizagem', href: '/admin/trilhas', icon: 'route' },
+        { name: 'Central de Denúncias & Reports', href: '/admin/reports', icon: 'flag' },
         { name: 'Telemetria do Sistema', href: '/admin/telemetria', icon: 'query_stats' },
-        { name: 'Acessos Beta', href: '/admin/beta', icon: 'smartphone' },
         { name: 'Configurações Admin', href: '/admin/config', icon: 'settings', adminOnly: true },
     ];
 

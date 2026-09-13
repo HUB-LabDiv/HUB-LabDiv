@@ -453,7 +453,7 @@ export async function submitSoftware(rawInput: SubmitSoftwareInput) {
                 target_audience: validated.target_audience,
                 features_list: validated.features_list || [],
                 submitted_by: user.id,
-                status: 'aprovado' // Publicado diretamente ou pronto para testes
+                status: 'pendente' // Aguardando aprovação do admin
             })
             .select()
             .single();
@@ -579,5 +579,88 @@ export async function submitSoftwareFeedback(input: {
         }
         console.error('Erro inesperado ao enviar feedback:', err);
         return { success: false, error: 'Erro interno ao salvar feedback.' };
+    }
+}
+
+/**
+ * Get all pending community softwares (ADMIN ONLY)
+ */
+export async function getPendingSoftwares() {
+    try {
+        const supabase = await createServerSupabase();
+        
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return [];
+
+        const { data, error } = await supabase
+            .from('academic_softwares')
+            .select(`
+                *,
+                author_profile:profiles(avatar_url, username, full_name, institute)
+            `)
+            .eq('status', 'pendente')
+            .order('created_at', { ascending: false });
+
+        if (error || !data) {
+            return [];
+        }
+
+        return data as AcademicSoftware[];
+    } catch (err) {
+        console.error('Erro ao buscar softwares pendentes:', err);
+        return [];
+    }
+}
+
+/**
+ * Approve a community software (ADMIN ONLY)
+ */
+export async function approveSoftware(softwareId: string) {
+    try {
+        const supabase = await createServerSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return { success: false, error: 'Acesso negado' };
+
+        const { error } = await supabase
+            .from('academic_softwares')
+            .update({ status: 'aprovado' })
+            .eq('id', softwareId);
+
+        if (error) {
+            return { success: false, error: error.message };
+        }
+
+        revalidatePath('/ferramentas/softwares');
+        revalidatePath('/admin/softwares');
+        return { success: true };
+    } catch (err) {
+        console.error('Erro ao aprovar software:', err);
+        return { success: false, error: 'Erro interno ao aprovar' };
+    }
+}
+
+/**
+ * Reject a community software (ADMIN ONLY)
+ */
+export async function rejectSoftware(softwareId: string) {
+    try {
+        const supabase = await createServerSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return { success: false, error: 'Acesso negado' };
+
+        const { error } = await supabase
+            .from('academic_softwares')
+            .update({ status: 'rejeitado' })
+            .eq('id', softwareId);
+
+        if (error) {
+            return { success: false, error: error.message };
+        }
+
+        revalidatePath('/admin/softwares');
+        return { success: true };
+    } catch (err) {
+        console.error('Erro ao rejeitar software:', err);
+        return { success: false, error: 'Erro interno ao rejeitar' };
     }
 }
