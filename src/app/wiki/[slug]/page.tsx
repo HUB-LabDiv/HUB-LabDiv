@@ -59,11 +59,15 @@ import {
     ArrowRight,
     Edit3,
     GitBranch,
-    BookOpen
+    BookOpen,
+    Award,
+    GraduationCap
 } from 'lucide-react';
 import { ProposeWikiTopicModal } from '@/components/wiki/ProposeWikiTopicModal';
 import { WikiProposalType } from '@/types/wiki';
 import { CircularBusMap } from '@/components/wiki/CircularBusMap';
+import { PesquisaGuiaContent } from '@/components/wiki/pesquisa/PesquisaGuiaContent';
+import GraduacaoCursosContent from '@/components/wiki/graduacao/GraduacaoCursosContent';
 
 // --- TECHNICAL DATA SHARD ---
 const pageContent: Record<string, any> = {
@@ -80,7 +84,7 @@ const pageContent: Record<string, any> = {
                     <div className="glass-card p-6 sm:p-8 rounded-[40px] border border-black/5 dark:border-white/10 shadow-2xl space-y-8 relative">
                         <div>
                             <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-medium leading-relaxed">
-                                Para tornar o compartilhamento intuitivo e respeitar as diferentes linguagens da divulgação científica, o HUB organiza as publicações da comunidade em <strong className="text-brand-blue dark:text-sky-400 font-bold">3 feeds complementares</strong> no Eixo Social. Cada feed possui um propósito comunicativo próprio e uma estrutura de envio adaptada:
+                                Para tornar o compartilhamento intuitivo e respeitar as diferentes linguagens da divulgação científica, o HUB organiza as publicações da comunidade em <strong className="text-brand-blue dark:text-brand-blue-accent font-bold">3 feeds complementares</strong> no Eixo Social. Cada feed possui um propósito comunicativo próprio e uma estrutura de envio adaptada:
                             </p>
                         </div>
 
@@ -348,10 +352,10 @@ const pageContent: Record<string, any> = {
                             >
                                 <div>
                                     <div className="flex items-center justify-between gap-2 mb-3">
-                                        <div className="p-2 rounded-xl bg-[#0F4780]/20 text-[#0F4780] dark:text-sky-400">
-                                            <BookOpen className="w-4 h-4 text-[#0F4780] dark:text-sky-400" />
+                                        <div className="p-2 rounded-xl bg-[#0F4780]/20 text-[#0F4780] dark:text-brand-blue-accent">
+                                            <BookOpen className="w-4 h-4 text-[#0F4780] dark:text-brand-blue-accent" />
                                         </div>
-                                        <span className="text-[10px] font-black uppercase tracking-wider text-[#0F4780] dark:text-sky-400 font-bukra">Portal IFUSP • CoCLic</span>
+                                        <span className="text-[10px] font-black uppercase tracking-wider text-[#0F4780] dark:text-brand-blue-accent font-bukra">Portal IFUSP • CoCLic</span>
                                     </div>
                                     <h4 className="text-base font-black font-bukra text-gray-900 dark:text-white uppercase italic mb-2">
                                         Manual do(a) Calouro(a) IFUSP
@@ -360,7 +364,7 @@ const pageContent: Record<string, any> = {
                                         Guia específico do Instituto de Física mantido pela Comissão de Coordenação de Licenciatura e Bacharelado (CoCLic).
                                     </p>
                                 </div>
-                                <div className="mt-5 pt-3 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-xs font-black font-bukra text-[#0F4780] dark:text-sky-400 uppercase tracking-wider">
+                                <div className="mt-5 pt-3 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-xs font-black font-bukra text-[#0F4780] dark:text-brand-blue-accent uppercase tracking-wider">
                                     <span>Acessar no Portal do IFUSP</span>
                                     <ExternalLink className="w-3.5 h-3.5" />
                                 </div>
@@ -382,18 +386,31 @@ const pageContent: Record<string, any> = {
     },
     'ifusp': {
         title: 'Cursos, Grades & Graduação IFUSP',
-        subtitle: 'Bacharelado, Licenciatura, PPPs e Comissões',
+        subtitle: 'Bacharelado, Física Médica e Licenciatura • Estruturas Curriculares & PPPs',
         icon: <Atom className="w-12 h-12" />,
         color: 'brand-red',
+        metricsTitle: 'Indicadores da Graduação IFUSP',
         sections: [
             {
-                title: 'Em Desenvolvimento',
+                title: 'Habilitações, Grades Curriculares & Projetos Pedagógicos (PPPs)',
                 fullWidth: true,
-                content: 'Esta aba está em construção. No futuro, teremos aqui um guia completo sobre a progressão dos cursos do IFUSP, incluindo os Projetos Político-Pedagógicos (PPPs), informações essenciais do manual de cada habilitação, quantidade de créditos necessários, grade de matérias, semestres, horas de Atividades de Extensão (AEx) e tudo o que você precisa saber para entender como e quando se formar.'
+                content: <GraduacaoCursosContent />
             }
         ],
-        dates: [],
-        actions: []
+        dates: [
+            { label: 'Habilitações Oficiais', value: '3 Cursos', icon: <Atom className="w-5 h-5" /> },
+            { label: 'Vagas Totais Anuais', value: '270 Vagas', icon: <Users className="w-5 h-5" /> },
+            { label: 'Carga Extensão (AEx)', value: '10% Mínimo', icon: <Award className="w-5 h-5" /> },
+            { label: 'Comissões Coordenadoras', value: '3 CoCs', icon: <Landmark className="w-5 h-5" /> }
+        ],
+        actions: [
+            { label: 'PPP Bacharelado 2026 (PDF)', icon: <Download className="w-4 h-4" />, href: 'https://portal.if.usp.br/cocb/sites/portal.if.usp.br.cocb/files/PPP-Bacharelado-2026.pdf' },
+            { label: 'PPP Física Médica 2025 (PDF)', icon: <Download className="w-4 h-4" />, href: 'https://portal.if.usp.br/cocfismed/sites/portal.if.usp.br.ifusp/files/cocfismed/PPPFisMedMarco2025.pdf' },
+            { label: 'PPP Licenciatura (PDF)', icon: <Download className="w-4 h-4" />, href: 'http://portal.if.usp.br/coclic/sites/portal.if.usp.br.coclic/files/PPP-LIC-IFUSP-2018.pdf' },
+            { label: 'Relatório CoC Física Médica', icon: <Download className="w-4 h-4" />, href: 'https://portal.if.usp.br/cocfismed/sites/portal.if.usp.br.ifusp/files/cocfismed/SoRelatorio.pdf' },
+            { label: 'Matrizes no JúpiterWeb', icon: <ExternalLink className="w-4 h-4" />, href: 'https://uspdigital.usp.br/jupiterweb/jupCarreira.jsp?codmnu=4544' },
+            { label: 'Seção de Alunos do IFUSP', icon: <ExternalLink className="w-4 h-4" />, href: 'https://portal.if.usp.br/salunos/' }
+        ]
     },
     'bolsas': {
         title: 'Bolsas & Auxílios de Permanência',
@@ -483,7 +500,7 @@ const pageContent: Record<string, any> = {
                                     <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
                                         A jornada na pesquisa científica exige proatividade e planejamento. Antes de buscar uma bolsa, é fundamental entender como escolher orientador, definir um tema e navegar pelos sistemas. Confira nosso guia técnico completo.
                                     </p>
-                                    <ActionButton label="Acessar Guia de Sistemas de Pesquisa" icon={<Microscope className="w-4 h-4" />} href="/wiki/pesquisa" variant="primary" />
+                                    <ActionButton label="Acessar Iniciação Científica & Laboratórios" icon={<Microscope className="w-4 h-4" />} href="/wiki/pesquisa" variant="primary" />
                                 </div>
                                 <div className="hidden md:flex size-32 rounded-full border border-brand-red/10 items-center justify-center bg-brand-red/10 group-hover:scale-105 transition-transform duration-500">
                                     <Microscope className="w-12 h-12 text-brand-red" />
@@ -756,19 +773,32 @@ const pageContent: Record<string, any> = {
         ]
     },
     'pesquisa': {
-        title: 'Sistemas de Pesquisa',
-        subtitle: 'IC e Ciência Experimental',
+        title: 'Iniciação Científica & Laboratórios',
+        subtitle: 'Como Conseguir IC, Orientadores e Labs.',
         icon: <Microscope className="w-12 h-12" />,
         color: 'brand-red',
+        metricsTitle: 'Panorama da Pesquisa & IC',
         sections: [
             {
-                title: 'Em Desenvolvimento',
+                title: 'Guia Completo de Iniciação Científica & Laboratórios',
                 fullWidth: true,
-                content: 'Estamos trabalhando nesta seção! Em breve, você encontrará aqui um guia completo sobre como iniciar sua trajetória na pesquisa científica, como utilizar os softwares técnicos essenciais e o passo a passo para conquistar sua primeira Iniciação Científica (IC).'
+                content: <PesquisaGuiaContent />
             }
         ],
-        dates: [],
-        actions: []
+        dates: [
+            { label: 'Departamentos IFUSP', value: '5 Polos', icon: <Landmark className="w-5 h-5" /> },
+            { label: 'Laboratórios & Grupos', value: '120+', icon: <Microscope className="w-5 h-5" /> },
+            { label: 'Bolsa PIBIC / CNPq', value: 'R$ 700 /mês', icon: <Award className="w-5 h-5" /> },
+            { label: 'Simpósio Internacional', value: 'SIICUSP', icon: <Sparkles className="w-5 h-5" /> }
+        ],
+        actions: [
+            { label: 'Guia Oficial de IC (PDF)', icon: <Download className="w-4 h-4" />, href: 'https://prpi.usp.br/wp-content/uploads/sites/1239/2024/05/guia-programa-iniciacao-cientifica.pdf' },
+            { label: 'Edital PIBIC 2025/2026', icon: <Download className="w-4 h-4" />, href: 'https://prpi.usp.br/wp-content/uploads/sites/1239/2025/05/Edital-PIBIC-2025_2026.pdf' },
+            { label: 'Edital PIBITI 2025/2026', icon: <Download className="w-4 h-4" />, href: 'https://prpi.usp.br/wp-content/uploads/sites/1239/2025/05/Edital-PIBITI-2025_2026_PIBITI.pdf' },
+            { label: 'CPqI do IFUSP', icon: <ExternalLink className="w-4 h-4" />, href: 'https://portal.if.usp.br/pesquisa/pt-br/node/328' },
+            { label: 'Sistema Atena / Ateneu', icon: <ExternalLink className="w-4 h-4" />, href: 'https://ateneu.usp.br' },
+            { label: 'Portal de Editais PRPI', icon: <ExternalLink className="w-4 h-4" />, href: 'https://prpi.usp.br/editais-e-normas/' }
+        ]
     },
     'carreira': {
         title: 'Vetores de Carreira',
@@ -943,18 +973,20 @@ export default function WikiSubPage() {
                     className="space-y-8"
                 >
                     {/* Dates/DataCards */}
-                        {content.dates && content.dates.length > 0 && (
+                    {content.dates && content.dates.length > 0 && (
                         <div className="space-y-4">
-                            <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-gray-600 mb-6">Métricas de Colisão</h4>
+                            <h4 className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 font-bukra mb-6">
+                                {content.metricsTitle || 'Panorama & Indicadores'}
+                            </h4>
                             {content.dates.map((date: any, idx: number) => (
-                                <DataCard key={idx} label={date.label} value={date.value} color={content.color} />
+                                <DataCard key={idx} label={date.label} value={date.value} icon={date.icon} color={content.color} />
                             ))}
                         </div>
                     )}
 
                     {/* Actions/ActionButtons */}
                     <div className="space-y-4">
-                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-400 dark:text-gray-600 mb-6">Ações Rápidas</h4>
+                        <h4 className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 font-bukra mb-6">Ações Rápidas</h4>
                         {content.actions?.map((action: any, idx: number) => (
                             <ActionButton key={idx} label={action.label} icon={action.icon} href={action.href} variant={idx === 0 ? 'primary' : 'secondary'} color={content.color} />
                         ))}
@@ -1117,16 +1149,18 @@ export default function WikiSubPage() {
                                 {/* Dates/DataCards */}
                                 {content.dates && content.dates.length > 0 && (
                                     <div className="space-y-4">
-                                        <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600 mb-6">Métricas de Colisão</h4>
+                                        <h4 className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 font-bukra mb-6">
+                                            {content.metricsTitle || 'Panorama & Indicadores'}
+                                        </h4>
                                         {content.dates.map((date: any, idx: number) => (
-                                            <DataCard key={idx} label={date.label} value={date.value} color={content.color} />
+                                            <DataCard key={idx} label={date.label} value={date.value} icon={date.icon} color={content.color} />
                                         ))}
                                     </div>
                                 )}
 
                                 {/* Actions/ActionButtons */}
                                 <div className="space-y-4 pt-8 border-t border-white/5">
-                                    <h4 className="text-[10px] font-black uppercase tracking-[0.4em] text-gray-600 mb-6">Ações Rápidas</h4>
+                                    <h4 className="text-[10px] font-black uppercase tracking-[0.25em] text-gray-500 dark:text-gray-400 font-bukra mb-6">Ações Rápidas</h4>
                                     {content.actions?.map((action: any, idx: number) => (
                                         <ActionButton key={idx} label={action.label} icon={action.icon} href={action.href} variant={idx === 0 ? 'primary' : 'secondary'} color={content.color} />
                                     ))}
@@ -1140,14 +1174,12 @@ export default function WikiSubPage() {
 
             {/* Re-injecting Global Tooltip Color Classes (Defensive) */}
             <style jsx global>{`
-                .ring-brand-green\/10 { --tw-ring-color: rgba(16, 185, 129, 0.1); }
-                .shadow-brand-green\/10 { --tw-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1), 0 2px 4px -2px rgba(16, 185, 129, 0.1); }
-                .bg-brand-green\/10 { background-color: rgba(16, 185, 129, 0.1); }
-                .text-brand-green { color: #10b981; }
-                .bg-brand-blue\/10 { background-color: rgba(0, 150, 255, 0.1); }
-                .text-brand-blue { color: #0096FF; }
-                .bg-brand-red\/10 { background-color: rgba(255, 59, 48, 0.1); }
-                .shadow-brand-red\/10 { --tw-shadow: 0 4px 6px -1px rgba(255, 59, 48, 0.1), 0 2px 4px -2px rgba(255, 59, 48, 0.1); }
+                .bg-brand-blue\/10 { background-color: rgba(15, 71, 128, 0.1); }
+                .text-brand-blue { color: #0F4780; }
+                .bg-brand-red\/10 { background-color: rgba(241, 67, 67, 0.1); }
+                .shadow-brand-red\/10 { --tw-shadow: 0 4px 6px -1px rgba(241, 67, 67, 0.1), 0 2px 4px -2px rgba(241, 67, 67, 0.1); }
+                .bg-brand-yellow\/10 { background-color: rgba(255, 204, 0, 0.1); }
+                .text-brand-yellow { color: #FFCC00; }
             `}</style>
         </MainLayoutWrapper>
     );

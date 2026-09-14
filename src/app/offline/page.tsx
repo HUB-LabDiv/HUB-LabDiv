@@ -58,7 +58,7 @@ const GCIF_CELLS = [
     },
     {
         id: 'pesquisa',
-        title: 'Sistemas de Pesquisa (IC & Labs)',
+        title: 'Iniciação Científica & Laboratórios',
         badge: 'Acadêmico',
         color: 'text-red-400 bg-red-400/10 border-red-400/30',
         desc: 'Guia passo a passo para encontrar orientador, iniciar Iniciação Científica e navegar no Sistema Ateneu.',

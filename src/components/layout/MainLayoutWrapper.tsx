@@ -28,6 +28,7 @@ import { ReportModal } from '../feedback/ReportModal';
 
 import { usePersonalizacaoStore } from '@/store/usePersonalizacaoStore';
 import { OnboardingBanner } from '../onboarding/OnboardingBanner';
+import { EixoInformacaoDisclaimerBanner } from './EixoInformacaoDisclaimerBanner';
 import { PullToRefreshWrapper } from '@/components/ui/PullToRefreshWrapper';
 
 interface MainLayoutWrapperProps {
@@ -122,6 +123,7 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = true, fu
                                 style={{ paddingBottom: 'calc(6.5rem + env(safe-area-inset-bottom, 0px))' }}
                             >
                                 <div className="w-full flex flex-col min-h-full">
+                                    <EixoInformacaoDisclaimerBanner />
                                     <OnboardingBanner />
                                     <AnimatePresence mode="wait">
                                         <m.div
@@ -149,6 +151,7 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = true, fu
                             style={{ paddingBottom: 'calc(6.5rem + env(safe-area-inset-bottom, 0px))' }}
                         >
                             <div className="w-full flex flex-col min-h-full">
+                                <EixoInformacaoDisclaimerBanner />
                                 <OnboardingBanner />
                                 <AnimatePresence mode="wait">
                                     <m.div

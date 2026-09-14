@@ -63,11 +63,11 @@ const wikiEntries = [
         content: 'em desenvolvimento caminhos graduação formação carreiras acadêmicas mercado trabalho novas fronteiras físicos',
     },
     {
-        title: 'Sistemas de Pesquisa',
+        title: 'Iniciação Científica & Laboratórios',
         href: '/wiki/pesquisa',
-        desc: 'Iniciação científica, laboratórios e sistema Ateneu.',
-        keywords: ['pesquisa', 'ic', 'iniciação científica', 'laboratório', 'ateneu', 'orientador', 'ciência', 'partícula'],
-        content: 'em desenvolvimento trajetória pesquisa científica softwares técnicos essenciais passo passo Iniciação Científica IC',
+        desc: 'Como conseguir IC, contatar orientador, departamentos do IFUSP e editais PIBIC/PIBITI.',
+        keywords: ['pesquisa', 'ic', 'iniciação científica', 'laboratório', 'ateneu', 'atena', 'orientador', 'ciência', 'pibic', 'pibiti', 'fapesp', 'siicusp', 'lattes', 'email formal'],
+        content: 'professores são pesquisadores melhor forma conseguir iniciação científica proatividade mande email formal apresente interesse pergunte ir sala conversar brevemente linhas pesquisa departamentos base teorica ateneu atena pibic pibiti fapesp siicusp livros clássicos preparação',
     },
     {
         title: 'Energia de Permanência — Bolsas',

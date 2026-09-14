@@ -3,35 +3,33 @@
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
  * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
- * * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
+ *
+ * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
  * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
  * publicada pela Free Software Foundation.
- * * Este programa é distribuído na esperança de que seja útil, mas SEM
+ *
+ * Este programa é distribuído na esperança de que seja útil, mas SEM
  * QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
 
 import React from 'react';
-import { m, AnimatePresence } from 'framer-motion';
+import { m } from 'framer-motion';
 import Link from 'next/link';
 import {
     ChevronRight,
     ArrowLeft,
-    Clock,
-    Download,
-    ExternalLink,
-    AlertCircle,
-    CheckCircle2
+    Clock
 } from 'lucide-react';
 
 // --- ELITE COMPONENTS ---
 
-export const Breadcrumbs = ({ slug, title }: { slug: string, title: React.ReactNode }) => (
+export const Breadcrumbs = ({ title }: { slug?: string, title: React.ReactNode }) => (
     <nav className="flex items-center gap-2 text-xs font-bold font-bukra uppercase tracking-[0.2em] mb-8 text-gray-400 dark:text-gray-500 flex-wrap">
         <Link href="/gcif" className="flex items-center gap-2 hover:text-white transition-colors bg-white/5 border border-white/10 px-4 py-2 rounded-full mr-4 text-brand-blue hover:bg-brand-blue/10">
             <ArrowLeft className="w-3 h-3" />
-            <span>Voltar ao CGIF</span>
+            <span>Voltar ao GCIF</span>
         </Link>
         <Link href="/gcif#wiki-hub-section" className="hover:text-brand-blue transition-colors">Wiki Hub</Link>
         <ChevronRight className="w-3 h-3 text-black/20 dark:text-white/20" />
@@ -63,17 +61,38 @@ export const TechnicalAccordion = ({ title, children }: { title: React.ReactNode
     );
 };
 
-export const DataCard = ({ label, value, icon, color = 'brand-blue' }: { label: string, value: string, icon?: React.ReactNode, color?: string }) => (
-    <div className={`p-6 rounded-[32px] bg-white dark:bg-[#1E1E1E] border border-gray-100 dark:border-white/5 shadow-2xl ring-1 ring-${color}/10 group hover:ring-${color}/30 transition-all`}>
-        <div className="flex items-center gap-4 mb-3">
-            <div className={`size-10 rounded-2xl bg-${color}/10 text-${color} flex items-center justify-center`}>
-                {icon || <Clock className="w-5 h-5" />}
+export const DataCard = ({ label, value, icon, color = 'brand-blue' }: { label: string, value: string, icon?: React.ReactNode, color?: string }) => {
+    const isRed = color === 'brand-red';
+    const isYellow = color === 'brand-yellow';
+
+    const iconStyles = isRed
+        ? 'bg-brand-red/10 text-brand-red border border-brand-red/20'
+        : isYellow
+            ? 'bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20'
+            : 'bg-brand-blue/10 text-brand-blue border border-brand-blue/20';
+
+    const hoverBorder = isRed
+        ? 'hover:border-brand-red/40'
+        : isYellow
+            ? 'hover:border-brand-yellow/40'
+            : 'hover:border-brand-blue/40';
+
+    return (
+        <div className={`p-6 rounded-[32px] bg-white dark:bg-[#1E1E1E] border border-black/5 dark:border-white/10 shadow-xl ${hoverBorder} group transition-all`}>
+            <div className="flex items-center gap-4 mb-3">
+                <div className={`size-10 rounded-2xl ${iconStyles} flex items-center justify-center shrink-0 transition-transform group-hover:scale-105`}>
+                    {icon || <Clock className="w-5 h-5" />}
+                </div>
+                <span className="text-[10px] font-black font-bukra uppercase tracking-widest text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-200 transition-colors">
+                    {label}
+                </span>
             </div>
-            <span className="text-[10px] font-black font-bukra uppercase tracking-widest text-gray-600 dark:text-gray-500 group-hover:text-gray-800 dark:group-hover:text-gray-300 transition-colors">{label}</span>
+            <div className="text-xl font-black font-bukra text-gray-900 dark:text-white italic tracking-tighter pl-1">
+                {value}
+            </div>
         </div>
-        <div className="text-xl font-black font-bukra text-gray-900 dark:text-white italic tracking-tighter">{value}</div>
-    </div>
-);
+    );
+};
 
 export const ActionButton = ({ label, icon, href, variant = 'primary', color = 'brand-blue' }: { label: string, icon: React.ReactNode, href: string, variant?: 'primary' | 'secondary', color?: string }) => {
     const isExternal = href.startsWith('http');
