@@ -58,10 +58,12 @@ import {
     Sparkles,
     ArrowRight,
     Edit3,
-    GitBranch
+    GitBranch,
+    BookOpen
 } from 'lucide-react';
 import { ProposeWikiTopicModal } from '@/components/wiki/ProposeWikiTopicModal';
 import { WikiProposalType } from '@/types/wiki';
+import { CircularBusMap } from '@/components/wiki/CircularBusMap';
 
 // --- TECHNICAL DATA SHARD ---
 const pageContent: Record<string, any> = {
@@ -260,7 +262,8 @@ const pageContent: Record<string, any> = {
         sections: [
             {
                 title: 'Mobilidade (Circulares e BUSP)',
-                content: 'As linhas circulares principais são: 8082-10, 8083-10, 8084-10 e 8085-10. Nos fins de semana e madrugadas, operam apenas as linhas 8012-10 e 8022-10. O cartão BUSP é obrigatório para gratuidade; sem ele, a tarifa é cobrada via Bilhete Único.'
+                fullWidth: true,
+                content: <CircularBusMap />
             },
             {
                 title: 'Guia do Bandejão',
@@ -268,11 +271,11 @@ const pageContent: Record<string, any> = {
             },
             {
                 title: 'Esporte e Lazer (CEPEUSP)',
-                content: 'O CEPE oferece piscinas, quadras e academia gratuitas para alunos. Para utilizar, basta fazer o exame médico no local e apresentar a carteirinha USP digital. É o local ideal para desintegrar o estresse das provas.'
+                content: 'O CEPEUSP oferece piscinas, quadras e academia gratuitas para alunos. Para utilizar as piscinas, basta fazer o exame médico no local quando houver, para acessar a academia deve se inscrever nas aulas e para entrar no CEPE é só apresentar a carteirinha USP física ou digital. É o local ideal para liberar o estresse das provas.'
             },
             {
                 title: 'Burocracia e Infraestrutura',
-                content: 'A Seção de Alunos resolve trancamentos e matrículas. O Pró-Aluno é seu hub de computação: use para imprimir trabalhos e acessar softwares técnicos necessários para os laboratórios.'
+                content: 'A Seção de Alunos resolve trancamentos e matrículas. O Pró-Aluno é a lanhouse do instituto, onde você pode encontrar diversos PCs para poder realizar seus relatórios de experimentos, imprimir listas, realizar pesquisas etc. Também há a sala da PROFIS (Espaço de Apoio, Pesquisa e Cooperação de Professores de Física), onde há diversos recursos didáticos, materiais de apoio e projetos de ensino para docentes para ajudar os estudantes da licenciatura.'
             },
             {
                 title: 'Networking Acadêmico',
@@ -301,10 +304,76 @@ const pageContent: Record<string, any> = {
                         </div>
                     </div>
                 )
+            },
+            {
+                title: 'Manuais Oficiais (USP e IFUSP)',
+                fullWidth: true,
+                content: (
+                    <div className="p-6 sm:p-8 rounded-[40px] border border-black/5 dark:border-white/10 bg-white dark:bg-[#1E1E1E] shadow-2xl relative overflow-hidden space-y-6">
+                        <p className="text-sm sm:text-base text-gray-700 dark:text-gray-300 font-open-sans leading-relaxed">
+                            Além das orientações práticas da comunidade reunidas nesta Wiki, consulte as publicações e os manuais institucionais oficiais desenvolvidos para apoiar seu ingresso:
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <a
+                                href="https://jornal.usp.br/universidade/manual-do-calouro-apresenta-a-usp-aos-novos-ingressantes/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-6 rounded-3xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-[#FFCC00]/50 transition-all group flex flex-col justify-between hover:-translate-y-1 shadow-lg"
+                            >
+                                <div>
+                                    <div className="flex items-center justify-between gap-2 mb-3">
+                                        <div className="p-2 rounded-xl bg-[#FFCC00]/20 text-[#FFCC00]">
+                                            <BookOpen className="w-4 h-4 text-[#FFCC00]" />
+                                        </div>
+                                        <span className="text-[10px] font-black uppercase tracking-wider text-[#FFCC00] font-bukra">Jornal da USP</span>
+                                    </div>
+                                    <h4 className="text-base font-black font-bukra text-gray-900 dark:text-white uppercase italic mb-2">
+                                        Manual do Calouro USP
+                                    </h4>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 font-open-sans leading-relaxed">
+                                        Apresentação oficial da universidade, guia de serviços essenciais, oportunidades acadêmicas e vida nos campi da USP.
+                                    </p>
+                                </div>
+                                <div className="mt-5 pt-3 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-xs font-black font-bukra text-[#0F4780] dark:text-[#FFCC00] uppercase tracking-wider">
+                                    <span>Acessar no Jornal da USP</span>
+                                    <ExternalLink className="w-3.5 h-3.5" />
+                                </div>
+                            </a>
+
+                            <a
+                                href="https://portal.if.usp.br/coclic/pt-br/manual-doa-calouroa-usp"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="p-6 rounded-3xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 hover:border-[#0F4780]/50 transition-all group flex flex-col justify-between hover:-translate-y-1 shadow-lg"
+                            >
+                                <div>
+                                    <div className="flex items-center justify-between gap-2 mb-3">
+                                        <div className="p-2 rounded-xl bg-[#0F4780]/20 text-[#0F4780] dark:text-sky-400">
+                                            <BookOpen className="w-4 h-4 text-[#0F4780] dark:text-sky-400" />
+                                        </div>
+                                        <span className="text-[10px] font-black uppercase tracking-wider text-[#0F4780] dark:text-sky-400 font-bukra">Portal IFUSP • CoCLic</span>
+                                    </div>
+                                    <h4 className="text-base font-black font-bukra text-gray-900 dark:text-white uppercase italic mb-2">
+                                        Manual do(a) Calouro(a) IFUSP
+                                    </h4>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 font-open-sans leading-relaxed">
+                                        Guia específico do Instituto de Física mantido pela Comissão de Coordenação de Licenciatura e Bacharelado (CoCLic).
+                                    </p>
+                                </div>
+                                <div className="mt-5 pt-3 border-t border-black/5 dark:border-white/5 flex items-center justify-between text-xs font-black font-bukra text-[#0F4780] dark:text-sky-400 uppercase tracking-wider">
+                                    <span>Acessar no Portal do IFUSP</span>
+                                    <ExternalLink className="w-3.5 h-3.5" />
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                )
             }
         ],
         dates: [],
         actions: [
+            { label: 'Manual do Calouro USP', icon: <ExternalLink className="w-4 h-4" />, href: 'https://jornal.usp.br/universidade/manual-do-calouro-apresenta-a-usp-aos-novos-ingressantes/' },
+            { label: 'Manual do IFUSP (CoCLic)', icon: <ExternalLink className="w-4 h-4" />, href: 'https://portal.if.usp.br/coclic/pt-br/manual-doa-calouroa-usp' },
             { label: 'Acessar Júpiter', icon: <ExternalLink className="w-4 h-4" />, href: 'https://jupiterweb.usp.br' },
             { label: 'Mapa da USP', icon: <Download className="w-4 h-4" />, href: 'https://www.puspc.usp.br/wp-content/uploads/sites/159/2016/08/Mapa-do-Campus-abril-de-2019.pdf' },
             { label: 'Mapa do IFUSP', icon: <Download className="w-4 h-4" />, href: 'https://portal.if.usp.br/ifusp/pt-br/media-gallery/lightbox/1518/441827' },
