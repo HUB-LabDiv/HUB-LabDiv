@@ -40,16 +40,12 @@
       <stop offset="100%" stop-color="#FFCC00" />
     </linearGradient>
 
-    <!-- Glow Filter for Signal Waves to match the PNG glow -->
-    <filter id="glowBlur" x="-30%" y="-30%" width="160%" height="160%">
-      <feGaussianBlur stdDeviation="10" result="blur" />
-    </filter>
   </defs>
 
   <!-- SIGNAL WAVES CROWN SITTING ABOVE THE CAP -->
   
-  <!-- GLOW GROUP Rendered behind, merged together before applying the blur filter -->
-  <g stroke="url(#waveGradient)" stroke-width="32" stroke-linecap="round" fill="none" opacity="0.6" filter="url(#glowBlur)">
+  <!-- PURE VECTOR GLOW LAYER (NO BITMAP FILTERS, 100% PARITY BETWEEN PDF AND PNG) -->
+  <g stroke="url(#waveGradient)" stroke-width="26" stroke-linecap="round" fill="none" opacity="0.15">
     <!-- Far Left -->
     <path d="M 53 225 C 27 168 27 104 53 50" />
     <path d="M 94 196 C 72 157 72 109 94 72" />

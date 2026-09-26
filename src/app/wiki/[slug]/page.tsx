@@ -140,7 +140,7 @@ const pageContent: Record<string, any> = {
                                         </div>
                                         <div>
                                             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-yellow">Galeria Visual</span>
-                                            <h4 className="text-gray-900 dark:text-white font-black font-bukra uppercase italic text-base">Feed Arte</h4>
+                                            <h4 className="text-gray-900 dark:text-white font-black font-bukra uppercase italic text-base">Feed Galeria</h4>
                                         </div>
                                     </div>
                                     <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-4">
@@ -182,7 +182,7 @@ const pageContent: Record<string, any> = {
                                         </div>
                                         <div>
                                             <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-brand-red">Micro-Posts Ágeis</span>
-                                            <h4 className="text-gray-900 dark:text-white font-black font-bukra uppercase italic text-base">Feed Logs</h4>
+                                            <h4 className="text-gray-900 dark:text-white font-black font-bukra uppercase italic text-base">Feed Registros</h4>
                                         </div>
                                     </div>
                                     <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-4">

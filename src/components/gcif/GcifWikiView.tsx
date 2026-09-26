@@ -28,7 +28,8 @@ import {
     PlusCircle,
     Edit3,
     Layers,
-    Sparkles
+    Sparkles,
+    Compass
 } from 'lucide-react';
 import { wikiCells, WIKI_CATEGORIES } from '@/components/wiki/WikiView';
 import { ProposeWikiTopicModal } from '@/components/wiki/ProposeWikiTopicModal';
@@ -136,9 +137,14 @@ export function GcifWikiView() {
                             Base de conhecimento viva do IFUSP dividida em 3 eixos essenciais. Navegue por sobrevivência universitária, formação científica e divulgação acadêmica.
                         </p>
                     </div>
-                    <span className="text-xs text-gray-400 font-bold shrink-0">
-                        {filteredCells.length} de {wikiCells.length} tópicos
-                    </span>
+                    <div className="flex items-center gap-3 shrink-0">
+                        <span className="md:hidden text-[10px] text-gray-400 font-bold flex items-center gap-1">
+                            Deslize para o lado &rarr;
+                        </span>
+                        <span className="text-xs text-gray-400 font-bold shrink-0">
+                            {filteredCells.length} de {wikiCells.length} tópicos
+                        </span>
+                    </div>
                 </div>
 
                 {/* Filtro por Categorias */}
@@ -179,7 +185,7 @@ export function GcifWikiView() {
                     })}
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-x-auto md:overflow-visible pb-4 md:pb-0 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory no-scrollbar">
                     <AnimatePresence mode="popLayout">
                         {filteredCells.map((cell: any, idx: number) => {
                             const colors = colorVariants[cell.color] || colorVariants['brand-blue'];
@@ -191,6 +197,7 @@ export function GcifWikiView() {
                                     animate={{ opacity: 1, scale: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.95, y: 15 }}
                                     transition={{ duration: 0.3, delay: idx * 0.03 }}
+                                    className="snap-center shrink-0 w-[84vw] max-w-[340px] md:w-auto md:shrink flex flex-col"
                                 >
                                     <Link
                                         href={cell.href}
@@ -310,6 +317,48 @@ export function GcifWikiView() {
                 initialTopicId={targetTopicId}
                 initialTopicTitle={targetTopicTitle}
             />
+
+            {/* USP 101: Conselhos de Veteranos (Multi-Instituto) */}
+            <div data-tour="gcif-wiki-usp101" className="space-y-4 pt-6 border-t border-white/10">
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5 }}
+                    className="relative group w-full"
+                >
+                    <div className="absolute -inset-0.5 bg-brand-yellow/25 rounded-[32px] blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <Link
+                        href="/wiki/veteranos"
+                        className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-[#1E1E1E] border border-white/10 hover:border-brand-yellow/60 transition-all overflow-hidden text-left shadow-2xl"
+                    >
+                        <div className="absolute top-0 right-0 w-80 h-80 bg-brand-yellow/5 rounded-full blur-[100px] pointer-events-none" />
+                        <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
+                            <div className="size-20 bg-brand-yellow/10 text-brand-yellow rounded-[28px] flex items-center justify-center ring-1 ring-brand-yellow/30 group-hover:scale-110 transition-transform shadow-2xl shrink-0">
+                                <Compass className="w-10 h-10 text-brand-yellow" />
+                            </div>
+                            <div className="text-center md:text-left">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/15 border border-brand-yellow/30 text-brand-yellow text-[10px] font-black uppercase tracking-wider mb-2">
+                                    <Sparkles className="w-3 h-3" />
+                                    Todos os Institutos da USP • Vivência &amp; Sobrevivência
+                                </div>
+                                <h3 className="text-2xl sm:text-4xl font-black text-white font-bukra italic uppercase tracking-tighter mb-2 group-hover:text-brand-yellow transition-colors">
+                                    USP 101 &amp; Dicas de Veteranos
+                                </h3>
+                                <p className="text-xs sm:text-sm text-gray-300 font-open-sans max-w-xl leading-relaxed">
+                                    Central colaborativa de conselhos transgeracionais. Encontre ou envie macetes acadêmicos para a USP como um todo ou direcionados para o seu instituto (IFUSP, Poli, IME, IQ, FFLCH e outros).
+                                </p>
+                            </div>
+                        </div>
+                        <div className="mt-8 md:mt-0 relative z-10 shrink-0">
+                            <div className="px-8 py-4 bg-brand-yellow text-gray-950 font-black rounded-2xl group-hover:scale-105 active:scale-95 transition-all text-xs uppercase tracking-widest flex items-center gap-3 shadow-xl shadow-brand-yellow/20">
+                                <span>Explorar USP 101</span>
+                                <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                            </div>
+                        </div>
+                    </Link>
+                </motion.div>
+            </div>
 
             {/* Banner em Destaque: Como Pesquisar & Metodologia Científica */}
             <div data-tour="gcif-wiki-guias" className="space-y-6 pt-6 border-t border-white/10">

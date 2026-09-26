@@ -67,7 +67,7 @@ export default function HubPage() {
                         <div className="size-10 md:size-12 rounded-xl md:rounded-2xl bg-brand-red/10 flex items-center justify-center mb-4 md:mb-6 group-hover:scale-110 transition-transform">
                             <span className="material-symbols-outlined text-brand-red text-xl md:text-2xl">list_alt</span>
                         </div>
-                        <h4 className="text-sm md:text-xl font-black uppercase italic tracking-tight mb-2 md:mb-4">Logs do IFUSP</h4>
+                        <h4 className="text-sm md:text-xl font-black uppercase italic tracking-tight mb-2 md:mb-4">Registros do IFUSP</h4>
                         <p className="text-gray-500 text-[10px] md:text-sm leading-relaxed mb-4 md:mb-6 flex-1">
                             O mural da nossa gente. Um espaço informal para desabafos, avisos rápidos e aquelas fofocas de laboratório que fazem parte do dia a dia, sem o peso do rigor acadêmico ou oficial.
                         </p>

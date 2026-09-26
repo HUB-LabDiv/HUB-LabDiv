@@ -12,7 +12,7 @@
 export const CATEGORIES = [
     {
         id: 'Arte',
-        title: 'Arte',
+        title: 'Galeria',
         description: 'Expressões artísticas da comunidade: desenhos, pinturas, poemas e outras artes criativas.',
         icon: 'palette',
         color: 'brand-yellow',

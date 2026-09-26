@@ -88,13 +88,13 @@ export const HUB_INSTITUCIONAL_SLIDES: HubSlideItem[] = [
   },
   {
     id: 3,
-    title: 'Aba Comunidade: Fluxo, Logs & Arte',
+    title: 'Aba Comunidade: Fluxo, Registros & Galeria',
     subtitle: 'Descrição detalhada das 3 seções integradas do Eixo Comunidade',
     category: 'EIXO 1 — COMUNIDADE | HUB LABDIV',
-    description: 'A aba Comunidade reúne a comunicação dialógica (Fluxo), as vivências cotidianas (Logs) e a expressão criativa (Arte).',
+    description: 'A aba Comunidade reúne a comunicação dialógica (Fluxo), as vivências cotidianas (Registros) e a expressão criativa (Galeria).',
     showComunidadeDescriptions: true,
     notes: [
-      'Apresentar a descrição das 3 abas da comunidade: Fluxo, Logs e Arte.'
+      'Apresentar a descrição das 3 abas da comunidade: Fluxo, Registros e Galeria.'
     ],
     links: [
       { label: 'Ir para Aba Comunidade', url: '/comunidade', variant: 'yellow' }
@@ -398,7 +398,7 @@ export function HubSlideViewer() {
                         REDE SOCIAL &amp; INTERAÇÕES
                       </span>
                       <p className="text-xs text-gray-200 leading-relaxed font-semibold">
-                        Feed focado na comunicação científica (Fluxo), galeria artística (Arte), vivências cotidianas (Logs) e a Central de Interações com Emaranhamento Quântico e Pergunte a um Cientista.
+                        Feed focado na comunicação científica (Fluxo), galeria artística (Galeria), vivências cotidianas (Registros) e a Central de Interações com Emaranhamento Quântico e Pergunte a um Cientista.
                       </p>
                     </div>
                   </div>
@@ -436,7 +436,7 @@ export function HubSlideViewer() {
               </div>
             )}
 
-            {/* SLIDE 3: Aba Comunidade com Descrição Detalhada das 3 Seções (Fluxo, Logs e Arte) */}
+            {/* SLIDE 3: Aba Comunidade com Descrição Detalhada das 3 Seções (Fluxo, Registros e Galeria) */}
             {currentSlide.showComunidadeDescriptions && (
               <div className="flex flex-col gap-5 text-left">
                 <div>
@@ -467,34 +467,34 @@ export function HubSlideViewer() {
                     </div>
                   </div>
 
-                  {/* Seção 2: Logs (Azul) */}
+                  {/* Seção 2: Registros (Azul) */}
                   <div className="glass-card p-6 rounded-3xl border-2 border-brand-blue/60 bg-black/80 shadow-xl flex flex-col justify-between hover:scale-103 transition-all">
                     <div>
                       <div className="flex items-center gap-2.5 mb-3 pb-2 border-b border-brand-blue/30">
                         <Users className="w-5 h-5 text-brand-blue-accent" />
-                        <h4 className="text-lg font-black uppercase tracking-wider text-white">2. Logs</h4>
+                        <h4 className="text-lg font-black uppercase tracking-wider text-white">2. Registros</h4>
                       </div>
                       <span className="inline-block px-2.5 py-0.5 rounded-full bg-brand-blue/30 text-brand-blue-accent text-[11px] font-black uppercase mb-3 border border-brand-blue/50">
                         VIVÊNCIA DISCENTE
                       </span>
                       <p className="text-xs text-gray-200 leading-relaxed font-semibold">
-                        Espaço relatos/notícias/fofocas — um espaço para a vivência acadêmica, trocas cotidianas e desabafos entre alunos com sistema de fios energizados que conectam a comunidade.
+                        Espaço de registro de vivências da comunidade acadêmica com foco na humanização de quem faz a ciência.
                       </p>
                     </div>
                   </div>
 
-                  {/* Seção 3: Arte (Vermelho) */}
+                  {/* Seção 3: Galeria (Vermelho) */}
                   <div className="glass-card p-6 rounded-3xl border-2 border-brand-red/60 bg-black/80 shadow-xl flex flex-col justify-between hover:scale-103 transition-all">
                     <div>
                       <div className="flex items-center gap-2.5 mb-3 pb-2 border-b border-brand-red/30">
                         <Palette className="w-5 h-5 text-brand-red" />
-                        <h4 className="text-lg font-black uppercase tracking-wider text-white">3. Arte</h4>
+                        <h4 className="text-lg font-black uppercase tracking-wider text-white">3. Galeria</h4>
                       </div>
                       <span className="inline-block px-2.5 py-0.5 rounded-full bg-brand-red/20 text-brand-red text-[11px] font-black uppercase mb-3 border border-brand-red/40">
                         EXPRESSÃO ARTÍSTICA
                       </span>
                       <p className="text-xs text-gray-200 leading-relaxed font-semibold">
-                        Galeria autoral de expressão visual, fotográfica, poética… Um espaço para mostrar que o ambiente acadêmico é feito por seres humanos.
+                        Galeria de expressões artísticas da comunidade para mostrar que cada cientista não só é humano, mas também é um ser único com suas criações e expressões.
                       </p>
                     </div>
                   </div>
