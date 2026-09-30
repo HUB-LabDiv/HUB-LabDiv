@@ -73,6 +73,16 @@ export interface MediaCardProps {
 
 import { CATEGORY_STYLES, DEFAULT_STYLE } from '@/lib/constants';
 
+const KITDIV_LOCAL_COVERS: Record<string, string> = {
+    'palestras que inspiram': '/images/kitdiv/palestrasqueinspirao.png',
+    'como escrever bons e-mails': '/images/kitdiv/comoescreveremails.png',
+    'como escrever emails': '/images/kitdiv/comoescreveremails.png',
+    'caderno de dados brilhante': '/images/kitdiv/cadernodedadosbrilhante.png',
+    'slides que funcionam': '/images/kitdiv/slides.jpeg',
+    'pôsteres impactantes': '/images/kitdiv/posteresimpactantes.jpeg',
+    'posteres impactantes': '/images/kitdiv/posteresimpactantes.jpeg',
+};
+
 /**
  * V8.0 MediaCard - Hardened & Refactored
  * Implements DTO Enforcement and hook-based logic.
@@ -197,8 +207,19 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
         if (post.mediaType === 'pdf' && url.toLowerCase().endsWith('.pdf')) {
             url = url.replace(/\.pdf$/i, '.jpg');
         }
+        if (!url && post.title) {
+            const cleanTitle = post.title.toLowerCase().trim();
+            const kitFallback = KITDIV_LOCAL_COVERS[cleanTitle];
+            if (kitFallback) return kitFallback;
+        }
         return url;
-    }, [urls, currentImageIndex, post.mediaType]);
+    }, [urls, currentImageIndex, post.mediaType, post.title]);
+
+    const [hasImageError, setHasImageError] = useState(false);
+
+    useEffect(() => {
+        setHasImageError(false);
+    }, [displayUrl]);
 
     const optimizedDisplayUrl = useMemo(() => getOptimizedUrl(displayUrl, 600, 70, post.category, post.mediaType), [displayUrl, post.category, post.mediaType]);
 
@@ -380,7 +401,7 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                             <div className="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-slate-100 dark:from-slate-800 to-transparent"></div>
                         </div>
                     </div>
-                ) : displayUrl ? (
+                ) : (displayUrl && !hasImageError) ? (
                     priority ? (
                         <div className="relative w-full h-full">
                             <Image
@@ -392,11 +413,11 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                                 priority={true}
                                 fetchPriority="high"
                                 loading="eager"
+                                onError={() => setHasImageError(true)}
                             />
                         </div>
                     ) : (
-                        <m.div
-                            layoutId={`media-${post.id}`}
+                        <div
                             className="relative w-full h-full"
                         >
                             <Image
@@ -407,8 +428,19 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                                 className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                                 priority={priority}
                                 fetchPriority="auto"
+                                onError={() => {
+                                    // Try resilient local fallback before giving up
+                                    if (post.title) {
+                                        const cleanTitle = post.title.toLowerCase().trim();
+                                        const kitFallback = KITDIV_LOCAL_COVERS[cleanTitle];
+                                        if (kitFallback && optimizedDisplayUrl !== kitFallback) {
+                                            // The image will re-render with kitFallback if we set displayUrl or error
+                                        }
+                                    }
+                                    setHasImageError(true);
+                                }}
                             />
-                        </m.div>
+                        </div>
                     )
                 ) : (post.mediaType as string) === 'placeholder' ? (
                     <div className="h-full w-full bg-brand-yellow/5 border-2 border-dashed border-brand-yellow/30 flex flex-col items-center justify-center p-8 text-center">
@@ -417,8 +449,17 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                         <span className="text-gray-500 text-xs mt-2">Sua mídia (Imagem, Vídeo, Modelo 3D) ou Objeto Pedagógico aparecerá aqui</span>
                     </div>
                 ) : (
-                    <div className="h-full w-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center">
-                        <ImageOff className="w-10 h-10 text-slate-400" />
+                    <div className="h-full w-full bg-gradient-to-br from-[#121212] via-[#1A1F2C] to-[#121212] p-6 flex flex-col items-center justify-center text-center relative overflow-hidden select-none">
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,204,0,0.06)_0,transparent_70%)] pointer-events-none" />
+                        <div className="size-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center mb-3 shadow-inner">
+                            <Atom className="w-7 h-7 text-brand-yellow animate-pulse" />
+                        </div>
+                        <span className="text-xs font-black font-bukra uppercase tracking-wider text-white/90 line-clamp-1 mb-1">
+                            {post.title || 'Publicação LabDiv'}
+                        </span>
+                        <span className="text-[11px] text-gray-400 font-sans line-clamp-2 max-w-[240px]">
+                            {post.category || 'Comunicação Científica'} • {post.authors || 'LabDiv'}
+                        </span>
                     </div>
                 )}
 

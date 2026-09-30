@@ -239,8 +239,21 @@ export const HomeClientView = ({
 
     const scrollTrending = (direction: 'left' | 'right') => {
         if (trendingScrollRef.current) {
-            const offset = direction === 'left' ? -350 : 350;
-            trendingScrollRef.current.scrollBy({ left: offset, behavior: 'smooth' });
+            const container = trendingScrollRef.current;
+            const firstCard = container.firstElementChild as HTMLElement | null;
+            const cardWidth = firstCard ? firstCard.offsetWidth + 16 : 336;
+            const offset = direction === 'left' ? -cardWidth : cardWidth;
+            container.scrollBy({ left: offset, behavior: 'smooth' });
+        }
+    };
+
+    const scrollToPageIndex = (index: number) => {
+        if (trendingScrollRef.current) {
+            const container = trendingScrollRef.current;
+            const maxScroll = container.scrollWidth - container.clientWidth;
+            if (maxScroll <= 0) return;
+            const target = (index / 2) * maxScroll;
+            container.scrollTo({ left: target, behavior: 'smooth' });
         }
     };
 
@@ -910,9 +923,12 @@ export const HomeClientView = ({
                                         const isActive = activePageIndex === i;
                                         const colors = ['bg-brand-yellow', 'bg-brand-blue', 'bg-brand-red'];
                                         return (
-                                            <div
+                                            <button
                                                 key={i}
-                                                className={`w-2.5 h-2.5 rounded-full transition-all duration-500 ${isActive ? `${colors[i]} scale-125 shadow-lg brightness-110` : 'bg-gray-300 dark:bg-gray-600 opacity-40 scale-90'}`}
+                                                type="button"
+                                                onClick={() => scrollToPageIndex(i)}
+                                                aria-label={`Ir para página ${i + 1} de Em Órbita`}
+                                                className={`w-2.5 h-2.5 rounded-full transition-all duration-500 cursor-pointer ${isActive ? `${colors[i]} scale-125 shadow-lg brightness-110` : 'bg-gray-300 dark:bg-gray-600 opacity-40 scale-90 hover:opacity-75'}`}
                                             />
                                         );
                                     })}
@@ -921,15 +937,17 @@ export const HomeClientView = ({
                                 <div className="flex gap-2">
                                     <button
                                         onClick={() => scrollTrending('left')}
-                                        className="p-2 rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-brand-blue hover:text-white transition-all disabled:opacity-20"
+                                        className="p-2 rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-brand-blue hover:text-white transition-all disabled:opacity-20 cursor-pointer"
                                         disabled={!canScrollLeft}
+                                        aria-label="Rolar Em Órbita para a esquerda"
                                     >
                                         <ChevronLeft className="w-4 h-4" />
                                     </button>
                                     <button
                                         onClick={() => scrollTrending('right')}
-                                        className="p-2 rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-brand-blue hover:text-white transition-all disabled:opacity-20"
+                                        className="p-2 rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-brand-blue hover:text-white transition-all disabled:opacity-20 cursor-pointer"
                                         disabled={!canScrollRight}
+                                        aria-label="Rolar Em Órbita para a direita"
                                     >
                                         <ChevronRight className="w-4 h-4" />
                                     </button>
@@ -939,11 +957,11 @@ export const HomeClientView = ({
 
                         <div
                             ref={trendingScrollRef}
-                            className="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x snap-mandatory scroll-smooth"
+                            className="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x snap-proximity scroll-smooth"
                         >
                             {orbitItems.map((item, index) => (
                                 <div
-                                    key={item.post.id}
+                                    key={`orbit-${item.post.id}`}
                                     className="min-w-[280px] md:min-w-[320px] snap-start"
                                 >
                                     <MediaCard post={item.post} priority={false} isLikedByUser={likedIds.has(item.post.id)} isSavedByUser={savedIds.has(item.post.id)} highlightQuery={searchQuery} setIsSyncing={setIsSyncing} />

@@ -36,7 +36,14 @@ export const parseMediaUrl = (mediaUrl: string | string[]): string[] => {
     } catch {
         parsedUrls = [typeof mediaUrl === 'string' ? mediaUrl : ''];
     }
-    return parsedUrls.filter(Boolean);
+    return parsedUrls
+        .filter(Boolean)
+        .filter(url => {
+            if (typeof url === 'string' && url.startsWith('blob:')) {
+                return false;
+            }
+            return true;
+        });
 };
 
 export const formatYoutubeUrl = (url?: string | null) => {

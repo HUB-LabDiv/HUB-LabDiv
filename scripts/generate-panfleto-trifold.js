@@ -18,7 +18,7 @@ const puppeteer = require('puppeteer-core');
 const chromium = require('@sparticuz/chromium');
 const QRCode = require('qrcode');
 
-const ACTIVE_CONV_ARTIFACTS_DIR = '/home/stangorlini/.gemini/antigravity-ide/brain/5a46d8d8-0ead-4748-b7f8-79d5aa921e43';
+const ACTIVE_CONV_ARTIFACTS_DIR = '/home/stangorlini/.gemini/antigravity-ide/brain/0e85cca9-5c37-450d-8e79-baf641084d9c';
 const PUBLIC_DIR = path.resolve(__dirname, '../public');
 const OUT_DIR = path.join(PUBLIC_DIR, 'divulgacao/panfletos');
 
@@ -682,73 +682,73 @@ function buildFace1Html({ qrWebSvg, qrPlaySvg, qrLabDivSvg }) {
         </div>
       </div>
 
-      <div style="display: flex; flex-direction: column; gap: 10px; flex: 1; justify-content: space-evenly; margin: 6px 0;">
-        <!-- Card 1: Mentoria Entre Pares (Inspirado no MIT Communication Lab) - Vermelho LabDiv #F14343 -->
-        <div class="clean-card card-accent-red" style="padding: 12px 18px;">
-          <div class="font-bukra" style="font-size: 24px; font-weight: 900; color: #F14343; margin-bottom: 5px;">
-            Mentoria Entre Pares (Modelo MIT)
+      <div style="display: flex; flex-direction: column; gap: 8px; flex: 1; justify-content: space-evenly; margin: 4px 0;">
+        <!-- Card 1: Mentorias LabDiv (Inspirado no MIT Communication Lab) - Vermelho LabDiv #F14343 -->
+        <div class="clean-card card-accent-red" style="padding: 10px 16px;">
+          <div class="font-bukra" style="font-size: 23px; font-weight: 900; color: #F14343; margin-bottom: 4px;">
+            Mentorias LabDiv
           </div>
-          <p style="font-size: 18px; color: #334155; line-height: 1.34; margin-bottom: 6px;">
-            Inspirado no consagrado modelo do <strong>Communication Lab do MIT</strong> (<em>Massachusetts Institute of Technology</em>), o LabDiv capacita cientistas do IFUSP a comunicarem suas pesquisas com clareza, impacto e rigor.
+          <p style="font-size: 17px; color: #334155; line-height: 1.30; margin-bottom: 5px;">
+            Inspirado no consagrado modelo do <strong>Communication Lab do MIT</strong> (<em>Massachusetts Institute of Technology</em>), o LabDiv auxilia cientistas do IFUSP a comunicarem suas pesquisas com clareza, impacto e rigor.
           </p>
-          <div class="feature-item" style="margin-bottom: 5px;">
+          <div class="feature-item" style="margin-bottom: 4px;">
             <div class="feature-bullet bullet-red"></div>
-            <div class="feature-text"><strong>Apoio Prático Gratuito:</strong> Sessões individuais para <em>relatórios, seminários, artigos, teses, pôsteres, apresentações e entrevistas</em> em qualquer etapa acadêmica.</div>
+            <div class="feature-text" style="font-size: 16.5px; line-height: 1.30;"><strong>Funcionamento das Mentorias:</strong> Sessões individuais com feedback técnico qualificado entre pares (cientistas formando cientistas) para aprimorar a escrita, o design e a oratória.</div>
           </div>
           <div class="feature-item">
             <div class="feature-bullet bullet-red"></div>
-            <div class="feature-text"><strong>Cientistas Formando Cientistas:</strong> Feedback técnico qualificado entre pares para aprimorar a escrita, o design e a oratória.</div>
+            <div class="feature-text" style="font-size: 16.5px; line-height: 1.30;"><strong>Como Podemos te Ajudar:</strong> Apoio prático gratuito em relatórios, seminários, artigos, teses, pôsteres e entrevistas, além de auxílio com Canva, LaTeX e MATLAB.</div>
           </div>
         </div>
 
         <!-- Card 2: Projetos & Frentes de Atuação - Azul LabDiv #0F4780 -->
-        <div class="clean-card card-accent-blue" style="padding: 12px 18px;">
-          <div class="font-bukra" style="font-size: 24px; font-weight: 900; color: #0F4780; margin-bottom: 5px;">
+        <div class="clean-card card-accent-blue" style="padding: 10px 16px;">
+          <div class="font-bukra" style="font-size: 23px; font-weight: 900; color: #0F4780; margin-bottom: 4px;">
             Projetos &amp; Frentes de Atuação
           </div>
-          <div class="feature-item" style="margin-bottom: 5px;">
+          <div class="feature-item" style="margin-bottom: 4px;">
             <div class="feature-bullet bullet-blue"></div>
-            <div class="feature-text"><strong>KITDIV:</strong> Kits didáticos e experimentais de física para demonstrações práticas em escolas e espaços públicos.</div>
+            <div class="feature-text" style="font-size: 16.5px; line-height: 1.30;"><strong>KitDiv:</strong> Coleção de guias e dicas práticas sobre comunicação científica (escrita, design e apresentações) com exemplos reais comentados.</div>
           </div>
-          <div class="feature-item" style="margin-bottom: 5px;">
+          <div class="feature-item" style="margin-bottom: 4px;">
             <div class="feature-bullet bullet-blue"></div>
-            <div class="feature-text"><strong>Dublagem Científica:</strong> Tradução e dublagem de canais de referência mundial (como o <em>3Blue1Brown</em>) para o português.</div>
+            <div class="feature-text" style="font-size: 16.5px; line-height: 1.30;"><strong>Dublagem Científica:</strong> Tradução e dublagem de canais de referência mundial (como o <em>3Blue1Brown</em>) para o português.</div>
           </div>
-          <div class="feature-item" style="margin-bottom: 5px;">
+          <div class="feature-item" style="margin-bottom: 4px;">
             <div class="feature-bullet bullet-blue"></div>
-            <div class="feature-text"><strong>HUB LabDiv:</strong> O novo aplicativo integrado de comunicação, rede social e ferramentas acadêmicas do IFUSP.</div>
+            <div class="feature-text" style="font-size: 16.5px; line-height: 1.30;"><strong>HUB LabDiv:</strong> O novo aplicativo integrado de comunicação, rede social e ferramentas acadêmicas do IFUSP.</div>
           </div>
           <div class="feature-item">
             <div class="feature-bullet bullet-blue"></div>
-            <div class="feature-text"><strong>Em Breve:</strong> Produção de <em>podcasts científicos</em> e muito mais!</div>
+            <div class="feature-text" style="font-size: 16.5px; line-height: 1.30;"><strong>Em Breve:</strong> Produção de <em>podcasts científicos</em> e muito mais!</div>
           </div>
         </div>
 
         <!-- Card 3: DigitaLab (Estúdio Multimídia Oficial) - Amarelo LabDiv #FFCC00 -->
-        <div class="clean-card card-accent-yellow" style="padding: 12px 18px;">
-          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 5px;">
-            <div class="font-bukra" style="font-size: 24px; font-weight: 900; color: #854D0E;">
+        <div class="clean-card card-accent-yellow" style="padding: 10px 16px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+            <div class="font-bukra" style="font-size: 23px; font-weight: 900; color: #854D0E;">
               DigitaLab: Estúdio Multimídia
             </div>
-            <span class="badge-pill badge-yellow font-bukra" style="font-size: 14.5px; padding: 4px 12px;">ÁUDIO &amp; VÍDEO</span>
+            <span class="badge-pill badge-yellow font-bukra" style="font-size: 13.5px; padding: 3px 10px;">ÁUDIO &amp; VÍDEO</span>
           </div>
-          <p style="font-size: 18px; color: #334155; line-height: 1.34;">
+          <p style="font-size: 16.5px; color: #334155; line-height: 1.30;">
             Espaço de gravação profissional do IFUSP com <strong>4 microfones profissionais, tratamento acústico, iluminação de estúdio e chroma key</strong> para podcasts, videoaulas e divulgação científica. Agendamento gratuito via site!
           </p>
         </div>
       </div>
 
       <!-- Localização & Contato Oficial do LabDiv + QR Code para sites.google.com/usp.br/labdiv -->
-      <div style="background: #FFFFFF; border: 1.8px solid rgba(15, 71, 128, 0.20); border-radius: 18px; padding: 10px 16px; box-shadow: 0 8px 22px -3px rgba(15, 71, 128, 0.14), 0 3px 8px -2px rgba(15, 71, 128, 0.08); position: relative; overflow: hidden; display: flex; align-items: center; gap: 14px;">
+      <div style="background: #FFFFFF; border: 1.8px solid rgba(15, 71, 128, 0.20); border-radius: 16px; padding: 8px 14px; box-shadow: 0 8px 22px -3px rgba(15, 71, 128, 0.14), 0 3px 8px -2px rgba(15, 71, 128, 0.08); position: relative; overflow: hidden; display: flex; align-items: center; gap: 12px;">
         <div style="position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #0F4780 0%, #F14343 50%, #FFCC00 100%);"></div>
-        <div style="width: 74px; height: 74px; flex-shrink: 0; border-radius: 12px; overflow: hidden; border: 1.5px solid #CBD5E1; background: #FFFFFF; display: flex; align-items: center; justify-content: center; position: relative;">
+        <div style="width: 68px; height: 68px; flex-shrink: 0; border-radius: 10px; overflow: hidden; border: 1.5px solid #CBD5E1; background: #FFFFFF; display: flex; align-items: center; justify-content: center; position: relative;">
           ${qrLabDivSvg}
         </div>
-        <div style="display: flex; flex-direction: column; justify-content: center; gap: 2px; font-size: 16px; color: #475569; line-height: 1.30;">
-          <div class="font-bukra" style="font-size: 20px; font-weight: 900; color: #0F172A;">Conheça o LabDiv</div>
-          <div style="color: #0F4780; font-weight: 700; font-size: 17px;">sites.google.com/usp.br/labdiv</div>
+        <div style="display: flex; flex-direction: column; justify-content: center; gap: 1.5px; font-size: 15px; color: #475569; line-height: 1.28;">
+          <div class="font-bukra" style="font-size: 19px; font-weight: 900; color: #0F172A;">Conheça o LabDiv</div>
+          <div style="color: #0F4780; font-weight: 700; font-size: 16px;">sites.google.com/usp.br/labdiv</div>
           <div>📍 <strong>Edifício Novo Milênio</strong> &bull; IFUSP</div>
-          <div>✉️ Contato: <span style="color: #0F4780; font-weight: 700;">labdiv@usp.br</span></div>
+          <div>✉️ Contato para sugestões: <span style="color: #0F4780; font-weight: 700;">hublabdiv@gmail.com</span></div>
         </div>
       </div>
     </div>
@@ -875,13 +875,13 @@ function buildFace1Html({ qrWebSvg, qrPlaySvg, qrLabDivSvg }) {
         </div>
 
         <p class="text-shield" style="font-size: 18.5px; color: #334155; font-weight: 600; line-height: 1.38; width: 100%; text-align: center; margin-bottom: 22px;">
-          Uma aplicação desenvolvida para aprimorar a comunicação entre discentes, docentes e conectar o IFUSP à sociedade. Unindo rede social, enciclopédia interativa e ferramentas acadêmicas em uma plataforma aberta.
+          Uma aplicação desenvolvida para aprimorar a comunicação entre discentes, docentes e conectar o ambiente acadêmico à sociedade. Unindo rede social, enciclopédia interativa e ferramentas acadêmicas em uma plataforma aberta.
         </p>
 
         <!-- OS 3 EIXOS COM ÍCONES OFICIAIS (VISÃO IMEDIATA DO QUE É O APP) -->
         <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%; max-width: 490px;">
           <!-- Eixo 1: Social -->
-          <div style="background: #FFFFFF; border-radius: 18px; border: 1.8px solid rgba(15, 71, 128, 0.22); box-shadow: 0 8px 20px -3px rgba(15, 71, 128, 0.16), 0 3px 8px -2px rgba(15, 71, 128, 0.08); padding: 16px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; overflow: hidden;">
+          <div style="background: #FFFFFF; border-radius: 18px; border: 1.8px solid rgba(15, 71, 128, 0.22); box-shadow: 0 8px 20px -3px rgba(15, 71, 128, 0.16), 0 3px 8px -2px rgba(15, 71, 128, 0.08); padding: 16px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; overflow: hidden; min-height: 185px;">
             <div style="position: absolute; top: 0; left: 0; right: 0; height: 4.5px; background: #0F4780;"></div>
             <div style="width: 54px; height: 54px; border-radius: 50%; background: rgba(15, 71, 128, 0.10); border: 1.5px solid rgba(15, 71, 128, 0.25); display: flex; align-items: center; justify-content: center; color: #0F4780; margin-bottom: 8px;">
               ${iconComunidadeSvg}
@@ -889,13 +889,13 @@ function buildFace1Html({ qrWebSvg, qrPlaySvg, qrLabDivSvg }) {
             <div class="font-bukra" style="font-size: 22px; font-weight: 900; color: #0F4780; margin-bottom: 4px; line-height: 1.15;">
               Social
             </div>
-            <div style="font-size: 16px; color: #475569; font-weight: 600; line-height: 1.25;">
-              Rede comunicativa &amp; mensageiro
+            <div style="font-size: 15.5px; color: #475569; font-weight: 600; line-height: 1.25;">
+              Rede comunicativa &amp; pedagógica
             </div>
           </div>
 
           <!-- Eixo 2: Informativo -->
-          <div style="background: #FFFFFF; border-radius: 18px; border: 1.8px solid rgba(241, 67, 67, 0.25); box-shadow: 0 8px 20px -3px rgba(241, 67, 67, 0.16), 0 3px 8px -2px rgba(241, 67, 67, 0.08); padding: 16px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; overflow: hidden;">
+          <div style="background: #FFFFFF; border-radius: 18px; border: 1.8px solid rgba(241, 67, 67, 0.25); box-shadow: 0 8px 20px -3px rgba(241, 67, 67, 0.16), 0 3px 8px -2px rgba(241, 67, 67, 0.08); padding: 16px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; overflow: hidden; min-height: 185px;">
             <div style="position: absolute; top: 0; left: 0; right: 0; height: 4.5px; background: #F14343;"></div>
             <div style="width: 54px; height: 54px; border-radius: 50%; background: rgba(241, 67, 67, 0.10); border: 1.5px solid rgba(241, 67, 67, 0.25); display: flex; align-items: center; justify-content: center; color: #F14343; margin-bottom: 8px;">
               ${iconCgifSvg}
@@ -903,13 +903,13 @@ function buildFace1Html({ qrWebSvg, qrPlaySvg, qrLabDivSvg }) {
             <div class="font-bukra" style="font-size: 22px; font-weight: 900; color: #F14343; margin-bottom: 4px; line-height: 1.15;">
               Informativo
             </div>
-            <div style="font-size: 16px; color: #475569; font-weight: 600; line-height: 1.25;">
-              Wiki IFUSP &amp; enciclopédia
+            <div style="font-size: 15.5px; color: #475569; font-weight: 600; line-height: 1.25;">
+              Enciclopédia acadêmica &amp; interativa
             </div>
           </div>
 
           <!-- Eixo 3: Ferramentas -->
-          <div style="background: #FFFFFF; border-radius: 18px; border: 1.8px solid rgba(255, 204, 0, 0.55); box-shadow: 0 8px 20px -3px rgba(217, 119, 6, 0.18), 0 3px 8px -2px rgba(217, 119, 6, 0.08); padding: 16px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; overflow: hidden;">
+          <div style="background: #FFFFFF; border-radius: 18px; border: 1.8px solid rgba(255, 204, 0, 0.55); box-shadow: 0 8px 20px -3px rgba(217, 119, 6, 0.18), 0 3px 8px -2px rgba(217, 119, 6, 0.08); padding: 16px 10px; display: flex; flex-direction: column; align-items: center; text-align: center; position: relative; overflow: hidden; min-height: 185px;">
             <div style="position: absolute; top: 0; left: 0; right: 0; height: 4.5px; background: #FFCC00;"></div>
             <div style="width: 54px; height: 54px; border-radius: 50%; background: rgba(255, 204, 0, 0.22); border: 1.5px solid #FFCC00; display: flex; align-items: center; justify-content: center; color: #854D0E; margin-bottom: 8px;">
               ${iconFerramentasSvg}
@@ -917,8 +917,8 @@ function buildFace1Html({ qrWebSvg, qrPlaySvg, qrLabDivSvg }) {
             <div class="font-bukra" style="font-size: 22px; font-weight: 900; color: #854D0E; margin-bottom: 4px; line-height: 1.15;">
               Ferramentas
             </div>
-            <div style="font-size: 16px; color: #475569; font-weight: 600; line-height: 1.25;">
-              Grade interativa &amp; anotações
+            <div style="font-size: 15.5px; color: #475569; font-weight: 600; line-height: 1.25;">
+              Funções de auxílio ao universitário
             </div>
           </div>
         </div>
@@ -1035,7 +1035,7 @@ function buildFace2Html() {
           </div>
           <div class="mini-feature-item">
             <div class="mini-bullet bullet-blue"></div>
-            <div class="mini-text"><strong>Pergunte a um Cientista:</strong> Canal de mentoria direta ligando discentes a pesquisadores e professores do instituto.</div>
+            <div class="mini-text"><strong>Pergunte a um Cientista:</strong> Envie sua dúvida sobre ciência e o LabDiv conecta você a um pesquisador para respondê-la, tornando a ciência acessível e aproximando os cientistas da sociedade.</div>
           </div>
         </div>
 
@@ -1055,7 +1055,7 @@ function buildFace2Html() {
           </div>
           <div class="mini-feature-item">
             <div class="mini-bullet bullet-blue"></div>
-            <div class="mini-text"><strong>Radiação:</strong> Medidor de contribuição comunicativa/aprendizado. Sistema de gamificação da aplicação para premiar os melhores comunicadores, os que mais aprenderam e mais contribuíram com a plataforma.</div>
+            <div class="mini-text"><strong>Radiação:</strong> Medidor de contribuição comunicativa/aprendizado. Sistema de gamificação da plataforma.</div>
           </div>
         </div>
       </div>
@@ -1097,7 +1097,7 @@ function buildFace2Html() {
           </div>
           <div class="mini-feature-item">
             <div class="mini-bullet bullet-red"></div>
-            <div class="mini-text"><strong>Guia Metodológico:</strong> Diretrizes práticas de metodologia científica, escrita acadêmica, relatórios técnicos e normas.</div>
+            <div class="mini-text"><strong>Guia Metodológico:</strong> Diretrizes de metodologia científica, escrita acadêmica e guias práticos de como pesquisar, avaliar e ler artigos.</div>
           </div>
         </div>
 
@@ -1117,7 +1117,7 @@ function buildFace2Html() {
           </div>
           <div class="mini-feature-item">
             <div class="mini-bullet bullet-red"></div>
-            <div class="mini-text"><strong>Conheça o IFUSP:</strong> História, estrutura institucional, departamentos e governança acadêmica.</div>
+            <div class="mini-text"><strong>Conheça o IFUSP:</strong> História, estrutura institucional, departamentos e funcionamento.</div>
           </div>
         </div>
 
@@ -1133,11 +1133,11 @@ function buildFace2Html() {
           </div>
           <div class="mini-feature-item">
             <div class="mini-bullet bullet-red"></div>
-            <div class="mini-text"><strong>Teste de Radiação:</strong> Quizzes interativos para a fixação das informações da plataforma.</div>
+            <div class="mini-text"><strong>Teste de Radiação:</strong> Quizzes da Wiki e uma das formas de subir seu nível de radiação (sistema de gamificação).</div>
           </div>
           <div class="mini-feature-item">
             <div class="mini-bullet bullet-red"></div>
-            <div class="mini-text"><strong>QC (Questionamentos Frequentes):</strong> Respostas para os questionamentos frequentes feitos pela comunidade.</div>
+            <div class="mini-text"><strong>SAC LabDiv:</strong> Respostas para os questionamentos frequentes feitos pela comunidade.</div>
           </div>
         </div>
       </div>
@@ -1175,11 +1175,11 @@ function buildFace2Html() {
           </div>
           <div class="mini-feature-item">
             <div class="mini-bullet bullet-yellow"></div>
-            <div class="mini-text"><strong>Central de Anotações &amp; Match Acadêmico:</strong> Cadernos digitais colaborativos e formação de grupos de estudos com colegas.</div>
+            <div class="mini-text"><strong>Central de Anotações &amp; Softwares:</strong> Espaço onde a comunidade compartilha anotações das disciplinas e softwares (aplicações, scripts e sites desenvolvidos).</div>
           </div>
           <div class="mini-feature-item">
             <div class="mini-bullet bullet-yellow"></div>
-            <div class="mini-text"><strong>Softwares:</strong> Catálogo aberto com simuladores didáticos (LumiFI, Aurtistic) e ferramentas computacionais.</div>
+            <div class="mini-text"><strong>Match Acadêmico:</strong> Une discentes em grupos de estudo e sistema de adoção, e conecta discentes com docentes no Quero uma IC.</div>
           </div>
         </div>
 
@@ -1195,7 +1195,7 @@ function buildFace2Html() {
           </div>
           <div class="mini-feature-item">
             <div class="mini-bullet bullet-yellow"></div>
-            <div class="mini-text"><strong>Desafios:</strong> Proposição de desafios científicos e problemas práticos para engajar a comunidade acadêmica.</div>
+            <div class="mini-text"><strong>Desafios:</strong> Competições saudáveis entre departamentos e pesquisadores (quem didatiza melhor, quem comunica mais e dinâmicas colaborativas).</div>
           </div>
           <div class="mini-feature-item">
             <div class="mini-bullet bullet-yellow"></div>
@@ -1215,7 +1215,7 @@ function buildFace2Html() {
           </div>
           <div class="mini-feature-item">
             <div class="mini-bullet bullet-yellow"></div>
-            <div class="mini-text"><strong>Visitas &amp; Extensão:</strong> Divulgação de eventos, visitas, museus, extensões... Abertas para a comunidade externa.</div>
+            <div class="mini-text"><strong>Visitas &amp; Extensão:</strong> Divulgação de iniciativas e espaços USP abertos ao público.</div>
           </div>
         </div>
       </div>
@@ -1262,7 +1262,7 @@ function buildFace2Html() {
             <span>Open Source &amp; Licença AGPLv3</span>
           </div>
           <div class="panel-footer-body font-open-sans">
-            Código livre e auditável: <strong>github.com/HUB-LabDiv/HUB-LabDiv</strong> &bull; Contato: <strong>labdiv@usp.br</strong>
+            Código livre e auditável: <strong>github.com/HUB-LabDiv/HUB-LabDiv</strong> &bull; Contato para sugestões: <strong>hublabdiv@gmail.com</strong>
           </div>
         </div>
       </div>
