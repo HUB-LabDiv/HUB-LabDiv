@@ -14,9 +14,24 @@
 
 import { createServerSupabase } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
+const CreateDropSchema = z.object({
+    content: z.string().trim().min(1, 'O conteúdo não pode estar vazio').max(2000, 'Máximo de 2000 caracteres'),
+    parentId: z.string().uuid().optional().nullable()
+});
+
+const ReactDropSchema = z.object({
+    dropId: z.string().uuid(),
+    reactionType: z.enum(['up', 'down'])
+});
 
 export async function createDrop(content: string, parentId?: string) {
+    const parse = CreateDropSchema.safeParse({ content, parentId });
+    if (!parse.success) {
+        return { error: parse.error.issues[0]?.message || 'Dados inválidos' };
+    }
+
     const supabase = await createServerSupabase();
     
     // 1. Get User
@@ -28,8 +43,8 @@ export async function createDrop(content: string, parentId?: string) {
         .from('micro_articles')
         .insert({
             author_id: user.id,
-            content: content.trim(),
-            parent_id: parentId || null,
+            content: parse.data.content,
+            parent_id: parse.data.parentId || null,
             status: 'pending' // CLÁUSULA 2: Segurança e Aprovação
         })
         .select(`
@@ -129,19 +144,27 @@ export async function fetchThreads(parentId: string) {
 }
 
 export async function reactToDrop(dropId: string, reactionType: 'up' | 'down') {
+    const parse = ReactDropSchema.safeParse({ dropId, reactionType });
+    if (!parse.success) {
+        return { error: 'Parâmetros de reação inválidos' };
+    }
+
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
     
     // Identificador único (User ID ou Fingerprint se quisermos permitir deslogado, mas usaremos user aqui)
     if (!user) return { error: 'Faça login para reagir.' };
 
+    const validDropId = parse.data.dropId;
+    const validReactionType = parse.data.reactionType;
+
     // 1. Verificar reação existente
     const { data: existing } = await supabase
         .from('micro_article_likes')
         .select('*')
-        .eq('article_id', dropId)
+        .eq('article_id', validDropId)
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
 
     if (existing) {
         if (existing.reaction_type === reactionType) {

@@ -15,6 +15,7 @@
 import React, { useState } from 'react';
 import { BookOpen, GraduationCap, Globe, HelpCircle, ArrowRight, Sparkles, Zap, Compass, Clock, FlaskConical, Bell, Calendar, MapPin, CheckCircle2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { motion } from 'framer-motion';
 
 const IngressOption = ({ title, icon, description, items, color }: any) => (
     <div className="glass-card rounded-[40px] border border-white/5 overflow-hidden hover:border-white/20 transition-all duration-500 group bg-[#1E1E1E]">
@@ -59,31 +60,52 @@ export default function IngressoClient({ profile }: { profile: any }) {
     return (
         <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Switch Superior: Ingresso vs Visitas & Extensão */}
-            <div className="flex justify-center pt-2">
-                <div className="inline-flex p-1.5 rounded-2xl bg-[#1E1E1E] border border-white/10 shadow-2xl backdrop-blur-md w-full sm:w-auto max-w-md">
+            <div 
+                className="sticky z-40 flex justify-center mb-6 pointer-events-none"
+                style={{ top: 'calc(4.5rem + env(safe-area-inset-top, 0px))' }}
+            >
+                <div data-tour="ingresso-subnav" className="flex p-1.5 bg-white/50 dark:bg-background-dark/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
                     <button
                         type="button"
                         onClick={() => setActiveTab('ingresso')}
-                        className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bukra text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
+                        className={`relative flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-black font-bukra uppercase tracking-widest transition-all ${
                             activeTab === 'ingresso'
-                                ? 'bg-[#FFCC00] text-gray-950 shadow-md shadow-[#FFCC00]/25'
-                                : 'text-gray-400 hover:text-white'
+                                ? 'text-gray-950'
+                                : 'text-gray-500 hover:text-white'
                         }`}
                     >
-                        <GraduationCap className="w-4 h-4 shrink-0" />
-                        <span>Como Ingressar</span>
+                        {activeTab === 'ingresso' && (
+                            <motion.div
+                                layoutId="activeTabIngresso"
+                                className="absolute inset-0 bg-brand-yellow rounded-xl shadow-lg shadow-brand-yellow/20"
+                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                            />
+                        )}
+                        <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
+                            <GraduationCap className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                            <span className="truncate font-bukra">Como Ingressar</span>
+                        </span>
                     </button>
                     <button
                         type="button"
                         onClick={() => setActiveTab('visitar')}
-                        className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 rounded-xl font-bukra text-xs font-bold uppercase tracking-wider transition-all duration-300 ${
+                        className={`relative flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-black font-bukra uppercase tracking-widest transition-all ${
                             activeTab === 'visitar'
-                                ? 'bg-[#0F4780] text-white shadow-md shadow-[#0F4780]/30'
-                                : 'text-gray-400 hover:text-white'
+                                ? 'text-white'
+                                : 'text-gray-500 hover:text-white'
                         }`}
                     >
-                        <Compass className="w-4 h-4 shrink-0" />
-                        <span>Visitas &amp; Extensão</span>
+                        {activeTab === 'visitar' && (
+                            <motion.div
+                                layoutId="activeTabIngresso"
+                                className="absolute inset-0 bg-[#0F4780] rounded-xl shadow-lg shadow-[#0F4780]/30"
+                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
+                            />
+                        )}
+                        <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
+                            <Compass className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
+                            <span className="truncate font-bukra">Visitas &amp; Extensão</span>
+                        </span>
                     </button>
                 </div>
             </div>

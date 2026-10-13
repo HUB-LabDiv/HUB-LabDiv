@@ -119,10 +119,14 @@ export function LogsView() {
                 const followingIds = follows.map(f => f.following_id);
                 queryBuilder = queryBuilder.in('author_id', followingIds);
             } else {
-                queryBuilder = queryBuilder.in('author_id', []);
+                setDrops([]);
+                setIsLoading(false);
+                return;
             }
         } else if (scope === 'seguindo' && !user) {
-             queryBuilder = queryBuilder.in('author_id', []);
+             setDrops([]);
+             setIsLoading(false);
+             return;
         }
 
         const { data, error } = await queryBuilder

@@ -196,7 +196,13 @@ export function Header() {
                                 navbarThirdAxis,
                                 { label: 'Interações', href: '/interacao', color: '#38BDF8', dataTour: 'navbar-eixo-interacoes' },
                             ].map((tab) => {
-                                const isActive = pathname === tab.href || (tab.href !== '/' && pathname.startsWith(tab.href));
+                                const isActive = tab.href === '/gcif'
+                                    ? (pathname.startsWith('/gcif') || pathname.startsWith('/wiki') || pathname.startsWith('/cgif') || pathname.startsWith('/informativo'))
+                                    : tab.href === '/interacao'
+                                    ? (pathname.startsWith('/interacao') || pathname.startsWith('/emaranhamento'))
+                                    : tab.href === '/'
+                                    ? pathname === '/'
+                                    : (pathname === tab.href || pathname.startsWith(tab.href));
                                 
                                 return (
                                     <Link

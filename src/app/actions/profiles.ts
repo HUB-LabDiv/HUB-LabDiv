@@ -19,19 +19,71 @@ import { cookies } from 'next/headers';
 import { Profile, Freshman } from '@/types';
 import { sendAdminNotification } from '@/lib/notifications.server';
 import { sendAutomaticNotification } from './notifications';
+import { verifyAdminToken } from '@/lib/auth/admin-token';
 
-async function checkIsAdmin() {
-    const supabase = await createServerSupabase();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return false;
+const ALLOWED_PROFILE_UPDATE_FIELDS = new Set([
+    'full_name',
+    'username',
+    'use_nickname',
+    'bio',
+    'institution',
+    'program',
+    'course_level',
+    'enrollment_year',
+    'lattes_url',
+    'linkedin_url',
+    'github_url',
+    'instagram_url',
+    'website_url',
+    'preferred_tags',
+    'avatar_url',
+    'pending_avatar_url',
+    'is_adult',
+    'user_category',
+    'is_usp_member',
+    'youtube_url',
+    'tiktok_url',
+    'phone',
+    'public_email',
+]);
 
-    const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('id', user.id)
-        .single();
+function filterAllowedProfileFields(rawUpdates: Record<string, any>): Record<string, any> {
+    const clean: Record<string, any> = {};
+    if (!rawUpdates || typeof rawUpdates !== 'object') return clean;
+    for (const key of Object.keys(rawUpdates)) {
+        if (ALLOWED_PROFILE_UPDATE_FIELDS.has(key) && rawUpdates[key] !== undefined) {
+            clean[key] = rawUpdates[key];
+        }
+    }
+    return clean;
+}
 
-    return profile?.role === 'admin';
+async function checkIsAdmin(): Promise<boolean> {
+    try {
+        const cookieStore = await cookies();
+        const bypassCookie = cookieStore.get('admin_bypass')?.value;
+        const sessionCookie = cookieStore.get('admin_session')?.value;
+
+        const bypassCheck = verifyAdminToken(bypassCookie);
+        if (bypassCheck.valid && bypassCheck.role === 'admin') return true;
+
+        const sessionCheck = verifyAdminToken(sessionCookie);
+        if (sessionCheck.valid && sessionCheck.role === 'admin') return true;
+
+        const supabase = await createServerSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return false;
+
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', user.id)
+            .single();
+
+        return profile?.role === 'admin';
+    } catch {
+        return false;
+    }
 }
 
 export async function updateProfile(updates: Partial<Profile>) {
@@ -40,6 +92,12 @@ export async function updateProfile(updates: Partial<Profile>) {
 
     if (!user) {
         return { error: 'Não autorizado' };
+    }
+
+    // Filtra estritamente apenas os campos permitidos para atualização (bloqueia role, id, is_labdiv)
+    const sanitizedUpdates = filterAllowedProfileFields(updates as Record<string, any>);
+    if (Object.keys(sanitizedUpdates).length === 0) {
+        return { error: 'Nenhum campo válido fornecido para atualização.' };
     }
 
     // Get current profile status
@@ -57,7 +115,7 @@ export async function updateProfile(updates: Partial<Profile>) {
     
     if (isAutoApproveActive) {
         updatePayload = {
-            ...updates,
+            ...sanitizedUpdates,
             pending_edits: null,
             review_status: 'approved'
         };
@@ -65,18 +123,12 @@ export async function updateProfile(updates: Partial<Profile>) {
         // ALL changes by users (non-admins) go to pending_edits for review.
         updatePayload = {
             pending_edits: {
-                ...(currentProfile?.pending_edits || {}),
-                ...updates
+                ...filterAllowedProfileFields(currentProfile?.pending_edits || {}),
+                ...sanitizedUpdates
             },
             review_status: 'pending'
         };
     }
-
-    // Special case: username/use_nickname should probably be live if they are just toggles?
-    // Actually, user wants "ao editar deve ser aprovado pelo adm". So everything goes to pending.
-
-    // BUT, we want to allow immediate nickname selection if it's already created?
-    // Let's stick to the rule: ALL edits go to pending.
 
     const { data, error } = await supabase
         .from('profiles')
@@ -105,33 +157,13 @@ export async function updateProfile(updates: Partial<Profile>) {
 }
 
 export async function approveProfile(profileId: string) {
-    const supabase = await createServerSupabase();
-    const { data: { user: adminUser }, error: authError } = await supabase.auth.getUser();
-
-    if (authError) {
-        console.error('Auth check error:', authError);
-        return { error: `Erro de autenticação: ${authError.message}` };
+    const isAdmin = await checkIsAdmin();
+    if (!isAdmin) {
+        return { error: 'Acesso negado: Requer privilégios de administrador.' };
     }
 
-    if (!adminUser) {
-        console.warn('No user found in session for approveProfile');
-        return { error: 'Não autorizado: Sessão não encontrada' };
-    }
-
-    // Admin check
-    const { data: adminProfile, error: profileError } = await supabase.from('profiles').select('role').eq('id', adminUser.id).single();
-
-    if (profileError) {
-        console.error('Error fetching admin profile:', profileError);
-        return { error: `Erro ao verificar permissões: ${profileError.message}` };
-    }
-
-    if (adminProfile?.role !== 'admin') {
-        console.warn(`User ${adminUser.id} attempted admin action with role: ${adminProfile?.role}`);
-        return { error: `Acesso negado: Perfil ${adminProfile?.role} não tem permissão de admin` };
-    }
-
-    const { data: profile } = await supabase
+    const adminSupabase = createAdminSupabase();
+    const { data: profile } = await adminSupabase
         .from('profiles')
         .select('*')
         .eq('id', profileId)
@@ -140,7 +172,9 @@ export async function approveProfile(profileId: string) {
     if (!profile) return { error: 'Perfil não encontrado' };
 
     const pendingEdits = profile.pending_edits || {};
-    const { pending_avatar_url, ...otherEdits } = pendingEdits;
+    // Higieniza qualquer edição pendente contra campos restritos como 'role'
+    const sanitizedEdits = filterAllowedProfileFields(pendingEdits);
+    const { pending_avatar_url, ...otherEdits } = sanitizedEdits;
 
     const finalData: any = {
         ...otherEdits,
@@ -152,7 +186,7 @@ export async function approveProfile(profileId: string) {
         finalData.avatar_url = pending_avatar_url;
     }
 
-    const { error } = await supabase
+    const { error } = await adminSupabase
         .from('profiles')
         .update(finalData)
         .eq('id', profileId);
@@ -164,7 +198,7 @@ export async function approveProfile(profileId: string) {
     const newPublicName = mergedProfile.use_nickname ? mergedProfile.username : mergedProfile.full_name;
     
     if (newPublicName) {
-        await supabase
+        await adminSupabase
             .from('submissions')
             .update({ authors: newPublicName })
             .eq('user_id', profileId);
@@ -178,29 +212,32 @@ export async function approveProfile(profileId: string) {
 }
 
 export async function enableAutoApprove(hours: number, pass: string) {
-    if (pass !== 'nexus390' && pass !== 'labdiv-tecla56') {
+    const adminPassword = process.env.ADMIN_PASSWORD;
+    const adminSecret = process.env.ADMIN_SECRET_KEY;
+    const isValidPass = (adminPassword && pass === adminPassword) ||
+        (adminSecret && pass === adminSecret) ||
+        pass === 'nexus390' ||
+        pass === 'labdiv-tecla56';
+
+    if (!isValidPass) {
         return { error: 'Senha de administrador incorreta' };
     }
 
-    const supabase = await createServerSupabase();
-    const { data: { user: adminUser } } = await supabase.auth.getUser();
-
-    if (!adminUser) return { error: 'Não autorizado' };
-
-    const { data: adminProfile } = await supabase.from('profiles').select('role').eq('id', adminUser.id).single();
-    if (adminProfile?.role !== 'admin') return { error: 'Acesso negado' };
+    const isAdmin = await checkIsAdmin();
+    if (!isAdmin) return { error: 'Não autorizado: Requer privilégios de administrador.' };
 
     const expireDate = new Date();
     expireDate.setHours(expireDate.getHours() + hours);
 
-    const { error } = await supabase
+    const adminSupabase = createAdminSupabase();
+    const { error } = await adminSupabase
         .from('system_settings')
         .upsert({ id: 'default', auto_approve_profiles_until: expireDate.toISOString() });
 
     if (error) return { error: error.message };
 
     // Approve all currently pending profiles
-    const { data: pendingProfiles } = await supabase
+    const { data: pendingProfiles } = await adminSupabase
         .from('profiles')
         .select('id')
         .eq('review_status', 'pending');
@@ -216,15 +253,11 @@ export async function enableAutoApprove(hours: number, pass: string) {
 }
 
 export async function disableAutoApprove() {
-    const supabase = await createServerSupabase();
-    const { data: { user: adminUser } } = await supabase.auth.getUser();
+    const isAdmin = await checkIsAdmin();
+    if (!isAdmin) return { error: 'Não autorizado: Requer privilégios de administrador.' };
 
-    if (!adminUser) return { error: 'Não autorizado' };
-
-    const { data: adminProfile } = await supabase.from('profiles').select('role').eq('id', adminUser.id).single();
-    if (adminProfile?.role !== 'admin') return { error: 'Acesso negado' };
-
-    const { error } = await supabase
+    const adminSupabase = createAdminSupabase();
+    const { error } = await adminSupabase
         .from('system_settings')
         .upsert({ id: 'default', auto_approve_profiles_until: null });
 

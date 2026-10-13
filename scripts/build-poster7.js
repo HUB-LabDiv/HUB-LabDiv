@@ -281,6 +281,7 @@ async function main() {
       display: flex;
       align-items: center;
       justify-content: center;
+      transform: translateX(12px);
     }
     .hub-hero-svg-holder svg {
       width: 100%;
@@ -608,7 +609,7 @@ async function main() {
       </div>
 
       <h1 class="hero-title font-bukra">
-        Conecte-se ao HUB<br><span class="title-highlight">da graduação do IFUSP</span>
+        Entender a universidade está<br><span class="title-highlight">à um clique de distância</span>
       </h1>
 
       <p class="hero-subtitle font-open-sans">

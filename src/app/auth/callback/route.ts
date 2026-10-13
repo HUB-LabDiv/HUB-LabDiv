@@ -72,8 +72,20 @@ export async function GET(request: NextRequest) {
                 .update(profileUpdate)
                 .eq('id', session.user.id);
 
-            const target = (!next || next === '/login' || next.startsWith('/login')) ? '/' : next;
-            const redirectUrl = new URL(target, publicOrigin);
+            // Sanitize redirect target against Open Redirects
+            const sanitizeRedirectPath = (url: string | null): string => {
+                if (!url) return '/';
+                if (!url.startsWith('/') || url.startsWith('//') || url.startsWith('/\\')) {
+                    return '/';
+                }
+                if (url === '/login' || url.startsWith('/login?') || url.startsWith('/login/')) {
+                    return '/';
+                }
+                return url;
+            };
+
+            const safeTarget = sanitizeRedirectPath(next);
+            const redirectUrl = new URL(safeTarget, publicOrigin);
             return NextResponse.redirect(redirectUrl.toString());
         }
         if (process.env.NODE_ENV === 'development') {

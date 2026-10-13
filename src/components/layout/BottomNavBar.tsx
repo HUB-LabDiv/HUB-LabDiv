@@ -53,6 +53,20 @@ export const BottomNavBar = () => {
         closeAll();
     }, [pathname, closeAll]);
 
+    const isItemActive = (itemHref: string) => {
+        const baseHref = itemHref.split('?')[0];
+        if (baseHref === '/gcif') {
+            return pathname.startsWith('/gcif') || pathname.startsWith('/wiki') || pathname.startsWith('/cgif') || pathname.startsWith('/informativo');
+        }
+        if (baseHref === '/interacao') {
+            return pathname.startsWith('/interacao') || pathname.startsWith('/emaranhamento');
+        }
+        if (baseHref === '/') {
+            return pathname === '/';
+        }
+        return pathname === baseHref || pathname.startsWith(baseHref);
+    };
+
     if (!dynamicNavItems?.length) return null;
 
     return (
@@ -66,7 +80,7 @@ export const BottomNavBar = () => {
             >
                 <nav className="max-w-md mx-auto h-16 bg-white/70 dark:bg-[#1E1E1E]/80 backdrop-blur-3xl rounded-[32px] border border-white/30 dark:border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.35)] flex items-center justify-around px-1 pointer-events-auto overflow-visible">
                     {dynamicNavItems.map((item) => {
-                        const isActive = pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
+                        const isActive = isItemActive(item.href);
                         const activeColor = item.color || 'brand-blue';
                         const cStyle = colorStyles[activeColor] || colorStyles['brand-blue'];
 

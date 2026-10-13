@@ -10,7 +10,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createServerSupabase } from '@/lib/supabase/server';
+import { createAdminSupabase } from '@/lib/supabase/admin';
 import webpush from 'web-push';
 
 /*!
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
         return new Response('Unauthorized', { status: 401 });
     }
 
-    const supabase = await createServerSupabase();
+    const supabase = createAdminSupabase();
 
     try {
         // Find events that start within their reminder_minutes and haven't been notified yet

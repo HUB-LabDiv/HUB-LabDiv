@@ -135,6 +135,9 @@ export function TelemetryManager() {
         query = query.eq('user_id', targetUserId);
       }
 
+      // Limita a consulta para prevenir timeouts de PostgREST e gargalos de memória
+      query = query.limit(1000);
+
       const { data, error } = await query;
 
       if (error) throw error;

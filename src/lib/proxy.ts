@@ -12,6 +12,7 @@
 import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
+import { verifyAdminToken } from './auth/admin-token';
 
 export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
@@ -56,7 +57,7 @@ export async function proxy(request: NextRequest) {
     const isProd = process.env.NODE_ENV === 'production';
     const cspHeader = `
         default-src 'self';
-        script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://*.supabase.co https://*.cloudinary.com https://*.youtube.com https://www.clarity.ms https://scripts.clarity.ms https://c.bing.com;
+        script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://*.supabase.co https://*.cloudinary.com https://*.youtube.com https://www.clarity.ms https://scripts.clarity.ms https://c.bing.com https://ajax.googleapis.com;
         style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
         img-src 'self' blob: data: https://api.dicebear.com https://*.supabase.co https://*.cloudinary.com https://i.ytimg.com https://*.ytimg.com https://*.googleusercontent.com https://*.google.com https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://c.bing.com https://*.bing.com;
         font-src 'self' data: https://fonts.gstatic.com;
@@ -122,9 +123,21 @@ export async function proxy(request: NextRequest) {
 
     // --- Admin Auth Check (Hardened) ---
     if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
-        // Check for password-based session cookie first (bypass)
-        const adminSession = request.cookies.get('admin_session');
-        if (adminSession?.value === 'authenticated') {
+        // Check for cryptographically signed admin tokens (session ou bypass)
+        const adminSession = request.cookies.get('admin_session')?.value;
+        const adminBypass = request.cookies.get('admin_bypass')?.value;
+        const bypassCheck = verifyAdminToken(adminBypass);
+        const sessionCheck = verifyAdminToken(adminSession);
+        const tokenCheck = bypassCheck.valid ? bypassCheck : sessionCheck;
+
+        if (tokenCheck.valid && tokenCheck.role) {
+            const isAdminOnlyRoute = pathname.startsWith('/admin/perigo') || 
+                                   pathname.startsWith('/admin/profiles') ||
+                                   pathname.startsWith('/admin/trails');
+            if (isAdminOnlyRoute && tokenCheck.role !== 'admin') {
+                const adminHomeUrl = new URL('/admin', request.url);
+                return applyHeaders(NextResponse.redirect(adminHomeUrl));
+            }
             return applyHeaders(response);
         }
 

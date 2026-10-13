@@ -14,6 +14,31 @@
 
 import { createServerSupabase } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
+import { verifyAdminToken } from '@/lib/auth/admin-token';
+
+async function checkIsAdminOrModerator(): Promise<boolean> {
+    try {
+        const cookieStore = await cookies();
+        const bypassCookie = cookieStore.get('admin_bypass')?.value;
+        const sessionCookie = cookieStore.get('admin_session')?.value;
+
+        const bypassCheck = verifyAdminToken(bypassCookie);
+        if (bypassCheck.valid && (bypassCheck.role === 'admin' || bypassCheck.role === 'moderator')) return true;
+
+        const sessionCheck = verifyAdminToken(sessionCookie);
+        if (sessionCheck.valid && (sessionCheck.role === 'admin' || sessionCheck.role === 'moderator')) return true;
+
+        const supabase = await createServerSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return false;
+
+        const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
+        return ['admin', 'moderator', 'labdiv', 'labdiv adm'].includes(profile?.role || '');
+    } catch {
+        return false;
+    }
+}
 
 export async function submitFeedback(data: { type: string; description: string; user_agent?: string; url?: string; email?: string; context?: any }) {
     const supabase = await createServerSupabase();
@@ -93,6 +118,11 @@ export async function submitFeedback(data: { type: string; description: string; 
  * Usa Admin Client para bypassar RLS (somente chamado de Server Components/Actions autenticados).
  */
 export async function getFeedbackReports() {
+    const isAuthorized = await checkIsAdminOrModerator();
+    if (!isAuthorized) {
+        return { data: [], error: 'Não autorizado: Acesso restrito a administradores.' };
+    }
+
     try {
         const { createAdminSupabase } = await import('@/lib/supabase/admin');
         const adminSupabase = createAdminSupabase();
@@ -124,14 +154,9 @@ export async function getFeedbackReports() {
  * Usa Admin Client para bypassar RLS.
  */
 export async function updateFeedbackReportStatus(id: string, newStatus: string) {
-    // Valida que o usuário é admin antes de executar
-    const supabase = await createServerSupabase();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { success: false, error: 'Não autenticado' };
-
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-    if (!['admin', 'moderator', 'labdiv', 'labdiv adm'].includes(profile?.role || '')) {
-        return { success: false, error: 'Acesso negado' };
+    const isAuthorized = await checkIsAdminOrModerator();
+    if (!isAuthorized) {
+        return { success: false, error: 'Acesso negado: Requer privilégios de moderação.' };
     }
 
     try {
@@ -152,13 +177,9 @@ export async function updateFeedbackReportStatus(id: string, newStatus: string) 
 }
 
 export async function deleteFeedbackReport(id: string) {
-    const supabase = await createServerSupabase();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return { success: false, error: 'Não autenticado' };
-
-    const { data: profile } = await supabase.from('profiles').select('role').eq('id', user.id).single();
-    if (!['admin', 'moderator', 'labdiv', 'labdiv adm'].includes(profile?.role || '')) {
-        return { success: false, error: 'Acesso negado' };
+    const isAuthorized = await checkIsAdminOrModerator();
+    if (!isAuthorized) {
+        return { success: false, error: 'Acesso negado: Requer privilégios de moderação.' };
     }
 
     try {

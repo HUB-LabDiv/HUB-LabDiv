@@ -27,11 +27,15 @@ import { ptBR } from 'date-fns/locale';
 
 interface Correction {
     id: string;
-    suggestion: string;
-    status: 'pending' | 'applied' | 'rejected';
+    suggested_text?: string;
+    suggestion?: string;
+    original_text?: string;
+    comment?: string;
+    status: 'pending' | 'applied' | 'rejected' | 'pendente' | 'aceito' | 'rejeitado';
     created_at: string;
     user_id: string | null;
-    post_id: string;
+    submission_id?: string;
+    post_id?: string;
     profiles: {
         full_name: string;
         email: string;
@@ -155,12 +159,21 @@ export function CorrectionsManager() {
 
     const filteredCorrections = useMemo(() => {
         return corrections.filter(c => {
+            const textToSearch = `${c.suggested_text || ''} ${c.suggestion || ''} ${c.original_text || ''} ${c.comment || ''}`.toLowerCase();
             const matchesSearch = 
-                c.suggestion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                textToSearch.includes(searchTerm.toLowerCase()) ||
                 (c.profiles?.full_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
                 (c.submissions?.title || '').toLowerCase().includes(searchTerm.toLowerCase());
             
-            const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
+            const isPending = c.status === 'pending' || c.status === 'pendente';
+            const isApplied = c.status === 'applied' || c.status === 'aceito';
+            const isRejected = c.status === 'rejected' || c.status === 'rejeitado';
+
+            const matchesStatus = 
+                statusFilter === 'all' || 
+                (statusFilter === 'pending' && isPending) ||
+                (statusFilter === 'applied' && isApplied) ||
+                (statusFilter === 'rejected' && isRejected);
             
             return matchesSearch && matchesStatus;
         });
@@ -286,17 +299,17 @@ export function CorrectionsManager() {
                                     </div>
 
                                     <div className="flex items-center gap-2">
-                                        {correction.status === 'pending' && (
+                                        {(correction.status === 'pending' || correction.status === 'pendente') && (
                                             <span className="px-3 py-1 bg-brand-yellow/10 text-brand-yellow text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5">
                                                 <Clock className="w-3 h-3" /> Pendente
                                             </span>
                                         )}
-                                        {correction.status === 'applied' && (
+                                        {(correction.status === 'applied' || correction.status === 'aceito') && (
                                             <span className="px-3 py-1 bg-brand-blue/10 text-brand-blue text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5">
                                                 <Check className="w-3 h-3" /> Aplicado
                                             </span>
                                         )}
-                                        {correction.status === 'rejected' && (
+                                        {(correction.status === 'rejected' || correction.status === 'rejeitado') && (
                                             <span className="px-3 py-1 bg-brand-red/10 text-brand-red text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5">
                                                 <X className="w-3 h-3" /> Rejeitado
                                             </span>
@@ -304,14 +317,27 @@ export function CorrectionsManager() {
                                     </div>
                                 </div>
 
+                                {correction.original_text && (
+                                    <div className="p-3 bg-brand-red/5 dark:bg-brand-red/10 rounded-xl border border-brand-red/20 text-xs text-gray-600 dark:text-gray-300">
+                                        <span className="font-bold text-brand-red uppercase tracking-wider block text-[10px] mb-1">Texto Original Selecionado:</span>
+                                        <p className="italic line-clamp-3">"{correction.original_text}"</p>
+                                    </div>
+                                )}
+
                                 <div className="p-4 bg-white/50 dark:bg-background-dark/20 rounded-2xl border border-gray-100 dark:border-gray-800 text-gray-700 dark:text-gray-300 text-sm leading-relaxed flex gap-3">
                                     <MessageSquare className="w-5 h-5 text-gray-400 shrink-0 mt-0.5" />
-                                    {correction.suggestion}
+                                    <div className="space-y-1">
+                                        <span className="font-bold text-brand-blue uppercase tracking-wider block text-[10px]">Sugestão de Correção:</span>
+                                        <p>{correction.suggested_text || correction.suggestion || 'Sem texto de sugestão'}</p>
+                                        {correction.comment && (
+                                            <p className="text-xs text-gray-500 mt-2 italic">Motivo / Comentário: {correction.comment}</p>
+                                        )}
+                                    </div>
                                 </div>
 
                                 <div className="flex items-center justify-between pt-2">
                                     <div className="flex items-center gap-2">
-                                        {correction.status !== 'applied' && (
+                                        {correction.status !== 'applied' && correction.status !== 'aceito' && (
                                             <button 
                                                 onClick={() => handleUpdateStatus(correction.id, 'applied')}
                                                 className="px-4 py-2 bg-brand-blue/10 text-brand-blue hover:bg-brand-blue hover:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2"
@@ -319,7 +345,7 @@ export function CorrectionsManager() {
                                                 <Check className="w-4 h-4" /> Sinalizar Aplicado
                                             </button>
                                         )}
-                                        {correction.status !== 'rejected' && (
+                                        {correction.status !== 'rejected' && correction.status !== 'rejeitado' && (
                                             <button 
                                                 onClick={() => handleUpdateStatus(correction.id, 'rejected')}
                                                 className="px-4 py-2 bg-brand-red/10 text-brand-red hover:bg-brand-red hover:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2"

@@ -13,7 +13,7 @@ const DETAILS = [
         content: (
             <div className="space-y-4">
                 <p>
-                    O Show de Fisica promoveu a formação de centenas de monitores (estudantes de diversos cursos) com o desenvolvimento de habilidades em ciências, comunicação e mediação cultural. Em 2024, são quase quarenta anos de participação de eventos em todo o país e de apresentações cheias, todas as semanas.
+                    O Show de Física promoveu a formação de centenas de monitores (estudantes de diversos cursos) com o desenvolvimento de habilidades em ciências, comunicação e mediação cultural. Em 2024, são quase quarenta anos de participação de eventos em todo o país e de apresentações cheias, todas as semanas.
                 </p>
                 <p>
                     O projeto busca articular diversas demonstrações na busca da transposição dos fenômenos, dos limites frios e muitas vezes áridos do ensino em sala de aula, para um novo cenário, rico de estímulos e fortemente interativo, capaz de atingir o emocional de cada espectador.
@@ -30,7 +30,7 @@ const DETAILS = [
         content: (
             <div className="space-y-4">
                 <p>
-                    Nos primórdios de sua longeva história no IFUSP, o Show de Fisica era realizado em espaço compartilhado com o Laboratório de Demonstrações Ernst W. Hamburger e, posteriormente, já se realizou em diversos outros ambientes no Instituto.
+                    Nos primórdios de sua longeva história no IFUSP, o Show de Física era realizado em espaço compartilhado com o Laboratório de Demonstrações Ernst W. Hamburger e, posteriormente, já se realizou em diversos outros ambientes no Instituto.
                 </p>
                 <p>
                     Desde 2008, o programa se instalou em sua "residência" atual, o <strong>auditório Alessandro Volta</strong>, que tem recebido reparos e investimentos contínuos para sua modernização.

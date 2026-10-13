@@ -55,7 +55,7 @@ const nextConfig: NextConfig = {
   async headers() {
     const cspHeader = `
       default-src 'self';
-      script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://*.supabase.co https://*.vercel-scripts.com https://*.vercel.app https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms;
+      script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://ajax.googleapis.com https://*.supabase.co https://*.vercel-scripts.com https://*.vercel.app https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://vlibras.gov.br;
       img-src 'self' blob: data: https://*.supabase.co https://res.cloudinary.com https://*.ytimg.com https://img.youtube.com https://images.unsplash.com https://lh3.googleusercontent.com https://upload.wikimedia.org https://portal.if.usp.br https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms;
       font-src 'self' data: https://fonts.gstatic.com;

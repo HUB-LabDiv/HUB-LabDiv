@@ -16,6 +16,13 @@ import { useEffect, useState, useMemo, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
 import { 
+    approveComment, 
+    rejectComment, 
+    deleteComment, 
+    bulkUpdateCommentsStatus, 
+    bulkDeleteComments 
+} from '@/app/actions/comments';
+import { 
     MessageSquare, Check, X, Trash2, 
     Search, Filter, Clock, AlertCircle,
     Loader2, User as UserIcon, Calendar,
@@ -27,7 +34,7 @@ import { ptBR } from 'date-fns/locale';
 interface Comment {
     id: string;
     content: string;
-    status: 'pending' | 'approved' | 'rejected';
+    status: 'pending' | 'approved' | 'rejected' | 'pendente' | 'aprovado' | 'rejeitado';
     created_at: string;
     user_id: string;
     post_id: string;
@@ -70,68 +77,65 @@ export function CommentsManager() {
         fetchComments();
     }, [fetchComments]);
 
-    const handleUpdateStatus = async (id: string, status: 'approved' | 'rejected') => {
-        const { error } = await supabase
-            .from('comments')
-            .update({ status })
-            .eq('id', id);
+    const isPending = (s: string) => s === 'pending' || s === 'pendente';
+    const isApproved = (s: string) => s === 'approved' || s === 'aprovado';
+    const isRejected = (s: string) => s === 'rejected' || s === 'rejeitado';
 
-        if (error) {
-            toast.error("Erro ao atualizar status.");
-        } else {
-            setComments(prev => prev.map(c => c.id === id ? { ...c, status } : c));
-            toast.success(status === 'approved' ? "Comentário aprovado!" : "Comentário rejeitado.");
+    const handleUpdateStatus = async (id: string, status: 'approved' | 'rejected') => {
+        try {
+            if (status === 'approved') {
+                await approveComment(id);
+                setComments(prev => prev.map(c => c.id === id ? { ...c, status: 'aprovado' } : c));
+                toast.success("Comentário aprovado!");
+            } else {
+                await rejectComment(id);
+                setComments(prev => prev.map(c => c.id === id ? { ...c, status: 'rejeitado' } : c));
+                toast.success("Comentário rejeitado.");
+            }
+        } catch (err: any) {
+            toast.error(err.message || "Erro ao atualizar status.");
         }
     };
 
     const handleDelete = async (id: string) => {
         if (!confirm("Tem certeza que deseja excluir permanentemente este comentário?")) return;
 
-        const { error } = await supabase
-            .from('comments')
-            .delete()
-            .eq('id', id);
-
-        if (error) {
-            toast.error("Erro ao excluir comentário.");
-        } else {
+        try {
+            await deleteComment(id);
             setComments(prev => prev.filter(c => c.id !== id));
             toast.success("Comentário excluído.");
+        } catch (err: any) {
+            toast.error(err.message || "Erro ao excluir comentário.");
         }
     };
 
     const handleBulkStatus = async (status: 'approved' | 'rejected') => {
         if (selectedIds.size === 0) return;
-        
-        const { error } = await supabase
-            .from('comments')
-            .update({ status })
-            .in('id', Array.from(selectedIds));
+        const ids = Array.from(selectedIds);
+        const dbStatus = status === 'approved' ? 'aprovado' : 'rejeitado';
 
-        if (error) {
-            toast.error("Erro no processamento em massa.");
-        } else {
-            setComments(prev => prev.map(c => selectedIds.has(c.id) ? { ...c, status } : c));
+        try {
+            await bulkUpdateCommentsStatus(ids, dbStatus);
+            setComments(prev => prev.map(c => selectedIds.has(c.id) ? { ...c, status: dbStatus } : c));
             setSelectedIds(new Set());
-            toast.success(`${selectedIds.size} comentários atualizados.`);
+            toast.success(`${ids.length} comentários atualizados.`);
+        } catch (err: any) {
+            toast.error(err.message || "Erro no processamento em massa.");
         }
     };
 
     const handleBulkDelete = async () => {
         if (selectedIds.size === 0) return;
         if (!confirm(`Excluir permanentemente ${selectedIds.size} comentários?`)) return;
+        const ids = Array.from(selectedIds);
 
-        const { error } = await supabase
-            .from('comments')
-            .delete()
-            .in('id', Array.from(selectedIds));
-
-        if (error) {
-            toast.error("Erro ao excluir comentários.");
-        } else {
+        try {
+            await bulkDeleteComments(ids);
             setComments(prev => prev.filter(c => !selectedIds.has(c.id)));
             setSelectedIds(new Set());
             toast.success("Comentários excluídos.");
+        } catch (err: any) {
+            toast.error(err.message || "Erro ao excluir comentários.");
         }
     };
 
@@ -156,19 +160,23 @@ export function CommentsManager() {
         return comments.filter(c => {
             const matchesSearch = 
                 c.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                c.profiles?.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                c.submissions?.title?.toLowerCase().includes(searchTerm.toLowerCase());
+                (c.profiles?.full_name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                (c.submissions?.title || '').toLowerCase().includes(searchTerm.toLowerCase());
             
-            const matchesStatus = statusFilter === 'all' || c.status === statusFilter;
+            const matchesStatus = 
+                statusFilter === 'all' || 
+                (statusFilter === 'pending' && isPending(c.status)) ||
+                (statusFilter === 'approved' && isApproved(c.status)) ||
+                (statusFilter === 'rejected' && isRejected(c.status));
             
             return matchesSearch && matchesStatus;
         });
     }, [comments, searchTerm, statusFilter]);
 
     const stats = useMemo(() => ({
-        pending: comments.filter(c => c.status === 'pending').length,
-        approved: comments.filter(c => c.status === 'approved').length,
-        rejected: comments.filter(c => c.status === 'rejected').length,
+        pending: comments.filter(c => isPending(c.status)).length,
+        approved: comments.filter(c => isApproved(c.status)).length,
+        rejected: comments.filter(c => isRejected(c.status)).length,
     }), [comments]);
 
     return (
@@ -291,17 +299,17 @@ export function CommentsManager() {
                                     </div>
 
                                     <div className="flex items-center gap-2">
-                                        {comment.status === 'pending' && (
+                                        {isPending(comment.status) && (
                                             <span className="px-3 py-1 bg-brand-yellow/10 text-brand-yellow text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5">
                                                 <Clock className="w-3 h-3" /> Pendente
                                             </span>
                                         )}
-                                        {comment.status === 'approved' && (
+                                        {isApproved(comment.status) && (
                                             <span className="px-3 py-1 bg-brand-blue/10 text-brand-blue text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5">
-                                                <Check className="w-3 h-3" /> Ativo
+                                                <Check className="w-3 h-3" /> Aprovado
                                             </span>
                                         )}
-                                        {comment.status === 'rejected' && (
+                                        {isRejected(comment.status) && (
                                             <span className="px-3 py-1 bg-brand-red/10 text-brand-red text-[10px] font-black uppercase tracking-widest rounded-full flex items-center gap-1.5">
                                                 <X className="w-3 h-3" /> Rejeitado
                                             </span>
@@ -315,7 +323,7 @@ export function CommentsManager() {
 
                                 <div className="flex items-center justify-between pt-2">
                                     <div className="flex items-center gap-2">
-                                        {comment.status !== 'approved' && (
+                                        {!isApproved(comment.status) && (
                                             <button 
                                                 onClick={() => handleUpdateStatus(comment.id, 'approved')}
                                                 className="px-4 py-2 bg-brand-blue/10 text-brand-blue hover:bg-brand-blue hover:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2"
@@ -323,7 +331,7 @@ export function CommentsManager() {
                                                 <Check className="w-4 h-4" /> Aprovar
                                             </button>
                                         )}
-                                        {comment.status !== 'rejected' && (
+                                        {!isRejected(comment.status) && (
                                             <button 
                                                 onClick={() => handleUpdateStatus(comment.id, 'rejected')}
                                                 className="px-4 py-2 bg-brand-red/10 text-brand-red hover:bg-brand-red hover:text-white rounded-xl text-xs font-bold transition-all flex items-center gap-2"

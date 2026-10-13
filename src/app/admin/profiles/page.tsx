@@ -16,6 +16,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
 import { approveProfile, getEnrollmentProofUrl, enableAutoApprove, disableAutoApprove, getAutoApproveStatus, updateProfileCategory } from '@/app/actions/profiles';
+import { getAdminSessionRole } from '@/app/actions/admin';
 import { Loader2, Check, X, AlertCircle, Info, ExternalLink, Edit } from 'lucide-react';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
 
@@ -69,18 +70,13 @@ export default function ProfileApprovalPage() {
     const [editingProfileId, setEditingProfileId] = useState<string | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
-    // Verifica se o usuário logado é admin (não apenas moderador)
-    const isAdmin = typeof document !== 'undefined'
-        ? document.cookie.includes('admin_bypass=admin')
-        : false;
     const [isAdminRole, setIsAdminRole] = useState(false);
 
     const fetchProfiles = async () => {
         setIsLoading(true);
 
-        // Determina o role do usuário logado via cookie
-        const adminBypass = document.cookie.split('; ').find(r => r.startsWith('admin_bypass='))?.split('=')[1];
-        setIsAdminRole(adminBypass === 'admin');
+        const sessionRole = await getAdminSessionRole();
+        setIsAdminRole(sessionRole.role === 'admin');
 
         const status = await getAutoApproveStatus();
         if (status.active) {

@@ -118,11 +118,22 @@ export async function upsertCalendarEvent(event: any) {
 
     if (!user) return { success: false, error: 'Não autenticado' };
 
+    if (!event || !event.title || !event.start) {
+        return { success: false, error: 'Título e data de início são obrigatórios' };
+    }
+
+    const startTimeStamp = Date.parse(event.start);
+    if (isNaN(startTimeStamp)) {
+        return { success: false, error: 'Data de início inválida' };
+    }
+
     let calculatedEndTime = event.end;
     if (!calculatedEndTime) {
         // If event.end is missing (common on first drop), use duration from extendedProps, or default to 2 hours
         const durationH = event.extendedProps?.duration ? parseFloat(event.extendedProps.duration) : 2;
-        calculatedEndTime = new Date(new Date(event.start).getTime() + durationH * 60 * 60 * 1000).toISOString();
+        calculatedEndTime = new Date(startTimeStamp + durationH * 60 * 60 * 1000).toISOString();
+    } else if (isNaN(Date.parse(calculatedEndTime))) {
+        return { success: false, error: 'Data de término inválida' };
     }
 
     let finalType = event.extendedProps?.type || 'aula';

@@ -197,11 +197,11 @@ export async function uploadMediaServerAction(formData: FormData) {
     if (!user) return { error: 'Usuário não autenticado.' };
 
     const file = formData.get('file') as File;
+    if (!file) return { error: 'Nenhum arquivo fornecido para upload.' };
+
     const rawResourceType = (formData.get('resourceType') as string) || 'auto';
     const isPdf = file.type === 'application/pdf' || file.name?.toLowerCase().endsWith('.pdf');
     const effectiveResourceType = isPdf ? 'raw' : rawResourceType;
-
-    if (!file) return { error: 'Nenhum arquivo fornecido para upload.' };
 
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
     const apiKey = process.env.CLOUDINARY_API_KEY;

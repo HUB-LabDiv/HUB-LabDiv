@@ -3,23 +3,41 @@
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
  * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
- * * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
+ *
+ * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
  * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
  * publicada pela Free Software Foundation.
- * * Este programa é distribuído na esperança de que seja útil, mas SEM
+ *
+ * Este programa é distribuído na esperança de que seja útil, mas SEM
  * QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-
 import { createServerSupabase } from '@/lib/supabase/server';
+import { createAdminSupabase } from '@/lib/supabase/admin';
+import { z } from 'zod';
+
+const SubjectCodeSchema = z.string().trim().min(1).max(30);
 
 export async function fetchClassmates(subjectCode: string) {
+    const parsed = SubjectCodeSchema.safeParse(subjectCode);
+    if (!parsed.success) {
+        return { success: false, error: 'Código de disciplina inválido' };
+    }
+
     const supabase = await createServerSupabase();
-    
-    // Query users who have this subject in their calendar
-    // We use the 'type' column with prefix 'aula:' as implemented in calendar.ts
-    const { data, error } = await supabase
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+        return { success: false, error: 'Não autenticado' };
+    }
+
+    const cleanSubjectCode = parsed.data;
+
+    // Use admin client to query user_calendar_events across users for this subject
+    // (RLS on user_calendar_events restricts standard client to viewing only own calendar)
+    const adminSupabase = createAdminSupabase();
+    const { data, error } = await adminSupabase
         .from('user_calendar_events')
         .select(`
             user_id,
@@ -28,10 +46,12 @@ export async function fetchClassmates(subjectCode: string) {
                 full_name,
                 role,
                 bio,
-                avatar_url
+                avatar_url,
+                user_category,
+                entrance_year
             )
         `)
-        .eq('type', `aula:${subjectCode}`);
+        .eq('type', `aula:${cleanSubjectCode}`);
 
     if (error) {
         console.error('[Fetch Classmates Error]', error);
@@ -41,21 +61,20 @@ export async function fetchClassmates(subjectCode: string) {
     // Deduplicate users (one user might have multiple events for the same subject)
     const uniqueUsers = new Map();
     data?.forEach((item: any) => {
-        if (item.profiles && !uniqueUsers.has(item.user_id)) {
+        if (item.profiles && !uniqueUsers.has(item.user_id) && item.user_id !== user.id) {
             uniqueUsers.set(item.user_id, item.profiles);
         }
     });
 
     const results = Array.from(uniqueUsers.values());
 
-    // Always provide 3 diverse dummy profiles for testing as requested by the user
-    // These will be appended to real results if they exist
+    // Provide diverse dummy profiles for testing/demo fallback
     const dummyProfiles = [
         { 
             id: 'dummy-alice', 
             full_name: 'Alice Oliveira (Beta)', 
             role: 'student', 
-            bio: 'Estudante de Física (IFUSP). Curto astronomia e estou procurando grupo para ' + subjectCode,
+            bio: 'Estudante de Física (IFUSP). Curto astronomia e estou procurando grupo para ' + cleanSubjectCode,
             avatar_url: null,
             user_category: 'aluno_usp',
             entrance_year: 2024
@@ -64,7 +83,7 @@ export async function fetchClassmates(subjectCode: string) {
             id: 'dummy-bob', 
             full_name: 'Roberto "Bob" Silva (Beta)', 
             role: 'student', 
-            bio: 'Cibersegurança e Algoritmos no IME. Bora estudar ' + subjectCode + '?',
+            bio: 'Cibersegurança e Algoritmos no IME. Bora estudar ' + cleanSubjectCode + '?',
             avatar_url: null,
             user_category: 'bacharelado',
             entrance_year: 2023
@@ -80,10 +99,7 @@ export async function fetchClassmates(subjectCode: string) {
         }
     ];
 
-    // Merge real results and dummy profiles
-    // In a real app, we might only show mocks if results.length === 0, 
-    // but for testing the "match" with 3 users, we'll ensure they are there.
-    const finalData = [...results, ...dummyProfiles].slice(0, 10); // Limit to 10 for UI cleaness
+    const finalData = [...results, ...dummyProfiles].slice(0, 10);
 
     return { 
         success: true, 

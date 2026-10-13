@@ -49,20 +49,17 @@ export function ViewTracker({ submissionId }: ViewTrackerProps) {
         window.addEventListener('scroll', handleScroll, { passive: true });
 
         if (!hasTracked.current) {
+            hasTracked.current = true;
             const viewedKey = `viewed_${submissionId}`;
             const alreadyViewed = localStorage.getItem(viewedKey);
 
             if (!alreadyViewed) {
+                localStorage.setItem(viewedKey, Date.now().toString());
                 async function incrementView() {
                     try {
-                        const { error } = await supabase.rpc('increment_view_count', {
+                        await supabase.rpc('increment_view_count', {
                             submission_id: submissionId
                         });
-                        if (!error) {
-                            hasTracked.current = true;
-                            // Set a timestamp so we don't count again for a while (e.g., 24h)
-                            localStorage.setItem(viewedKey, Date.now().toString());
-                        }
                     } catch (err) {
                         console.error('Failed to increment view count:', err);
                     }

@@ -19,7 +19,7 @@ import { MonteSeuShowClient } from './MonteSeuShowClient';
 const orbitron = Orbitron({ subsets: ['latin'], weight: ['400', '600', '700', '900'] });
 
 export const metadata: Metadata = {
-    title: 'Monte seu Show | Show de Fisica IFUSP',
+    title: 'Monte seu Show | Show de Física IFUSP',
     description: 'Monte o roteiro personalizado de experimentos do Show de Física e envie a solicitação de agendamento da sua escola.',
 };
 

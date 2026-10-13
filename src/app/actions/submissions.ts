@@ -13,12 +13,15 @@
 
 
 import { createServerSupabase, createSupabaseStatic } from '@/lib/supabase/server';
+import { createAdminSupabase } from '@/lib/supabase/admin';
 import { PostDTO, mapToPostDTO, mapToAdminPostDTO } from '@/dtos/media';
 import { unstable_cache, revalidatePath } from 'next/cache';
+import { cookies } from 'next/headers';
 import { SubmissionSchema } from '@/lib/validations';
 import { z } from 'zod';
 import { sendAutomaticNotification } from './notifications';
 import { postMatchesMediaTypes } from '@/lib/media-utils';
+import { verifyAdminToken } from '@/lib/auth/admin-token';
 
 export interface AdminUpdate {
     status?: string;
@@ -83,12 +86,12 @@ export async function fetchSubmissions({ page, limit, query, categories, exclude
                 const followingIds = follows.map(f => f.following_id);
                 queryBuilder = queryBuilder.in('user_id', followingIds);
             } else {
-                // Se não segue ninguém, retorna vazio
-                queryBuilder = queryBuilder.in('user_id', []);
+                // Se não segue ninguém, retorna vazio imediatamente sem disparar erro PostgREST 400
+                return { items: [], hasMore: false };
             }
         } else {
              // Se não estiver logado mas tentar acessar seguindo, retorna vazio
-             queryBuilder = queryBuilder.in('user_id', []);
+             return { items: [], hasMore: false };
         }
     }
 
@@ -972,8 +975,13 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
     const isAuthorized = ['admin', 'labdiv', 'moderator', 'labdiv adm'].includes(profile?.role || '');
     const initialStatus = (validated.data.category === 'Lab-Div' && isAuthorized) ? 'aprovado' : 'pendente';
 
+    const sanitizedTags = Array.isArray(insertData.tags)
+        ? Array.from(new Set(insertData.tags.map((t: any) => String(t).trim().toLowerCase()).filter((t: string) => t.length > 0 && t.length <= 50)))
+        : [];
+
     const insertPayload = {
         ...insertData,
+        tags: sanitizedTags,
         co_author_ids,
         event_date,
         pseudonym_id,
@@ -1054,8 +1062,6 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
 
     // Wait for all non-critical work to complete or error out gracefully
     await Promise.allSettled(sideEffects);
-
-    return { success: true, data: newSub };
 
     return { success: true, data: newSub };
 }
@@ -1158,17 +1164,29 @@ export async function fetchUserSubmissions(userId: string): Promise<{ post: Post
 }
 
 export async function updateSubmissionAdmin(id: string, updates: AdminUpdate) {
-    const serverSupabase = await createServerSupabase();
-    const { data: { user } } = await serverSupabase.auth.getUser();
-    if (!user) return { error: { message: 'Unauthorized' } };
+    const cookieStore = await cookies();
+    const bypassCookie = cookieStore.get('admin_bypass')?.value;
+    const sessionCookie = cookieStore.get('admin_session')?.value;
+    const isTokenAdmin = verifyAdminToken(bypassCookie).valid || verifyAdminToken(sessionCookie).valid;
 
-    // Strict Admin Check
-    const { data: profile } = await serverSupabase.from('profiles').select('role').eq('id', user.id).single();
-    if (profile?.role !== 'admin') return { error: { message: 'Forbidden' } };
+    if (!isTokenAdmin) {
+        const serverSupabase = await createServerSupabase();
+        const { data: { user } } = await serverSupabase.auth.getUser();
+        if (!user) return { error: { message: 'Unauthorized' } };
 
-    const { data, error } = await serverSupabase
+        const { data: profile } = await serverSupabase.from('profiles').select('role').eq('id', user.id).single();
+        if (profile?.role !== 'admin' && profile?.role !== 'moderator') return { error: { message: 'Forbidden' } };
+    }
+
+    const cleanUpdates = { ...updates };
+    if (Array.isArray(cleanUpdates.tags)) {
+        cleanUpdates.tags = Array.from(new Set(cleanUpdates.tags.map((t: any) => String(t).trim().toLowerCase()).filter((t: string) => t.length > 0 && t.length <= 50)));
+    }
+
+    const adminSupabase = createAdminSupabase();
+    const { data, error } = await adminSupabase
         .from('submissions')
-        .update(updates)
+        .update(cleanUpdates)
         .eq('id', id)
         .select()
         .single();

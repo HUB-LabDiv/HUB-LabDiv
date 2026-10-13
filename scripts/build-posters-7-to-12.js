@@ -15,7 +15,7 @@ const QRCode = require('qrcode');
 
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 const POSTERS_ROOT = path.join(PROJECT_ROOT, 'public/divulgacao/posters');
-const ARTIFACTS_DIR = '/home/stangorlini/.gemini/antigravity-ide/brain/8eedeacd-9d14-43b8-bbae-27449bc2b2fb';
+const ARTIFACTS_DIR = '/home/stangorlini/.gemini/antigravity-ide/brain/1b0a3e62-f6a4-4da4-9784-dca0b9ff443a';
 
 async function main() {
   console.log('🎨 Iniciando geração das 6 Propostas de Design Únicas (Posters 7 a 12)...');
@@ -51,12 +51,10 @@ async function main() {
     margin: 1
   });
 
-  // Badge central do QR em base64
-  let qrBadgeBase64 = '';
-  const qrBadgePath = path.join(PROJECT_ROOT, 'public/icone-HUBLabDiv-white.png');
-  if (fs.existsSync(qrBadgePath)) {
-    qrBadgeBase64 = fs.readFileSync(qrBadgePath).toString('base64');
-  }
+  // Versão com IDs únicos para o QR code (evita colisão de IDs de gradiente no SVG)
+  const hubIconQrSvg = hubIconSvg
+    .replace(/id="([^"]+)"/g, 'id="$1_qr"')
+    .replace(/url\(#([^)]+)\)/g, 'url(#$1_qr)');
 
   // Bloco institucional padronizado oficial (AGPLv3 & Conformidade Legal)
   function renderInstitutionalBox() {
@@ -115,7 +113,7 @@ async function main() {
         <div class="qr-code-box" style="border-color: ${color}40;">
           ${qrSvg}
           <div class="qr-center-badge-img">
-            <img src="data:image/png;base64,${qrBadgeBase64}" alt="HUB Logo" />
+            ${hubIconQrSvg}
           </div>
         </div>
         <a class="qr-clean-link font-bukra" style="color: ${color};" href="https://hub.labdiv.com.br/divulgacao">hub.labdiv.com.br/divulgacao</a>
@@ -198,10 +196,10 @@ async function main() {
       flex-shrink: 0;
     }
     .qr-code-box {
-      width: 270px; height: 270px;
+      width: 320px; height: 320px;
       background: #FFFFFF;
-      padding: 12px;
-      border-radius: 26px;
+      padding: 14px;
+      border-radius: 28px;
       border: 2.5px solid rgba(15, 71, 128, 0.20);
       box-shadow: 0 18px 40px -4px rgba(15, 71, 128, 0.16), 0 4px 14px rgba(0, 0, 0, 0.06);
       position: relative;
@@ -211,56 +209,62 @@ async function main() {
     .qr-center-badge-img {
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      width: 72px; height: 72px;
+      width: 78px; height: 78px;
       display: flex; align-items: center; justify-content: center;
-      background: #0F4780;
-      border-radius: 18px;
-      padding: 6px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+      background: #FFFFFF;
+      border-radius: 12px;
+      padding: 3px;
     }
-    .qr-center-badge-img img { width: 100%; height: 100%; object-fit: contain; }
+    .qr-center-badge-img svg { width: 100%; height: 100%; display: block; }
     .qr-clean-link {
-      font-size: 20px; font-weight: 800; color: #0F4780;
-      text-decoration: underline; text-underline-offset: 5px;
+      font-size: 23px; font-weight: 800; color: #0F4780;
+      text-decoration: underline; text-underline-offset: 4px;
+      background: rgba(255, 255, 255, 0.94);
+      padding: 4px 18px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(15, 71, 128, 0.16);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+      white-space: nowrap;
     }
 
+
     .bottom-inst-box {
-      flex: 1; height: 270px;
+      flex: 1; height: 320px;
       background: #F8FAFC;
-      border-radius: 26px;
+      border-radius: 28px;
       border: 2px solid #E2E8F0;
-      padding: 22px 26px 18px 26px;
+      padding: 26px 30px 22px 30px;
       display: flex; flex-direction: column; justify-content: space-between;
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.05);
     }
     .inst-badge-line {
-      display: flex; align-items: center; gap: 9px;
-      color: #0F4780; font-size: 15.5px; font-weight: 800;
-      margin-bottom: 6px;
+      display: flex; align-items: center; gap: 10px;
+      color: #0F4780; font-size: 18px; font-weight: 800;
+      margin-bottom: 8px;
     }
     .inst-desc-text {
-      font-size: 15.5px; line-height: 1.44; color: #334155;
+      font-size: 18px; line-height: 1.45; color: #334155;
     }
-    .inst-actions-row { display: flex; align-items: center; gap: 12px; }
+    .inst-actions-row { display: flex; align-items: center; gap: 16px; }
     .inst-action-card {
       flex: 1; background: #FFFFFF; border: 1.5px solid #CBD5E1;
-      padding: 8px 12px; border-radius: 12px;
-      display: flex; align-items: center; gap: 10px;
+      padding: 10px 14px; border-radius: 14px;
+      display: flex; align-items: center; gap: 12px;
     }
     .inst-action-icon {
-      width: 34px; height: 34px; border-radius: 8px;
+      width: 40px; height: 40px; border-radius: 10px;
       display: flex; align-items: center; justify-content: center; flex-shrink: 0;
     }
     .inst-action-icon.git-icon { background: #EEF4FA; color: #0F4780; }
     .inst-action-icon.email-icon { background: #FEF2F2; color: #F14343; }
-    .inst-action-details { display: flex; flex-direction: column; gap: 2px; }
-    .inst-action-tag { font-size: 11px; font-weight: 800; text-transform: uppercase; }
+    .inst-action-details { display: flex; flex-direction: column; gap: 3px; }
+    .inst-action-tag { font-size: 13px; font-weight: 800; text-transform: uppercase; }
     .inst-action-tag.tag-git { color: #0F4780; }
     .inst-action-tag.tag-email { color: #F14343; }
-    .inst-action-val { font-size: 13px; font-weight: 700; color: #0F172A; white-space: nowrap; }
+    .inst-action-val { font-size: 16px; font-weight: 700; color: #0F172A; white-space: nowrap; }
     .inst-legal-copy {
-      font-size: 12.5px; color: #64748B; font-weight: 600;
-      border-top: 1.5px solid #E2E8F0; padding-top: 8px; text-align: center;
+      font-size: 15px; color: #64748B; font-weight: 600;
+      border-top: 1.5px solid #E2E8F0; padding-top: 12px; text-align: center;
     }
   </style>
   `;
@@ -295,7 +299,7 @@ async function main() {
 
     /* 2. CENTRO: O ÍCONE HERO É O DESTAQUE MÁXIMO ABSOLUTO */
     .p7-orbital-zone {
-      position: absolute; top: 410px; left: 0; width: 1240px; height: 800px; z-index: 20;
+      position: absolute; top: 715px; left: 0; width: 1240px; height: 800px; z-index: 20;
     }
     .p7-hero-podium {
       position: absolute; top: 70px; left: 50%; transform: translateX(-50%);
@@ -307,9 +311,9 @@ async function main() {
       box-shadow: 0 35px 75px -10px rgba(15, 71, 128, 0.32), 0 10px 25px rgba(0,0,0,0.08);
       display: flex; align-items: center; justify-content: center; padding: 25px;
     }
-    .p7-hero-shield svg { width: 245px; height: 245px; }
+    .p7-hero-shield svg { width: 245px; height: 245px; transform: translate(14px, -16px); }
     .p7-hero-name {
-      margin-top: 16px; font-size: 38px; font-weight: 900; color: #0F172A;
+      margin-top: 24px; font-size: 58px; font-weight: 900; color: #0F172A; letter-spacing: -1px;
     }
     .p7-hero-name span {
       background: linear-gradient(90deg, #0F4780 0%, #F14343 50%, #D97706 100%);
@@ -332,7 +336,7 @@ async function main() {
       box-shadow: 0 18px 36px rgba(241, 67, 67, 0.12);
     }
     .p7-card-tools {
-      bottom: 45px; left: 50%; transform: translateX(-50%); width: 560px;
+      top: -150px; left: 50%; transform: translateX(-50%); width: 320px;
       border: 2.5px solid rgba(255, 204, 0, 0.45); border-top: 6px solid #FFCC00;
       box-shadow: 0 18px 36px rgba(217, 119, 6, 0.15);
     }
@@ -348,7 +352,7 @@ async function main() {
     <!-- SEGUNDO PLANO: CHAMADA / TÍTULO -->
     <header class="p7-header">
       <div class="p7-badge font-bukra">IFUSP &bull; Laboratório de Expressão e Divulgação da Ciência</div>
-      <h1 class="p7-title font-bukra">Conecte-se ao HUB<br><span>da graduação do IFUSP</span></h1>
+      <h1 class="p7-title font-bukra">Entender a universidade está<br><span>à um clique de distância</span></h1>
       <p class="p7-subtitle font-open-sans">A plataforma de comunicação científica e apoio acadêmico que une os estudantes de física.</p>
     </header>
 
@@ -359,7 +363,7 @@ async function main() {
         <circle cx="620" cy="235" r="350" fill="none" stroke="#F14343" stroke-width="1.4" stroke-dasharray="5 7" opacity="0.25" />
         <path d="M 450 235 L 370 215" stroke="#0F4780" stroke-width="2.5" stroke-dasharray="4 4" opacity="0.6" />
         <path d="M 790 235 L 870 215" stroke="#F14343" stroke-width="2.5" stroke-dasharray="4 4" opacity="0.6" />
-        <path d="M 620 400 L 620 540" stroke="#D97706" stroke-width="2.5" stroke-dasharray="4 4" opacity="0.6" />
+        <path d="M 620 70 L 620 -15" stroke="#D97706" stroke-width="2.5" stroke-dasharray="4 4" opacity="0.6" />
       </svg>
 
       <div class="p7-hero-podium">
@@ -407,7 +411,7 @@ async function main() {
     .p8-hero-zone {
       position: relative; z-index: 30;
       display: flex; flex-direction: column; align-items: center;
-      padding-top: 85px;
+      padding-top: 365px;
     }
     .p8-hero-box {
       width: 360px; height: 360px; background: #FFFFFF;
@@ -465,7 +469,7 @@ async function main() {
     <!-- PLANO 2 (SEGUNDO PLANO): CHAMADA / TÍTULO -->
     <div class="p8-headline-zone">
       <h1 class="p8-title font-bukra">
-        A Plataforma Oficial<br><span class="p8-title-grad">da Graduação do IFUSP</span>
+        A Plataforma Oficial<br><span class="p8-title-grad">da Graduação da USP</span>
       </h1>
       <p class="p8-subtitle font-open-sans">
         O ambiente completo de apoio acadêmico, ciência aberta e colaboração universitária.
@@ -505,58 +509,67 @@ async function main() {
 <head>
   ${baseHead('HUB LabDiv - Proposta 9: Scientific Prism')}
   <style>
-    /* 1. SEGUNDO PLANO: CHAMADA / TÍTULO */
-    .p9-header {
-      position: relative; z-index: 25; text-align: center;
-      padding-top: 95px; padding-left: 45px; padding-right: 45px;
+    /* 1. LAYOUT ASIMÉTRICO (SPLIT LEFT/RIGHT) */
+    .p9-layout {
+      position: absolute; top: 110px; left: 65px; right: 65px; height: 1220px;
+      display: flex; gap: 50px; z-index: 20;
+    }
+
+    /* COLUNA ESQUERDA: TÍTULO, SUBTÍTULO E ÍCONE GIGANTE */
+    .p9-left {
+      flex: 1.1; display: flex; flex-direction: column; z-index: 20;
     }
     .p9-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: #FEF2F2; border: 1.5px solid rgba(241, 67, 67, 0.28);
-      border-radius: 9999px; padding: 6px 22px; color: #F14343;
-      font-size: 13px; font-weight: 800; text-transform: uppercase; margin-bottom: 14px;
+      display: inline-flex; align-items: center; justify-content: center;
+      background: #0F4780; color: #FFFFFF; border-radius: 9999px; padding: 12px 26px;
+      font-size: 16px; font-weight: 800; text-transform: uppercase; align-self: flex-start;
+      margin-bottom: 35px;
     }
     .p9-title {
-      font-size: 80px; font-weight: 900; line-height: 1.10; color: #0F172A; letter-spacing: -1.6px;
+      font-size: 88px; font-weight: 900; line-height: 1.05; color: #0F172A; letter-spacing: -2px;
+      margin-bottom: 26px;
     }
     .p9-title span { color: #F14343; }
     .p9-subtitle {
-      font-size: 23px; font-weight: 600; color: #475569; max-width: 1000px; margin: 10px auto 0 auto;
+      font-size: 26px; font-weight: 600; color: #475569; line-height: 1.45; max-width: 500px;
     }
+    .p9-hero-icon {
+      margin-top: 50px; margin-bottom: auto;
+      width: 540px; height: 540px;
+      background: #FFFFFF; border-radius: 65px;
+      border: 4px solid rgba(15, 71, 128, 0.12);
+      box-shadow: 0 40px 80px rgba(15, 71, 128, 0.15);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .p9-hero-icon svg { width: 420px; height: 420px; }
 
-    /* 2. PLANO 1 (HERO DESTAQUE MÁXIMO): LOGO DO HUB CENTRALIZADA NO EPICENTRO */
-    .p9-prism-zone {
-      position: absolute; top: 430px; left: 0; width: 1240px; height: 770px; z-index: 20;
+    /* COLUNA DIREITA: STACK DE CARDS VERTICAIS */
+    .p9-right {
+      flex: 0.9; display: flex; flex-direction: column; gap: 40px; justify-content: flex-end;
+      padding-bottom: 40px; z-index: 20;
     }
-    .p9-hero-prism {
-      position: absolute; top: 90px; left: 50%; transform: translateX(-50%);
-      width: 325px; height: 325px; background: #FFFFFF;
-      border-radius: 50%; border: 4px solid rgba(241, 67, 67, 0.25);
-      box-shadow: 0 35px 80px -10px rgba(241, 67, 67, 0.30), 0 10px 25px rgba(0,0,0,0.08);
-      display: flex; align-items: center; justify-content: center; z-index: 30;
+    .p9-stack-card {
+      background: #FFFFFF; border-radius: 26px; padding: 35px 35px;
+      box-shadow: 0 25px 60px rgba(0,0,0,0.06);
+      display: flex; flex-direction: column; justify-content: center;
+      position: relative; overflow: hidden;
     }
-    .p9-hero-prism svg { width: 235px; height: 235px; }
-
-    /* 3. TERCEIRO PLANO: OS 3 EIXOS NOS VÉRTICES DO PRISMA */
-    .p9-vertex-card {
-      position: absolute; background: #FFFFFF; border-radius: 22px;
-      padding: 18px 24px; box-sizing: border-box; z-index: 15; width: 335px;
+    .p9-stack-card::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 14px;
     }
-    .p9-card-left {
-      top: 135px; left: 45px; border: 2.5px solid rgba(15, 71, 128, 0.25); border-left: 6px solid #0F4780;
-      box-shadow: 0 18px 36px rgba(15, 71, 128, 0.12);
-    }
-    .p9-card-right {
-      top: 135px; right: 45px; border: 2.5px solid rgba(241, 67, 67, 0.25); border-right: 6px solid #F14343;
-      box-shadow: 0 18px 36px rgba(241, 67, 67, 0.12);
-    }
-    .p9-card-bottom {
-      bottom: 25px; left: 50%; transform: translateX(-50%); width: 560px;
-      border: 2.5px solid rgba(255, 204, 0, 0.45); border-bottom: 6px solid #FFCC00;
-      box-shadow: 0 18px 36px rgba(217, 119, 6, 0.15);
-    }
-    .p9-v-title { font-size: 24px; font-weight: 900; margin-bottom: 6px; }
-    .p9-v-desc { font-size: 15px; font-weight: 600; color: #334155; line-height: 1.35; }
+    .p9-card-social { border: 2.5px solid rgba(15, 71, 128, 0.2); }
+    .p9-card-social::before { background: #0F4780; }
+    .p9-card-info { border: 2.5px solid rgba(241, 67, 67, 0.2); }
+    .p9-card-info::before { background: #F14343; }
+    .p9-card-tools { border: 2.5px solid rgba(255, 204, 0, 0.4); }
+    .p9-card-tools::before { background: #FFCC00; }
+    
+    .p9-card-title { font-size: 30px; font-weight: 900; margin-bottom: 10px; }
+    .p9-card-social .p9-card-title { color: #0F4780; }
+    .p9-card-info .p9-card-title { color: #F14343; }
+    .p9-card-tools .p9-card-title { color: #854D0E; }
+    
+    .p9-card-desc { font-size: 19px; font-weight: 600; color: #334155; line-height: 1.45; }
   </style>
 </head>
 <body>
@@ -564,39 +577,34 @@ async function main() {
     <div class="brand-gradient-line-top"></div>
     <div class="bg-math-pattern"></div>
 
-    <!-- SEGUNDO PLANO: CHAMADA / TÍTULO -->
-    <header class="p9-header">
-      <div class="p9-badge font-bukra">Comunicação Científica &bull; IFUSP</div>
-      <h1 class="p9-title font-bukra">A Enciclopédia &amp; Acervo<br><span>da Física no IFUSP</span></h1>
-      <p class="p9-subtitle font-open-sans">Acesse todo o histórico da ciência, matérias detalhadas e ferramentas de estudo em um só lugar.</p>
-    </header>
-
-    <!-- PLANO 1 (HERO DESTAQUE MÁXIMO): LOGO DO HUB NO EPICENTRO -->
-    <div class="p9-prism-zone">
-      <!-- Feixes de refração triangular -->
-      <svg style="position: absolute; width: 100%; height: 100%; pointer-events: none;" viewBox="0 0 1240 770">
-        <polygon points="620,250 210,220 1030,220" fill="none" stroke="#F14343" stroke-width="1.8" stroke-dasharray="6 6" opacity="0.30" />
-        <line x1="620" y1="250" x2="620" y2="580" stroke="#D97706" stroke-width="2" stroke-dasharray="5 5" opacity="0.45" />
-      </svg>
-
-      <div class="p9-hero-prism">
-        ${hubIconSvg}
+    <div class="p9-layout">
+      <!-- ESQUERDA -->
+      <div class="p9-left">
+        <div class="p9-badge font-bukra">Comunicação Científica</div>
+        <h1 class="p9-title font-bukra">A Plataforma<br>Oficial da<br><span>USP</span></h1>
+        <p class="p9-subtitle font-open-sans">Acesse todo o histórico da ciência, matérias detalhadas e ferramentas de estudo em um só lugar.</p>
+        
+        <div class="p9-hero-icon">
+          ${hubIconSvg}
+        </div>
       </div>
+      
+      <!-- DIREITA -->
+      <div class="p9-right">
+        <div class="p9-stack-card p9-card-social">
+          <h3 class="p9-card-title font-bukra">1. Eixo Social</h3>
+          <p class="p9-card-desc font-open-sans">Espaço de diálogo, compartilhamento de experiências e conexão viva entre as turmas.</p>
+        </div>
 
-      <!-- TERCEIRO PLANO: OS 3 EIXOS -->
-      <div class="p9-vertex-card p9-card-left">
-        <h3 class="p9-v-title font-bukra" style="color: #0F4780;">Eixo Social</h3>
-        <p class="p9-v-desc font-open-sans">Espaço de diálogo, compartilhamento de experiências e conexão entre turmas.</p>
-      </div>
+        <div class="p9-stack-card p9-card-info">
+          <h3 class="p9-card-title font-bukra">2. Eixo Informativo</h3>
+          <p class="p9-card-desc font-open-sans">O repositório completo da física: artigos, história da ciência e resumos das disciplinas.</p>
+        </div>
 
-      <div class="p9-vertex-card p9-card-right">
-        <h3 class="p9-v-title font-bukra" style="color: #F14343;">Eixo Informativo</h3>
-        <p class="p9-v-desc font-open-sans">O repositório completo da física: artigos, história da ciência e resumos das disciplinas.</p>
-      </div>
-
-      <div class="p9-vertex-card p9-card-bottom">
-        <h3 class="p9-v-title font-bukra" style="color: #854D0E;">Eixo Ferramentas</h3>
-        <p class="p9-v-desc font-open-sans">Simuladores gráficos interativos e calculadoras científicas para os laboratórios e provas.</p>
+        <div class="p9-stack-card p9-card-tools">
+          <h3 class="p9-card-title font-bukra">3. Ferramentas</h3>
+          <p class="p9-card-desc font-open-sans">Simuladores interativos e calculadoras científicas projetadas para laboratórios e provas.</p>
+        </div>
       </div>
     </div>
 
@@ -610,60 +618,151 @@ async function main() {
 </html>`;
 
   // =========================================================================
-  // PROPOSTA 10: "Glassmorphism Deck & Modern Dock" (Camadas de Vidro Acetinado & Dock Horizontal)
+  // PROPOSTA 3: "The Quantum Nexus & Split Horizon" (Arquitetura Revolucionária)
   // =========================================================================
-  const htmlPoster10 = `<!DOCTYPE html>
+  const htmlPoster3 = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  ${baseHead('HUB LabDiv - Proposta 10: Glassmorphism Dock')}
+  ${baseHead('HUB LabDiv - Proposta 3: The Quantum Nexus')}
   <style>
-    /* 1. SEGUNDO PLANO: CHAMADA / TÍTULO */
-    .p10-header {
-      position: relative; z-index: 25; text-align: center;
-      padding-top: 95px; padding-left: 45px; padding-right: 45px;
+    .poster-container {
+      background: #FFFFFF !important;
+      position: relative;
+      width: 1240px;
+      height: 1754px;
+      overflow: hidden;
     }
-    .p10-badge {
+    .brand-gradient-line-top {
+      position: absolute; top: 0; left: 0; width: 100%; height: 8px;
+      background: linear-gradient(90deg, #0F4780 0%, #0284C7 33%, #F14343 66%, #FFCC00 100%);
+      z-index: 50;
+    }
+
+    /* 1. SEÇÃO SUPERIOR: SPLIT HORIZON (EDITORIAL NA ESQUERDA + QR CODE DE ACESSO IMEDIATO NO TOPO DIREITO) */
+    .p3-top-section {
+      position: absolute; top: 55px; left: 60px; right: 60px; height: 380px;
+      display: flex; justify-content: space-between; align-items: stretch; gap: 40px;
+      z-index: 20;
+    }
+    .p3-top-left {
+      flex: 1.25; display: flex; flex-direction: column; justify-content: center;
+    }
+    .p3-top-tag {
       display: inline-flex; align-items: center; gap: 8px;
-      background: #FEF9C3; border: 1.5px solid rgba(217, 119, 6, 0.35);
-      border-radius: 9999px; padding: 6px 22px; color: #92400E;
-      font-size: 13px; font-weight: 800; text-transform: uppercase; margin-bottom: 14px;
+      background: #EEF4FA; border: 1.5px solid rgba(15, 71, 128, 0.22);
+      padding: 6px 20px; border-radius: 9999px;
+      font-size: 13px; font-weight: 800; color: #0F4780; letter-spacing: 1.2px;
+      text-transform: uppercase; margin-bottom: 16px; align-self: flex-start;
     }
-    .p10-title {
-      font-size: 80px; font-weight: 900; line-height: 1.10; color: #0F172A; letter-spacing: -1.6px;
+    .p3-hero-title {
+      font-size: 64px; font-weight: 900; line-height: 1.08; color: #0F172A;
+      letter-spacing: -1.8px; margin-bottom: 16px;
     }
-    .p10-title span { color: #D97706; }
-    .p10-subtitle {
-      font-size: 23px; font-weight: 600; color: #475569; max-width: 1000px; margin: 10px auto 0 auto;
+    .p3-hero-title span { color: #0F4780; }
+    .p3-hero-sub {
+      font-size: 20px; font-weight: 600; color: #475569; line-height: 1.45; max-width: 680px;
     }
 
-    /* 2. PLANO 1 (HERO DESTAQUE MÁXIMO): LOGO DO HUB EM PEDESTAL GLASSMORPHISM */
-    .p10-center-zone {
-      position: absolute; top: 410px; left: 0; width: 1240px; height: 800px; z-index: 20;
+    /* CARD DE ACESSO IMEDIATO NO TOPO DIREITO (INOVAÇÃO ERGONÔMICA: ESCANEAMENTO NA ALTURA DOS OLHOS) */
+    .p3-top-right-qr {
+      width: 320px; flex-shrink: 0;
+      background: #FFFFFF;
+      border: 2.5px solid rgba(15, 71, 128, 0.20);
+      border-radius: 24px;
+      padding: 18px 20px;
+      box-shadow: 0 16px 36px rgba(15, 71, 128, 0.08);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+      position: relative; overflow: hidden;
     }
-    .p10-hero-glass {
-      position: absolute; top: 40px; left: 50%; transform: translateX(-50%);
-      width: 340px; height: 340px; background: rgba(255, 255, 255, 0.95);
-      border-radius: 80px; border: 3.5px solid rgba(217, 119, 6, 0.25);
-      box-shadow: 0 35px 80px -10px rgba(217, 119, 6, 0.30), 0 10px 25px rgba(0,0,0,0.06);
-      display: flex; align-items: center; justify-content: center; z-index: 30;
+    .p3-top-right-qr::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+      background: linear-gradient(90deg, #0F4780, #F14343, #FFCC00);
     }
-    .p10-hero-glass svg { width: 255px; height: 255px; }
+    .p3-qr-badge-header {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; font-weight: 900; color: #0F4780; text-transform: uppercase; letter-spacing: 1.2px;
+      margin-bottom: 10px;
+    }
+    .p3-qr-box {
+      width: 190px; height: 190px; position: relative;
+      background: #FFFFFF; border-radius: 16px; padding: 6px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.06); margin-bottom: 10px;
+    }
+    .p3-qr-box svg { width: 100%; height: 100%; display: block; }
+    .p3-qr-center-icon {
+      position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+      width: 46px; height: 46px; background: #FFFFFF; border-radius: 8px; padding: 2px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .p3-qr-center-icon svg { width: 100%; height: 100%; display: block; }
+    .p3-qr-url {
+      font-size: 13.5px; font-weight: 900; color: #0F4780; letter-spacing: 0.2px;
+    }
 
-    /* 3. TERCEIRO PLANO: DOCK MODERNO COM OS 3 EIXOS EMPILHADOS */
-    .p10-dock-stack {
-      position: absolute; top: 420px; left: 45px; right: 45px;
-      display: flex; gap: 20px; z-index: 25;
+    /* 2. ZONA HERO: O ÍCONE MONUMENTAL DO HUB LABDIV (570px) COM TOTAL PROTAGONISMO */
+    .p3-hero-section {
+      position: absolute; top: 455px; left: 60px; right: 60px; height: 600px;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 20;
     }
-    .p10-dock-card {
-      flex: 1; background: #FFFFFF; border-radius: 24px; padding: 20px 24px;
-      box-shadow: 0 14px 32px rgba(0,0,0,0.05); display: flex; flex-direction: column; gap: 6px;
+    .p3-hero-icon {
+      width: 570px; height: 570px;
+      display: flex; align-items: center; justify-content: center;
     }
-    .p10-dock-card.c-soc { border: 2px solid rgba(15, 71, 128, 0.22); border-left: 6px solid #0F4780; }
-    .p10-dock-card.c-inf { border: 2px solid rgba(241, 67, 67, 0.22); border-left: 6px solid #F14343; }
-    .p10-dock-card.c-fer { border: 2px solid rgba(255, 204, 0, 0.40); border-left: 6px solid #FFCC00; }
-    .p10-dock-head { display: flex; align-items: center; justify-content: space-between; }
-    .p10-dock-title { font-size: 22px; font-weight: 900; }
-    .p10-dock-desc { font-size: 14.5px; font-weight: 600; color: #334155; line-height: 1.35; }
+    .p3-hero-icon svg {
+      width: 570px; height: 570px;
+      filter: drop-shadow(0 28px 56px rgba(15, 71, 128, 0.20));
+    }
+
+    /* 3. BASE: TRÍPTICO DOS 3 EIXOS & BLOCO INSTITUCIONAL INTEGRADO */
+    .p3-bottom-section {
+      position: absolute; top: 1075px; left: 60px; right: 60px; height: 600px;
+      display: flex; flex-direction: column; justify-content: flex-start; gap: 24px;
+      z-index: 20;
+    }
+    .p3-triptych-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; height: 260px;
+    }
+    .p3-triptych-card {
+      background: #FFFFFF; border-radius: 20px; padding: 24px 22px;
+      border: 1.5px solid #E2E8F0;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.05);
+      display: flex; flex-direction: column; position: relative; overflow: hidden;
+    }
+    .p3-triptych-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 7px;
+    }
+    .p3-card-social::before { background: #0F4780; }
+    .p3-card-social .p3-card-badge { color: #0F4780; }
+    .p3-card-social .p3-card-title { color: #0F4780; }
+
+    .p3-card-info::before { background: #F14343; }
+    .p3-card-info .p3-card-badge { color: #F14343; }
+    .p3-card-info .p3-card-title { color: #F14343; }
+
+    .p3-card-tools::before { background: #FFCC00; }
+    .p3-card-tools .p3-card-badge { color: #B45309; }
+    .p3-card-tools .p3-card-title { color: #B45309; }
+
+    .p3-card-badge {
+      font-size: 13px; font-weight: 900; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px;
+    }
+    .p3-card-title {
+      font-size: 24px; font-weight: 900; margin-bottom: 8px; line-height: 1.2;
+    }
+    .p3-card-desc {
+      font-size: 16px; font-weight: 600; color: #475569; line-height: 1.45;
+    }
+
+    /* BLOCO INSTITUCIONAL & SEGURANÇA NA BASE */
+    .p3-inst-wrapper {
+      height: 280px;
+    }
+    .p3-inst-wrapper .bottom-inst-box {
+      margin: 0; width: 100%; height: 100%; box-sizing: border-box;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
   </style>
 </head>
 <body>
@@ -671,111 +770,222 @@ async function main() {
     <div class="brand-gradient-line-top"></div>
     <div class="bg-math-pattern"></div>
 
-    <!-- SEGUNDO PLANO: CHAMADA / TÍTULO -->
-    <header class="p10-header">
-      <div class="p10-badge font-bukra">Tecnologia &bull; IFUSP</div>
-      <h1 class="p10-title font-bukra">Seu Laboratório Virtual<br><span>de Física na Graduação</span></h1>
-      <p class="p10-subtitle font-open-sans">Simuladores interativos, calculadoras científicas e utilitários acadêmicos desenvolvidos no IFUSP.</p>
-    </header>
-
-    <!-- PLANO 1 (HERO DESTAQUE MÁXIMO): LOGO DO HUB -->
-    <div class="p10-center-zone">
-      <div class="p10-hero-glass">
-        ${hubIconSvg}
+    <!-- 1. TOPO: SPLIT HORIZON (EDITORIAL + QR DE ACESSO IMEDIATO) -->
+    <div class="p3-top-section">
+      <div class="p3-top-left">
+        <div class="p3-top-tag font-bukra">Instituto de Física da USP • LabDiv</div>
+        <h1 class="p3-hero-title font-bukra">
+          O PONTO DE ENCONTRO<br>
+          <span>DA FÍSICA NA USP.</span>
+        </h1>
+        <p class="p3-hero-sub font-open-sans">
+          A plataforma colaborativa criada pela comunidade para conectar estudantes, preservar a história da ciência e impulsionar a graduação.
+        </p>
       </div>
 
-      <!-- TERCEIRO PLANO: DOCK MODERNO DOS 3 EIXOS -->
-      <div class="p10-dock-stack">
-        <div class="p10-dock-card c-soc">
-          <div class="p10-dock-head">
-            <span class="p10-dock-title font-bukra" style="color: #0F4780;">Social</span>
-            <span class="font-bukra" style="font-size: 11px; font-weight: 800; color: #0F4780;">EIXO 1</span>
-          </div>
-          <p class="p10-dock-desc font-open-sans">Conexão entre turmas, grupos de estudos e docentes da física.</p>
+      <!-- CARD DE ACESSO IMEDIATO NO TOPO DIREITO -->
+      <div class="p3-top-right-qr">
+        <div class="p3-qr-badge-header font-bukra">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect width="14" height="20" x="5" y="2" rx="2" ry="2"/>
+            <path d="M12 18h.01"/>
+          </svg>
+          <span>ACESSO DIRETO</span>
         </div>
-
-        <div class="p10-dock-card c-inf">
-          <div class="p10-dock-head">
-            <span class="p10-dock-title font-bukra" style="color: #F14343;">Informativo</span>
-            <span class="font-bukra" style="font-size: 11px; font-weight: 800; color: #F14343;">EIXO 2</span>
+        <div class="p3-qr-box">
+          ${qrSvg}
+          <div class="p3-qr-center-icon">
+            ${hubIconQrSvg}
           </div>
-          <p class="p10-dock-desc font-open-sans">Histórico da ciência e acervo oficial de matérias da graduação.</p>
         </div>
-
-        <div class="p10-dock-card c-fer">
-          <div class="p10-dock-head">
-            <span class="p10-dock-title font-bukra" style="color: #854D0E;">Ferramentas</span>
-            <span class="font-bukra" style="font-size: 11px; font-weight: 800; color: #854D0E;">EIXO 3</span>
-          </div>
-          <p class="p10-dock-desc font-open-sans">Simuladores numéricos, calculadoras e gerenciador de notas.</p>
-        </div>
+        <div class="p3-qr-url font-bukra">hub.labdiv.com.br/divulgacao</div>
       </div>
     </div>
 
-    <!-- TERCEIRO PLANO: QR CODE & SEGURANÇA -->
-    <div class="bottom-third-plane">
-      ${renderQrBox('#D97706')}
-      ${renderInstitutionalBox()}
+    <!-- 2. ZONA HERO CENTRAL: ÍCONE MONUMENTAL (570px) COM RESPIRO TOTAL -->
+    <div class="p3-hero-section">
+      <div class="p3-hero-icon">
+        ${hubIconSvg}
+      </div>
+    </div>
+
+    <!-- 3. BASE: TRÍPTICO DOS 3 EIXOS & INSTITUCIONAL DE SEGURANÇA -->
+    <div class="p3-bottom-section">
+      <div class="p3-triptych-grid">
+        <div class="p3-triptych-card p3-card-social">
+          <div class="p3-card-badge font-bukra">01 // Social</div>
+          <h3 class="p3-card-title font-bukra">Comunidade &amp; Fóruns</h3>
+          <p class="p3-card-desc font-open-sans">
+            Tire dúvidas de física, conecte-se com veteranos e troque experiências entre turmas.
+          </p>
+        </div>
+
+        <div class="p3-triptych-card p3-card-info">
+          <div class="p3-card-badge font-bukra">02 // Informativo</div>
+          <h3 class="p3-card-title font-bukra">História &amp; Acervo</h3>
+          <p class="p3-card-desc font-open-sans">
+            Memória científica do IFUSP, matérias detalhadas e resumos acadêmicos oficiais.
+          </p>
+        </div>
+
+        <div class="p3-triptych-card p3-card-tools">
+          <div class="p3-card-badge font-bukra">03 // Ferramentas</div>
+          <h3 class="p3-card-title font-bukra">Simuladores &amp; Lab</h3>
+          <p class="p3-card-desc font-open-sans">
+            Simulações interativas de experimentos e calculadoras científicas para relatórios.
+          </p>
+        </div>
+      </div>
+
+      <div class="p3-inst-wrapper">
+        ${renderInstitutionalBox()}
+      </div>
     </div>
   </div>
 </body>
 </html>`;
 
+
   // =========================================================================
-  // PROPOSTA 11: "Swiss Precision & High-Impact Editorial" (Grid Suíço & Minimalismo Escultural)
+  // PROPOSTA 10: "The Editorial Focus & Solid Medallions"
+  // (Título no Topo, Ícones Sólidos Sem Cards e Logo Hero Monumental Abaixo)
   // =========================================================================
-  const htmlPoster11 = `<!DOCTYPE html>
+  const htmlPoster10 = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  ${baseHead('HUB LabDiv - Proposta 11: Swiss Precision')}
+  ${baseHead('HUB LabDiv - O Novo Hub da Física (Poster 10)')}
   <style>
-    /* 1. SEGUNDO PLANO: CHAMADA / TÍTULO COM GRID SUÍÇO */
-    .p11-header {
-      position: relative; z-index: 25;
-      padding-top: 95px; padding-left: 55px; padding-right: 55px;
-      display: flex; flex-direction: column; align-items: flex-start;
+    .poster-container {
+      background: #FFFFFF !important;
+      position: relative;
+      width: 1240px;
+      height: 1754px;
+      overflow: hidden;
     }
-    .p11-meta-line {
-      display: flex; align-items: center; gap: 14px; margin-bottom: 12px;
-      font-size: 13.5px; font-weight: 800; color: #0F4780; letter-spacing: 1px; text-transform: uppercase;
-    }
-    .p11-meta-line span { color: #F14343; }
-    .p11-title {
-      font-size: 88px; font-weight: 900; line-height: 1.05; color: #0F172A; letter-spacing: -2px;
-    }
-    .p11-title mark {
-      background: none; color: #0F4780;
-    }
-    .p11-subtitle {
-      font-size: 24px; font-weight: 600; color: #475569; max-width: 1050px; margin-top: 12px;
+    .brand-gradient-line-top {
+      position: absolute; top: 0; left: 0; width: 100%; height: 8px;
+      background: linear-gradient(90deg, #0F4780 0%, #0284C7 33%, #F14343 66%, #FFCC00 100%);
+      z-index: 50;
     }
 
-    /* 2. PLANO 1 (HERO DESTAQUE MÁXIMO): LOGO DO HUB MONUMENTAL CENTRALIZADA */
-    .p11-hero-area {
-      position: absolute; top: 430px; left: 0; width: 1240px; height: 740px; z-index: 20;
+    /* 1. TÍTULO NO TOPO (HERO TYPOGRAPHY) */
+    .p10-top-header {
+      position: absolute; top: 56px; left: 60px; right: 60px;
+      display: flex; flex-direction: column; align-items: center; text-align: center;
+      z-index: 20;
     }
-    .p11-hero-frame {
-      position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-      width: 350px; height: 350px; background: #FFFFFF;
-      border: 3.5px solid #0F172A; border-radius: 40px;
-      box-shadow: 18px 18px 0px rgba(15, 71, 128, 0.15);
-      display: flex; align-items: center; justify-content: center; z-index: 30;
+    .p10-tag {
+      display: inline-flex; align-items: center; gap: 9px;
+      background: rgba(238, 244, 250, 0.95);
+      border: 1.5px solid rgba(15, 71, 128, 0.25);
+      padding: 7px 24px; border-radius: 9999px;
+      font-size: 13.5px; font-weight: 800; color: #0F4780; letter-spacing: 1.2px;
+      text-transform: uppercase; margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(15, 71, 128, 0.08);
+      backdrop-filter: blur(8px);
     }
-    .p11-hero-frame svg { width: 260px; height: 260px; }
+    .p10-tag-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: #0F4780;
+    }
+    .p10-title {
+      font-size: 82px; font-weight: 900; line-height: 1.05; color: #0F172A;
+      letter-spacing: -2.2px; margin-bottom: 8px;
+      text-shadow: 0 0 18px #FFFFFF, 0 0 28px #FFFFFF, 0 2px 10px rgba(15, 71, 128, 0.12);
+    }
+    .p10-title span { color: #0F4780; }
+    .p10-sub {
+      font-size: 21.5px; font-weight: 600; color: #475569; max-width: 980px; line-height: 1.35;
+      text-shadow: 0 0 14px #FFFFFF, 0 0 22px #FFFFFF;
+    }
 
-    /* 3. TERCEIRO PLANO: GRID MODULAR DOS 3 EIXOS COM LINHAS DE PRECISÃO */
-    .p11-axes-row {
-      position: absolute; top: 420px; left: 55px; right: 55px;
-      display: flex; border-top: 2px solid #0F172A; border-bottom: 2px solid #0F172A;
-      background: #FFFFFF; z-index: 25;
+    /* 2. OS 3 EIXOS SEM CARDS: ÍCONES EM CORES SÓLIDAS + TIPOGRAFIA EDITORIAL */
+    .p10-pillars-row {
+      position: absolute; top: 310px; left: 60px; right: 60px; height: 215px;
+      display: flex; gap: 40px;
+      z-index: 20;
+      background: radial-gradient(ellipse 95% 85% at 50% 50%, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.82) 55%, transparent 100%);
+      padding: 0 10px;
     }
-    .p11-axis-cell {
-      flex: 1; padding: 22px 24px; display: flex; flex-direction: column; gap: 6px;
+    .p10-pillar-col {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
     }
-    .p11-axis-cell:not(:last-child) { border-right: 2px solid #0F172A; }
-    .p11-cell-num { font-size: 12px; font-weight: 800; color: #64748B; text-transform: uppercase; }
-    .p11-cell-title { font-size: 24px; font-weight: 900; color: #0F172A; }
-    .p11-cell-desc { font-size: 15px; font-weight: 600; color: #334155; line-height: 1.35; }
+
+    .pillar-icon-medallion {
+      width: 72px; height: 72px; border-radius: 22px;
+      display: flex; align-items: center; justify-content: center;
+      margin-bottom: 14px;
+      position: relative;
+    }
+    .medallion-blue {
+      background-color: #0F4780; color: #FFFFFF;
+      box-shadow: 0 12px 28px -4px rgba(15, 71, 128, 0.42);
+      border: 2px solid rgba(255, 255, 255, 0.95);
+    }
+    .badge-blue { color: #0F4780; }
+
+    .medallion-red {
+      background-color: #F14343; color: #FFFFFF;
+      box-shadow: 0 12px 28px -4px rgba(241, 67, 67, 0.42);
+      border: 2px solid rgba(255, 255, 255, 0.95);
+    }
+    .badge-red { color: #F14343; }
+
+    .medallion-yellow {
+      background-color: #FFCC00; color: #0F172A;
+      box-shadow: 0 12px 28px -4px rgba(255, 204, 0, 0.48);
+      border: 2px solid rgba(255, 255, 255, 0.95);
+    }
+    .badge-yellow { color: #B45309; }
+
+    .pillar-badge {
+      font-size: 13.5px; font-weight: 900; letter-spacing: 1.4px; text-transform: uppercase;
+      margin-bottom: 6px;
+      text-shadow: 0 0 10px #FFFFFF, 0 0 18px #FFFFFF;
+    }
+    .pillar-title {
+      font-size: 24px; font-weight: 900; line-height: 1.15; color: #0F172A;
+      letter-spacing: -0.4px; margin-bottom: 6px;
+      text-shadow: 0 0 12px #FFFFFF, 0 0 20px #FFFFFF;
+    }
+    .pillar-desc {
+      font-size: 15px; font-weight: 600; line-height: 1.45; color: #475569;
+      max-width: 320px;
+      text-shadow: 0 0 10px #FFFFFF, 0 0 18px #FFFFFF;
+    }
+
+    .pillar-divider {
+      position: absolute; top: 15px; bottom: 15px; width: 1.5px;
+      background: linear-gradient(180deg, transparent, rgba(15, 71, 128, 0.12) 30%, rgba(15, 71, 128, 0.12) 70%, transparent);
+    }
+    .divider-1 { left: calc(33.333% - 20px); }
+    .divider-2 { left: calc(66.666% - 20px); }
+
+    /* 3. LOGO HERO MONUMENTAL CENTRAL ABAIXO */
+    .p10-center-logo-zone {
+      position: absolute; top: 545px; left: 60px; right: 60px; height: 780px;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 20;
+    }
+    .p10-radial-glow {
+      position: absolute; width: 820px; height: 820px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(15, 71, 128, 0.08) 0%, rgba(241, 67, 67, 0.04) 40%, rgba(255, 204, 0, 0.05) 65%, transparent 75%);
+      pointer-events: none; z-index: 1;
+    }
+    .p10-center-logo {
+      width: 650px; height: 650px;
+      display: flex; align-items: center; justify-content: center;
+      position: relative; z-index: 2;
+    }
+    .p10-center-logo svg {
+      width: 100%; height: 100%;
+      filter: drop-shadow(0 32px 64px rgba(15, 71, 128, 0.22));
+    }
   </style>
 </head>
 <body>
@@ -783,48 +993,77 @@ async function main() {
     <div class="brand-gradient-line-top"></div>
     <div class="bg-math-pattern"></div>
 
-    <!-- SEGUNDO PLANO: CHAMADA / TÍTULO -->
-    <header class="p11-header font-bukra">
-      <div class="p11-meta-line">
-        <span>LabDiv</span> &bull; Instituto de Física da USP &bull; <span>Hub Acadêmico</span>
+    <!-- 1. TÍTULO NO TOPO -->
+    <div class="p10-top-header">
+      <div class="p10-tag font-bukra">
+        <span class="p10-tag-dot"></span>
+        <span>Laboratório de Demonstrações • IFUSP</span>
       </div>
-      <h1 class="p11-title">
-        O IFUSP na palma<br><mark>da sua mão</mark>
-      </h1>
-      <p class="p11-subtitle font-open-sans">
-        Uma plataforma aberta e colaborativa feita para elevar o aprendizado e a comunicação científica.
+      <h1 class="p10-title font-bukra">O NOVO HUB DA <span>FÍSICA</span></h1>
+      <p class="p10-sub font-open-sans">
+        Tecnologia aberta e ciência conectada para transformar sua jornada acadêmica na USP.
       </p>
-    </header>
+    </div>
 
-    <!-- PLANO 1 (HERO DESTAQUE MÁXIMO): LOGO DO HUB -->
-    <div class="p11-hero-area">
-      <div class="p11-hero-frame">
-        ${hubIconSvg}
+    <!-- 2. OS 3 EIXOS SEM CARDS -->
+    <div class="p10-pillars-row">
+      <div class="pillar-divider divider-1"></div>
+      <div class="pillar-divider divider-2"></div>
+
+      <div class="p10-pillar-col">
+        <div class="pillar-icon-medallion medallion-blue">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <span class="pillar-badge badge-blue font-bukra">01 • SOCIAL</span>
+        <h3 class="pillar-title font-bukra">Comunidade &amp; Fóruns</h3>
+        <p class="pillar-desc font-open-sans">
+          Fóruns de dúvidas, grupos de estudo e troca de experiências entre turmas.
+        </p>
       </div>
 
-      <!-- TERCEIRO PLANO: GRID MODULAR DOS 3 EIXOS -->
-      <div class="p11-axes-row">
-        <div class="p11-axis-cell">
-          <span class="p11-cell-num font-bukra">Módulo 01</span>
-          <h3 class="p11-cell-title font-bukra" style="color: #0F4780;">Social</h3>
-          <p class="p11-cell-desc font-open-sans">Comunidade integrada entre turmas e projetos acadêmicos.</p>
+      <div class="p10-pillar-col">
+        <div class="pillar-icon-medallion medallion-red">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+            <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+          </svg>
         </div>
+        <span class="pillar-badge badge-red font-bukra">02 • INFORMATIVO</span>
+        <h3 class="pillar-title font-bukra">Histórico &amp; Acervo</h3>
+        <p class="pillar-desc font-open-sans">
+          Memória científica do IFUSP, roteiros de laboratório e acervo das matérias.
+        </p>
+      </div>
 
-        <div class="p11-axis-cell">
-          <span class="p11-cell-num font-bukra">Módulo 02</span>
-          <h3 class="p11-cell-title font-bukra" style="color: #F14343;">Informativo</h3>
-          <p class="p11-cell-desc font-open-sans">Acervo oficial, história da ciência e repositório de aulas.</p>
+      <div class="p10-pillar-col">
+        <div class="pillar-icon-medallion medallion-yellow">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"></circle>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+          </svg>
         </div>
-
-        <div class="p11-axis-cell">
-          <span class="p11-cell-num font-bukra">Módulo 03</span>
-          <h3 class="p11-cell-title font-bukra" style="color: #854D0E;">Ferramentas</h3>
-          <p class="p11-cell-desc font-open-sans">Simuladores de fenômenos físicos e calculadoras numéricas.</p>
-        </div>
+        <span class="pillar-badge badge-yellow font-bukra">03 • FERRAMENTAS</span>
+        <h3 class="pillar-title font-bukra">Simuladores &amp; Lab</h3>
+        <p class="pillar-desc font-open-sans">
+          Simulações interativas de experimentos e calculadoras científicas para relatórios.
+        </p>
       </div>
     </div>
 
-    <!-- TERCEIRO PLANO: QR CODE & SEGURANÇA -->
+    <!-- 3. LOGO HERO MONUMENTAL CENTRAL ABAIXO -->
+    <div class="p10-center-logo-zone">
+      <div class="p10-radial-glow"></div>
+      <div class="p10-center-logo">
+        ${hubIconSvg}
+      </div>
+    </div>
+
+    <!-- 4. RODAPÉ INSTITUCIONAL & QR CODE -->
     <div class="bottom-third-plane">
       ${renderQrBox('#0F4780')}
       ${renderInstitutionalBox()}
@@ -834,68 +1073,104 @@ async function main() {
 </html>`;
 
   // =========================================================================
-  // PROPOSTA 12: "The Quantum Accelerator & Open Science Nexus" (Sincrotron & Ciência Livre)
+  // PROPOSTA 11: "The Asymmetric Editorial Blueprint" (Tipografia Esquerda + Ícone Gigante Direita)
   // =========================================================================
-  const htmlPoster12 = `<!DOCTYPE html>
+  const htmlPoster11 = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  ${baseHead('HUB LabDiv - Proposta 12: Quantum Accelerator')}
+  ${baseHead('HUB LabDiv - Proposta 11: The Asymmetric Editorial Blueprint')}
   <style>
-    /* 1. SEGUNDO PLANO: CHAMADA / TÍTULO */
-    .p12-header {
-      position: relative; z-index: 25; text-align: center;
-      padding-top: 95px; padding-left: 45px; padding-right: 45px;
+    .poster-container {
+      background: #FFFFFF !important;
+      position: relative;
+      width: 1240px;
+      height: 1754px;
+      overflow: hidden;
     }
-    .p12-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: #EEF4FA; border: 1.5px solid rgba(15, 71, 128, 0.25);
-      border-radius: 9999px; padding: 6px 22px; color: #0F4780;
-      font-size: 13px; font-weight: 800; text-transform: uppercase; margin-bottom: 14px;
-    }
-    .p12-title {
-      font-size: 80px; font-weight: 900; line-height: 1.10; color: #0F172A; letter-spacing: -1.6px;
-    }
-    .p12-title span {
-      background: linear-gradient(90deg, #0F4780 0%, #F14343 50%, #D97706 100%);
-      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-    }
-    .p12-subtitle {
-      font-size: 23px; font-weight: 600; color: #475569; max-width: 1000px; margin: 10px auto 0 auto;
+    .brand-gradient-line-top {
+      position: absolute; top: 0; left: 0; width: 100%; height: 8px;
+      background: linear-gradient(90deg, #0F4780 0%, #0284C7 33%, #F14343 66%, #FFCC00 100%);
+      z-index: 50;
     }
 
-    /* 2. PLANO 1 (HERO DESTAQUE MÁXIMO): LOGO DO HUB COM ONDAS CONCÊNTRICAS DE ACELERAÇÃO */
-    .p12-synchrotron-zone {
-      position: absolute; top: 410px; left: 0; width: 1240px; height: 800px; z-index: 20;
+    /* LAYOUT ASSIMÉTRICO EDITORIAL (DIVIDIDO EM DUAS COLUNAS FLUIDAS) */
+    .p11-editorial-split {
+      position: absolute; top: 75px; left: 55px; right: 55px; height: 1100px;
+      display: flex; gap: 40px; align-items: center;
+      z-index: 20;
     }
-    .p12-hero-core {
-      position: absolute; top: 55px; left: 50%; transform: translateX(-50%);
-      width: 340px; height: 340px; background: #FFFFFF;
-      border-radius: 90px; border: 4px solid rgba(15, 71, 128, 0.22);
-      box-shadow: 0 40px 90px -10px rgba(15, 71, 128, 0.32), 0 10px 30px rgba(0,0,0,0.08);
-      display: flex; align-items: center; justify-content: center; z-index: 30;
-    }
-    .p12-hero-core svg { width: 250px; height: 250px; }
 
-    /* 3. TERCEIRO PLANO: OS 3 DETECTORES (EIXOS) */
-    .p12-detector-card {
-      position: absolute; background: #FFFFFF; border-radius: 24px;
-      padding: 18px 24px; box-sizing: border-box; z-index: 25; width: 340px;
+    /* COLUNA ESQUERDA: TIPOGRAFIA MONUMENTAL BUKRA + 3 PILS FLUTUANTES */
+    .p11-left-col {
+      flex: 1.15;
+      display: flex; flex-direction: column; justify-content: center;
     }
-    .p12-det-left {
-      top: 110px; left: 45px; border: 2.5px solid rgba(15, 71, 128, 0.30); border-top: 6px solid #0F4780;
-      box-shadow: 0 18px 36px rgba(15, 71, 128, 0.14);
+    .p11-tag {
+      display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
+      background: #EEF4FA; border: 1.5px solid rgba(15, 71, 128, 0.22);
+      padding: 6px 20px; border-radius: 9999px;
+      font-size: 13px; font-weight: 800; color: #0F4780; letter-spacing: 1.2px;
+      text-transform: uppercase; margin-bottom: 22px;
     }
-    .p12-det-right {
-      top: 110px; right: 45px; border: 2.5px solid rgba(241, 67, 67, 0.30); border-top: 6px solid #F14343;
-      box-shadow: 0 18px 36px rgba(241, 67, 67, 0.14);
+    .p11-title {
+      font-size: 78px; font-weight: 900; line-height: 1.04; letter-spacing: -2px; margin-bottom: 18px;
     }
-    .p12-det-bottom {
-      bottom: 35px; left: 50%; transform: translateX(-50%); width: 560px;
-      border: 2.5px solid rgba(255, 204, 0, 0.50); border-top: 6px solid #FFCC00;
-      box-shadow: 0 18px 36px rgba(217, 119, 6, 0.16);
+    .p11-blue { color: #0F4780; }
+    .p11-dark { color: #0F172A; }
+    .p11-red { color: #F14343; }
+    .p11-sub {
+      font-size: 21px; font-weight: 600; color: #475569; line-height: 1.45; margin-bottom: 34px; max-width: 540px;
     }
-    .p12-d-title { font-size: 24px; font-weight: 900; margin-bottom: 6px; }
-    .p12-d-desc { font-size: 15px; font-weight: 600; color: #334155; line-height: 1.35; }
+
+    /* 3 PÍLULAS HORIZONTAIS EMPILHADAS (POUCOS ELEMENTOS, ELEGANTE) */
+    .p11-pills-list {
+      display: flex; flex-direction: column; gap: 14px; max-width: 530px;
+    }
+    .p11-pill-row {
+      display: flex; align-items: center; gap: 16px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(8px);
+      border: 1.5px solid #CBD5E1;
+      border-radius: 999px;
+      padding: 12px 22px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+    }
+    .p11-pill-row.social { border-left: 6px solid #0F4780; }
+    .p11-pill-row.info { border-left: 6px solid #F14343; }
+    .p11-pill-row.tools { border-left: 6px solid #FFCC00; }
+
+    .p11-pill-num {
+      font-size: 16px; font-weight: 900; flex-shrink: 0;
+    }
+    .p11-pill-row.social .p11-pill-num { color: #0F4780; }
+    .p11-pill-row.info .p11-pill-num { color: #F14343; }
+    .p11-pill-row.tools .p11-pill-num { color: #B45309; }
+
+    .p11-pill-text {
+      font-size: 16px; font-weight: 600; color: #334155; line-height: 1.35;
+    }
+    .p11-pill-text strong { font-weight: 800; color: #0F172A; }
+
+    /* COLUNA DIREITA: O ÍCONE HERO MONUMENTAL (500px) TOTALMENTE LIVRE NO FUNDO DAS EQUAÇÕES */
+    .p11-right-col {
+      flex: 1.05;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .p11-hero-icon-wrap {
+      width: 520px; height: 520px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .p11-hero-icon-wrap svg {
+      width: 500px; height: 500px;
+      filter: drop-shadow(0 26px 48px rgba(15, 71, 128, 0.22));
+    }
+    .p11-tech-label {
+      margin-top: 18px;
+      display: flex; align-items: center; gap: 10px;
+      font-size: 13px; font-weight: 800; color: #64748B; letter-spacing: 1.5px; text-transform: uppercase;
+    }
+    .p11-tech-dot { width: 8px; height: 8px; border-radius: 50%; background: #0F4780; }
   </style>
 </head>
 <body>
@@ -903,40 +1178,155 @@ async function main() {
     <div class="brand-gradient-line-top"></div>
     <div class="bg-math-pattern"></div>
 
-    <!-- SEGUNDO PLANO: CHAMADA / TÍTULO -->
-    <header class="p12-header">
-      <div class="p12-badge font-bukra">Ciência Aberta &bull; Código Livre AGPLv3</div>
-      <h1 class="p12-title font-bukra">Ciência Livre.<br><span>Código Aberto.</span></h1>
-      <p class="p12-subtitle font-open-sans">A plataforma universitária de comunicação científica, código aberto e autonomia estudantil no IFUSP.</p>
-    </header>
+    <div class="p11-editorial-split">
+      <!-- ESQUERDA: TIPOGRAFIA MONUMENTAL + 3 PÍLULAS -->
+      <div class="p11-left-col">
+        <div class="p11-tag font-bukra">Instituto de Física da USP • LabDiv</div>
+        <h1 class="p11-title font-bukra">
+          <span class="p11-blue">CIÊNCIA</span><br>
+          <span class="p11-dark">LIVRE.</span><br>
+          <span class="p11-red">CÓDIGO</span><br>
+          <span class="p11-blue">ABERTO.</span>
+        </h1>
+        <p class="p11-sub font-open-sans">
+          A plataforma oficial criada pela comunidade para apoiar o aprendizado e transformar a graduação no IFUSP.
+        </p>
 
-    <!-- PLANO 1 (HERO DESTAQUE MÁXIMO): LOGO DO HUB -->
-    <div class="p12-synchrotron-zone">
-      <!-- Ondas de radiação síncrotron -->
-      <svg style="position: absolute; width: 100%; height: 100%; pointer-events: none;" viewBox="0 0 1240 800">
-        <circle cx="620" cy="225" r="230" fill="none" stroke="#0F4780" stroke-width="2" stroke-dasharray="6 6" opacity="0.40" />
-        <circle cx="620" cy="225" r="330" fill="none" stroke="#F14343" stroke-width="1.8" stroke-dasharray="8 8" opacity="0.30" />
-        <circle cx="620" cy="225" r="410" fill="none" stroke="#FFCC00" stroke-width="1.4" stroke-dasharray="4 8" opacity="0.25" />
-      </svg>
+        <div class="p11-pills-list">
+          <div class="p11-pill-row social">
+            <span class="p11-pill-num font-bukra">01</span>
+            <div class="p11-pill-text font-open-sans"><strong>Eixo Social:</strong> Fóruns e diálogo com veteranos</div>
+          </div>
 
-      <div class="p12-hero-core">
+          <div class="p11-pill-row info">
+            <span class="p11-pill-num font-bukra">02</span>
+            <div class="p11-pill-text font-open-sans"><strong>Informativo:</strong> Acervo histórico e ementas do curso</div>
+          </div>
+
+          <div class="p11-pill-row tools">
+            <span class="p11-pill-num font-bukra">03</span>
+            <div class="p11-pill-text font-open-sans"><strong>Ferramentas:</strong> Simuladores gráficos de física</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DIREITA: O ÍCONE HERO MONUMENTAL FLUTUANTE (500px) -->
+      <div class="p11-right-col">
+        <div class="p11-hero-icon-wrap">
+          ${hubIconSvg}
+        </div>
+        <div class="p11-tech-label font-bukra">
+          <span class="p11-tech-dot"></span>
+          <span>IFUSP • LabDiv V3.0 • AGPLv3</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- TERCEIRO PLANO: QR CODE & SEGURANÇA INSTITUCIONAL -->
+    <div class="bottom-third-plane">
+      ${renderQrBox('#0F4780')}
+      ${renderInstitutionalBox()}
+    </div>
+  </div>
+</body>
+</html>`;
+
+  // =========================================================================
+  // PROPOSTA 12: "The Diagonal Split" (Assimetria Cortada, Estilo Institucional Futurista)
+  // =========================================================================
+  const htmlPoster12 = `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  ${baseHead('HUB LabDiv - Proposta 12: The Diagonal Split')}
+  <style>
+    .poster-container { background: #F8FAFC !important; }
+    
+    .p12-diagonal {
+       position: absolute; top: 0; left: 0; width: 100%; height: 950px;
+       background: #0F4780; 
+       clip-path: polygon(0 0, 100% 0, 100% 100%, 0 55%);
+       z-index: 10;
+    }
+    
+    .p12-content {
+       position: absolute; top: 0; left: 0; width: 100%; height: 1280px;
+       z-index: 20; padding: 90px 60px; box-sizing: border-box;
+    }
+    
+    .p12-header {
+       color: #FFFFFF; max-width: 600px;
+    }
+    .p12-badge {
+       display: inline-block; background: #FFCC00; color: #0F172A;
+       padding: 8px 24px; font-size: 15px; font-weight: 900; border-radius: 999px;
+       margin-bottom: 24px; text-transform: uppercase;
+    }
+    .p12-header h1 { font-size: 85px; font-weight: 900; line-height: 1.05; letter-spacing: -2px; }
+    .p12-header p { font-size: 24px; font-weight: 600; margin-top: 24px; color: #CBD5E1; line-height: 1.4; }
+    
+    .p12-icon-wrapper {
+       position: absolute; top: 120px; right: 60px;
+       width: 480px; height: 480px; background: #FFFFFF; border-radius: 50%;
+       display: flex; align-items: center; justify-content: center;
+       box-shadow: 0 40px 100px rgba(0,0,0,0.25);
+       border: 8px solid rgba(255,255,255,0.2); background-clip: padding-box;
+    }
+    .p12-icon-wrapper svg { width: 360px; height: 360px; }
+    
+    .p12-cards-grid {
+       position: absolute; bottom: 0; left: 60px; right: 60px;
+       display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
+    }
+    .p12-card {
+       background: #FFFFFF; padding: 45px 35px; border-radius: 20px;
+       box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+       border-bottom: 10px solid;
+    }
+    .p12-card-1 { border-color: #0F4780; }
+    .p12-card-2 { border-color: #F14343; }
+    .p12-card-3 { border-color: #FFCC00; }
+    
+    .p12-card-icon {
+       width: 60px; height: 60px; background: #F1F5F9; border-radius: 14px;
+       display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 900;
+       margin-bottom: 24px; color: #0F172A;
+    }
+    .p12-card h3 { font-size: 26px; font-weight: 900; margin-bottom: 12px; color: #0F172A; }
+    .p12-card p { font-size: 17px; font-weight: 600; color: #475569; line-height: 1.5; }
+  </style>
+</head>
+<body>
+  <div class="poster-container">
+    <div class="p12-diagonal"></div>
+    <div class="bg-math-pattern"></div>
+
+    <div class="p12-content">
+      <div class="p12-header">
+        <div class="p12-badge font-bukra">Tecnologia Livre AGPLv3</div>
+        <h1 class="font-bukra">Ciência Livre.<br>Código Aberto.</h1>
+        <p class="font-open-sans">A plataforma oficial da graduação desenvolvida para acelerar a comunicação científica e garantir autonomia estudantil no IFUSP.</p>
+      </div>
+
+      <div class="p12-icon-wrapper">
         ${hubIconSvg}
       </div>
 
-      <!-- TERCEIRO PLANO: DETECTORES DOS 3 EIXOS -->
-      <div class="p12-detector-card p12-det-left">
-        <h3 class="p12-d-title font-bukra" style="color: #0F4780;">1. Eixo Social</h3>
-        <p class="p12-d-desc font-open-sans">Rede pedagógica aberta para aproximar calouros, veteranos e docentes.</p>
-      </div>
-
-      <div class="p12-detector-card p12-det-right">
-        <h3 class="p12-d-title font-bukra" style="color: #F14343;">2. Eixo Informativo</h3>
-        <p class="p12-d-desc font-open-sans">Enciclopédia viva de física com resumos e história da ciência ao seu alcance.</p>
-      </div>
-
-      <div class="p12-detector-card p12-det-bottom">
-        <h3 class="p12-d-title font-bukra" style="color: #854D0E;">3. Eixo Ferramentas</h3>
-        <p class="p12-d-desc font-open-sans">Simuladores computacionais e calculadoras analíticas de código aberto.</p>
+      <div class="p12-cards-grid">
+        <div class="p12-card p12-card-1">
+          <div class="p12-card-icon font-bukra">01</div>
+          <h3 class="font-bukra">Eixo Social</h3>
+          <p class="font-open-sans">Rede pedagógica aberta para aproximar calouros, veteranos e toda a equipe docente do instituto.</p>
+        </div>
+        <div class="p12-card p12-card-2">
+          <div class="p12-card-icon font-bukra">02</div>
+          <h3 class="font-bukra">Eixo Informativo</h3>
+          <p class="font-open-sans">Enciclopédia viva de física com resumos e história da ciência ao seu alcance imediato.</p>
+        </div>
+        <div class="p12-card p12-card-3">
+          <div class="p12-card-icon font-bukra">03</div>
+          <h3 class="font-bukra">Ferramentas</h3>
+          <p class="font-open-sans">Simuladores computacionais, calculadoras analíticas e gerenciamento de notas.</p>
+        </div>
       </div>
     </div>
 
@@ -951,12 +1341,13 @@ async function main() {
 
   // Mapeamento dos pôsteres
   const posters = [
+    { num: 3, html: htmlPoster3, title: 'Proposta 3: The Minimalist Manifesto' },
     { num: 7, html: htmlPoster7, title: 'Proposta 7: Orbital Gravity Core' },
     { num: 8, html: htmlPoster8, title: 'Proposta 8: Monumental Pillar' },
     { num: 9, html: htmlPoster9, title: 'Proposta 9: Scientific Prism' },
-    { num: 10, html: htmlPoster10, title: 'Proposta 10: Glassmorphism Dock' },
-    { num: 11, html: htmlPoster11, title: 'Proposta 11: Swiss Precision' },
-    { num: 12, html: htmlPoster12, title: 'Proposta 12: Quantum Accelerator' },
+    { num: 10, html: htmlPoster10, title: 'Proposta 10: The Circular Lens' },
+    { num: 11, html: htmlPoster11, title: 'Proposta 11: The Bauhaus Pavilion' },
+    { num: 12, html: htmlPoster12, title: 'Proposta 12: The Diagonal Split' },
   ];
 
   // Iniciar Puppeteer para renderização a 300 DPI (2480x3508)

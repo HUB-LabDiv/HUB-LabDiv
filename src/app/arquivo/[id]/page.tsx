@@ -297,7 +297,7 @@ export default async function ArquivoItemPage({ params }: PageProps) {
     }
 
     const breadcrumbItems = [
-        { label: 'Arquivo Lab-Div', href: '/arquivo-labdiv' },
+        { label: 'Arquivo Lab-Div', href: '/' },
         { label: submission.category, href: `/?collection=${encodeURIComponent(submission.category)}` },
         { label: submission.title }
     ];

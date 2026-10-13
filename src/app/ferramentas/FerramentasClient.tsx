@@ -302,8 +302,13 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                 const eventDate = new Date(startOfWeek);
                 eventDate.setDate(startOfWeek.getDate() + dow);
                 
-                const startDateStr = `${eventDate.toISOString().split('T')[0]}T${startStr}:00`;
-                const endDateStr = `${eventDate.toISOString().split('T')[0]}T${endStr}:00`;
+                const year = eventDate.getFullYear();
+                const month = String(eventDate.getMonth() + 1).padStart(2, '0');
+                const day = String(eventDate.getDate()).padStart(2, '0');
+                const datePart = `${year}-${month}-${day}`;
+
+                const startDateStr = `${datePart}T${startStr}:00`;
+                const endDateStr = `${datePart}T${endStr}:00`;
 
                 const seed = subject.codigo;
                 let hash = 0;

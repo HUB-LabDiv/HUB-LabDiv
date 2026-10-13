@@ -13,6 +13,7 @@
 
 
 import { createServerSupabase } from '@/lib/supabase/server';
+import { createAdminSupabase } from '@/lib/supabase/admin';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 
@@ -31,15 +32,41 @@ export async function validateAISuggestionsBulk(ids: string[]) {
         return { success: false, error: result.error.issues[0].message };
     }
 
-    // 2. Chamada RPC Atômica
-    const supabase = await createServerSupabase();
-    const { error } = await supabase.rpc('accept_ai_suggestions_bulk', {
+    const adminSupabase = createAdminSupabase();
+
+    // 2. Chamada RPC Atômica (tenta executar caso já migrado no Supabase)
+    const { error: rpcError } = await adminSupabase.rpc('accept_ai_suggestions_bulk', {
         submission_ids: result.data.submission_ids
     });
 
-    if (error) {
-        console.error('Erro na RPC Bulk Validate:', error);
-        return { success: false, error: 'Falha no processamento atômico do banco de dados.' };
+    if (rpcError) {
+        // Fallback resiliente direto no banco
+        const { data: subs, error: fetchErr } = await adminSupabase
+            .from('submissions')
+            .select('id, tags, ai_suggested_tags, alt_text, ai_suggested_alt')
+            .in('id', result.data.submission_ids);
+
+        if (fetchErr) {
+            console.error('Erro na leitura para aplicar sugestões IA:', fetchErr);
+            return { success: false, error: 'Falha no processamento das sugestões de IA.' };
+        }
+
+        for (const sub of (subs || [])) {
+            const mergedTags = Array.from(new Set([
+                ...(sub.tags || []),
+                ...(sub.ai_suggested_tags || [])
+            ]));
+            const newAlt = sub.ai_suggested_alt || sub.alt_text;
+
+            await adminSupabase
+                .from('submissions')
+                .update({
+                    tags: mergedTags,
+                    alt_text: newAlt,
+                    ai_status: 'applied'
+                })
+                .eq('id', sub.id);
+        }
     }
 
     revalidatePath('/admin/acervo');
@@ -146,6 +173,8 @@ export async function fetchSubmissionTrails(submissionId: string) {
     return { success: true, data };
 }
 
+import { createAdminToken, verifyAdminToken, AdminRole } from '@/lib/auth/admin-token';
+
 export async function loginAdminBypass(login: string, senha: string) {
     const cookieStore = await import('next/headers').then(m => m.cookies());
 
@@ -161,12 +190,18 @@ export async function loginAdminBypass(login: string, senha: string) {
     const loginMatchesAlias = login.trim().toLowerCase() === 'adm' || login.trim().toLowerCase() === 'admin';
     const senhaCorreta = senha === adminPassword || senha === adminSecret;
 
+    const cookieOptions = {
+        path: '/',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax' as const,
+        maxAge: 60 * 60 * 8, // 8 horas
+    };
+
     if ((loginMatchesEmail || loginMatchesAlias) && senhaCorreta && adminPassword) {
-        cookieStore.set('admin_bypass', 'admin', {
-            path: '/',
-            httpOnly: false,
-            maxAge: 60 * 60 * 8, // 8 horas
-        });
+        const token = createAdminToken('admin');
+        cookieStore.set('admin_bypass', token, cookieOptions);
+        cookieStore.set('admin_session', token, cookieOptions);
         return { success: true };
     }
 
@@ -188,11 +223,10 @@ export async function loginAdminBypass(login: string, senha: string) {
             .maybeSingle();
 
         if (profile?.id && (profile.role === 'admin' || profile.role === 'moderator')) {
-            cookieStore.set('admin_bypass', profile.role === 'admin' ? 'admin' : 'moderator', {
-                path: '/',
-                httpOnly: false,
-                maxAge: 60 * 60 * 8,
-            });
+            const role: AdminRole = profile.role === 'admin' ? 'admin' : 'moderator';
+            const token = createAdminToken(role);
+            cookieStore.set('admin_bypass', token, cookieOptions);
+            cookieStore.set('admin_session', token, cookieOptions);
         }
 
         return { success: true };
@@ -200,4 +234,43 @@ export async function loginAdminBypass(login: string, senha: string) {
         return { success: false, error: e.message || 'Erro ao autenticar' };
     }
 }
+
+/**
+ * Consulta de forma segura no servidor o papel administrativo atual (sessão Supabase ou token HMAC).
+ */
+export async function getAdminSessionRole(): Promise<{ role: string | null }> {
+    const cookieStore = await import('next/headers').then(m => m.cookies());
+    const bypassCookie = cookieStore.get('admin_bypass')?.value;
+    const sessionCookie = cookieStore.get('admin_session')?.value;
+
+    const bypassCheck = verifyAdminToken(bypassCookie);
+    if (bypassCheck.valid && bypassCheck.role) {
+        return { role: bypassCheck.role };
+    }
+
+    const sessionCheck = verifyAdminToken(sessionCookie);
+    if (sessionCheck.valid && sessionCheck.role) {
+        return { role: sessionCheck.role };
+    }
+
+    try {
+        const supabase = await createServerSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('role')
+                .eq('id', user.id)
+                .maybeSingle();
+            if (profile?.role === 'admin' || profile?.role === 'moderator') {
+                return { role: profile.role };
+            }
+        }
+    } catch {
+        // Ignora erros na consulta do supabase
+    }
+
+    return { role: null };
+}
+
 

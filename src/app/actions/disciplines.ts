@@ -21,7 +21,7 @@ export async function fetchAllDisciplines() {
     const { data, error } = await supabase
         .from('learning_trails')
         .select('*')
-        .order('code', { ascending: true });
+        .order('course_code', { ascending: true });
 
     if (error) {
         console.error('Error fetching disciplines:', error);

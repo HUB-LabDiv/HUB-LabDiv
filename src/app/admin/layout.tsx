@@ -3,6 +3,7 @@ import { createServerSupabase } from '@/lib/supabase/server';
 import AdminLayoutClient from './AdminLayoutClient';
 import AdminLoginGate from './AdminLoginGate';
 import { cookies } from 'next/headers';
+import { verifyAdminToken } from '@/lib/auth/admin-token';
 
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
@@ -20,12 +21,22 @@ export default async function AdminLayout({
 }: {
     children: React.ReactNode;
 }) {
-    const bypassCookie = (await cookies()).get('admin_bypass')?.value;
+    const cookieStore = await cookies();
+    const bypassCookie = cookieStore.get('admin_bypass')?.value;
+    const sessionCookie = cookieStore.get('admin_session')?.value;
     let finalRole: string | null = null;
 
-    if (bypassCookie === 'admin' || bypassCookie === 'moderator') {
-        finalRole = bypassCookie;
+    const bypassCheck = verifyAdminToken(bypassCookie);
+    if (bypassCheck.valid && bypassCheck.role) {
+        finalRole = bypassCheck.role;
     } else {
+        const sessionCheck = verifyAdminToken(sessionCookie);
+        if (sessionCheck.valid && sessionCheck.role) {
+            finalRole = sessionCheck.role;
+        }
+    }
+
+    if (!finalRole) {
         const supabase = await createServerSupabase();
         const { data: { user } } = await supabase.auth.getUser();
 

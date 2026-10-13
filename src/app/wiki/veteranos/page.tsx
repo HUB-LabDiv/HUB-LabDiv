@@ -372,7 +372,13 @@ export default function VeteranosPage() {
                                                 </div>
 
                                                 <div className="mb-3">
-                                                    <span className={`text-[9px] font-black uppercase tracking-widest text-${categoryColor} bg-${categoryColor}/10 px-2.5 py-0.5 rounded-full font-bukra`}>
+                                                    <span className={`text-[9px] font-black uppercase tracking-widest ${
+                                                        categoryColor === 'brand-yellow' 
+                                                            ? 'text-brand-yellow bg-brand-yellow/10' 
+                                                            : categoryColor === 'brand-red' 
+                                                            ? 'text-brand-red bg-brand-red/10' 
+                                                            : 'text-brand-blue bg-brand-blue/10'
+                                                    } px-2.5 py-0.5 rounded-full font-bukra`}>
                                                         {tip.categoria}
                                                     </span>
                                                 </div>

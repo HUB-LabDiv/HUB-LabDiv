@@ -13,7 +13,7 @@
 
 
 import React, { useState, useEffect, Suspense } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { motion, AnimatePresence } from 'framer-motion';
 import { LabTabContent } from './LabTabContent';
@@ -22,6 +22,7 @@ import { EmaranhamentoTabContent } from './EmaranhamentoTabContent';
 import { useSwipe } from '@/hooks/useSwipe';
 
 export default function InteracaoClient() {
+    const router = useRouter();
     const searchParams = useSearchParams();
     const initialTab = searchParams.get('tab') || 'emaranhamento';
     const [activeTab, setActiveTab] = useState(initialTab);
@@ -35,7 +36,7 @@ export default function InteracaoClient() {
 
     const handleTabChange = (tab: string) => {
         setActiveTab(tab);
-        window.history.replaceState(null, '', `/interacao?tab=${tab}`);
+        router.replace(`/interacao?tab=${tab}`, { scroll: false });
     };
 
     const tabs = ['emaranhamento', 'perguntas'];

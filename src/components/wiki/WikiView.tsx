@@ -36,6 +36,93 @@ import {
 } from 'lucide-react';
 import { SacSection } from '@/components/sac/SacSection';
 
+const CELL_COLOR_MAP: Record<string, {
+    hoverBorder: string;
+    bgBlur: string;
+    bgBlurHover: string;
+    iconBg: string;
+    iconText: string;
+    iconRing: string;
+    iconRingHover: string;
+    barBg: string;
+    titleHover: string;
+    dotBg: string;
+    ctaText: string;
+    ctaBtnBg: string;
+}> = {
+    'brand-yellow': {
+        hoverBorder: 'hover:border-brand-yellow',
+        bgBlur: 'bg-brand-yellow/5',
+        bgBlurHover: 'group-hover:bg-brand-yellow/10',
+        iconBg: 'bg-brand-yellow/10',
+        iconText: 'text-brand-yellow',
+        iconRing: 'ring-brand-yellow/20',
+        iconRingHover: 'group-hover:ring-brand-yellow/50',
+        barBg: 'bg-brand-yellow',
+        titleHover: 'group-hover:text-brand-yellow',
+        dotBg: 'bg-brand-yellow/40',
+        ctaText: 'text-brand-yellow',
+        ctaBtnBg: 'bg-brand-yellow/10 text-brand-yellow',
+    },
+    'brand-red': {
+        hoverBorder: 'hover:border-brand-red',
+        bgBlur: 'bg-brand-red/5',
+        bgBlurHover: 'group-hover:bg-brand-red/10',
+        iconBg: 'bg-brand-red/10',
+        iconText: 'text-brand-red',
+        iconRing: 'ring-brand-red/20',
+        iconRingHover: 'group-hover:ring-brand-red/50',
+        barBg: 'bg-brand-red',
+        titleHover: 'group-hover:text-brand-red',
+        dotBg: 'bg-brand-red/40',
+        ctaText: 'text-brand-red',
+        ctaBtnBg: 'bg-brand-red/10 text-brand-red',
+    },
+    'brand-blue': {
+        hoverBorder: 'hover:border-brand-blue',
+        bgBlur: 'bg-brand-blue/5',
+        bgBlurHover: 'group-hover:bg-brand-blue/10',
+        iconBg: 'bg-brand-blue/10',
+        iconText: 'text-brand-blue',
+        iconRing: 'ring-brand-blue/20',
+        iconRingHover: 'group-hover:ring-brand-blue/50',
+        barBg: 'bg-brand-blue',
+        titleHover: 'group-hover:text-brand-blue',
+        dotBg: 'bg-brand-blue/40',
+        ctaText: 'text-brand-blue',
+        ctaBtnBg: 'bg-brand-blue/10 text-brand-blue',
+    },
+    'brand-blue-ifusp': {
+        hoverBorder: 'hover:border-brand-blue-ifusp',
+        bgBlur: 'bg-brand-blue-ifusp/5',
+        bgBlurHover: 'group-hover:bg-brand-blue-ifusp/10',
+        iconBg: 'bg-brand-blue-ifusp/10',
+        iconText: 'text-brand-blue-ifusp',
+        iconRing: 'ring-brand-blue-ifusp/20',
+        iconRingHover: 'group-hover:ring-brand-blue-ifusp/50',
+        barBg: 'bg-brand-blue-ifusp',
+        titleHover: 'group-hover:text-brand-blue-ifusp',
+        dotBg: 'bg-brand-blue-ifusp/40',
+        ctaText: 'text-brand-blue-ifusp',
+        ctaBtnBg: 'bg-brand-blue-ifusp/10 text-brand-blue-ifusp',
+    },
+};
+
+const DEFAULT_COLOR_STYLE = {
+    hoverBorder: 'hover:border-brand-blue',
+    bgBlur: 'bg-brand-blue/5',
+    bgBlurHover: 'group-hover:bg-brand-blue/10',
+    iconBg: 'bg-brand-blue/10',
+    iconText: 'text-brand-blue',
+    iconRing: 'ring-brand-blue/20',
+    iconRingHover: 'group-hover:ring-brand-blue/50',
+    barBg: 'bg-brand-blue',
+    titleHover: 'group-hover:text-brand-blue',
+    dotBg: 'bg-brand-blue/40',
+    ctaText: 'text-brand-blue',
+    ctaBtnBg: 'bg-brand-blue/10 text-brand-blue',
+};
+
 // --- DATA STRUCTURE (O Síncrotron) ---
 export const WIKI_CATEGORIES = [
     {
@@ -330,61 +417,64 @@ export function WikiView() {
                 {/* --- Wiki Matrix (Grid de Elite 3x3) --- */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                     <AnimatePresence mode="popLayout">
-                        {wikiCells.map((cell: any, idx) => (
-                            <motion.div
-                                key={cell.id}
-                                layout
-                                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                                animate={{ opacity: 1, scale: 1, y: 0 }}
-                                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                                transition={{ duration: 0.4, delay: idx * 0.05 }}
-                            >
-                                <Link
-                                    href={cell.href}
-                                    className={`relative block h-full group glass-card rounded-[40px] p-8 hover:border-${cell.color} transition-all shadow-2xl overflow-hidden`}
+                        {wikiCells.map((cell: any, idx) => {
+                            const cStyle = CELL_COLOR_MAP[cell.color] || DEFAULT_COLOR_STYLE;
+                            return (
+                                <motion.div
+                                    key={cell.id}
+                                    layout
+                                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                                    transition={{ duration: 0.4, delay: idx * 0.05 }}
                                 >
-                                    <div className={`absolute -right-20 -top-20 size-64 bg-${cell.color}/5 blur-[100px] group-hover:bg-${cell.color}/10 transition-colors`}></div>
-                                    <div className="relative z-10 flex flex-col h-full">
-                                        <div className="flex items-start justify-between mb-8">
-                                            <div className={`size-16 rounded-[24px] bg-${cell.color}/10 text-${cell.color} flex items-center justify-center ring-1 ring-${cell.color}/20 group-hover:scale-110 group-hover:ring-${cell.color}/50 transition-all duration-500`}>
-                                                {cell.icon}
-                                            </div>
-                                            <div className="h-2 w-12 bg-white/5 rounded-full overflow-hidden">
-                                                <motion.div
-                                                    className={`h-full bg-${cell.color}`}
-                                                    initial={{ width: 0 }}
-                                                    whileInView={{ width: '100%' }}
-                                                    transition={{ duration: 1.5, delay: idx * 0.1 }}
-                                                />
-                                            </div>
-                                        </div>
-                                        <h3 className={`text-2xl font-black text-gray-900 dark:text-white mb-1 group-hover:text-${cell.color} transition-colors italic uppercase tracking-tighter`}>
-                                            {renderIFUSP(cell.title)}
-                                        </h3>
-                                        <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">
-                                            {cell.subtitle}
-                                        </p>
-                                        <p className="text-sm text-gray-400 font-medium leading-relaxed mb-6 line-clamp-2">
-                                            {renderIFUSP(cell.description)}
-                                        </p>
-                                        <div className="space-y-2 mb-8">
-                                            {cell.details.map((detail: string, dIdx: number) => (
-                                                <div key={dIdx} className="flex items-start gap-2 text-[11px] text-gray-500 font-bold group-hover:text-gray-300 transition-colors">
-                                                    <div className={`size-1.5 rounded-full bg-${cell.color}/40 mt-1 cursor-default`} />
-                                                    <span>{detail}</span>
+                                    <Link
+                                        href={cell.href}
+                                        className={`relative block h-full group glass-card rounded-[40px] p-8 ${cStyle.hoverBorder} transition-all shadow-2xl overflow-hidden`}
+                                    >
+                                        <div className={`absolute -right-20 -top-20 size-64 ${cStyle.bgBlur} blur-[100px] ${cStyle.bgBlurHover} transition-colors`}></div>
+                                        <div className="relative z-10 flex flex-col h-full">
+                                            <div className="flex items-start justify-between mb-8">
+                                                <div className={`size-16 rounded-[24px] ${cStyle.iconBg} ${cStyle.iconText} flex items-center justify-center ring-1 ${cStyle.iconRing} group-hover:scale-110 ${cStyle.iconRingHover} transition-all duration-500`}>
+                                                    {cell.icon}
                                                 </div>
-                                            ))}
-                                        </div>
-                                        <div className="mt-auto pt-6 border-t border-gray-100 dark:border-white/5 flex items-center justify-between">
-                                            <span className={`text-[10px] font-black text-${cell.color} uppercase tracking-[0.2em]`}>{cell.cta}</span>
-                                            <div className={`size-8 rounded-full bg-${cell.color}/10 flex items-center justify-center text-${cell.color} group-hover:translate-x-1 transition-transform`}>
-                                                <ChevronRight className="w-4 h-4" />
+                                                <div className="h-2 w-12 bg-white/5 rounded-full overflow-hidden">
+                                                    <motion.div
+                                                        className={`h-full ${cStyle.barBg}`}
+                                                        initial={{ width: 0 }}
+                                                        whileInView={{ width: '100%' }}
+                                                        transition={{ duration: 1.5, delay: idx * 0.1 }}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <h3 className={`text-2xl font-black text-gray-900 dark:text-white mb-1 ${cStyle.titleHover} transition-colors italic uppercase tracking-tighter`}>
+                                                {renderIFUSP(cell.title)}
+                                            </h3>
+                                            <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mb-4">
+                                                {cell.subtitle}
+                                            </p>
+                                            <p className="text-sm text-gray-400 font-medium leading-relaxed mb-6 line-clamp-2">
+                                                {renderIFUSP(cell.description)}
+                                            </p>
+                                            <div className="space-y-2 mb-8">
+                                                {cell.details.map((detail: string, dIdx: number) => (
+                                                    <div key={dIdx} className="flex items-start gap-2 text-[11px] text-gray-500 font-bold group-hover:text-gray-300 transition-colors">
+                                                        <div className={`size-1.5 rounded-full ${cStyle.dotBg} mt-1 cursor-default`} />
+                                                        <span>{detail}</span>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                            <div className="mt-auto pt-6 border-t border-gray-100 dark:border-white/5 flex items-center justify-between">
+                                                <span className={`text-[10px] font-black ${cStyle.ctaText} uppercase tracking-[0.2em]`}>{cell.cta}</span>
+                                                <div className={`size-8 rounded-full ${cStyle.ctaBtnBg} flex items-center justify-center group-hover:translate-x-1 transition-transform`}>
+                                                    <ChevronRight className="w-4 h-4" />
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                </Link>
-                            </motion.div>
-                        ))}
+                                    </Link>
+                                </motion.div>
+                            );
+                        })}
                     </AnimatePresence>
                 </div>
 

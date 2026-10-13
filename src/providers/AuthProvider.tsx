@@ -18,6 +18,7 @@ import { User } from '@supabase/supabase-js';
 import { Capacitor } from '@capacitor/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
+import { getAdminSessionRole } from '@/app/actions/admin';
 
 interface AuthContextType {
     user: User | null;
@@ -44,7 +45,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         try {
             const { data: { user: realUser } } = await supabase.auth.getUser();
             const impersonatedId = getCookie('admin_impersonating_id');
-            const bypassRole = getCookie('admin_bypass');
 
             // Impersonation: Só é valido se houver realUser e este for admin
             let targetId: string | undefined = undefined;
@@ -65,13 +65,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 targetId = realUser?.id;
             }
 
-            if (!targetId && bypassRole) {
-                const { data: defaultProf } = await supabase
-                    .from('profiles')
-                    .select('id')
-                    .or('email.eq.hublabdiv@gmail.com,username.eq.labdiv,username.eq.LabDiv')
-                    .maybeSingle();
-                if (defaultProf) targetId = defaultProf.id;
+            if (!targetId) {
+                const sessionRole = await getAdminSessionRole();
+                if (sessionRole.role) {
+                    const { data: defaultProf } = await supabase
+                        .from('profiles')
+                        .select('id')
+                        .or('email.eq.hublabdiv@gmail.com,username.eq.labdiv,username.eq.LabDiv')
+                        .maybeSingle();
+                    if (defaultProf) targetId = defaultProf.id;
+                }
             }
 
             if (targetId) {

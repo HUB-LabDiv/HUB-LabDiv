@@ -16,20 +16,25 @@ import { createServerSupabase } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
+import { createAdminToken } from '@/lib/auth/admin-token';
 
 export async function login(formData: FormData) {
     const password = formData.get('password') as string;
     const adminPassword = process.env.ADMIN_PASSWORD;
 
-    if (password === adminPassword) {
-        // Simple session cookie for the demo
-        (await cookies()).set('admin_session', 'authenticated', {
+    if (adminPassword && password === adminPassword) {
+        const token = createAdminToken('admin');
+        const cookieStore = await cookies();
+        const cookieOptions = {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 60 * 60 * 24 * 7, // 1 week
+            sameSite: 'lax' as const,
+            maxAge: 60 * 60 * 8, // 8 horas
             path: '/',
-        });
+        };
+
+        cookieStore.set('admin_session', token, cookieOptions);
+        cookieStore.set('admin_bypass', token, cookieOptions);
         redirect('/admin');
     } else {
         return { error: 'Senha incorreta. Tente novamente.' };
@@ -37,7 +42,11 @@ export async function login(formData: FormData) {
 }
 
 export async function signOut(redirectTo: string = '/') {
-    (await cookies()).delete('admin_session');
+    const cookieStore = await cookies();
+    cookieStore.delete('admin_session');
+    cookieStore.delete('admin_bypass');
+    cookieStore.delete('admin_impersonating_id');
+
     const supabase = await createServerSupabase();
     await supabase.auth.signOut();
     revalidatePath('/');

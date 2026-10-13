@@ -95,7 +95,14 @@ export function CustomEventModal({ isOpen, onClose, onSave, initialDate }: Custo
             return;
         }
 
-        const baseDateStr = date || new Date().toISOString().split('T')[0];
+        const todayLocal = (() => {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, '0');
+            const d = String(now.getDate()).padStart(2, '0');
+            return `${y}-${m}-${d}`;
+        })();
+        const baseDateStr = date || todayLocal;
         const startIso = new Date(`${baseDateStr}T${startTime}:00`).toISOString();
         const endIso = new Date(`${baseDateStr}T${endTime}:00`).toISOString();
         const selectedCat = CATEGORIES.find(c => c.id === category);

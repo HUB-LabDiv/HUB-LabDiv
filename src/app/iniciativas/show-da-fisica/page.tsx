@@ -19,7 +19,7 @@ import { Breadcrumbs } from '@/components/wiki/WikiComponents';
 import { ShowActionButtons } from './ShowActionButtons';
 
 export const metadata = {
-    title: 'Show de Fisica | Iniciativas IFUSP',
+    title: 'Show de Física | Iniciativas IFUSP',
     description: 'Levando demonstrações de fenômenos físicos ao público em geral.',
 };
 
@@ -69,10 +69,10 @@ export default function ShowDaFisicaPage() {
                         <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-widest mb-8 uppercase flex flex-col md:flex-row items-center justify-center gap-4 md:gap-8">
                             <span className="neon-text-red">Show</span>
                             <span className="neon-text-blue">de</span>
-                            <span className="neon-text-green">Fisica</span>
+                            <span className="neon-text-green">Física</span>
                         </h1>
                         <p className="text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed font-sans tracking-wide text-gray-300">
-                            O Show de Fisica é um espetáculo de demonstrações experimentais que abordam os mais variados temas. Contamos com uma performance lúdica, divertida, dinâmica, envolvente e interativa! A proposta é permitir que os visitantes contextualizem, ampliem e estimulem o seu perfil científico.
+                            O Show de Física é um espetáculo de demonstrações experimentais que abordam os mais variados temas. Contamos com uma performance lúdica, divertida, dinâmica, envolvente e interativa! A proposta é permitir que os visitantes contextualizem, ampliem e estimulem o seu perfil científico.
                         </p>
                     </div>
 

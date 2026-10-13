@@ -90,7 +90,7 @@ export function ApresentacaoClient() {
                 </div>
             )}
             
-            <Link href="/sobre?tab=sobre" className="glass-card rounded-3xl p-6 border-white/5 hover:border-white/20 transition-colors flex flex-col items-center justify-center text-center group">
+            <Link href="/" className="glass-card rounded-3xl p-6 border-white/5 hover:border-white/20 transition-colors flex flex-col items-center justify-center text-center group">
                 <ArrowLeft className="w-6 h-6 text-gray-400 group-hover:text-white transition-colors mb-2 group-hover:-translate-x-1" />
                 <span className="text-xs font-black uppercase tracking-widest text-gray-400 group-hover:text-white">Voltar para o HUB</span>
             </Link>

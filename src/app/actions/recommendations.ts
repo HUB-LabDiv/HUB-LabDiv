@@ -3,19 +3,22 @@
 /*!
  * Hub de Comunicação Científica Lab-Div V3.0
  * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
- * * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
+ *
+ * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
  * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
  * publicada pela Free Software Foundation.
- * * Este programa é distribuído na esperança de que seja útil, mas SEM
+ *
+ * Este programa é distribuído na esperança de que seja útil, mas SEM
  * QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-
-import { supabase } from '@/lib/supabase';
+import { createServerSupabase } from '@/lib/supabase/server';
 import { PostDTO, mapToPostDTO } from '@/dtos/media';
 
 export async function getForYouRecommendations(userId: string | undefined): Promise<{ post: PostDTO }[]> {
+    const supabase = await createServerSupabase();
+
     if (!userId) {
         const { data } = await supabase
             .from('submissions')
@@ -47,14 +50,17 @@ export async function getForYouRecommendations(userId: string | undefined): Prom
         return (data || []).map(sub => ({ post: mapToPostDTO(sub) }));
     }
 
-    const categories = Array.from(new Set(history.map((h: any) => h.submissions.category).filter(Boolean)));
-    const readIds = history.map((h: any) => h.submission_id);
+    const categories = Array.from(new Set(history.map((h: any) => h.submissions?.category).filter(Boolean)));
+    const readIds = history.map((h: any) => h.submission_id).filter(Boolean);
 
     let query = supabase
         .from('submissions')
         .select('*')
-        .eq('status', 'aprovado')
-        .not('id', 'in', `(${readIds.join(',')})`);
+        .eq('status', 'aprovado');
+
+    if (readIds.length > 0) {
+        query = query.not('id', 'in', `(${readIds.join(',')})`);
+    }
 
     if (categories.length > 0) {
         query = query.in('category', categories);
@@ -65,11 +71,16 @@ export async function getForYouRecommendations(userId: string | undefined): Prom
         .limit(4);
 
     if (error || !recommendations || recommendations.length < 2) {
-        const { data: fallback } = await supabase
+        let fallbackQuery = supabase
             .from('submissions')
             .select('*')
-            .eq('status', 'aprovado')
-            .not('id', 'in', `(${readIds.join(',')})`)
+            .eq('status', 'aprovado');
+
+        if (readIds.length > 0) {
+            fallbackQuery = fallbackQuery.not('id', 'in', `(${readIds.join(',')})`);
+        }
+
+        const { data: fallback } = await fallbackQuery
             .order('views', { ascending: false })
             .limit(4);
         return (fallback || []).map(sub => ({ post: mapToPostDTO(sub) }));
@@ -79,6 +90,7 @@ export async function getForYouRecommendations(userId: string | undefined): Prom
 }
 
 export async function getUserInterest(userId?: string): Promise<string | null> {
+    const supabase = await createServerSupabase();
     let targetId = userId;
     
     if (!targetId) {
