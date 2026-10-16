@@ -1167,7 +1167,7 @@ export async function updateSubmissionAdmin(id: string, updates: AdminUpdate) {
     const cookieStore = await cookies();
     const bypassCookie = cookieStore.get('admin_bypass')?.value;
     const sessionCookie = cookieStore.get('admin_session')?.value;
-    const isTokenAdmin = verifyAdminToken(bypassCookie).valid || verifyAdminToken(sessionCookie).valid;
+    const isTokenAdmin = (await verifyAdminToken(bypassCookie)).valid || (await verifyAdminToken(sessionCookie)).valid;
 
     if (!isTokenAdmin) {
         const serverSupabase = await createServerSupabase();

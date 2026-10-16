@@ -75,7 +75,7 @@ export function stripMarkdownAndLatex(text: string | null | undefined): string {
  */
 export function getAvatarUrl(url: string | null | undefined): string {
     if (!url) return '';
-    if (url.startsWith('/') || url.startsWith('data:')) return url;
+    if (url.startsWith('/') || url.startsWith('data:') || url.includes('api.dicebear.com')) return url;
 
     let processedUrl = url;
     

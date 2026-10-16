@@ -40,7 +40,7 @@ export const BottomNavBar = () => {
         { name: 'Informativo', href: '/gcif', icon: 'colisor', color: 'brand-red', dataTour: 'mobile-eixo-cgif' },
         ...(isLoggedIn
             ? ((isAdult || userCategory === 'pesquisador')
-                ? [{ name: 'Lançar à Órbita', href: AppRoutes.ENVAR, icon: 'rocket_launch', isAction: true, color: 'brand-blue' }]
+                ? [{ name: 'Lançar à Órbita', href: AppRoutes.ENVIAR, icon: 'rocket_launch', isAction: true, color: 'brand-blue' }]
                 : [])
             : [{ name: 'Login', href: '/login', icon: 'login', isAction: true, color: 'brand-blue' }]
         ),

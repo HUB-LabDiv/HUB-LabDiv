@@ -144,18 +144,38 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
             return;
         }
 
-        const payload = {
-            type,
-            description,
-            user_agent: navigator.userAgent,
-            url: window.location.href,
-            // Passa o email do usuário logado para o servidor identificar melhor
-            email: currentUser?.email,
-            context: reportContext
-        };
-
         setIsSubmitting(true);
         try {
+            let screenshot_url: string | null = null;
+            if (screenshot) {
+                try {
+                    const ext = screenshot.name.split('.').pop() || 'png';
+                    const fileName = `feedback/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+                    const { error: uploadError } = await supabase.storage
+                        .from('submissions')
+                        .upload(fileName, screenshot, { upsert: false });
+
+                    if (!uploadError) {
+                        const { data: urlData } = supabase.storage
+                            .from('submissions')
+                            .getPublicUrl(fileName);
+                        screenshot_url = urlData.publicUrl;
+                    }
+                } catch (upErr) {
+                    console.warn('[ReportModal] Falha no upload do screenshot:', upErr);
+                }
+            }
+
+            const payload = {
+                type,
+                description,
+                user_agent: navigator.userAgent,
+                url: window.location.href,
+                email: currentUser?.email,
+                screenshot_url,
+                context: reportContext
+            };
+
             const result = await submitFeedback(payload);
             if (result.success) {
                 setStep('success');
@@ -165,6 +185,14 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
         } catch (err: any) {
             const isOffline = !navigator.onLine || err.message?.includes('fetch') || err.message?.includes('Network');
             if (isOffline) {
+                const payload = {
+                    type,
+                    description,
+                    user_agent: navigator.userAgent,
+                    url: window.location.href,
+                    email: currentUser?.email,
+                    context: reportContext
+                };
                 await offlineCrud.enqueueMutation({ endpoint: '/api/sync', method: 'POST', payload });
                 toast.success('Salvo localmente! Será enviado quando houver conexão.');
                 onClose();

@@ -18,14 +18,59 @@ export const maxDuration = 60;
 import { createServerSupabase } from '@/lib/supabase/server';
 import { createAdminSupabase } from '@/lib/supabase/admin';
 
+// Controle de concorrência e rate limiting para proteção contra DoS e esgotamento de memória
+let activeBrowsers = 0;
+const MAX_CONCURRENT_BROWSERS = 2;
+
+interface RateLimitEntry {
+    count: number;
+    resetAt: number;
+}
+const ipAttempts = new Map<string, RateLimitEntry>();
+
+function checkRateLimit(ip: string): boolean {
+    const now = Date.now();
+    const entry = ipAttempts.get(ip);
+    if (!entry || now > entry.resetAt) {
+        ipAttempts.set(ip, { count: 1, resetAt: now + 5 * 60 * 1000 });
+        return true;
+    }
+    if (entry.count >= 5) {
+        return false;
+    }
+    entry.count++;
+    return true;
+}
+
 export async function POST(req: NextRequest) {
+    const ip = req.headers.get('x-forwarded-for')?.split(',')[0].trim() || '127.0.0.1';
+    if (!checkRateLimit(ip)) {
+        return NextResponse.json(
+            { success: false, error: 'Muitas tentativas de validação. Aguarde alguns minutos antes de tentar novamente.' },
+            { status: 429 }
+        );
+    }
+
+    if (activeBrowsers >= MAX_CONCURRENT_BROWSERS) {
+        return NextResponse.json(
+            { success: false, error: 'Servidor ocupado processando validações USP. Tente novamente em alguns segundos.' },
+            { status: 429 }
+        );
+    }
+
     let browser;
+    activeBrowsers++;
     try {
         const body = await req.json();
         const { nUsp, password } = body;
 
-        if (!nUsp || !password) {
-            return NextResponse.json({ success: false, error: 'Credenciais ausentes' }, { status: 400 });
+        if (!nUsp || !password || typeof nUsp !== 'string' || typeof password !== 'string') {
+            return NextResponse.json({ success: false, error: 'Credenciais ausentes ou inválidas' }, { status: 400 });
+        }
+
+        const cleanNUsp = nUsp.trim();
+        if (!/^\d{4,12}$/.test(cleanNUsp)) {
+            return NextResponse.json({ success: false, error: 'Número USP inválido. Deve conter apenas números.' }, { status: 400 });
         }
 
         const supabaseAdmin = createAdminSupabase();
@@ -336,11 +381,19 @@ export async function POST(req: NextRequest) {
         });
 
     } catch (error: any) {
-        if (browser) await browser.close();
         console.error('[Jupiter Auth Error]', error);
         return NextResponse.json({ 
             success: false, 
             error: error.message || 'Erro ao comunicar com sistema da USP.' 
         }, { status: 500 });
+    } finally {
+        activeBrowsers = Math.max(0, activeBrowsers - 1);
+        if (browser) {
+            try {
+                await browser.close();
+            } catch (closeErr) {
+                console.error('[Jupiter] Erro ao fechar instância do browser:', closeErr);
+            }
+        }
     }
 }

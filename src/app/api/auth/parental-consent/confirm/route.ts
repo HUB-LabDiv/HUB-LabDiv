@@ -10,7 +10,7 @@
  */
 
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createAdminSupabase } from '@/lib/supabase/admin';
 import { z } from 'zod';
 
 const ConfirmSchema = z.object({
@@ -25,29 +25,21 @@ export async function POST(req: Request) {
     const body = await req.json();
     const { tokenId, childId, ipHash } = ConfirmSchema.parse(body);
 
-    // CRÍTICO: Usamos o SERVICE ROLE KEY para bypassar RLS em uma ação de sistema (verificação de anonimato)
-    const supabaseAdmin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
-    );
+    const supabaseAdmin = createAdminSupabase();
 
-    // 1. Validar Token (Atomicamente via Service Role) - Mantemos 'pending' até o final
+    // 1. Validar Token (Atomicamente via Service Role e com verificação temporal rigorosa de expiração)
+    const nowIso = new Date().toISOString();
     const { data: tokenData, error: tokenError } = await supabaseAdmin
       .from('parental_consent_tokens')
-      .select('id, guardian_email, status')
+      .select('id, guardian_email, status, expires_at')
       .eq('id', tokenId)
       .eq('child_id', childId)
       .eq('status', 'pending')
+      .gt('expires_at', nowIso)
       .single();
 
     if (tokenError || !tokenData) {
-        console.error('[PARENTAL-CONSENT] Token Error:', tokenError);
+        console.error('[PARENTAL-CONSENT] Token Error or Expired:', tokenError);
         return NextResponse.json({ error: 'Link de consentimento inválido ou expirado.' }, { status: 400 });
     }
 

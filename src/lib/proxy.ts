@@ -126,8 +126,8 @@ export async function proxy(request: NextRequest) {
         // Check for cryptographically signed admin tokens (session ou bypass)
         const adminSession = request.cookies.get('admin_session')?.value;
         const adminBypass = request.cookies.get('admin_bypass')?.value;
-        const bypassCheck = verifyAdminToken(adminBypass);
-        const sessionCheck = verifyAdminToken(adminSession);
+        const bypassCheck = await verifyAdminToken(adminBypass);
+        const sessionCheck = await verifyAdminToken(adminSession);
         const tokenCheck = bypassCheck.valid ? bypassCheck : sessionCheck;
 
         if (tokenCheck.valid && tokenCheck.role) {

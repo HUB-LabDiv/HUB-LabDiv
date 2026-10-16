@@ -593,8 +593,8 @@ const pageContent: Record<string, any> = {
                     <div className="space-y-6">
                         <p>Utilize o KitDiv para assets visuais e tipografia oficial. Caso precise de suporte personalizado, agende uma Mentoria com nossa equipe técnica de comunicação.</p>
                         <div className="flex flex-wrap gap-4">
-                            <ActionButton label="Acessar KitDiv" icon={<Download className="w-4 h-4" />} href="/arquivo-labdiv#kitdiv" variant="primary" />
-                            <ActionButton label="Agendar Mentoria" icon={<Brain className="w-4 h-4" />} href="/arquivo-labdiv#mentorias" variant="secondary" />
+                            <ActionButton label="Acessar KitDiv" icon={<Download className="w-4 h-4" />} href="/iniciativas/labdiv#kitdiv" variant="primary" />
+                            <ActionButton label="Agendar Mentoria" icon={<Brain className="w-4 h-4" />} href="/iniciativas/labdiv#mentorias" variant="secondary" />
                         </div>
                     </div>
                 )
@@ -602,8 +602,8 @@ const pageContent: Record<string, any> = {
         ],
         dates: [],
         actions: [
-            { label: 'Acessar KitDiv', icon: <Download className="w-4 h-4" />, href: '/arquivo-labdiv' },
-            { label: 'Agendar Mentoria', icon: <Brain className="w-4 h-4" />, href: '/arquivo-labdiv' }
+            { label: 'Acessar KitDiv', icon: <Download className="w-4 h-4" />, href: '/iniciativas/labdiv' },
+            { label: 'Agendar Mentoria', icon: <Brain className="w-4 h-4" />, href: '/iniciativas/labdiv' }
         ]
     },
     'protecao': {

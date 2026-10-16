@@ -23,7 +23,7 @@ export async function login(formData: FormData) {
     const adminPassword = process.env.ADMIN_PASSWORD;
 
     if (adminPassword && password === adminPassword) {
-        const token = createAdminToken('admin');
+        const token = await createAdminToken('admin');
         const cookieStore = await cookies();
         const cookieOptions = {
             httpOnly: true,

@@ -11,32 +11,65 @@
 
 import { NextResponse } from 'next/server';
 import { createServerSupabase } from '@/lib/supabase/server';
+import { z } from 'zod';
+
+const FeedbackSyncSchema = z.object({
+  type: z.string().min(1).max(50),
+  description: z.string().min(5).max(3000),
+  user_agent: z.string().max(500).optional(),
+  url: z.string().max(500).optional(),
+});
+
+const SacSyncSchema = z.object({
+  pergunta: z.string().min(5).max(2000),
+  nome: z.string().min(2).max(120),
+  num_usp: z.string().max(30).optional().default(''),
+  email: z.string().email().or(z.literal('')).optional().default(''),
+});
+
+const MAX_MUTATIONS_BATCH = 15;
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const mutations = Array.isArray(body) ? body : [body];
+    if (!Array.isArray(body) && typeof body !== 'object') {
+      return NextResponse.json({ success: false, error: 'Payload inválido.' }, { status: 400 });
+    }
 
-    if (mutations.length === 0) {
+    const rawMutations = Array.isArray(body) ? body : [body];
+
+    if (rawMutations.length === 0) {
       return NextResponse.json({ success: true, message: 'Fila vazia.' });
     }
 
-    const supabase = await createServerSupabase();
+    if (rawMutations.length > MAX_MUTATIONS_BATCH) {
+      return NextResponse.json({ 
+        success: false, 
+        error: `Tamanho máximo de lote excedido (máximo: ${MAX_MUTATIONS_BATCH} itens por sincronização).` 
+      }, { status: 400 });
+    }
 
-    for (const mutation of mutations) {
-      const { payload } = mutation;
+    const supabase = await createServerSupabase();
+    let processedCount = 0;
+
+    for (const mutation of rawMutations) {
+      const { payload } = mutation || {};
       const data = payload?._type === 'formData' ? payload.data : payload;
 
-      if (!data) continue;
+      if (!data || typeof data !== 'object') continue;
 
       // 1. Processa Reports e Feedbacks
       if (data.type && data.description) {
+        const feedbackParsed = FeedbackSyncSchema.safeParse(data);
+        if (!feedbackParsed.success) continue;
+
+        const validFb = feedbackParsed.data;
         await supabase.from('feedback_reports').insert([{
-          type: data.type,
-          description: data.description,
+          type: validFb.type,
+          description: validFb.description,
           metadata: {
-            user_agent: data.user_agent,
-            url: data.url,
+            user_agent: validFb.user_agent,
+            url: validFb.url,
             platform: 'web_offline_sync'
           }
         }]);
@@ -46,20 +79,25 @@ export async function POST(req: Request) {
           await sendAdminNotification({
             type: 'bug_report',
             userName: 'Usuário Offline',
-            content: data.description,
-            url: data.url || ''
+            content: validFb.description,
+            url: validFb.url || ''
           });
         } catch (notifErr) {
           console.warn('[Sync Engine] Notificação de admin ignorada:', notifErr);
         }
+        processedCount++;
       } 
       // 2. Processa Dúvidas do SAC
       else if (data.pergunta && data.nome) {
+        const sacParsed = SacSyncSchema.safeParse(data);
+        if (!sacParsed.success) continue;
+
+        const validSac = sacParsed.data;
         await supabase.from('sac_faq').insert([{
-          pergunta: data.pergunta,
-          nome: data.nome,
-          num_usp: data.num_usp,
-          email: data.email || '',
+          pergunta: validSac.pergunta,
+          nome: validSac.nome,
+          num_usp: validSac.num_usp,
+          email: validSac.email || '',
           status: 'pending'
         }]);
 
@@ -67,24 +105,26 @@ export async function POST(req: Request) {
           const { sendAdminNotification } = await import('@/lib/notifications.server');
           await sendAdminNotification({
             type: 'question',
-            userName: `${data.nome} (Nº USP: ${data.num_usp}) - Via Sincronização Offline`,
-            question: data.pergunta,
-            details: data.email
+            userName: `${validSac.nome} (Nº USP: ${validSac.num_usp}) - Via Sincronização Offline`,
+            question: validSac.pergunta,
+            details: validSac.email
           });
         } catch (notifErr) {
           console.warn('[Sync Engine] Notificação de admin ignorada para SAC:', notifErr);
         }
+        processedCount++;
       }
       // 3. Processa Submissões do Diagramador (Lançar em Órbita)
       else if (data.title && data.authors) {
         const { createSubmission } = await import('@/app/actions/submissions');
         await createSubmission(data);
+        processedCount++;
       }
     }
 
     return NextResponse.json({ 
       success: true, 
-      processed: mutations.length,
+      processed: processedCount,
       message: 'Sincronização concluída com sucesso!'
     });
 

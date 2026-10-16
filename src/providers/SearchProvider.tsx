@@ -12,7 +12,7 @@
  */
 
 
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useMemo } from 'react';
 import { usePathname } from 'next/navigation';
 
 type SearchScope = 'GLOBAL' | 'WIKI' | 'MAPA';
@@ -28,25 +28,23 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
 /**
  * 🧠 SearchProvider: O Cérebro da Busca Contextual (V3.1.0)
- * Detecta automaticamente o escopo via Regex Routing.
+ * Detecta automaticamente o escopo via Regex Routing sem render cascata.
  */
 export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
     const [query, setQuery] = useState('');
-    const [scope, setScope] = useState<SearchScope>('GLOBAL');
     const pathname = usePathname();
 
-    useEffect(() => {
-        // Regex Routing Engine
-        if (pathname.match(/^\/colisor/)) {
-            setScope('WIKI');
-        } else if (pathname.match(/^\/mapa/)) {
-            setScope('MAPA');
+    const scope: SearchScope = useMemo(() => {
+        if (/^\/colisor/.test(pathname)) {
+            return 'WIKI';
+        } else if (/^\/mapa/.test(pathname)) {
+            return 'MAPA';
         } else {
-            setScope('GLOBAL');
+            return 'GLOBAL';
         }
     }, [pathname]);
 
-    const getPlaceholder = useCallback(() => {
+    const placeholder = useMemo(() => {
         switch (scope) {
             case 'WIKI': return 'Pesquisar documentação técnica...';
             case 'MAPA': return 'Pesquisar locais e mídias...';
@@ -55,7 +53,7 @@ export const SearchProvider = ({ children }: { children: React.ReactNode }) => {
     }, [scope]);
 
     return (
-        <SearchContext.Provider value={{ query, setQuery, scope, placeholder: getPlaceholder() }}>
+        <SearchContext.Provider value={{ query, setQuery, scope, placeholder }}>
             {children}
         </SearchContext.Provider>
     );

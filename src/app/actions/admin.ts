@@ -14,6 +14,7 @@
 
 import { createServerSupabase } from '@/lib/supabase/server';
 import { createAdminSupabase } from '@/lib/supabase/admin';
+import { createAdminToken, verifyAdminToken, AdminRole } from '@/lib/auth/admin-token';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
 
@@ -21,10 +22,24 @@ const BulkActionSchema = z.object({
     submission_ids: z.array(z.string().uuid()).min(1, "Selecione ao menos um item"),
 });
 
+export async function requireAdminOrModerator(): Promise<{ authorized: boolean; role?: string; error?: string }> {
+    const session = await getAdminSessionRole();
+    if (!session.role || (session.role !== 'admin' && session.role !== 'moderator')) {
+        return { authorized: false, error: 'Acesso não autorizado. Permissão de administrador ou moderador requerida.' };
+    }
+    return { authorized: true, role: session.role };
+}
+
 /**
- * Valida sugestões de IA em massa com proteção Zod
+ * Valida sugestões de IA em massa com proteção Zod e RBAC
  */
 export async function validateAISuggestionsBulk(ids: string[]) {
+    // 0. Verificação de Permissão RBAC
+    const auth = await requireAdminOrModerator();
+    if (!auth.authorized) {
+        return { success: false, error: auth.error };
+    }
+
     // 1. Validação Strict
     const result = BulkActionSchema.safeParse({ submission_ids: ids });
 
@@ -77,6 +92,11 @@ export async function validateAISuggestionsBulk(ids: string[]) {
  * Solicita re-processamento de IA para itens com erro
  */
 export async function reprocessAI(submissionId: string) {
+    const auth = await requireAdminOrModerator();
+    if (!auth.authorized) {
+        return { success: false, error: auth.error };
+    }
+
     const supabase = await createServerSupabase();
     const { error } = await supabase
         .from('submissions')
@@ -95,6 +115,11 @@ export async function reprocessAI(submissionId: string) {
  * Vincula uma submissão a uma trilha e tópico.
  */
 export async function linkSubmissionToTrail(submissionId: string, trailId: string, topicIndex: number) {
+    const auth = await requireAdminOrModerator();
+    if (!auth.authorized) {
+        return { success: false, error: auth.error };
+    }
+
     const supabase = await createServerSupabase();
     const { error } = await supabase
         .from('trail_submissions')
@@ -119,6 +144,11 @@ export async function linkSubmissionToTrail(submissionId: string, trailId: strin
  * Remove o vínculo de uma submissão com uma trilha.
  */
 export async function unlinkSubmissionFromTrail(linkId: string, trailId: string) {
+    const auth = await requireAdminOrModerator();
+    if (!auth.authorized) {
+        return { success: false, error: auth.error };
+    }
+
     const supabase = await createServerSupabase();
     const { error } = await supabase
         .from('trail_submissions')
@@ -173,8 +203,6 @@ export async function fetchSubmissionTrails(submissionId: string) {
     return { success: true, data };
 }
 
-import { createAdminToken, verifyAdminToken, AdminRole } from '@/lib/auth/admin-token';
-
 export async function loginAdminBypass(login: string, senha: string) {
     const cookieStore = await import('next/headers').then(m => m.cookies());
 
@@ -199,7 +227,7 @@ export async function loginAdminBypass(login: string, senha: string) {
     };
 
     if ((loginMatchesEmail || loginMatchesAlias) && senhaCorreta && adminPassword) {
-        const token = createAdminToken('admin');
+        const token = await createAdminToken('admin');
         cookieStore.set('admin_bypass', token, cookieOptions);
         cookieStore.set('admin_session', token, cookieOptions);
         return { success: true };
@@ -224,7 +252,7 @@ export async function loginAdminBypass(login: string, senha: string) {
 
         if (profile?.id && (profile.role === 'admin' || profile.role === 'moderator')) {
             const role: AdminRole = profile.role === 'admin' ? 'admin' : 'moderator';
-            const token = createAdminToken(role);
+            const token = await createAdminToken(role);
             cookieStore.set('admin_bypass', token, cookieOptions);
             cookieStore.set('admin_session', token, cookieOptions);
         }
@@ -243,12 +271,12 @@ export async function getAdminSessionRole(): Promise<{ role: string | null }> {
     const bypassCookie = cookieStore.get('admin_bypass')?.value;
     const sessionCookie = cookieStore.get('admin_session')?.value;
 
-    const bypassCheck = verifyAdminToken(bypassCookie);
+    const bypassCheck = await verifyAdminToken(bypassCookie);
     if (bypassCheck.valid && bypassCheck.role) {
         return { role: bypassCheck.role };
     }
 
-    const sessionCheck = verifyAdminToken(sessionCookie);
+    const sessionCheck = await verifyAdminToken(sessionCookie);
     if (sessionCheck.valid && sessionCheck.role) {
         return { role: sessionCheck.role };
     }

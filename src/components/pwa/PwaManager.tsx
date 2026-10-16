@@ -88,21 +88,32 @@ export function PwaManager() {
     }, []);
 
     useEffect(() => {
-        // Intercepta Deep Links do Widget (ex: hublabdiv://trilhas)
+        // Intercepta Hardware Back Button no Android (Capacitor)
+        const backListener = App.addListener('backButton', ({ canGoBack }) => {
+            const isRoot = typeof window !== 'undefined' && (window.location.pathname === '/' || window.location.pathname === '');
+            if (isRoot) {
+                App.exitApp();
+            } else if (canGoBack) {
+                router.back();
+            } else {
+                router.push('/');
+            }
+        });
+
+        // Intercepta Deep Links do Widget (ex: hublabdiv://trilhas) sem full-reload
         const listener = App.addListener('appUrlOpen', (event) => {
             const urlString = event.url;
             if (urlString.startsWith('hublabdiv://')) {
                 const path = urlString.replace('hublabdiv://', '');
                 
-                // Mapeia todos os atalhos dos Widgets
-                if (path === 'comunidade') window.location.href = '/comunidade';
-                else if (path === 'gcif') window.location.href = '/gcif';
-                else if (path === 'enviar') window.location.href = '/enviar';
-                else if (path === 'ferramentas') window.location.href = '/ferramentas';
-                else if (path === 'menu') window.location.href = '/';
-                else if (path === 'lab-pessoal') window.location.href = '/lab';
-                else if (path === 'trilhas') window.location.href = '/ferramentas/trilhas';
-                else window.location.href = `/${path}`;
+                // Mapeia todos os atalhos dos Widgets via SPA router sem hard reload
+                if (path === 'comunidade' || path === 'menu') router.push('/');
+                else if (path === 'gcif') router.push('/gcif');
+                else if (path === 'enviar') router.push('/enviar');
+                else if (path === 'ferramentas') router.push('/ferramentas');
+                else if (path === 'lab-pessoal') router.push('/lab');
+                else if (path === 'trilhas') router.push('/ferramentas/trilhas');
+                else router.push(`/${path}`);
             }
         });
 
@@ -167,7 +178,6 @@ export function PwaManager() {
                     const rotasSecundarias = [
                         '/',
                         '/interacao',
-                        '/drops',
                         '/perguntas'
                     ];
                     
@@ -187,10 +197,11 @@ export function PwaManager() {
         }, 3000);
 
         return () => {
+            backListener.then(l => l.remove());
             listener.then(l => l.remove());
             clearTimeout(warmerTimer);
         };
-    }, []);
+    }, [router]);
 
     useEffect(() => {
         // Handle native online/offline events

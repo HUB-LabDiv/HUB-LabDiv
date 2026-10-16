@@ -64,10 +64,10 @@ async function checkIsAdmin(): Promise<boolean> {
         const bypassCookie = cookieStore.get('admin_bypass')?.value;
         const sessionCookie = cookieStore.get('admin_session')?.value;
 
-        const bypassCheck = verifyAdminToken(bypassCookie);
+        const bypassCheck = await verifyAdminToken(bypassCookie);
         if (bypassCheck.valid && bypassCheck.role === 'admin') return true;
 
-        const sessionCheck = verifyAdminToken(sessionCookie);
+        const sessionCheck = await verifyAdminToken(sessionCookie);
         if (sessionCheck.valid && sessionCheck.role === 'admin') return true;
 
         const supabase = await createServerSupabase();

@@ -40,6 +40,14 @@ export async function submitOportunidade(rawInput: unknown) {
 
         const data = parsed.data;
         const supabase = await createServerSupabase();
+        const { data: { user }, error: authError } = await supabase.auth.getUser();
+
+        if (authError || !user) {
+            return {
+                success: false,
+                error: 'Você precisa estar conectado com uma conta para publicar uma oportunidade.'
+            };
+        }
 
         const payload = {
             titulo: data.titulo.trim(),
@@ -50,21 +58,9 @@ export async function submitOportunidade(rawInput: unknown) {
             link: data.link?.trim() || null,
         };
 
-        let { error } = await supabase
+        const { error } = await supabase
             .from('oportunidades')
             .insert(payload);
-
-        if (error) {
-            console.warn('[Oportunidades] Standard insert failed, retrying with Admin Client:', error.message);
-            try {
-                const { createAdminSupabase } = await import('@/lib/supabase/admin');
-                const adminSupabase = createAdminSupabase();
-                const { error: adminErr } = await adminSupabase.from('oportunidades').insert(payload);
-                if (!adminErr) error = null;
-            } catch (adminEx) {
-                console.error('[Oportunidades] Admin Supabase client error:', adminEx);
-            }
-        }
 
         if (error) {
             console.error('Erro ao cadastrar oportunidade:', error);

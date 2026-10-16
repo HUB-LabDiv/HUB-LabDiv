@@ -16,16 +16,15 @@
 
 export enum AppRoutes {
     HOME = '/',
-    ENVAR = '/enviar',
+    ENVIAR = '/enviar',
     LAB = '/lab',
     COLISOR = '/colisor',
     MAPA = '/mapa',
     ADMIN = '/admin',
     PERGUNTAS = '/perguntas',
-    ARQUIVO_LABDIV = '/arquivo-labdiv',
+    LABDIV = '/iniciativas/labdiv',
     WIKI = '/wiki',
     EMARANHAMENTO = '/emaranhamento',
-    COMUNIDADE = '/',
 }
 
 export interface UserMinimalDTO {

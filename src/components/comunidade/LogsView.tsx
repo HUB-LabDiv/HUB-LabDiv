@@ -66,25 +66,41 @@ export function LogsView() {
     }, []);
 
     const [feedScope, setFeedScope] = useState<'todos' | 'seguindo'>('todos');
+    const feedScopeRef = useRef<'todos' | 'seguindo'>(feedScope);
 
     useEffect(() => {
-        fetchDrops();
-        supabase.auth.getUser().then(({ data }) => setUser(data.user));
+        feedScopeRef.current = feedScope;
+    }, [feedScope]);
+
+    useEffect(() => {
+        let isMounted = true;
+        const init = async () => {
+            const { data } = await supabase.auth.getUser();
+            const currentUser = data?.user || null;
+            if (isMounted) {
+                if (currentUser) setUser(currentUser);
+                await fetchDrops(feedScopeRef.current, currentUser);
+            }
+        };
+        init();
 
         const channel = supabase
             .channel('drops_realtime_hub')
             .on('postgres_changes', { event: '*', schema: 'public', table: 'micro_articles' }, () => {
-                fetchDrops();
+                fetchDrops(feedScopeRef.current);
             })
             .subscribe();
 
-        return () => { supabase.removeChannel(channel); };
+        return () => {
+            isMounted = false;
+            supabase.removeChannel(channel);
+        };
     }, []);
 
-    const fetchDrops = async (scope: 'todos' | 'seguindo' = feedScope) => {
+    const fetchDrops = async (scope?: 'todos' | 'seguindo', passedUser?: any) => {
+        const activeScope = scope || feedScopeRef.current;
         setIsLoading(true);
-        const { data: { session } } = await supabase.auth.getSession();
-        let followingIds: string[] = [];
+        const currentUser = passedUser !== undefined ? passedUser : (user || (await supabase.auth.getUser()).data.user);
         const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
         
         let queryBuilder = supabase
@@ -109,11 +125,11 @@ export function LogsView() {
             .neq('moderation_status', 'suspended')
             .or(`is_featured.eq.true,created_at.gte.${sevenDaysAgo}`);
 
-        if (scope === 'seguindo' && user) {
+        if (activeScope === 'seguindo' && currentUser) {
             const { data: follows } = await supabase
                 .from('follows')
                 .select('following_id')
-                .eq('follower_id', user.id);
+                .eq('follower_id', currentUser.id);
             
             if (follows && follows.length > 0) {
                 const followingIds = follows.map(f => f.following_id);
@@ -123,7 +139,7 @@ export function LogsView() {
                 setIsLoading(false);
                 return;
             }
-        } else if (scope === 'seguindo' && !user) {
+        } else if (activeScope === 'seguindo' && !currentUser) {
              setDrops([]);
              setIsLoading(false);
              return;
@@ -135,6 +151,7 @@ export function LogsView() {
 
         if (error) {
             console.error('[Drops] Fetch error:', error);
+            setIsLoading(false);
             return;
         }
 
@@ -147,12 +164,12 @@ export function LogsView() {
                 .neq('moderation_status', 'suspended');
 
             let userReaction = null;
-            if (user) {
+            if (currentUser) {
                 const { data: reaction } = await supabase
                     .from('micro_article_likes')
                     .select('reaction_type')
                     .eq('article_id', drop.id)
-                    .eq('user_id', user.id)
+                    .eq('user_id', currentUser.id)
                     .single();
                 userReaction = reaction?.reaction_type || null;
             }
@@ -234,10 +251,6 @@ export function LogsView() {
                 <div className="flex p-1 bg-white/50 dark:bg-card-dark/40 backdrop-blur-xl border border-gray-200 dark:border-white/10 rounded-full shadow-sm">
                     <button
                         onClick={() => {
-                            if (!user) {
-                                toast.error('Faça login para ver os logs de quem você segue!');
-                                return;
-                            }
                             setFeedScope('todos');
                             fetchDrops('todos');
                         }}

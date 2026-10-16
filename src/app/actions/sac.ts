@@ -15,6 +15,7 @@
 import { createServerSupabase } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { Resend } from 'resend';
+import { requireAdminOrModerator } from '@/app/actions/admin';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -23,30 +24,21 @@ export async function submitFAQ(data: { pergunta: string; nome: string; num_usp:
         const supabase = await createServerSupabase();
         
         const { data: user } = await supabase.auth.getUser();
+        if (!user?.user) {
+            return { success: false, error: 'Você precisa estar autenticado para enviar uma dúvida ao SAC.' };
+        }
 
         const faqPayload = {
-            pergunta: data.pergunta,
-            nome: data.nome,
-            num_usp: data.num_usp,
-            email: data.email || user?.user?.email || '',
+            pergunta: data.pergunta?.trim(),
+            nome: data.nome?.trim(),
+            num_usp: data.num_usp?.trim(),
+            email: data.email?.trim() || user.user.email || '',
             status: 'pending'
         };
 
-        let { error } = await supabase
+        const { error } = await supabase
             .from('sac_faq')
             .insert(faqPayload);
-
-        if (error) {
-            console.warn('[SAC] Standard insert failed, retrying with Admin Client:', error.message);
-            try {
-                const { createAdminSupabase } = await import('@/lib/supabase/admin');
-                const adminSupabase = createAdminSupabase();
-                const { error: adminErr } = await adminSupabase.from('sac_faq').insert(faqPayload);
-                if (!adminErr) error = null;
-            } catch (adminEx) {
-                console.error('[SAC] Admin Supabase client error:', adminEx);
-            }
-        }
 
         if (error) {
             console.error('Erro ao submeter FAQ:', error);
@@ -98,6 +90,11 @@ export async function getApprovedFAQs() {
 
 export async function getAdminFAQs(statusFilter?: string) {
     try {
+        const auth = await requireAdminOrModerator();
+        if (!auth.authorized) {
+            return { success: false, error: auth.error, data: [] };
+        }
+
         const supabase = await createServerSupabase();
         
         let query = supabase.from('sac_faq').select('*').order('created_at', { ascending: false });
@@ -122,12 +119,12 @@ export async function getAdminFAQs(statusFilter?: string) {
 
 export async function updateFAQStatus(id: string, status: string, resposta?: string) {
     try {
-        const supabase = await createServerSupabase();
-        
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-            return { success: false, error: 'Acesso negado' };
+        const auth = await requireAdminOrModerator();
+        if (!auth.authorized) {
+            return { success: false, error: auth.error };
         }
+
+        const supabase = await createServerSupabase();
 
         // Recupera o faq antes de atualizar para pegar o e-mail do aluno
         const { data: faqItem, error: fetchError } = await supabase

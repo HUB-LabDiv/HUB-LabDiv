@@ -81,8 +81,10 @@ export async function GET(request: Request) {
         const rawContentType = response.headers.get('content-type') || 'image/jpeg';
         const contentType = rawContentType.toLowerCase();
 
-        // Enforce strict image MIME types (prevent proxying HTML/XSS/scripts)
-        if (!contentType.startsWith('image/') || contentType.includes('svg')) {
+        // Enforce strict image MIME types (allow image/svg+xml from trusted host api.dicebear.com, or standard raster images)
+        const isDicebear = parsedUrl.hostname === 'api.dicebear.com';
+        const isSvg = contentType.includes('svg');
+        if (!contentType.startsWith('image/') || (isSvg && !isDicebear)) {
             return new NextResponse('Target resource is not a valid image format', { status: 415 });
         }
 
@@ -97,6 +99,12 @@ export async function GET(request: Request) {
         headers.set('Content-Type', contentType.split(';')[0]);
         headers.set('X-Content-Type-Options', 'nosniff');
         headers.set('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
+
+        // Se for SVG, protege contra qualquer execução de script ou XSS
+        if (isSvg) {
+            headers.set('Content-Security-Policy', "default-src 'none'; style-src 'unsafe-inline'");
+            headers.set('Content-Disposition', 'inline; filename="avatar.svg"');
+        }
 
         return new NextResponse(buffer, {
             status: 200,

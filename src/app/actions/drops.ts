@@ -74,7 +74,7 @@ export async function createDrop(content: string, parentId?: string) {
         console.error('Failed to send drop notification email:', notifyError);
     }
 
-    revalidatePath('/drops');
+    revalidatePath('/');
     revalidatePath('/admin/drops');
     
     return { success: true, data: drop };
@@ -216,7 +216,7 @@ export async function reactToDrop(dropId: string, reactionType: 'up' | 'down') {
         });
     }
 
-    revalidatePath('/drops');
+    revalidatePath('/');
     return { success: true };
 }
 

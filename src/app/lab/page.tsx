@@ -24,12 +24,11 @@ interface LabPageProps {
 export default async function LabPage({ searchParams }: LabPageProps) {
     const supabase = await createServerSupabase();
     
-    // Auth Check
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
+    // Auth Check (Secure Supabase Server Component pattern)
+    const { data: { user: currentUser } } = await supabase.auth.getUser();
+    if (!currentUser) {
         redirect('/login');
     }
-    const currentUser = session.user;
     
     // Parse search parameters
     const params = await searchParams;

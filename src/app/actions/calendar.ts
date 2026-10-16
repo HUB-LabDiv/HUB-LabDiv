@@ -14,6 +14,14 @@
 
 import { createServerSupabase } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
+
+const CustomBlockSchema = z.object({
+    title: z.string().trim().min(1, 'Título é obrigatório').max(100, 'Máximo de 100 caracteres'),
+    duration: z.number().positive('Duração deve ser positiva').max(24, 'Máximo de 24 horas')
+});
+
+const IdSchema = z.string().min(1, 'ID inválido');
 
 // --- CUSTOM BLOCKS ---
 
@@ -34,6 +42,11 @@ export async function getCustomBlocks() {
 }
 
 export async function addCustomBlock(title: string, duration: number) {
+    const parsed = CustomBlockSchema.safeParse({ title, duration });
+    if (!parsed.success) {
+        return { success: false, error: parsed.error.issues[0]?.message || 'Dados inválidos' };
+    }
+
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -41,7 +54,7 @@ export async function addCustomBlock(title: string, duration: number) {
 
     const { data, error } = await supabase
         .from('user_custom_blocks')
-        .insert([{ user_id: user.id, title, duration }])
+        .insert([{ user_id: user.id, title: parsed.data.title, duration: parsed.data.duration }])
         .select()
         .single();
 
@@ -50,6 +63,11 @@ export async function addCustomBlock(title: string, duration: number) {
 }
 
 export async function deleteCustomBlock(id: string) {
+    const parsed = IdSchema.safeParse(id);
+    if (!parsed.success) {
+        return { success: false, error: 'ID inválido' };
+    }
+
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -58,7 +76,7 @@ export async function deleteCustomBlock(id: string) {
     const { error } = await supabase
         .from('user_custom_blocks')
         .delete()
-        .eq('id', id)
+        .eq('id', parsed.data)
         .eq('user_id', user.id);
 
     if (error) return { success: false, error: error.message };
@@ -112,15 +130,35 @@ export async function getCalendarEvents() {
     return { success: true, data: events };
 }
 
-export async function upsertCalendarEvent(event: any) {
+const UpsertCalendarEventSchema = z.object({
+    id: z.string().optional(),
+    title: z.string().trim().min(1, 'Título é obrigatório').max(200, 'Título muito longo'),
+    start: z.string().min(1, 'Data de início é obrigatória'),
+    end: z.string().optional().nullable(),
+    color: z.string().max(50).optional().nullable(),
+    daysOfWeek: z.array(z.number().int().min(0).max(6)).optional().nullable(),
+    extendedProps: z.object({
+        trail_id: z.string().uuid().optional().nullable(),
+        type: z.string().max(50).optional().nullable(),
+        sourceId: z.string().max(100).optional().nullable(),
+        duration: z.union([z.number(), z.string()]).optional().nullable(),
+        daysOfWeek: z.array(z.number().int().min(0).max(6)).optional().nullable(),
+        description: z.string().max(2000).optional().nullable(),
+        reminder_minutes: z.number().int().min(0).max(43200).optional().nullable(),
+    }).optional().nullable()
+});
+
+export async function upsertCalendarEvent(rawEvent: unknown) {
+    const parsed = UpsertCalendarEventSchema.safeParse(rawEvent);
+    if (!parsed.success) {
+        return { success: false, error: parsed.error.issues[0]?.message || 'Dados do evento inválidos' };
+    }
+
+    const event = parsed.data;
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) return { success: false, error: 'Não autenticado' };
-
-    if (!event || !event.title || !event.start) {
-        return { success: false, error: 'Título e data de início são obrigatórios' };
-    }
 
     const startTimeStamp = Date.parse(event.start);
     if (isNaN(startTimeStamp)) {
@@ -130,7 +168,7 @@ export async function upsertCalendarEvent(event: any) {
     let calculatedEndTime = event.end;
     if (!calculatedEndTime) {
         // If event.end is missing (common on first drop), use duration from extendedProps, or default to 2 hours
-        const durationH = event.extendedProps?.duration ? parseFloat(event.extendedProps.duration) : 2;
+        const durationH = event.extendedProps?.duration ? parseFloat(String(event.extendedProps.duration)) : 2;
         calculatedEndTime = new Date(startTimeStamp + durationH * 60 * 60 * 1000).toISOString();
     } else if (isNaN(Date.parse(calculatedEndTime))) {
         return { success: false, error: 'Data de término inválida' };
@@ -155,7 +193,8 @@ export async function upsertCalendarEvent(event: any) {
         reminder_minutes: event.extendedProps?.reminder_minutes || 1440
     };
 
-    if (event.id && !event.id.includes('.')) { // Simple check if it's a UUID or temp ID
+    const isUuid = event.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(event.id);
+    if (isUuid) {
         const { data, error } = await supabase
             .from('user_calendar_events')
             .upsert({ id: event.id, ...payload })
@@ -175,6 +214,11 @@ export async function upsertCalendarEvent(event: any) {
 }
 
 export async function deleteCalendarEvent(id: string) {
+    const parsed = IdSchema.safeParse(id);
+    if (!parsed.success) {
+        return { success: false, error: 'ID inválido' };
+    }
+
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -183,7 +227,7 @@ export async function deleteCalendarEvent(id: string) {
     const { error } = await supabase
         .from('user_calendar_events')
         .delete()
-        .eq('id', id)
+        .eq('id', parsed.data)
         .eq('user_id', user.id);
 
     if (error) return { success: false, error: error.message };

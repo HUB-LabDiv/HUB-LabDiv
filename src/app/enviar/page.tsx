@@ -103,7 +103,7 @@ function SubmitPageContent() {
 
         if (!authLoading) {
             if (!user) {
-                router.push('/lab');
+                router.push('/login?next=/enviar');
                 return;
             }
             setIsInitializing(false);

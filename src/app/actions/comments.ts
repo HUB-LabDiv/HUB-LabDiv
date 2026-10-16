@@ -33,10 +33,10 @@ async function checkIsAdminOrModerator(): Promise<boolean> {
         const bypassCookie = cookieStore.get('admin_bypass')?.value;
         const sessionCookie = cookieStore.get('admin_session')?.value;
 
-        const bypassCheck = verifyAdminToken(bypassCookie);
+        const bypassCheck = await verifyAdminToken(bypassCookie);
         if (bypassCheck.valid && (bypassCheck.role === 'admin' || bypassCheck.role === 'moderator')) return true;
 
-        const sessionCheck = verifyAdminToken(sessionCookie);
+        const sessionCheck = await verifyAdminToken(sessionCookie);
         if (sessionCheck.valid && (sessionCheck.role === 'admin' || sessionCheck.role === 'moderator')) return true;
 
         const supabase = await createServerSupabase();
@@ -51,12 +51,16 @@ async function checkIsAdminOrModerator(): Promise<boolean> {
 }
 
 export async function addComment(submissionId: string, authorName: string, content: string, inlineParagraphId?: string) {
-    const validated = AddCommentSchema.parse({
+    const validated = AddCommentSchema.safeParse({
         submissionId,
         authorName: authorName.trim(),
         content: content.trim(),
         inlineParagraphId: inlineParagraphId || null,
     });
+
+    if (!validated.success) {
+        return { success: false, error: validated.error.issues[0]?.message || 'Dados de comentário inválidos.' };
+    }
 
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
@@ -64,17 +68,17 @@ export async function addComment(submissionId: string, authorName: string, conte
     const { error } = await supabase
         .from('comments')
         .insert([{
-            submission_id: validated.submissionId,
-            author_name: validated.authorName,
-            content: validated.content,
-            inline_paragraph_id: validated.inlineParagraphId || null,
+            submission_id: validated.data.submissionId,
+            author_name: validated.data.authorName,
+            content: validated.data.content,
+            inline_paragraph_id: validated.data.inlineParagraphId || null,
             user_id: user?.id || null,
             status: 'pendente' // Explicitamente pendente para moderação
         }]);
 
     if (error) {
         console.error("Error adding comment:", error);
-        throw new Error('Falha ao adicionar comentário.');
+        return { success: false, error: 'Falha ao adicionar comentário.' };
     }
 
     return { success: true };

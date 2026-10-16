@@ -1,8 +1,16 @@
+/*!
+ * Hub de Comunicação Científica Lab-Div V3.0
+ * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
+ *
+ * Este programa é um software livre: você pode redistribuí-lo e/ou modificá-lo
+ * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
+ * publicada pela Free Software Foundation.
+ */
+
 "use client";
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
 
 export function InteractivePamphlet() {
@@ -12,9 +20,18 @@ export function InteractivePamphlet() {
     <div className="flex flex-col items-center justify-center min-h-[70vh] w-full max-w-md mx-auto px-4">
       {/* 3D Container */}
       <div 
-        className="relative w-full aspect-[1/1.414] cursor-pointer"
+        role="button"
+        tabIndex={0}
+        aria-label="Alternar visualização frente e verso do panfleto"
+        className="relative w-full aspect-[1/1.414] cursor-pointer focus:outline-none focus:ring-2 focus:ring-brand-yellow/50 rounded-xl"
         style={{ perspective: '1000px' }}
         onClick={() => setIsFlipped(!isFlipped)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            setIsFlipped(!isFlipped);
+          }
+        }}
       >
         <motion.div
           className="w-full h-full relative"
@@ -24,7 +41,7 @@ export function InteractivePamphlet() {
         >
           {/* Front Cover */}
           <div 
-            className="absolute w-full h-full rounded-xl shadow-2xl overflow-hidden bg-brand-dark/90 border border-white/10 flex flex-col p-6 items-center justify-between"
+            className="absolute w-full h-full rounded-xl shadow-2xl overflow-hidden bg-brand-dark/95 border border-white/10 flex flex-col p-6 items-center justify-between"
             style={{ backfaceVisibility: 'hidden' }}
           >
             <div className="w-full flex justify-between items-start">
@@ -50,7 +67,7 @@ export function InteractivePamphlet() {
 
           {/* Back Cover */}
           <div 
-            className="absolute w-full h-full rounded-xl shadow-2xl overflow-hidden bg-surface-base border border-white/10 flex flex-col p-6 items-center justify-between"
+            className="absolute w-full h-full rounded-xl shadow-2xl overflow-hidden bg-brand-dark/95 border border-white/10 flex flex-col p-6 items-center justify-between"
             style={{ 
               backfaceVisibility: 'hidden',
               transform: 'rotateY(180deg)' 
@@ -112,7 +129,9 @@ export function InteractivePamphlet() {
           ENTRAR NO HUB
         </Link>
         <Link 
-          href="/offline"
+          href="https://play.google.com/store/apps/details?id=br.usp.ifusp.hublabdiv&pcampaignid=web_share"
+          target="_blank"
+          rel="noopener noreferrer"
           className="flex-1 bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold py-4 px-6 rounded-xl text-center transition-all flex items-center justify-center gap-2 font-bukra text-sm tracking-wide"
         >
           <span className="material-symbols-outlined">install_mobile</span>

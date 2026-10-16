@@ -26,11 +26,11 @@ export default async function AdminLayout({
     const sessionCookie = cookieStore.get('admin_session')?.value;
     let finalRole: string | null = null;
 
-    const bypassCheck = verifyAdminToken(bypassCookie);
+    const bypassCheck = await verifyAdminToken(bypassCookie);
     if (bypassCheck.valid && bypassCheck.role) {
         finalRole = bypassCheck.role;
     } else {
-        const sessionCheck = verifyAdminToken(sessionCookie);
+        const sessionCheck = await verifyAdminToken(sessionCookie);
         if (sessionCheck.valid && sessionCheck.role) {
             finalRole = sessionCheck.role;
         }

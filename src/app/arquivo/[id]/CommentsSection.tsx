@@ -76,7 +76,11 @@ export function CommentsSection({ submissionId, submissionTitle, initialComments
                 }
             }
 
-            await addComment(submissionId, name, finalContent, filterParagraph || undefined);
+            const res = await addComment(submissionId, name, finalContent, filterParagraph || undefined);
+            if (!res.success) {
+                setError(res.error || 'Erro ao publicar comentário.');
+                return;
+            }
 
             // Send notification
             triggerNotification({

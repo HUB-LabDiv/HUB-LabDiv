@@ -17,16 +17,28 @@ import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { verifyAdminToken } from '@/lib/auth/admin-token';
 
+import { z } from 'zod';
+
+const SubmitFeedbackSchema = z.object({
+    type: z.string().min(1).max(100),
+    description: z.string().min(1, 'Descrição é obrigatória').max(5000),
+    user_agent: z.string().max(500).optional(),
+    url: z.string().max(1000).optional(),
+    email: z.string().email('E-mail inválido').optional().or(z.literal('')),
+    screenshot_url: z.string().optional().nullable(),
+    context: z.any().optional(),
+});
+
 async function checkIsAdminOrModerator(): Promise<boolean> {
     try {
         const cookieStore = await cookies();
         const bypassCookie = cookieStore.get('admin_bypass')?.value;
         const sessionCookie = cookieStore.get('admin_session')?.value;
 
-        const bypassCheck = verifyAdminToken(bypassCookie);
+        const bypassCheck = await verifyAdminToken(bypassCookie);
         if (bypassCheck.valid && (bypassCheck.role === 'admin' || bypassCheck.role === 'moderator')) return true;
 
-        const sessionCheck = verifyAdminToken(sessionCookie);
+        const sessionCheck = await verifyAdminToken(sessionCookie);
         if (sessionCheck.valid && (sessionCheck.role === 'admin' || sessionCheck.role === 'moderator')) return true;
 
         const supabase = await createServerSupabase();
@@ -40,11 +52,15 @@ async function checkIsAdminOrModerator(): Promise<boolean> {
     }
 }
 
-export async function submitFeedback(data: { type: string; description: string; user_agent?: string; url?: string; email?: string; context?: any }) {
+export async function submitFeedback(data: { type: string; description: string; user_agent?: string; url?: string; email?: string; screenshot_url?: string | null; context?: any }) {
+    const parse = SubmitFeedbackSchema.safeParse(data);
+    if (!parse.success) {
+        return { success: false, error: parse.error.issues[0]?.message || 'Dados inválidos' };
+    }
+
     const supabase = await createServerSupabase();
 
-    const { type, description, user_agent, url, email, context } = data;
-    let screenshot_url = null;
+    const { type, description, user_agent, url, email, screenshot_url, context } = parse.data;
 
     // Get current user if any
     const { data: { user } } = await supabase.auth.getUser();
@@ -53,12 +69,13 @@ export async function submitFeedback(data: { type: string; description: string; 
         user_id: user?.id || null,
         type,
         description,
-        screenshot_url,
+        screenshot_url: screenshot_url || null,
         metadata: {
             user_email: email || user?.email,
             user_agent: user_agent || '',
             url: url || '',
             platform: 'web',
+            screenshot_url: screenshot_url || null,
             context: context || null
         }
     };

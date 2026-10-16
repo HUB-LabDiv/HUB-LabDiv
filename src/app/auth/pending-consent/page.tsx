@@ -49,9 +49,9 @@ export default function PendingConsentPage() {
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Aguardando Autorização</h1>
                 <p className="text-gray-600 dark:text-gray-400 mb-8 leading-relaxed">
                     Seus dados foram enviados com sucesso! Como você é <strong>menor de 18 anos</strong>, enviamos um link de segurança para o e-mail:
-                    <div className="mt-2 font-bold text-[#0F4780] dark:text-blue-300 bg-blue-50 dark:bg-blue-900/10 py-2 rounded-lg break-all px-2">
+                    <span className="block mt-2 font-bold text-[#0F4780] dark:text-blue-300 bg-blue-50 dark:bg-blue-900/10 py-2 rounded-lg break-all px-2">
                         {guardianEmail || 'p...l@r...l.com'}
-                    </div>
+                    </span>
                 </p>
                 
                 <div className="bg-gray-50 dark:bg-card-dark p-4 rounded-lg mb-8 text-sm text-left border border-gray-100 dark:border-gray-800">

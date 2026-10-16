@@ -18,6 +18,7 @@ import nodemailer from 'nodemailer';
 import { createClient } from '@supabase/supabase-js';
 import { EXPERIMENTS_CATALOG, SHOW_ACTS } from '../iniciativas/show-da-fisica/data/experiments';
 import { ShowBookingResult } from '@/types/show-da-fisica';
+import { requireAdminOrModerator } from '@/app/actions/admin';
 
 const bookingSchema = z.object({
     email: z.string().email('E-mail inválido'),
@@ -312,19 +313,43 @@ export async function submitShowBooking(rawData: unknown): Promise<ShowBookingRe
     }
 }
 
+const PinSchema = z.string().trim().min(1, 'Código obrigatório').max(50);
+
+const AvailabilityRuleSchema = z.object({
+    experiment_id: z.string().min(1, 'ID do experimento obrigatório'),
+    unavailable_date: z.string().nullable().optional(),
+    unavailable_weekday: z.number().int().min(0).max(6).nullable().optional(),
+    reason: z.string().max(500).default('')
+});
+
+const StudentResponseSchema = z.object({
+    session_id: z.string().min(1, 'ID de sessão inválido'),
+    experiment_id: z.string().optional(),
+    stage: z.string().min(1, 'Estágio obrigatório'),
+    free_text_answer: z.string().max(2000).optional(),
+    selected_misconception_id: z.string().optional().nullable()
+});
+
+const SessionIdSchema = z.string().min(1, 'ID de sessão inválido');
+
 export async function validateShowPin(pin: string) {
+    const parsed = PinSchema.safeParse(pin);
+    if (!parsed.success) {
+        return { success: false, error: 'Código inválido' };
+    }
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseKey) {
         // Simulador fallback caso não haja config real do BD
-        const upperPin = pin.trim().toUpperCase();
+        const upperPin = parsed.data.toUpperCase();
         if (upperPin.includes('PROF-DEMO')) return { success: true, role: 'teacher', sessionId: 'demo-id', code: upperPin };
         if (upperPin.includes('ALUNO-DEMO')) return { success: true, role: 'student', sessionId: 'demo-id', code: upperPin };
         return { success: false, error: 'Código inválido (Modo fallback ativo)' };
     }
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const code = pin.trim().toUpperCase();
+    const code = parsed.data.toUpperCase();
 
     // Check teacher code
     const { data: teacherData } = await supabase.from('show_sessions').select('id').eq('teacher_code', code).maybeSingle();
@@ -359,24 +384,44 @@ export async function getAvailabilityRules() {
 }
 
 export async function addAvailabilityRule(rule: { experiment_id: string, unavailable_date: string | null, unavailable_weekday: number | null, reason: string }) {
+    const auth = await requireAdminOrModerator();
+    if (!auth.authorized) {
+        return { success: false, error: auth.error };
+    }
+
+    const parsed = AvailabilityRuleSchema.safeParse(rule);
+    if (!parsed.success) {
+        return { success: false, error: parsed.error.issues[0]?.message || 'Dados da regra inválidos' };
+    }
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseKey) return { success: false, error: 'Supabase configs missing' };
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const { error, data } = await supabase.from('show_experiment_availability').insert([rule]).select().single();
+    const { error, data } = await supabase.from('show_experiment_availability').insert([parsed.data]).select().single();
     
     if (error) return { success: false, error: error.message };
     return { success: true, data };
 }
 
 export async function deleteAvailabilityRule(id: string) {
+    const auth = await requireAdminOrModerator();
+    if (!auth.authorized) {
+        return { success: false, error: auth.error };
+    }
+
+    const parsed = SessionIdSchema.safeParse(id);
+    if (!parsed.success) {
+        return { success: false, error: 'ID inválido' };
+    }
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseKey) return { success: false, error: 'Supabase configs missing' };
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const { error } = await supabase.from('show_experiment_availability').delete().eq('id', id);
+    const { error } = await supabase.from('show_experiment_availability').delete().eq('id', parsed.data);
     
     if (error) return { success: false, error: error.message };
     return { success: true };
@@ -384,30 +429,67 @@ export async function deleteAvailabilityRule(id: string) {
 
 // --- INTERAÇÕES (SPRINT 4) ---
 export async function getSessionData(sessionId: string) {
+    const parsed = SessionIdSchema.safeParse(sessionId);
+    if (!parsed.success) {
+        return { success: false, data: null, error: 'ID de sessão inválido' };
+    }
+
+    if (parsed.data === 'demo-id') {
+        return {
+            success: true,
+            data: {
+                id: 'demo-id',
+                teacher_code: 'PROF-DEMO',
+                student_code: 'ALUNO-DEMO',
+                status: 'active',
+                title: 'Sessão Demonstrativa (Show da Física)',
+                current_stage: 'interaction'
+            }
+        };
+    }
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseKey) return { success: false, data: null, error: 'Supabase configs missing' };
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const { data, error } = await supabase.from('show_sessions').select('*').eq('id', sessionId).single();
+    const { data, error } = await supabase.from('show_sessions').select('*').eq('id', parsed.data).single();
     
     if (error) return { success: false, data: null, error: error.message };
     return { success: true, data };
 }
 
 export async function submitStudentResponse(payload: { session_id: string, experiment_id?: string, stage: string, free_text_answer?: string, selected_misconception_id?: string }) {
+    const parsed = StudentResponseSchema.safeParse(payload);
+    if (!parsed.success) {
+        return { success: false, error: parsed.error.issues[0]?.message || 'Dados inválidos' };
+    }
+
+    if (parsed.data.session_id === 'demo-id') {
+        return { success: true };
+    }
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseKey) return { success: false, error: 'Supabase configs missing' };
 
     const supabase = createClient(supabaseUrl, supabaseKey);
-    const { error } = await supabase.from('show_student_responses').insert([payload]);
+    const { error } = await supabase.from('show_student_responses').insert([parsed.data]);
     
     if (error) return { success: false, error: error.message };
     return { success: true };
 }
 
 export async function getStudentResponses(sessionId: string) {
+    const parsed = SessionIdSchema.safeParse(sessionId);
+    if (!parsed.success) {
+        return { success: false, data: [], error: 'ID de sessão inválido' };
+    }
+
+    if (parsed.data === 'demo-id') {
+        return { success: true, data: [] };
+    }
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     if (!supabaseUrl || !supabaseKey) return { success: false, data: [], error: 'Supabase configs missing' };
@@ -415,7 +497,7 @@ export async function getStudentResponses(sessionId: string) {
     const supabase = createClient(supabaseUrl, supabaseKey);
     const { data, error } = await supabase.from('show_student_responses')
         .select('*, show_experiment_misconceptions(misconception_text)')
-        .eq('session_id', sessionId)
+        .eq('session_id', parsed.data)
         .order('created_at', { ascending: false });
     
     if (error) return { success: false, data: [], error: error.message };

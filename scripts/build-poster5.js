@@ -14,7 +14,7 @@ const chromium = require('@sparticuz/chromium');
 const QRCode = require('qrcode');
 
 const PROJECT_ROOT = path.resolve(__dirname, '..');
-const POSTER5_DIR = path.join(PROJECT_ROOT, 'public/divulgacao/poster5');
+const POSTER5_DIR = path.join(PROJECT_ROOT, 'public/divulgacao/posters/poster5');
 const HTML_PATH = path.join(POSTER5_DIR, 'poster.html');
 
 async function main() {
@@ -26,7 +26,7 @@ async function main() {
   if (!fs.existsSync(iconsDir)) fs.mkdirSync(iconsDir, { recursive: true });
 
   fs.copyFileSync(path.join(PROJECT_ROOT, 'public/icone-HUBLabDiv-white.png'), path.join(iconsDir, 'icone-HUBLabDiv-white.png'));
-  fs.copyFileSync(path.join(PROJECT_ROOT, 'public/divulgacao/poster4/icons/qr-hub-logo-badge.png'), path.join(iconsDir, 'qr-hub-logo-badge.png'));
+  fs.copyFileSync(path.join(PROJECT_ROOT, 'public/icone-HUBLabDiv-white.png'), path.join(iconsDir, 'qr-hub-logo-badge.png'));
 
   // Generate crisp QR code SVG
   const qrSvg = await QRCode.toString('https://hub.labdiv.com.br/divulgacao', {
@@ -481,9 +481,9 @@ async function main() {
         <p class="axis-card-desc font-open-sans">Rede comunicativa e pedagógica para conectar estudantes e pesquisadores.</p>
       </div>
       <div class="axis-tags-row font-bukra">
-        <span class="axis-tag">#Comunidades</span>
-        <span class="axis-tag">#GruposDeEstudo</span>
-        <span class="axis-tag">#Feed</span>
+        <span class="axis-tag">Comunidades</span>
+        <span class="axis-tag">Grupos de Estudo</span>
+        <span class="axis-tag">Feed</span>
       </div>
     </div>
 
@@ -512,9 +512,9 @@ async function main() {
         <p class="axis-card-desc font-open-sans">Enciclopédia acadêmica interativa e acervo de matérias da graduação.</p>
       </div>
       <div class="axis-tags-row font-bukra">
-        <span class="axis-tag">#Artigos</span>
-        <span class="axis-tag">#WikiIFUSP</span>
-        <span class="axis-tag">#HistóriaDaCiência</span>
+        <span class="axis-tag">Artigos</span>
+        <span class="axis-tag">Wiki IFUSP</span>
+        <span class="axis-tag">História da Ciência</span>
       </div>
     </div>
 
@@ -532,9 +532,9 @@ async function main() {
         <p class="axis-card-desc font-open-sans">Utilidades para a rotina universitária: simuladores, notas e cronogramas.</p>
       </div>
       <div class="axis-tags-row font-bukra">
-        <span class="axis-tag">#Simuladores</span>
-        <span class="axis-tag">#Calculadoras</span>
-        <span class="axis-tag">#ApoioEstudantil</span>
+        <span class="axis-tag">Simuladores</span>
+        <span class="axis-tag">Calculadoras</span>
+        <span class="axis-tag">Apoio Estudantil</span>
       </div>
     </div>
 

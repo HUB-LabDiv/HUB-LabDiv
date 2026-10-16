@@ -11,14 +11,15 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import crypto from 'crypto';
-
 function getAdminSecret(): string {
-    return (
-        process.env.ADMIN_SECRET_KEY ||
-        process.env.ADMIN_PASSWORD ||
-        'hub-labdiv-secure-admin-token-salt-2026'
-    );
+    const secret = process.env.ADMIN_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!secret) {
+        if (process.env.NODE_ENV === 'production') {
+            throw new Error('[Security] ADMIN_SECRET_KEY ou SUPABASE_SERVICE_ROLE_KEY é obrigatória no ambiente de produção.');
+        }
+        return 'hub-labdiv-dev-only-secret-key-local';
+    }
+    return secret;
 }
 
 export type AdminRole = 'admin' | 'moderator';
@@ -29,10 +30,43 @@ interface TokenPayload {
     iat: number;
 }
 
+function bytesToBase64Url(bytes: Uint8Array): string {
+    let binary = '';
+    const len = bytes.byteLength;
+    for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+    }
+    return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+}
+
+function base64UrlToBytes(base64url: string): Uint8Array {
+    let base64 = base64url.replace(/-/g, '+').replace(/_/g, '/');
+    while (base64.length % 4) {
+        base64 += '=';
+    }
+    const binary = atob(base64);
+    const bytes = new Uint8Array(binary.length);
+    for (let i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+}
+
+async function getHmacKey(): Promise<CryptoKey> {
+    const encoder = new TextEncoder();
+    return await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(getAdminSecret()),
+        { name: 'HMAC', hash: 'SHA-256' },
+        false,
+        ['sign', 'verify']
+    );
+}
+
 /**
- * Gera um token assinado com HMAC-SHA256 para sessão administrativa
+ * Gera um token assinado com HMAC-SHA256 para sessão administrativa via Web Crypto API (Edge-safe)
  */
-export function createAdminToken(role: AdminRole = 'admin', ttlSeconds: number = 8 * 3600): string {
+export async function createAdminToken(role: AdminRole = 'admin', ttlSeconds: number = 8 * 3600): Promise<string> {
     const now = Date.now();
     const payload: TokenPayload = {
         role,
@@ -40,19 +74,21 @@ export function createAdminToken(role: AdminRole = 'admin', ttlSeconds: number =
         exp: now + ttlSeconds * 1000,
     };
 
-    const data = Buffer.from(JSON.stringify(payload)).toString('base64url');
-    const signature = crypto
-        .createHmac('sha256', getAdminSecret())
-        .update(data)
-        .digest('base64url');
+    const encoder = new TextEncoder();
+    const dataBytes = encoder.encode(JSON.stringify(payload));
+    const data = bytesToBase64Url(dataBytes);
+
+    const key = await getHmacKey();
+    const signatureBuffer = await crypto.subtle.sign('HMAC', key, encoder.encode(data));
+    const signature = bytesToBase64Url(new Uint8Array(signatureBuffer));
 
     return `${data}.${signature}`;
 }
 
 /**
- * Valida a integridade criptográfica e expiração de um token administrativo
+ * Valida a integridade criptográfica e expiração de um token administrativo via Web Crypto API (Edge-safe)
  */
-export function verifyAdminToken(token: string | undefined | null): { valid: boolean; role?: AdminRole } {
+export async function verifyAdminToken(token: string | undefined | null): Promise<{ valid: boolean; role?: AdminRole }> {
     if (!token || typeof token !== 'string') {
         return { valid: false };
     }
@@ -67,20 +103,22 @@ export function verifyAdminToken(token: string | undefined | null): { valid: boo
         return { valid: false };
     }
 
-    const expectedSignature = crypto
-        .createHmac('sha256', getAdminSecret())
-        .update(data)
-        .digest('base64url');
-
-    // Prevenção contra timing attacks
-    const sigBuf = Buffer.from(signature);
-    const expBuf = Buffer.from(expectedSignature);
-    if (sigBuf.length !== expBuf.length || !crypto.timingSafeEqual(sigBuf, expBuf)) {
-        return { valid: false };
-    }
-
     try {
-        const payload: TokenPayload = JSON.parse(Buffer.from(data, 'base64url').toString('utf-8'));
+        const key = await getHmacKey();
+        const encoder = new TextEncoder();
+        const decoder = new TextDecoder();
+        const signatureBytes = base64UrlToBytes(signature);
+        const dataBytes = encoder.encode(data);
+
+        // Prevenção contra timing attacks e validação criptográfica atômica
+        const isValid = await crypto.subtle.verify('HMAC', key, signatureBytes as unknown as BufferSource, dataBytes);
+        if (!isValid) {
+            return { valid: false };
+        }
+
+        const payloadJson = decoder.decode(base64UrlToBytes(data));
+        const payload: TokenPayload = JSON.parse(payloadJson);
+
         if (typeof payload.exp !== 'number' || payload.exp < Date.now()) {
             return { valid: false };
         }

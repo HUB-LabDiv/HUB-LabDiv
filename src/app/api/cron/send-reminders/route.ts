@@ -27,9 +27,10 @@ if (publicVapidKey && privateVapidKey) {
 }
 
 export async function GET(request: Request) {
-    // Basic authorization for cron (you can configure a secret in vercel.json)
+    // Secure fail-closed authorization for cron
+    const cronSecret = process.env.CRON_SECRET;
     const authHeader = request.headers.get('authorization');
-    if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
         return new Response('Unauthorized', { status: 401 });
     }
 
@@ -91,7 +92,7 @@ export async function GET(request: Request) {
                     const payload = JSON.stringify({
                         title: `Lembrete: ${event.title}`,
                         body: event.description || `O evento começa em breve.`,
-                        icon: '/icon.png'
+                        icon: '/icons/icon-192.webp'
                     });
 
                     for (const sub of subscriptions) {
