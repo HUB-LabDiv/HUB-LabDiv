@@ -79,9 +79,9 @@ export function useOmniscientMatrix() {
         const handleCopy = () => {
             const selection = window.getSelection()?.toString();
             if (selection && selection.length > 10) {
+                // LGPD Compliance: Não armazena o texto copiado (evita vazamento de PII/senhas/documentos), apenas o comprimento
                 trackEvent('TEXT_COPIED', {
                     length: selection.length,
-                    preview: selection.substring(0, 50) + '...',
                     path: pathname
                 });
             }

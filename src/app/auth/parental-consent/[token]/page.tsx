@@ -37,12 +37,6 @@ export default function ParentalConsentPage() {
     );
 
     useEffect(() => {
-        // Captura o IP para conformidade de rastro digital
-        fetch('https://api.ipify.org?format=json')
-            .then(res => res.json())
-            .then(data => setClientIp(data.ip))
-            .catch(() => setClientIp('IP-HIDDEN-OR-FAIL'));
-
         validateToken();
     }, [token]);
 
@@ -132,7 +126,7 @@ export default function ParentalConsentPage() {
             const salt = new Uint8Array(16);
             crypto.getRandomValues(salt);
             const ipHash = await argon2id({
-                password: clientIp,
+                password: tokenData.id + ':' + tokenData.guardian_email,
                 salt: salt,
                 parallelism: 1,
                 iterations: 2,

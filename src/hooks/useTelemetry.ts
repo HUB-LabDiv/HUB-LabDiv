@@ -40,10 +40,30 @@ export function useTelemetry() {
         eventType: 'SEARCH_QUERY' | 'SCROLL_50' | 'SCROLL_90' | 'SCROLL_100' | 'TIME_ON_PAGE' | 'FILE_DOWNLOAD' | 'DEPT_FILTER' | 'TAB_CHANGE' | 'SEARCH_SUCCESS' | 'SEARCH_FAIL' | 'RAGE_CLICK' | 'HOVER_INTENT' | 'TOOLTIP_VIEWED' | 'TEXT_COPIED' | 'FIRST_ACTION_TAKEN' | 'FORM_ABANDONMENT' | 'LINK_SHARED' | 'CONTENT_RATING' | 'AUDIO_PLAY' | 'AUDIO_PAUSE' | 'AUDIO_ENDED' | 'IMAGE_VIEW_DETAIL',
         metadata: any = {}
     ) => {
+        if (typeof window === 'undefined') return;
+
+        // LGPD Compliance: Rastreamento comportamental estritamente condicionado ao Opt-In voluntário
+        const consent = localStorage.getItem('cookie_consent');
+        if (consent !== 'true') return;
+
         // Fire-and-forget
         const fire = async () => {
             try {
                 const { data: { session } } = await supabase.auth.getSession();
+                
+                // ECA Compliance: Se o usuário for menor de idade, suspende a gravação de telemetria
+                if (session?.user) {
+                    const { data: profile } = await supabase
+                        .from('profiles')
+                        .select('is_adult')
+                        .eq('id', session.user.id)
+                        .single();
+
+                    if (profile && profile.is_adult === false) {
+                        return;
+                    }
+                }
+
                 const originPath = typeof window !== 'undefined' ? sessionStorage.getItem('last_telemetry_path') : null;
                 
                 await supabase.from('telemetry_events').insert({

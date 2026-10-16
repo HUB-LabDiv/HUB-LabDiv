@@ -68,49 +68,13 @@ export async function POST(req: Request) {
     birthdate = validated.birthdate;
     const guardianEmail = validated.guardianEmail;
 
-    // 1. Validação via BrasilAPI com Fallback de Algoritmo
-    let verificationSuccess = true;
-    let verificationError = null;
-    let isAuditMode = false;
-
-    try {
-      const brasilApiRes = await fetch(`https://brasilapi.com.br/api/cpf/v1/${cpfPlainText}`, {
-        method: 'GET',
-        headers: { 
-          'Content-Type': 'application/json',
-          'User-Agent': 'HUB-LabDiv-IFUSP (contato: hublabdiv@gmail.com)'
-        },
-        cache: 'no-store'
-      });
-
-      if (!brasilApiRes.ok) {
-        // Se a API falhou (404 ou 5xx), tentamos validar pelo algoritmo local
-        const isValidChecksum = validateCPFChecksum(cpfPlainText);
-        
-        if (isValidChecksum) {
-          isAuditMode = true;
-          verificationSuccess = true;
-        } else {
-          verificationSuccess = false;
-          verificationError = brasilApiRes.status === 404 
-            ? 'CPF não encontrado na base da Receita Federal e falhou na validação algorítmica.' 
-            : 'Instabilidade na base governamental. Tente novamente em instantes.';
-        }
-      }
-    } catch (e) {
-      // Falha de rede: usa o checksum como última linha de defesa
-      if (validateCPFChecksum(cpfPlainText)) {
-        isAuditMode = true;
-        verificationSuccess = true;
-      } else {
-        verificationSuccess = false;
-        verificationError = 'Erro de conexão com a base de CPFs e falha na validação local.';
-      }
+    // 1. Validação Algorítmica Segura (Módulo 11 - Receita Federal)
+    // LGPD Privacy by Design: Não transmite o CPF em texto claro pela web para APIs terceiras
+    const isValidChecksum = validateCPFChecksum(cpfPlainText);
+    if (!isValidChecksum) {
+      return NextResponse.json({ error: 'O CPF informado possui dígitos verificadores inválidos.' }, { status: 400 });
     }
-
-    if (!verificationSuccess) {
-      return NextResponse.json({ error: verificationError }, { status: 502 });
-    }
+    const isAuditMode = false;
 
     // 2. Cálculo de Maioridade
     const birthDateObj = new Date(birthdate);

@@ -40,32 +40,99 @@ export default function TransparenciaPage() {
                     </p>
                 </header>
 
-                <nav className="mb-12 flex flex-wrap justify-center gap-4" aria-label="Navegação rápida">
+                <nav className="mb-10 flex flex-wrap justify-center gap-3 sm:gap-4" aria-label="Navegação rápida">
                     {[
+                        { id: 'documentos', label: 'Políticas & Termos', icon: 'gavel' },
                         { id: 'termos', label: 'Termos de Uso', icon: 'description' },
+                        { id: 'privacidade', label: 'Privacidade (LGPD)', icon: 'shield_person' },
+                        { id: 'exclusao', label: 'Exclusão de Conta', icon: 'person_remove' },
                         { id: 'moderacao', label: 'Moderação', icon: 'security' },
-                        { id: 'acessibilidade', label: 'Acessibilidade', icon: 'accessibility_new' },
                         { id: 'contato', label: 'SLA & Contato', icon: 'contact_support' }
                     ].map(item => (
                         <a 
                             key={item.id}
                             href={`#${item.id}`}
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-gray-100 dark:bg-white/5 text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-brand-blue hover:text-white transition-all"
+                            className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-gray-100 dark:bg-white/5 text-xs sm:text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-brand-blue hover:text-white transition-all"
                         >
-                            <span className="material-symbols-outlined text-lg">{item.icon}</span>
+                            <span className="material-symbols-outlined text-base">{item.icon}</span>
                             {item.label}
                         </a>
                     ))}
                 </nav>
 
+                {/* Banner de Acesso Rápido aos Documentos Legais Oficiais */}
+                <section id="documentos" className="scroll-mt-24 mb-10 p-6 sm:p-8 bg-gradient-to-br from-brand-blue/10 via-brand-yellow/5 to-transparent border-2 border-brand-blue/30 rounded-[32px] shadow-lg">
+                    <div className="flex items-center gap-3 mb-3">
+                        <span className="material-symbols-outlined text-2xl text-brand-yellow">verified</span>
+                        <h2 className="text-xl font-bukra font-bold text-gray-900 dark:text-white uppercase tracking-tight">
+                            Documentos Oficiais &amp; Termos Legais em Vigor
+                        </h2>
+                    </div>
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
+                        Acesse as páginas normativas integrais do ecossistema HUB LabDiv (IFUSP). Toda a plataforma opera sob estrita conformidade com a LGPD (Lei nº 13.709/2018), Marco Civil da Internet (Lei nº 12.965/2014) e as diretrizes de transparência do Google Play.
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <Link
+                            href="/terms"
+                            className="flex flex-col justify-between p-5 rounded-2xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:border-brand-blue/50 hover:shadow-md transition-all group"
+                        >
+                            <div className="space-y-1 mb-4">
+                                <span className="material-symbols-outlined text-brand-blue text-2xl group-hover:scale-110 transition-transform">description</span>
+                                <h3 className="font-bukra font-bold text-sm text-gray-900 dark:text-white">Termos de Serviço e Uso</h3>
+                                <p className="text-[11px] text-gray-500 leading-tight">Regime Dual de Feeds, direitos autorais e código de conduta comunitária.</p>
+                            </div>
+                            <span className="text-xs font-bold text-brand-blue inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                                Acessar Termos <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                            </span>
+                        </Link>
+
+                        <Link
+                            href="/privacy"
+                            className="flex flex-col justify-between p-5 rounded-2xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:border-brand-yellow/50 hover:shadow-md transition-all group"
+                        >
+                            <div className="space-y-1 mb-4">
+                                <span className="material-symbols-outlined text-brand-yellow text-2xl group-hover:scale-110 transition-transform">shield_person</span>
+                                <h3 className="font-bukra font-bold text-sm text-gray-900 dark:text-white">Política de Privacidade</h3>
+                                <p className="text-[11px] text-gray-500 leading-tight">Bases legais da LGPD, permissões Android, proteção ao ECA e dados do DPO.</p>
+                            </div>
+                            <span className="text-xs font-bold text-brand-yellow inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                                Acessar Privacidade <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                            </span>
+                        </Link>
+
+                        <Link
+                            href="/delete-account"
+                            className="flex flex-col justify-between p-5 rounded-2xl bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:border-brand-red/50 hover:shadow-md transition-all group"
+                        >
+                            <div className="space-y-1 mb-4">
+                                <span className="material-symbols-outlined text-brand-red text-2xl group-hover:scale-110 transition-transform">person_remove</span>
+                                <h3 className="font-bukra font-bold text-sm text-gray-900 dark:text-white">Exclusão de Conta</h3>
+                                <p className="text-[11px] text-gray-500 leading-tight">Portal público para expurgo definitivo de conta e eliminação de dados.</p>
+                            </div>
+                            <span className="text-xs font-bold text-brand-red inline-flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+                                Solicitar Exclusão <span className="material-symbols-outlined text-sm">arrow_forward</span>
+                            </span>
+                        </Link>
+                    </div>
+                </section>
+
                 <main className="space-y-8">
                     {/* Seção 1: Termos de Uso e Licenciamento */}
                     <section id="termos" className="scroll-mt-24 p-8 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-[32px]">
-                        <div className="flex items-center gap-4 mb-6">
-                            <span className="p-3 bg-brand-blue/10 rounded-xl">
-                                <span className="material-symbols-outlined text-brand-blue">description</span>
-                            </span>
-                            <h2 className="text-2xl font-bukra font-bold text-gray-900 dark:text-white">Termos de Uso & Licenciamento</h2>
+                        <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
+                            <div className="flex items-center gap-4">
+                                <span className="p-3 bg-brand-blue/10 rounded-xl">
+                                    <span className="material-symbols-outlined text-brand-blue">description</span>
+                                </span>
+                                <h2 className="text-2xl font-bukra font-bold text-gray-900 dark:text-white">Termos de Uso &amp; Licenciamento</h2>
+                            </div>
+                            <Link 
+                                href="/terms"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-blue text-white text-xs font-bold uppercase tracking-wider hover:bg-brand-blue/90 transition-all shadow-md shadow-brand-blue/20"
+                            >
+                                Ler Contrato Completo
+                                <span className="material-symbols-outlined text-sm">open_in_new</span>
+                            </Link>
                         </div>
                         <div className="prose prose-slate dark:prose-invert max-w-none">
                             <p>
@@ -82,6 +149,19 @@ export default function TransparenciaPage() {
                                     <span className="text-sm"><strong>Adaptar:</strong> Remixar, transformar e criar a partir do material para qualquer fim.</span>
                                 </li>
                             </ul>
+                            <div className="mt-4 p-4 rounded-2xl bg-brand-blue/5 border border-brand-blue/15 text-xs text-gray-700 dark:text-gray-300">
+                                <strong className="text-brand-blue block mb-1">Licença do Software (AGPLv3):</strong>
+                                O código-fonte da aplicação é software livre licenciado sob a <strong>GNU Affero General Public License v3 (AGPLv3)</strong>. Conforme a Seção 13 da AGPLv3, qualquer usuário que interaja remotamente com a plataforma tem o direito de acessar o código-fonte correspondente completo no repositório oficial:{' '}
+                                <a 
+                                    href="https://github.com/JoaoStangorlini/HUB-LabDiv" 
+                                    target="_blank" 
+                                    rel="noopener noreferrer" 
+                                    className="text-brand-blue dark:text-brand-yellow font-bold underline inline-flex items-center gap-1"
+                                >
+                                    github.com/JoaoStangorlini/HUB-LabDiv
+                                    <span className="material-symbols-outlined text-[12px]">open_in_new</span>
+                                </a>.
+                            </div>
                             <p className="mt-4 text-sm opacity-80 italic">
                                 * É obrigatório dar o crédito apropriado ao HUB Lab-Div e ao autor original, provendo um link para a licença.
                             </p>
@@ -131,11 +211,20 @@ export default function TransparenciaPage() {
 
                     {/* Seção 3: Políticas de Privacidade */}
                     <section id="privacidade" className="scroll-mt-24 p-8 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-[32px]">
-                        <div className="flex items-center gap-4 mb-6">
-                            <span className="p-3 bg-brand-yellow/10 rounded-xl">
-                                <span className="material-symbols-outlined text-brand-yellow">policy</span>
-                            </span>
-                            <h2 className="text-2xl font-bukra font-bold text-gray-900 dark:text-white">Políticas de Privacidade</h2>
+                        <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
+                            <div className="flex items-center gap-4">
+                                <span className="p-3 bg-brand-yellow/10 rounded-xl">
+                                    <span className="material-symbols-outlined text-brand-yellow">policy</span>
+                                </span>
+                                <h2 className="text-2xl font-bukra font-bold text-gray-900 dark:text-white">Políticas de Privacidade</h2>
+                            </div>
+                            <Link 
+                                href="/privacy"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-yellow text-black text-xs font-bold uppercase tracking-wider hover:bg-brand-yellow/90 transition-all shadow-md shadow-brand-yellow/20"
+                            >
+                                Ver Política Completa
+                                <span className="material-symbols-outlined text-sm">open_in_new</span>
+                            </Link>
                         </div>
                         <div className="space-y-4 text-gray-600 dark:text-gray-300">
                             <p className="leading-relaxed">
@@ -162,37 +251,87 @@ export default function TransparenciaPage() {
                         </div>
                     </section>
 
-                    {/* Seção 4: SLA e Contato */}
+                    {/* Seção 4: Exclusão de Conta e Eliminação de Registros (Google Play Requirement) */}
+                    <section id="exclusao" className="scroll-mt-24 p-8 bg-white dark:bg-white/5 border border-brand-red/30 rounded-[32px] shadow-sm">
+                        <div className="flex items-center justify-between gap-4 mb-6 flex-wrap">
+                            <div className="flex items-center gap-4">
+                                <span className="p-3 bg-brand-red/10 rounded-xl">
+                                    <span className="material-symbols-outlined text-brand-red">person_remove</span>
+                                </span>
+                                <h2 className="text-2xl font-bukra font-bold text-gray-900 dark:text-white">Exclusão de Conta &amp; Dados</h2>
+                            </div>
+                            <Link 
+                                href="/delete-account"
+                                className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-red text-white text-xs font-bold uppercase tracking-wider hover:bg-brand-red/90 transition-all shadow-md shadow-brand-red/20"
+                            >
+                                Solicitar Exclusão
+                                <span className="material-symbols-outlined text-sm">open_in_new</span>
+                            </Link>
+                        </div>
+                        <div className="space-y-4 text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                            <p>
+                                O usuário pode requisitar o cancelamento do registro e o expurgo total de seus dados pessoais a qualquer momento, diretamente pelo navegador web ou pelo aplicativo móvel, sem barreiras contratuais.
+                            </p>
+                            <div className="p-4 rounded-2xl bg-gray-50 dark:bg-background-dark/30 border border-gray-200 dark:border-white/10 grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                                <div>
+                                    <strong className="text-brand-red block mb-1">Dados Pessoais:</strong>
+                                    Exclusão permanente de nome, e-mail, biografia e foto em até 30 dias.
+                                </div>
+                                <div>
+                                    <strong className="text-brand-yellow block mb-1">Artigos Científicos:</strong>
+                                    Mantidos sob licença aberta (CC BY 4.0) com desidentificação irreversível.
+                                </div>
+                                <div>
+                                    <strong className="text-emerald-500 block mb-1">Logs de Conexão:</strong>
+                                    Isolados e guardados por 6 meses por obrigação do Art. 15 do Marco Civil.
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    {/* Seção 5: SLA e Contato */}
                     <section id="contato" className="scroll-mt-24 p-8 bg-brand-blue text-white rounded-[32px] shadow-xl shadow-brand-blue/20">
                         <div className="flex items-center gap-4 mb-6">
                             <span className="p-3 bg-white/10 rounded-xl">
                                 <span className="material-symbols-outlined text-white">contact_support</span>
                             </span>
-                            <h2 className="text-2xl font-bukra font-bold">Governança, SLA & Contato</h2>
+                            <h2 className="text-2xl font-bukra font-bold">Governança, SLA &amp; Contato</h2>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
                             <div className="space-y-4">
-                                <p className="opacity-90 leading-relaxed">
-                                    Dúvidas sobre o funcionamento técnico, remoção de dados ou parcerias institucionais?
+                                <p className="opacity-90 leading-relaxed text-sm">
+                                    Dúvidas sobre o funcionamento técnico, remoção de dados, requisições de titulares da LGPD ou parcerias institucionais?
                                 </p>
                                 <div className="space-y-2">
-                                    <p className="flex items-center gap-3 font-bold">
+                                    <p className="flex items-center gap-3 font-bold text-sm">
                                         <span className="material-symbols-outlined">mail</span>
                                         hublabdiv@gmail.com
                                     </p>
                                     <p className="flex items-center gap-3 text-xs opacity-75">
                                         <span className="material-symbols-outlined text-sm">schedule</span>
-                                        Tempo médio de resposta: 48 horas úteis.
+                                        Tempo médio de resposta do DPO: até 48 horas úteis (requisições de exclusão atendidas em até 15 dias conforme Art. 19 da LGPD).
                                     </p>
                                 </div>
                             </div>
                             <div className="p-6 bg-white/5 rounded-2xl border border-white/10">
-                                <h4 className="font-bold mb-2 uppercase text-xs tracking-widest text-brand-yellow">Documentação Geral</h4>
-                                <div className="space-y-3">
-                                    <Link href="/privacy-policy" className="flex items-center justify-between group">
-                                        <span className="text-sm opacity-80 group-hover:opacity-100 transition-opacity">Política de Privacidade</span>
-                                        <span className="material-symbols-outlined text-brand-yellow group-hover:translate-x-1 transition-transform">arrow_forward</span>
+                                <h4 className="font-bold mb-3 uppercase text-xs tracking-widest text-brand-yellow">Documentação Geral</h4>
+                                <div className="space-y-2.5">
+                                    <Link href="/terms" className="flex items-center justify-between group text-xs sm:text-sm">
+                                        <span className="opacity-80 group-hover:opacity-100 transition-opacity">Termos de Serviço e Uso</span>
+                                        <span className="material-symbols-outlined text-brand-yellow group-hover:translate-x-1 transition-transform text-base">arrow_forward</span>
                                     </Link>
+                                    <Link href="/privacy" className="flex items-center justify-between group text-xs sm:text-sm">
+                                        <span className="opacity-80 group-hover:opacity-100 transition-opacity">Política de Privacidade (LGPD)</span>
+                                        <span className="material-symbols-outlined text-brand-yellow group-hover:translate-x-1 transition-transform text-base">arrow_forward</span>
+                                    </Link>
+                                    <Link href="/delete-account" className="flex items-center justify-between group text-xs sm:text-sm">
+                                        <span className="opacity-80 group-hover:opacity-100 transition-opacity">Exclusão de Conta e Dados</span>
+                                        <span className="material-symbols-outlined text-brand-yellow group-hover:translate-x-1 transition-transform text-base">arrow_forward</span>
+                                    </Link>
+                                    <a href="https://github.com/JoaoStangorlini/HUB-LabDiv" target="_blank" rel="noopener noreferrer" className="flex items-center justify-between group text-xs sm:text-sm">
+                                        <span className="opacity-80 group-hover:opacity-100 transition-opacity">Código-Fonte Aberto (AGPLv3)</span>
+                                        <span className="material-symbols-outlined text-brand-yellow group-hover:translate-x-1 transition-transform text-base">open_in_new</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>

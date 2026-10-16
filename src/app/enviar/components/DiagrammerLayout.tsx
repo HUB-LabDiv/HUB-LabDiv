@@ -1561,14 +1561,17 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                         Ler em Popup
                                     </button>
                                 </div>
-                                <div className="max-h-24 overflow-y-auto text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed custom-scrollbar pr-2">
-                                    Ao licenciar sua contribuição sob a licença CC BY, você permite que outras pessoas distribuam, remixem, adaptem e criem a partir do seu trabalho, mesmo para fins comerciais, desde que lhe atribuam o devido crédito pela criação original.<br /><br />
-                                    Você é livre para:<br />
-                                    - Compartilhar: copiar e redistribuir o material em qualquer suporte ou formato.<br />
-                                    - Adaptar: remixar, transformar e criar a partir do material para qualquer fim.<br />
-                                    Sob os seguintes termos:<br />
-                                    - Atribuição: Você deve dar o crédito apropriado, prover um link para a licença e indicar se mudanças foram feitas.
-                                    {previewMode === 'arte' && <><br /><br /><strong>Nota para Artes:</strong> Se você não aceitar esta licença, sua arte manterá os direitos autorais fechados (Todos os Direitos Reservados).</>}
+                                <div className="max-h-28 overflow-y-auto text-[11px] text-gray-600 dark:text-gray-400 leading-relaxed custom-scrollbar pr-2 space-y-2">
+                                    <p>
+                                        Ao licenciar sua contribuição sob a licença CC BY 4.0, você permite que outras pessoas distribuam, remixem, adaptem e criem a partir do seu trabalho, mesmo para fins comerciais, desde que lhe atribuam o devido crédito pela criação original.
+                                    </p>
+                                    <p className="p-2 rounded bg-brand-yellow/10 border border-brand-yellow/20 text-brand-yellow text-[10px]">
+                                        <strong>⚠️ Regime de Acervo Aberto (Permanência e Anonimização):</strong> Esta publicação integrará o acervo público permanente. Caso venha a excluir sua conta no futuro, o conteúdo científico permanecerá no HUB sob anonimização irreversível da autoria (desvinculando dados pessoais, nome e e-mail), conforme Art. 5º, VIII, &apos;b&apos; da Lei nº 9.610/98 e diretrizes de Data Safety.
+                                    </p>
+                                    <p className="text-[10px] text-gray-400">
+                                        <strong>Declaração de Autoria:</strong> Ao marcar o aceite, você atesta sob responsabilidade civil e autoral ser o titular legítimo da obra ou possuir autorização expressa dos coautores (Art. 22 e 29 da Lei nº 9.610/1998).
+                                    </p>
+                                    {previewMode === 'arte' && <p><strong>Nota para Artes:</strong> Se você não aceitar esta licença, sua arte manterá os direitos autorais fechados (Todos os Direitos Reservados).</p>}
                                 </div>
                             </div>
                             <label className="flex items-center gap-3 cursor-pointer group mt-2">
@@ -1576,7 +1579,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                     {acceptedCc && <span className="material-symbols-outlined text-white text-sm font-bold">check</span>}
                                 </div>
                                 <input type="checkbox" className="hidden" checked={acceptedCc} onChange={(e) => setAcceptedCc(e.target.checked)} />
-                                <span className="text-gray-700 dark:text-gray-200 text-sm font-medium group-hover:text-gray-900 dark:group-hover:text-white transition-colors">Aceito os termos da Licença CC-BY</span>
+                                <span className="text-gray-700 dark:text-gray-200 text-xs font-medium group-hover:text-gray-900 dark:group-hover:text-white transition-colors">Aceito a Licença CC-BY 4.0 e atesto autoria / autorização de coautores</span>
                             </label>
                         </div>
 
@@ -1740,20 +1743,27 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                 <span className="material-symbols-outlined">close</span>
                             </button>
                         </div>
-                        <div className="p-6 text-sm text-gray-700 dark:text-gray-300 leading-relaxed overflow-y-auto max-h-[60vh] custom-scrollbar">
-                            <strong className="text-gray-900 dark:text-white block mb-4">Licença Creative Commons Atribuição 4.0 Internacional (CC BY 4.0)</strong>
-                            <p className="mb-4">
-                                Ao licenciar sua contribuição sob a licença CC BY, você permite que outras pessoas distribuam, remixem, adaptem e criem a partir do seu trabalho, mesmo para fins comerciais, desde que lhe atribuam o devido crédito pela criação original.
+                        <div className="p-6 text-sm text-gray-700 dark:text-gray-300 leading-relaxed overflow-y-auto max-h-[60vh] custom-scrollbar space-y-4">
+                            <strong className="text-gray-900 dark:text-white block text-base font-bukra">Licença Creative Commons Atribuição 4.0 Internacional (CC BY 4.0)</strong>
+                            <p>
+                                Ao licenciar sua contribuição sob a licença CC BY 4.0, você permite que outras pessoas distribuam, remixem, adaptem e criem a partir do seu trabalho, inclusive para fins científicos e educacionais, desde que lhe atribuam o devido crédito pela criação original.
                             </p>
-                            <strong className="text-gray-900 dark:text-white block mb-2">Você é livre para:</strong>
-                            <ul className="list-disc list-inside space-y-2 mb-4">
-                                <li><strong>Compartilhar:</strong> copiar e redistribuir o material em qualquer suporte ou formato.</li>
-                                <li><strong>Adaptar:</strong> remixar, transformar e criar a partir do material para qualquer fim.</li>
-                            </ul>
-                            <strong className="text-gray-900 dark:text-white block mb-2">Sob os seguintes termos:</strong>
-                            <ul className="list-disc list-inside space-y-2">
-                                <li><strong>Atribuição:</strong> Você deve dar o crédito apropriado, prover um link para a licença e indicar se mudanças foram feitas.</li>
-                            </ul>
+                            <div className="p-3 bg-brand-yellow/10 border border-brand-yellow/20 rounded-xl text-xs text-brand-yellow">
+                                <strong>Regime de Acervo Aberto &amp; Anonimização:</strong> As publicações em feeds Creative Commons integram a memória científica comunitária. Em caso de exclusão futura da conta, o post permanecerá público sob desidentificação/anonimização irreversível dos dados pessoais do autor (Art. 5º, VIII, &apos;b&apos; da Lei nº 9.610/98).
+                            </div>
+                            <div>
+                                <strong className="text-gray-900 dark:text-white block mb-2 font-bold">Você é livre para:</strong>
+                                <ul className="list-disc list-inside space-y-1 text-xs">
+                                    <li><strong>Compartilhar:</strong> copiar e redistribuir o material em qualquer suporte ou formato.</li>
+                                    <li><strong>Adaptar:</strong> remixar, transformar e criar a partir do material para qualquer fim.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <strong className="text-gray-900 dark:text-white block mb-2 font-bold">Declaração de Titularidade:</strong>
+                                <p className="text-xs">
+                                    Ao submeter, o usuário garante possuir a titularidade autoral ou autorização formal de todos os coautores, isentando a plataforma de infrações à Lei de Direitos Autorais (Lei nº 9.610/1998).
+                                </p>
+                            </div>
                         </div>
                         <div className="p-4 border-t border-gray-200 dark:border-white/5 bg-gray-50 dark:bg-[#1E1E1E]/30 flex justify-end gap-3">
                             <button

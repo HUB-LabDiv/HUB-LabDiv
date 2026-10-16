@@ -90,18 +90,21 @@ export function ViewTracker({ submissionId }: ViewTrackerProps) {
             }
         }
 
-        // Send analytics on unmount
+        // Send analytics on unmount only if user granted cookie consent (LGPD Art. 7, I)
         return () => {
             if (intervalRef.current) clearInterval(intervalRef.current);
             window.removeEventListener('scroll', handleScroll);
             
-            // Register analytics (runs asynchronously)
-            registerPostAnalytics({
-                submissionId,
-                scrollDepth: maxScroll.current,
-                timeSpentSeconds: timeSpent.current
-            })
-                .catch(err => console.error('Failed to register analytics:', err));
+            const hasConsent = typeof window !== 'undefined' && localStorage.getItem('cookie_consent') === 'true';
+            if (hasConsent) {
+                // Register analytics (runs asynchronously)
+                registerPostAnalytics({
+                    submissionId,
+                    scrollDepth: maxScroll.current,
+                    timeSpentSeconds: timeSpent.current
+                })
+                    .catch(err => console.error('Failed to register analytics:', err));
+            }
         };
     }, [submissionId]);
 

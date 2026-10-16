@@ -24,6 +24,7 @@ import {
     AlertCircle,
     Lightbulb,
     HelpCircle,
+    ShieldAlert,
     X,
     Camera,
     Send,
@@ -43,7 +44,7 @@ interface ReportModalProps {
     onClose: () => void;
 }
 
-type ReportType = 'bug' | 'sugestao' | 'outro';
+type ReportType = 'bug' | 'sugestao' | 'denuncia' | 'outro';
 
 const TYPE_CONFIG: Record<ReportType, {
     title: string;
@@ -77,6 +78,17 @@ const TYPE_CONFIG: Record<ReportType, {
         bg: 'bg-brand-yellow/10',
         successTitle: 'Sugestão Recebida!',
         successMsg: 'Obrigado pela sua contribuição! Vamos analisar sua ideia com cuidado.',
+    },
+    denuncia: {
+        title: 'Denúncia / Violação Autoral',
+        label: 'Denúncia',
+        placeholder: 'Indique o conteúdo contestado, a autoria e descreva detalhadamente a violação autoral (plágio) ou ilicitude...',
+        btnLabel: 'Enviar Notificação de Denúncia',
+        icon: ShieldAlert,
+        color: 'text-brand-red',
+        bg: 'bg-brand-red/10',
+        successTitle: 'Denúncia Protocolada!',
+        successMsg: 'A moderação e a curadoria do IFUSP foram notificadas para análise prioritária nos termos do Marco Civil e da Lei 9.610/98.',
     },
     outro: {
         title: 'Enviar Mensagem',
@@ -207,11 +219,13 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
     const config = TYPE_CONFIG[type];
     const Icon = config.icon;
 
-    const activeColor = type === 'bug' ? 'bg-brand-red text-white shadow-lg shadow-brand-red/20'
-        : type === 'sugestao' ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20'
+    const activeColor = type === 'bug' || type === 'denuncia'
+        ? 'bg-brand-red text-white shadow-lg shadow-brand-red/20'
+        : type === 'sugestao'
+            ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20'
             : 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20';
 
-    const submitBtnStyle = type === 'bug'
+    const submitBtnStyle = type === 'bug' || type === 'denuncia'
         ? 'bg-brand-red hover:bg-brand-red/90 text-white shadow-brand-red/20'
         : type === 'sugestao'
             ? 'bg-brand-yellow hover:bg-brand-yellow/90 text-black shadow-brand-yellow/20'
@@ -262,12 +276,12 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
                                 <div className="space-y-5">
                                     {/* Type Selector */}
                                     <div className="flex gap-2">
-                                        {(['bug', 'sugestao', 'outro'] as ReportType[]).map((t) => (
+                                        {(['bug', 'sugestao', 'denuncia', 'outro'] as ReportType[]).map((t) => (
                                             <button
                                                 key={t}
                                                 type="button"
                                                 onClick={() => setType(t)}
-                                                className={`flex-1 py-2 px-4 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${type === t
+                                                className={`flex-1 py-2 px-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${type === t
                                                     ? activeColor
                                                     : 'bg-white/5 text-gray-400 hover:bg-white/10'
                                                     }`}
@@ -280,7 +294,7 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
                                     {/* Description */}
                                     <div>
                                         <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 px-1">
-                                            {type === 'bug' ? 'O que aconteceu?' : type === 'sugestao' ? 'Sua sugestão' : 'Sua mensagem'}
+                                            {type === 'bug' ? 'O que aconteceu?' : type === 'sugestao' ? 'Sua sugestão' : type === 'denuncia' ? 'Detalhamento da Denúncia' : 'Sua mensagem'}
                                         </label>
                                         <textarea
                                             value={description}
@@ -291,8 +305,8 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
                                         />
                                     </div>
 
-                                    {/* Screenshot — só para bugs */}
-                                    {type === 'bug' && (
+                                    {/* Screenshot — para bugs e denúncias */}
+                                    {(type === 'bug' || type === 'denuncia') && (
                                         <div
                                             onClick={() => fileInputRef.current?.click()}
                                             className="relative group cursor-pointer border-2 border-dashed border-white/10 rounded-2xl p-5 flex flex-col items-center justify-center hover:bg-white/5 transition-all"

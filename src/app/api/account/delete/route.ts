@@ -31,6 +31,20 @@ export async function POST(req: Request) {
     // 2. Cliente com Service Role (Privilégios de Admin)
     const supabaseAdmin = createAdminSupabase();
 
+    // 2.1 Limpar arquivos de avatar no Supabase Storage (LGPD Art. 18, VI & Google Play Data Safety)
+    try {
+      const { data: avatarFiles } = await supabaseAdmin.storage
+        .from('avatars')
+        .list(userId);
+
+      if (avatarFiles && avatarFiles.length > 0) {
+        const filePaths = avatarFiles.map(f => `${userId}/${f.name}`);
+        await supabaseAdmin.storage.from('avatars').remove(filePaths);
+      }
+    } catch (storageErr) {
+      console.warn('Aviso: falha não-bloqueante na remoção de arquivos de avatar do Storage:', storageErr);
+    }
+
     // 3. Executar o Soft Delete via RPC (Lógica MK5)
     // A RPC no god-sql-mk5.sql cuida da anonimização e deleção de auth.users
     const { error: rpcError } = await supabaseAdmin.rpc('soft_delete_user', {

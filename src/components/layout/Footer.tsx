@@ -390,14 +390,24 @@ export function Footer() {
                     </div>
                 </div>
 
-                {/* BOTTOM BAR: USP LOGO & COPYRIGHT */}
-                <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-center md:text-left">
-                    <div className="flex items-center gap-3">
+                {/* BOTTOM BAR: USP LOGO, LEGAL LINKS & COPYRIGHT */}
+                <div className="border-t border-white/10 pt-8 flex flex-col xl:flex-row justify-between items-center gap-6 text-center md:text-left">
+                    <div className="flex flex-col sm:flex-row items-center gap-4">
                         <USPLogo size={100} className="text-white opacity-80 hover:opacity-100 transition-opacity" />
                         <p className="text-xs text-white/40 font-open-sans">
                             © {new Date().getFullYear()} IFUSP. Todos os direitos reservados.
                         </p>
                     </div>
+
+                    {/* LINKS LEGAIS PERMANENTES */}
+                    <nav aria-label="Links de Conformidade e Legais" className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-xs font-semibold text-white/70">
+                        <Link href="/terms" className="hover:text-brand-yellow hover:underline transition-colors">Termos de Uso</Link>
+                        <Link href="/privacy" className="hover:text-brand-yellow hover:underline transition-colors">Privacidade</Link>
+                        <Link href="/transparencia" className="hover:text-brand-yellow hover:underline transition-colors">Transparência</Link>
+                        <Link href="/delete-account" className="hover:text-brand-yellow hover:underline transition-colors">Exclusão de Conta</Link>
+                        <a href="https://github.com/JoaoStangorlini/HUB-LabDiv" target="_blank" rel="noopener noreferrer" className="hover:text-brand-yellow hover:underline transition-colors">Código Aberto (AGPLv3)</a>
+                    </nav>
+
                     <div className="flex items-center gap-6">
                         <Link href="/divulgacao" className="flex items-center gap-1.5 text-xs text-white bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all px-3 py-1.5 rounded-lg font-sans">
                             <span className="material-symbols-outlined text-[14px]">share</span>

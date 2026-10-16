@@ -10,6 +10,7 @@
  */
 
 import React from 'react';
+import Link from 'next/link';
 
 interface TermsOfUseProps {
   onAccept?: () => void;
@@ -20,10 +21,20 @@ export function TermsOfUse({ onAccept, acceptedVersion }: TermsOfUseProps) {
   return (
     <div className="flex flex-col h-full max-h-[60vh] overflow-hidden bg-white dark:bg-[#1E1E1E] rounded-xl border border-gray-200 dark:border-gray-800 shadow-sm font-open-sans">
       <div className="p-5 border-b border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-background-dark">
-        <h3 className="text-lg font-bold text-[#0F4780] dark:text-brand-blue uppercase tracking-tight">
-          Termos de Uso e LGPD (HUB Lab-Div)
-        </h3>
-        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-1 italic">Versão: v3.0</p>
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <h3 className="text-lg font-bold text-[#0F4780] dark:text-brand-blue uppercase tracking-tight">
+            Termos de Uso e LGPD (HUB Lab-Div)
+          </h3>
+          <div className="flex items-center gap-3 text-xs">
+            <Link href="/terms" target="_blank" className="text-brand-blue font-bold hover:underline">
+              Versão Completa dos Termos ↗
+            </Link>
+            <Link href="/privacy" target="_blank" className="text-brand-yellow font-bold hover:underline">
+              Política de Privacidade ↗
+            </Link>
+          </div>
+        </div>
+        <p className="text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mt-1 italic">Versão: v3.0 (Em vigor)</p>
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-6 text-sm text-gray-700 dark:text-gray-300 leading-relaxed">

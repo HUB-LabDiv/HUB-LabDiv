@@ -52,6 +52,10 @@ export async function proxy(request: NextRequest) {
         pathname.startsWith('/sobre') ||
         pathname.startsWith('/fluxo') ||
         pathname.startsWith('/drops') ||
+        pathname.startsWith('/terms') ||
+        pathname.startsWith('/privacy') ||
+        pathname.startsWith('/delete-account') ||
+        pathname.startsWith('/transparencia') ||
         pathname.startsWith('/api/og');
 
     const isProd = process.env.NODE_ENV === 'production';
@@ -89,7 +93,16 @@ export async function proxy(request: NextRequest) {
         const { data: { user } } = await supabase.auth.getUser();
 
         // [FASE 2 e FASE 3: Gatekeepers (ECA & Termos Legados)]
-        if (user && !pathname.startsWith('/re-accept-terms') && !pathname.startsWith('/auth') && !pathname.startsWith('/api/auth')) {
+        if (
+            user && 
+            !pathname.startsWith('/re-accept-terms') && 
+            !pathname.startsWith('/terms') && 
+            !pathname.startsWith('/privacy') && 
+            !pathname.startsWith('/delete-account') && 
+            !pathname.startsWith('/transparencia') && 
+            !pathname.startsWith('/auth') && 
+            !pathname.startsWith('/api/auth')
+        ) {
             const { data: profile } = await supabase
                 .from('profiles')
                 .select('accepted_terms_version, is_adult')

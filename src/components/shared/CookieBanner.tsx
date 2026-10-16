@@ -66,7 +66,7 @@ export const CookieBanner = () => {
                     </h3>
                     <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed font-medium">
                         Respeitamos de ponta a ponta a <strong>LGPD</strong>, o <strong>ECA</strong> e o <strong>Marco Civil da Internet</strong>. Utilizamos cookies essenciais para navegação. A telemetria anônima para melhoria de bugs é ativada <strong>exclusivamente após a criação do perfil</strong> e apenas para usuários <strong>maiores de 18 anos</strong> que optarem pelo aceite em nossa{' '}
-                        <Link href="/re-accept-terms" onClick={() => setIsVisible(false)} className="text-brand-blue hover:text-brand-yellow font-bold underline transition-colors">
+                        <Link href="/privacy" onClick={() => setIsVisible(false)} className="text-brand-blue hover:text-brand-yellow font-bold underline transition-colors">
                             Política de Privacidade
                         </Link>.
                     </p>

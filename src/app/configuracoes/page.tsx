@@ -754,16 +754,22 @@ export default function ConfigPage() {
                                     Portal de Transparência
                                 </Link>
                                 <Link
-                                    href="/privacy-policy"
+                                    href="/privacy"
                                     className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold rounded-xl transition-all active:scale-95 text-xs uppercase tracking-widest font-bukra"
                                 >
                                     Privacidade
                                 </Link>
                                 <Link
-                                    href="/re-accept-terms"
+                                    href="/terms"
                                     className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-white/5 border border-white/10 hover:bg-white/10 text-white font-bold rounded-xl transition-all active:scale-95 text-xs uppercase tracking-widest font-bukra"
                                 >
                                     Termos de Uso
+                                </Link>
+                                <Link
+                                    href="/delete-account"
+                                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-brand-red/10 border border-brand-red/30 hover:bg-brand-red/20 text-brand-red font-bold rounded-xl transition-all active:scale-95 text-xs uppercase tracking-widest font-bukra"
+                                >
+                                    Exclusão de Conta
                                 </Link>
                             </div>
                         </section>

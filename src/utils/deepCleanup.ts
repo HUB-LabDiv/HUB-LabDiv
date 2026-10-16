@@ -17,6 +17,14 @@ export async function handleDeepCleanup() {
   if (typeof window === 'undefined') return;
 
   try {
+    // 0. Sign out do cliente Supabase
+    try {
+      const { supabase } = await import('@/lib/supabase/client');
+      await supabase.auth.signOut();
+    } catch {
+      // Ignora erro se não autenticado
+    }
+
     // 1. Limpar LocalStorage e SessionStorage
     localStorage.clear();
     sessionStorage.clear();

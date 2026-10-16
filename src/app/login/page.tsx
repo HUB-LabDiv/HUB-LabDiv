@@ -296,8 +296,26 @@ function LoginContent() {
                         </div>
 
                         <p className="text-[10px] text-center text-gray-400 leading-relaxed px-4">
-                            Ao entrar, você concorda em compartilhar sua experiência acadêmica de forma ética e colaborativa com o Hub Lab-Div.
+                            Ao continuar, você concorda com os{' '}
+                            <Link href="/terms" target="_blank" className="text-brand-blue hover:underline font-bold">
+                                Termos de Uso
+                            </Link>{' '}
+                            e confirma ter lido a{' '}
+                            <Link href="/privacy" target="_blank" className="text-brand-yellow hover:underline font-bold">
+                                Política de Privacidade
+                            </Link>{' '}
+                            do HUB LabDiv (IFUSP).
                         </p>
+
+                        <div className="flex justify-center items-center gap-3 text-[10px] text-gray-500 pt-1">
+                            <Link href="/transparencia" target="_blank" className="hover:underline hover:text-gray-300">
+                                Portal de Transparência
+                            </Link>
+                            <span>•</span>
+                            <Link href="/delete-account" target="_blank" className="hover:underline hover:text-gray-300">
+                                Exclusão de Conta
+                            </Link>
+                        </div>
                     </div>
                 </div>
 

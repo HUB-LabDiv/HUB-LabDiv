@@ -13,6 +13,7 @@
 
 
 import { createServerSupabase } from '@/lib/supabase/server';
+import { createAdminSupabase } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
@@ -131,32 +132,33 @@ export async function deleteSpecificUserData(categories: string[]) {
   const userEmail = user.email;
 
   try {
+    const adminSupabase = createAdminSupabase();
     const GHOST_UUID = '00000000-0000-0000-0000-000000000000';
 
     for (const category of categories) {
       switch (category) {
         case 'submissions':
           // Submissões (Fluxo) são CC obrigatório, portanto anonimizadas
-          await supabase.from('submissions').update({ user_id: GHOST_UUID }).eq('user_id', userId);
+          await adminSupabase.from('submissions').update({ user_id: GHOST_UUID }).eq('user_id', userId);
           break;
         case 'comments':
           // Comentários acompanham o fluxo científico, também anonimizados
-          await supabase.from('comments').update({ user_id: GHOST_UUID }).eq('user_id', userId);
+          await adminSupabase.from('comments').update({ user_id: GHOST_UUID }).eq('user_id', userId);
           break;
         case 'articles':
           // Micro Artigos (Arte/Drops) têm CC opcional, portanto são deletados
-          await supabase.from('micro_articles').delete().eq('author_id', userId);
+          await adminSupabase.from('micro_articles').delete().eq('author_id', userId);
           break;
         case 'questions':
           if (userEmail) {
-            await supabase.from('perguntas').delete().eq('email', userEmail);
+            await adminSupabase.from('perguntas').delete().eq('email', userEmail);
           }
           break;
         case 'interactions':
           await Promise.all([
-            supabase.from('curtidas').delete().eq('user_id', userId),
-            supabase.from('saved_posts').delete().eq('user_id', userId),
-            supabase.from('follows').delete().eq('follower_id', userId)
+            adminSupabase.from('curtidas').delete().eq('user_id', userId),
+            adminSupabase.from('saved_posts').delete().eq('user_id', userId),
+            adminSupabase.from('follows').delete().eq('follower_id', userId)
           ]);
           break;
         default:
