@@ -7,14 +7,14 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.content.Context;
 import com.getcapacitor.BridgeActivity;
-import androidx.core.view.WindowCompat;
+import androidx.activity.EdgeToEdge;
 
 public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // Habilita Edge-to-Edge nativo para compatibilidade com Android 15+ (SDK 35) e anteriores
+        EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
-        // Desativa o edge-to-edge (faz o app respeitar a barra de status e não preencher até o topo)
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
 
         // Otimização de Cache e Resiliência Offline para o WebView do Capacitor
         try {

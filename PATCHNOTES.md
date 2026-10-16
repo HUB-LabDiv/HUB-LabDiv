@@ -2,7 +2,7 @@
 
 ---
 
-## 🚀 Versão 6.5.0 (Build 16) — *Conformidade Jurídica Integral & Blindagem Regulatória*
+## 🚀 Versão 6.5.1 (Build 17) — *Conformidade Jurídica Integral & Blindagem Regulatória*
 **Data de Lançamento:** 16 de Outubro de 2026  
 **Ambiente:** Web (Next.js 14+) & Android Mobile (Capacitor / Google Play Store)  
 **Licença:** GNU Affero General Public License v3 (AGPLv3)
@@ -66,12 +66,13 @@
 *(Limite de 500 caracteres para o campo "Novidades desta versão" no Play Console)*
 
 ```text
-Versão 6.5.0:
+Versão 6.5.1:
 • Conformidade plena com a LGPD e Marco Civil da Internet.
 • Atualização do fluxo de exclusão de conta e dados pessoais (in-app e web).
 • Regime Dual de Feeds com licença aberta Creative Commons (CC BY 4.0).
 • Proteção aprimorada para menores de idade e consentimento parental.
 • Validação local e segura de documentos com criptografia Argon2id.
 • Link para código aberto conforme a licença AGPLv3.
+• Otimização R8 e suporte Edge-to-Edge nativo para Android 15+.
 • Melhorias de desempenho, estabilidade e correções de interface.
 ```
