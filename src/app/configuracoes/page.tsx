@@ -66,9 +66,13 @@ export default function ConfigPage() {
 
     useEffect(() => {
         async function loadPrefs() {
-            const res = await getNotificationPreferences();
-            if (res.success && res.data) {
-                setNotifPrefs(res.data);
+            try {
+                const res = await getNotificationPreferences();
+                if (res.success && res.data) {
+                    setNotifPrefs(res.data);
+                }
+            } catch (err) {
+                console.error('[Configurações] Erro ao carregar preferências:', err);
             }
         }
         if (user) {

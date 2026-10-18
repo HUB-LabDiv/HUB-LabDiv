@@ -37,29 +37,33 @@ export function TelemetryManager() {
 
     useEffect(() => {
         const verifyConsentAndAge = async () => {
-            // 1. Visitante Anônimo -> Bloqueia Imediatamente
-            if (!authUser) {
-                setCanLoadClarity(false);
-                return;
-            }
+            try {
+                // 1. Visitante Anônimo -> Bloqueia Imediatamente
+                if (!authUser) {
+                    setCanLoadClarity(false);
+                    return;
+                }
 
-            // 2. Cookie de Aceite (Opt-In Absoluto)
-            const consent = localStorage.getItem('cookie_consent');
-            if (consent !== 'true') {
-                setCanLoadClarity(false);
-                return;
-            }
+                // 2. Cookie de Aceite (Opt-In Absoluto)
+                const consent = localStorage.getItem('cookie_consent');
+                if (consent !== 'true') {
+                    setCanLoadClarity(false);
+                    return;
+                }
 
-            // 3. Checagem do ECA (Maioridade)
-            const { data: profile } = await supabase
-                .from('profiles')
-                .select('is_adult')
-                .eq('id', authUser.id)
-                .single();
+                // 3. Checagem do ECA (Maioridade)
+                const { data: profile } = await supabase
+                    .from('profiles')
+                    .select('is_adult')
+                    .eq('id', authUser.id)
+                    .single();
 
-            if (profile?.is_adult === true) {
-                setCanLoadClarity(true);
-            } else {
+                if (profile?.is_adult === true) {
+                    setCanLoadClarity(true);
+                } else {
+                    setCanLoadClarity(false);
+                }
+            } catch {
                 setCanLoadClarity(false);
             }
         };

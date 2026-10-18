@@ -35,7 +35,6 @@ import {
     X
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import confetti from 'canvas-confetti';
 import { EXPERIMENTS_CATALOG, SHOW_ACTS } from '../data/experiments';
 import { ShowActType, ShowSelectedExperiments } from '@/types/show-da-fisica';
 import { submitShowBooking, getAvailabilityRules } from '@/app/actions/show-da-fisica';
@@ -230,6 +229,7 @@ export function MonteSeuShowClient({ orbitronClassName = '' }: MonteSeuShowClien
             if (result.success && result.bookingId) {
                 toast.success('Agendamento enviado com sucesso!');
                 try {
+                    const { default: confetti } = await import('canvas-confetti');
                     confetti({
                         particleCount: 90,
                         spread: 70,

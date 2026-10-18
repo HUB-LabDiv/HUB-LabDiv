@@ -19,14 +19,21 @@ import { getApprovedFAQs } from '@/app/actions/sac';
 
 export function SacSection() {
     const [sacFaqs, setSacFaqs] = useState<any[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
     const [isSacModalOpen, setIsSacModalOpen] = useState(false);
     const [openFaqId, setOpenFaqId] = useState<string | null>(null);
 
     useEffect(() => {
         const loadFaqs = async () => {
-            const res = await getApprovedFAQs();
-            if (res.success) {
-                setSacFaqs(res.data || []);
+            try {
+                const res = await getApprovedFAQs();
+                if (res.success) {
+                    setSacFaqs(res.data || []);
+                }
+            } catch (err) {
+                console.error('[SAC] Erro ao carregar FAQs:', err);
+            } finally {
+                setIsLoading(false);
             }
         };
         loadFaqs();
@@ -52,7 +59,11 @@ export function SacSection() {
             </div>
 
             <div className="space-y-4">
-                {sacFaqs.length > 0 ? (
+                {isLoading ? (
+                    [1, 2, 3].map(i => (
+                        <div key={i} className="h-20 bg-gray-100 dark:bg-white/5 rounded-3xl animate-pulse" />
+                    ))
+                ) : sacFaqs.length > 0 ? (
                     sacFaqs.map(faq => (
                         <div key={faq.id} className="border border-gray-100 dark:border-white/5 rounded-3xl overflow-hidden bg-gray-50 dark:bg-white/5">
                             <button

@@ -23,8 +23,13 @@ import { createSubmission, updateSubmission, revertSubmissionToDraft, saveDraftF
 import { ShareDraftModal } from './ShareDraftModal';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import { TargetProfileModal } from './TargetProfileModal';
 import { useMutation } from '@tanstack/react-query';
+import dynamic from 'next/dynamic';
+const TargetProfileModal = dynamic(
+    () => import('./TargetProfileModal').then(m => m.TargetProfileModal),
+    { ssr: false }
+);
+
 import { DraftsMenu } from './DraftsMenu';
 import { useDraftsStore } from '@/store/useDraftsStore';
 import { usePendingUploadsStore } from '@/store/usePendingUploadsStore';

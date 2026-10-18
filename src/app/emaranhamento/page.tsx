@@ -12,7 +12,7 @@
  */
 
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 import { Header } from '@/components/layout/Header';
@@ -27,7 +27,7 @@ import { User, Loader2, Search, X, Users, Plus, Send } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
 
-export default function EmaranhamentoPage() {
+function EmaranhamentoContent() {
     const searchParams = useSearchParams();
     const userId = searchParams.get('userId') || searchParams.get('userID');
     const groupId = searchParams.get('groupId');
@@ -669,5 +669,17 @@ export default function EmaranhamentoPage() {
                     </div>
                 )}
             </MainLayoutWrapper>
+    );
+}
+
+export default function EmaranhamentoPage() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-background-light dark:bg-background-dark flex items-center justify-center">
+                <Loader2 className="w-8 h-8 animate-spin text-brand-yellow" />
+            </div>
+        }>
+            <EmaranhamentoContent />
+        </Suspense>
     );
 }

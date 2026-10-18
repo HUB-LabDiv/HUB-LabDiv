@@ -40,7 +40,8 @@ const PRECACHE_ASSETS = [
     '/gcif/wiki',
     '/gcif/interativo',
     '/ferramentas',
-    '/lab'
+    '/lab',
+    '/offline'
 ];
 
 try {

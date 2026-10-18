@@ -53,8 +53,13 @@ import { CookieBanner } from "@/components/shared/CookieBanner";
 import { RouteFocusManager } from "@/components/shared/RouteFocusManager";
 import { VLibrasWidget } from "@/components/ui/VLibrasWidget";
 import { QueryProvider } from "@/providers/QueryProvider";
-import { BetaRegistrationModal } from "@/components/modals/BetaRegistrationModal";
+import dynamic from "next/dynamic";
 import { BootLoader } from "@/components/layout/BootLoader";
+
+const BetaRegistrationModal = dynamic(
+  () => import("@/components/modals/BetaRegistrationModal").then(m => m.BetaRegistrationModal),
+  { ssr: false }
+);
 
 /**
  * V4.0.0 Layout - Protocol Apocalypse Certified
@@ -177,7 +182,7 @@ export default async function RootLayout({
                 <RouteFocusManager />
                 <VLibrasWidget />
                 <BetaRegistrationModal />
-                <Script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" />
+                <Script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/4.0.0/model-viewer.min.js" strategy="lazyOnload" />
                 {/* <DivAIAWidget /> */}
               </SearchProvider>
             </ReadingExperienceProvider>

@@ -14,7 +14,19 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ConstelacoesGraphView } from './ConstelacoesGraphView';
+import dynamic from 'next/dynamic';
+
+const ConstelacoesGraphView = dynamic(
+    () => import('./ConstelacoesGraphView').then(m => m.ConstelacoesGraphView),
+    {
+        ssr: false,
+        loading: () => (
+            <div className="w-full h-[600px] rounded-3xl bg-surface-dark border border-white/10 flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full border-2 border-brand-yellow border-t-transparent animate-spin" />
+            </div>
+        )
+    }
+);
 
 interface ConstelacoesProps {
     glossario: any[];

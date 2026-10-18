@@ -30,7 +30,18 @@ const nextConfig: NextConfig = {
     ],
   },
   experimental: {
-    optimizePackageImports: ['lucide-react', 'recharts', 'framer-motion', 'date-fns', 'clsx', 'tailwind-merge'],
+    optimizePackageImports: [
+      'lucide-react',
+      'recharts',
+      'framer-motion',
+      'date-fns',
+      'clsx',
+      'tailwind-merge',
+      '@radix-ui/react-accordion',
+      '@radix-ui/react-popover',
+      '@radix-ui/react-tabs',
+      'katex',
+    ],
   },
   serverExternalPackages: ['puppeteer-core', '@sparticuz/chromium', 'nodemailer'],
   outputFileTracingIncludes: {
@@ -51,6 +62,11 @@ const nextConfig: NextConfig = {
       { source: '/trilhas', destination: '/ferramentas/trilhas', permanent: true },
       { source: '/trilhas/:id', destination: '/ferramentas/trilhas/:id', permanent: true },
       { source: '/register', destination: '/login', permanent: true },
+      { source: '/privacy-policy', destination: '/privacy', permanent: true },
+      { source: '/mapa', destination: '/ferramentas/mapa', permanent: true },
+      { source: '/leaderboard', destination: '/lab', permanent: true },
+      { source: '/auth/parent', destination: '/', permanent: true },
+      { source: '/auth/parent/:path*', destination: '/', permanent: true },
     ];
   },
   async headers() {

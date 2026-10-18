@@ -11,8 +11,7 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import { driver, DriveStep } from 'driver.js';
-import 'driver.js/dist/driver.css';
+import type { DriveStep } from 'driver.js';
 import { TourStepConfig, getPageTourInfo, getEixoTourInfo, getGlobalTourSteps, UserRoleCategory } from './tour-data';
 
 function removeScreenGesture() {
@@ -108,7 +107,7 @@ function showScreenGesture(type: 'horizontal' | 'vertical', targetElement: HTMLE
     observer.observe(document.body, { childList: true });
 }
 
-export function runCustomTour(steps: TourStepConfig[], onFinish?: () => void) {
+export async function runCustomTour(steps: TourStepConfig[], onFinish?: () => void) {
     if (typeof window === 'undefined') return;
 
     // Helper: Encontra o primeiro elemento que corresponda ao seletor e esteja visível na tela
@@ -139,6 +138,11 @@ export function runCustomTour(steps: TourStepConfig[], onFinish?: () => void) {
         .filter((item): item is { step: TourStepConfig; element: HTMLElement } => item !== null);
 
     if (validSteps.length === 0) return;
+
+    const [{ driver }] = await Promise.all([
+        import('driver.js'),
+        import('driver.js/dist/driver.css' as any)
+    ]);
 
     let cleanupKeyHandler: (() => void) | null = null;
 

@@ -881,7 +881,7 @@ const pageContent: Record<string, any> = {
     }
 };
 
-export default function WikiSubPage() {
+function WikiSubPageContent() {
     const params = useParams();
     const searchParams = useSearchParams();
     const slug = params.slug as string;
@@ -1182,5 +1182,17 @@ export default function WikiSubPage() {
                 .text-brand-yellow { color: #FFCC00; }
             `}</style>
         </MainLayoutWrapper>
+    );
+}
+
+export default function WikiSubPage() {
+    return (
+        <React.Suspense fallback={
+            <div className="min-h-screen bg-background-light dark:bg-background-dark flex items-center justify-center">
+                <div className="w-8 h-8 rounded-full border-2 border-brand-yellow border-t-transparent animate-spin" />
+            </div>
+        }>
+            <WikiSubPageContent />
+        </React.Suspense>
     );
 }

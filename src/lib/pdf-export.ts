@@ -9,9 +9,6 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import jsPDF from 'jspdf';
-import { domToPng } from 'modern-screenshot';
-
 /**
  * Exporta um elemento HTML específico para um arquivo PDF com múltiplas páginas se necessário.
  * Ideal para manter formatação de Markdown e KaTeX com precisão.
@@ -32,6 +29,11 @@ export async function exportElementToPDF(elementId: string, filename: string = '
     };
 
     try {
+        const [{ default: jsPDF }, { domToPng }] = await Promise.all([
+            import('jspdf'),
+            import('modern-screenshot')
+        ]);
+
         const dataUrl = await domToPng(element, {
             quality: 0.95,
             backgroundColor: window.matchMedia('(prefers-color-scheme: dark)').matches ? '#0a0a0b' : '#ffffff',
