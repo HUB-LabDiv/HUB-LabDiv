@@ -2,6 +2,59 @@
 
 ---
 
+## 🚀 Versão 6.6.0 (Build 18) — *Navegação em Árvore, Busca Global Spotlight & Eixos Acadêmicos*
+**Data de Lançamento:** 18 de Outubro de 2026  
+**Ambiente:** Web (Next.js 14+) & Android Mobile (Capacitor / Google Play Store)  
+**Licença:** GNU Affero General Public License v3 (AGPLv3)
+
+---
+
+### 🌟 1. Navegação Central & Busca Global (Spotlight / Command Bar)
+* **Busca Global Centralizada (`Ctrl + K` / `Cmd + K` e `/`):**
+  - Implementação de barra de busca central estilo Spotlight/Command Bar no topo, com captura e atalhos de teclado globais.
+  - Otimização para Mobile: barra responsiva expandida e atalho `/` ocultado automaticamente em interfaces touch.
+  - Normalização algorítmica de diacríticos e acentos (`NFD`) em queries e títulos.
+  - Cobertura completa de rotas, ferramentas, iniciativas e páginas institucionais com palavras-chave dedicadas.
+
+---
+
+### 🌳 2. Menu em Árvore Lateral (Tree View / Accordion)
+* **Estrutura Hierárquica por Eixos:**
+  - Menu vertical estilo árvore na Sidebar esquerda permitindo acesso direto às sub-abas:
+    - *Social:* Fluxo, Arte e Logs.
+    - *Informativo:* Instituto, Wiki e Interativo.
+    - *Ferramentas Acadêmicas:* Acompanhamento, Estudos e Integração.
+    - *Como Ingressar:* Visitas & Extensão, Vestibular & Matrícula e Perguntas Frequentes.
+  - Destaque dinâmico e cores oficiais da marca LabDiv (`#FFCC00`, `#0F4780`, `#F14343`) no hover e estado ativo.
+  - Sincronização em tempo real de parâmetros de URL (`?tab=fluxo`, `?tab=artes`, `?tab=logs`).
+
+---
+
+### 🎓 3. Ferramentas Acadêmicas Reestruturadas
+* **Navegação em Dois Níveis:**
+  - *Acompanhamento:* Segmentado semanticamente em **Semestre** (Grade Horária) e **Curso** (Trilhas Curriculares).
+  - *Estudos:* Segmentado em **Central de Anotações** e **Softwares da Comunidade**.
+  - *Integração:* Direcionamento imediato para o **Match Acadêmico** entre estudantes.
+
+---
+
+### 🔬 4. Perfil Científico (Lab Pessoal) & Preenchimento Direto
+* **Interatividade Inline e Chips 'Não Informados (NI)':**
+  - Eliminação de modais intermediários para dados rápidos: badges e chips interativos para preenchimento imediato de Curso, Hobbies, Expressões Culturais, Apelido e Bio.
+  - Atualização otimista imediata com persistência segura no Supabase e suporte a atalhos `Enter` (salvar) e `Esc` (cancelar).
+  - Botão de edição atualizado com ícone semântico de lápis (`Pencil`).
+
+---
+
+### 🔭 5. Observatório Científico & Parcerias
+* **Seção "Como o LabDiv Pode Ajudar":**
+  - Apresentação estruturada dos 4 pilares de apoio à divulgação científica: Mentoria Pedagógica, Design & Identidade Visual, Infraestrutura & TI e Cobertura Audiovisual.
+  - Case de sucesso integrado do **Show da Física**.
+  - Formulário interativo e Server Action com validação Zod para solicitação oficial de parcerias com o LabDiv.
+  - Integração do Show da Física no portal "Como Ingressar" (visitas de escolas e vestibulandos).
+
+---
+
 ## 🚀 Versão 6.5.1 (Build 17) — *Conformidade Jurídica Integral & Blindagem Regulatória*
 **Data de Lançamento:** 16 de Outubro de 2026  
 **Ambiente:** Web (Next.js 14+) & Android Mobile (Capacitor / Google Play Store)  
@@ -66,14 +119,12 @@
 *(Limite de 500 caracteres para o campo "Novidades desta versão" no Play Console)*
 
 ```text
-Versão 6.5.1:
-• Conformidade plena com a LGPD e Marco Civil da Internet.
-• Atualização do fluxo de exclusão de conta e dados pessoais (in-app e web).
-• Regime Dual de Feeds com licença aberta Creative Commons (CC BY 4.0).
-• Proteção aprimorada para menores de idade e consentimento parental.
-• Validação local e segura de documentos com criptografia Argon2id.
-• Link para código aberto conforme a licença AGPLv3.
-• Otimização R8 e suporte Edge-to-Edge nativo para Android 15+.
-• Melhorias de desempenho, estabilidade e correções de interface.
-
+Versão 6.6.0:
+• Nova busca global com atalhos de teclado e estilo Spotlight.
+• Menu em árvore vertical com acesso direto a todas as sub-abas.
+• Ferramentas acadêmicas: Acompanhamento, Estudos e Integração.
+• Edição inline de curso, hobbies e apelido no Lab Pessoal.
+• Observatório: pilares de apoio e parcerias com o LabDiv.
+• Show da Física integrado ao portal Como Ingressar.
+• Melhorias de desempenho, estabilidade e responsividade mobile.
 ```
