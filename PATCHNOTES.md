@@ -2,6 +2,24 @@
 
 ---
 
+## 🚀 Versão 6.6.1 (Build 19) — *Correção de Interface Mobile & Estabilidade Android 15+*
+**Data de Lançamento:** 18 de Outubro de 2026  
+**Ambiente:** Web (Next.js 14+) & Android Mobile (Capacitor / Google Play Store)  
+**Licença:** GNU Affero General Public License v3 (AGPLv3)
+
+---
+
+### 📱 1. Correções Críticas de Layout Android & Edge-to-Edge
+* **Eliminação de ActionBar Nativa Duplicada:**
+  - Correção no tema da aplicação (`AppTheme.NoActionBar`) eliminando a barra superior nativa do Android que causava sobreposição ("H...") e duplicava o cabeçalho no aplicativo móvel.
+  - Configuração do `postSplashScreenTheme` na Splash Screen nativa para transição direta sem barras indesejadas.
+* **Ajuste Fino de Insets da Barra de Status:**
+  - Implementação de `ViewCompat.setOnApplyWindowInsetsListener` em `MainActivity.java` para cálculo exato da área de recorte (notch/câmera) e status bar no Android 15 (SDK 35/36), garantindo visual idêntico ao navegador mobile.
+* **Paleta de Cores Nativas do Sistema:**
+  - Criação de `colors.xml` no Android alinhando `windowBackground`, `colorPrimary` e `colorPrimaryDark` ao padrão Base Dark (`#121212`) e amarelo LabDiv (`#FFCC00`).
+
+---
+
 ## 🚀 Versão 6.6.0 (Build 18) — *Navegação em Árvore, Busca Global Spotlight & Eixos Acadêmicos*
 **Data de Lançamento:** 18 de Outubro de 2026  
 **Ambiente:** Web (Next.js 14+) & Android Mobile (Capacitor / Google Play Store)  
@@ -119,12 +137,12 @@
 *(Limite de 500 caracteres para o campo "Novidades desta versão" no Play Console)*
 
 ```text
-Versão 6.6.0:
-• Nova busca global com atalhos de teclado e estilo Spotlight.
+Versão 6.6.1:
+• Correção de sobreposição no cabeçalho e suporte aprimorado ao Android 15.
+• Nova busca global rápida com design Spotlight e atalho Ctrl+K.
 • Menu em árvore vertical com acesso direto a todas as sub-abas.
-• Ferramentas acadêmicas: Acompanhamento, Estudos e Integração.
-• Edição inline de curso, hobbies e apelido no Lab Pessoal.
-• Observatório: pilares de apoio e parcerias com o LabDiv.
-• Show da Física integrado ao portal Como Ingressar.
-• Melhorias de desempenho, estabilidade e responsividade mobile.
+• Ferramentas acadêmicas reorganizadas: Acompanhamento, Estudos e Integração.
+• Edição inline no Lab Pessoal (curso, hobbies e apelido).
+• Seção de parcerias do LabDiv e Show da Física no Como Ingressar.
+• Melhorias de desempenho e estabilidade geral.
 ```

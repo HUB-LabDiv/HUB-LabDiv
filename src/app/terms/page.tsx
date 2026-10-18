@@ -36,7 +36,7 @@ export default function TermsOfServicePage() {
                         Contrato de Adesão, Propriedade Intelectual, Código de Conduta Comunitária e Governança do Ecossistema HUB LabDiv (IFUSP).
                     </p>
                     <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 border border-brand-blue/20 text-xs font-semibold text-brand-blue">
-                        <span>Versão 6.6.0 • Atualizado em 2026</span>
+                        <span>Versão 6.6.1 • Atualizado em 2026</span>
                     </div>
                 </header>
 
