@@ -214,7 +214,7 @@ export default function TrailDetailsClient({
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -10 }}
                         >
-                            <Link href="/trilhas" className="inline-flex items-center gap-2 text-gray-400 dark:text-gray-500 hover:text-brand-blue dark:hover:text-white transition-colors font-mono text-xs mb-8 group">
+                            <Link href="/ferramentas/trilhas" className="inline-flex items-center gap-2 text-gray-400 dark:text-gray-500 hover:text-brand-blue dark:hover:text-white transition-colors font-mono text-xs mb-8 group">
                                 <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
                                 [VOLTAR_A_MATRIZ]
                             </Link>
@@ -326,7 +326,7 @@ export default function TrailDetailsClient({
                                     {equivalentTrails.map((eq) => (
                                         <Link
                                             key={eq.id}
-                                            href={`/trilhas/${eq.id}`}
+                                            href={`/ferramentas/trilhas/${eq.id}`}
                                             className="px-3 py-1.5 bg-gray-100 dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-full font-mono text-[10px] text-gray-400 hover:text-brand-blue-accent hover:border-brand-blue-accent/40 transition-all flex items-center gap-2 group/chip"
                                         >
                                             <span className="font-bold">{eq.course_code}</span>
@@ -393,7 +393,7 @@ export default function TrailDetailsClient({
                                                                     return (
                                                                         <div key={code} className="flex items-center gap-2">
                                                                             {eqData ? (
-                                                                                <Link href={`/trilhas/${eqData.id}`} className="px-2 py-1 bg-[#1E1E1E] border border-cyan-500/10 rounded flex items-center gap-2 group/eqlink hover:border-cyan-500/40 transition-colors">
+                                                                                <Link href={`/ferramentas/trilhas/${eqData.id}`} className="px-2 py-1 bg-[#1E1E1E] border border-cyan-500/10 rounded flex items-center gap-2 group/eqlink hover:border-cyan-500/40 transition-colors">
                                                                                     <span className="font-mono text-[10px] font-bold text-gray-300 group-hover/eqlink:text-cyan-400">{code}</span>
                                                                                     <span className="text-[10px] text-gray-500 max-w-[120px] truncate">{eqData.title}</span>
                                                                                 </Link>
@@ -419,7 +419,7 @@ export default function TrailDetailsClient({
                                                         return (
                                                             <Link
                                                                 key={eq.id}
-                                                                href={`/trilhas/${eq.id}`}
+                                                                href={`/ferramentas/trilhas/${eq.id}`}
                                                                 className="group flex items-center gap-3 p-3 bg-gray-50 dark:bg-background-dark/60 border border-cyan-500/10 rounded-lg hover:border-cyan-500/30 transition-all"
                                                             >
                                                                 <eqCfg.icon size={12} style={{ color: eqCfg.color }} className="shrink-0" />
@@ -471,7 +471,7 @@ export default function TrailDetailsClient({
                                             {prerequisiteTrails.map((prereq) => (
                                                 <Link
                                                     key={prereq.course_code}
-                                                    href={`/trilhas/${prereq.id}`}
+                                                    href={`/ferramentas/trilhas/${prereq.id}`}
                                                     className="group flex items-center gap-3 p-3 bg-background-dark/60 border border-[#FF4B4B]/15 rounded-lg hover:border-[#FF4B4B]/40 transition-all"
                                                 >
                                                     <Lock size={12} className="text-[#FF4B4B] shrink-0 group-hover:hidden" />
@@ -697,7 +697,7 @@ export default function TrailDetailsClient({
                                     {prerequisiteTrails.map((prereq) => (
                                         <Link
                                             key={prereq.id}
-                                            href={`/trilhas/${prereq.id}`}
+                                            href={`/ferramentas/trilhas/${prereq.id}`}
                                             className="group flex flex-col p-5 bg-gray-50 dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded-2xl hover:border-brand-red dark:hover:border-[#FF4B4B]/30 transition-all relative overflow-hidden h-32"
                                         >
                                             <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-20 transition-opacity">
@@ -836,7 +836,7 @@ export default function TrailDetailsClient({
                                         {prerequisiteTrails.map((prereq) => (
                                             <Link
                                                 key={prereq.course_code}
-                                                href={`/trilhas/${prereq.id}`}
+                                                href={`/ferramentas/trilhas/${prereq.id}`}
                                                 className="flex items-center gap-2 p-2 rounded bg-background-dark border border-gray-800 hover:border-[#FF4B4B]/30 transition-all group"
                                             >
                                                 <Lock size={10} className="text-[#FF4B4B]/50 shrink-0" />
@@ -865,7 +865,7 @@ export default function TrailDetailsClient({
                                             return (
                                                 <Link
                                                     key={eq.id}
-                                                    href={`/trilhas/${eq.id}`}
+                                                    href={`/ferramentas/trilhas/${eq.id}`}
                                                     className="flex items-center gap-2 p-2 rounded bg-background-dark border border-gray-800 hover:border-cyan-500/30 transition-all group"
                                                 >
                                                     <eqCfg.icon size={10} style={{ color: eqCfg.color }} className="shrink-0" />

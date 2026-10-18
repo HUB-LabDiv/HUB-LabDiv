@@ -14,8 +14,13 @@ import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
 export async function POST(req: Request) {
-    let payload = await req.json();
-    let ageSignalToken: string | null = payload.token?.trim();
+    let payload;
+    try {
+        payload = await req.json();
+    } catch {
+        return NextResponse.json({ error: 'Payload JSON inválido.' }, { status: 400 });
+    }
+    let ageSignalToken: string | null = payload?.token?.trim();
 
     if (!ageSignalToken) {
         return NextResponse.json({ error: 'Token do Play Age Signals não enviado.' }, { status: 400 });

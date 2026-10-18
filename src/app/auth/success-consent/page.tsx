@@ -48,7 +48,7 @@ export default function SuccessConsentPage() {
                     </p>
                     
                     <button
-                        onClick={() => router.push('/register')}
+                        onClick={() => router.push('/login')}
                         className="flex items-center gap-2 bg-[#0F4780] hover:bg-[#0c3966] text-white px-6 py-3 rounded-xl font-bold transition-all shadow-md active:scale-95"
                     >
                         Criar minha conta agora

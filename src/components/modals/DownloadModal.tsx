@@ -373,7 +373,7 @@ export const DownloadModal = ({ id, title, authors, avatarUrl, description, medi
                     </div>
 
                     <div className="mt-16 pt-8 border-t-2 border-gray-200 flex justify-between items-center text-sm font-bold text-gray-400">
-                        <span>Documento gerado em {new Date().toLocaleDateString('pt-BR')}</span>
+                        <span suppressHydrationWarning>Documento gerado em {new Date().toLocaleDateString('pt-BR')}</span>
                         <span className="text-brand-blue">hub.labdiv.if.usp.br/arquivo/{id}</span>
                     </div>
                 </div>

@@ -174,7 +174,7 @@ export default function AdminTrilhasPage() {
                                             {new Date(trail.created_at).toLocaleDateString('pt-BR')}
                                         </span>
                                         <a
-                                            href={`/trilhas/${trail.id}`}
+                                            href={`/ferramentas/trilhas/${trail.id}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
                                             className="text-[10px] font-black uppercase tracking-wider text-gray-400 hover:text-[#0055ff] transition-colors flex items-center gap-1 ml-auto"

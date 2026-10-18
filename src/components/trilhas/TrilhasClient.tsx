@@ -881,7 +881,7 @@ export default function TrilhasClient({
                                                 exit={{ opacity: 0, scale: 0.9 }}
                                                 transition={{ duration: 0.2 }}
                                             >
-                                                <Link href={`/trilhas/${trail.id}`} className="group block h-full">
+                                                <Link href={`/ferramentas/trilhas/${trail.id}`} className="group block h-full">
                                                     <div
                                                         className="relative rounded-xl p-6 border transition-all h-full flex flex-col dark:bg-[#1E1E1E] bg-white border-gray-300 dark:border-white/10 shadow-md dark:shadow-none hover:border-gray-400 dark:hover:border-white/20 group-hover:bg-gray-50/50 dark:group-hover:bg-[#252525] group-hover:shadow-2xl hover:scale-[1.02]"
                                                         style={{

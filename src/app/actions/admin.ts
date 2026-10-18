@@ -136,7 +136,7 @@ export async function linkSubmissionToTrail(submissionId: string, trailId: strin
     }
 
     revalidatePath('/admin/acervo');
-    revalidatePath(`/trilhas/${trailId}`);
+    revalidatePath(`/ferramentas/trilhas/${trailId}`);
     return { success: true };
 }
 
@@ -160,7 +160,7 @@ export async function unlinkSubmissionFromTrail(linkId: string, trailId: string)
     }
 
     revalidatePath('/admin/acervo');
-    revalidatePath(`/trilhas/${trailId}`);
+    revalidatePath(`/ferramentas/trilhas/${trailId}`);
     return { success: true };
 }
 

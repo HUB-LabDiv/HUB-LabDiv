@@ -394,7 +394,7 @@ export function Footer() {
                 <div className="border-t border-white/10 pt-8 flex flex-col xl:flex-row justify-between items-center gap-6 text-center md:text-left">
                     <div className="flex flex-col sm:flex-row items-center gap-4">
                         <USPLogo size={100} className="text-white opacity-80 hover:opacity-100 transition-opacity" />
-                        <p className="text-xs text-white/40 font-open-sans">
+                        <p className="text-xs text-white/40 font-open-sans" suppressHydrationWarning>
                             © {new Date().getFullYear()} IFUSP. Todos os direitos reservados.
                         </p>
                     </div>

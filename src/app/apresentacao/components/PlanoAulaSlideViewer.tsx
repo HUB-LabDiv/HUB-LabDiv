@@ -72,8 +72,7 @@ export const PLANO_AULA_SLIDES: SlideItem[] = [
       'Contextualizar a prática do Caderno do Artista na divulgação científica.'
     ],
     links: [
-      { label: 'Baixar Apresentação (.pptx)', url: '/Plano de Aula - HUB LabDiv.pptx', variant: 'yellow' },
-      { label: 'Baixar Plano de Aula (.pdf)', url: '/Plano de Aula - HUB LabDiv.pdf', variant: 'blue' }
+      { label: 'Baixar Apresentação (.pptx)', url: '/presentation/Plano de Aula - HUB LabDiv.pptx', variant: 'yellow' }
     ]
   },
   {
@@ -435,7 +434,7 @@ export function PlanoAulaSlideViewer() {
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-3">
           <a
-            href="/Plano de Aula - HUB LabDiv.pptx"
+            href="/presentation/Plano de Aula - HUB LabDiv.pptx"
             download="Plano de Aula - HUB LabDiv.pptx"
             className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-brand-blue/30 hover:bg-brand-blue/60 text-brand-yellow font-bold text-xs uppercase tracking-wider border border-brand-yellow/30 transition-all hover:scale-105 active:scale-95 shadow-lg"
             title="Baixar arquivo PowerPoint (.pptx)"

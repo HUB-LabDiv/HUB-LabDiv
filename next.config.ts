@@ -50,6 +50,7 @@ const nextConfig: NextConfig = {
       { source: '/drops', destination: '/?tab=updates', permanent: true },
       { source: '/trilhas', destination: '/ferramentas/trilhas', permanent: true },
       { source: '/trilhas/:id', destination: '/ferramentas/trilhas/:id', permanent: true },
+      { source: '/register', destination: '/login', permanent: true },
     ];
   },
   async headers() {

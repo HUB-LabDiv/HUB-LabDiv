@@ -254,8 +254,8 @@ export function HubSlideViewer() {
         {/* Action Buttons */}
         <div className="flex flex-wrap items-center gap-3 pt-2">
           <a
-            href="/Apresentação - HUB LabDiv.pptx"
-            download="Apresentação - HUB LabDiv.pptx"
+            href="/presentation/Apresentação do HUB.pptx"
+            download="Apresentação do HUB.pptx"
             className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-brand-yellow hover:bg-[#e6b800] text-black font-black text-xs uppercase tracking-wider transition-all hover:scale-105 active:scale-95 shadow-lg"
             title="Baixar Apresentação em PowerPoint (.pptx)"
           >
