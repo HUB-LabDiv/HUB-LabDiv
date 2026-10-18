@@ -12,7 +12,9 @@
  */
 
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { BookOpen, GraduationCap, Globe, HelpCircle, ArrowRight, Sparkles, Zap, Compass, Clock, FlaskConical, Bell, Calendar, MapPin, CheckCircle2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
@@ -43,9 +45,21 @@ const IngressOption = ({ title, icon, description, items, color }: any) => (
 );
 
 export default function IngressoClient({ profile }: { profile: any }) {
-    const [activeTab, setActiveTab] = useState<'ingresso' | 'visitar'>('ingresso');
+    const searchParams = useSearchParams();
+    const tabParam = searchParams.get('tab');
+    const [activeTab, setActiveTab] = useState<'ingresso' | 'visitar'>(
+        tabParam === 'visitar' ? 'visitar' : 'ingresso'
+    );
     const [notifyEmail, setNotifyEmail] = useState('');
     const [isSubscribed, setIsSubscribed] = useState(false);
+
+    useEffect(() => {
+        if (tabParam === 'visitar') {
+            setActiveTab('visitar');
+        } else if (tabParam === 'ingresso') {
+            setActiveTab('ingresso');
+        }
+    }, [tabParam]);
 
     const handleSubscribeNotification = (e: React.FormEvent) => {
         e.preventDefault();
@@ -150,6 +164,34 @@ export default function IngressoClient({ profile }: { profile: any }) {
                         />
                     </div>
 
+                    {/* Banner Promocional do Show da Física para Futuros Alunos */}
+                    <div className="glass-card rounded-[36px] border border-[#FFCC00]/30 bg-gradient-to-br from-[#1E1E1E] via-[#1E1E1E] to-[#FFCC00]/10 p-8 relative overflow-hidden shadow-2xl group">
+                        <div className="absolute top-0 right-0 w-80 h-80 bg-[#FFCC00]/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none group-hover:bg-[#FFCC00]/15 transition-all duration-700" />
+                        <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                            <div className="space-y-3 text-center md:text-left flex-1">
+                                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFCC00]/10 text-[#FFCC00] text-[10px] font-black uppercase tracking-wider font-bukra border border-[#FFCC00]/20">
+                                    <Zap className="w-3.5 h-3.5 fill-current" />
+                                    Experiência Pré-Vestibular
+                                </div>
+                                <h3 className="text-2xl md:text-3xl font-bukra font-black text-white uppercase tracking-tight">
+                                    Conheça o IFUSP através do <span className="text-[#FFCC00]">Show da Física</span>
+                                </h3>
+                                <p className="text-sm text-gray-300 font-open-sans font-medium leading-relaxed max-w-2xl">
+                                    Quer sentir a vibração da ciência antes mesmo do vestibular? O Show da Física realiza demonstrações de bobinas de Tesla, giroscópios e levitação quântica. É a melhor porta de entrada para se apaixonar pelo curso!
+                                </p>
+                            </div>
+                            <div className="shrink-0">
+                                <Link
+                                    href="/iniciativas/show-da-fisica"
+                                    className="px-6 py-4 bg-[#FFCC00] text-black rounded-2xl text-xs font-bukra font-black uppercase tracking-widest hover:bg-[#FFCC00]/90 transition-all flex items-center gap-2 shadow-lg shadow-[#FFCC00]/20 hover:scale-105"
+                                >
+                                    <span>Explorar Show da Física</span>
+                                    <ArrowRight className="w-4 h-4" />
+                                </Link>
+                            </div>
+                        </div>
+                    </div>
+
                     <div data-tour="ingresso-faq" className="glass-card rounded-[40px] border border-white/5 p-8 md:p-12 relative overflow-hidden group bg-[#1E1E1E]">
                         <div className="absolute top-0 right-0 w-96 h-96 bg-brand-blue/5 rounded-full blur-3xl -mr-48 -mt-48 transition-all group-hover:bg-brand-blue/10 duration-700 pointer-events-none"></div>
                         <div className="relative z-10 flex flex-col items-center gap-12 w-full">
@@ -221,16 +263,19 @@ export default function IngressoClient({ profile }: { profile: any }) {
                     {/* Cards de Atividades de Extensão */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
                         {/* Card 1: Show da Física */}
-                        <div className="glass-card rounded-[40px] border border-white/5 overflow-hidden hover:border-[#FFCC00]/40 transition-all duration-500 group bg-[#1E1E1E]">
+                        <div className="glass-card rounded-[40px] border border-[#FFCC00]/40 overflow-hidden hover:border-[#FFCC00]/80 transition-all duration-500 group bg-[#1E1E1E] shadow-xl relative">
+                            <div className="absolute top-4 right-4 z-10">
+                                <span className="inline-flex items-center gap-1.5 text-[9px] font-bukra font-black uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
+                                    Disponível no HUB
+                                </span>
+                            </div>
                             <div className="p-8 space-y-6">
                                 <div className="w-14 h-14 rounded-2xl flex items-center justify-center bg-[#FFCC00]/10 text-[#FFCC00] shadow-lg transition-transform group-hover:scale-110 duration-500">
                                     <Zap className="w-8 h-8 fill-current" />
                                 </div>
                                 <div className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <h3 className="text-2xl font-bukra font-bold text-white uppercase tracking-tight">Show da Física</h3>
-                                        <span className="text-[9px] font-bukra font-black uppercase tracking-wider px-2.5 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/30">Em Breve</span>
-                                    </div>
+                                    <h3 className="text-2xl font-bukra font-bold text-white uppercase tracking-tight">Show da Física</h3>
                                     <p className="text-sm text-gray-400 font-open-sans font-medium italic">Demonstrações lúdicas e eletrizantes.</p>
                                 </div>
                                 <ul className="space-y-3 font-open-sans">
@@ -241,13 +286,13 @@ export default function IngressoClient({ profile }: { profile: any }) {
                                         </li>
                                     ))}
                                 </ul>
-                                <button
-                                    type="button"
-                                    onClick={() => toast('O agendamento do Show da Física será integrado diretamente nesta tela!')}
-                                    className="w-full py-4 bg-white/5 text-white/70 border border-white/10 rounded-2xl text-[10px] font-bukra font-black uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all"
+                                <Link
+                                    href="/iniciativas/show-da-fisica"
+                                    className="w-full py-4 bg-[#FFCC00] text-black rounded-2xl text-[10px] font-bukra font-black uppercase tracking-widest hover:bg-[#FFCC00]/90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#FFCC00]/20 hover:scale-[1.02]"
                                 >
-                                    Saber Mais
-                                </button>
+                                    <span>Acessar no HUB</span>
+                                    <ArrowRight className="w-3.5 h-3.5" />
+                                </Link>
                             </div>
                         </div>
 

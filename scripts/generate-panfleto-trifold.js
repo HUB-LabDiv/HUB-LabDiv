@@ -871,8 +871,8 @@ function buildFace1Html({ qrWebSvg, qrPlaySvg, qrLabDivSvg }) {
           <span class="title-halo" style="color: #0F172A;">HUB</span> <span class="text-gradient-brand">LabDiv</span>
         </div>
 
-        <div class="font-bukra title-halo" style="font-size: 27px; font-weight: 900; font-style: italic; color: #F14343; letter-spacing: 0.8px; margin-bottom: 12px; text-align: center;">
-          1 APP &bull; INÚMERAS FUNÇÕES
+        <div class="font-bukra title-halo" style="font-size: 24.5px; font-weight: 900; color: #F14343; letter-spacing: 0.2px; margin-bottom: 12px; text-align: center;">
+          Conectando você à universidade
         </div>
 
         <p class="text-shield" style="font-size: 18.5px; color: #334155; font-weight: 600; line-height: 1.38; width: 100%; text-align: center; margin-bottom: 22px;">

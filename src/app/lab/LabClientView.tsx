@@ -20,7 +20,7 @@ import { PostDTO } from '@/dtos/media';
 import { parseMediaUrl, getYoutubeThumbnail, getOptimizedUrl } from '@/lib/media-utils';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 
-import { Grid, Star, Image as ImageIcon, FileText, Heart, MessageSquare, Info, Camera, ShieldCheck, Play, Linkedin, Github, Youtube, Instagram, Globe, Share2, GraduationCap, Eye, Edit, BarChart2, Filter, Trash2 } from 'lucide-react';
+import { Grid, Star, Image as ImageIcon, FileText, Heart, MessageSquare, Info, Camera, ShieldCheck, Play, Linkedin, Github, Youtube, Instagram, Globe, Share2, GraduationCap, Eye, Edit, BarChart2, Filter, Trash2, Check, X, Plus, Loader2, Pencil } from 'lucide-react';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { RadiationBadge } from '@/components/gamification/RadiationBadge';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
@@ -90,9 +90,99 @@ export function LabClientView({
         }
     }
 
-    const [isEditModalOpen, setIsEditModalOpen] = useState(
-        isViewingOwn && isProfileIncomplete
-    );
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+    // Inline editing states for uncompleted fields (NI - Não Informado)
+    const [fieldSaving, setFieldSaving] = useState<string | null>(null);
+    const [editingNickname, setEditingNickname] = useState(false);
+    const [nicknameInput, setNicknameInput] = useState('');
+    const [useNicknameInput, setUseNicknameInput] = useState(false);
+
+    const [editingCourse, setEditingCourse] = useState(false);
+    const [customCourseInput, setCustomCourseInput] = useState('');
+
+    const [editingLanguage, setEditingLanguage] = useState(false);
+
+    const [editingHobbies, setEditingHobbies] = useState(false);
+    const [customHobbyInput, setCustomHobbyInput] = useState('');
+    const [tempHobbies, setTempHobbies] = useState<string[]>([]);
+
+    const [editingBio, setEditingBio] = useState(false);
+    const [bioInput, setBioInput] = useState('');
+
+    const handleInlineUpdate = async (field: keyof Profile, value: any, successMessage?: string) => {
+        if (!viewedProfile || !isViewingOwn) return;
+        
+        const previousViewed = { ...viewedProfile };
+        const previousCurrent = currentUserProfile ? { ...currentUserProfile } : null;
+
+        // Optimistic update
+        setViewedProfile(prev => prev ? ({ ...prev, [field]: value }) : null);
+        if (currentUserProfile) {
+            setCurrentUserProfile(prev => prev ? ({ ...prev, [field]: value }) : null);
+        }
+
+        setFieldSaving(field as string);
+
+        try {
+            const { updateProfile } = await import('@/app/actions/profiles');
+            const res = await updateProfile({ [field]: value });
+            if (res.error) {
+                // Rollback
+                setViewedProfile(previousViewed);
+                if (previousCurrent) setCurrentUserProfile(previousCurrent);
+                toast.error(res.error || 'Erro ao atualizar');
+            } else {
+                toast.success(successMessage || 'Informação atualizada com sucesso!');
+            }
+        } catch {
+            setViewedProfile(previousViewed);
+            if (previousCurrent) setCurrentUserProfile(previousCurrent);
+            toast.error('Erro de conexão ao salvar');
+        } finally {
+            setFieldSaving(null);
+        }
+    };
+
+    const handleSaveNickname = async () => {
+        if (!viewedProfile || !isViewingOwn) return;
+        const cleanName = nicknameInput.trim();
+        if (!cleanName) {
+            toast.error('Digite um apelido válido');
+            return;
+        }
+        setFieldSaving('username');
+        const previousViewed = { ...viewedProfile };
+        setViewedProfile(prev => prev ? ({ ...prev, username: cleanName, use_nickname: useNicknameInput }) : null);
+        try {
+            const { updateProfile } = await import('@/app/actions/profiles');
+            const res = await updateProfile({ username: cleanName, use_nickname: useNicknameInput });
+            if (res.error) {
+                setViewedProfile(previousViewed);
+                toast.error(res.error || 'Erro ao atualizar apelido');
+            } else {
+                toast.success('Apelido atualizado!');
+                setEditingNickname(false);
+            }
+        } catch {
+            setViewedProfile(previousViewed);
+            toast.error('Erro ao atualizar apelido');
+        } finally {
+            setFieldSaving(null);
+        }
+    };
+
+    const handleSaveBio = async () => {
+        if (!viewedProfile || !isViewingOwn) return;
+        await handleInlineUpdate('bio', bioInput.trim(), 'Bio atualizada com sucesso!');
+        setEditingBio(false);
+    };
+
+    const handleSaveHobbies = async (newList: string[]) => {
+        if (!viewedProfile || !isViewingOwn) return;
+        await handleInlineUpdate('artistic_interests', newList, 'Hobbies atualizados com sucesso!');
+        setEditingHobbies(false);
+    };
     
     const [activeTab, setActiveTab] = useState(initialTab);
 
@@ -218,17 +308,96 @@ export function LabClientView({
                             />
                         </div>
                         <div className="flex-1 text-center sm:text-left space-y-4 sm:pt-2">
-                            <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 dark:text-white flex flex-wrap items-center gap-2">
-                                {(viewedProfile?.use_nickname && viewedProfile?.username) ? viewedProfile.username : (viewedProfile?.full_name || 'Usuário')}
-                                <span className="text-xs font-black uppercase text-brand-blue bg-brand-blue/10 px-2 py-1 rounded">
-                                    {viewedProfile?.id === currentUser.id ? 'Laboratório Pessoal' : 'Laboratório Externo'}
-                                </span>
-                                {viewedProfile && (
-                                    <span data-tour="lab-radiation-badge">
-                                        <RadiationBadge xp={viewedProfile.xp || 0} level={viewedProfile.level || 1} size="md" showTierName />
+                            <div>
+                                <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 dark:text-white flex flex-wrap items-center gap-2">
+                                    {(viewedProfile?.use_nickname && viewedProfile?.username) ? viewedProfile.username : (viewedProfile?.full_name || 'Usuário')}
+                                    <span className="text-xs font-black uppercase text-brand-blue bg-brand-blue/10 px-2 py-1 rounded">
+                                        {viewedProfile?.id === currentUser.id ? 'Laboratório Pessoal' : 'Laboratório Externo'}
                                     </span>
+                                    {viewedProfile && (
+                                        <span data-tour="lab-radiation-badge">
+                                            <RadiationBadge xp={viewedProfile.xp || 0} level={viewedProfile.level || 1} size="md" showTierName />
+                                        </span>
+                                    )}
+                                </h1>
+
+                                {isViewingOwn && (
+                                    <div className="mt-1 flex items-center gap-2">
+                                        {editingNickname ? (
+                                            <div className="flex flex-wrap items-center gap-2 p-2 bg-black/40 border border-brand-yellow/30 rounded-xl">
+                                                <input
+                                                    type="text"
+                                                    value={nicknameInput}
+                                                    onChange={(e) => setNicknameInput(e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter') handleSaveNickname();
+                                                        if (e.key === 'Escape') setEditingNickname(false);
+                                                    }}
+                                                    placeholder="Seu apelido..."
+                                                    className="px-2.5 py-1 text-xs bg-white/5 border border-white/10 rounded-lg text-white font-bold outline-none focus:border-brand-yellow"
+                                                    autoFocus
+                                                />
+                                                <label className="flex items-center gap-1.5 text-[11px] text-gray-300 cursor-pointer">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={useNicknameInput}
+                                                        onChange={(e) => setUseNicknameInput(e.target.checked)}
+                                                        className="rounded text-brand-yellow focus:ring-0"
+                                                    />
+                                                    Usar como nome principal
+                                                </label>
+                                                <div className="flex items-center gap-1">
+                                                    <button
+                                                        onClick={handleSaveNickname}
+                                                        disabled={fieldSaving === 'username'}
+                                                        className="px-2 py-1 bg-brand-yellow text-black font-black text-[10px] rounded uppercase hover:bg-brand-yellow/90 flex items-center gap-1"
+                                                    >
+                                                        {fieldSaving === 'username' ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
+                                                        Salvar
+                                                    </button>
+                                                    <button
+                                                        onClick={() => setEditingNickname(false)}
+                                                        className="px-2 py-1 bg-white/10 text-gray-300 font-bold text-[10px] rounded uppercase hover:bg-white/20"
+                                                    >
+                                                        <X className="w-3 h-3" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="flex items-center gap-2">
+                                                {viewedProfile?.username ? (
+                                                    <span className="text-xs text-gray-400 font-medium flex items-center gap-1">
+                                                        @{viewedProfile.username}
+                                                        <button
+                                                            onClick={() => {
+                                                                setNicknameInput(viewedProfile.username || '');
+                                                                setUseNicknameInput(viewedProfile.use_nickname || false);
+                                                                setEditingNickname(true);
+                                                            }}
+                                                            className="text-gray-500 hover:text-brand-yellow p-0.5 rounded transition-colors"
+                                                            title="Alterar apelido"
+                                                        >
+                                                            <Edit className="w-3 h-3" />
+                                                        </button>
+                                                    </span>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => {
+                                                            setNicknameInput('');
+                                                            setUseNicknameInput(false);
+                                                            setEditingNickname(true);
+                                                        }}
+                                                        className="inline-flex items-center gap-1 px-2 py-0.5 text-[10px] font-bold text-brand-yellow bg-brand-yellow/10 hover:bg-brand-yellow/20 border border-dashed border-brand-yellow/40 rounded-md transition-all"
+                                                    >
+                                                        <Plus className="w-2.5 h-2.5" />
+                                                        <span>Apelido: NI (Definir)</span>
+                                                    </button>
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
                                 )}
-                            </h1>
+                            </div>
 
                             <div className="flex flex-wrap items-center justify-center sm:justify-start gap-6 pt-1">
                                 <div className="text-center sm:text-left">
@@ -260,20 +429,20 @@ export function LabClientView({
 
                                 {isViewingOwn ? (
                                     <div data-tour="lab-actions" className="flex flex-wrap items-center gap-2 sm:ml-4">
-                                        <button
-                                            onClick={() => setIsEditModalOpen(true)}
-                                            className="px-4 py-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-600 dark:text-gray-300 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-2"
-                                        >
-                                            <span className="material-symbols-outlined text-sm">edit</span>
-                                            Editar Perfil
-                                        </button>
-
                                         <button 
                                             onClick={handleShare}
                                             className="px-4 py-2 bg-brand-blue text-white hover:scale-105 transition-all rounded-xl text-[10px] font-black uppercase tracking-widest flex items-center gap-2 shadow-lg shadow-brand-blue/20"
                                         >
                                             <Share2 className="w-3.5 h-3.5" />
                                             Compartilhar Lab
+                                        </button>
+                                        <button
+                                            onClick={() => setIsEditModalOpen(true)}
+                                            className="p-2 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-400 hover:text-white rounded-xl transition-all"
+                                            title="Editar perfil"
+                                            aria-label="Editar perfil"
+                                        >
+                                            <Pencil className="w-4 h-4" />
                                         </button>
                                     </div>
                                 ) : (
@@ -324,11 +493,60 @@ export function LabClientView({
                                             {viewedProfile.institute}
                                         </span>
                                     )}
-                                    {viewedProfile?.course && (
-                                        <span className="px-2 py-0.5 bg-brand-yellow/10 text-brand-yellow text-[10px] font-bold rounded uppercase">
+                                    {viewedProfile?.course ? (
+                                        <span className="group relative inline-flex items-center gap-1 px-2 py-0.5 bg-brand-yellow/10 text-brand-yellow text-[10px] font-bold rounded uppercase">
                                             {viewedProfile.course}
+                                            {isViewingOwn && (
+                                                <button
+                                                    onClick={() => setEditingCourse(true)}
+                                                    className="opacity-60 group-hover:opacity-100 hover:text-white transition-opacity ml-1"
+                                                    title="Alterar curso"
+                                                >
+                                                    <Edit className="w-2.5 h-2.5" />
+                                                </button>
+                                            )}
                                         </span>
-                                    )}
+                                    ) : isViewingOwn ? (
+                                        <button
+                                            onClick={() => setEditingCourse(true)}
+                                            className="inline-flex items-center gap-1 px-2 py-0.5 bg-brand-yellow/10 hover:bg-brand-yellow/20 text-brand-yellow text-[10px] font-bold rounded uppercase border border-dashed border-brand-yellow/40 transition-all hover:scale-105"
+                                            title="Clique para informar seu curso"
+                                        >
+                                            <GraduationCap className="w-3 h-3" />
+                                            <span>Curso: NI (Preencher)</span>
+                                        </button>
+                                    ) : null}
+
+                                    {/* Linguagem Cultural / Expressão */}
+                                    {viewedProfile?.cultural_language ? (
+                                        <span className="group relative inline-flex items-center gap-1 px-2 py-0.5 bg-brand-blue/10 text-brand-blue text-[10px] font-bold rounded uppercase border border-brand-blue/20">
+                                            <MessageSquare className="w-3 h-3" />
+                                            Expressão: {
+                                                viewedProfile.cultural_language === 'nerd_geek' ? 'Nerd/Geek' :
+                                                viewedProfile.cultural_language === 'artistica' ? 'Artística' :
+                                                viewedProfile.cultural_language === 'academica' ? 'Acadêmica' : 'Jovem'
+                                            }
+                                            {isViewingOwn && (
+                                                <button
+                                                    onClick={() => setEditingLanguage(true)}
+                                                    className="opacity-60 group-hover:opacity-100 hover:text-white transition-opacity ml-1"
+                                                    title="Alterar linguagem"
+                                                >
+                                                    <Edit className="w-2.5 h-2.5" />
+                                                </button>
+                                            )}
+                                        </span>
+                                    ) : isViewingOwn ? (
+                                        <button
+                                            onClick={() => setEditingLanguage(true)}
+                                            className="inline-flex items-center gap-1 px-2 py-0.5 bg-brand-blue/10 hover:bg-brand-blue/20 text-brand-blue text-[10px] font-bold rounded uppercase border border-dashed border-brand-blue/40 transition-all hover:scale-105"
+                                            title="Definir linguagem/expressão cultural"
+                                        >
+                                            <MessageSquare className="w-3 h-3" />
+                                            <span>Expressão: NI (Preencher)</span>
+                                        </button>
+                                    ) : null}
+
                                     {viewedProfile?.is_labdiv && (
                                         <span className="px-2 py-0.5 bg-brand-yellow text-black text-[10px] font-black rounded uppercase flex items-center gap-1 shadow-sm shadow-brand-yellow/20">
                                             <ShieldCheck className="w-3 h-3" />
@@ -374,6 +592,112 @@ export function LabClientView({
                                         </span>
                                     )}
                                 </div>
+
+                                {/* Seletor inline de Curso */}
+                                {editingCourse && isViewingOwn && (
+                                    <div className="w-full mt-2 p-3 bg-white/5 border border-brand-yellow/30 rounded-2xl space-y-2 animate-in fade-in">
+                                        <div className="flex items-center justify-between text-xs text-brand-yellow font-black uppercase">
+                                            <span>Selecione seu curso:</span>
+                                            <button onClick={() => setEditingCourse(false)} className="text-gray-400 hover:text-white">
+                                                <X className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                        <div className="flex flex-wrap gap-1.5">
+                                            {[
+                                                'Bacharelado em Física',
+                                                'Licenciatura em Física',
+                                                'Física Médica',
+                                                'Pós-Graduação em Física',
+                                                'Astronomia',
+                                                'Ciências Exatas',
+                                                'Engenharia'
+                                            ].map(courseName => (
+                                                <button
+                                                    key={courseName}
+                                                    disabled={fieldSaving === 'course'}
+                                                    onClick={async () => {
+                                                        await handleInlineUpdate('course', courseName, `Curso alterado para ${courseName}!`);
+                                                        setEditingCourse(false);
+                                                    }}
+                                                    className={`px-2.5 py-1 rounded-lg text-[10px] font-bold uppercase transition-all ${
+                                                        viewedProfile?.course === courseName
+                                                            ? 'bg-brand-yellow text-black'
+                                                            : 'bg-white/5 hover:bg-white/10 text-gray-200 border border-white/5'
+                                                    }`}
+                                                >
+                                                    {courseName}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <div className="flex items-center gap-2 pt-1 border-t border-white/5">
+                                            <input
+                                                type="text"
+                                                placeholder="Outro curso... (digite e aperte Enter)"
+                                                value={customCourseInput}
+                                                onChange={(e) => setCustomCourseInput(e.target.value)}
+                                                onKeyDown={async (e) => {
+                                                    if (e.key === 'Enter' && customCourseInput.trim()) {
+                                                        await handleInlineUpdate('course', customCourseInput.trim(), `Curso definido como ${customCourseInput.trim()}!`);
+                                                        setCustomCourseInput('');
+                                                        setEditingCourse(false);
+                                                    }
+                                                    if (e.key === 'Escape') setEditingCourse(false);
+                                                }}
+                                                className="flex-1 px-2.5 py-1 text-xs bg-white/5 border border-white/10 rounded-lg text-white font-medium outline-none focus:border-brand-yellow"
+                                            />
+                                            {customCourseInput.trim() && (
+                                                <button
+                                                    onClick={async () => {
+                                                        await handleInlineUpdate('course', customCourseInput.trim(), `Curso definido como ${customCourseInput.trim()}!`);
+                                                        setCustomCourseInput('');
+                                                        setEditingCourse(false);
+                                                    }}
+                                                    className="px-2.5 py-1 bg-brand-yellow text-black font-black text-[10px] rounded uppercase hover:bg-brand-yellow/90"
+                                                >
+                                                    Salvar
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Seletor inline de Expressão / Linguagem Cultural */}
+                                {editingLanguage && isViewingOwn && (
+                                    <div className="w-full mt-2 p-3 bg-white/5 border border-brand-blue/30 rounded-2xl space-y-2 animate-in fade-in">
+                                        <div className="flex items-center justify-between text-xs text-brand-blue font-black uppercase">
+                                            <span>Selecione sua linguagem de tradução da ciência:</span>
+                                            <button onClick={() => setEditingLanguage(false)} className="text-gray-400 hover:text-white">
+                                                <X className="w-3.5 h-3.5" />
+                                            </button>
+                                        </div>
+                                        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                                            {[
+                                                { id: 'jovem', label: 'Jovem', desc: 'Descontraída e direta' },
+                                                { id: 'nerd_geek', label: 'Nerd/Geek', desc: 'Referências e cultura pop' },
+                                                { id: 'artistica', label: 'Artística', desc: 'Sensível e poética' },
+                                                { id: 'academica', label: 'Acadêmica', desc: 'Formal e técnica' },
+                                            ].map(lang => (
+                                                <button
+                                                    key={lang.id}
+                                                    disabled={fieldSaving === 'cultural_language'}
+                                                    onClick={async () => {
+                                                        await handleInlineUpdate('cultural_language', lang.id, `Linguagem alterada para ${lang.label}!`);
+                                                        setEditingLanguage(false);
+                                                    }}
+                                                    className={`p-2.5 rounded-xl text-left transition-all border ${
+                                                        viewedProfile?.cultural_language === lang.id
+                                                            ? 'bg-brand-blue text-white border-brand-blue'
+                                                            : 'bg-white/5 hover:bg-white/10 text-gray-200 border-white/10'
+                                                    }`}
+                                                >
+                                                    <span className="block text-xs font-black uppercase">{lang.label}</span>
+                                                    <span className="text-[10px] text-gray-400 block mt-0.5">{lang.desc}</span>
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
                                 {isViewingOwn && viewedProfile?.review_status === 'pending' && (viewedProfile?.bio_draft || !viewedProfile?.is_public) && (
                                     <div className="mt-4 p-3 bg-brand-yellow/10 border border-brand-yellow/20 rounded-xl flex items-center gap-3 animate-pulse">
                                         <Info className="w-4 h-4 text-brand-yellow" />
@@ -383,9 +707,62 @@ export function LabClientView({
                                     </div>
                                 )}
 
-                                <p className="mt-4 text-gray-500 italic text-[13px] leading-relaxed">
-                                    {viewedProfile?.bio_draft || viewedProfile?.bio || (isViewingOwn ? "Seu laboratório pessoal está quase pronto!" : "Membro da comunidade Lab-Div.")}
-                                </p>
+                                {/* Bio inline com Ctrl+Enter e Esc */}
+                                {editingBio && isViewingOwn ? (
+                                    <div className="mt-4 space-y-2 p-3 bg-white/5 border border-brand-blue/30 rounded-2xl animate-in fade-in">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-brand-blue flex items-center gap-1.5">
+                                            <Edit className="w-3 h-3" /> Editar Bio
+                                        </label>
+                                        <textarea
+                                            value={bioInput}
+                                            onChange={(e) => setBioInput(e.target.value)}
+                                            onKeyDown={(e) => {
+                                                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) handleSaveBio();
+                                                if (e.key === 'Escape') setEditingBio(false);
+                                            }}
+                                            rows={3}
+                                            className="w-full p-3 bg-black/40 border border-white/10 focus:border-brand-blue rounded-xl text-[13px] text-white outline-none resize-none transition-all placeholder:text-gray-500 font-sans"
+                                            placeholder="Conte um pouco sobre sua trajetória, seus interesses, pesquisas e projetos..."
+                                            autoFocus
+                                        />
+                                        <div className="flex flex-wrap items-center justify-between gap-2 text-[11px] text-gray-400">
+                                            <span className="text-[10px]">Pressione <kbd className="px-1 py-0.5 bg-white/10 rounded">Ctrl+Enter</kbd> para salvar ou <kbd className="px-1 py-0.5 bg-white/10 rounded">Esc</kbd></span>
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={() => setEditingBio(false)}
+                                                    className="px-3 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-gray-300 font-bold transition-colors text-xs"
+                                                >
+                                                    Cancelar
+                                                </button>
+                                                <button
+                                                    onClick={handleSaveBio}
+                                                    disabled={fieldSaving === 'bio'}
+                                                    className="px-3 py-1 bg-brand-blue text-white rounded-lg font-bold hover:bg-brand-blue/90 transition-colors flex items-center gap-1 text-xs shadow-md shadow-brand-blue/20"
+                                                >
+                                                    {fieldSaving === 'bio' ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
+                                                    Salvar Bio
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="mt-4 group relative">
+                                        <p className="text-gray-500 dark:text-gray-300 italic text-[13px] leading-relaxed">
+                                            {viewedProfile?.bio_draft || viewedProfile?.bio || (isViewingOwn ? "Seu laboratório pessoal está pronto! Adicione uma bio para compartilhar sua trajetória científica." : "Membro da comunidade Lab-Div.")}
+                                        </p>
+                                        {isViewingOwn && (
+                                            <button 
+                                                onClick={() => {
+                                                    setBioInput(viewedProfile?.bio || viewedProfile?.bio_draft || '');
+                                                    setEditingBio(true);
+                                                }}
+                                                className="opacity-70 group-hover:opacity-100 transition-opacity text-[10px] text-brand-blue font-bold flex items-center gap-1 mt-1 hover:underline"
+                                            >
+                                                <Edit className="w-3 h-3" /> {viewedProfile?.bio ? 'Editar Bio' : '+ Escrever Bio (NI)'}
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
 
                                 {/* Redes Sociais e Contato */}
                                 <div className="mt-4 flex flex-wrap gap-3">
@@ -427,24 +804,167 @@ export function LabClientView({
                                     )}
                                 </div>
 
-                                {viewedProfile?.artistic_interests && viewedProfile.artistic_interests.length > 0 && (
-                                    <div className="mt-4 flex flex-wrap gap-2 border-t border-gray-100 dark:border-gray-800 pt-4">
-                                        <span className="text-[9px] font-black uppercase text-gray-400 block w-full mb-1">Lado Artístico / Hobbies</span>
-                                        {viewedProfile.artistic_interests.map((art: string, index: number) => {
-                                            const colors = [
-                                                { text: 'text-brand-blue', bg: 'bg-brand-blue/5', border: 'border-brand-blue/10' },
-                                                { text: 'text-brand-yellow', bg: 'bg-brand-yellow/5', border: 'border-brand-yellow/10' },
-                                                { text: 'text-brand-red', bg: 'bg-brand-red/5', border: 'border-brand-red/10' }
-                                            ];
-                                            const color = colors[index % colors.length];
-                                            return (
-                                                <span key={art} className={`px-2 py-0.5 ${color.bg} ${color.text} text-[9px] font-black rounded-full border ${color.border} uppercase tracking-tighter transition-all hover:scale-105`}>
-                                                    {art}
-                                                </span>
-                                            );
-                                        })}
+                                {/* Hobbies e Lado Artístico com preenchimento inline */}
+                                <div className="mt-4 border-t border-gray-100 dark:border-gray-800 pt-4">
+                                    <div className="flex items-center justify-between mb-2">
+                                        <span className="text-[9px] font-black uppercase text-gray-400">Lado Artístico / Hobbies</span>
+                                        {isViewingOwn && !editingHobbies && (
+                                            <button
+                                                onClick={() => {
+                                                    setTempHobbies(viewedProfile?.artistic_interests || []);
+                                                    setEditingHobbies(true);
+                                                }}
+                                                className="text-[10px] text-brand-yellow hover:underline font-bold flex items-center gap-1"
+                                            >
+                                                <Edit className="w-3 h-3" />
+                                                {viewedProfile?.artistic_interests && viewedProfile.artistic_interests.length > 0
+                                                    ? 'Editar Hobbies'
+                                                    : '+ Hobbies: NI (Preencher)'}
+                                            </button>
+                                        )}
                                     </div>
-                                )}
+
+                                    {/* Exibição normal dos hobbies */}
+                                    {viewedProfile?.artistic_interests && viewedProfile.artistic_interests.length > 0 ? (
+                                        <div className="flex flex-wrap gap-2">
+                                            {viewedProfile.artistic_interests.map((art: string, index: number) => {
+                                                const colors = [
+                                                    { text: 'text-brand-blue', bg: 'bg-brand-blue/5', border: 'border-brand-blue/10' },
+                                                    { text: 'text-brand-yellow', bg: 'bg-brand-yellow/5', border: 'border-brand-yellow/10' },
+                                                    { text: 'text-brand-red', bg: 'bg-brand-red/5', border: 'border-brand-red/10' }
+                                                ];
+                                                const color = colors[index % colors.length];
+                                                return (
+                                                    <span key={art} className={`px-2 py-0.5 ${color.bg} ${color.text} text-[9px] font-black rounded-full border ${color.border} uppercase tracking-tighter transition-all hover:scale-105`}>
+                                                        {art}
+                                                    </span>
+                                                );
+                                            })}
+                                        </div>
+                                    ) : (
+                                        <p className="text-[11px] text-gray-500 italic">
+                                            {isViewingOwn ? 'Nenhum hobby preenchido. Clique acima para adicionar!' : 'Nenhum hobby informado.'}
+                                        </p>
+                                    )}
+
+                                    {/* Editor de Hobbies Inline */}
+                                    {editingHobbies && isViewingOwn && (
+                                        <div className="mt-3 p-3 bg-white/5 border border-brand-yellow/30 rounded-2xl space-y-3 animate-in fade-in">
+                                            <div className="flex items-center justify-between text-xs text-brand-yellow font-black uppercase">
+                                                <span>Escolha ou adicione seus hobbies:</span>
+                                                <button onClick={() => setEditingHobbies(false)} className="text-gray-400 hover:text-white">
+                                                    <X className="w-3.5 h-3.5" />
+                                                </button>
+                                            </div>
+
+                                            {/* Chips Populares */}
+                                            <div className="flex flex-wrap gap-1.5">
+                                                {[
+                                                    'Música', 'Games', 'Fotografia', 'Leitura',
+                                                    'Teatro', 'Desenho/Pintura', 'Divulgação Científica',
+                                                    'Cinema', 'Escrita', 'Esportes', 'Programação', 'Astronomia Amadora'
+                                                ].map(chip => {
+                                                    const isSelected = tempHobbies.includes(chip);
+                                                    return (
+                                                        <button
+                                                            key={chip}
+                                                            type="button"
+                                                            onClick={() => {
+                                                                if (isSelected) {
+                                                                    setTempHobbies(tempHobbies.filter(h => h !== chip));
+                                                                } else {
+                                                                    setTempHobbies([...tempHobbies, chip]);
+                                                                }
+                                                            }}
+                                                            className={`px-2 py-0.5 text-[10px] font-bold rounded-full border transition-all ${
+                                                                isSelected
+                                                                    ? 'bg-brand-yellow text-black border-brand-yellow font-black'
+                                                                    : 'bg-white/5 hover:bg-white/10 text-gray-300 border-white/10'
+                                                            }`}
+                                                        >
+                                                            {isSelected ? '✓ ' : '+ '}
+                                                            {chip}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+
+                                            {/* Adicionar Custom Hobby */}
+                                            <div className="flex items-center gap-2 pt-2 border-t border-white/5">
+                                                <input
+                                                    type="text"
+                                                    placeholder="Outro hobby... (digite e aperte Enter)"
+                                                    value={customHobbyInput}
+                                                    onChange={(e) => setCustomHobbyInput(e.target.value)}
+                                                    onKeyDown={(e) => {
+                                                        if (e.key === 'Enter' && customHobbyInput.trim()) {
+                                                            e.preventDefault();
+                                                            const newHobby = customHobbyInput.trim();
+                                                            if (!tempHobbies.includes(newHobby)) {
+                                                                setTempHobbies([...tempHobbies, newHobby]);
+                                                            }
+                                                            setCustomHobbyInput('');
+                                                        }
+                                                        if (e.key === 'Escape') setEditingHobbies(false);
+                                                    }}
+                                                    className="flex-1 px-2.5 py-1 text-xs bg-white/5 border border-white/10 rounded-lg text-white font-medium outline-none focus:border-brand-yellow"
+                                                />
+                                                {customHobbyInput.trim() && (
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => {
+                                                            const newHobby = customHobbyInput.trim();
+                                                            if (!tempHobbies.includes(newHobby)) {
+                                                                setTempHobbies([...tempHobbies, newHobby]);
+                                                            }
+                                                            setCustomHobbyInput('');
+                                                        }}
+                                                        className="px-2 py-1 bg-white/10 hover:bg-white/20 text-white font-bold text-[10px] rounded uppercase"
+                                                    >
+                                                        Adicionar
+                                                    </button>
+                                                )}
+                                            </div>
+
+                                            {/* Selected badges with remove option */}
+                                            {tempHobbies.length > 0 && (
+                                                <div className="flex flex-wrap gap-1.5 pt-1">
+                                                    {tempHobbies.map(h => (
+                                                        <span key={h} className="inline-flex items-center gap-1 px-2 py-0.5 bg-brand-yellow/20 text-brand-yellow text-[9px] font-black rounded-full border border-brand-yellow/30">
+                                                            {h}
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => setTempHobbies(tempHobbies.filter(item => item !== h))}
+                                                                className="hover:text-white"
+                                                            >
+                                                                <X className="w-2.5 h-2.5" />
+                                                            </button>
+                                                        </span>
+                                                    ))}
+                                                </div>
+                                            )}
+
+                                            <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/5">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setEditingHobbies(false)}
+                                                    className="px-3 py-1 bg-white/5 hover:bg-white/10 rounded-lg text-gray-300 font-bold transition-colors text-xs"
+                                                >
+                                                    Cancelar
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    disabled={fieldSaving === 'artistic_interests'}
+                                                    onClick={() => handleSaveHobbies(tempHobbies)}
+                                                    className="px-3 py-1 bg-brand-yellow text-black font-black text-xs rounded-lg hover:bg-brand-yellow/90 flex items-center gap-1 shadow-md shadow-brand-yellow/20"
+                                                >
+                                                    {fieldSaving === 'artistic_interests' ? <Loader2 className="w-3 h-3 animate-spin" /> : <Check className="w-3 h-3" />}
+                                                    Salvar Hobbies
+                                                </button>
+                                            </div>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
                     </div>

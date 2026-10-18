@@ -13,7 +13,7 @@ const puppeteer = require('puppeteer-core');
 const chromium = require('@sparticuz/chromium');
 
 const PROJECT_ROOT = path.resolve(__dirname, '..');
-const POSTER2_DIR = path.join(PROJECT_ROOT, 'public/divulgacao/poster2');
+const POSTER2_DIR = path.join(PROJECT_ROOT, 'public/divulgacao/posters/poster2');
 const HTML_PATH = path.join(POSTER2_DIR, 'poster.html');
 
 async function render() {
@@ -35,7 +35,7 @@ async function render() {
   await page.evaluateHandle('document.fonts.ready');
   await new Promise(r => setTimeout(r, 1000));
 
-  const outPngPath = path.join(POSTER2_DIR, 'poster.png');
+  const outPngPath = path.join(POSTER2_DIR, 'poster2.png');
   await page.screenshot({
     path: outPngPath,
     type: 'png',

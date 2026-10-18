@@ -103,21 +103,23 @@ export function OnboardingBanner() {
                     {/* Botão 2: Tutorial do Eixo Atual */}
                     <button
                         onClick={() => runEixoTour(currentPath)}
-                        className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-200 text-[9px] sm:text-[10px] font-black font-bukra uppercase tracking-wider border border-gray-200 dark:border-white/10 active:scale-95 transition-all cursor-pointer shadow-sm truncate"
+                        className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-200 text-[9px] sm:text-[10px] font-black font-bukra uppercase tracking-wider border border-gray-200 dark:border-white/10 active:scale-95 transition-all cursor-pointer shadow-sm truncate"
                         title={`Iniciar ${eixoTour.title}`}
                     >
                         <Layers className="size-3 text-brand-blue shrink-0" />
-                        <span className="truncate">{eixoTour.shortLabel}</span>
+                        <span className="truncate sm:hidden">{eixoTour.shortLabel.replace(/^Eixo\s+/i, '')}</span>
+                        <span className="truncate hidden sm:inline">{eixoTour.shortLabel}</span>
                     </button>
 
                     {/* Botão 3: Tutorial Específico da Aba Atual (Seção por Seção) */}
                     <button
                         onClick={() => runPageTour(currentPath, searchParams)}
-                        className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-brand-blue hover:bg-brand-blue-hover text-white text-[9px] sm:text-[10px] font-black font-bukra uppercase tracking-wider shadow-md shadow-brand-blue/20 active:scale-95 transition-all cursor-pointer truncate"
+                        className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-1.5 rounded-xl bg-brand-blue hover:bg-brand-blue-hover text-white text-[9px] sm:text-[10px] font-black font-bukra uppercase tracking-wider shadow-md shadow-brand-blue/20 active:scale-95 transition-all cursor-pointer truncate"
                         title={`Iniciar ${pageTour.title} (Explicação detalhada de cada seção)`}
                     >
                         <Sparkles className="size-3 shrink-0" />
-                        <span className="truncate">Aba {pageTour.shortLabel}</span>
+                        <span className="truncate sm:hidden">{pageTour.shortLabel}</span>
+                        <span className="truncate hidden sm:inline">Aba {pageTour.shortLabel}</span>
                     </button>
 
                     {/* Botão Fechar (Desktop) */}

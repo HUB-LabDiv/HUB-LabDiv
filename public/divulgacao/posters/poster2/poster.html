@@ -163,9 +163,9 @@
     }
 
     .app-icon-squircle {
-      width: 250px;
-      height: 250px;
-      border-radius: 56px;
+      width: 290px;
+      height: 290px;
+      border-radius: 64px;
       background: #FFFFFF;
       overflow: hidden;
       box-shadow: 
@@ -187,12 +187,26 @@
     }
 
     .app-icon-name {
-      font-size: 26px;
-      font-weight: 800;
+      font-size: 40px;
+      font-weight: 900;
       color: #0F172A;
-      letter-spacing: -0.4px;
-      margin-top: 14px;
-      text-shadow: 0 1px 4px rgba(255, 255, 255, 0.95);
+      letter-spacing: -0.6px;
+      margin-top: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .app-icon-name .hub-text {
+      color: #0F172A;
+      text-shadow: 0 2px 8px rgba(255, 255, 255, 0.95);
+    }
+    .app-icon-name .labdiv-gradient {
+      background: linear-gradient(90deg, #0F4780 0%, #0284C7 22%, #F14343 55%, #FFCC00 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      text-shadow: none !important;
+      filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.10));
     }
 
     /* 4. CARDS DOS TRÊS EIXOS (EM CIMA DOS ESPIRROS DE TINTA) */
@@ -338,8 +352,8 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      width: 68px;
-      height: 68px;
+      width: 78px;
+      height: 78px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -426,7 +440,7 @@
     <!-- 1. HEADER SECTION (SEM LOGO NO TOPO, TÍTULO DESCIDO E AMPLIADO) -->
     <header class="header-section">
       <h1 class="hero-title font-bukra">
-        Entenda a universidade <span class="palma-highlight">sem complicações</span>
+        Conectando você à universidade
       </h1>
 
       <p class="hero-subtitle font-open-sans">
@@ -740,7 +754,9 @@
       <div class="app-icon-squircle">
         <img src="icons/icone-HUBLabDiv-white.png" alt="HUB LabDiv App" />
       </div>
-      <span class="app-icon-name font-open-sans">HUB LabDiv</span>
+      <span class="app-icon-name font-bukra">
+        <span class="hub-text">HUB</span> <span class="labdiv-gradient">LabDiv</span>
+      </span>
     </div>
 
     <!-- 4. EIXO SOCIAL (EM CIMA DO ESPIRRO AZUL) -->

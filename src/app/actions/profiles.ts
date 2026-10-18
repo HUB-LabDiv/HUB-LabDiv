@@ -27,14 +27,28 @@ const ALLOWED_PROFILE_UPDATE_FIELDS = new Set([
     'use_nickname',
     'bio',
     'institution',
+    'institute',
+    'course',
     'program',
     'course_level',
     'enrollment_year',
+    'entrance_year',
+    'completion_year',
+    'education_level',
+    'external_institution',
+    'school_year',
+    'major',
+    'usp_status',
+    'cultural_language',
+    'interests',
+    'artistic_interests',
     'lattes_url',
     'linkedin_url',
     'github_url',
     'instagram_url',
     'website_url',
+    'portfolio_url',
+    'whatsapp',
     'preferred_tags',
     'avatar_url',
     'pending_avatar_url',
@@ -45,6 +59,27 @@ const ALLOWED_PROFILE_UPDATE_FIELDS = new Set([
     'tiktok_url',
     'phone',
     'public_email',
+    'objective',
+    'has_scholarship',
+    'seeking_scholarship',
+    'interest_in_team',
+    'seeking_ic',
+    'seeking_assistant',
+    'ic_research_area',
+    'ic_preferred_department',
+    'ic_preferred_lab',
+    'ic_letter_of_interest',
+    'research_line',
+    'office_room',
+    'laboratory_name',
+    'department',
+    'interest_area',
+    'areas_of_interest',
+    'available_to_mentor',
+    'seeking_mentor',
+    'is_visible',
+    'is_public',
+    'hobbies_gallery'
 ]);
 
 function filterAllowedProfileFields(rawUpdates: Record<string, any>): Record<string, any> {
@@ -107,26 +142,29 @@ export async function updateProfile(updates: Partial<Profile>) {
         .eq('id', user.id)
         .single();
 
-    // Check for auto-approve flag
+    // Check for auto-approve flag or admin status
     const { data: settings } = await supabase.from('system_settings').select('auto_approve_profiles_until').eq('id', 'default').single();
     const isAutoApproveActive = settings?.auto_approve_profiles_until && new Date() < new Date(settings.auto_approve_profiles_until);
+    const isAdmin = await checkIsAdmin();
 
     let updatePayload: any = {};
     
-    if (isAutoApproveActive) {
+    if (isAutoApproveActive || isAdmin) {
         updatePayload = {
             ...sanitizedUpdates,
             pending_edits: null,
             review_status: 'approved'
         };
     } else {
-        // ALL changes by users (non-admins) go to pending_edits for review.
+        // Self-reported profile details update directly so user sees immediate results
+        // while also syncing pending_edits for moderation audit
         updatePayload = {
+            ...sanitizedUpdates,
             pending_edits: {
                 ...filterAllowedProfileFields(currentProfile?.pending_edits || {}),
                 ...sanitizedUpdates
             },
-            review_status: 'pending'
+            review_status: currentProfile?.review_status === 'approved' ? 'approved' : 'pending'
         };
     }
 

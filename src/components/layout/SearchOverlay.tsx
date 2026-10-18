@@ -99,15 +99,209 @@ const wikiEntries = [
     },
 ];
 
-// ── Navigation routes ──
-const navRoutes = [
-    { label: 'Grade Horária / Cronograma', href: '/ferramentas', icon: 'calendar_month', color: 'text-brand-blue-accent', desc: 'Monte seu cronograma semestral do Júpiter' },
-    { label: 'Trilhas de Aprendizado', href: '/trilhas', icon: 'auto_stories', color: 'text-brand-yellow', desc: 'Descubra a ordem ideal de matérias' },
-    { label: 'GCIF (Grande Colisor do IF)', href: '/gcif', icon: 'hub', color: 'text-brand-blue', desc: 'Oportunidades de pesquisa e projetos' },
-    { label: 'Meu Laboratório / Perfil', href: '/lab', icon: 'science', color: 'text-brand-red', desc: 'XP, conquistas e painel pessoal' },
-    { label: 'Comunidade & Interações', href: '/', icon: 'forum', color: 'text-brand-red', desc: 'Mural público e networking' },
-    { label: 'Submeter ou Editar Wiki', href: '/interacao', icon: 'edit_square', color: 'text-brand-blue-accent', desc: 'Colabore criando novas páginas' },
-    { label: 'Ferramentas', href: '/ferramentas', icon: 'construction', color: 'text-brand-yellow', desc: 'Grade, Trilhas e sincronização Júpiter' },
+// ── Helper para normalização de acentos e diacríticos ──
+const normalizeSearchText = (text: string): string => {
+    return (text || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
+};
+
+interface NavRoute {
+    label: string;
+    href: string;
+    icon: string;
+    color: string;
+    desc: string;
+    category: string;
+    keywords: string[];
+}
+
+// ── Navigation routes (Auditoria Completa V3.0) ──
+const navRoutes: NavRoute[] = [
+    // Ferramentas Acadêmicas
+    { 
+        label: 'Acompanhar Semestre (Grade Horária)', 
+        href: '/ferramentas', 
+        icon: 'calendar_month', 
+        color: 'text-brand-yellow', 
+        desc: 'Acompanhamento do semestre: horários, controle de faltas e cronograma',
+        category: 'Ferramentas Acadêmicas',
+        keywords: ['semestre', 'grade', 'horario', 'cronograma', 'acompanhamento', 'faltas', 'estudos', 'aulas', 'disciplinas', 'jupiter'] 
+    },
+    { 
+        label: 'Acompanhar Curso (Trilhas Curriculares)', 
+        href: '/ferramentas/trilhas', 
+        icon: 'route', 
+        color: 'text-brand-yellow', 
+        desc: 'Acompanhamento do curso: fluxo curricular, matérias concluídas e Júpiter',
+        category: 'Ferramentas Acadêmicas',
+        keywords: ['curso', 'trilhas', 'aprendizado', 'acompanhamento', 'disciplinas', 'jupiter', 'curriculo', 'fluxograma', 'obrigatorias', 'eletivas'] 
+    },
+    { 
+        label: 'Central de Anotações', 
+        href: '/ferramentas/anotacoes', 
+        icon: 'menu_book', 
+        color: 'text-brand-blue-accent', 
+        desc: 'Auxílio nos estudos com cadernos de matérias e anotações acadêmicas',
+        category: 'Ferramentas Acadêmicas',
+        keywords: ['anotacoes', 'cadernos', 'resumos', 'estudos', 'auxilio', 'materias', 'notas', 'bloco', 'anotar'] 
+    },
+    { 
+        label: 'Softwares da Comunidade', 
+        href: '/ferramentas/softwares', 
+        icon: 'laptop_chromebook', 
+        color: 'text-brand-blue-accent', 
+        desc: 'Auxílio nos estudos com softwares e ferramentas desenvolvidos pela comunidade',
+        category: 'Ferramentas Acadêmicas',
+        keywords: ['softwares', 'comunidade', 'programas', 'auxilio', 'estudos', 'python', 'matlab', 'root', 'simulacao', 'computacao', 'ferramentas'] 
+    },
+    { 
+        label: 'Match Acadêmico & Adoção', 
+        href: '/ferramentas/match', 
+        icon: 'person_search', 
+        color: 'text-brand-yellow', 
+        desc: 'Adoção de calouros por veteranos e cartas de interesse em IC',
+        category: 'Ferramentas Acadêmicas',
+        keywords: ['match', 'academico', 'adocao', 'veterano', 'bixo', 'calouro', 'orientador', 'mentoria', 'ic', 'iniciacao'] 
+    },
+
+    // Iniciativas & Extensão
+    { 
+        label: 'Show de Física do IFUSP', 
+        href: '/iniciativas/show-da-fisica', 
+        icon: 'bolt', 
+        color: 'text-brand-red', 
+        desc: 'Espetáculo lúdico de experimentos, sessões para escolas e público geral',
+        category: 'Iniciativas de Extensão',
+        keywords: ['show', 'fisica', 'show da fisica', 'show de fisica', 'demonstracoes', 'experimentos', 'ludico', 'bobina', 'tesla', 'escolas', 'visita'] 
+    },
+    { 
+        label: 'Monte seu Show da Física', 
+        href: '/iniciativas/show-da-fisica/monte-seu-show', 
+        icon: 'tune', 
+        color: 'text-brand-red', 
+        desc: 'Personalize o roteiro de experimentos para a sua visita escolar',
+        category: 'Iniciativas de Extensão',
+        keywords: ['monte seu show', 'personalizar', 'roteiro', 'selecionar', 'experimentos', 'agendamento'] 
+    },
+
+    // Como Ingressar & Visitas
+    { 
+        label: 'Como Ingressar no IFUSP', 
+        href: '/ingresso', 
+        icon: 'school', 
+        color: 'text-brand-blue', 
+        desc: 'Guia completo para vestibulandos: FUVEST, ENEM-USP e Provão Paulista',
+        category: 'Como Ingressar',
+        keywords: ['ingresso', 'como ingressar', 'vestibular', 'fuvest', 'enem', 'provao paulista', 'olimpiadas', 'vagas', 'curioso'] 
+    },
+    { 
+        label: 'Visitas Escolares & Extensão', 
+        href: '/ingresso?tab=visitar', 
+        icon: 'explore', 
+        color: 'text-brand-blue', 
+        desc: 'Agendamento de caravanas, laboratórios e observações astronômicas',
+        category: 'Como Ingressar',
+        keywords: ['visitas', 'escolas', 'extensao', 'caravanas', 'agendamento', 'laboratorios', 'ceu aberto', 'tours'] 
+    },
+
+    // Observatório de Pesquisa
+    { 
+        label: 'Observatório de Pesquisa & Arena', 
+        href: '/arena', 
+        icon: 'visibility', 
+        color: 'text-brand-red', 
+        desc: 'Espaço para docentes e pesquisadores divulgarem linhas ativas e captarem talentos',
+        category: 'Observatório',
+        keywords: ['observatorio', 'pesquisa', 'arena', 'pesquisador', 'docentes', 'laboratorios', 'linhas de pesquisa'] 
+    },
+    { 
+        label: 'Como o LabDiv Pode Ajudar', 
+        href: '/arena?tab=como-ajudar', 
+        icon: 'lightbulb', 
+        color: 'text-brand-yellow', 
+        desc: 'Parcerias, identidade visual, módulos interativos e aceleração de laboratórios',
+        category: 'Observatório',
+        keywords: ['como o labdiv ajuda', 'parcerias', 'apoio', 'consultoria', 'divulgacao cientifica', 'aceleracao', 'labdiv'] 
+    },
+    { 
+        label: 'Desafios Científicos Ativos', 
+        href: '/arena?tab=challenges', 
+        icon: 'emoji_events', 
+        color: 'text-brand-yellow', 
+        desc: 'Desafios propostos pela comunidade científica e oportunidades',
+        category: 'Observatório',
+        keywords: ['desafios', 'arena', 'competicao', 'propostas', 'premiacao', 'desafios ativos'] 
+    },
+
+    // Lab Pessoal & Interações
+    { 
+        label: 'Meu Laboratório Pessoal', 
+        href: '/lab', 
+        icon: 'science', 
+        color: 'text-brand-blue-accent', 
+        desc: 'Seu perfil no HUB: XP, nível, conquistas, hobbies e publicações',
+        category: 'Pessoal',
+        keywords: ['lab', 'meu laboratorio', 'laboratorio pessoal', 'perfil', 'xp', 'nivel', 'hobbies', 'apelido', 'minhas publicacoes'] 
+    },
+    { 
+        label: 'Central de Interações', 
+        href: '/interacao', 
+        icon: 'hub', 
+        color: 'text-brand-blue', 
+        desc: 'Emaranhamento, perguntas da comunidade e conexões',
+        category: 'Interações',
+        keywords: ['interacao', 'interacoes', 'emaranhamento', 'mensagens', 'perguntas', 'chat', 'duvidas'] 
+    },
+
+    // Eixo Informativo & Comunidade
+    { 
+        label: 'GCIF (Grande Colisor do IF)', 
+        href: '/gcif', 
+        icon: 'newspaper', 
+        color: 'text-brand-red', 
+        desc: 'Oportunidades, notícias oficiais, editais e eventos do instituto',
+        category: 'Informativo',
+        keywords: ['gcif', 'grande colisor', 'informativo', 'noticias', 'oportunidades', 'instituto', 'mural'] 
+    },
+    { 
+        label: 'Mural da Comunidade (Social)', 
+        href: '/', 
+        icon: 'forum', 
+        color: 'text-brand-blue', 
+        desc: 'Feed principal da comunidade LabDiv: publicações, discussões e mídia',
+        category: 'Social',
+        keywords: ['social', 'mural', 'feed', 'comunidade', 'publicacoes', 'home'] 
+    },
+    { 
+        label: 'Galeria de Arte Científica', 
+        href: '/?tab=artes', 
+        icon: 'palette', 
+        color: 'text-brand-yellow', 
+        desc: 'Ilustrações, fotografias, infográficos e arte científica produzida no IFUSP',
+        category: 'Social',
+        keywords: ['arte', 'artes', 'ilustracao', 'design', 'galeria', 'visual', 'desenho'] 
+    },
+    { 
+        label: 'Logs do Sistema LabDiv', 
+        href: '/?tab=logs', 
+        icon: 'terminal', 
+        color: 'text-brand-red', 
+        desc: 'Changelog, notas de versão e melhorias contínuas da plataforma',
+        category: 'Social',
+        keywords: ['logs', 'novidades', 'notas de versao', 'atualizacoes', 'sistema', 'changelog'] 
+    },
+    { 
+        label: 'Arquivo do HUB', 
+        href: '/arquivo', 
+        icon: 'inventory_2', 
+        color: 'text-brand-blue-accent', 
+        desc: 'Acervo e repositório de trabalhos e submissões da comunidade',
+        category: 'Social',
+        keywords: ['arquivo', 'repositorio', 'acervo', 'pesquisa de trabalhos', 'historico'] 
+    },
 ];
 
 interface SearchOverlayProps {
@@ -150,7 +344,8 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
 
     // Debounced Supabase search
     const searchDatabase = useCallback(async (searchTerm: string) => {
-        if (searchTerm.trim().length < 2) {
+        const cleanTerm = searchTerm.trim();
+        if (cleanTerm.length < 2) {
             setDbResults([]);
             return;
         }
@@ -160,7 +355,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                 .from('submissions')
                 .select('id, title, category')
                 .eq('status', 'aprovado')
-                .ilike('title', `%${searchTerm}%`)
+                .ilike('title', `%${cleanTerm}%`)
                 .limit(8);
             setDbResults((data as SubmissionResult[]) || []);
         } catch {
@@ -175,35 +370,40 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         return () => clearTimeout(timer);
     }, [query, searchDatabase]);
 
-    // Filter navigation routes
-    const q = query.toLowerCase().trim();
-    const filteredNav = q === ''
+    // Filter navigation routes with normalization
+    const qNorm = normalizeSearchText(query);
+    const filteredNav = qNorm === ''
         ? navRoutes
-        : navRoutes.filter(r =>
-            r.label.toLowerCase().includes(q) ||
-            r.desc.toLowerCase().includes(q)
-        );
+        : navRoutes.filter(r => {
+            const labelMatch = normalizeSearchText(r.label).includes(qNorm);
+            const descMatch = normalizeSearchText(r.desc).includes(qNorm);
+            const categoryMatch = normalizeSearchText(r.category).includes(qNorm);
+            const kwMatch = r.keywords?.some(kw => normalizeSearchText(kw).includes(qNorm));
+            return labelMatch || descMatch || categoryMatch || kwMatch;
+        });
 
-    // Deep wiki search (title + description + keywords + body content)
-    const filteredWiki = q === ''
+    // Deep wiki search (title + description + keywords + body content) with normalization
+    const filteredWiki = qNorm === ''
         ? []
-        : wikiEntries.filter(w =>
-            w.title.toLowerCase().includes(q) ||
-            w.desc.toLowerCase().includes(q) ||
-            w.keywords.some(kw => kw.includes(q)) ||
-            w.content.toLowerCase().includes(q)
-        );
+        : wikiEntries.filter(w => {
+            const titleMatch = normalizeSearchText(w.title).includes(qNorm);
+            const descMatch = normalizeSearchText(w.desc).includes(qNorm);
+            const kwMatch = w.keywords.some(kw => normalizeSearchText(kw).includes(qNorm));
+            const contentMatch = normalizeSearchText(w.content).includes(qNorm);
+            return titleMatch || descMatch || kwMatch || contentMatch;
+        });
 
     // Extract a snippet around the matched term with highlight
     const getContentSnippet = (content: string, searchTerm: string): React.ReactNode | null => {
         const lowerContent = content.toLowerCase();
-        const idx = lowerContent.indexOf(searchTerm);
+        const lowerSearch = searchTerm.toLowerCase();
+        const idx = lowerContent.indexOf(lowerSearch);
         if (idx === -1) return null;
 
         // Extract a window around the match
         const snippetRadius = 40;
         const start = Math.max(0, idx - snippetRadius);
-        const end = Math.min(content.length, idx + searchTerm.length + snippetRadius);
+        const end = Math.min(content.length, idx + lowerSearch.length + snippetRadius);
         
         // Find word boundaries to avoid cutting words
         let snippetStart = start;
@@ -214,12 +414,12 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
         let snippetEnd = end;
         if (end < content.length) {
             const spaceIdx = content.lastIndexOf(' ', end);
-            snippetEnd = spaceIdx > idx + searchTerm.length ? spaceIdx : end;
+            snippetEnd = spaceIdx > idx + lowerSearch.length ? spaceIdx : end;
         }
 
         const before = content.slice(snippetStart, idx);
-        const match = content.slice(idx, idx + searchTerm.length);
-        const after = content.slice(idx + searchTerm.length, snippetEnd);
+        const match = content.slice(idx, idx + lowerSearch.length);
+        const after = content.slice(idx + lowerSearch.length, snippetEnd);
 
         return (
             <span className="text-[10px] text-gray-500 leading-snug">
@@ -294,7 +494,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         {filteredNav.length > 0 && (
                             <div className="px-3 pt-3 pb-1">
                                 <h3 className="px-2 mb-2 text-[10px] font-black uppercase text-gray-500 tracking-[0.2em]">
-                                    {q === '' ? '⚡ Navegação Rápida' : `🔗 Páginas (${filteredNav.length})`}
+                                    {query === '' ? '⚡ Navegação Rápida' : `🔗 Páginas (${filteredNav.length})`}
                                 </h3>
                                 <div className="flex flex-col">
                                     {filteredNav.map((route, idx) => (
@@ -337,10 +537,10 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                                                 <span className="text-sm font-bold text-gray-200 group-hover:text-brand-yellow transition-colors block truncate">{wiki.title}</span>
                                                 <span className="text-[11px] text-gray-500 block truncate">{wiki.desc}</span>
                                                 {/* Content snippet with highlighted match */}
-                                                {wiki.content.toLowerCase().includes(q) && (
+                                                {normalizeSearchText(wiki.content).includes(qNorm) && (
                                                     <div className="mt-1.5 flex items-start gap-1.5 bg-brand-yellow/5 rounded-lg px-2.5 py-2 border border-brand-yellow/10">
                                                         <span className="material-symbols-outlined text-brand-yellow/60 text-[14px] mt-px shrink-0">format_quote</span>
-                                                        {getContentSnippet(wiki.content, q)}
+                                                        {getContentSnippet(wiki.content, query)}
                                                     </div>
                                                 )}
                                             </div>
@@ -381,7 +581,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                         )}
 
                         {/* No Results */}
-                        {q !== '' && !isLoading && !hasResults && (
+                        {query !== '' && !isLoading && !hasResults && (
                             <div className="p-10 flex flex-col items-center justify-center gap-3 text-center">
                                 <span className="material-symbols-outlined text-[48px] text-gray-700">search_off</span>
                                 <div className="flex flex-col">

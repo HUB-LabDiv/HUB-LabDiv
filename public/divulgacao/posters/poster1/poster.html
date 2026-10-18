@@ -9,7 +9,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HUB LabDiv - Poster 1: The Diagonal Split</title>
+  <title>HUB LabDiv - Poster 1: Conectando você à universidade</title>
   <link rel="stylesheet" href="../../fonts/fonts.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -70,54 +70,63 @@
     }
     
     .p12-content {
-       position: absolute; top: 0; left: 0; width: 100%; height: 1280px;
+       position: absolute; top: 0; left: 0; width: 100%; height: 1754px;
        z-index: 20; padding: 85px 60px; box-sizing: border-box;
     }
     
-    /* CABEÇALHO ESQUERDO: FONTES ENCORPADAS E AUMENTADAS */
+    /* CABEÇALHO ESQUERDO */
     .p12-header {
-       color: #FFFFFF; max-width: 630px;
+       color: #FFFFFF; max-width: 610px;
     }
     .p12-badge {
        display: inline-block; background: #FFCC00; color: #0F172A;
-       padding: 8px 24px; font-size: 14.5px; font-weight: 900; border-radius: 999px;
+       padding: 10px 28px; font-size: 16.5px; font-weight: 900; border-radius: 999px;
        margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px;
        box-shadow: 0 4px 14px rgba(0,0,0,0.14);
     }
-    .p12-header h1 { font-size: 64px; font-weight: 900; line-height: 1.10; letter-spacing: -1.5px; }
-    .p12-subline { font-size: 26px; font-weight: 800; margin-top: 20px; color: #FFCC00; line-height: 1.35; max-width: 600px; }
+    .p12-header h1 {
+       font-size: 54px; font-weight: 900; line-height: 1.15; letter-spacing: -1.2px;
+    }
+    .p12-subline {
+       font-size: 27px; font-weight: 800; margin-top: 18px; color: #FFCC00; line-height: 1.34; max-width: 600px;
+    }
     
-    /* COLUNA DIREITA HERO: ÍCONE COM DEGRADÊ + APENAS "HUB LabDiv" */
+    /* COLUNA DIREITA HERO: ÍCONE COM DEGRADÊ + "HUB LabDiv" */
     .p12-right-hero-col {
-       position: absolute; top: 90px; right: 55px;
-       width: 495px;
+       position: absolute; top: 45px; right: 45px;
+       width: 500px;
        display: flex; flex-direction: column; align-items: center;
        z-index: 25;
     }
     .p12-icon-wrapper {
-       width: 460px; height: 460px;
+       width: 480px; height: 480px;
        border-radius: 50%;
-       background: linear-gradient(135deg, #0F4780 0%, #0284C7 28%, #F14343 66%, #FFCC00 100%);
-       padding: 9px;
+       background: linear-gradient(90deg, #0F4780 0%, #0284C7 22%, #F14343 55%, #FFCC00 100%);
+       padding: 6px;
        display: flex; align-items: center; justify-content: center;
-       box-shadow: 0 35px 90px rgba(0,0,0,0.30), 0 0 0 5px rgba(255,255,255,0.18);
+       box-shadow: 0 30px 75px rgba(0,0,0,0.28), 0 0 0 3px rgba(255,255,255,0.20);
        flex-shrink: 0;
+       box-sizing: border-box;
     }
     .p12-icon-inner {
        width: 100%; height: 100%;
        background: #FFFFFF;
        border-radius: 50%;
        display: flex; align-items: center; justify-content: center;
+       overflow: hidden;
     }
-    .p12-icon-inner svg { width: 345px; height: 345px; }
+    .p12-icon-inner svg {
+       width: 355px; height: 355px;
+       transform: translateY(12px);
+    }
 
     .p12-icon-branding {
-       margin-top: 22px;
+       margin-top: 14px;
        display: flex; flex-direction: column; align-items: center; text-align: center;
        width: 100%;
     }
     .p12-brand-title {
-       font-size: 58px; font-weight: 900; line-height: 1.0; letter-spacing: -0.8px;
+       font-size: 62px; font-weight: 900; line-height: 1.0; letter-spacing: -0.8px;
     }
     .p12-brand-title .hub-white {
        color: #FFFFFF;
@@ -130,55 +139,63 @@
        display: inline-block;
     }
     
-    /* CARDS: ESCADINHA MAIS ALTA (-130px, -65px, 0px) E FONTES AUMENTADAS */
+    /* CARDS: POSICIONAMENTO E FORMATAÇÃO VISUAL DO PANFLETO */
     .p12-cards-grid {
-       position: absolute; bottom: 0; left: 60px; right: 60px;
+       position: absolute; top: 966px; left: 60px; right: 60px;
        display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px;
-       align-items: flex-end;
+       align-items: flex-start;
+       z-index: 28;
     }
     .p12-card {
-       background: #FFFFFF; padding: 30px 28px; border-radius: 22px;
+       background: #FFFFFF; padding: 26px 20px 22px 20px; border-radius: 22px;
        box-shadow: 0 18px 45px rgba(0,0,0,0.08);
-       display: flex; flex-direction: column; justify-content: flex-start;
+       display: flex; flex-direction: column; align-items: center; text-align: center; justify-content: center;
        position: relative;
        height: 260px;
        box-sizing: border-box;
+       overflow: hidden;
     }
+    .p12-card-accent-top {
+       position: absolute; top: 0; left: 0; right: 0; height: 6px;
+    }
+    .accent-blue { background: #0F4780; }
+    .accent-red { background: #F14343; }
+    .accent-yellow { background: #FFCC00; }
+
     .p12-card-1 {
        border: 2px solid rgba(15, 71, 128, 0.22);
-       border-bottom: 10px solid #0F4780;
-       transform: translateY(-260px); /* Começa na metade do vermelho */
+       box-shadow: 0 14px 32px -4px rgba(15, 71, 128, 0.16);
+       transform: translateY(-132px);
     }
     .p12-card-2 {
        border: 2px solid rgba(241, 67, 67, 0.22);
-       border-bottom: 10px solid #F14343;
-       transform: translateY(-130px);  /* Começa na metade do amarelo */
+       box-shadow: 0 14px 32px -4px rgba(241, 67, 67, 0.16);
+       transform: translateY(-66px);
+       
     }
     .p12-card-3 {
        border: 2.5px solid rgba(255, 204, 0, 0.45);
-       border-bottom: 10px solid #FFCC00;
-       transform: translateY(0);     /* Base */
+       box-shadow: 0 14px 32px -4px rgba(217, 119, 6, 0.16);
+       transform: translateY(0);
     }
 
-    .p12-card-head {
-       display: flex; align-items: center; gap: 14px; margin-bottom: 16px;
-    }
     .p12-card-icon-badge {
-       width: 54px; height: 54px; border-radius: 14px;
+       width: 60px; height: 60px; border-radius: 50%;
        display: flex; align-items: center; justify-content: center;
+       margin-bottom: 12px;
        flex-shrink: 0;
     }
-    .p12-card-icon-badge.badge-blue { background: #EEF4FA; color: #0F4780; border: 1.5px solid rgba(15, 71, 128, 0.22); }
-    .p12-card-icon-badge.badge-red { background: #FEF2F2; color: #F14343; border: 1.5px solid rgba(241, 67, 67, 0.22); }
-    .p12-card-icon-badge.badge-yellow { background: #FEF9C3; color: #854D0E; border: 1.5px solid rgba(255, 204, 0, 0.45); }
+    .p12-card-icon-badge.badge-blue { background: rgba(15, 71, 128, 0.10); color: #0F4780; border: 1.5px solid rgba(15, 71, 128, 0.25); }
+    .p12-card-icon-badge.badge-red { background: rgba(241, 67, 67, 0.10); color: #F14343; border: 1.5px solid rgba(241, 67, 67, 0.25); }
+    .p12-card-icon-badge.badge-yellow { background: rgba(255, 204, 0, 0.22); color: #854D0E; border: 1.5px solid #FFCC00; }
     
-    .p12-card h3 { font-size: 26px; font-weight: 900; line-height: 1.15; }
-    .p12-card p { font-size: 17.5px; font-weight: 600; color: #475569; line-height: 1.48; }
+    .p12-card h3 { font-size: 29px; font-weight: 900; line-height: 1.15; margin-bottom: 8px; }
+    .p12-card p { font-size: 21.5px; font-weight: 600; color: #475569; line-height: 1.35; max-width: 280px; }
 
-    /* RODAPÉ: QR CODE AUMENTADO PARA 410px E SEGURANÇA EM UMA LINHA */
+    /* RODAPÉ: QR CODE E SEGURANÇA EM UMA LINHA */
     .bottom-third-plane {
       position: absolute;
-      bottom: 30px; left: 45px; right: 45px;
+      bottom: 40px; left: 45px; right: 45px;
       display: flex;
       align-items: flex-end;
       justify-content: space-between;
@@ -189,17 +206,17 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       flex-shrink: 0;
-      width: 410px;
+      width: 315px;
     }
     .qr-code-box {
-      width: 410px; height: 410px;
+      width: 315px; height: 315px;
       background: #FFFFFF;
-      padding: 18px;
-      border-radius: 32px;
+      padding: 14px;
+      border-radius: 26px;
       border: 2.5px solid rgba(15, 71, 128, 0.22);
-      box-shadow: 0 20px 48px -4px rgba(15, 71, 128, 0.18), 0 4px 14px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 18px 45px -4px rgba(15, 71, 128, 0.18), 0 4px 14px rgba(0, 0, 0, 0.06);
       position: relative;
       display: flex; align-items: center; justify-content: center;
     }
@@ -207,7 +224,7 @@
     .qr-center-badge-img {
       position: absolute; top: 50%; left: 50%;
       transform: translate(-50%, -50%);
-      width: 96px; height: 96px;
+      width: 82px; height: 82px;
       display: flex; align-items: center; justify-content: center;
       background: #FFFFFF;
       border-radius: 18px;
@@ -216,10 +233,10 @@
     }
     .qr-center-badge-img svg { width: 100%; height: 100%; display: block; }
     .qr-clean-link {
-      font-size: 20px; font-weight: 800; color: #0F4780;
+      font-size: 19px; font-weight: 800; color: #0F4780;
       text-decoration: underline; text-underline-offset: 4px;
       background: rgba(255, 255, 255, 0.95);
-      padding: 5px 22px;
+      padding: 6px 16px;
       border-radius: 999px;
       border: 1.5px solid rgba(15, 71, 128, 0.20);
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
@@ -227,20 +244,20 @@
     }
 
     .bottom-inst-box {
-      flex: 1; height: 410px;
+      flex: 1; height: 375px;
       background: #F8FAFC;
-      border-radius: 32px;
+      border-radius: 30px;
       border: 2px solid #E2E8F0;
-      padding: 28px 32px 22px 32px;
+      padding: 22px 28px 18px 28px;
       display: flex; flex-direction: column; justify-content: space-between;
       box-shadow: 0 10px 28px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
     }
-    /* SEGURANÇA E CONFORMIDADE LEGAL EM UMA LINHA SÓ */
     .inst-badge-line {
       display: flex; align-items: center; gap: 14px;
-      color: #0F4780; font-size: 19px; font-weight: 900;
+      color: #0F4780; font-size: 21.5px; font-weight: 900;
       white-space: nowrap;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
     }
     .inst-badge-icon {
       width: 44px; height: 44px; border-radius: 12px;
@@ -249,9 +266,8 @@
       flex-shrink: 0;
       border: 1.5px solid rgba(15, 71, 128, 0.20);
     }
-    /* TEXTO QUEBRADO NO BRASIL E CONTINUA EMBAIXO */
     .inst-desc-text {
-      font-size: 19px; line-height: 1.50; color: #334155;
+      font-size: 19.5px; line-height: 1.45; color: #334155;
     }
     .inst-actions-row { display: flex; align-items: center; gap: 16px; }
     .inst-action-card {
@@ -267,12 +283,12 @@
     .inst-action-icon.git-icon { background: #EEF4FA; color: #0F4780; }
     .inst-action-icon.email-icon { background: #FEF2F2; color: #F14343; }
     .inst-action-details { display: flex; flex-direction: column; gap: 3px; }
-    .inst-action-tag { font-size: 13.5px; font-weight: 800; text-transform: uppercase; }
+    .inst-action-tag { font-size: 15px; font-weight: 800; text-transform: uppercase; }
     .inst-action-tag.tag-git { color: #0F4780; }
     .inst-action-tag.tag-email { color: #F14343; }
-    .inst-action-val { font-size: 17px; font-weight: 700; color: #0F172A; white-space: nowrap; }
+    .inst-action-val { font-size: 19.5px; font-weight: 700; color: #0F172A; white-space: nowrap; }
     .inst-legal-copy {
-      font-size: 15px; color: #64748B; font-weight: 600;
+      font-size: 16.5px; color: #64748B; font-weight: 600;
       border-top: 1.5px solid #E2E8F0; padding-top: 10px; text-align: center;
     }
   </style>
@@ -287,11 +303,11 @@
       <!-- CABEÇALHO ESQUERDO -->
       <div class="p12-header">
         <div class="p12-badge font-bukra">Laboratório de Expressão e Divulgação do IFUSP</div>
-        <h1 class="font-bukra">Entenda a universidade<br>sem complicações.</h1>
+        <h1 class="font-bukra">HUB LabDiv:<br>Conectando você à universidade.</h1>
         <p class="font-open-sans p12-subline">Comunidade, conhecimento e ferramentas na palma da mão.</p>
       </div>
 
-      <!-- COLUNA HERO DIREITA: ÍCONE COM DEGRADÊ + APENAS "HUB LabDiv" -->
+      <!-- COLUNA HERO DIREITA: ÍCONE COM DEGRADÊ + "HUB LabDiv" -->
       <div class="p12-right-hero-col">
         <div class="p12-icon-wrapper">
           <div class="p12-icon-inner">
@@ -461,54 +477,58 @@
         </div>
       </div>
 
-      <!-- CARDS COM ESCADINHA MAIS ALTA E ÍCONES -->
+      <!-- CARDS DOS EIXOS -->
       <div class="p12-cards-grid">
-        <!-- Eixo 1: Social (-130px) -->
+        <!-- Eixo 1: Social -->
         <div class="p12-card p12-card-1">
-          <div class="p12-card-head">
-            <div class="p12-card-icon-badge badge-blue">
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-            </div>
-            <h3 class="font-bukra" style="color: #0F4780;">Eixo Social</h3>
+          <div class="p12-card-accent-top accent-blue"></div>
+          <div class="p12-card-icon-badge badge-blue">
+            <svg width="32" height="32" viewBox="0 -960 960 960" fill="currentColor">
+              <path d="M0-240v-63q0-43 44-70t116-27q13 0 25 .5t23 2.5q-14 21-21 44t-7 48v65H0Zm240 0v-65q0-32 17.5-58.5T307-410q32-20 76.5-30t96.5-10q53 0 97.5 10t76.5 30q32 20 49 46.5t17 58.5v65H240Zm540 0v-65q0-26-6.5-49T754-397q11-2 22.5-2.5t23.5-.5q72 0 116 26.5t44 70.5v63H780ZM160-440q-33 0-56.5-23.5T80-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T160-440Zm640 0q-33 0-56.5-23.5T720-520q0-34 23.5-57t56.5-23q34 0 57 23t23 57q0 33-23 56.5T800-440Zm-320-40q-50 0-85-35t-35-85q0-51 35-85.5t85-34.5q51 0 85.5 34.5T600-600q0 50-34.5 85T480-480Z"/>
+            </svg>
           </div>
-          <p class="font-open-sans">Rede pedagógica aberta para aproximar calouros, veteranos e toda a equipe docente do instituto.</p>
+          <h3 class="font-bukra" style="color: #0F4780;">Social</h3>
+          <p class="font-open-sans">Rede comunicativa &amp; pedagógica</p>
         </div>
 
-        <!-- Eixo 2: Informativo (-65px) -->
+        <!-- Eixo 2: Informativo -->
         <div class="p12-card p12-card-2">
-          <div class="p12-card-head">
-            <div class="p12-card-icon-badge badge-red">
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
-              </svg>
-            </div>
-            <h3 class="font-bukra" style="color: #F14343;">Eixo Informativo</h3>
+          <div class="p12-card-accent-top accent-red"></div>
+          <div class="p12-card-icon-badge badge-red">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2v4" />
+              <path d="M12 18v4" />
+              <path d="M2 12h4" />
+              <path d="M18 12h4" />
+              <path d="M4.93 4.93l2.83 2.83" />
+              <path d="M16.24 16.24l2.83 2.83" />
+              <path d="M4.93 19.07l2.83-2.83" />
+              <path d="M16.24 7.76l2.83-2.83" />
+              <circle cx="12" cy="12" r="9.5" stroke-dasharray="2 2" stroke-width="1.5" />
+              <circle cx="12" cy="12" r="4.2" stroke-width="1.6" />
+              <path d="M12 9.5v5M9.5 12h5" stroke-width="2" />
+              <circle cx="12" cy="12" r="1.3" fill="currentColor" stroke="none" />
+            </svg>
           </div>
-          <p class="font-open-sans">Enciclopédia viva de física com resumos e história da ciência ao seu alcance imediato.</p>
+          <h3 class="font-bukra" style="color: #F14343;">Informativo</h3>
+          <p class="font-open-sans">Enciclopédia acadêmica &amp; interativa</p>
         </div>
 
-        <!-- Eixo 3: Ferramentas (0px) -->
+        <!-- Eixo 3: Ferramentas -->
         <div class="p12-card p12-card-3">
-          <div class="p12-card-head">
-            <div class="p12-card-icon-badge badge-yellow">
-              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
-              </svg>
-            </div>
-            <h3 class="font-bukra" style="color: #854D0E;">Ferramentas</h3>
+          <div class="p12-card-accent-top accent-yellow"></div>
+          <div class="p12-card-icon-badge badge-yellow">
+            <svg width="32" height="32" viewBox="0 -960 960 960" fill="currentColor">
+              <path d="M756-120 537-339l84-84 219 219-84 84Zm-552 0-84-84 276-276-68-68-28 28-51-51v82l-28 28-121-121 28-28h82l-50-50 142-142q20-20 43-29t47-9q24 0 47 9t43 29l-92 92 50 50-28 28 68 68 90-90q-4-11-6.5-23t-2.5-24q0-59 40.5-99.5T701-841q15 0 28.5 3t27.5 9l-99 99 72 72 99-99q7 14 9.5 27.5T841-701q0 59-40.5 99.5T701-561q-12 0-24-2t-23-7L204-120Z"/>
+            </svg>
           </div>
-          <p class="font-open-sans">Simuladores computacionais, calculadoras analíticas e gerenciamento de notas.</p>
+          <h3 class="font-bukra" style="color: #854D0E;">Ferramentas</h3>
+          <p class="font-open-sans">Funções de auxílio ao universitário</p>
         </div>
       </div>
     </div>
 
-    <!-- TERCEIRO PLANO: QR CODE 410px E SEGURANÇA EM UMA LINHA -->
+    <!-- TERCEIRO PLANO: QR CODE E SEGURANÇA EM UMA LINHA -->
     <div class="bottom-third-plane">
       
       <div class="bottom-qr-col">
@@ -520,14 +540,14 @@
   
   <defs>
     
-    <linearGradient id="labdivBrandGradient-qr" x1="0%" y1="0%" x2="100%" y2="0%">
+    <linearGradient id="labdivBrandGradient" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#0F4780" />
       <stop offset="48%" stop-color="#F14343" />
       <stop offset="100%" stop-color="#FFCC00" />
     </linearGradient>
 
     
-    <linearGradient id="capTopGradient-qr" x1="0%" y1="0%" x2="100%" y2="0%">
+    <linearGradient id="capTopGradient" x1="0%" y1="0%" x2="100%" y2="0%">
       <stop offset="0%" stop-color="#0E4277" />
       <stop offset="22%" stop-color="#0F4780" />
       <stop offset="48%" stop-color="#F14343" />
@@ -536,7 +556,7 @@
     </linearGradient>
 
     
-    <linearGradient id="capBaseGradient-qr" x1="5%" y1="0%" x2="95%" y2="0%">
+    <linearGradient id="capBaseGradient" x1="5%" y1="0%" x2="95%" y2="0%">
       <stop offset="0%" stop-color="#0B3764" />
       <stop offset="25%" stop-color="#0F4780" />
       <stop offset="50%" stop-color="#F14343" />
@@ -545,7 +565,7 @@
     </linearGradient>
 
     
-    <linearGradient id="waveGradient-qr" x1="45" y1="0" x2="467" y2="0" gradientUnits="userSpaceOnUse">
+    <linearGradient id="waveGradient" x1="45" y1="0" x2="467" y2="0" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#0F4780" />
       <stop offset="22%" stop-color="#0F4780" />
       <stop offset="50%" stop-color="#F14343" />
@@ -558,7 +578,7 @@
   
   
   
-  <g stroke="url(#waveGradient-qr)" stroke-width="26" stroke-linecap="round" fill="none" opacity="0.15">
+  <g stroke="url(#waveGradient)" stroke-width="26" stroke-linecap="round" fill="none" opacity="0.15">
     
     <path d="M 53 225 C 27 168 27 104 53 50" />
     <path d="M 94 196 C 72 157 72 109 94 72" />
@@ -600,7 +620,7 @@
     </g>
 
     
-    <g stroke="url(#waveGradient-qr)" stroke-width="12">
+    <g stroke="url(#waveGradient)" stroke-width="12">
       
       <path d="M 53 225 C 27 168 27 104 53 50" />
       <path d="M 94 196 C 72 157 72 109 94 72" />
@@ -623,7 +643,7 @@
   
   <g>
     
-    <path d="M 120 300 L 120 355 C 120 430, 392 430, 392 355 L 392 300 Z" fill="url(#capBaseGradient-qr)" />
+    <path d="M 120 300 L 120 355 C 120 430, 392 430, 392 355 L 392 300 Z" fill="url(#capBaseGradient)" />
 
     
     <path d="M 120 316 L 236 365 Q 256 375 276 365 L 392 316 L 392 334 L 276 375 Q 256 383 236 375 L 120 334 Z" fill="#000000" opacity="0.35" />
@@ -635,7 +655,7 @@
   
   <g>
     
-    <path d="M 276 175 L 456 260 Q 476 270 456 280 L 276 365 Q 256 375 236 365 L 56 280 Q 36 270 56 260 L 236 175 Q 256 165 276 175 Z" fill="url(#capTopGradient-qr)" stroke="#000000" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" />
+    <path d="M 276 175 L 456 260 Q 476 270 456 280 L 276 365 Q 256 375 236 365 L 56 280 Q 36 270 56 260 L 236 175 Q 256 165 276 175 Z" fill="url(#capTopGradient)" stroke="#000000" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" />
 
   </g>
 
@@ -691,7 +711,7 @@
           </div>
           <!-- TEXTO QUEBRADO NO BRASIL E CONTINUA EMBAIXO -->
           <p class="inst-desc-text font-open-sans">
-            O <strong>HUB LabDiv</strong> respeita as <strong>leis, normas e decisões judiciais do Brasil</strong>,<br>
+            <span style="white-space: nowrap;">O <strong>HUB LabDiv</strong> respeita as <strong>leis, normas e decisões judiciais do Brasil</strong>,</span><br>
             além de ter todo o seu <strong>código aberto</strong> e um e-mail para <strong>suporte, sugestões e ideias da comunidade</strong>.
           </p>
         </div>

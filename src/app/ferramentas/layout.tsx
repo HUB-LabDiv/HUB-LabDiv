@@ -29,9 +29,9 @@ export default async function FerramentasLayout({ children }: { children: React.
     const routes = [
         '/ferramentas',
         '/ferramentas/trilhas',
-        '/ferramentas/match',
         '/ferramentas/anotacoes',
-        ...(hasSoftwaresAccess ? ['/ferramentas/softwares'] : [])
+        ...(hasSoftwaresAccess ? ['/ferramentas/softwares'] : []),
+        '/ferramentas/match'
     ];
 
     return (

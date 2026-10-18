@@ -89,14 +89,29 @@ export const HomeClientView = ({
     const { trackEvent } = useTelemetry();
 
     const tabParam = searchParams.get('tab');
-    const [activeTab, setActiveTab] = useState<'fluxo' | 'logs' | 'arte'>(
-        tabParam === 'logs' ? 'logs' : tabParam === 'arte' ? 'arte' : 'fluxo'
-    );
+    const getInitialTab = (): 'fluxo' | 'logs' | 'arte' => {
+        if (tabParam === 'logs') return 'logs';
+        if (tabParam === 'arte' || tabParam === 'artes') return 'arte';
+        return 'fluxo';
+    };
+
+    const [activeTab, setActiveTab] = useState<'fluxo' | 'logs' | 'arte'>(getInitialTab);
+
+    // Sincroniza a aba quando a URL muda (ex: navegação via Sidebar Tree View)
+    useEffect(() => {
+        if (tabParam === 'logs') {
+            setActiveTab('logs');
+        } else if (tabParam === 'arte' || tabParam === 'artes') {
+            setActiveTab('arte');
+        } else if (tabParam === 'fluxo' || !tabParam) {
+            setActiveTab('fluxo');
+        }
+    }, [tabParam]);
 
     const handleTabChange = (newTab: 'fluxo' | 'logs' | 'arte') => {
         setActiveTab(newTab);
         const params = new URLSearchParams(searchParams.toString());
-        params.set('tab', newTab);
+        params.set('tab', newTab === 'arte' ? 'artes' : newTab);
         router.push(`${pathname}?${params.toString()}`, { scroll: false });
     };
 

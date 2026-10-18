@@ -75,4 +75,5 @@ Versão 6.5.1:
 • Link para código aberto conforme a licença AGPLv3.
 • Otimização R8 e suporte Edge-to-Edge nativo para Android 15+.
 • Melhorias de desempenho, estabilidade e correções de interface.
+
 ```

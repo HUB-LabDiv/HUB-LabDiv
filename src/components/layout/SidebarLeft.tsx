@@ -12,11 +12,10 @@
  */
 
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import {
-
     Megaphone,
     Network,
     BookOpen,
@@ -31,6 +30,7 @@ import {
     LayoutDashboard,
     ChevronLeft,
     ChevronRight,
+    ChevronDown,
     Search,
     Settings
 } from 'lucide-react';
@@ -53,8 +53,77 @@ const secondaryLinks = [
     { name: 'Painel Admin', href: '/admin', icon: <ShieldAlert className="w-5 h-5" /> },
 ];
 
-export const SidebarLeft = ({ userId }: { userId?: string }) => {
+type SubColorKey = 'brand-yellow' | 'brand-blue' | 'brand-red';
+
+interface TreeItem {
+    label: string;
+    href: string;
+    tab?: string;
+    group?: string;
+    color?: SubColorKey;
+}
+
+const subColorStyles: Record<SubColorKey, {
+    active: string;
+    activeBullet: string;
+    hover: string;
+    hoverBullet: string;
+}> = {
+    'brand-yellow': {
+        active: 'text-brand-yellow font-bold bg-brand-yellow/15 shadow-sm',
+        activeBullet: 'bg-brand-yellow scale-125 shadow-[0_0_8px_rgba(255,204,0,0.8)]',
+        hover: 'hover:text-brand-yellow hover:bg-brand-yellow/10 dark:hover:bg-brand-yellow/15',
+        hoverBullet: 'group-hover:bg-brand-yellow group-hover:scale-125 group-hover:shadow-[0_0_6px_rgba(255,204,0,0.6)]',
+    },
+    'brand-blue': {
+        active: 'text-brand-blue font-bold bg-brand-blue/15 shadow-sm',
+        activeBullet: 'bg-brand-blue scale-125 shadow-[0_0_8px_rgba(15,71,128,0.8)]',
+        hover: 'hover:text-brand-blue hover:bg-brand-blue/10 dark:hover:bg-brand-blue/15',
+        hoverBullet: 'group-hover:bg-brand-blue group-hover:scale-125 group-hover:shadow-[0_0_6px_rgba(15,71,128,0.6)]',
+    },
+    'brand-red': {
+        active: 'text-brand-red font-bold bg-brand-red/15 shadow-sm',
+        activeBullet: 'bg-brand-red scale-125 shadow-[0_0_8px_rgba(241,67,67,0.8)]',
+        hover: 'hover:text-brand-red hover:bg-brand-red/10 dark:hover:bg-brand-red/15',
+        hoverBullet: 'group-hover:bg-brand-red group-hover:scale-125 group-hover:shadow-[0_0_6px_rgba(241,67,67,0.6)]',
+    },
+};
+
+const socialTreeItems: TreeItem[] = [
+    { label: 'Fluxo', href: '/?tab=fluxo', tab: 'fluxo', color: 'brand-blue' },
+    { label: 'Arte', href: '/?tab=artes', tab: 'artes', color: 'brand-yellow' },
+    { label: 'Logs', href: '/?tab=logs', tab: 'logs', color: 'brand-red' },
+];
+
+const informativoTreeItems: TreeItem[] = [
+    { label: 'Instituto', href: '/gcif/instituto', color: 'brand-blue' },
+    { label: 'Wiki', href: '/gcif/wiki', color: 'brand-red' },
+    { label: 'Interativo', href: '/gcif/interativo', color: 'brand-yellow' },
+];
+
+const ferramentasTreeItems: TreeItem[] = [
+    { label: 'Acompanhamento', href: '/ferramentas', color: 'brand-blue' },
+    { label: 'Estudos', href: '/ferramentas/anotacoes', color: 'brand-yellow' },
+    { label: 'Integração', href: '/ferramentas/match', color: 'brand-red' },
+];
+
+const ingressoTreeItems: TreeItem[] = [
+    { label: 'Formas de Ingresso', href: '/ingresso', color: 'brand-yellow' },
+    { label: 'Visitas & Extensão', href: '/ingresso?tab=visitar', tab: 'visitar', color: 'brand-blue' },
+    { label: 'Show da Física', href: '/iniciativas/show-da-fisica', color: 'brand-red' },
+];
+
+const arenaTreeItems: TreeItem[] = [
+    { label: 'Observatório Geral', href: '/arena', color: 'brand-blue' },
+    { label: 'Como o LabDiv Ajuda', href: '/arena?tab=como-ajudar', tab: 'como-ajudar', color: 'brand-yellow' },
+    { label: 'Desafios Ativos', href: '/arena?tab=challenges', tab: 'challenges', color: 'brand-red' },
+    { label: 'Match Acadêmico', href: '/arena?tab=match', tab: 'match', color: 'brand-red' },
+];
+
+function SidebarLeftInner({ userId }: { userId?: string }) {
     const pathname = usePathname();
+    const searchParams = useSearchParams();
+    const tabParam = searchParams.get('tab');
     const { isSidebarCollapsed, setSidebarCollapsed } = useNavigationStore();
     const { sidebarThirdAxis, userCategory, isLoading: isRoleLoading, isLoggedIn, isAdult } = useUserRoleNavigation();
     const [recentEntanglements, setRecentEntanglements] = React.useState<any[]>([]);
@@ -62,14 +131,93 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
     const { trackEvent } = useTelemetry();
     const [mounted, setMounted] = React.useState(false);
 
+    // Accordion state
+    const [expandedAxes, setExpandedAxes] = React.useState<Record<string, boolean>>({
+        social: false,
+        informativo: false,
+        thirdAxis: false,
+    });
+
     React.useEffect(() => {
         setMounted(true);
     }, []);
 
+    // Auto-expand active axis based on current route
+    React.useEffect(() => {
+        if (pathname === '/') {
+            setExpandedAxes(prev => ({ ...prev, social: true }));
+        } else if (pathname.startsWith('/gcif') || pathname.startsWith('/wiki')) {
+            setExpandedAxes(prev => ({ ...prev, informativo: true }));
+        } else if (
+            pathname.startsWith('/ferramentas') || 
+            pathname.startsWith('/ingresso') || 
+            pathname.startsWith('/arena') ||
+            pathname.startsWith('/iniciativas')
+        ) {
+            setExpandedAxes(prev => ({ ...prev, thirdAxis: true }));
+        }
+    }, [pathname]);
+
+    const toggleAxis = (axisKey: string) => {
+        setExpandedAxes(prev => ({ ...prev, [axisKey]: !prev[axisKey] }));
+    };
+
+    const isSubItemActive = (item: TreeItem) => {
+        if (item.tab) {
+            if (pathname === '/' && (item.tab === 'artes' || item.tab === 'arte')) {
+                return tabParam === 'artes' || tabParam === 'arte';
+            }
+            if (pathname === '/' && item.tab === 'fluxo') {
+                return !tabParam || tabParam === 'fluxo';
+            }
+            if (pathname === '/' && item.tab === 'logs') {
+                return tabParam === 'logs';
+            }
+            if (pathname === '/ingresso') {
+                return tabParam === item.tab;
+            }
+            if (pathname === '/arena') {
+                return tabParam === item.tab;
+            }
+        }
+        if (item.href === '/ingresso') {
+            return pathname === '/ingresso' && !tabParam;
+        }
+        if (item.href === '/arena') {
+            return pathname === '/arena' && !tabParam;
+        }
+        if (item.href === '/iniciativas/show-da-fisica') {
+            return pathname.startsWith('/iniciativas/show-da-fisica');
+        }
+
+        // Informativo: Instituto, Wiki, Interativo
+        if (item.href === '/gcif/instituto') {
+            return pathname.startsWith('/gcif/instituto');
+        }
+        if (item.href === '/gcif/wiki') {
+            return pathname === '/gcif' || pathname.startsWith('/gcif/wiki') || pathname.startsWith('/wiki');
+        }
+        if (item.href === '/gcif/interativo') {
+            return pathname.startsWith('/gcif/interativo');
+        }
+
+        // Ferramentas: Acompanhamento, Estudos, Integração
+        if (item.href === '/ferramentas') {
+            return pathname === '/ferramentas' || pathname.startsWith('/ferramentas/trilhas');
+        }
+        if (item.href === '/ferramentas/anotacoes') {
+            return pathname.startsWith('/ferramentas/anotacoes') || pathname.startsWith('/ferramentas/softwares');
+        }
+        if (item.href === '/ferramentas/match') {
+            return pathname.startsWith('/ferramentas/match');
+        }
+
+        return pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href) && !item.tab);
+    };
+
     const loadSidebarData = async () => {
         setIsLoading(true);
         try {
-            // Fetch entanglements independently
             const entanglements = await fetchRecentEntanglements();
             setRecentEntanglements(entanglements);
         } catch (error) {
@@ -82,7 +230,6 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
     React.useEffect(() => {
         loadSidebarData();
 
-        // Listen for new messages to update the recent list
         const channel = supabase
             .channel('sidebar_entanglements')
             .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'messages' }, () => {
@@ -98,7 +245,6 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
         };
     }, []);
 
-    // Color mapper for consistent UI architecture
     const colorMap: Record<string, { bg: string; text: string; border: string; hoverBorder: string }> = {
         'brand-blue': { bg: 'bg-brand-blue/10', text: 'text-brand-blue', border: 'border-l-brand-blue', hoverBorder: 'hover:border-l-brand-blue' },
         'brand-red': { bg: 'bg-brand-red/10', text: 'text-brand-red', border: 'border-l-brand-red', hoverBorder: 'hover:border-l-brand-red' },
@@ -107,113 +253,251 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
 
     if (!mounted) return null;
 
+    const thirdAxisSubItems: TreeItem[] = userCategory === 'aluno_usp'
+        ? ferramentasTreeItems
+        : userCategory === 'pesquisador'
+        ? arenaTreeItems
+        : ingressoTreeItems;
+
+    const renderTreeSubItem = (sub: TreeItem) => {
+        const isSubActive = isSubItemActive(sub);
+        const colorKey = sub.color || 'brand-yellow';
+        const styles = subColorStyles[colorKey];
+
+        return (
+            <Link
+                key={sub.href}
+                href={sub.href}
+                className={`flex items-center gap-2 py-1.5 px-2 rounded-lg text-xs font-open-sans transition-all duration-200 group ${
+                    isSubActive 
+                        ? styles.active
+                        : `text-gray-400 dark:text-gray-400 ${styles.hover}`
+                }`}
+            >
+                <span 
+                    className={`w-1.5 h-1.5 rounded-full transition-all duration-200 shrink-0 ${
+                        isSubActive 
+                            ? styles.activeBullet 
+                            : `bg-white/20 dark:bg-white/10 ${styles.hoverBullet}`
+                    }`} 
+                />
+                <span className="truncate">{sub.label}</span>
+            </Link>
+        );
+    };
+
     return (
         <div className={`w-full h-full flex flex-col gap-2 py-6 ${isSidebarCollapsed ? 'px-2' : 'px-4'} overflow-x-hidden relative transition-all duration-300`}>
-            {/* When collapsed, show expand button at top of rail */}
-            {isSidebarCollapsed && (
+            {/* Header / Collapse Controls */}
+            {!isSidebarCollapsed ? (
+                <div className="flex items-center justify-between px-4 pb-2 mb-1 border-b border-gray-100 dark:border-white/5">
+                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Navegação</span>
+                    <button
+                        type="button"
+                        onClick={() => setSidebarCollapsed(true)}
+                        className="p-1 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-gray-400 hover:text-brand-blue hover:bg-gray-100 dark:hover:bg-white/10 transition-all shadow-sm group"
+                        title="Recolher menu lateral"
+                        aria-label="Recolher menu lateral"
+                    >
+                        <ChevronLeft size={14} className="group-hover:scale-110 transition-transform" />
+                    </button>
+                </div>
+            ) : (
                 <div className="flex items-center justify-center mb-2 px-2">
                     <button
+                        type="button"
                         onClick={() => setSidebarCollapsed(false)}
                         className="p-1.5 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-gray-400 hover:text-brand-blue hover:bg-gray-100 dark:hover:bg-white/10 transition-all shadow-sm group"
-                        title="Expandir menu"
+                        title="Expandir menu lateral"
+                        aria-label="Expandir menu lateral"
                     >
                         <ChevronRight size={16} className="group-hover:scale-110 transition-transform" />
                     </button>
                 </div>
             )}
 
-            {/* Primary Navigation */}
+            {/* Primary Navigation Tree View */}
             <nav className={`flex flex-col gap-1 ${isSidebarCollapsed ? 'items-center' : ''}`}>
-                {/* Main Links - Rendered instantly (SSR Friendly) */}
-                {mainLinks.map((link) => {
-                    const isActive = pathname === link.href || (link.href !== '/' && pathname.startsWith(link.href));
-                    const c = colorMap[link.color] || colorMap['brand-blue'];
-
-                    if (link.name === 'Social' && !isSidebarCollapsed) {
-                        return (
-                            <div key={link.href} className="relative flex items-center w-full">
-                                <Link
-                                    href={link.href}
-                                    data-tour={link.dataTour}
-                                    onClick={() => trackEvent('TAB_CHANGE', { tab: link.name, href: link.href })}
-                                    className={`flex items-center flex-1 gap-4 px-6 pr-12 py-3 transition-all group border-l-[3px] rounded-r-xl ${isActive
-                                        ? `${c.bg} ${c.text} ${c.border}`
-                                        : `border-l-transparent ${c.hoverBorder} text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white`
-                                        }`}
-                                >
-                                    <span className={`transition-transform group-hover:scale-110 ${isActive ? c.text : ''}`}>
-                                        {link.icon}
-                                    </span>
-                                    <span className={`font-bold text-base ${isActive ? 'text-gray-900 dark:text-white' : ''}`}>
-                                        {link.name}
-                                    </span>
-                                </Link>
-                                <button
-                                    type="button"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        setSidebarCollapsed(true);
-                                    }}
-                                    className="absolute right-2 p-1.5 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-lg text-gray-400 hover:text-brand-blue hover:bg-gray-100 dark:hover:bg-white/10 transition-all shadow-sm group z-10"
-                                    title="Recolher menu"
-                                >
-                                    <ChevronLeft size={16} className="group-hover:scale-110 transition-transform" />
-                                </button>
-                            </div>
-                        );
-                    }
+                {/* 1. Eixo Social */}
+                {(() => {
+                    const isActive = pathname === '/';
+                    const isExpanded = expandedAxes['social'];
+                    const c = colorMap['brand-blue'];
 
                     return (
-                        <Link
-                            key={link.href}
-                            href={link.href}
-                            data-tour={link.dataTour}
-                            onClick={() => trackEvent('TAB_CHANGE', { tab: link.name, href: link.href })}
-                            className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-4 px-6'} py-3 transition-all group border-l-[3px] rounded-r-xl ${isActive
-                                ? `${c.bg} ${c.text} ${c.border}`
-                                : `border-l-transparent ${c.hoverBorder} text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white`
-                                }`}
-                        >
-                            <span className={`transition-transform group-hover:scale-110 ${isActive ? c.text : ''}`}>
-                                {link.icon}
-                            </span>
-                            {!isSidebarCollapsed && (
-                                <span className={`font-bold text-base ${isActive ? 'text-gray-900 dark:text-white' : ''}`}>
-                                    {link.name}
-                                </span>
-                            )}
-                        </Link>
-                    );
-                })}
+                        <div className="flex flex-col w-full">
+                            <div className="flex items-center w-full">
+                                <Link
+                                    href="/"
+                                    data-tour="sidebar-eixo-comunidade"
+                                    onClick={() => {
+                                        trackEvent('TAB_CHANGE', { tab: 'Social', href: '/' });
+                                        setExpandedAxes(prev => ({ ...prev, social: true }));
+                                    }}
+                                    className={`flex items-center flex-1 ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-3.5 px-4'} py-2.5 transition-all group border-l-[3px] rounded-r-xl ${isActive
+                                        ? `${c.bg} ${c.text} ${c.border}`
+                                        : `border-l-transparent ${c.hoverBorder} text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white`
+                                    }`}
+                                >
+                                    <span className={`transition-transform group-hover:scale-110 ${isActive ? c.text : ''}`}>
+                                        <span className="material-symbols-outlined text-2xl">groups</span>
+                                    </span>
+                                    {!isSidebarCollapsed && (
+                                        <span className={`font-bold text-sm ${isActive ? 'text-gray-900 dark:text-white' : ''}`}>
+                                            Social
+                                        </span>
+                                    )}
+                                </Link>
+                                {!isSidebarCollapsed && (
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            toggleAxis('social');
+                                        }}
+                                        className="p-1.5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-all mr-1 cursor-pointer"
+                                        title={isExpanded ? "Recolher sub-itens" : "Expandir sub-itens"}
+                                        aria-label="Expandir ou recolher sub-itens"
+                                    >
+                                        <ChevronDown size={14} className={`transition-transform duration-200 ${isExpanded ? 'rotate-180 text-brand-blue' : ''}`} />
+                                    </button>
+                                )}
+                            </div>
 
-                {/* 3º Eixo Dinâmico (Ferramentas Acadêmicas / Como Ingressar / Observatório de Pesquisa) */}
+                            {/* Sub-tree branches */}
+                            {!isSidebarCollapsed && isExpanded && (
+                                <div className="border-l border-white/10 ml-6 pl-2.5 space-y-1 my-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                                    {socialTreeItems.map(renderTreeSubItem)}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })()}
+
+                {/* 2. Eixo Informativo */}
                 {(() => {
-                    const isActive = pathname === sidebarThirdAxis.href || (sidebarThirdAxis.href !== '/' && pathname.startsWith(sidebarThirdAxis.href));
+                    const isActive = pathname.startsWith('/gcif') || pathname.startsWith('/wiki');
+                    const isExpanded = expandedAxes['informativo'];
+                    const c = colorMap['brand-red'];
+
+                    return (
+                        <div className="flex flex-col w-full">
+                            <div className="flex items-center w-full">
+                                <Link
+                                    href="/gcif"
+                                    data-tour="sidebar-eixo-cgif"
+                                    onClick={() => {
+                                        trackEvent('TAB_CHANGE', { tab: 'Informativo', href: '/gcif' });
+                                        setExpandedAxes(prev => ({ ...prev, informativo: true }));
+                                    }}
+                                    className={`flex items-center flex-1 ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-3.5 px-4'} py-2.5 transition-all group border-l-[3px] rounded-r-xl ${isActive
+                                        ? `${c.bg} ${c.text} ${c.border}`
+                                        : `border-l-transparent ${c.hoverBorder} text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white`
+                                    }`}
+                                >
+                                    <span className={`transition-transform group-hover:scale-110 ${isActive ? c.text : ''}`}>
+                                        <ColisorIcon className="w-6 h-6" />
+                                    </span>
+                                    {!isSidebarCollapsed && (
+                                        <span className={`font-bold text-sm ${isActive ? 'text-gray-900 dark:text-white' : ''}`}>
+                                            Informativo
+                                        </span>
+                                    )}
+                                </Link>
+                                {!isSidebarCollapsed && (
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            toggleAxis('informativo');
+                                        }}
+                                        className="p-1.5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-all mr-1 cursor-pointer"
+                                        title={isExpanded ? "Recolher sub-itens" : "Expandir sub-itens"}
+                                        aria-label="Expandir ou recolher sub-itens"
+                                    >
+                                        <ChevronDown size={14} className={`transition-transform duration-200 ${isExpanded ? 'rotate-180 text-brand-red' : ''}`} />
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Sub-tree branches */}
+                            {!isSidebarCollapsed && isExpanded && (
+                                <div className="border-l border-white/10 ml-6 pl-2.5 space-y-1 my-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                                    {informativoTreeItems.map(renderTreeSubItem)}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })()}
+
+                {/* 3. 3º Eixo Dinâmico (Ferramentas Acadêmicas / Como Ingressar / Observatório) */}
+                {(() => {
+                    const isActive = pathname === sidebarThirdAxis.href || (sidebarThirdAxis.href !== '/' && pathname.startsWith(sidebarThirdAxis.href)) || (sidebarThirdAxis.href === '/ingresso' && pathname.startsWith('/iniciativas'));
+                    const isExpanded = expandedAxes['thirdAxis'];
                     const c = colorMap[sidebarThirdAxis.color] || colorMap['brand-yellow'];
 
                     return (
-                        <Link
-                            key={sidebarThirdAxis.href}
-                            href={sidebarThirdAxis.href}
-                            data-tour={sidebarThirdAxis.dataTour}
-                            onClick={() => trackEvent('TAB_CHANGE', { tab: sidebarThirdAxis.name, href: sidebarThirdAxis.href })}
-                            className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-4 px-6'} py-3 transition-all group border-l-[3px] rounded-r-xl ${isActive
-                                ? `${c.bg} ${c.text} ${c.border}`
-                                : `border-l-transparent ${c.hoverBorder} text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white`
-                                }`}
-                        >
-                            <span className={`transition-transform group-hover:scale-110 ${isActive ? c.text : ''}`}>
-                                <span className="material-symbols-outlined text-2xl">
-                                    {sidebarThirdAxis.iconName === 'capelo' ? 'school' : sidebarThirdAxis.iconName}
-                                </span>
-                            </span>
-                            {!isSidebarCollapsed && (
-                                <span className={`font-bold text-base ${isActive ? 'text-gray-900 dark:text-white' : ''}`}>
-                                    {sidebarThirdAxis.name}
-                                </span>
+                        <div className="flex flex-col w-full">
+                            <div className="flex items-center w-full">
+                                <Link
+                                    key={sidebarThirdAxis.href}
+                                    href={sidebarThirdAxis.href}
+                                    data-tour={sidebarThirdAxis.dataTour}
+                                    onClick={() => {
+                                        trackEvent('TAB_CHANGE', { tab: sidebarThirdAxis.name, href: sidebarThirdAxis.href });
+                                        setExpandedAxes(prev => ({ ...prev, thirdAxis: true }));
+                                    }}
+                                    className={`flex items-center flex-1 ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-3.5 px-4'} py-2.5 transition-all group border-l-[3px] rounded-r-xl ${isActive
+                                        ? `${c.bg} ${c.text} ${c.border}`
+                                        : `border-l-transparent ${c.hoverBorder} text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white`
+                                    }`}
+                                >
+                                    <span className={`transition-transform group-hover:scale-110 ${isActive ? c.text : ''}`}>
+                                        <span className="material-symbols-outlined text-2xl">
+                                            {sidebarThirdAxis.iconName === 'capelo' ? 'school' : sidebarThirdAxis.iconName}
+                                        </span>
+                                    </span>
+                                    {!isSidebarCollapsed && (
+                                        <span className={`font-bold text-sm ${isActive ? 'text-gray-900 dark:text-white' : ''}`}>
+                                            {sidebarThirdAxis.name}
+                                        </span>
+                                    )}
+                                </Link>
+                                {!isSidebarCollapsed && (
+                                    <button
+                                        type="button"
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            toggleAxis('thirdAxis');
+                                        }}
+                                        className="p-1.5 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-all mr-1 cursor-pointer"
+                                        title={isExpanded ? "Recolher sub-itens" : "Expandir sub-itens"}
+                                        aria-label="Expandir ou recolher sub-itens"
+                                    >
+                                        <ChevronDown size={14} className={`transition-transform duration-200 ${isExpanded ? 'rotate-180 text-brand-yellow' : ''}`} />
+                                    </button>
+                                )}
+                            </div>
+
+                            {/* Sub-tree branches */}
+                            {!isSidebarCollapsed && isExpanded && (
+                                <div className="border-l border-white/10 ml-6 pl-2.5 space-y-1 my-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
+                                    {thirdAxisSubItems.map((sub, sIdx) => (
+                                        <React.Fragment key={sub.href}>
+                                            {sub.group && (sIdx === 0 || thirdAxisSubItems[sIdx - 1]?.group !== sub.group) && (
+                                                <div className="pt-2 pb-0.5 px-2 text-[9px] font-black uppercase text-gray-500 tracking-wider">
+                                                    {sub.group}
+                                                </div>
+                                            )}
+                                            {renderTreeSubItem(sub)}
+                                        </React.Fragment>
+                                    ))}
+                                </div>
                             )}
-                        </Link>
+                        </div>
                     );
                 })()}
 
@@ -376,5 +660,13 @@ export const SidebarLeft = ({ userId }: { userId?: string }) => {
                 ))}
             </nav>
         </div>
+    );
+}
+
+export const SidebarLeft = ({ userId }: { userId?: string }) => {
+    return (
+        <Suspense fallback={null}>
+            <SidebarLeftInner userId={userId} />
+        </Suspense>
     );
 };

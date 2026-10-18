@@ -15,6 +15,7 @@
 import { createServerSupabase } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { Resend } from 'resend';
+import { z } from 'zod';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
 
@@ -326,6 +327,87 @@ export async function updateHubAdoptionStatus(adoptionId: string, status: 'pende
         return { success: false, error: error.message };
     }
 
+    revalidatePath('/admin/observatorio');
+    return { success: true };
+}
+
+const PartnershipRequestSchema = z.object({
+    project_name: z.string().min(3, 'Nome do projeto deve ter no mínimo 3 caracteres'),
+    category: z.string().min(2, 'Selecione uma categoria válida'),
+    description: z.string().min(10, 'Descreva a iniciativa com ao menos 10 caracteres'),
+    needs: z.array(z.string()).min(1, 'Selecione ao menos uma área em que o LabDiv pode apoiar'),
+    contact_email: z.string().email('E-mail de contato inválido'),
+    contact_phone: z.string().optional()
+});
+
+export type PartnershipRequestInput = z.infer<typeof PartnershipRequestSchema>;
+
+export async function submitLabdivPartnershipRequest(rawInput: PartnershipRequestInput) {
+    const parseResult = PartnershipRequestSchema.safeParse(rawInput);
+    if (!parseResult.success) {
+        return { error: parseResult.error.issues[0]?.message || 'Dados inválidos' };
+    }
+
+    const data = parseResult.data;
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) return { error: 'Você precisa estar autenticado para enviar uma proposta de parceria.' };
+
+    const { error } = await supabase
+        .from('hub_adoptions')
+        .insert({
+            user_id: user.id,
+            discipline_name: `[PARCERIA LABDIV] ${data.project_name}`,
+            summary: `Categoria: ${data.category} | Contato: ${data.contact_email} ${data.contact_phone ? `(${data.contact_phone})` : ''} | Áreas Solicitadas: ${data.needs.join(', ')}`,
+            usage_intent: data.description,
+            requested_features: data.needs.join(', ')
+        });
+
+    if (error) {
+        console.error('Error submitting LabDiv partnership request:', error);
+        return { error: 'Erro ao enviar solicitação de parceria' };
+    }
+
+    // Notify Admins
+    try {
+        const { sendAdminNotification } = await import('@/lib/notifications.server');
+        const { data: profile } = await supabase.from('profiles').select('full_name, email').eq('id', user.id).single();
+        const userName = profile?.full_name || 'Pesquisador/Docente';
+
+        await sendAdminNotification({
+            type: 'system_alert' as any,
+            userName,
+            details: `Nova proposta de parceria LabDiv para o projeto: ${data.project_name} (${data.category})`
+        });
+
+        if (resend) {
+            await resend.emails.send({
+                from: 'HUB Lab-Div <noreply@labdiv.com.br>',
+                to: 'hublabdiv@gmail.com',
+                subject: `Nova Proposta de Parceria LabDiv: ${data.project_name}`,
+                html: `
+                    <div style="font-family: sans-serif; color: #1e1e1e; max-width: 600px; padding: 20px;">
+                        <h2 style="color: #0F4780;">Nova Proposta de Parceria com o LabDiv</h2>
+                        <p><strong>Projeto/Iniciativa:</strong> ${data.project_name}</p>
+                        <p><strong>Categoria:</strong> ${data.category}</p>
+                        <p><strong>Responsável:</strong> ${userName} (${data.contact_email})</p>
+                        ${data.contact_phone ? `<p><strong>Telefone:</strong> ${data.contact_phone}</p>` : ''}
+                        <p><strong>Áreas de Apoio Solicitadas:</strong> ${data.needs.join(', ')}</p>
+                        <br/>
+                        <p><strong>Descrição e Objetivos:</strong></p>
+                        <blockquote style="border-left: 4px solid #FFCC00; padding-left: 12px; color: #444; font-style: italic;">
+                            ${data.description}
+                        </blockquote>
+                    </div>
+                `
+            });
+        }
+    } catch (notifyErr) {
+        console.error('Erro ao enviar notificações de parceria:', notifyErr);
+    }
+
+    revalidatePath('/arena');
     revalidatePath('/admin/observatorio');
     return { success: true };
 }

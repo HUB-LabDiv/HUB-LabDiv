@@ -16,17 +16,20 @@ import React, { useState, useEffect } from 'react';
 import { fetchChallenges, submitToChallenge, voteSubmission, proposeChallenge, fetchArenaSuggestions, submitHubAdoption } from '@/app/actions/arena';
 import { submitHubSuggestion } from '@/app/actions/feedback';
 import { Avatar } from "@/components/ui/Avatar";
-import { Loader2, Trophy, MessageSquare, ThumbsUp, Plus, Calendar, AlertCircle, Microscope, UserPlus, Settings, Lightbulb, ClipboardList, BookOpen } from 'lucide-react';
+import { Loader2, Trophy, MessageSquare, ThumbsUp, Plus, Calendar, AlertCircle, Microscope, UserPlus, Settings, Lightbulb, ClipboardList, BookOpen, Sparkles } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { updateProfile } from '@/app/actions/profiles';
+import { ComoLabDivAjudaSection } from '@/components/arena/ComoLabDivAjudaSection';
+import { SolicitarParceriaModal } from '@/components/arena/SolicitarParceriaModal';
 
-type Tab = 'challenges' | 'suggestions' | 'match';
+type Tab = 'challenges' | 'suggestions' | 'match' | 'labdiv_help';
 import { MatchAcademicoTab } from '@/components/profile/MatchAcademicoTab';
 
 export default function ArenaClient({ profile }: { profile: any }) {
     const [activeTab, setActiveTab] = useState<Tab>('challenges');
+    const [showPartnershipModal, setShowPartnershipModal] = useState(false);
     const [challenges, setChallenges] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     
@@ -199,6 +202,13 @@ export default function ArenaClient({ profile }: { profile: any }) {
                         <BookOpen className="w-4 h-4" />
                         Adotar na Disciplina
                     </button>
+                    <button 
+                        onClick={() => setShowPartnershipModal(true)}
+                        className="px-6 py-3 bg-[#FFCC00]/15 border border-[#FFCC00]/40 text-[#FFCC00] hover:bg-[#FFCC00]/25 font-black uppercase text-xs tracking-widest rounded-2xl transition-all shadow-lg flex items-center gap-2"
+                    >
+                        <Sparkles className="w-4 h-4" />
+                        Parceria LabDiv
+                    </button>
                 </div>
             </header>
 
@@ -233,6 +243,16 @@ export default function ArenaClient({ profile }: { profile: any }) {
                 >
                     <UserPlus className="w-4 h-4" />
                     Match Acadêmico
+                </button>
+                <button
+                    onClick={() => setActiveTab('labdiv_help')}
+                    className={`px-6 py-4 text-[10px] font-black uppercase tracking-widest transition-all border-b-2 flex items-center gap-2 whitespace-nowrap ${activeTab === 'labdiv_help'
+                        ? 'border-brand-yellow text-brand-yellow'
+                        : 'border-transparent text-gray-500 hover:text-white'
+                        }`}
+                >
+                    <Sparkles className="w-4 h-4" />
+                    Como o LabDiv Ajuda
                 </button>
             </div>
 
@@ -347,6 +367,10 @@ export default function ArenaClient({ profile }: { profile: any }) {
                             </header>
                             <MatchAcademicoTab profile={profile} />
                         </div>
+                    )}
+
+                    {activeTab === 'labdiv_help' && (
+                        <ComoLabDivAjudaSection onRequestPartnership={() => setShowPartnershipModal(true)} />
                     )}
                 </div>
             )}
@@ -511,6 +535,13 @@ export default function ArenaClient({ profile }: { profile: any }) {
                     </div>
                 </div>
             )}
+
+            {/* Modal de Solicitação de Parceria LabDiv */}
+            <SolicitarParceriaModal
+                isOpen={showPartnershipModal}
+                onClose={() => setShowPartnershipModal(false)}
+                userEmail={profile?.email}
+            />
         </div>
     );
 }

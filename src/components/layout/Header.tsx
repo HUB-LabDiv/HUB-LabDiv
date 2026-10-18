@@ -31,7 +31,6 @@ import { useTelemetry } from '@/hooks/useTelemetry';
 import { IFUSPLogo } from '../icons/IFUSPLogo';
 import { usePersonalizacaoStore } from '@/store/usePersonalizacaoStore';
 import { CacheManagerModal } from '../pwa/CacheManagerModal';
-import { useUserRoleNavigation } from '@/hooks/useUserRoleNavigation';
 
 /**
  * V8.0 Header - Fort Knox Edition
@@ -54,7 +53,6 @@ export function Header() {
 
     const [user, setUser] = useState<UserMinimalDTO | null>(null);
     const { user: authUser } = useAuth();
-    const { navbarThirdAxis } = useUserRoleNavigation();
     const [isSearchOverlayOpen, setSearchOverlayOpen] = useState(false);
     const [isCacheModalOpen, setCacheModalOpen] = useState(false);
 
@@ -104,6 +102,27 @@ export function Header() {
             });
     }, [authUser]);
 
+    // Global Keyboard Shortcuts (Ctrl+K, Cmd+K, /)
+    useEffect(() => {
+        const handleGlobalKeyDown = (e: KeyboardEvent) => {
+            const activeElement = document.activeElement;
+            const isTyping = activeElement instanceof HTMLInputElement || 
+                             activeElement instanceof HTMLTextAreaElement || 
+                             (activeElement as HTMLElement)?.isContentEditable;
+
+            if ((e.key === 'k' || e.key === 'K') && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                setSearchOverlayOpen(true);
+            } else if (e.key === '/' && !isTyping && !e.ctrlKey && !e.metaKey && !e.altKey) {
+                e.preventDefault();
+                setSearchOverlayOpen(true);
+            }
+        };
+
+        window.addEventListener('keydown', handleGlobalKeyDown);
+        return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+    }, []);
+
     // Close all menus on route change
     useEffect(() => {
         closeAll();
@@ -142,7 +161,7 @@ export function Header() {
                                     {institution === 'ime' ? 'IME-USP' : institution === 'iag' ? 'IAG-USP' : institution === 'igc' ? 'IGC-USP' : institution === 'io' ? 'IO-USP' : 'IFUSP'}
                                 </span>
                             </div>
-                            <div className="flex items-center gap-1.5 sm:gap-2.5 ml-0 sm:ml-1 scale-75 sm:scale-100 origin-left">
+                            <div className="hidden md:flex items-center gap-1.5 sm:gap-2.5 ml-0 sm:ml-1 scale-75 sm:scale-100 origin-left">
                                 <div className="w-px h-5 sm:h-7 bg-gray-200 dark:bg-white/15"></div>
                                 {institution === 'ime' ? (
                                     <Image 
@@ -187,80 +206,55 @@ export function Header() {
                         </div>
                     </Link>
 
-                    {/* Middle: Nav Tabs + Search (The Notch) - Hardened V8.1 with Static Centering */}
-                    <div className="hidden xl:flex absolute left-1/2 -translate-x-1/2 top-0 z-50">
-                        <div className="bg-[#0F4780] rounded-b-[24px] px-8 py-3 flex items-center gap-1.5 shadow-[0_8px_32px_rgba(0,0,0,0.5)] border-x border-b border-white/10 backdrop-blur-xl transition-colors duration-300">
-                            {[
-                                { label: 'Social', href: '/', color: '#38BDF8', dataTour: 'navbar-eixo-comunidade' },
-                                { label: 'Informativo', href: '/gcif', color: '#F14343', dataTour: 'navbar-eixo-cgif' },
-                                navbarThirdAxis,
-                                { label: 'Interações', href: '/interacao', color: '#38BDF8', dataTour: 'navbar-eixo-interacoes' },
-                            ].map((tab) => {
-                                const isActive = tab.href === '/gcif'
-                                    ? (pathname.startsWith('/gcif') || pathname.startsWith('/wiki') || pathname.startsWith('/cgif') || pathname.startsWith('/informativo'))
-                                    : tab.href === '/interacao'
-                                    ? (pathname.startsWith('/interacao') || pathname.startsWith('/emaranhamento'))
-                                    : tab.href === '/'
-                                    ? pathname === '/'
-                                    : (pathname === tab.href || pathname.startsWith(tab.href));
-                                
-                                return (
-                                    <Link
-                                        key={tab.href}
-                                        href={tab.href}
-                                        data-tour={tab.dataTour}
-                                        className={`px-4 py-2 text-[11px] font-black uppercase tracking-[0.2em] rounded-xl transition-all whitespace-nowrap relative group/tab border border-transparent ${
-                                            isActive
-                                                ? `text-white bg-white/10 border-white/10 ring-1 ring-inset ${tab.color === 'white' ? 'ring-white/30' : `ring-[${tab.color}]/50`}`
-                                                : `text-white/60 hover:bg-white/5`
-                                        }`}
-                                        style={{ 
-                                            color: isActive ? tab.color : undefined,
-                                            ['--tab-hover-color' as any]: tab.color
-                                        }}
-                                        onMouseEnter={(e) => {
-                                            if (!isActive) e.currentTarget.style.color = tab.color;
-                                        }}
-                                        onMouseLeave={(e) => {
-                                            if (!isActive) e.currentTarget.style.color = '';
-                                        }}
-                                    >
-                                        {tab.label}
-                                        {(isActive) && (
-                                            <div 
-                                                className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full animate-premium-glow"
-                                                style={{ backgroundColor: tab.color }}
-                                            />
-                                        )}
-                                    </Link>
-                                );
-                            })}
-    
-                            {/* Global Search Trigger (Adjusted for Notch) */}
-                            <button
-                                data-tour="global-search"
-                                onClick={() => setSearchOverlayOpen(true)}
-                                className="ml-4 flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl text-xs text-white/50 hover:text-[#FFCC00] hover:border-[#FFCC00]/50 hover:bg-[#FFCC00]/10 transition-all group"
-                            >
-                                <span className="material-symbols-outlined text-[18px] group-hover:text-[#FFCC00] transition-colors">search</span>
-                                <span className="hidden lg:inline text-[10px] font-bold uppercase tracking-widest">Buscar</span>
-                                <kbd className="hidden lg:flex items-center px-1.5 py-0.5 bg-white/5 group-hover:bg-[#FFCC00]/20 rounded text-[9px] font-mono text-white/20 group-hover:text-[#FFCC00]/80 transition-colors">/</kbd>
-                            </button>
-                        </div>
+                    {/* Mobile: Search Bar (Barra expansiva visível no mobile) */}
+                    <div className="flex md:hidden flex-1 min-w-0 mx-1.5 sm:mx-3">
+                        <button
+                            type="button"
+                            data-tour="global-search-mobile"
+                            onClick={() => setSearchOverlayOpen(true)}
+                            className="flex items-center gap-2 w-full h-9 px-3 rounded-xl bg-gray-100/90 dark:bg-card-dark/80 border border-gray-200 dark:border-white/10 hover:border-brand-yellow/50 dark:hover:border-brand-yellow/50 hover:bg-white dark:hover:bg-card-dark/95 shadow-sm transition-all text-gray-500 dark:text-gray-400 group cursor-pointer"
+                            aria-label="Buscar no HUB LabDiv"
+                        >
+                            <span className="material-symbols-outlined text-[18px] text-gray-400 group-hover:text-brand-yellow transition-colors shrink-0">
+                                search
+                            </span>
+                            <span className="text-[11px] font-open-sans text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors truncate">
+                                Buscar no HUB...
+                            </span>
+                        </button>
+                    </div>
+
+                    {/* Middle: Global Search Spotlight / Command Bar */}
+                    <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-40">
+                        <button
+                            type="button"
+                            data-tour="global-search"
+                            onClick={() => setSearchOverlayOpen(true)}
+                            className="flex items-center justify-between gap-3 w-72 lg:w-96 xl:w-[480px] px-4 py-2 rounded-2xl bg-gray-100/80 dark:bg-card-dark/70 border border-gray-200 dark:border-white/10 hover:border-brand-yellow/50 dark:hover:border-brand-yellow/50 hover:bg-white dark:hover:bg-card-dark/95 shadow-sm hover:shadow-md hover:shadow-brand-yellow/10 transition-all text-gray-500 dark:text-gray-400 group cursor-pointer backdrop-blur-md"
+                            aria-label="Buscar no HUB LabDiv"
+                        >
+                            <div className="flex items-center gap-2.5 min-w-0">
+                                <span className="material-symbols-outlined text-[20px] text-gray-400 group-hover:text-brand-yellow transition-colors">
+                                    search
+                                </span>
+                                <span className="text-xs font-open-sans font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors truncate">
+                                    Buscar no HUB LabDiv...
+                                </span>
+                            </div>
+                            <div className="flex items-center gap-1.5 shrink-0">
+                                <span className="hidden sm:inline-flex items-center gap-0.5 px-2 py-0.5 bg-gray-200/80 dark:bg-white/10 group-hover:bg-brand-yellow/20 rounded-md text-[10px] font-mono text-gray-500 dark:text-gray-300 group-hover:text-brand-yellow transition-colors">
+                                    <span>Ctrl</span>
+                                    <span>K</span>
+                                </span>
+                                <span className="hidden sm:inline-flex items-center px-1.5 py-0.5 bg-gray-200/80 dark:bg-white/10 group-hover:bg-brand-yellow/20 rounded-md text-[10px] font-mono text-gray-500 dark:text-gray-300 group-hover:text-brand-yellow transition-colors">
+                                    /
+                                </span>
+                            </div>
+                        </button>
                     </div>
 
                     {/* Right: Sharded Actions */}
                     <div className="flex items-center gap-1 sm:gap-4 shrink-0">
-                        {/* Mobile Search Toggle */}
-                        <button
-                            data-tour="global-search-mobile"
-                            onClick={() => setSearchOverlayOpen(true)}
-                            className="xl:hidden flex-shrink-0 size-10 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/5 text-gray-500 hover:text-brand-yellow transition-all border border-gray-200 dark:border-white/10"
-                            aria-label="Abrir Busca"
-                        >
-                            <span className="material-symbols-outlined text-[22px]">search</span>
-                        </button>
-
                         <div className="flex items-center gap-1 sm:gap-2 pr-1.5 sm:pr-4 border-r border-gray-100 dark:border-white/10">
 
 

@@ -9,6 +9,7 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
+import { Suspense } from 'react';
 import { createServerSupabase } from '@/lib/supabase/server';
 import IngressoClient from './IngressoClient';
 import { redirect } from 'next/navigation';
@@ -32,7 +33,9 @@ export default async function IngressoPage() {
     return (
         <MainLayoutWrapper userId={user?.id}>
             <div data-tour="ingresso-content" className="w-full">
-                <IngressoClient profile={profile} />
+                <Suspense fallback={null}>
+                    <IngressoClient profile={profile} />
+                </Suspense>
             </div>
         </MainLayoutWrapper>
     );
