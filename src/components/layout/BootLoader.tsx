@@ -3,10 +3,19 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 
+import { Capacitor } from '@capacitor/core';
+
 export function BootLoader() {
     const [isVisible, setIsVisible] = useState(true);
 
     useEffect(() => {
+        // No aplicativo nativo (Android Capacitor), a Splash Screen nativa já cumpre esse papel
+        if (typeof window !== 'undefined' && Capacitor.isNativePlatform()) {
+            setIsVisible(false);
+            sessionStorage.setItem('bootLoaderShown', 'true');
+            return;
+        }
+
         // Only show the bootloader once per session (upon entering the site)
         const hasShown = sessionStorage.getItem('bootLoaderShown');
         if (hasShown) {
@@ -17,7 +26,7 @@ export function BootLoader() {
         const MIN_LOADING_TIME = 1000; // reduced to 1s
         const startTime = Date.now();
 
-        const handleLoad = () => {
+        const dismiss = () => {
             const timeElapsed = Date.now() - startTime;
             const remainingTime = Math.max(0, MIN_LOADING_TIME - timeElapsed);
 
@@ -27,13 +36,22 @@ export function BootLoader() {
             }, remainingTime);
         };
 
-        if (document.readyState === 'complete') {
-            handleLoad();
+        // Safety fallback: nunca travar a tela por mais de 2.5s caso o evento 'load' demore
+        const safetyTimer = setTimeout(() => {
+            setIsVisible(false);
+            sessionStorage.setItem('bootLoaderShown', 'true');
+        }, 2500);
+
+        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+            dismiss();
         } else {
-            window.addEventListener('load', handleLoad);
+            window.addEventListener('load', dismiss);
         }
 
-        return () => window.removeEventListener('load', handleLoad);
+        return () => {
+            window.removeEventListener('load', dismiss);
+            clearTimeout(safetyTimer);
+        };
     }, []);
 
     if (!isVisible) return null;

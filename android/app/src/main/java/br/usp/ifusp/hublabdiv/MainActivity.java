@@ -8,23 +8,17 @@ import android.net.NetworkInfo;
 import android.content.Context;
 import com.getcapacitor.BridgeActivity;
 import androidx.activity.EdgeToEdge;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-import androidx.core.graphics.Insets;
+import androidx.core.splashscreen.SplashScreen;
 
 public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        // Transição limpa da Splash Screen nativa (Theme.SplashScreen) para AppTheme.NoActionBar
+        SplashScreen.installSplashScreen(this);
+
         // Habilita Edge-to-Edge nativo para compatibilidade com Android 15+ (SDK 35/36)
         EdgeToEdge.enable(this);
         super.onCreate(savedInstanceState);
-
-        // Aplica padding dos insets da barra de status para a WebView não sobrepor o relógio/notch
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (view, windowInsets) -> {
-            Insets insets = windowInsets.getInsets(WindowInsetsCompat.Type.statusBars());
-            view.setPadding(0, insets.top, 0, 0);
-            return windowInsets;
-        });
 
         // Otimização de Cache e Resiliência Offline para o WebView do Capacitor
         try {
