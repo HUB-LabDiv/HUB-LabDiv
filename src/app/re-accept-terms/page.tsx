@@ -155,7 +155,7 @@ export default function ReAcceptTermsPage() {
                 {/* Termos de Uso */}
                 <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-1">
                       <TermsOfUse 
-                        acceptedVersion={termsAccepted ? 'v2.0' : ''}
+                        acceptedVersion={termsAccepted ? 'v3.0' : ''}
                         onAccept={() => {
                             setTermsAccepted(true);
                             toast.success('Termos aceitos!');
@@ -217,12 +217,12 @@ export default function ReAcceptTermsPage() {
                 {/* Política de Privacidade e Telemetria (Somente para Maiores) */}
                 <div className={`rounded-2xl border-2 transition-all duration-500 overflow-hidden ${
                     !birthdate 
-                    ? 'bg-gray-50/50 dark:bg-gray-800/20 border-gray-100 dark:border-gray-800 opacity-60 grayscale' 
+                    ? 'bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-gray-800 shadow-md' 
                     : isMinor 
-                        ? 'bg-red-50/5 border-red-100 dark:border-red-900/20' 
+                        ? 'bg-red-50/10 border-brand-red/30 dark:border-brand-red/30' 
                         : privacyAccepted 
-                            ? 'bg-brand-blue/5 border-brand-blue shadow-xl shadow-brand-blue/5'
-                            : 'bg-white dark:bg-[#1E1E1E] border-brand-blue/40 shadow-lg'
+                            ? 'bg-emerald-500/5 border-emerald-500/40 shadow-xl shadow-emerald-500/5'
+                            : 'bg-white dark:bg-[#1E1E1E] border-brand-yellow/60 dark:border-brand-yellow/40 shadow-xl shadow-brand-yellow/5'
                 }`}>
                     {/* Header da Política */}
                     <div className="p-5 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
@@ -307,41 +307,47 @@ export default function ReAcceptTermsPage() {
                     </div>
 
                     {/* Ação de Aceite */}
-                    <div className="p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-background-dark">
+                    <div className="p-5 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-[#181818]">
                         {!birthdate ? (
-                            <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-gray-400 uppercase italic py-4">
-                                <span className="material-symbols-outlined text-sm">lock</span>
-                                Preencha sua data de nascimento abaixo para liberar este campo
+                            <div className="flex items-center justify-center gap-2 text-xs font-bold text-amber-600 dark:text-brand-yellow bg-amber-500/10 dark:bg-brand-yellow/10 border border-amber-300 dark:border-brand-yellow/30 rounded-xl py-3.5 px-4 text-center">
+                                <span className="material-symbols-outlined text-base">lock</span>
+                                <span>Preencha sua Data de Nascimento no formulário abaixo para liberar o botão de aceite</span>
                             </div>
                         ) : isMinor ? (
-                            <div className="p-3 bg-red-100/30 border border-red-200 dark:border-red-900/20 rounded-xl flex items-center gap-3">
-                                <span className="material-symbols-outlined text-brand-red text-lg">verified</span>
-                                <p className="text-[10px] text-brand-red dark:text-brand-red font-bold leading-tight">
-                                    Política de Proteção de Menores aplicada. Você pode prosseguir com a regularização sem sensores de telemetria.
+                            <div className="p-4 bg-red-500/10 border-2 border-brand-red/40 rounded-xl flex items-center gap-3">
+                                <span className="material-symbols-outlined text-brand-red text-2xl">verified_user</span>
+                                <p className="text-xs text-brand-red font-bold leading-tight">
+                                    Política de Proteção de Menores aplicada. Todos os sensores de telemetria externa foram desativados permanentemente para sua conta.
                                 </p>
                             </div>
                         ) : (
                              <button
                                 type="button"
                                 onClick={() => {
-                                    setPrivacyAccepted(!privacyAccepted);
-                                    if (!privacyAccepted) {
+                                    const nextState = !privacyAccepted;
+                                    setPrivacyAccepted(nextState);
+                                    if (nextState) {
                                         localStorage.setItem('cookie_consent', 'true');
                                         window.dispatchEvent(new Event('cookie_consent_changed'));
                                         toast.success('Política de Privacidade Aceita!');
                                     } else {
                                         localStorage.setItem('cookie_consent', 'false');
                                         window.dispatchEvent(new Event('cookie_consent_changed'));
+                                        toast('Consentimento de telemetria desativado.', { icon: 'ℹ️' });
                                     }
                                 }}
-                                className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl border-2 transition-all font-bold text-sm ${
+                                className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-2xl border-2 transition-all font-bukra font-bold text-sm tracking-wide cursor-pointer select-none ${
                                     privacyAccepted 
-                                    ? 'bg-brand-blue border-brand-blue text-white shadow-xl shadow-brand-blue/30 scale-[1.01]' 
-                                    : 'bg-white dark:bg-gray-800 border-brand-blue text-brand-blue hover:bg-brand-blue/5 animate-pulse-subtle'
+                                    ? 'bg-emerald-600 hover:bg-emerald-500 border-emerald-400 text-white shadow-xl shadow-emerald-600/30 scale-[1.01] active:scale-[0.99]' 
+                                    : 'bg-brand-yellow hover:bg-[#f5c300] border-brand-yellow text-gray-950 shadow-xl shadow-brand-yellow/30 hover:scale-[1.01] active:scale-[0.99] animate-pulse-subtle'
                                 }`}
                             >
-                                <span className="material-symbols-outlined text-xl">{privacyAccepted ? 'check_circle' : 'draw_abstract'}</span>
-                                {privacyAccepted ? 'Privacidade e Telemetria Aceita' : 'Li e Aceito a Política de Privacidade'}
+                                <span className="material-symbols-outlined text-2xl font-black">
+                                    {privacyAccepted ? 'check_circle' : 'check_box_outline_blank'}
+                                </span>
+                                <span className="font-bold">
+                                    {privacyAccepted ? 'Privacidade e Telemetria Aceitas (Clique para alterar)' : 'Li e Aceito a Política de Privacidade'}
+                                </span>
                             </button>
                         )}
                     </div>

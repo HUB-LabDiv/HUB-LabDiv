@@ -2,6 +2,23 @@
 
 ---
 
+## 🚀 Versão 6.6.2 (Build 20) — *Governança de Acesso do Show de Física & Redirecionamento Oficial*
+**Data de Lançamento:** 19 de Outubro de 2026  
+**Ambiente:** Web (Next.js 14+) & Android Mobile (Capacitor / Google Play Store)  
+**Licença:** GNU Affero General Public License v3 (AGPLv3)
+
+---
+
+### 🎭 1. Show de Física & Governança de Agendamentos
+* **Bloqueio de Acesso para Não-Administradores:**
+  - Botões de ação do Show de Física bloqueados para usuários comuns, com avisos informativos em toast sobre a fase de homologação.
+  - Inserção de botão de alta visibilidade direcionando para o portal oficial do Show de Física no IFUSP (`https://portal.if.usp.br/showdefisica/pt-br/node/323`).
+* **Inativação Temporária do "Monte seu Show":**
+  - O recurso de montagem customizada de roteiro foi colocado em modo "Em Breve" com proteção de rota via redirecionamento de servidor para `/iniciativas/show-da-fisica`.
+  - Acompanhamento de sessões interativas liberado estritamente para administradores autenticados.
+
+---
+
 ## 🚀 Versão 6.6.1 (Build 19) — *Correção de Interface Mobile & Estabilidade Android 15+*
 **Data de Lançamento:** 18 de Outubro de 2026  
 **Ambiente:** Web (Next.js 14+) & Android Mobile (Capacitor / Google Play Store)  

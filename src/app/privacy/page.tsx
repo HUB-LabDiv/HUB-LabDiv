@@ -32,7 +32,7 @@ export default function PrivacyPolicyPage() {
                         Transparência integral sobre o tratamento de dados pessoais no HUB LabDiv em estrita conformidade com a LGPD (Lei nº 13.709/2018), o Marco Civil da Internet (Lei nº 12.965/2014) e as diretrizes do Google Play.
                     </p>
                     <div className="mt-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 border border-brand-blue/20 text-xs font-semibold text-brand-blue">
-                        <span>Versão 6.6.1 • Atualizado em 2026</span>
+                        <span>Versão 6.6.2 • Atualizado em 2026</span>
                     </div>
                 </header>
 

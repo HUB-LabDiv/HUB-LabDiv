@@ -95,13 +95,23 @@ export function TermsOfUse({ onAccept, acceptedVersion }: TermsOfUseProps) {
       </div>
 
       {onAccept && (
-        <div className="p-4 bg-gray-50 dark:bg-background-dark border-t border-gray-100 dark:border-gray-800 flex justify-end">
+        <div className="p-4 bg-gray-50 dark:bg-[#181818] border-t border-gray-100 dark:border-gray-800 flex justify-end items-center gap-3">
           <button 
+            type="button"
             onClick={onAccept}
             disabled={acceptedVersion === 'v3.0'}
-            className="px-6 py-2 bg-[#0F4780] hover:bg-[#0c3966] text-white rounded-md font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className={`px-6 py-3 rounded-xl font-bukra font-bold text-xs uppercase tracking-wider transition-all flex items-center gap-2 border-2 ${
+              acceptedVersion === 'v3.0'
+                ? 'bg-emerald-600 border-emerald-400 text-white shadow-md shadow-emerald-600/20 cursor-default'
+                : 'bg-brand-yellow hover:bg-[#f5c300] border-brand-yellow text-gray-950 shadow-lg shadow-brand-yellow/25 hover:scale-105 active:scale-95 cursor-pointer'
+            }`}
           >
-            {acceptedVersion === 'v3.0' ? 'Termos Já Aceitos' : 'Li, Entendi e Aceito (v3.0)'}
+            <span className="material-symbols-outlined text-lg font-bold">
+              {acceptedVersion === 'v3.0' ? 'check_circle' : 'check_box_outline_blank'}
+            </span>
+            <span>
+              {acceptedVersion === 'v3.0' ? 'Termos de Uso Aceitos (v3.0)' : 'Li, Entendi e Aceito os Termos (v3.0)'}
+            </span>
           </button>
         </div>
       )}

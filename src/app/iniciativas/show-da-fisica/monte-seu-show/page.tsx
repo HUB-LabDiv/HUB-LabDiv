@@ -11,12 +11,8 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import React from 'react';
+import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
-import { Orbitron } from 'next/font/google';
-import { MonteSeuShowClient } from './MonteSeuShowClient';
-
-const orbitron = Orbitron({ subsets: ['latin'], weight: ['400', '600', '700', '900'] });
 
 export const metadata: Metadata = {
     title: 'Monte seu Show | Show de Física IFUSP',
@@ -24,9 +20,6 @@ export const metadata: Metadata = {
 };
 
 export default function MonteSeuShowPage() {
-    return (
-        <div className="w-full min-h-screen bg-[#070708]">
-            <MonteSeuShowClient orbitronClassName={orbitron.className} />
-        </div>
-    );
+    redirect('/iniciativas/show-da-fisica');
 }
+

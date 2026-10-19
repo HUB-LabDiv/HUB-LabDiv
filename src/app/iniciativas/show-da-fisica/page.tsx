@@ -17,6 +17,7 @@ import { ShowCarousel } from './ShowCarousel';
 import { ShowDetailsAccordion } from './ShowDetailsAccordion';
 import { Breadcrumbs } from '@/components/wiki/WikiComponents';
 import { ShowActionButtons } from './ShowActionButtons';
+import { getAdminSessionRole } from '@/app/actions/admin';
 
 export const metadata = {
     title: 'Show de Física | Iniciativas IFUSP',
@@ -25,7 +26,10 @@ export const metadata = {
 
 const orbitron = Orbitron({ subsets: ['latin'], weight: ['400', '700', '900'] });
 
-export default function ShowDaFisicaPage() {
+export default async function ShowDaFisicaPage() {
+    const adminSession = await getAdminSessionRole();
+    const isAdmin = adminSession.role === 'admin';
+
     return (
         <MainLayoutWrapper fullWidth={true}>
             <div className={`min-h-screen bg-black text-white ${orbitron.className}`}>
@@ -137,7 +141,7 @@ export default function ShowDaFisicaPage() {
                             </div>
                         </div>
                         
-                        <ShowActionButtons />
+                        <ShowActionButtons initialIsAdmin={isAdmin} />
                     </div>
 
                 </div>

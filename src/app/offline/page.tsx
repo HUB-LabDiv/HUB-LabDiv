@@ -692,7 +692,7 @@ export default function OfflinePage() {
 
                 {/* Footer License Note */}
                 <p className="text-center text-[10px] text-gray-500 uppercase font-black tracking-widest pt-4">
-                    Software Livre (Licença AGPLv3) • Hub LabDiv IFUSP v6.6.1
+                    Software Livre (Licença AGPLv3) • Hub LabDiv IFUSP v6.6.2
                 </p>
             </div>
         </div>
