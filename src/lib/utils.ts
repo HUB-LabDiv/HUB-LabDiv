@@ -71,11 +71,12 @@ export function stripMarkdownAndLatex(text: string | null | undefined): string {
 }
 
 /**
- * Proxy external avatar URLs to our own API route for caching.
+ * Resolves avatar URLs. Direct high-speed CDN for trusted hosts (Google, Supabase, Cloudinary, GitHub, Dicebear),
+ * and proxy for untrusted external sources.
  */
 export function getAvatarUrl(url: string | null | undefined): string {
     if (!url) return '';
-    if (url.startsWith('/') || url.startsWith('data:') || url.includes('api.dicebear.com')) return url;
+    if (url.startsWith('/') || url.startsWith('data:')) return url;
 
     let processedUrl = url;
     
@@ -87,11 +88,24 @@ export function getAvatarUrl(url: string | null | undefined): string {
         } else {
             processedUrl += '=s500-c';
         }
+        return processedUrl;
     }
 
     // Upgrade GitHub avatars
-    if (processedUrl.includes('githubusercontent.com') && !processedUrl.includes('&s=')) {
-        processedUrl += (processedUrl.includes('?') ? '&' : '?') + 's=500';
+    if (processedUrl.includes('githubusercontent.com')) {
+        if (!processedUrl.includes('&s=') && !processedUrl.includes('?s=')) {
+            processedUrl += (processedUrl.includes('?') ? '&' : '?') + 's=500';
+        }
+        return processedUrl;
+    }
+
+    // Direct CDN for Supabase, Cloudinary, and Dicebear
+    if (
+        processedUrl.includes('.supabase.co') ||
+        processedUrl.includes('cloudinary.com') ||
+        processedUrl.includes('api.dicebear.com')
+    ) {
+        return processedUrl;
     }
 
     return `/api/avatar?url=${encodeURIComponent(processedUrl)}`;

@@ -37,11 +37,11 @@ function LoginContent() {
     // Redireciona imediatamente se já autenticado
     useEffect(() => {
         if (!authLoading && user) {
-            const rawNext = searchParams.get('next') || '/';
-            const target = (!rawNext || rawNext === '/login' || rawNext.startsWith('/login')) ? '/' : rawNext;
-            router.replace(target);
+            const rawNext = searchParams.get('next');
+            const target = (!rawNext || rawNext === '/' || rawNext === '/login' || rawNext.startsWith('/login')) ? '/lab' : rawNext;
+            window.location.href = target;
         }
-    }, [user, authLoading, router, searchParams]);
+    }, [user, authLoading, searchParams]);
 
     const handleOneTapResponse = async (response: any) => {
         setIsLoading(true);
@@ -52,10 +52,10 @@ function LoginContent() {
             });
             if (error) throw error;
             
-            const rawNext = searchParams.get('next') || '/';
-            const target = (!rawNext || rawNext === '/login' || rawNext.startsWith('/login')) ? '/' : rawNext;
-            router.replace(target);
+            const rawNext = searchParams.get('next');
+            const target = (!rawNext || rawNext === '/' || rawNext === '/login' || rawNext.startsWith('/login')) ? '/lab' : rawNext;
             toast.success("Login automático realizado com sucesso!");
+            window.location.href = target;
         } catch (error: any) {
             console.error('One Tap Error:', error.message);
             toast.error("Erro no login automático.");
@@ -65,8 +65,8 @@ function LoginContent() {
 
     const triggerOAuthLogin = async (track: 'usp' | 'external', category?: 'aluno_usp' | 'pesquisador') => {
         const isNative = typeof window !== 'undefined' && Capacitor.isNativePlatform();
-        const rawNext = searchParams.get('next') || '/';
-        const next = (!rawNext || rawNext === '/login' || rawNext.startsWith('/login')) ? '/' : rawNext;
+        const rawNext = searchParams.get('next');
+        const next = (!rawNext || rawNext === '/' || rawNext === '/login' || rawNext.startsWith('/login')) ? '/lab' : rawNext;
         
         let redirectTo = isNative
             ? `hublabdiv://auth/callback?next=${encodeURIComponent(next)}&track=${track}`
@@ -137,8 +137,8 @@ function LoginContent() {
         if (choice === 'switch') {
             handleLogin('usp');
         } else {
-            const rawNext = searchParams.get('next') || '/';
-            const next = (!rawNext || rawNext === '/login' || rawNext.startsWith('/login')) ? '/' : rawNext;
+            const rawNext = searchParams.get('next');
+            const next = (!rawNext || rawNext === '/' || rawNext === '/login' || rawNext.startsWith('/login')) ? '/lab' : rawNext;
             router.push(`/onboarding?track=external&next=${encodeURIComponent(next)}`);
         }
     };
@@ -187,8 +187,8 @@ function LoginContent() {
                     try {
                         const cleanUrl = data.url.replace('hublabdiv://', 'https://hub-lab-div.vercel.app/');
                         const urlObj = new URL(cleanUrl);
-                        const rawNext = urlObj.searchParams.get('next') || '/';
-                        const target = (!rawNext || rawNext === '/login' || rawNext.startsWith('/login')) ? '/' : rawNext;
+                        const rawNext = urlObj.searchParams.get('next');
+                        const target = (!rawNext || rawNext === '/' || rawNext === '/login' || rawNext.startsWith('/login')) ? '/lab' : rawNext;
                         
                         // Hash tokens (#access_token=...&refresh_token=...)
                         if (urlObj.hash && urlObj.hash.includes('access_token')) {

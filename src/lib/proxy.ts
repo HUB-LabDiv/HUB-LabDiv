@@ -45,7 +45,7 @@ export async function proxy(request: NextRequest) {
     );
 
     // Performance: Only refresh auth token on routes that need it
-    // Public routes skip getUser() to save ~100-200ms TTFB
+    // Public routes skip getUser() to save ~100-200ms TTFB and prevent DB bottleneck on media/auth
     const isPublicRoute = pathname === '/' ||
         pathname.startsWith('/gcif') ||
         pathname.startsWith('/comunidade') ||
@@ -56,14 +56,19 @@ export async function proxy(request: NextRequest) {
         pathname.startsWith('/privacy') ||
         pathname.startsWith('/delete-account') ||
         pathname.startsWith('/transparencia') ||
-        pathname.startsWith('/api/og');
+        pathname.startsWith('/login') ||
+        pathname.startsWith('/auth') ||
+        pathname.startsWith('/api/auth') ||
+        pathname.startsWith('/api/avatar') ||
+        pathname.startsWith('/api/og') ||
+        pathname.startsWith('/api/webpush');
 
     const isProd = process.env.NODE_ENV === 'production';
     const cspHeader = `
         default-src 'self';
         script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://*.supabase.co https://*.cloudinary.com https://*.youtube.com https://www.clarity.ms https://scripts.clarity.ms https://c.bing.com https://ajax.googleapis.com;
         style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-        img-src 'self' blob: data: https://api.dicebear.com https://*.supabase.co https://*.cloudinary.com https://i.ytimg.com https://*.ytimg.com https://*.googleusercontent.com https://*.google.com https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://c.bing.com https://*.bing.com;
+        img-src 'self' blob: data: https://api.dicebear.com https://*.supabase.co https://*.cloudinary.com https://i.ytimg.com https://*.ytimg.com https://*.googleusercontent.com https://*.google.com https://avatars.githubusercontent.com https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://c.bing.com https://*.bing.com;
         font-src 'self' data: https://fonts.gstatic.com;
         connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.cloudinary.com https://*.resend.com https://fonts.googleapis.com https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://*.bing.com https://c.bing.com;
         media-src 'self' https://*.supabase.co https://*.cloudinary.com https://*.youtube.com;

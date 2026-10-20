@@ -12,7 +12,7 @@
  */
 
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { User } from 'lucide-react';
 import { getAvatarUrl } from '@/lib/utils';
@@ -50,7 +50,26 @@ const badgeSizeClasses = {
 };
 
 export const Avatar = ({ src, name = 'Usuário', size = 'md', className = '', customSize, xp, level, isLabDiv, userId, onClick }: AvatarProps) => {
+    const [currentSrc, setCurrentSrc] = useState<string>(() => getAvatarUrl(src));
+    const [hasFailedOnce, setHasFailedOnce] = useState(false);
     const [error, setError] = useState(false);
+
+    // Reseta estado sempre que a URL prop 'src' mudar
+    useEffect(() => {
+        setCurrentSrc(getAvatarUrl(src));
+        setHasFailedOnce(false);
+        setError(false);
+    }, [src]);
+
+    const handleImageError = () => {
+        // Se a URL otimizada/processada falhar e for diferente da original bruta, tenta a original
+        if (!hasFailedOnce && src && currentSrc !== src) {
+            setHasFailedOnce(true);
+            setCurrentSrc(src);
+        } else {
+            setError(true);
+        }
+    };
 
     // Tier calculations
     const tier = xp !== undefined ? getRadiationTier(xp) : null;
@@ -74,13 +93,15 @@ export const Avatar = ({ src, name = 'Usuário', size = 'md', className = '', cu
     const badgeSize = badgeSizeClasses[size];
 
     const renderContent = () => {
-        if (src && !error) {
+        if (currentSrc && !error) {
             return (
                 <img
-                    src={getAvatarUrl(src)}
+                    src={currentSrc}
                     alt={name}
                     className="w-full h-full object-cover rounded-full"
-                    onError={() => setError(true)}
+                    loading="lazy"
+                    decoding="async"
+                    onError={handleImageError}
                 />
             );
         }

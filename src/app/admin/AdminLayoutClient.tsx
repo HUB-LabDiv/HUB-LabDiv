@@ -186,8 +186,15 @@ export default function AdminLayoutClient({
                 <div className="p-6 border-t border-gray-800 dark:border-white/5 transition-colors relative z-10 bg-[#1e1e1e] md:bg-background-dark flex flex-col gap-2">
                     <button
                         onClick={async () => {
-                            await signOut('/login');
-                            window.location.reload();
+                            try {
+                                const { supabase } = await import('@/lib/supabase/client');
+                                await supabase.auth.signOut();
+                            } catch {}
+                            document.cookie = 'admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                            document.cookie = 'admin_bypass=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                            document.cookie = 'admin_impersonating_id=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+                            await signOut();
+                            window.location.href = '/login';
                         }}
                         className="flex items-center gap-3 px-4 py-3 w-full text-sm font-medium text-gray-400 rounded-xl hover:bg-gray-800 hover:text-brand-red transition-colors border border-transparent group focus:outline-none"
                     >

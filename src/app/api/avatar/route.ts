@@ -63,19 +63,20 @@ export async function GET(request: Request) {
 
     try {
         const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 6000);
+        const timeout = setTimeout(() => controller.abort(), 10000);
 
         const response = await fetch(parsedUrl.toString(), {
             signal: controller.signal,
             headers: {
-                'User-Agent': 'HUB-LabDiv-AvatarProxy/1.0',
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
                 'Accept': 'image/jpeg, image/png, image/webp, image/gif, image/*;q=0.8'
             }
         });
         clearTimeout(timeout);
 
         if (!response.ok) {
-            return new NextResponse('Failed to fetch image', { status: response.status });
+            // Fallback: redireciona o navegador diretamente para o recurso de origem
+            return NextResponse.redirect(parsedUrl.toString(), 302);
         }
 
         const rawContentType = response.headers.get('content-type') || 'image/jpeg';
@@ -98,7 +99,7 @@ export async function GET(request: Request) {
 
         headers.set('Content-Type', contentType.split(';')[0]);
         headers.set('X-Content-Type-Options', 'nosniff');
-        headers.set('Cache-Control', 'public, s-maxage=86400, stale-while-revalidate=604800');
+        headers.set('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=2592000');
 
         // Se for SVG, protege contra qualquer execução de script ou XSS
         if (isSvg) {
@@ -111,7 +112,8 @@ export async function GET(request: Request) {
             headers,
         });
     } catch (error) {
-        console.error('Error proxying avatar:', error);
-        return new NextResponse('Error fetching avatar', { status: 500 });
+        console.error('Error proxying avatar, falling back to direct redirect:', error);
+        // Fallback: se o proxy falhar por timeout ou rede, tenta redirecionar o navegador diretamente
+        return NextResponse.redirect(parsedUrl.toString(), 302);
     }
 }

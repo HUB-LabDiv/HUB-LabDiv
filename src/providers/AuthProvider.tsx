@@ -66,14 +66,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             }
 
             if (!targetId) {
-                const sessionRole = await getAdminSessionRole();
-                if (sessionRole.role) {
-                    const { data: defaultProf } = await supabase
-                        .from('profiles')
-                        .select('id')
-                        .or('email.eq.hublabdiv@gmail.com,username.eq.labdiv,username.eq.LabDiv')
-                        .maybeSingle();
-                    if (defaultProf) targetId = defaultProf.id;
+                const hasAdminCookie = getCookie('admin_session') || getCookie('admin_bypass');
+                if (hasAdminCookie) {
+                    const sessionRole = await getAdminSessionRole();
+                    if (sessionRole.role) {
+                        const { data: defaultProf } = await supabase
+                            .from('profiles')
+                            .select('id')
+                            .or('email.eq.hublabdiv@gmail.com,username.eq.labdiv,username.eq.LabDiv')
+                            .maybeSingle();
+                        if (defaultProf) targetId = defaultProf.id;
+                    }
                 }
             }
 
@@ -132,7 +135,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         loadAuth();
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-            if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'USER_UPDATED') {
+            if (event === 'SIGNED_OUT') {
+                setUser(null);
+                setProfile(null);
+                setLoading(false);
+                return;
+            }
+            if (
+                event === 'SIGNED_IN' ||
+                event === 'USER_UPDATED' ||
+                event === 'INITIAL_SESSION' ||
+                event === 'TOKEN_REFRESHED'
+            ) {
                 loadAuth();
             }
         });
@@ -149,8 +163,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     try {
                         const cleanUrl = data.url.replace('hublabdiv://', 'https://hub-lab-div.vercel.app/');
                         const urlObj = new URL(cleanUrl);
-                        const rawNext = urlObj.searchParams.get('next') || '/';
-                        const target = (!rawNext || rawNext === '/login' || rawNext.startsWith('/login')) ? '/' : rawNext;
+                        const rawNext = urlObj.searchParams.get('next');
+                        const target = (!rawNext || rawNext === '/' || rawNext === '/login' || rawNext.startsWith('/login')) ? '/lab' : rawNext;
 
                         if (urlObj.hash && urlObj.hash.includes('access_token')) {
                             const hashParams = new URLSearchParams(urlObj.hash.replace(/^#/, ''));

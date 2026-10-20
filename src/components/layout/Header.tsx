@@ -56,6 +56,25 @@ export function Header() {
     const [isSearchOverlayOpen, setSearchOverlayOpen] = useState(false);
     const [isCacheModalOpen, setCacheModalOpen] = useState(false);
 
+    const handleLogout = async () => {
+        try {
+            setProfileMenuOpen(false);
+            setUser(null);
+            // 1. Desconecta o cliente Supabase no navegador (limpa sessão e cookies do cliente)
+            await supabase.auth.signOut();
+            // 2. Limpa cookies de sessão no navegador
+            document.cookie = 'admin_session=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            document.cookie = 'admin_bypass=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            document.cookie = 'admin_impersonating_id=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+            // 3. Limpa sessão no servidor
+            await signOut();
+        } catch (e) {
+            console.error('Erro ao sair:', e);
+        } finally {
+            window.location.href = '/';
+        }
+    };
+
     // Handle Clicks Outside (Profile menu only)
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
@@ -334,11 +353,7 @@ export function Header() {
                                             </Link>
                                             <div className="h-[1px] bg-gray-100 dark:bg-white/10 my-1"></div>
                                             <button
-                                                onClick={async () => {
-                                                    setProfileMenuOpen(false);
-                                                    await signOut('/login');
-                                                    window.location.reload();
-                                                }}
+                                                onClick={handleLogout}
                                                 className="px-4 py-3 text-sm text-brand-red hover:bg-brand-red/10 transition-colors flex items-center gap-2 font-bold w-full text-left"
                                             >
                                                 <span className="material-symbols-outlined text-[18px]">logout</span>

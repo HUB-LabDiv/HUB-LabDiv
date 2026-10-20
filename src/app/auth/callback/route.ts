@@ -9,21 +9,19 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import { createServerSupabase } from '@/lib/supabase/server';
+import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');
-    const next = searchParams.get('next') ?? '/';
+    const next = searchParams.get('next') ?? '/lab';
 
     // Improved Origin Detection for Local/Prod
     const getPublicOrigin = () => {
         const host = request.headers.get('host');
         const xForwardedHost = request.headers.get('x-forwarded-host');
         const xForwardedProto = request.headers.get('x-forwarded-proto') || 'https';
-
-        console.log(`[Auth Callback] Detection - Host: ${host}, ForwardedHost: ${xForwardedHost}, Proto: ${xForwardedProto}`);
 
         // 1. Prioritize localhost for local development
         if (host?.includes('localhost')) {
@@ -32,7 +30,8 @@ export async function GET(request: NextRequest) {
 
         // 2. Use forwarded headers for production (SSL offloading)
         if (xForwardedHost && !xForwardedHost.includes('localhost')) {
-            return `${xForwardedProto}://${xForwardedHost}`;
+            const cleanHost = xForwardedHost.split(',')[0].trim();
+            return `${xForwardedProto}://${cleanHost}`;
         }
 
         // 3. Fallback to request origin
@@ -41,8 +40,41 @@ export async function GET(request: NextRequest) {
 
     const publicOrigin = getPublicOrigin();
 
+    // Sanitize redirect target against Open Redirects
+    const sanitizeRedirectPath = (url: string | null): string => {
+        if (!url || url === '/') return '/lab';
+        if (!url.startsWith('/') || url.startsWith('//') || url.startsWith('/\\')) {
+            return '/lab';
+        }
+        if (url === '/login' || url.startsWith('/login?') || url.startsWith('/login/')) {
+            return '/lab';
+        }
+        return url;
+    };
+
     if (code) {
-        const supabase = await createServerSupabase();
+        const safeTarget = sanitizeRedirectPath(next);
+        const redirectUrl = new URL(safeTarget, publicOrigin);
+        const response = NextResponse.redirect(redirectUrl.toString());
+
+        const supabase = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+            {
+                cookies: {
+                    getAll() {
+                        return request.cookies.getAll();
+                    },
+                    setAll(cookiesToSet) {
+                        cookiesToSet.forEach(({ name, value, options }) => {
+                            request.cookies.set(name, value);
+                            response.cookies.set(name, value, options);
+                        });
+                    },
+                },
+            }
+        );
+
         const { data: { session }, error } = await supabase.auth.exchangeCodeForSession(code);
 
         if (!error && session) {
@@ -59,7 +91,9 @@ export async function GET(request: NextRequest) {
                 conflictUrl.searchParams.set('conflict', 'true');
                 conflictUrl.searchParams.set('email', email);
                 conflictUrl.searchParams.set('next', next);
-                return NextResponse.redirect(conflictUrl.toString());
+                const conflictResponse = NextResponse.redirect(conflictUrl.toString());
+                response.cookies.getAll().forEach(c => conflictResponse.cookies.set(c.name, c.value));
+                return conflictResponse;
             }
 
             const profileUpdate: any = { is_usp_member: isUspDomain };
@@ -72,22 +106,9 @@ export async function GET(request: NextRequest) {
                 .update(profileUpdate)
                 .eq('id', session.user.id);
 
-            // Sanitize redirect target against Open Redirects
-            const sanitizeRedirectPath = (url: string | null): string => {
-                if (!url) return '/';
-                if (!url.startsWith('/') || url.startsWith('//') || url.startsWith('/\\')) {
-                    return '/';
-                }
-                if (url === '/login' || url.startsWith('/login?') || url.startsWith('/login/')) {
-                    return '/';
-                }
-                return url;
-            };
-
-            const safeTarget = sanitizeRedirectPath(next);
-            const redirectUrl = new URL(safeTarget, publicOrigin);
-            return NextResponse.redirect(redirectUrl.toString());
+            return response;
         }
+
         if (process.env.NODE_ENV === 'development') {
             console.error('Auth callback: Code exchange failed or no session', error);
         }
