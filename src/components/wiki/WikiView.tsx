@@ -332,7 +332,7 @@ export const institutoCell = {
     subtitle: 'Estrutura, História e Espaços.',
     icon: <Landmark className="w-8 h-8" />,
     color: 'brand-blue-ifusp',
-    href: '/wiki/instituto',
+    href: '/gcif/instituto',
     description: 'Mergulhe na história do IFUSP e entenda como um dos institutos de física mais respeitados do mundo é organizado atualmente.',
     details: [
         'Organização: Diretoria, Conselhos e Comissões',

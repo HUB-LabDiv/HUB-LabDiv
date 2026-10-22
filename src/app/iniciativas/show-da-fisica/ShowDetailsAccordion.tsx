@@ -1,5 +1,18 @@
 "use client";
 
+/*!
+ * Hub de Comunicação Científica Lab-Div V3.0
+ * Copyright (C) 2026 João Paulo Stangorlini de Carvalho
+ *
+ * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
+ * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
+ * publicada pela Free Software Foundation.
+ *
+ * Este programa é distribuído na esperança de que seja útil, mas SEM
+ * QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
+ * ou ADEQUAÇÃO A UM DETERMINADO FIM.
+ */
+
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Info, History, Users } from 'lucide-react';
 
@@ -67,10 +80,10 @@ export function ShowDetailsAccordion() {
     return (
         <div className="w-full max-w-4xl mx-auto space-y-6">
             {DETAILS.map((item) => (
-                <div key={item.id} className={`bg-black transition-all duration-300 ${item.colorClass}`}>
+                <div key={item.id} className={`bg-white dark:bg-black rounded-lg transition-all duration-300 shadow-md dark:shadow-none ${item.colorClass}`}>
                     <button
                         onClick={() => toggle(item.id)}
-                        className="w-full px-6 py-5 flex items-center justify-between hover:bg-white/5 transition-colors focus:outline-none"
+                        className="w-full px-6 py-5 flex items-center justify-between hover:bg-gray-100/60 dark:hover:bg-white/5 transition-colors focus:outline-none rounded-t-lg"
                     >
                         <div className="flex items-center gap-4">
                             {item.icon}
@@ -79,9 +92,9 @@ export function ShowDetailsAccordion() {
                             </h3>
                         </div>
                         {openId === item.id ? (
-                            <ChevronUp className="w-6 h-6 text-white" />
+                            <ChevronUp className="w-6 h-6 text-gray-800 dark:text-white" />
                         ) : (
-                            <ChevronDown className="w-6 h-6 text-white" />
+                            <ChevronDown className="w-6 h-6 text-gray-800 dark:text-white" />
                         )}
                     </button>
                     
@@ -90,7 +103,7 @@ export function ShowDetailsAccordion() {
                             openId === item.id ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
                         }`}
                     >
-                        <div className="px-6 pb-6 pt-2 text-lg text-gray-200 font-sans leading-relaxed border-t border-white/10 mt-2">
+                        <div className="px-6 pb-6 pt-2 text-lg text-gray-700 dark:text-gray-200 font-sans leading-relaxed border-t border-gray-200 dark:border-white/10 mt-2">
                             {item.content}
                         </div>
                     </div>

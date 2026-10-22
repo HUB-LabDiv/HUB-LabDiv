@@ -13,13 +13,25 @@
 
 import { redirect } from 'next/navigation';
 import { Metadata } from 'next';
+import { getAdminSessionRole } from '@/app/actions/admin';
+import { MonteSeuShowClient } from './MonteSeuShowClient';
+import { Orbitron } from 'next/font/google';
+
+const orbitron = Orbitron({ subsets: ['latin'], weight: ['400', '700', '900'] });
 
 export const metadata: Metadata = {
     title: 'Monte seu Show | Show de Física IFUSP',
     description: 'Monte o roteiro personalizado de experimentos do Show de Física e envie a solicitação de agendamento da sua escola.',
 };
 
-export default function MonteSeuShowPage() {
-    redirect('/iniciativas/show-da-fisica');
+export default async function MonteSeuShowPage() {
+    const adminSession = await getAdminSessionRole();
+    const isAdmin = adminSession.role === 'admin' || adminSession.role === 'moderator';
+
+    if (!isAdmin) {
+        redirect('/iniciativas/show-da-fisica');
+    }
+
+    return <MonteSeuShowClient orbitronClassName={orbitron.className} />;
 }
 

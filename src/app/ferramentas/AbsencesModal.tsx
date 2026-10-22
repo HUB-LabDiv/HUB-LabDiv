@@ -15,6 +15,7 @@ import React, { useState, useEffect } from 'react';
 import { X, CalendarX, Loader2, Save, AlertTriangle, CheckCircle2, Minus, Plus, Search, BookOpen, Info } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { getAllUserAbsences, updateSubjectAbsences } from '@/app/actions/absences';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 
 // USP Formula: 1 crédito aula = 15h. 75% frequência -> máx faltas = Math.floor(Créditos Aula * 1.5)
 export const calcMaxAbsencesFromCredits = (credits: number): number => {
@@ -287,27 +288,30 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
         item.subjectCode.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    if (!isOpen) return null;
+
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="bg-[#1E1E1E] border border-white/10 rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+        <ModalPortal>
+            <div className="fixed inset-0 z-[100] flex min-h-full items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-md overflow-y-auto animate-in fade-in duration-200">
+                <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-3xl w-full max-w-2xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden m-auto">
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-white/10 bg-[#121212]">
+                <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-[#121212]">
                     <div className="flex items-center gap-3">
                         <div className="p-3 bg-brand-red/10 border border-brand-red/20 rounded-2xl text-brand-red">
                             <CalendarX className="w-6 h-6" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-display font-black text-white uppercase tracking-tight">
+                            <h2 className="text-xl font-display font-black text-gray-900 dark:text-white uppercase tracking-tight">
                                 Controle de <span className="text-brand-red">Faltas</span>
                             </h2>
-                            <p className="text-xs text-gray-400 font-medium">
-                                Créditos integrados ao catálogo USP: <span className="text-white font-bold">Máx. Faltas = ⌊Créditos × 1,5⌋</span>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+                                Créditos integrados ao catálogo USP: <span className="text-gray-900 dark:text-white font-bold">Máx. Faltas = ⌊Créditos × 1,5⌋</span>
                             </p>
                         </div>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors cursor-pointer"
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
                     >
                         <X size={20} />
                     </button>
@@ -322,19 +326,19 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                 </div>
 
                 {/* Search Bar & Stats Header */}
-                <div className="p-4 border-b border-white/5 bg-[#181818] flex flex-col sm:flex-row items-center gap-3 justify-between">
+                <div className="p-4 border-b border-gray-100 dark:border-white/5 bg-gray-50/30 dark:bg-[#181818] flex flex-col sm:flex-row items-center gap-3 justify-between">
                     <div className="relative w-full sm:w-72">
-                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+                        <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                         <input
                             type="text"
                             placeholder="Buscar disciplina..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-[#121212] border border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs font-bold text-white placeholder-gray-500 focus:outline-none focus:border-[#00A3FF]/50 transition-colors"
+                            className="w-full bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#00A3FF]/50 transition-colors"
                         />
                     </div>
-                    <div className="text-[11px] font-bold text-gray-400 self-end sm:self-center">
-                        Total de disciplinas: <span className="text-white font-black">{subjectsList.length}</span>
+                    <div className="text-[11px] font-bold text-gray-500 dark:text-gray-400 self-end sm:self-center">
+                        Total de disciplinas: <span className="text-gray-900 dark:text-white font-black">{subjectsList.length}</span>
                     </div>
                 </div>
 
@@ -343,16 +347,16 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                     {isLoading ? (
                         <div className="space-y-4 py-6">
                             {[1, 2, 3].map((i) => (
-                                <div key={i} className="p-5 bg-white/5 border border-white/10 rounded-2xl animate-pulse space-y-3">
-                                    <div className="h-4 bg-white/10 rounded w-1/2"></div>
-                                    <div className="h-10 bg-white/5 rounded"></div>
+                                <div key={i} className="p-5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl animate-pulse space-y-3">
+                                    <div className="h-4 bg-gray-200 dark:bg-white/10 rounded w-1/2"></div>
+                                    <div className="h-10 bg-gray-100 dark:bg-white/5 rounded"></div>
                                 </div>
                             ))}
                         </div>
                     ) : filteredList.length === 0 ? (
                         <div className="text-center py-12 space-y-3">
-                            <BookOpen className="w-12 h-12 text-gray-600 mx-auto" />
-                            <p className="text-sm font-bold text-gray-400">
+                            <BookOpen className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto" />
+                            <p className="text-sm font-bold text-gray-600 dark:text-gray-400">
                                 {subjectsList.length === 0
                                     ? 'Nenhuma disciplina encontrada na sua grade.'
                                     : 'Nenhuma disciplina encontrada para essa busca.'}
@@ -383,14 +387,14 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                             return (
                                 <div
                                     key={item.subjectCode}
-                                    className="p-5 bg-[#121212] border border-white/10 rounded-2xl space-y-4 hover:border-white/20 transition-all shadow-sm"
+                                    className="p-5 bg-gray-50/50 dark:bg-[#121212] border border-gray-200 dark:border-white/10 rounded-2xl space-y-4 hover:border-gray-300 dark:hover:border-white/20 transition-all shadow-sm"
                                 >
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/5 pb-3">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100 dark:border-white/5 pb-3">
                                         <div>
                                             <span className="text-[10px] font-mono font-black uppercase tracking-widest text-brand-yellow bg-brand-yellow/10 px-2.5 py-1 rounded-lg border border-brand-yellow/20">
                                                 {item.subjectCode}
                                             </span>
-                                            <h3 className="text-sm font-bold text-white mt-1.5 line-clamp-1">
+                                            <h3 className="text-sm font-bold text-gray-900 dark:text-white mt-1.5 line-clamp-1">
                                                 {item.title}
                                             </h3>
                                         </div>
@@ -403,14 +407,14 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
                                         {/* Créditos Aula */}
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                                            <label className="text-[10px] font-black uppercase text-gray-500 dark:text-gray-400 tracking-wider">
                                                 Créditos Aula
                                             </label>
                                             <div className="flex items-center gap-1.5">
                                                 <button
                                                     type="button"
                                                     onClick={() => handleCreditsChange(originalIndex, -1)}
-                                                    className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                                    className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
                                                 >
                                                     <Minus className="w-3.5 h-3.5" />
                                                 </button>
@@ -418,12 +422,12 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                                                     type="number"
                                                     value={isNaN(item.creditsAula) ? '' : item.creditsAula}
                                                     onChange={(e) => handleCreditsInputChange(originalIndex, parseInt(e.target.value))}
-                                                    className="w-14 bg-white/5 border border-white/10 rounded-xl py-2 text-center text-sm font-bold text-white focus:outline-none focus:border-[#00A3FF]/50"
+                                                    className="w-14 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl py-2 text-center text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:border-[#00A3FF]/50"
                                                 />
                                                 <button
                                                     type="button"
                                                     onClick={() => handleCreditsChange(originalIndex, 1)}
-                                                    className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                                    className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
                                                 >
                                                     <Plus className="w-3.5 h-3.5" />
                                                 </button>
@@ -432,14 +436,14 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
 
                                         {/* Faltas Atuais */}
                                         <div className="space-y-1.5">
-                                            <label className="text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                                            <label className="text-[10px] font-black uppercase text-gray-500 dark:text-gray-400 tracking-wider">
                                                 Faltas Atuais
                                             </label>
                                             <div className="flex items-center gap-1.5">
                                                 <button
                                                     type="button"
                                                     onClick={() => handleAbsenceChange(originalIndex, -1)}
-                                                    className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                                    className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
                                                 >
                                                     <Minus className="w-3.5 h-3.5" />
                                                 </button>
@@ -447,12 +451,12 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                                                     type="number"
                                                     value={isNaN(item.absences) ? 0 : item.absences}
                                                     onChange={(e) => handleAbsenceInputChange(originalIndex, parseInt(e.target.value))}
-                                                    className="w-14 bg-white/5 border border-white/10 rounded-xl py-2 text-center text-sm font-bold text-white focus:outline-none focus:border-[#00A3FF]/50"
+                                                    className="w-14 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl py-2 text-center text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:border-[#00A3FF]/50"
                                                 />
                                                 <button
                                                     type="button"
                                                     onClick={() => handleAbsenceChange(originalIndex, 1)}
-                                                    className="w-9 h-9 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
+                                                    className="w-9 h-9 rounded-xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-white/10 active:scale-95 transition-all cursor-pointer"
                                                 >
                                                     <Plus className="w-3.5 h-3.5" />
                                                 </button>
@@ -462,21 +466,21 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                                         {/* Limite de Faltas & Save */}
                                         <div className="flex items-center gap-3">
                                             <div className="space-y-1.5 flex-1">
-                                                <label className="text-[10px] font-black uppercase text-gray-400 tracking-wider">
+                                                <label className="text-[10px] font-black uppercase text-gray-500 dark:text-gray-400 tracking-wider">
                                                     Limite (Faltas)
                                                 </label>
                                                 <input
                                                     type="number"
                                                     value={isNaN(item.maxAbsences) ? '' : item.maxAbsences}
                                                     onChange={(e) => handleMaxAbsenceInputChange(originalIndex, parseInt(e.target.value))}
-                                                    className="w-full bg-white/5 border border-white/10 rounded-xl py-2 px-3 text-center text-sm font-bold text-white focus:outline-none focus:border-[#00A3FF]/50"
+                                                    className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl py-2 px-3 text-center text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:border-[#00A3FF]/50"
                                                 />
                                             </div>
                                             <button
                                                 type="button"
                                                 onClick={() => handleSaveSingle(originalIndex)}
                                                 disabled={item.isSaving}
-                                                className="px-4 py-2.5 bg-white/5 border border-white/10 text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-red hover:border-brand-red hover:text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2 shrink-0 cursor-pointer h-9"
+                                                className="px-4 py-2.5 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-brand-red hover:border-brand-red hover:text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2 shrink-0 cursor-pointer h-9"
                                             >
                                                 {item.isSaving ? (
                                                     <Loader2 className="w-3.5 h-3.5 animate-spin" />
@@ -494,11 +498,11 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                 </div>
 
                 {/* Footer */}
-                <div className="p-5 border-t border-white/10 bg-[#121212] flex items-center justify-between gap-4">
+                <div className="p-5 border-t border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-[#121212] flex items-center justify-between gap-4">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="px-5 py-3 bg-white/5 text-gray-300 hover:text-white hover:bg-white/10 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all cursor-pointer"
+                        className="px-5 py-3 bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/10 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all cursor-pointer"
                     >
                         Fechar
                     </button>
@@ -520,5 +524,6 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                 </div>
             </div>
         </div>
+        </ModalPortal>
     );
 }

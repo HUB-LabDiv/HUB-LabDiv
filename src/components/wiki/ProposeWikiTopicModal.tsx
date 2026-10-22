@@ -19,6 +19,7 @@ import { useAuth } from '@/providers/AuthProvider';
 import { submitWikiProposal } from '@/app/actions/wiki-proposals';
 import { wikiCells, WIKI_CATEGORIES } from '@/components/wiki/WikiView';
 import { WikiProposalType } from '@/types/wiki';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 
 interface ProposeWikiTopicModalProps {
     isOpen: boolean;
@@ -125,241 +126,243 @@ export function ProposeWikiTopicModal({
     };
 
     return (
-        <AnimatePresence>
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-black/80 backdrop-blur-md overflow-y-auto">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                    className="relative w-full max-w-2xl bg-[#1E1E1E] border border-white/10 rounded-[32px] p-6 sm:p-8 shadow-2xl overflow-hidden my-auto"
-                >
-                    {/* Background glow effects */}
-                    <div className="absolute top-0 right-0 w-64 h-64 bg-brand-blue/10 rounded-full blur-3xl pointer-events-none" />
-                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
+        <ModalPortal>
+            <AnimatePresence>
+                <div className="fixed inset-0 z-[100] flex min-h-full items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-md overflow-y-auto">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                        className="relative w-full max-w-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-[32px] p-6 sm:p-8 shadow-2xl m-auto max-h-[90vh] flex flex-col"
+                    >
+                        {/* Background glow effects */}
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-brand-blue/10 dark:bg-brand-blue/5 rounded-full blur-3xl pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-yellow/10 dark:bg-brand-yellow/5 rounded-full blur-3xl pointer-events-none" />
 
-                    {/* Header */}
-                    <div className="relative flex items-center justify-between pb-4 border-b border-white/10 mb-6">
-                        <div className="flex items-center gap-3">
-                            <div className="size-10 rounded-2xl bg-brand-blue/10 border border-brand-blue/30 text-brand-blue flex items-center justify-center">
-                                <BookOpen className="w-5 h-5" />
+                        {/* Header */}
+                        <div className="relative flex items-center justify-between pb-4 border-b border-gray-100 dark:border-white/10 mb-6 shrink-0">
+                            <div className="flex items-center gap-3">
+                                <div className="size-10 rounded-2xl bg-brand-blue/10 border border-brand-blue/30 text-brand-blue flex items-center justify-center">
+                                    <BookOpen className="w-5 h-5" />
+                                </div>
+                                <div>
+                                    <h3 className="text-lg sm:text-xl font-black font-bukra text-gray-900 dark:text-white tracking-tight uppercase italic">
+                                        Colaborar com a Wiki
+                                    </h3>
+                                    <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                                        Envie propostas para a curadoria no Eixo de Informação do Admin
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="text-lg sm:text-xl font-black font-bukra text-white tracking-tight uppercase italic">
-                                    Colaborar com a Wiki
-                                </h3>
-                                <p className="text-[11px] text-gray-400">
-                                    Envie propostas para a curadoria no Eixo de Informação do Admin
-                                </p>
-                            </div>
-                        </div>
-                        <button
-                            onClick={onClose}
-                            className="size-9 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors"
-                        >
-                            <X className="w-5 h-5" />
-                        </button>
-                    </div>
-
-                    {/* Type Selector Tabs */}
-                    <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-2 p-1.5 bg-black/40 rounded-2xl border border-white/5 mb-6">
-                        <button
-                            type="button"
-                            onClick={() => setProposalType('new_topic')}
-                            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all ${
-                                proposalType === 'new_topic'
-                                    ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20'
-                                    : 'text-gray-400 hover:text-white'
-                            }`}
-                        >
-                            <PlusCircle className="w-4 h-4 shrink-0" />
-                            <span>Novo Tópico</span>
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => setProposalType('complement')}
-                            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all ${
-                                proposalType === 'complement'
-                                    ? 'bg-brand-yellow text-gray-900 shadow-lg shadow-brand-yellow/20'
-                                    : 'text-gray-400 hover:text-white'
-                            }`}
-                        >
-                            <Edit3 className="w-4 h-4 shrink-0" />
-                            <span>Complementar</span>
-                        </button>
-
-                        <button
-                            type="button"
-                            onClick={() => setProposalType('related_topic')}
-                            className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all ${
-                                proposalType === 'related_topic'
-                                    ? 'bg-brand-red text-white shadow-lg shadow-brand-red/20'
-                                    : 'text-gray-400 hover:text-white'
-                            }`}
-                        >
-                            <GitBranch className="w-4 h-4 shrink-0" />
-                            <span>Tópico Conexo</span>
-                        </button>
-                    </div>
-
-                    {/* Form */}
-                    <form onSubmit={handleSubmit} className="relative space-y-4">
-                        {/* Target Topic (When complementing or suggesting related) */}
-                        {proposalType !== 'new_topic' && (
-                            <div>
-                                <label className="block text-xs font-black uppercase tracking-wider text-gray-300 mb-1.5">
-                                    {proposalType === 'complement' ? 'Tópico a ser Complementado' : 'Tópico de Referência'}
-                                </label>
-                                <select
-                                    value={targetTopicId}
-                                    onChange={(e) => setTargetTopicId(e.target.value)}
-                                    className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white text-xs font-medium focus:outline-none focus:border-brand-blue"
-                                >
-                                    {wikiCells.map(cell => (
-                                        <option key={cell.id} value={cell.id} className="bg-[#1E1E1E] text-white">
-                                            {cell.title} ({cell.subtitle})
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                        )}
-
-                        {/* Title & Category Grid */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
-                                <label className="block text-xs font-black uppercase tracking-wider text-gray-300 mb-1.5">
-                                    {proposalType === 'complement' ? 'Resumo da Atualização *' : 'Título do Tópico *'}
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={title}
-                                    onChange={(e) => setTitle(e.target.value)}
-                                    placeholder={
-                                        proposalType === 'complement'
-                                            ? 'Ex: Atualização dos horários do Circular em 2026'
-                                            : 'Ex: Guia da Biblioteca do IFUSP e Empréstimos'
-                                    }
-                                    className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-500 text-xs focus:outline-none focus:border-brand-blue"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-black uppercase tracking-wider text-gray-300 mb-1.5">
-                                    Categoria Temática
-                                </label>
-                                <select
-                                    value={category}
-                                    onChange={(e) => setCategory(e.target.value)}
-                                    className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white text-xs font-medium focus:outline-none focus:border-brand-blue"
-                                >
-                                    {WIKI_CATEGORIES.map(cat => (
-                                        <option key={cat.id} value={cat.id} className="bg-[#1E1E1E] text-white">
-                                            {cat.name}
-                                        </option>
-                                    ))}
-                                    <option value="outro" className="bg-[#1E1E1E] text-white">Outro / Geral</option>
-                                </select>
-                            </div>
+                            <button
+                                onClick={onClose}
+                                className="size-9 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white flex items-center justify-center transition-colors"
+                            >
+                                <X className="w-5 h-5" />
+                            </button>
                         </div>
 
-                        {/* Description / Proposed Content */}
-                        <div>
-                            <label className="block text-xs font-black uppercase tracking-wider text-gray-300 mb-1.5">
-                                {proposalType === 'complement'
-                                    ? 'Conteúdo a Adicionar ou Corrigir *'
-                                    : 'Conteúdo Proposto / Resumo do Artigo *'}
-                            </label>
-                            <textarea
-                                required
-                                rows={4}
-                                value={description}
-                                onChange={(e) => setDescription(e.target.value)}
-                                placeholder={
-                                    proposalType === 'complement'
-                                        ? 'Escreva os novos detalhes, links de editais, avisos de disciplinas ou sugestões de parágrafos...'
-                                        : 'Descreva a estrutura que este novo tópico deve ter: principais tópicos, dicas essenciais, referências...'
-                                }
-                                className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-white placeholder-gray-500 text-xs focus:outline-none focus:border-brand-blue resize-none"
-                            />
-                        </div>
-
-                        {/* Justification (Optional) */}
-                        <div>
-                            <label className="block text-xs font-black uppercase tracking-wider text-gray-300 mb-1.5">
-                                Justificativa / Por que é relevante para os estudantes? (Opcional)
-                            </label>
-                            <input
-                                type="text"
-                                value={justification}
-                                onChange={(e) => setJustification(e.target.value)}
-                                placeholder="Ex: Muitos calouros têm dúvidas recorrentes sobre este procedimento no grupo..."
-                                className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-500 text-xs focus:outline-none focus:border-brand-blue"
-                            />
-                        </div>
-
-                        {/* Author details */}
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                            <div>
-                                <label className="block text-xs font-black uppercase tracking-wider text-gray-300 mb-1.5">
-                                    Seu Nome / Apelido *
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={authorName}
-                                    onChange={(e) => setAuthorName(e.target.value)}
-                                    placeholder="Nome para créditos na Wiki"
-                                    className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-500 text-xs focus:outline-none focus:border-brand-blue"
-                                />
-                            </div>
-
-                            <div>
-                                <label className="block text-xs font-black uppercase tracking-wider text-gray-300 mb-1.5">
-                                    E-mail de Contato (Opcional)
-                                </label>
-                                <input
-                                    type="email"
-                                    value={authorEmail}
-                                    onChange={(e) => setAuthorEmail(e.target.value)}
-                                    placeholder="seuemail@usp.br"
-                                    className="w-full px-4 py-2.5 rounded-xl bg-black/40 border border-white/10 text-white placeholder-gray-500 text-xs focus:outline-none focus:border-brand-blue"
-                                />
-                            </div>
-                        </div>
-
-                        {/* Footer buttons */}
-                        <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
+                        {/* Type Selector Tabs */}
+                        <div className="relative grid grid-cols-1 sm:grid-cols-3 gap-2 p-1.5 bg-gray-100 dark:bg-black/40 rounded-2xl border border-gray-200/60 dark:border-white/5 mb-6 shrink-0">
                             <button
                                 type="button"
-                                onClick={onClose}
-                                disabled={isSubmitting}
-                                className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 text-xs font-bold uppercase transition-colors"
+                                onClick={() => setProposalType('new_topic')}
+                                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all ${
+                                    proposalType === 'new_topic'
+                                        ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                }`}
                             >
-                                Cancelar
+                                <PlusCircle className="w-4 h-4 shrink-0" />
+                                <span>Novo Tópico</span>
                             </button>
 
                             <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="px-6 py-2.5 rounded-xl bg-brand-blue hover:bg-brand-blue/80 text-white text-xs font-black uppercase tracking-wider shadow-lg shadow-brand-blue/20 flex items-center gap-2 transition-all disabled:opacity-50"
+                                type="button"
+                                onClick={() => setProposalType('complement')}
+                                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all ${
+                                    proposalType === 'complement'
+                                        ? 'bg-brand-yellow text-gray-900 shadow-lg shadow-brand-yellow/20'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                }`}
                             >
-                                {isSubmitting ? (
-                                    <>
-                                        <Loader2 className="w-4 h-4 animate-spin" />
-                                        Enviando...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Send className="w-4 h-4" />
-                                        Enviar Proposta
-                                    </>
-                                )}
+                                <Edit3 className="w-4 h-4 shrink-0" />
+                                <span>Complementar</span>
+                            </button>
+
+                            <button
+                                type="button"
+                                onClick={() => setProposalType('related_topic')}
+                                className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl text-xs font-bold transition-all ${
+                                    proposalType === 'related_topic'
+                                        ? 'bg-brand-red text-white shadow-lg shadow-brand-red/20'
+                                        : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
+                                }`}
+                            >
+                                <GitBranch className="w-4 h-4 shrink-0" />
+                                <span>Tópico Conexo</span>
                             </button>
                         </div>
-                    </form>
-                </motion.div>
-            </div>
-        </AnimatePresence>
+
+                        {/* Form */}
+                        <form onSubmit={handleSubmit} className="relative space-y-4 overflow-y-auto pr-1 flex-1">
+                            {/* Target Topic (When complementing or suggesting related) */}
+                            {proposalType !== 'new_topic' && (
+                                <div>
+                                    <label className="block text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
+                                        {proposalType === 'complement' ? 'Tópico a ser Complementado' : 'Tópico de Referência'}
+                                    </label>
+                                    <select
+                                        value={targetTopicId}
+                                        onChange={(e) => setTargetTopicId(e.target.value)}
+                                        className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white text-xs font-medium focus:outline-none focus:border-brand-blue"
+                                    >
+                                        {wikiCells.map(cell => (
+                                            <option key={cell.id} value={cell.id} className="bg-white dark:bg-[#1E1E1E] text-gray-900 dark:text-white">
+                                                {cell.title} ({cell.subtitle})
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                            )}
+
+                            {/* Title & Category Grid */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
+                                        {proposalType === 'complement' ? 'Resumo da Atualização *' : 'Título do Tópico *'}
+                                    </label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={title}
+                                        onChange={(e) => setTitle(e.target.value)}
+                                        placeholder={
+                                            proposalType === 'complement'
+                                                ? 'Ex: Atualização dos horários do Circular em 2026'
+                                                : 'Ex: Guia da Biblioteca do IFUSP e Empréstimos'
+                                        }
+                                        className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-xs focus:outline-none focus:border-brand-blue"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
+                                        Categoria Temática
+                                    </label>
+                                    <select
+                                        value={category}
+                                        onChange={(e) => setCategory(e.target.value)}
+                                        className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white text-xs font-medium focus:outline-none focus:border-brand-blue"
+                                    >
+                                        {WIKI_CATEGORIES.map(cat => (
+                                            <option key={cat.id} value={cat.id} className="bg-white dark:bg-[#1E1E1E] text-gray-900 dark:text-white">
+                                                {cat.name}
+                                            </option>
+                                        ))}
+                                        <option value="outro" className="bg-white dark:bg-[#1E1E1E] text-gray-900 dark:text-white">Outro / Geral</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Description / Proposed Content */}
+                            <div>
+                                <label className="block text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
+                                    {proposalType === 'complement'
+                                        ? 'Conteúdo a Adicionar ou Corrigir *'
+                                        : 'Conteúdo Proposto / Resumo do Artigo *'}
+                                </label>
+                                <textarea
+                                    required
+                                    rows={4}
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    placeholder={
+                                        proposalType === 'complement'
+                                            ? 'Escreva os novos detalhes, links de editais, avisos de disciplinas ou sugestões de parágrafos...'
+                                            : 'Descreva a estrutura que este novo tópico deve ter: principais tópicos, dicas essenciais, referências...'
+                                    }
+                                    className="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-xs focus:outline-none focus:border-brand-blue resize-none"
+                                />
+                            </div>
+
+                            {/* Justification (Optional) */}
+                            <div>
+                                <label className="block text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
+                                    Justificativa / Por que é relevante para os estudantes? (Opcional)
+                                </label>
+                                <input
+                                    type="text"
+                                    value={justification}
+                                    onChange={(e) => setJustification(e.target.value)}
+                                    placeholder="Ex: Muitos calouros têm dúvidas recorrentes sobre este procedimento no grupo..."
+                                    className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-xs focus:outline-none focus:border-brand-blue"
+                                />
+                            </div>
+
+                            {/* Author details */}
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                                <div>
+                                    <label className="block text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
+                                        Seu Nome / Apelido *
+                                    </label>
+                                    <input
+                                        type="text"
+                                        required
+                                        value={authorName}
+                                        onChange={(e) => setAuthorName(e.target.value)}
+                                        placeholder="Nome para créditos na Wiki"
+                                        className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-xs focus:outline-none focus:border-brand-blue"
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
+                                        E-mail de Contato (Opcional)
+                                    </label>
+                                    <input
+                                        type="email"
+                                        value={authorEmail}
+                                        onChange={(e) => setAuthorEmail(e.target.value)}
+                                        placeholder="seuemail@usp.br"
+                                        className="w-full px-4 py-2.5 rounded-xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 text-xs focus:outline-none focus:border-brand-blue"
+                                    />
+                                </div>
+                            </div>
+
+                            {/* Footer buttons */}
+                            <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-100 dark:border-white/10">
+                                <button
+                                    type="button"
+                                    onClick={onClose}
+                                    disabled={isSubmitting}
+                                    className="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 text-xs font-bold uppercase transition-colors"
+                                >
+                                    Cancelar
+                                </button>
+
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="px-6 py-2.5 rounded-xl bg-brand-blue hover:bg-brand-blue/80 text-white text-xs font-black uppercase tracking-wider shadow-lg shadow-brand-blue/20 flex items-center gap-2 transition-all disabled:opacity-50"
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <Loader2 className="w-4 h-4 animate-spin" />
+                                            Enviando...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <Send className="w-4 h-4" />
+                                            Enviar Proposta
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </motion.div>
+                </div>
+            </AnimatePresence>
+        </ModalPortal>
     );
 }

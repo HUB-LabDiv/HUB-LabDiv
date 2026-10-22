@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { handleDeepCleanup } from '@/utils/deepCleanup';
 import { toast } from 'react-hot-toast';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 
 interface DeleteAccountModalProps {
   isOpen: boolean;
@@ -66,65 +67,68 @@ export function DeleteAccountModal({ isOpen, onClose }: DeleteAccountModalProps)
     };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-background-dark/80 backdrop-blur-sm p-4 animate-in fade-in duration-300">
-      <div className="bg-[#1E1E1E] border border-brand-red/30 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl shadow-brand-red/10">
-        <div className="p-6">
-          <div className="flex items-center gap-3 text-brand-red mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
-            <h2 className="text-xl font-bold tracking-tight">ZONA DE PERIGO</h2>
-          </div>
-
-          <div className="space-y-4 text-gray-400 text-sm leading-relaxed">
-            <p>
-              Você está prestes a <span className="text-white font-semibold">excluir permanentemente</span> sua conta no HUB Lab-Div.
-            </p>
-            <div className="bg-brand-red/5 border border-brand-red/20 p-4 rounded-xl space-y-2">
-              <p className="flex gap-2">
-                <span className="text-brand-red">•</span> 
-                Sua identidade será removida e dados sensíveis apagados.
-              </p>
-              <p className="flex gap-2">
-                <span className="text-brand-red">•</span> 
-                <span>Suas contribuições no acervo científico (Artigos e Drops) serão <span className="text-white">anonimizadas</span> mas mantidas sob licença <span className="text-white">CC BY 4.0</span>.</span>
-              </p>
-              <p className="flex gap-2">
-                <span className="text-brand-red">•</span> 
-                Esta ação é irreversível. Não poderemos recuperar seus dados.
-              </p>
+    <ModalPortal>
+      <div className="fixed inset-0 z-[100] flex min-h-full items-center justify-center bg-black/80 backdrop-blur-sm p-3 sm:p-4 overflow-y-auto animate-in fade-in duration-300">
+        <div className="m-auto bg-white dark:bg-[#1E1E1E] border border-brand-red/30 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl shadow-brand-red/10">
+          <div className="p-6">
+            <div className="flex items-center gap-3 text-brand-red mb-4">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>
+              <h2 className="text-xl font-bold tracking-tight">ZONA DE PERIGO</h2>
             </div>
 
-            <div className="pt-2">
-              <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">
-                Digite "EXCLUIR" no campo abaixo para prosseguir:
-              </label>
-              <input 
-                type="text" 
-                value={confirmText}
-                onChange={(e) => setConfirmText(e.target.value.toUpperCase())}
-                placeholder="EXCLUIR"
-                className="w-full bg-background-dark/40 border border-[#333] rounded-xl px-4 py-3 outline-none focus:border-brand-red/50 transition-colors text-white placeholder:text-gray-700"
-              />
+            <div className="space-y-4 text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
+              <p>
+                Você está prestes a <span className="text-gray-900 dark:text-white font-semibold">excluir permanentemente</span> sua conta no HUB Lab-Div.
+              </p>
+
+              <div className="bg-brand-red/5 border border-brand-red/20 p-4 rounded-xl space-y-2">
+                <p className="flex gap-2">
+                  <span className="text-brand-red">•</span> 
+                  Sua identidade será removida e dados sensíveis apagados.
+                </p>
+                <p className="flex gap-2">
+                  <span className="text-brand-red">•</span> 
+                  <span>Suas contribuições no acervo científico (Artigos e Drops) serão <span className="text-gray-900 dark:text-white font-medium">anonimizadas</span> mas mantidas sob licença <span className="text-gray-900 dark:text-white font-medium">CC BY 4.0</span>.</span>
+                </p>
+                <p className="flex gap-2">
+                  <span className="text-brand-red">•</span> 
+                  Esta ação é irreversível. Não poderemos recuperar seus dados.
+                </p>
+              </div>
+
+              <div className="pt-2">
+                <label className="block text-xs uppercase tracking-widest text-gray-500 mb-2">
+                  Digite "EXCLUIR" no campo abaixo para prosseguir:
+                </label>
+                <input 
+                  type="text" 
+                  value={confirmText}
+                  onChange={(e) => setConfirmText(e.target.value.toUpperCase())}
+                  placeholder="EXCLUIR"
+                  className="w-full bg-gray-50 dark:bg-black/40 border border-gray-300 dark:border-white/10 rounded-xl px-4 py-3 outline-none focus:border-brand-red/50 transition-colors text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-700"
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="flex border-t border-[#333]">
-          <button 
-            onClick={onClose}
-            className="flex-1 px-6 py-4 text-sm font-medium hover:bg-white/5 transition-colors border-r border-[#333]"
-            disabled={isLoading}
-          >
-            Cancelar
-          </button>
-          <button 
-            onClick={handleDelete}
-            disabled={confirmText !== 'EXCLUIR' || isLoading}
-            className="flex-1 px-6 py-4 text-sm font-bold text-brand-red hover:bg-brand-red/10 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
-          >
-            {isLoading ? 'Excluindo...' : 'Confirmar Exclusão'}
-          </button>
+          <div className="flex border-t border-gray-200 dark:border-white/10">
+            <button 
+              onClick={onClose}
+              className="flex-1 px-6 py-4 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/5 transition-colors border-r border-gray-200 dark:border-white/10"
+              disabled={isLoading}
+            >
+              Cancelar
+            </button>
+            <button 
+              onClick={handleDelete}
+              disabled={confirmText !== 'EXCLUIR' || isLoading}
+              className="flex-1 px-6 py-4 text-sm font-bold text-brand-red hover:bg-brand-red/10 transition-colors disabled:opacity-30 disabled:hover:bg-transparent"
+            >
+              {isLoading ? 'Excluindo...' : 'Confirmar Exclusão'}
+            </button>
+          </div>
         </div>
       </div>
-    </div>
+    </ModalPortal>
   );
 }

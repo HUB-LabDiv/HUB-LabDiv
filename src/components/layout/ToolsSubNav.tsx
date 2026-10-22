@@ -15,11 +15,6 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { 
-    Calendar, 
-    Route, 
-    UserSearch, 
-    BookOpen, 
-    Laptop, 
     ChevronLeft, 
     ChevronRight,
     Compass,
@@ -32,15 +27,9 @@ interface ToolsSubNavProps {
     hasSoftwaresAccess?: boolean;
 }
 
-interface SubTool {
-    name: string;
-    href: string;
-    icon: any;
-    exact: boolean;
-    description?: string;
-}
-
 export function ToolsSubNav({ hasSoftwaresAccess = false }: ToolsSubNavProps) {
+    // hasSoftwaresAccess mantido na interface para compatibilidade de tipagem
+    void hasSoftwaresAccess;
     const pathname = usePathname();
     const { isSidebarCollapsed } = useNavigationStore();
     const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -52,12 +41,6 @@ export function ToolsSubNav({ hasSoftwaresAccess = false }: ToolsSubNavProps) {
     const isAcompanhamento = pathname === '/ferramentas' || pathname.startsWith('/ferramentas/trilhas');
     const isEstudos = pathname.startsWith('/ferramentas/anotacoes') || pathname.startsWith('/ferramentas/softwares');
     const isIntegracao = pathname.startsWith('/ferramentas/match');
-
-    const activeGroup: 'acompanhamento' | 'estudos' | 'integracao' = isAcompanhamento
-        ? 'acompanhamento'
-        : isEstudos
-        ? 'estudos'
-        : 'integracao';
 
     // Definição dos 3 eixos principais (Nível 1)
     const mainGroups = [
@@ -83,49 +66,6 @@ export function ToolsSubNav({ hasSoftwaresAccess = false }: ToolsSubNavProps) {
             isActive: isIntegracao,
         },
     ];
-
-    // Definição das sub-ferramentas para o Nível 2
-    // Acompanhamento: Acompanhar o Semestre (Grade Horária) ou o Curso (Trilhas de Aprendizagem)
-    const acompanhamentoSubTools: SubTool[] = [
-        { 
-            name: 'Semestre', 
-            href: '/ferramentas', 
-            icon: Calendar, 
-            exact: true,
-            description: 'Acompanhar Semestre (Grade Horária)' 
-        },
-        { 
-            name: 'Curso', 
-            href: '/ferramentas/trilhas', 
-            icon: Route, 
-            exact: false,
-            description: 'Acompanhar Curso (Trilhas de Aprendizagem)' 
-        },
-    ];
-
-    // Estudos: Auxílio nos estudos com a Central de Anotações ou com Softwares da Comunidade
-    const estudosSubTools: SubTool[] = [
-        { 
-            name: 'Central de Anotações', 
-            href: '/ferramentas/anotacoes', 
-            icon: BookOpen, 
-            exact: false,
-            description: 'Auxílio nos estudos com a Central de Anotações' 
-        },
-        ...(hasSoftwaresAccess ? [{ 
-            name: 'Softwares da Comunidade', 
-            href: '/ferramentas/softwares', 
-            icon: Laptop, 
-            exact: false,
-            description: 'Auxílio nos estudos com Softwares da Comunidade' 
-        }] : []),
-    ];
-
-    const currentSubTools = isAcompanhamento
-        ? acompanhamentoSubTools
-        : isEstudos
-        ? estudosSubTools
-        : [];
 
     const checkScroll = useCallback(() => {
         const el = scrollContainerRef.current;
@@ -184,7 +124,7 @@ export function ToolsSubNav({ hasSoftwaresAccess = false }: ToolsSubNavProps) {
                     ? 'xl:-translate-x-[calc((80px+1.5rem)/2)]' 
                     : 'xl:-translate-x-[calc((280px+1.5rem)/2)]'
             }`}>
-                {/* NÍVEL 1: Cápsula Principal com os 3 Pilares */}
+                {/* NÍVEL 1: Cápsula Principal com os 3 Pilares (Sem sub-nível abaixo do switch) */}
                 <div data-tour="tools-subnav" className="flex items-center justify-center gap-1.5 sm:gap-2 max-w-full">
                     {canScrollLeft && (
                         <button
@@ -235,33 +175,6 @@ export function ToolsSubNav({ hasSoftwaresAccess = false }: ToolsSubNavProps) {
                         </button>
                     )}
                 </div>
-
-                {/* NÍVEL 2: Underline Tabs Sutis (Apenas para Acompanhamento e Estudos; Omitido em Integração) */}
-                {currentSubTools.length > 0 && (
-                    <div className="flex items-center justify-center gap-4 sm:gap-8 pt-2.5 pb-0.5 animate-in fade-in slide-in-from-top-1 duration-200 flex-wrap">
-                        {currentSubTools.map((sub) => {
-                            const isSubActive = sub.exact ? pathname === sub.href : pathname.startsWith(sub.href);
-                            return (
-                                <Link
-                                    key={sub.href}
-                                    href={sub.href}
-                                    title={sub.description || sub.name}
-                                    className={`relative pb-1.5 text-[10px] sm:text-[11px] font-open-sans uppercase tracking-wider transition-all flex items-center gap-1.5 group ${
-                                        isSubActive
-                                            ? 'text-brand-yellow font-bold'
-                                            : 'text-gray-400 hover:text-gray-900 dark:hover:text-white font-medium'
-                                    }`}
-                                >
-                                    <sub.icon className={`w-3.5 h-3.5 transition-transform ${isSubActive ? 'text-brand-yellow scale-110' : 'text-gray-400 group-hover:text-white'}`} />
-                                    <span>{sub.name}</span>
-                                    {isSubActive && (
-                                        <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-brand-yellow rounded-full shadow-sm shadow-brand-yellow/50" />
-                                    )}
-                                </Link>
-                            );
-                        })}
-                    </div>
-                )}
             </div>
         </nav>
     );

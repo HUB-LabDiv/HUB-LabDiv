@@ -26,6 +26,7 @@ import {
 import Link from 'next/link';
 import { useTelemetry } from '@/hooks/useTelemetry';
 import { useNavigationStore } from '@/store/useNavigationStore';
+import { institutoData } from '@/data/institutoData';
 
 const departments = [
     {
@@ -79,71 +80,77 @@ export function DepartmentGrid() {
         <section className="py-12">
             <div className="flex items-center gap-3 mb-8">
                <div className="h-[2px] w-8 bg-brand-blue"></div>
-               <h2 className="text-xl font-black text-white italic uppercase tracking-tighter">Departamentos</h2>
+               <h2 className="text-xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter">Departamentos</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {departments.map((dept, idx) => (
-                    <Link 
-                        key={dept.id} 
-                        href={`/wiki/instituto/${dept.id.toLowerCase()}`}
-                        className="block group"
-                        onClick={() => trackEvent('DEPT_FILTER', { dept_id: dept.id, dept_name: dept.name })}
-                    >
-                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ delay: idx * 0.1 }}
-                            className="glass-card p-6 rounded-[32px] border-gray-100 dark:border-white/5 hover:border-brand-blue/30 bg-white/40 dark:bg-[#1E1E1E]/40 hover:bg-gray-100 dark:hover:bg-[#1E1E1E]/60 transition-all duration-500 cursor-pointer h-full"
+                {departments.map((dept, idx) => {
+                    const deptData = institutoData[dept.id.toLowerCase()];
+                    const researchersCount = deptData ? deptData.pesquisadores.length : dept.metrics.researchers;
+                    const labsCount = deptData ? deptData.laboratorios.length : dept.metrics.labs;
+
+                    return (
+                        <Link 
+                            key={dept.id} 
+                            href={`/wiki/instituto/${dept.id.toLowerCase()}`}
+                            className="block group"
+                            onClick={() => trackEvent('DEPT_FILTER', { dept_id: dept.id, dept_name: dept.name })}
                         >
-                            <div className="flex items-center gap-4 mb-4">
-                                <div className="p-3 rounded-2xl bg-gray-100 dark:bg-white/5 group-hover:bg-brand-blue/20 transition-colors">
-                                    <span className="text-gray-500 dark:text-gray-400 group-hover:text-brand-blue transition-colors">
-                                        {dept.icon}
-                                    </span>
-                                </div>
-                                <div className="flex-1">
-                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-tight underline-offset-4 group-hover:underline group-hover:text-brand-blue transition-all">{dept.name}</h3>
-                                    <span className="text-[10px] font-black text-brand-blue/60 uppercase tracking-widest">{dept.id}</span>
-                                </div>
-                                <button
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        e.stopPropagation();
-                                        setReportModalOpen(true, 'outro', { id: dept.id, titulo: dept.name, local: 'Departamento' });
-                                    }}
-                                    title="Sugerir Alteração / Reportar Erro"
-                                    className="text-gray-500 hover:text-brand-red transition-colors p-2"
-                                >
-                                    <Flag size={14} />
-                                </button>
-                            </div>
-
-                            <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-6 h-12 overflow-hidden">
-                                {dept.description}
-                            </p>
-
-                            <div className="flex flex-wrap items-center gap-2">
-                                <div className="px-3 py-1.5 rounded-xl bg-brand-red/10 border border-brand-red/20">
-                                    <span className="text-[10px] font-black text-brand-red flex items-center gap-1.5">
-                                        <div className="size-1 bg-brand-red rounded-full"></div>
-                                        {dept.metrics.researchers} PESQUISADORES
-                                    </span>
-                                </div>
-                                
-                                {dept.metrics.labs > 0 && (
-                                    <div className="px-3 py-1.5 rounded-xl bg-brand-yellow/10 border border-brand-yellow/20">
-                                        <span className="text-[10px] font-black text-brand-yellow flex items-center gap-1.5">
-                                            <div className="size-1 bg-brand-yellow rounded-full"></div>
-                                            {dept.metrics.labs} LABORATÓRIOS
+                             <motion.div
+                                initial={{ opacity: 0, y: 20 }}
+                                whileInView={{ opacity: 1, y: 0 }}
+                                viewport={{ once: true }}
+                                transition={{ delay: idx * 0.1 }}
+                                className="glass-card p-6 rounded-[32px] border-gray-100 dark:border-white/5 hover:border-brand-blue/30 bg-white/40 dark:bg-[#1E1E1E]/40 hover:bg-gray-100 dark:hover:bg-[#1E1E1E]/60 transition-all duration-500 cursor-pointer h-full"
+                            >
+                                <div className="flex items-center gap-4 mb-4">
+                                    <div className="p-3 rounded-2xl bg-gray-100 dark:bg-white/5 group-hover:bg-brand-blue/20 transition-colors">
+                                        <span className="text-gray-500 dark:text-gray-400 group-hover:text-brand-blue transition-colors">
+                                            {dept.icon}
                                         </span>
                                     </div>
-                                )}
-                            </div>
-                        </motion.div>
-                    </Link>
-                ))}
+                                    <div className="flex-1">
+                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-tight underline-offset-4 group-hover:underline group-hover:text-brand-blue transition-all">{dept.name}</h3>
+                                        <span className="text-[10px] font-black text-brand-blue/60 uppercase tracking-widest">{dept.id}</span>
+                                    </div>
+                                    <button
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            setReportModalOpen(true, 'outro', { id: dept.id, titulo: dept.name, local: 'Departamento' });
+                                        }}
+                                        title="Sugerir Alteração / Reportar Erro"
+                                        className="text-gray-500 hover:text-brand-red transition-colors p-2"
+                                    >
+                                        <Flag size={14} />
+                                    </button>
+                                </div>
+
+                                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-6 h-12 overflow-hidden">
+                                    {dept.description}
+                                </p>
+
+                                <div className="flex flex-wrap items-center gap-2">
+                                    <div className="px-3 py-1.5 rounded-xl bg-brand-red/10 border border-brand-red/20">
+                                        <span className="text-[10px] font-black text-brand-red flex items-center gap-1.5">
+                                            <div className="size-1 bg-brand-red rounded-full"></div>
+                                            {researchersCount} PESQUISADORES
+                                        </span>
+                                    </div>
+                                    
+                                    {labsCount > 0 && (
+                                        <div className="px-3 py-1.5 rounded-xl bg-brand-yellow/10 border border-brand-yellow/20">
+                                            <span className="text-[10px] font-black text-brand-yellow flex items-center gap-1.5">
+                                                <div className="size-1 bg-brand-yellow rounded-full"></div>
+                                                {labsCount} LABORATÓRIOS
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                            </motion.div>
+                        </Link>
+                    );
+                })}
             </div>
         </section>
     );

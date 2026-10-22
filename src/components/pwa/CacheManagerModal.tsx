@@ -14,6 +14,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, HardDrive, Trash2, ShieldAlert, WifiOff, RefreshCw, Check, Loader2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 
 interface CacheItemDetails {
     name: string;
@@ -160,36 +161,37 @@ export function CacheManagerModal({ isOpen, onClose }: CacheManagerModalProps) {
     if (!isOpen) return null;
 
     return (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
-            <div className="bg-[#1E1E1E] border border-white/10 rounded-3xl w-full max-w-xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
-                {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-white/10 bg-[#121212]">
+        <ModalPortal>
+            <div className="fixed inset-0 z-[100] flex min-h-full items-center justify-center p-3 sm:p-4 overflow-y-auto bg-black/80 backdrop-blur-md animate-in fade-in duration-200">
+                <div className="m-auto bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-3xl w-full max-w-xl max-h-[90vh] flex flex-col shadow-2xl overflow-hidden">
+                    {/* Header */}
+                <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-[#121212]">
                     <div className="flex items-center gap-3">
                         <div className="p-3 bg-[#00A3FF]/10 border border-[#00A3FF]/20 rounded-2xl text-[#00A3FF]">
                             <HardDrive className="w-6 h-6" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-display font-black text-white uppercase tracking-tight">
+                            <h2 className="text-xl font-display font-black text-gray-900 dark:text-white uppercase tracking-tight">
                                 Gerenciador de <span className="text-[#00A3FF]">Arquivos & Cache</span>
                             </h2>
-                            <p className="text-xs text-gray-400 font-medium">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
                                 Monitore o espaço utilizado offline e ajuste a economia de dados.
                             </p>
                         </div>
                     </div>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-white/10 rounded-full text-gray-400 hover:text-white transition-colors cursor-pointer"
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
                     >
                         <X size={20} />
                     </button>
                 </div>
 
                 {/* Storage Overview Banner */}
-                <div className="p-5 border-b border-white/5 bg-[#181818] flex items-center justify-between gap-4">
+                <div className="p-5 border-b border-gray-100 dark:border-white/5 bg-gray-50/30 dark:bg-[#181818] flex items-center justify-between gap-4">
                     <div>
-                        <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Tamanho Total em Cache</span>
-                        <div className="text-2xl font-display font-black text-white mt-0.5">{totalSizeFormatted}</div>
+                        <span className="text-[10px] font-black uppercase text-gray-500 dark:text-gray-400 tracking-wider">Tamanho Total em Cache</span>
+                        <div className="text-2xl font-display font-black text-gray-900 dark:text-white mt-0.5">{totalSizeFormatted}</div>
                     </div>
                     <button
                         onClick={handleClearAllCaches}
@@ -202,12 +204,12 @@ export function CacheManagerModal({ isOpen, onClose }: CacheManagerModalProps) {
                 </div>
 
                 {/* Service Worker Data Saver Toggle */}
-                <div className="p-5 border-b border-white/10 bg-[#121212] flex items-center justify-between gap-4">
+                <div className="p-5 border-b border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-[#121212] flex items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <WifiOff className="w-5 h-5 text-brand-yellow shrink-0" />
                         <div>
-                            <h4 className="text-xs font-bold text-white uppercase tracking-wider">Economia de Dados / Service Worker</h4>
-                            <p className="text-[11px] text-gray-400">
+                            <h4 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider">Economia de Dados / Service Worker</h4>
+                            <p className="text-[11px] text-gray-500 dark:text-gray-400">
                                 Desative para evitar downloads em segundo plano e economizar dados móveis.
                             </p>
                         </div>
@@ -215,7 +217,7 @@ export function CacheManagerModal({ isOpen, onClose }: CacheManagerModalProps) {
                     <button
                         onClick={() => handleToggleServiceWorker(!isSwEnabled)}
                         className={`w-12 h-7 flex items-center rounded-full p-1 transition-colors cursor-pointer shrink-0 ${
-                            isSwEnabled ? 'bg-[#00A3FF] justify-end' : 'bg-white/20 justify-start'
+                            isSwEnabled ? 'bg-[#00A3FF] justify-end' : 'bg-gray-200 dark:bg-white/20 justify-start'
                         }`}
                     >
                         <div className="w-5 h-5 bg-white rounded-full shadow-md"></div>
@@ -227,7 +229,7 @@ export function CacheManagerModal({ isOpen, onClose }: CacheManagerModalProps) {
                     {isLoading ? (
                         <div className="space-y-3">
                             {[1, 2].map((i) => (
-                                <div key={i} className="p-4 bg-white/5 rounded-2xl animate-pulse h-16"></div>
+                                <div key={i} className="p-4 bg-gray-100 dark:bg-white/5 rounded-2xl animate-pulse h-16"></div>
                             ))}
                         </div>
                     ) : cachesList.length === 0 ? (
@@ -238,21 +240,21 @@ export function CacheManagerModal({ isOpen, onClose }: CacheManagerModalProps) {
                         cachesList.map((item) => (
                             <div
                                 key={item.name}
-                                className="p-4 bg-[#121212] border border-white/10 rounded-2xl flex items-center justify-between gap-4 hover:border-white/20 transition-all"
+                                className="p-4 bg-gray-50/50 dark:bg-[#121212] border border-gray-200 dark:border-white/10 rounded-2xl flex items-center justify-between gap-4 hover:border-gray-300 dark:hover:border-white/20 transition-all"
                             >
                                 <div className="space-y-1 flex-1">
                                     <div className="flex items-center gap-2">
-                                        <span className="text-xs font-bold text-white font-mono">{item.name}</span>
+                                        <span className="text-xs font-bold text-gray-900 dark:text-white font-mono">{item.name}</span>
                                         <span className="text-[9px] font-black text-brand-yellow bg-brand-yellow/10 px-2 py-0.5 rounded border border-brand-yellow/20">
                                             {item.entriesCount} itens
                                         </span>
                                     </div>
-                                    <p className="text-[11px] text-gray-400">{item.description}</p>
+                                    <p className="text-[11px] text-gray-500 dark:text-gray-400">{item.description}</p>
                                     <div className="text-[10px] font-mono text-[#00A3FF] font-bold">Tamanho: {item.sizeFormatted}</div>
                                 </div>
                                 <button
                                     onClick={() => handleClearSingleCache(item.name)}
-                                    className="p-2.5 bg-white/5 hover:bg-brand-red/20 text-gray-400 hover:text-brand-red border border-white/10 hover:border-brand-red/30 rounded-xl transition-all cursor-pointer shrink-0"
+                                    className="p-2.5 bg-gray-100 dark:bg-white/5 hover:bg-brand-red/20 text-gray-500 hover:text-brand-red border border-gray-200 dark:border-white/10 hover:border-brand-red/30 rounded-xl transition-all cursor-pointer shrink-0"
                                     title="Limpar este cache"
                                 >
                                     <Trash2 size={16} />
@@ -263,15 +265,16 @@ export function CacheManagerModal({ isOpen, onClose }: CacheManagerModalProps) {
                 </div>
 
                 {/* Footer */}
-                <div className="p-4 border-t border-white/10 bg-[#121212] flex items-center justify-between">
+                <div className="p-4 border-t border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-[#121212] flex items-center justify-between">
                     <button
                         onClick={onClose}
-                        className="w-full py-3 bg-white/5 text-gray-300 hover:text-white hover:bg-white/10 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all cursor-pointer"
+                        className="w-full py-3 bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/10 rounded-2xl font-black text-[11px] uppercase tracking-widest transition-all cursor-pointer"
                     >
                         Fechar
                     </button>
                 </div>
             </div>
-        </div>
+            </div>
+        </ModalPortal>
     );
 }

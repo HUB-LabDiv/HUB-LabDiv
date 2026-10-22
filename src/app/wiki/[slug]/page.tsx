@@ -303,7 +303,7 @@ const pageContent: Record<string, any> = {
                                 <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
                                     Mergulhe na história do IFUSP e entenda como um dos institutos de física mais respeitados do mundo é organizado atualmente. Descubra o legado, os departamentos e a estrutura de governança do nosso instituto.
                                 </p>
-                                <ActionButton label="Aprender sobre o IFUSP" icon={<Landmark className="w-4 h-4" />} href="/wiki/instituto" variant="primary" />
+                                <ActionButton label="Aprender sobre o IFUSP" icon={<Landmark className="w-4 h-4" />} href="/gcif/instituto" variant="primary" />
                             </div>
                         </div>
                     </div>
@@ -1079,19 +1079,19 @@ function WikiSubPageContent() {
                                 </div>
 
                                 {/* Seção de Co-Criação e Colaboração no Fim do Tópico (Full Width) */}
-                                <div className="mt-12 p-6 sm:p-8 rounded-[36px] bg-gradient-to-br from-[#1E1E1E] via-[#161616] to-[#121212] border border-white/10 shadow-2xl relative overflow-hidden w-full">
-                                    <div className="absolute top-0 right-0 w-64 h-64 bg-brand-yellow/5 rounded-full blur-3xl pointer-events-none" />
-                                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-blue/5 rounded-full blur-3xl pointer-events-none" />
+                                <div className="mt-12 p-6 sm:p-8 rounded-[36px] bg-gradient-to-br from-white via-gray-50 to-gray-100 dark:from-[#1E1E1E] dark:via-[#161616] dark:to-[#121212] border border-gray-200 dark:border-white/10 shadow-xl dark:shadow-2xl relative overflow-hidden w-full">
+                                    <div className="absolute top-0 right-0 w-64 h-64 bg-brand-yellow/10 dark:bg-brand-yellow/5 rounded-full blur-3xl pointer-events-none" />
+                                    <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-blue/10 dark:bg-brand-blue/5 rounded-full blur-3xl pointer-events-none" />
 
                                     <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                                         <div className="max-w-xl">
                                             <span className="text-[10px] font-black uppercase tracking-[0.25em] text-brand-yellow">
                                                 Co-Criação & Atualização
                                             </span>
-                                            <h3 className="text-xl sm:text-2xl font-black font-bukra text-white italic uppercase tracking-tight mt-1">
+                                            <h3 className="text-xl sm:text-2xl font-black font-bukra text-gray-900 dark:text-white italic uppercase tracking-tight mt-1">
                                                 Colabore com este Tópico
                                             </h3>
-                                            <p className="text-xs sm:text-sm text-gray-400 font-open-sans mt-2 leading-relaxed">
+                                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-open-sans mt-2 leading-relaxed">
                                                 Conhece novos detalhes, mudanças de regras, atualizações de editais ou quer sugerir um novo tópico conectado a este? Envie para a moderação da Wiki no Eixo de Informação.
                                             </p>
                                         </div>
@@ -1113,7 +1113,7 @@ function WikiSubPageContent() {
                                                     setProposalModalType('related_topic');
                                                     setIsProposalModalOpen(true);
                                                 }}
-                                                className="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-black text-xs uppercase tracking-wider border border-white/10 flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
+                                                className="px-5 py-3 rounded-2xl bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 text-gray-900 dark:text-white font-black text-xs uppercase tracking-wider border border-gray-200 dark:border-white/10 flex items-center justify-center gap-2 transition-all hover:scale-105 active:scale-95 whitespace-nowrap"
                                             >
                                                 <GitBranch className="w-4 h-4 text-brand-blue shrink-0" />
                                                 Sugerir Tópico Relacionado

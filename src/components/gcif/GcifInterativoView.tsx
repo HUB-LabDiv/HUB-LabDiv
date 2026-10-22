@@ -42,19 +42,19 @@ export function GcifInterativoView({ oportunidades, glossario }: GcifInterativoV
     return (
         <div className="w-full space-y-16 pb-16">
             {/* Header Hero */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1E1E1E] via-[#161616] to-[#0f0f0f] border border-white/10 p-6 sm:p-10 shadow-2xl">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50 to-blue-50/20 dark:from-[#1E1E1E] dark:via-[#161616] dark:to-[#0f0f0f] border border-gray-200 dark:border-white/10 p-6 sm:p-10 shadow-xl dark:shadow-2xl">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-brand-red/15 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="relative z-10 max-w-3xl">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-red/15 border border-brand-red/30 text-brand-red text-xs font-black uppercase tracking-wider mb-3">
                         <Radio className="w-3.5 h-3.5 animate-pulse" />
-                        Módulos Dinâmicos & Engajamento Comunitário
+                        Módulos Dinâmicos &amp; Engajamento Comunitário
                     </div>
-                    <h1 className="text-3xl sm:text-5xl font-black text-white font-bukra tracking-tight">
-                        Interativo & Oportunidades
+                    <h1 className="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white font-bukra tracking-tight">
+                        Interativo &amp; Oportunidades
                     </h1>
-                    <p className="text-xs sm:text-sm text-gray-300 font-open-sans mt-3 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans mt-3 leading-relaxed">
                         Encontre oportunidades ativas de Iniciação Científica e monitoria, teste seus conhecimentos no quiz, tire dúvidas pelo SAC e explore as constelações semânticas da física.
                     </p>
                 </div>
@@ -68,10 +68,10 @@ export function GcifInterativoView({ oportunidades, glossario }: GcifInterativoV
                             <ColisorIcon size={28} animate={false} />
                         </div>
                         <div>
-                            <h2 className="text-2xl sm:text-3xl font-black text-white font-bukra italic uppercase tracking-tighter">
+                            <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white font-bukra italic uppercase tracking-tighter">
                                 Oportunidades Ativas
                             </h2>
-                            <p className="text-xs sm:text-sm text-gray-400 font-open-sans">
+                            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-open-sans">
                                 Vagas de IC, monitorias, palestras e editais selecionados para o seu momento acadêmico.
                             </p>
                         </div>
@@ -79,7 +79,7 @@ export function GcifInterativoView({ oportunidades, glossario }: GcifInterativoV
 
                     <button
                         onClick={() => setIsModalOpen(true)}
-                        className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-brand-red hover:bg-brand-red/90 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-brand-red/20 transition-all hover:scale-105 active:scale-95 shrink-0"
+                        className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-brand-red hover:bg-brand-red/90 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-brand-red/20 transition-all hover:scale-105 active:scale-95 shrink-0 cursor-pointer"
                     >
                         <Plus className="w-4 h-4" />
                         <span>Divulgar Oportunidade</span>
@@ -87,7 +87,7 @@ export function GcifInterativoView({ oportunidades, glossario }: GcifInterativoV
                 </div>
 
                 {!oportunidades || oportunidades.length === 0 ? (
-                    <div className="p-12 text-center text-gray-400 bg-[#1E1E1E] border border-white/10 rounded-[32px] italic">
+                    <div className="p-12 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-[32px] italic">
                         Varredura concluída. Nenhuma anomalia de oportunidade detectada no momento.
                     </div>
                 ) : (
@@ -95,7 +95,7 @@ export function GcifInterativoView({ oportunidades, glossario }: GcifInterativoV
                         {oportunidades.map((item) => (
                             <div
                                 key={item.id}
-                                className="bg-[#1E1E1E] rounded-[32px] border border-white/10 p-6 sm:p-8 flex flex-col justify-between hover:border-brand-blue/40 transition-all hover:-translate-y-1 shadow-xl group"
+                                className="bg-white dark:bg-[#1E1E1E] rounded-[32px] border border-gray-200 dark:border-white/10 p-6 sm:p-8 flex flex-col justify-between hover:border-brand-blue/50 transition-all hover:-translate-y-1 shadow-lg dark:shadow-xl group"
                             >
                                 <div>
                                     <div className="flex items-center justify-between mb-4">
@@ -103,23 +103,23 @@ export function GcifInterativoView({ oportunidades, glossario }: GcifInterativoV
                                             {item.tipo}
                                         </span>
                                     </div>
-                                    <h3 className="text-lg sm:text-xl font-bold text-white font-bukra group-hover:text-brand-blue transition-colors line-clamp-2 mb-2">
+                                    <h3 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-white font-bukra group-hover:text-brand-blue transition-colors line-clamp-2 mb-2">
                                         {item.titulo}
                                     </h3>
-                                    <p className="text-xs text-gray-400 font-open-sans leading-relaxed line-clamp-3 mb-4">
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 font-open-sans leading-relaxed line-clamp-3 mb-4">
                                         {item.descricao}
                                     </p>
 
                                     {/* Data & Local */}
-                                    <div className="space-y-1.5 pt-2 border-t border-white/5">
+                                    <div className="space-y-1.5 pt-2 border-t border-gray-100 dark:border-white/5">
                                         {item.data && (
-                                            <div className="flex items-center gap-2 text-gray-400 text-xs font-semibold">
+                                            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-xs font-semibold">
                                                 <Calendar className="w-3.5 h-3.5 text-brand-yellow" />
                                                 <span>{item.data}</span>
                                             </div>
                                         )}
                                         {item.local && (
-                                            <div className="flex items-center gap-2 text-gray-400 text-xs font-semibold">
+                                            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-xs font-semibold">
                                                 <MapPin className="w-3.5 h-3.5 text-brand-red" />
                                                 <span>{item.local}</span>
                                             </div>
@@ -127,7 +127,7 @@ export function GcifInterativoView({ oportunidades, glossario }: GcifInterativoV
                                     </div>
                                 </div>
 
-                                <div className="pt-6 mt-4 border-t border-white/5">
+                                <div className="pt-6 mt-4 border-t border-gray-100 dark:border-white/5">
                                     {item.link && (
                                         <a
                                             href={item.link}
@@ -157,17 +157,17 @@ export function GcifInterativoView({ oportunidades, glossario }: GcifInterativoV
                 <div className="absolute -inset-0.5 bg-brand-red/30 rounded-[32px] blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                 <Link
                     href="/wiki/quiz"
-                    className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-[#1E1E1E] border border-white/10 hover:border-brand-red/50 transition-all overflow-hidden text-left shadow-xl"
+                    className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 hover:border-brand-red/50 transition-all overflow-hidden text-left shadow-xl"
                 >
                     <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
                         <div className="size-20 bg-brand-red/15 text-brand-red rounded-[28px] flex items-center justify-center ring-1 ring-brand-red/30 group-hover:scale-110 transition-transform shadow-2xl">
                             <Brain className="w-10 h-10 text-brand-red" />
                         </div>
                         <div className="text-center md:text-left">
-                            <h3 className="text-2xl sm:text-4xl font-black text-white font-bukra italic uppercase tracking-tighter mb-2">
+                            <h3 className="text-2xl sm:text-4xl font-black text-gray-900 dark:text-white font-bukra italic uppercase tracking-tighter mb-2">
                                 Teste de Radiação (Quiz)
                             </h3>
-                            <p className="text-xs sm:text-sm text-gray-400 font-open-sans max-w-xl leading-relaxed">
+                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-open-sans max-w-xl leading-relaxed">
                                 Desafie seus conhecimentos sobre física, história do IFUSP e divulgação científica. <span className="text-brand-red font-bold">Exploda o contador Geiger!</span>
                             </p>
                         </div>
@@ -182,16 +182,16 @@ export function GcifInterativoView({ oportunidades, glossario }: GcifInterativoV
             </motion.div>
 
             {/* 3. SAC (Serviço de Atendimento / Canal de Suporte) */}
-            <div data-tour="gcif-interativo-sac" className="pt-6 border-t border-white/10">
+            <div data-tour="gcif-interativo-sac" className="pt-6 border-t border-gray-200 dark:border-white/10">
                 <SacSection />
             </div>
 
             {/* 4. Glossário Translacional & Constelações Linguísticas */}
-            <div data-tour="gcif-interativo-glossario" className="pt-6 border-t border-white/10">
+            <div data-tour="gcif-interativo-glossario" className="pt-6 border-t border-gray-200 dark:border-white/10">
                 {glossario && glossario.length > 0 ? (
                     <ConstelacoesLinguisticas glossario={glossario} />
                 ) : (
-                    <div className="p-12 text-center text-gray-400 bg-[#1E1E1E] border border-white/10 rounded-[32px] italic">
+                    <div className="p-12 text-center text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-[32px] italic">
                         Nenhuma constelação formada ainda no ecossistema do IF.
                     </div>
                 )}

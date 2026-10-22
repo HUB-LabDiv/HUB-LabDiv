@@ -21,7 +21,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Trail } from '@/types';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
-import { Download, FileText, ChevronDown, RefreshCw } from 'lucide-react';
+import { Download, FileText, ChevronDown, RefreshCw, Calendar, Route } from 'lucide-react';
 import { JupiterEvolutionModal } from './JupiterEvolutionModal';
 
 const COURSE_MAPS = [
@@ -397,11 +397,31 @@ export default function TrilhasClient({
                     <div className="mb-16 space-y-10">
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                             <div className="space-y-2">
-                                <h1 className="text-5xl font-black tracking-tighter uppercase font-mono italic text-[#00A3FF]">
-                                    Trilhas de Aprendizado
-                                </h1>
-                                <p className="dark:text-gray-400 text-gray-600 font-mono text-sm max-w-xl border-l-2 border-[#00A3FF] pl-4">
-                                    [ACOMPANHAMENTO_CURRICULAR] &gt; Explore as disciplinas, requisitos e o progresso do seu curso no IFUSP.
+                                <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                                    <h1 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tighter uppercase font-bukra text-gray-900 dark:text-white">
+                                        Acompanhamento
+                                    </h1>
+
+                                    {/* Seletor Semestral / Curso à direita do título */}
+                                    <div className="inline-flex items-center p-1 rounded-2xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-sm backdrop-blur-md">
+                                        <Link
+                                            href="/ferramentas"
+                                            className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-bukra font-bold text-[11px] sm:text-xs uppercase tracking-wider hover:bg-gray-200/50 dark:hover:bg-white/5 flex items-center gap-2 transition-all"
+                                        >
+                                            <Calendar className="w-3.5 h-3.5" />
+                                            <span>Semestral</span>
+                                        </Link>
+                                        <Link
+                                            href="/ferramentas/trilhas"
+                                            className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-brand-blue text-white font-bukra font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-sm flex items-center gap-2 transition-all"
+                                        >
+                                            <Route className="w-3.5 h-3.5" />
+                                            <span>Curso</span>
+                                        </Link>
+                                    </div>
+                                </div>
+                                <p className="dark:text-gray-400 text-gray-600 font-open-sans text-xs sm:text-sm max-w-xl border-l-2 border-brand-blue pl-4">
+                                    Explore as disciplinas, requisitos e a evolução curricular do seu curso no IFUSP.
                                 </p>
                             </div>
 

@@ -15,8 +15,8 @@ import TrilhasClient from '@/components/trilhas/TrilhasClient';
 export const revalidate = 0;
 
 export const metadata = {
-    title: 'Trilhas de Aprendizado | IFUSP',
-    description: 'Painel de Controle de Trilhas Curriculares do IFUSP.',
+    title: 'Acompanhamento do Curso | IFUSP',
+    description: 'Painel de Acompanhamento Curricular e Evolução do Curso no IFUSP.',
 };
 
 async function getTrails() {

@@ -18,6 +18,7 @@ import toast from 'react-hot-toast';
 import { useHistoryBack } from '@/hooks/useHistoryBack';
 import { stripMarkdownAndLatex } from '@/lib/utils';
 import { useTelemetry } from '@/hooks/useTelemetry';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 
 interface DownloadModalProps {
     id: string;
@@ -176,108 +177,109 @@ export const DownloadModal = ({ id, title, authors, avatarUrl, description, medi
     };
 
     return (
-        <div
-            className="fixed inset-0 z-[200] flex items-center justify-center p-4"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
-        >
-            <m.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClose(); }}
-                className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm"
-            />
-
-            <m.div
-                initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                onClick={(e) => e.stopPropagation()}
-                drag="y"
-                dragConstraints={{ top: 0, bottom: 200 }}
-                dragElastic={0.4}
-                onDragEnd={(_, info) => {
-                    if (info.offset.y > 100) onClose();
-                }}
-                className="relative w-full max-w-md bg-[#1E1E1E] border border-gray-800 rounded-[32px] overflow-hidden shadow-2xl touch-none"
+        <ModalPortal>
+            <div
+                className="fixed inset-0 z-[200] flex min-h-full items-center justify-center p-3 sm:p-4 overflow-y-auto"
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
             >
-                <div className="p-8 space-y-6">
-                    <div className="w-12 h-1.5 bg-gray-800 rounded-full mx-auto -mt-2 mb-4 opacity-50" />
-                    <div className="text-center space-y-2">
-                        <div className="inline-flex items-center justify-center size-14 bg-brand-blue/10 text-brand-blue rounded-2xl mb-2">
-                            <span className="material-symbols-outlined text-3xl">download_for_offline</span>
+                <m.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); onClose(); }}
+                    className="fixed inset-0 bg-black/80 backdrop-blur-sm"
+                />
+
+                <m.div
+                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                    onClick={(e) => e.stopPropagation()}
+                    drag="y"
+                    dragConstraints={{ top: 0, bottom: 200 }}
+                    dragElastic={0.4}
+                    onDragEnd={(_, info) => {
+                        if (info.offset.y > 100) onClose();
+                    }}
+                    className="relative w-full max-w-md bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-[32px] overflow-hidden shadow-2xl touch-none m-auto max-h-[90vh] flex flex-col z-10"
+                >
+                    <div className="p-6 sm:p-8 space-y-6 overflow-y-auto flex-1">
+                        <div className="w-12 h-1.5 bg-gray-300 dark:bg-gray-800 rounded-full mx-auto -mt-2 mb-4 opacity-50" />
+                        <div className="text-center space-y-2">
+                            <div className="inline-flex items-center justify-center size-14 bg-brand-blue/10 text-brand-blue rounded-2xl mb-2">
+                                <span className="material-symbols-outlined text-3xl">download_for_offline</span>
+                            </div>
+                            <h2 className="text-2xl font-black text-gray-900 dark:text-white">Levar o conhecimento</h2>
+                            <p className="text-gray-500 dark:text-gray-400 text-sm">Escolha como deseja baixar este conteúdo:</p>
                         </div>
-                        <h2 className="text-2xl font-black text-white">Levar o conhecimento</h2>
-                        <p className="text-gray-400 text-sm">Escolha como deseja baixar este conteúdo:</p>
+
+                        <div className="grid gap-3">
+                            {/* PDF Option */}
+                            <button
+                                disabled={!!isDownloading}
+                                onClick={handleDownloadPDF}
+                                className="group flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-900/50 hover:bg-brand-blue/10 border border-gray-200 dark:border-gray-800 hover:border-brand-blue/50 rounded-2xl transition-all disabled:opacity-50"
+                            >
+                                <div className="size-12 bg-gray-100 dark:bg-gray-800 group-hover:bg-brand-blue/20 rounded-xl flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:text-brand-blue transition-colors">
+                                    {isDownloading === 'pdf' ? (
+                                        <div className="size-5 border-2 border-brand-blue border-t-transparent animate-spin rounded-full"></div>
+                                    ) : (
+                                        <span className="material-symbols-outlined">picture_as_pdf</span>
+                                    )}
+                                </div>
+                                <div className="text-left">
+                                    <p className="font-bold text-gray-900 dark:text-white text-sm">Documentação PDF</p>
+                                    <p className="text-[10px] text-gray-500 font-medium">Layout diagramado c/ logotipo e texto completo</p>
+                                </div>
+                            </button>
+
+                            {/* Markdown Option */}
+                            <button
+                                disabled={!!isDownloading}
+                                onClick={handleDownloadMD}
+                                className="group flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-900/50 hover:bg-brand-yellow/10 border border-gray-200 dark:border-gray-800 hover:border-brand-yellow/50 rounded-2xl transition-all disabled:opacity-50"
+                            >
+                                <div className="size-12 bg-gray-100 dark:bg-gray-800 group-hover:bg-brand-yellow/20 rounded-xl flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:text-brand-yellow transition-colors">
+                                    {isDownloading === 'md' ? (
+                                        <div className="size-5 border-2 border-brand-yellow border-t-transparent animate-spin rounded-full"></div>
+                                    ) : (
+                                        <span className="material-symbols-outlined">markdown</span>
+                                    )}
+                                </div>
+                                <div className="text-left">
+                                    <p className="font-bold text-gray-900 dark:text-white text-sm">O Markdown Secundário</p>
+                                    <p className="text-[10px] text-gray-500 font-medium">Para usar em editores como Obsidian ou Notion</p>
+                                </div>
+                            </button>
+
+                            {/* Image Option */}
+                            <button
+                                disabled={!!isDownloading}
+                                onClick={handleDownloadImage}
+                                className="group flex items-center gap-4 p-4 bg-gray-50 dark:bg-gray-900/50 hover:bg-brand-red/10 border border-gray-200 dark:border-gray-800 hover:border-brand-red/50 rounded-2xl transition-all disabled:opacity-50"
+                            >
+                                <div className="size-12 bg-gray-100 dark:bg-gray-800 group-hover:bg-brand-red/20 rounded-xl flex items-center justify-center text-gray-500 dark:text-gray-400 group-hover:text-brand-red transition-colors">
+                                    {isDownloading === 'img' ? (
+                                        <div className="size-5 border-2 border-brand-red border-t-transparent animate-spin rounded-full"></div>
+                                    ) : (
+                                        <span className="material-symbols-outlined">identity_platform</span>
+                                    )}
+                                </div>
+                                <div className="text-left">
+                                    <p className="font-bold text-gray-900 dark:text-white text-sm">Imagem Social (Card)</p>
+                                    <p className="text-[10px] text-gray-500 font-medium">Capture o card resumido para o Instagram</p>
+                                </div>
+                            </button>
+                        </div>
+
+                        <button
+                            onClick={onClose}
+                            className="w-full py-3 text-xs font-bold text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors uppercase tracking-widest"
+                        >
+                            Cancelar
+                        </button>
                     </div>
-
-                    <div className="grid gap-3">
-                        {/* PDF Option */}
-                        <button
-                            disabled={!!isDownloading}
-                            onClick={handleDownloadPDF}
-                            className="group flex items-center gap-4 p-4 bg-gray-900/50 hover:bg-brand-blue/10 border border-gray-800 hover:border-brand-blue/50 rounded-2xl transition-all disabled:opacity-50"
-                        >
-                            <div className="size-12 bg-gray-800 group-hover:bg-brand-blue/20 rounded-xl flex items-center justify-center text-gray-400 group-hover:text-brand-blue transition-colors">
-                                {isDownloading === 'pdf' ? (
-                                    <div className="size-5 border-2 border-brand-blue border-t-transparent animate-spin rounded-full"></div>
-                                ) : (
-                                    <span className="material-symbols-outlined">picture_as_pdf</span>
-                                )}
-                            </div>
-                            <div className="text-left">
-                                <p className="font-bold text-white text-sm">Documentação PDF</p>
-                                <p className="text-[10px] text-gray-500 font-medium">Layout diagramado c/ logotipo e texto completo</p>
-                            </div>
-                        </button>
-
-                        {/* Markdown Option */}
-                        <button
-                            disabled={!!isDownloading}
-                            onClick={handleDownloadMD}
-                            className="group flex items-center gap-4 p-4 bg-gray-900/50 hover:bg-brand-yellow/10 border border-gray-800 hover:border-brand-yellow/50 rounded-2xl transition-all disabled:opacity-50"
-                        >
-                            <div className="size-12 bg-gray-800 group-hover:bg-brand-yellow/20 rounded-xl flex items-center justify-center text-gray-400 group-hover:text-brand-yellow transition-colors">
-                                {isDownloading === 'md' ? (
-                                    <div className="size-5 border-2 border-brand-yellow border-t-transparent animate-spin rounded-full"></div>
-                                ) : (
-                                    <span className="material-symbols-outlined">markdown</span>
-                                )}
-                            </div>
-                            <div className="text-left">
-                                <p className="font-bold text-white text-sm">O Markdown Secundário</p>
-                                <p className="text-[10px] text-gray-500 font-medium">Para usar em editores como Obsidian ou Notion</p>
-                            </div>
-                        </button>
-
-                        {/* Image Option */}
-                        <button
-                            disabled={!!isDownloading}
-                            onClick={handleDownloadImage}
-                            className="group flex items-center gap-4 p-4 bg-gray-900/50 hover:bg-brand-red/10 border border-gray-800 hover:border-brand-red/50 rounded-2xl transition-all disabled:opacity-50"
-                        >
-                            <div className="size-12 bg-gray-800 group-hover:bg-brand-red/20 rounded-xl flex items-center justify-center text-gray-400 group-hover:text-brand-red transition-colors">
-                                {isDownloading === 'img' ? (
-                                    <div className="size-5 border-2 border-brand-red border-t-transparent animate-spin rounded-full"></div>
-                                ) : (
-                                    <span className="material-symbols-outlined">identity_platform</span>
-                                )}
-                            </div>
-                            <div className="text-left">
-                                <p className="font-bold text-white text-sm">Imagem Social (Card)</p>
-                                <p className="text-[10px] text-gray-500 font-medium">Capture o card resumido para o Instagram</p>
-                            </div>
-                        </button>
-                    </div>
-
-                    <button
-                        onClick={onClose}
-                        className="w-full py-4 text-xs font-bold text-gray-500 hover:text-white transition-colors uppercase tracking-widest"
-                    >
-                        Cancelar
-                    </button>
-                </div>
-            </m.div>
+                </m.div>
 
             {/* Hidden capture element 1: Social Image */}
             <div className="fixed -top-[9999px] -left-[9999px] -z-50 opacity-0 pointer-events-none" aria-hidden="true">
@@ -380,5 +382,6 @@ export const DownloadModal = ({ id, title, authors, avatarUrl, description, medi
             </div>
 
         </div>
+        </ModalPortal>
     );
 };

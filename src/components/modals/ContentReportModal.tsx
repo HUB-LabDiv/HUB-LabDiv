@@ -18,6 +18,7 @@ import { X, AlertTriangle, ShieldCheck, Flag, Info, Loader2 } from 'lucide-react
 import { submitContentReport } from '@/app/actions/reports';
 import { toast } from 'react-hot-toast';
 import { useMutation } from '@tanstack/react-query';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 
 const CATEGORIES = [
     { id: 'abuso', label: 'Abuso/Exploração Infantil', severity: 'gravissima' },
@@ -92,100 +93,101 @@ export function ContentReportModal() {
     const isSubmitting = reportMutation.isPending;
 
     return (
-        <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-background-dark/80 backdrop-blur-md animate-in fade-in duration-300">
-            <div 
-                className={`w-full max-w-lg max-h-[95vh] flex flex-col bg-gray-900 border-2 rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 ${
-                    isGravissima ? 'border-brand-red/50 shadow-brand-red/10' : 'border-gray-800'
-                }`}
-            >
-                {/* Header */}
-                <div className={`px-6 py-5 flex items-center justify-between border-b ${
-                    isGravissima ? 'bg-brand-red/5 border-brand-red/20' : 'bg-gray-800/30 border-gray-800'
-                }`}>
-                    <div className="flex items-center gap-3">
-                        <div className={`p-2 rounded-xl ${isGravissima ? 'bg-brand-red/20 text-brand-red' : 'bg-brand-blue/20 text-brand-blue'}`}>
-                            <Flag size={20} />
-                        </div>
-                        <div>
-                            <h2 className="text-lg font-bold text-white tracking-tight">Reportar Conteúdo</h2>
-                            <p className="text-xs text-gray-400 font-medium">Protocolo de Moderação LabDiv</p>
-                        </div>
-                    </div>
-                    <button 
-                        onClick={closeContentReport}
-                        className="p-2 hover:bg-white/10 rounded-full text-gray-400 transition-colors"
-                    >
-                        <X size={20} />
-                    </button>
-                </div>
-
-                <div className="p-6 space-y-6 overflow-y-auto no-scrollbar flex-1">
-                    {/* Legal Alert */}
-                    <div className={`p-4 rounded-2xl border flex gap-3 transition-colors duration-300 ${
-                        isGravissima 
-                            ? 'bg-brand-red/10 border-brand-red/30 animate-pulse' 
-                            : 'bg-amber-400/5 border-amber-400/20'
+        <ModalPortal>
+            <div className="fixed inset-0 z-[100] flex min-h-full items-center justify-center p-3 sm:p-6 bg-black/60 backdrop-blur-md overflow-y-auto animate-in fade-in duration-300">
+                <div 
+                    className={`w-full max-w-lg max-h-[90vh] flex flex-col bg-white dark:bg-gray-900 border-2 rounded-3xl overflow-hidden shadow-2xl transition-all duration-300 m-auto text-left ${
+                        isGravissima ? 'border-brand-red/50 shadow-brand-red/10' : 'border-gray-200 dark:border-gray-800'
+                    }`}
+                >
+                    {/* Header */}
+                    <div className={`px-6 py-5 flex items-center justify-between border-b ${
+                        isGravissima ? 'bg-brand-red/5 border-brand-red/20' : 'bg-gray-50 dark:bg-gray-800/30 border-gray-100 dark:border-gray-800'
                     }`}>
-                        <AlertTriangle className={isGravissima ? 'text-brand-red shrink-0' : 'text-amber-400 shrink-0'} size={20} />
-                        <div className="space-y-1">
-                            <h4 className={`text-xs font-bold tracking-wider uppercase ${isGravissima ? 'text-brand-red' : 'text-amber-400'}`}>
-                                Aviso de Responsabilidade
-                            </h4>
-                            <p className="text-[11px] leading-relaxed text-gray-300">
-                                Denúncias em categorias <strong className="text-white">'Gravíssimas'</strong> suspendem o conteúdo imediatamente. 
-                                O uso desta ferramenta para falsa acusação, calúnia ou difamação (Art. 138, 139 e 140 do CP) é crime.
-                            </p>
+                        <div className="flex items-center gap-3">
+                            <div className={`p-2 rounded-xl ${isGravissima ? 'bg-brand-red/20 text-brand-red' : 'bg-brand-blue/20 text-brand-blue'}`}>
+                                <Flag size={20} />
+                            </div>
+                            <div>
+                                <h2 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">Reportar Conteúdo</h2>
+                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Protocolo de Moderação LabDiv</p>
+                            </div>
                         </div>
+                        <button 
+                            onClick={closeContentReport}
+                            className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                        >
+                            <X size={20} />
+                        </button>
                     </div>
 
-                    {/* Safe Harbor Suggestion */}
-                    {isSafe && (
-                        <div className="p-3 bg-brand-blue/10 border border-brand-blue/30 rounded-xl flex gap-3 items-center">
-                            <ShieldCheck className="text-brand-blue shrink-0" size={18} />
-                            <p className="text-[11px] text-brand-blue-light font-medium">
-                                <strong>Porto Seguro:</strong> Esta categoria nunca suspende um post automaticamente. Ideal se você tiver dúvidas.
-                            </p>
-                        </div>
-                    )}
-
-                    <form onSubmit={handleSubmit} className="space-y-5">
-                        {/* Category Picker */}
-                        <div className="space-y-3">
-                            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">
-                                Por que você está denunciando?
-                            </label>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                {CATEGORIES.map((cat) => (
-                                    <button
-                                        key={cat.id}
-                                        type="button"
-                                        onClick={() => setSelectedCategory(cat.id)}
-                                        className={`px-4 py-2.5 rounded-xl text-left text-xs font-bold transition-all border ${
-                                            selectedCategory === cat.id
-                                                ? cat.severity === 'gravissima' 
-                                                    ? 'bg-brand-red text-white border-brand-red shadow-lg shadow-brand-red/20'
-                                                    : 'bg-brand-blue text-white border-brand-blue shadow-lg shadow-brand-blue/20'
-                                                : 'bg-gray-800/50 text-gray-400 border-gray-700 hover:border-gray-600 hover:bg-gray-800'
-                                        }`}
-                                    >
-                                        {cat.label}
-                                    </button>
-                                ))}
+                    <div className="p-6 space-y-6 overflow-y-auto no-scrollbar flex-1">
+                        {/* Legal Alert */}
+                        <div className={`p-4 rounded-2xl border flex gap-3 transition-colors duration-300 ${
+                            isGravissima 
+                                ? 'bg-brand-red/10 border-brand-red/30 animate-pulse' 
+                                : 'bg-amber-400/10 border-amber-400/30'
+                        }`}>
+                            <AlertTriangle className={isGravissima ? 'text-brand-red shrink-0' : 'text-amber-500 shrink-0'} size={20} />
+                            <div className="space-y-1">
+                                <h4 className={`text-xs font-bold tracking-wider uppercase ${isGravissima ? 'text-brand-red' : 'text-amber-600 dark:text-amber-400'}`}>
+                                    Aviso de Responsabilidade
+                                </h4>
+                                <p className="text-[11px] leading-relaxed text-gray-600 dark:text-gray-300">
+                                    Denúncias em categorias <strong className="text-gray-900 dark:text-white">'Gravíssimas'</strong> suspendem o conteúdo imediatamente. 
+                                    O uso desta ferramenta para falsa acusação, calúnia ou difamação (Art. 138, 139 e 140 do CP) é crime.
+                                </p>
                             </div>
                         </div>
 
-                        {/* Additional Context */}
-                        <div className="space-y-3">
-                            <label className="text-xs font-bold text-gray-400 uppercase tracking-widest pl-1">
-                                Mais detalhes (Opcional)
-                            </label>
-                            <textarea
-                                value={reason}
-                                onChange={(e) => setReason(e.target.value)}
-                                placeholder="Ajude os moderadores a entender o problema..."
-                                className="w-full bg-gray-800/50 border border-gray-700 rounded-2xl p-4 text-sm text-white focus:outline-none focus:ring-2 focus:ring-brand-blue/30 placeholder:text-gray-600 min-h-[100px] resize-none transition-all"
-                            />
-                        </div>
+                        {/* Safe Harbor Suggestion */}
+                        {isSafe && (
+                            <div className="p-3 bg-brand-blue/10 border border-brand-blue/30 rounded-xl flex gap-3 items-center">
+                                <ShieldCheck className="text-brand-blue shrink-0" size={18} />
+                                <p className="text-[11px] text-brand-blue dark:text-brand-blue-light font-medium">
+                                    <strong>Porto Seguro:</strong> Esta categoria nunca suspende um post automaticamente. Ideal se você tiver dúvidas.
+                                </p>
+                            </div>
+                        )}
+
+                        <form onSubmit={handleSubmit} className="space-y-5">
+                            {/* Category Picker */}
+                            <div className="space-y-3">
+                                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest pl-1">
+                                    Por que você está denunciando?
+                                </label>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    {CATEGORIES.map((cat) => (
+                                        <button
+                                            key={cat.id}
+                                            type="button"
+                                            onClick={() => setSelectedCategory(cat.id)}
+                                            className={`px-4 py-2.5 rounded-xl text-left text-xs font-bold transition-all border ${
+                                                selectedCategory === cat.id
+                                                    ? cat.severity === 'gravissima' 
+                                                        ? 'bg-brand-red text-white border-brand-red shadow-lg shadow-brand-red/20'
+                                                        : 'bg-brand-blue text-white border-brand-blue shadow-lg shadow-brand-blue/20'
+                                                    : 'bg-gray-50 dark:bg-gray-800/50 text-gray-700 dark:text-gray-400 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-800'
+                                            }`}
+                                        >
+                                            {cat.label}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Additional Context */}
+                            <div className="space-y-3">
+                                <label className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest pl-1">
+                                    Mais detalhes (Opcional)
+                                </label>
+                                <textarea
+                                    value={reason}
+                                    onChange={(e) => setReason(e.target.value)}
+                                    placeholder="Ajude os moderadores a entender o problema..."
+                                    className="w-full bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 text-sm text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-blue/30 placeholder:text-gray-400 dark:placeholder:text-gray-600 min-h-[100px] resize-none transition-all"
+                                />
+                            </div>
 
                         {/* Footer / Submit */}
                         <div className="pt-2">
@@ -210,13 +212,14 @@ export function ContentReportModal() {
                                 )}
                             </button>
                             
-                            <p className="mt-4 text-[10px] text-center text-gray-600 px-4">
-                                DICA DE SEGURANÇA: Denúncias feitas de má-fé resultarão em banimento e encaminhamento de logs às autoridades.
-                            </p>
-                        </div>
-                    </form>
+                                <p className="mt-4 text-[10px] text-center text-gray-500 dark:text-gray-600 px-4">
+                                    DICA DE SEGURANÇA: Denúncias feitas de má-fé resultarão em banimento e encaminhamento de logs às autoridades.
+                                </p>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
+        </ModalPortal>
     );
 }

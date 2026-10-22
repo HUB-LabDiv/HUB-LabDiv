@@ -32,29 +32,53 @@ export default async function ShowDaFisicaPage() {
 
     return (
         <MainLayoutWrapper fullWidth={true}>
-            <div className={`min-h-screen bg-black text-white ${orbitron.className}`}>
+            <div className={`min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white ${orbitron.className} transition-colors duration-300`}>
                 <style dangerouslySetInnerHTML={{__html: `
                     .neon-text-blue {
-                        text-shadow: 0 0 5px #002ffe, 0 0 10px #002ffe, 0 0 20px #002ffe, 0 0 40px #002ffe;
+                        color: #002ffe;
+                        text-shadow: 0 0 10px rgba(0, 47, 254, 0.3);
+                    }
+                    .dark .neon-text-blue {
                         color: #fff;
+                        text-shadow: 0 0 5px #002ffe, 0 0 10px #002ffe, 0 0 20px #002ffe, 0 0 40px #002ffe;
                     }
                     .neon-text-red {
-                        text-shadow: 0 0 5px #f60011, 0 0 10px #f60011, 0 0 20px #f60011, 0 0 40px #f60011;
+                        color: #f60011;
+                        text-shadow: 0 0 10px rgba(246, 0, 17, 0.3);
+                    }
+                    .dark .neon-text-red {
                         color: #fff;
+                        text-shadow: 0 0 5px #f60011, 0 0 10px #f60011, 0 0 20px #f60011, 0 0 40px #f60011;
                     }
                     .neon-text-green {
-                        text-shadow: 0 0 5px #01f300, 0 0 10px #01f300, 0 0 20px #01f300, 0 0 40px #01f300;
+                        color: #009900;
+                        text-shadow: 0 0 10px rgba(1, 243, 0, 0.3);
+                    }
+                    .dark .neon-text-green {
                         color: #fff;
+                        text-shadow: 0 0 5px #01f300, 0 0 10px #01f300, 0 0 20px #01f300, 0 0 40px #01f300;
                     }
                     .neon-border-blue {
+                        border: 2px solid #002ffe;
+                        box-shadow: 0 4px 15px rgba(0, 47, 254, 0.2);
+                    }
+                    .dark .neon-border-blue {
                         border: 2px solid #002ffe;
                         box-shadow: 0 0 10px #002ffe, inset 0 0 10px #002ffe;
                     }
                     .neon-border-red {
                         border: 2px solid #f60011;
+                        box-shadow: 0 4px 15px rgba(246, 0, 17, 0.2);
+                    }
+                    .dark .neon-border-red {
+                        border: 2px solid #f60011;
                         box-shadow: 0 0 10px #f60011, inset 0 0 10px #f60011;
                     }
                     .neon-border-green {
+                        border: 2px solid #01f300;
+                        box-shadow: 0 4px 15px rgba(1, 243, 0, 0.2);
+                    }
+                    .dark .neon-border-green {
                         border: 2px solid #01f300;
                         box-shadow: 0 0 10px #01f300, inset 0 0 10px #01f300;
                     }
@@ -75,7 +99,7 @@ export default async function ShowDaFisicaPage() {
                             <span className="neon-text-blue">de</span>
                             <span className="neon-text-green">Física</span>
                         </h1>
-                        <p className="text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed font-sans tracking-wide text-gray-300">
+                        <p className="text-xl md:text-2xl max-w-4xl mx-auto leading-relaxed font-sans tracking-wide text-gray-600 dark:text-gray-300">
                             O Show de Física é um espetáculo de demonstrações experimentais que abordam os mais variados temas. Contamos com uma performance lúdica, divertida, dinâmica, envolvente e interativa! A proposta é permitir que os visitantes contextualizem, ampliem e estimulem o seu perfil científico.
                         </p>
                     </div>
@@ -104,12 +128,12 @@ export default async function ShowDaFisicaPage() {
                         </h2>
                         
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                            <div className="bg-black p-8 neon-border-green flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
-                                <GraduationCap className="w-16 h-16 text-[#01f300] mb-6 drop-shadow-[0_0_10px_#01f300] group-hover:scale-110 transition-transform" />
-                                <h3 className="text-xl font-bold mb-4 uppercase text-[#01f300]">Público Alvo</h3>
-                                <div className="font-sans text-gray-300 space-y-2">
+                            <div className="bg-white dark:bg-black p-8 neon-border-green shadow-lg dark:shadow-none flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
+                                <GraduationCap className="w-16 h-16 text-[#009900] dark:text-[#01f300] mb-6 drop-shadow-[0_0_10px_rgba(1,243,0,0.4)] group-hover:scale-110 transition-transform" />
+                                <h3 className="text-xl font-bold mb-4 uppercase text-[#009900] dark:text-[#01f300]">Público Alvo</h3>
+                                <div className="font-sans text-gray-600 dark:text-gray-300 space-y-2">
                                     <p>Do 1º ano do E.F. ao 3º ano do E.M.</p>
-                                    <p className="pt-4 font-bold text-white">Dividido em Faixas:</p>
+                                    <p className="pt-4 font-bold text-gray-900 dark:text-white">Dividido em Faixas:</p>
                                     <ul className="text-sm">
                                         <li>Faixa 1: 1º ao 4º ano (E.F.)</li>
                                         <li>Faixa 2: 5º ao 7º ano (E.F.)</li>
@@ -118,25 +142,25 @@ export default async function ShowDaFisicaPage() {
                                 </div>
                             </div>
 
-                            <div className="bg-black p-8 neon-border-blue flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
-                                <Clock className="w-16 h-16 text-[#002ffe] mb-6 drop-shadow-[0_0_10px_#002ffe] group-hover:scale-110 transition-transform" />
+                            <div className="bg-white dark:bg-black p-8 neon-border-blue shadow-lg dark:shadow-none flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
+                                <Clock className="w-16 h-16 text-[#002ffe] mb-6 drop-shadow-[0_0_10px_rgba(0,47,254,0.4)] group-hover:scale-110 transition-transform" />
                                 <h3 className="text-xl font-bold mb-4 uppercase text-[#002ffe]">Duração</h3>
-                                <p className="font-sans text-gray-300 mt-4">
+                                <p className="font-sans text-gray-600 dark:text-gray-300 mt-4">
                                     Cada apresentação tem aproximadamente<br/>
-                                    <span className="text-3xl font-bold text-white block mt-4 drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">2 HORAS</span>
+                                    <span className="text-3xl font-bold text-gray-900 dark:text-white block mt-4 drop-shadow-[0_0_5px_rgba(0,47,254,0.2)] dark:drop-shadow-[0_0_5px_rgba(255,255,255,0.5)]">2 HORAS</span>
                                 </p>
                             </div>
 
-                            <div className="bg-black p-8 neon-border-red flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
-                                <CalendarDays className="w-16 h-16 text-[#f60011] mb-6 drop-shadow-[0_0_10px_#f60011] group-hover:scale-110 transition-transform" />
+                            <div className="bg-white dark:bg-black p-8 neon-border-red shadow-lg dark:shadow-none flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
+                                <CalendarDays className="w-16 h-16 text-[#f60011] mb-6 drop-shadow-[0_0_10px_rgba(246,0,17,0.4)] group-hover:scale-110 transition-transform" />
                                 <h3 className="text-xl font-bold mb-4 uppercase text-[#f60011]">Dias e Horários</h3>
-                                <p className="font-sans text-gray-300 mt-4">
+                                <p className="font-sans text-gray-600 dark:text-gray-300 mt-4">
                                     Sessões realizadas às<br/>
-                                    <strong className="text-white">Terças, Quartas e Quintas-feiras</strong>
+                                    <strong className="text-gray-900 dark:text-white">Terças, Quartas e Quintas-feiras</strong>
                                 </p>
                                 <div className="mt-4 flex gap-4 w-full justify-center">
-                                    <span className="px-3 py-1 border border-[#f60011] text-[#f60011]">10:00</span>
-                                    <span className="px-3 py-1 border border-[#f60011] text-[#f60011]">14:00</span>
+                                    <span className="px-3 py-1 bg-red-50 dark:bg-transparent border border-[#f60011] text-[#f60011]">10:00</span>
+                                    <span className="px-3 py-1 bg-red-50 dark:bg-transparent border border-[#f60011] text-[#f60011]">14:00</span>
                                 </div>
                             </div>
                         </div>

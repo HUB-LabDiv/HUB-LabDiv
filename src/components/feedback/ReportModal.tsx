@@ -38,6 +38,7 @@ import { toast } from 'react-hot-toast';
 import { useNavigationStore } from '@/store/useNavigationStore';
 import { offlineCrud } from '@/lib/offline-sync';
 import { supabase } from '@/lib/supabase/client';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 
 interface ReportModalProps {
     isOpen: boolean;
@@ -232,115 +233,116 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
             : 'bg-brand-blue hover:bg-brand-blue/90 text-white shadow-brand-blue/20';
 
     return (
-        <AnimatePresence>
-            {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                    {/* Backdrop */}
-                    <m.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={onClose}
-                        className="absolute inset-0 bg-background-dark/80 backdrop-blur-sm"
-                    />
+        <ModalPortal>
+            <AnimatePresence>
+                {isOpen && (
+                    <div className="fixed inset-0 z-[100] flex min-h-full items-center justify-center p-3 sm:p-6 overflow-y-auto">
+                        {/* Backdrop */}
+                        <m.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={onClose}
+                            className="fixed inset-0 bg-black/60 backdrop-blur-md"
+                        />
 
-                    {/* Modal */}
-                    <m.div
-                        initial={{ scale: 0.9, opacity: 0, y: 20 }}
-                        animate={{ scale: 1, opacity: 1, y: 0 }}
-                        exit={{ scale: 0.9, opacity: 0, y: 20 }}
-                        role="dialog"
-                        aria-modal="true"
-                        aria-labelledby="report-modal-title"
-                        className="relative w-full max-w-lg bg-[#1E1E1E] border border-white/10 rounded-[32px] overflow-hidden shadow-2xl"
-                    >
-                        {step === 'form' ? (
-                            <form onSubmit={handleSubmit} className="p-8">
-                                {/* Header */}
-                                <div className="flex items-center justify-between mb-6">
-                                    <div className="flex items-center gap-3">
-                                        <div className={`size-10 ${config.bg} rounded-xl flex items-center justify-center`}>
-                                            <Icon className={`${config.color} size-5`} aria-hidden="true" />
+                        {/* Modal */}
+                        <m.div
+                            initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                            animate={{ scale: 1, opacity: 1, y: 0 }}
+                            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                            role="dialog"
+                            aria-modal="true"
+                            aria-labelledby="report-modal-title"
+                            className="relative w-full max-w-lg bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-[32px] overflow-hidden shadow-2xl m-auto max-h-[90vh] flex flex-col text-left"
+                        >
+                            {step === 'form' ? (
+                                <form onSubmit={handleSubmit} className="p-6 sm:p-8 overflow-y-auto flex-1">
+                                    {/* Header */}
+                                    <div className="flex items-center justify-between mb-6">
+                                        <div className="flex items-center gap-3">
+                                            <div className={`size-10 ${config.bg} rounded-xl flex items-center justify-center`}>
+                                                <Icon className={`${config.color} size-5`} aria-hidden="true" />
+                                            </div>
+                                            <h2 id="report-modal-title" className="text-xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter">
+                                                {config.title}
+                                            </h2>
                                         </div>
-                                        <h2 id="report-modal-title" className="text-xl font-black text-white italic uppercase tracking-tighter">
-                                            {config.title}
-                                        </h2>
+                                        <button type="button" onClick={onClose} className="p-1 rounded-lg text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors">
+                                            <X size={24} />
+                                        </button>
                                     </div>
-                                    <button type="button" onClick={onClose} className="text-gray-500 hover:text-white transition-colors">
-                                        <X size={24} />
-                                    </button>
-                                </div>
 
                                 {/* Identificação do remetente enviada nos bastidores para o admin */}
 
-                                <div className="space-y-5">
-                                    {/* Type Selector */}
-                                    <div className="flex gap-2">
-                                        {(['bug', 'sugestao', 'denuncia', 'outro'] as ReportType[]).map((t) => (
-                                            <button
-                                                key={t}
-                                                type="button"
-                                                onClick={() => setType(t)}
-                                                className={`flex-1 py-2 px-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${type === t
-                                                    ? activeColor
-                                                    : 'bg-white/5 text-gray-400 hover:bg-white/10'
-                                                    }`}
-                                            >
-                                                {TYPE_CONFIG[t].label}
-                                            </button>
-                                        ))}
-                                    </div>
+                                    <div className="space-y-5">
+                                        {/* Type Selector */}
+                                        <div className="flex gap-2">
+                                            {(['bug', 'sugestao', 'denuncia', 'outro'] as ReportType[]).map((t) => (
+                                                <button
+                                                    key={t}
+                                                    type="button"
+                                                    onClick={() => setType(t)}
+                                                    className={`flex-1 py-2 px-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${type === t
+                                                        ? activeColor
+                                                        : 'bg-gray-100 hover:bg-gray-200 dark:bg-white/5 text-gray-600 dark:text-gray-400 dark:hover:bg-white/10'
+                                                        }`}
+                                                >
+                                                    {TYPE_CONFIG[t].label}
+                                                </button>
+                                            ))}
+                                        </div>
 
-                                    {/* Description */}
-                                    <div>
-                                        <label className="block text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-2 px-1">
-                                            {type === 'bug' ? 'O que aconteceu?' : type === 'sugestao' ? 'Sua sugestão' : type === 'denuncia' ? 'Detalhamento da Denúncia' : 'Sua mensagem'}
-                                        </label>
-                                        <textarea
-                                            value={description}
-                                            onChange={(e) => setDescription(e.target.value)}
-                                            placeholder={config.placeholder}
-                                            rows={4}
-                                            className="w-full bg-white/5 border border-white/10 rounded-2xl p-4 text-white placeholder:text-gray-600 focus:outline-none focus:border-white/30 transition-colors resize-none text-sm"
-                                        />
-                                    </div>
-
-                                    {/* Screenshot — para bugs e denúncias */}
-                                    {(type === 'bug' || type === 'denuncia') && (
-                                        <div
-                                            onClick={() => fileInputRef.current?.click()}
-                                            className="relative group cursor-pointer border-2 border-dashed border-white/10 rounded-2xl p-5 flex flex-col items-center justify-center hover:bg-white/5 transition-all"
-                                        >
-                                            <input
-                                                type="file"
-                                                ref={fileInputRef}
-                                                onChange={handleFileChange}
-                                                accept="image/*"
-                                                className="hidden"
+                                        {/* Description */}
+                                        <div>
+                                            <label className="block text-[10px] font-black text-gray-600 dark:text-gray-400 uppercase tracking-[0.2em] mb-2 px-1">
+                                                {type === 'bug' ? 'O que aconteceu?' : type === 'sugestao' ? 'Sua sugestão' : type === 'denuncia' ? 'Detalhamento da Denúncia' : 'Sua mensagem'}
+                                            </label>
+                                            <textarea
+                                                value={description}
+                                                onChange={(e) => setDescription(e.target.value)}
+                                                placeholder={config.placeholder}
+                                                rows={4}
+                                                className="w-full bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-2xl p-4 text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 focus:outline-none focus:border-brand-blue dark:focus:border-white/30 transition-colors resize-none text-sm"
                                             />
-                                            {previewUrl ? (
-                                                <img src={previewUrl} alt="Preview" className="max-h-28 rounded-lg" />
-                                            ) : (
-                                                <>
-                                                    <Camera className="text-gray-600 group-hover:text-brand-red transition-colors mb-2" size={20} />
-                                                    <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Anexar Captura de Tela (opcional)</span>
-                                                </>
-                                            )}
                                         </div>
-                                    )}
 
-                                    {/* Contato direto */}
-                                    <div className="flex gap-4 items-center py-3 border-t border-white/5">
-                                        <span className="text-[10px] font-black text-gray-600 uppercase tracking-widest">Ou mande direto:</span>
-                                        <div className="flex gap-4">
-                                            <a href="https://wa.me/5511968401823" target="_blank" rel="noopener noreferrer" className="text-brand-yellow hover:scale-110 transition-transform">
-                                                <MessageCircle size={18} />
-                                            </a>
-                                            <a href="mailto:hublabdiv@gmail.com" className="text-brand-blue hover:scale-110 transition-transform">
-                                                <Mail size={18} />
-                                            </a>
+                                        {/* Screenshot — para bugs e denúncias */}
+                                        {(type === 'bug' || type === 'denuncia') && (
+                                            <div
+                                                onClick={() => fileInputRef.current?.click()}
+                                                className="relative group cursor-pointer border-2 border-dashed border-gray-200 dark:border-white/10 rounded-2xl p-5 flex flex-col items-center justify-center hover:bg-gray-50 dark:hover:bg-white/5 transition-all"
+                                            >
+                                                <input
+                                                    type="file"
+                                                    ref={fileInputRef}
+                                                    onChange={handleFileChange}
+                                                    accept="image/*"
+                                                    className="hidden"
+                                                />
+                                                {previewUrl ? (
+                                                    <img src={previewUrl} alt="Preview" className="max-h-28 rounded-lg" />
+                                                ) : (
+                                                    <>
+                                                        <Camera className="text-gray-400 group-hover:text-brand-red transition-colors mb-2" size={20} />
+                                                        <span className="text-[10px] font-black text-gray-500 uppercase tracking-widest">Anexar Captura de Tela (opcional)</span>
+                                                    </>
+                                                )}
+                                            </div>
+                                        )}
+
+                                        {/* Contato direto */}
+                                        <div className="flex gap-4 items-center py-3 border-t border-gray-100 dark:border-white/5">
+                                            <span className="text-[10px] font-black text-gray-500 dark:text-gray-500 uppercase tracking-widest">Ou mande direto:</span>
+                                            <div className="flex gap-4">
+                                                <a href="https://wa.me/5511968401823" target="_blank" rel="noopener noreferrer" className="text-brand-yellow hover:scale-110 transition-transform">
+                                                    <MessageCircle size={18} />
+                                                </a>
+                                                <a href="mailto:hublabdiv@gmail.com" className="text-brand-blue hover:scale-110 transition-transform">
+                                                    <Mail size={18} />
+                                                </a>
+                                            </div>
                                         </div>
-                                    </div>
 
                                     {/* Submit */}
                                     <button
@@ -364,13 +366,13 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
                                 <div className={`size-20 ${config.bg} rounded-[32px] flex items-center justify-center mx-auto mb-8`}>
                                     <CheckCircle2 className={`${config.color} size-10`} aria-hidden="true" />
                                 </div>
-                                <h2 className="text-2xl font-black text-white italic uppercase tracking-tighter mb-4">
+                                <h2 className="text-2xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter mb-4">
                                     {config.successTitle}
                                 </h2>
-                                <p className="text-gray-400 font-medium mb-12">{config.successMsg}</p>
+                                <p className="text-gray-600 dark:text-gray-400 font-medium mb-12">{config.successMsg}</p>
                                 <button
                                     onClick={onClose}
-                                    className="w-full h-14 border border-white/10 rounded-2xl text-[10px] font-black text-white uppercase tracking-widest hover:bg-white/5 transition-colors"
+                                    className="w-full h-14 border border-gray-200 dark:border-white/10 rounded-2xl text-[10px] font-black text-gray-700 dark:text-white uppercase tracking-widest hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                                 >
                                     Fechar
                                 </button>
@@ -380,5 +382,6 @@ export function ReportModal({ isOpen, onClose }: ReportModalProps) {
                 </div>
             )}
         </AnimatePresence>
+        </ModalPortal>
     );
 }

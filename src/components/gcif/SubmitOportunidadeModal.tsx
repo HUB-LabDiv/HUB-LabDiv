@@ -17,6 +17,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Sparkles, Send, Calendar, MapPin, Link as LinkIcon, Briefcase, Loader2 } from 'lucide-react';
 import { submitOportunidade } from '@/app/actions/oportunidades';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 import { toast } from 'react-hot-toast';
 
 interface SubmitOportunidadeModalProps {
@@ -82,187 +83,189 @@ export function SubmitOportunidadeModal({ isOpen, onClose }: SubmitOportunidadeM
     };
 
     return (
-        <AnimatePresence>
-            {isOpen && (
-                <div className="fixed inset-0 z-[120] flex items-center justify-center p-4 sm:p-6 overflow-y-auto">
-                    {/* Backdrop */}
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        onClick={onClose}
-                        className="fixed inset-0 bg-black/80 backdrop-blur-md"
-                    />
+        <ModalPortal>
+            <AnimatePresence>
+                {isOpen && (
+                    <div className="fixed inset-0 z-[120] flex min-h-full items-center justify-center p-3 sm:p-6 overflow-y-auto">
+                        {/* Backdrop */}
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            onClick={onClose}
+                            className="fixed inset-0 bg-black/60 backdrop-blur-md"
+                        />
 
-                    {/* Modal Box */}
-                    <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="relative w-full max-w-2xl bg-[#1E1E1E] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl z-10 max-h-[90vh] overflow-y-auto"
-                    >
-                        {/* Header */}
-                        <div className="flex items-start justify-between gap-4 mb-6 pb-4 border-b border-white/10">
-                            <div>
-                                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-red/15 text-brand-red border border-brand-red/30 text-[10px] font-black uppercase tracking-wider mb-2">
-                                    <Sparkles className="w-3.5 h-3.5" />
-                                    Divulgação Comunitária
-                                </div>
-                                <h2 className="text-xl sm:text-2xl font-black text-white font-bukra tracking-tight">
-                                    Divulgar Oportunidade
-                                </h2>
-                                <p className="text-xs text-gray-400 font-open-sans mt-1">
-                                    Cadastre vagas de IC, palestras, bolsas e eventos para que outros alunos da USP descubram.
-                                </p>
-                            </div>
-                            <button
-                                onClick={onClose}
-                                className="p-2 text-gray-400 hover:text-white rounded-full hover:bg-white/5 transition-colors shrink-0"
-                            >
-                                <X className="w-5 h-5" />
-                            </button>
-                        </div>
-
-                        {/* Form */}
-                        <form onSubmit={handleSubmit} className="space-y-5">
-                            {/* Tipo Selector */}
-                            <div>
-                                <label className="block text-xs font-black uppercase tracking-wider text-gray-300 mb-2">
-                                    Tipo de Oportunidade *
-                                </label>
-                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    {tipoOptions.map((opt) => (
-                                        <button
-                                            key={opt.value}
-                                            type="button"
-                                            onClick={() => setTipo(opt.value as any)}
-                                            className={`p-3 rounded-2xl border text-left transition-all ${
-                                                tipo === opt.value
-                                                    ? 'bg-brand-red/15 border-brand-red/50 text-white shadow-lg'
-                                                    : 'bg-black/30 border-white/10 text-gray-400 hover:bg-white/5 hover:text-gray-200'
-                                            }`}
-                                        >
-                                            <div className="font-bold text-xs">{opt.label}</div>
-                                            <div className="text-[10px] text-gray-400 mt-0.5">{opt.desc}</div>
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Título */}
-                            <div>
-                                <label className="block text-xs font-black uppercase tracking-wider text-gray-300 mb-2">
-                                    Título da Oportunidade *
-                                </label>
-                                <input
-                                    type="text"
-                                    required
-                                    value={titulo}
-                                    onChange={(e) => setTitulo(e.target.value)}
-                                    placeholder="Ex: Bolsa de Iniciação Científica em Física Nuclear (DFN)"
-                                    className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-red transition-all"
-                                />
-                            </div>
-
-                            {/* Descrição */}
-                            <div>
-                                <label className="block text-xs font-black uppercase tracking-wider text-gray-300 mb-2">
-                                    Descrição & Detalhes *
-                                </label>
-                                <textarea
-                                    required
-                                    rows={4}
-                                    value={descricao}
-                                    onChange={(e) => setDescricao(e.target.value)}
-                                    placeholder="Descreva o escopo do projeto, pré-requisitos, bolsa, carga horária e instruções para entrar em contato com o orientador ou organizadores."
-                                    className="w-full px-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-red transition-all resize-none"
-                                />
-                            </div>
-
-                            {/* Grid 2 colunas: Data e Local */}
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        {/* Modal Box */}
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                            className="relative w-full max-w-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl z-10 m-auto max-h-[90vh] overflow-y-auto text-left"
+                        >
+                            {/* Header */}
+                            <div className="flex items-start justify-between gap-4 mb-6 pb-4 border-b border-gray-200 dark:border-white/10">
                                 <div>
-                                    <label className="block text-xs font-black uppercase tracking-wider text-gray-300 mb-2">
-                                        Data / Prazo de Inscrição
+                                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-red/15 text-brand-red border border-brand-red/30 text-[10px] font-black uppercase tracking-wider mb-2">
+                                        <Sparkles className="w-3.5 h-3.5" />
+                                        Divulgação Comunitária
+                                    </div>
+                                    <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white font-bukra tracking-tight">
+                                        Divulgar Oportunidade
+                                    </h2>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 font-open-sans mt-1">
+                                        Cadastre vagas de IC, palestras, bolsas e eventos para que outros alunos da USP descubram.
+                                    </p>
+                                </div>
+                                <button
+                                    onClick={onClose}
+                                    className="p-2 text-gray-400 hover:text-gray-900 dark:hover:text-white rounded-full hover:bg-gray-100 dark:hover:bg-white/5 transition-colors shrink-0"
+                                >
+                                    <X className="w-5 h-5" />
+                                </button>
+                            </div>
+
+                            {/* Form */}
+                            <form onSubmit={handleSubmit} className="space-y-5">
+                                {/* Tipo Selector */}
+                                <div>
+                                    <label className="block text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
+                                        Tipo de Oportunidade *
                                     </label>
-                                    <div className="relative">
-                                        <Calendar className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                                        <input
-                                            type="text"
-                                            value={data}
-                                            onChange={(e) => setData(e.target.value)}
-                                            placeholder="Ex: Inscrições até 15/04"
-                                            className="w-full pl-10 pr-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-brand-red transition-all"
-                                        />
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                        {tipoOptions.map((opt) => (
+                                            <button
+                                                key={opt.value}
+                                                type="button"
+                                                onClick={() => setTipo(opt.value as any)}
+                                                className={`p-3 rounded-2xl border text-left transition-all ${
+                                                    tipo === opt.value
+                                                        ? 'bg-brand-red/15 border-brand-red/50 text-brand-red dark:text-white shadow-md'
+                                                        : 'bg-gray-50 dark:bg-black/30 border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-gray-200'
+                                                }`}
+                                            >
+                                                <div className="font-bold text-xs">{opt.label}</div>
+                                                <div className="text-[10px] text-gray-400 mt-0.5">{opt.desc}</div>
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
 
+                                {/* Título */}
                                 <div>
-                                    <label className="block text-xs font-black uppercase tracking-wider text-gray-300 mb-2">
-                                        Local / Laboratório / Modalidade
+                                    <label className="block text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
+                                        Título da Oportunidade *
                                     </label>
-                                    <div className="relative">
-                                        <MapPin className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-                                        <input
-                                            type="text"
-                                            value={local}
-                                            onChange={(e) => setLocal(e.target.value)}
-                                            placeholder="Ex: Ed. Principal, Sala 204 / Híbrido"
-                                            className="w-full pl-10 pr-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-brand-red transition-all"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Link de Acesso / Inscrição */}
-                            <div>
-                                <label className="block text-xs font-black uppercase tracking-wider text-gray-300 mb-2">
-                                    Link Oficial de Acesso / Edital
-                                </label>
-                                <div className="relative">
-                                    <LinkIcon className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                                     <input
-                                        type="url"
-                                        value={link}
-                                        onChange={(e) => setLink(e.target.value)}
-                                        placeholder="https://..."
-                                        className="w-full pl-10 pr-4 py-3 rounded-2xl bg-black/40 border border-white/10 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-brand-red transition-all"
+                                        type="text"
+                                        required
+                                        value={titulo}
+                                        onChange={(e) => setTitulo(e.target.value)}
+                                        placeholder="Ex: Bolsa de Iniciação Científica em Física Nuclear (DFN)"
+                                        className="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-xs sm:text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-red transition-all"
                                     />
                                 </div>
-                            </div>
 
-                            {/* Buttons */}
-                            <div className="flex items-center justify-end gap-3 pt-4 border-t border-white/10">
-                                <button
-                                    type="button"
-                                    onClick={onClose}
-                                    disabled={isSubmitting}
-                                    className="px-5 py-2.5 rounded-xl border border-white/10 text-xs font-bold text-gray-400 hover:text-white hover:bg-white/5 transition-all"
-                                >
-                                    Cancelar
-                                </button>
-                                <button
-                                    type="submit"
-                                    disabled={isSubmitting}
-                                    className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-brand-red/25 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
-                                >
-                                    {isSubmitting ? (
-                                        <>
-                                            <Loader2 className="w-4 h-4 animate-spin" />
-                                            <span>Enviando...</span>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Send className="w-4 h-4" />
-                                            <span>Publicar Oportunidade</span>
-                                        </>
-                                    )}
-                                </button>
-                            </div>
-                        </form>
-                    </motion.div>
-                </div>
-            )}
-        </AnimatePresence>
+                                {/* Descrição */}
+                                <div>
+                                    <label className="block text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
+                                        Descrição & Detalhes *
+                                    </label>
+                                    <textarea
+                                        required
+                                        rows={4}
+                                        value={descricao}
+                                        onChange={(e) => setDescricao(e.target.value)}
+                                        placeholder="Descreva o escopo do projeto, pré-requisitos, bolsa, carga horária e instruções para entrar em contato com o orientador ou organizadores."
+                                        className="w-full px-4 py-3 rounded-2xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-xs sm:text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-red transition-all resize-none"
+                                    />
+                                </div>
+
+                                {/* Grid 2 colunas: Data e Local */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
+                                            Data / Prazo de Inscrição
+                                        </label>
+                                        <div className="relative">
+                                            <Calendar className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                                            <input
+                                                type="text"
+                                                value={data}
+                                                onChange={(e) => setData(e.target.value)}
+                                                placeholder="Ex: Inscrições até 15/04"
+                                                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-xs text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-red transition-all"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
+                                            Local / Laboratório / Modalidade
+                                        </label>
+                                        <div className="relative">
+                                            <MapPin className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                                            <input
+                                                type="text"
+                                                value={local}
+                                                onChange={(e) => setLocal(e.target.value)}
+                                                placeholder="Ex: Ed. Principal, Sala 204 / Híbrido"
+                                                className="w-full pl-10 pr-4 py-3 rounded-2xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-xs text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-red transition-all"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Link de Acesso / Inscrição */}
+                                <div>
+                                    <label className="block text-xs font-black uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-2">
+                                        Link Oficial de Acesso / Edital
+                                    </label>
+                                    <div className="relative">
+                                        <LinkIcon className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                                        <input
+                                            type="url"
+                                            value={link}
+                                            onChange={(e) => setLink(e.target.value)}
+                                            placeholder="https://..."
+                                            className="w-full pl-10 pr-4 py-3 rounded-2xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-xs text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-red transition-all"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Buttons */}
+                                <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200 dark:border-white/10">
+                                    <button
+                                        type="button"
+                                        onClick={onClose}
+                                        disabled={isSubmitting}
+                                        className="px-5 py-2.5 rounded-xl border border-gray-200 dark:border-white/10 text-xs font-bold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all"
+                                    >
+                                        Cancelar
+                                    </button>
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmitting}
+                                        className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-brand-red hover:bg-brand-red/90 text-white font-black text-xs uppercase tracking-wider shadow-lg shadow-brand-red/25 transition-all hover:scale-105 active:scale-95 disabled:opacity-50"
+                                    >
+                                        {isSubmitting ? (
+                                            <>
+                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                                <span>Enviando...</span>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Send className="w-4 h-4" />
+                                                <span>Publicar Oportunidade</span>
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                            </form>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
+        </ModalPortal>
     );
 }

@@ -39,8 +39,8 @@ export const Breadcrumbs = ({
     sectionHref = '/gcif#wiki-hub-section', 
     backHref = '/gcif' 
 }: BreadcrumbsProps) => (
-    <nav className="flex items-center gap-2 text-xs font-bold font-bukra uppercase tracking-[0.2em] mb-8 text-gray-400 dark:text-gray-400 flex-wrap">
-        <Link href={backHref} className="flex items-center gap-2 hover:text-white transition-colors bg-white/5 border border-white/10 px-4 py-2 rounded-full mr-4 text-brand-blue hover:bg-brand-blue/10">
+    <nav className="flex items-center gap-2 text-xs font-bold font-bukra uppercase tracking-[0.2em] mb-8 text-gray-500 dark:text-gray-400 flex-wrap">
+        <Link href={backHref} className="flex items-center gap-2 text-brand-blue hover:text-blue-700 dark:hover:text-white transition-colors bg-blue-50/70 hover:bg-brand-blue/15 dark:bg-white/5 dark:hover:bg-brand-blue/10 border border-brand-blue/20 dark:border-white/10 px-4 py-2 rounded-full mr-4">
             <ArrowLeft className="w-3 h-3" />
             <span>Voltar ao GCIF</span>
         </Link>

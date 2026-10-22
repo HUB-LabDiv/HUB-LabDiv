@@ -308,11 +308,11 @@ export default function OfflinePage() {
     });
 
     return (
-        <div className="min-h-screen bg-[#121212] text-white flex flex-col items-center p-4 sm:p-6 font-sans">
+        <div className="min-h-screen bg-gray-50 dark:bg-[#121212] text-gray-900 dark:text-white flex flex-col items-center p-4 sm:p-6 font-sans">
             <div className="w-full max-w-3xl space-y-6 pb-12">
                 
                 {/* Header Card com Logo Oficial LabDiv */}
-                <div className="relative overflow-hidden rounded-3xl bg-[#1E1E1E] border border-white/10 p-6 sm:p-8 text-center shadow-2xl">
+                <div className="relative overflow-hidden rounded-3xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 p-6 sm:p-8 text-center shadow-xl">
                     <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#0F4780] via-[#F14343] to-[#FFCC00]" />
                     
                     <div className="flex flex-col items-center gap-3 mb-4">
@@ -357,22 +357,22 @@ export default function OfflinePage() {
                             </svg>
                         </div>
 
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-400 text-xs font-bold uppercase tracking-wider">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-xs font-bold uppercase tracking-wider">
                             <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
                             Modo Offline Ativo
                         </div>
                     </div>
 
-                    <h1 className="text-2xl sm:text-3xl font-black text-white font-bukra">
+                    <h1 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white font-bukra">
                         HUB <span className="text-gradient-brand">LabDiv</span>
                     </h1>
                     
-                    <p className="text-sm text-gray-400 max-w-md mx-auto mt-2 leading-relaxed">
+                    <p className="text-sm text-gray-600 dark:text-gray-400 max-w-md mx-auto mt-2 leading-relaxed">
                         Você está desconectado da rede. Suas ferramentas, grade horária, dados do lab e o guia GCIF continuam disponíveis no dispositivo.
                     </p>
 
                     {reconnectMsg && (
-                        <div className="mt-4 p-3 rounded-xl bg-white/5 border border-white/10 text-xs text-yellow-300 font-semibold max-w-md mx-auto animate-fade-in">
+                        <div className="mt-4 p-3 rounded-xl bg-amber-50 dark:bg-white/5 border border-amber-200 dark:border-white/10 text-xs text-amber-800 dark:text-yellow-300 font-semibold max-w-md mx-auto animate-fade-in">
                             {reconnectMsg}
                         </div>
                     )}
@@ -391,23 +391,23 @@ export default function OfflinePage() {
                         <button
                             type="button"
                             onClick={handleGoHome}
-                            className="px-6 py-3 bg-white/10 hover:bg-white/15 text-white font-bold text-sm rounded-xl transition-all border border-white/10 flex items-center gap-2"
+                            className="px-6 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/15 text-gray-800 dark:text-white font-bold text-sm rounded-xl transition-all border border-gray-200 dark:border-white/10 flex items-center gap-2"
                         >
-                            <Home className="w-4 h-4 text-gray-300" />
+                            <Home className="w-4 h-4 text-gray-500 dark:text-gray-300" />
                             Voltar ao Início
                         </button>
                     </div>
                 </div>
 
                 {/* Navigation Tabs */}
-                <div className="flex bg-[#1E1E1E] border border-white/10 rounded-2xl p-1 gap-1 sticky top-4 z-40 backdrop-blur-md shadow-xl">
+                <div className="flex bg-white/90 dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-2xl p-1 gap-1 sticky top-4 z-40 backdrop-blur-md shadow-xl">
                     <button
                         type="button"
                         onClick={() => setActiveTab('ferramentas')}
                         className={`flex-1 py-3 px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
                             activeTab === 'ferramentas'
-                                ? 'bg-[#262626] text-[#FFCC00] shadow-md border border-[#FFCC00]/30'
-                                : 'text-gray-400 hover:text-white'
+                                ? 'bg-amber-50 dark:bg-[#262626] text-amber-800 dark:text-[#FFCC00] shadow-sm border border-amber-300 dark:border-[#FFCC00]/30'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                         }`}
                     >
                         <Calendar className="w-4 h-4" />
@@ -419,8 +419,8 @@ export default function OfflinePage() {
                         onClick={() => setActiveTab('lab')}
                         className={`flex-1 py-3 px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
                             activeTab === 'lab'
-                                ? 'bg-[#262626] text-[#FFCC00] shadow-md border border-[#FFCC00]/30'
-                                : 'text-gray-400 hover:text-white'
+                                ? 'bg-amber-50 dark:bg-[#262626] text-amber-800 dark:text-[#FFCC00] shadow-sm border border-amber-300 dark:border-[#FFCC00]/30'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                         }`}
                     >
                         <UserIcon className="w-4 h-4" />
@@ -432,8 +432,8 @@ export default function OfflinePage() {
                         onClick={() => setActiveTab('gcif')}
                         className={`flex-1 py-3 px-2 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
                             activeTab === 'gcif'
-                                ? 'bg-[#262626] text-[#FFCC00] shadow-md border border-[#FFCC00]/30'
-                                : 'text-gray-400 hover:text-white'
+                                ? 'bg-amber-50 dark:bg-[#262626] text-amber-800 dark:text-[#FFCC00] shadow-sm border border-amber-300 dark:border-[#FFCC00]/30'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                         }`}
                     >
                         <BookOpen className="w-4 h-4" />
@@ -445,13 +445,13 @@ export default function OfflinePage() {
                 {activeTab === 'ferramentas' && (
                     <div className="space-y-6 animate-fade-in">
                         {/* Card Grade Semanal */}
-                        <div className="bg-[#1E1E1E] border border-white/10 rounded-3xl p-6 shadow-xl space-y-4">
-                            <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                                <h2 className="text-lg font-bold text-white font-bukra flex items-center gap-2">
-                                    <Calendar className="w-5 h-5 text-[#00A3FF]" />
+                        <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-3xl p-6 shadow-xl space-y-4">
+                            <div className="flex items-center justify-between border-b border-gray-100 dark:border-white/10 pb-4">
+                                <h2 className="text-lg font-bold text-gray-900 dark:text-white font-bukra flex items-center gap-2">
+                                    <Calendar className="w-5 h-5 text-[#0F4780] dark:text-[#00A3FF]" />
                                     Grade Horária Semanal
                                 </h2>
-                                <span className="text-[10px] uppercase font-black px-2.5 py-1 rounded-full bg-[#FFCC00]/10 border border-[#FFCC00]/30 text-[#FFCC00]">
+                                <span className="text-[10px] uppercase font-black px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-[#FFCC00]">
                                     Armazenamento Local
                                 </span>
                             </div>
@@ -472,8 +472,8 @@ export default function OfflinePage() {
                                         onClick={() => setSelectedDay(d.day)}
                                         className={`px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                                             selectedDay === d.day
-                                                ? 'bg-[#0F4780] text-white border border-[#00A3FF]'
-                                                : 'bg-white/5 text-gray-400 hover:bg-white/10'
+                                                ? 'bg-[#0F4780] text-white border border-[#0F4780] dark:border-[#00A3FF]'
+                                                : 'bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10'
                                         }`}
                                     >
                                         {d.label}
@@ -484,9 +484,9 @@ export default function OfflinePage() {
                             {/* Lista de Aulas e Blocos */}
                             <div className="space-y-3">
                                 {dayEvents.length === 0 && dayBlocks.length === 0 ? (
-                                    <div className="p-8 text-center text-gray-400 text-sm">
+                                    <div className="p-8 text-center text-gray-500 dark:text-gray-400 text-sm">
                                         Nenhuma aula ou compromisso agendado para este dia da semana.
-                                        <p className="text-xs text-gray-500 mt-2">
+                                        <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
                                             Quando estiver online, sincronize sua grade com o JúpiterWeb para salvá-la offline.
                                         </p>
                                     </div>
@@ -495,17 +495,17 @@ export default function OfflinePage() {
                                         {dayEvents.map((ev, idx) => (
                                             <div
                                                 key={idx}
-                                                className="p-4 rounded-2xl bg-[#262626] border border-white/10 border-l-4 border-l-[#00A3FF] space-y-1"
+                                                className="p-4 rounded-2xl bg-gray-50 dark:bg-[#262626] border border-gray-200 dark:border-white/10 border-l-4 border-l-[#0F4780] dark:border-l-[#00A3FF] space-y-1"
                                             >
-                                                <div className="flex items-center gap-2 text-xs font-bold text-[#00A3FF]">
+                                                <div className="flex items-center gap-2 text-xs font-bold text-[#0F4780] dark:text-[#00A3FF]">
                                                     <Clock className="w-3.5 h-3.5" />
                                                     {ev.start_time ? ev.start_time.substring(0, 5) : '08:00'} - {ev.end_time ? ev.end_time.substring(0, 5) : '10:00'}
                                                 </div>
-                                                <h3 className="font-bold text-white text-sm sm:text-base">
+                                                <h3 className="font-bold text-gray-900 dark:text-white text-sm sm:text-base">
                                                     {ev.discipline_code ? `[${ev.discipline_code}] ` : ''}
                                                     {ev.subject_name || ev.discipline_code || ev.title || 'Disciplina'}
                                                 </h3>
-                                                <div className="flex flex-wrap gap-3 text-xs text-gray-400 pt-1">
+                                                <div className="flex flex-wrap gap-3 text-xs text-gray-600 dark:text-gray-400 pt-1">
                                                     {ev.classroom && (
                                                         <span className="flex items-center gap-1">
                                                             <MapPin className="w-3.5 h-3.5 text-gray-500" />
@@ -524,17 +524,17 @@ export default function OfflinePage() {
                                         {dayBlocks.map((b, idx) => (
                                             <div
                                                 key={`b-${idx}`}
-                                                className="p-4 rounded-2xl bg-[#262626] border border-white/10 border-l-4 border-l-[#FFCC00] space-y-1"
+                                                className="p-4 rounded-2xl bg-gray-50 dark:bg-[#262626] border border-gray-200 dark:border-white/10 border-l-4 border-l-[#FFCC00] space-y-1"
                                             >
-                                                <div className="flex items-center gap-2 text-xs font-bold text-[#FFCC00]">
+                                                <div className="flex items-center gap-2 text-xs font-bold text-amber-700 dark:text-[#FFCC00]">
                                                     <Clock className="w-3.5 h-3.5" />
                                                     {b.start_time?.substring(0, 5)} - {b.end_time?.substring(0, 5)}
                                                 </div>
-                                                <h3 className="font-bold text-white text-sm sm:text-base">
+                                                <h3 className="font-bold text-gray-900 dark:text-white text-sm sm:text-base">
                                                     {b.title || 'Atividade Personalizada'}
                                                 </h3>
                                                 {b.location && (
-                                                    <div className="flex items-center gap-1 text-xs text-gray-400">
+                                                    <div className="flex items-center gap-1 text-xs text-gray-600 dark:text-gray-400">
                                                         <MapPin className="w-3.5 h-3.5 text-gray-500" />
                                                         {b.location}
                                                     </div>
@@ -547,20 +547,20 @@ export default function OfflinePage() {
                         </div>
 
                         {/* Bloco de Anotações Rápidas */}
-                        <div className="bg-[#1E1E1E] border border-white/10 rounded-3xl p-6 shadow-xl space-y-3">
-                            <div className="flex items-center justify-between border-b border-white/10 pb-3">
-                                <h2 className="text-lg font-bold text-white font-bukra flex items-center gap-2">
-                                    <FileText className="w-5 h-5 text-[#FFCC00]" />
+                        <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-3xl p-6 shadow-xl space-y-3">
+                            <div className="flex items-center justify-between border-b border-gray-100 dark:border-white/10 pb-3">
+                                <h2 className="text-lg font-bold text-gray-900 dark:text-white font-bukra flex items-center gap-2">
+                                    <FileText className="w-5 h-5 text-amber-500 dark:text-[#FFCC00]" />
                                     Anotações Rápidas Offline
                                 </h2>
-                                <span className="text-xs text-gray-400">{notesStatus}</span>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">{notesStatus}</span>
                             </div>
 
                             <textarea
                                 value={quickNotes}
                                 onChange={e => handleNotesChange(e.target.value)}
                                 placeholder="Anote lembretes rápidos de aula, horários ou recados aqui. Eles ficam salvos no seu dispositivo mesmo sem internet..."
-                                className="w-full h-28 bg-[#262626] border border-white/10 rounded-2xl p-4 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#00A3FF] transition-colors resize-y"
+                                className="w-full h-28 bg-gray-50 dark:bg-[#262626] border border-gray-300 dark:border-white/10 rounded-2xl p-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0F4780] dark:focus:border-[#00A3FF] transition-colors resize-y"
                             />
                         </div>
                     </div>
@@ -568,19 +568,19 @@ export default function OfflinePage() {
 
                 {/* TAB 2: LAB PESSOAL OFFLINE */}
                 {activeTab === 'lab' && (
-                    <div className="bg-[#1E1E1E] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 animate-fade-in">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                            <h2 className="text-lg font-bold text-white font-bukra flex items-center gap-2">
-                                <UserIcon className="w-5 h-5 text-[#FFCC00]" />
+                    <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 animate-fade-in">
+                        <div className="flex items-center justify-between border-b border-gray-100 dark:border-white/10 pb-4">
+                            <h2 className="text-lg font-bold text-gray-900 dark:text-white font-bukra flex items-center gap-2">
+                                <UserIcon className="w-5 h-5 text-amber-500 dark:text-[#FFCC00]" />
                                 Identidade Estudantil • Lab Pessoal
                             </h2>
-                            <span className="text-[10px] uppercase font-black px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400">
+                            <span className="text-[10px] uppercase font-black px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-600 dark:text-blue-400">
                                 {profile ? 'Perfil Sincronizado' : 'Dispositivo Local'}
                             </span>
                         </div>
 
                         <div className="flex flex-col items-center text-center gap-4">
-                            <div className="w-24 h-24 rounded-full border-4 border-[#FFCC00] bg-[#262626] flex items-center justify-center text-2xl font-bold text-white shadow-xl overflow-hidden">
+                            <div className="w-24 h-24 rounded-full border-4 border-[#FFCC00] bg-gray-100 dark:bg-[#262626] flex items-center justify-center text-2xl font-bold text-gray-800 dark:text-white shadow-xl overflow-hidden">
                                 {profile?.avatar_url ? (
                                     /* eslint-disable-next-line @next/next/no-img-element */
                                     <img src={profile.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
@@ -590,37 +590,37 @@ export default function OfflinePage() {
                             </div>
 
                             <div>
-                                <h3 className="text-xl font-bold text-white font-bukra">
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-white font-bukra">
                                     {profile?.full_name || profile?.name || 'Estudante IFUSP'}
                                 </h3>
                                 <div className="mt-1">
-                                    <span className="inline-block text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-[#FFCC00]/10 border border-[#FFCC00]/30 text-[#FFCC00]">
+                                    <span className="inline-block text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full bg-[#FFCC00]/10 border border-[#FFCC00]/30 text-amber-800 dark:text-[#FFCC00]">
                                         {(profile?.user_category || profile?.role || 'Comunidade USP').toUpperCase().replace('_', ' ')}
                                     </span>
                                 </div>
                             </div>
 
-                            <p className="text-xs sm:text-sm text-gray-400 max-w-md">
+                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 max-w-md">
                                 {profile?.bio || 'Identidade estudantil e informações acadêmicas preservadas localmente.'}
                             </p>
 
                             {/* Informações em Grid */}
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full text-left mt-2">
-                                <div className="p-4 rounded-2xl bg-[#262626] border border-white/10">
-                                    <span className="text-[10px] uppercase font-black tracking-wider text-gray-400 block">Número USP</span>
-                                    <span className="text-sm font-bold text-white mt-0.5 block">{profile?.nusp || 'Sincronizado na nuvem'}</span>
+                                <div className="p-4 rounded-2xl bg-gray-50 dark:bg-[#262626] border border-gray-200 dark:border-white/10">
+                                    <span className="text-[10px] uppercase font-black tracking-wider text-gray-500 dark:text-gray-400 block">Número USP</span>
+                                    <span className="text-sm font-bold text-gray-900 dark:text-white mt-0.5 block">{profile?.nusp || 'Sincronizado na nuvem'}</span>
                                 </div>
-                                <div className="p-4 rounded-2xl bg-[#262626] border border-white/10">
-                                    <span className="text-[10px] uppercase font-black tracking-wider text-gray-400 block">Unidade</span>
-                                    <span className="text-sm font-bold text-white mt-0.5 block">{profile?.institute || 'Instituto de Física (IFUSP)'}</span>
+                                <div className="p-4 rounded-2xl bg-gray-50 dark:bg-[#262626] border border-gray-200 dark:border-white/10">
+                                    <span className="text-[10px] uppercase font-black tracking-wider text-gray-500 dark:text-gray-400 block">Unidade</span>
+                                    <span className="text-sm font-bold text-gray-900 dark:text-white mt-0.5 block">{profile?.institute || 'Instituto de Física (IFUSP)'}</span>
                                 </div>
-                                <div className="p-4 rounded-2xl bg-[#262626] border border-white/10">
-                                    <span className="text-[10px] uppercase font-black tracking-wider text-gray-400 block">Curso</span>
-                                    <span className="text-sm font-bold text-white mt-0.5 block">{profile?.course || 'Física'}</span>
+                                <div className="p-4 rounded-2xl bg-gray-50 dark:bg-[#262626] border border-gray-200 dark:border-white/10">
+                                    <span className="text-[10px] uppercase font-black tracking-wider text-gray-500 dark:text-gray-400 block">Curso</span>
+                                    <span className="text-sm font-bold text-gray-900 dark:text-white mt-0.5 block">{profile?.course || 'Física'}</span>
                                 </div>
-                                <div className="p-4 rounded-2xl bg-[#262626] border border-white/10">
-                                    <span className="text-[10px] uppercase font-black tracking-wider text-gray-400 block">Linha de Pesquisa</span>
-                                    <span className="text-sm font-bold text-white mt-0.5 block">{profile?.research_line || (profile?.interests && profile.interests.slice(0, 2).join(', ')) || 'Geral'}</span>
+                                <div className="p-4 rounded-2xl bg-gray-50 dark:bg-[#262626] border border-gray-200 dark:border-white/10">
+                                    <span className="text-[10px] uppercase font-black tracking-wider text-gray-500 dark:text-gray-400 block">Linha de Pesquisa</span>
+                                    <span className="text-sm font-bold text-gray-900 dark:text-white mt-0.5 block">{profile?.research_line || (profile?.interests && profile.interests.slice(0, 2).join(', ')) || 'Geral'}</span>
                                 </div>
                             </div>
                         </div>
@@ -629,18 +629,18 @@ export default function OfflinePage() {
 
                 {/* TAB 3: GCIF (GRANDE COLISOR DO IF) KNOWLEDGE BASE */}
                 {activeTab === 'gcif' && (
-                    <div className="bg-[#1E1E1E] border border-white/10 rounded-3xl p-6 shadow-xl space-y-6 animate-fade-in">
-                        <div className="flex items-center justify-between border-b border-white/10 pb-4">
+                    <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-3xl p-6 shadow-xl space-y-6 animate-fade-in">
+                        <div className="flex items-center justify-between border-b border-gray-100 dark:border-white/10 pb-4">
                             <div>
-                                <h2 className="text-lg font-bold text-white font-bukra flex items-center gap-2">
-                                    <BookOpen className="w-5 h-5 text-[#00A3FF]" />
+                                <h2 className="text-lg font-bold text-gray-900 dark:text-white font-bukra flex items-center gap-2">
+                                    <BookOpen className="w-5 h-5 text-[#0F4780] dark:text-[#00A3FF]" />
                                     GCIF • Guia de Convivência do IFUSP
                                 </h2>
-                                <p className="text-xs text-gray-400 mt-1">
+                                <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
                                     Células de conhecimento, sobrevivência universitária e dicas úteis salvas offline.
                                 </p>
                             </div>
-                            <span className="text-[10px] uppercase font-black px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 hidden sm:inline-block">
+                            <span className="text-[10px] uppercase font-black px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-600 dark:text-blue-400 hidden sm:inline-block">
                                 Base Completa
                             </span>
                         </div>
@@ -653,7 +653,7 @@ export default function OfflinePage() {
                                 value={searchQuery}
                                 onChange={e => setSearchQuery(e.target.value)}
                                 placeholder="Buscar no GCIF (ex: bandejão, bolsas, IC, CRUSP, TEA, veteranos)..."
-                                className="w-full bg-[#262626] border border-white/10 rounded-2xl py-3 pl-11 pr-4 text-sm text-white placeholder-gray-500 focus:outline-none focus:border-[#FFCC00] transition-colors"
+                                className="w-full bg-gray-50 dark:bg-[#262626] border border-gray-300 dark:border-white/10 rounded-2xl py-3 pl-11 pr-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#FFCC00] transition-colors"
                             />
                         </div>
 
@@ -662,24 +662,24 @@ export default function OfflinePage() {
                             {filteredGcif.map(cell => (
                                 <div
                                     key={cell.id}
-                                    className="p-5 rounded-2xl bg-[#262626] border border-white/10 hover:border-white/20 transition-all space-y-2 flex flex-col justify-between"
+                                    className="p-5 rounded-2xl bg-gray-50 dark:bg-[#262626] border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20 transition-all space-y-2 flex flex-col justify-between"
                                 >
                                     <div>
                                         <span className={`inline-block text-[10px] font-black uppercase px-2.5 py-0.5 rounded-md border ${cell.color} mb-1.5`}>
                                             {cell.badge}
                                         </span>
-                                        <h3 className="font-bold text-white text-base font-bukra">
+                                        <h3 className="font-bold text-gray-900 dark:text-white text-base font-bukra">
                                             {cell.title}
                                         </h3>
-                                        <p className="text-xs text-gray-400 mt-1 leading-relaxed">
+                                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1 leading-relaxed">
                                             {cell.desc}
                                         </p>
                                     </div>
 
-                                    <div className="space-y-1 pt-3 border-t border-white/5">
+                                    <div className="space-y-1 pt-3 border-t border-gray-200/60 dark:border-white/5">
                                         {cell.bullets.map((b, bIdx) => (
-                                            <div key={bIdx} className="flex items-start gap-1.5 text-[11px] text-gray-300">
-                                                <CheckCircle2 className="w-3.5 h-3.5 text-[#FFCC00] shrink-0 mt-0.5" />
+                                            <div key={bIdx} className="flex items-start gap-1.5 text-[11px] text-gray-700 dark:text-gray-300">
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-amber-600 dark:text-[#FFCC00] shrink-0 mt-0.5" />
                                                 <span>{b}</span>
                                             </div>
                                         ))}

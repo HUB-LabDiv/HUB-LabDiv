@@ -9,6 +9,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, Calendar, Clock, Tag, FileText, Bell } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 
 interface CustomEventModalProps {
     isOpen: boolean;
@@ -134,17 +135,20 @@ export function CustomEventModal({ isOpen, onClose, onSave, initialDate }: Custo
         onClose();
     };
 
+    if (!isOpen) return null;
+
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="bg-[#121212] border border-white/10 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-                <div className="flex items-center justify-between p-4 border-b border-white/5 bg-white/5">
-                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+        <ModalPortal>
+            <div className="fixed inset-0 z-[100] flex min-h-full items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-md overflow-y-auto animate-in fade-in duration-200">
+                <div className="bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/10 rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col max-h-[90vh] m-auto">
+                <div className="flex items-center justify-between p-4 border-b border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
                         <Calendar className="w-5 h-5 text-brand-blue" />
                         Novo Evento
                     </h3>
                     <button
                         onClick={onClose}
-                        className="p-2 hover:bg-white/10 rounded-lg text-gray-400 hover:text-white transition-colors"
+                        className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-lg text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                     >
                         <X size={20} />
                     </button>
@@ -153,19 +157,19 @@ export function CustomEventModal({ isOpen, onClose, onSave, initialDate }: Custo
                 <div className="p-6 overflow-y-auto">
                     <form id="custom-event-form" onSubmit={handleSubmit} className="space-y-4">
                         <div className="space-y-1">
-                            <label className="text-xs font-bold text-gray-400 uppercase">Título do Evento *</label>
+                            <label className="text-xs font-bold text-gray-700 dark:text-gray-400 uppercase">Título do Evento *</label>
                             <input
                                 type="text"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
                                 placeholder="Ex: Prova de Física, Psicóloga..."
-                                className="w-full px-4 py-3 bg-[#1A1A1A] border border-white/10 rounded-xl text-white focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none transition-all"
+                                className="w-full px-4 py-3 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
                                 required
                             />
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-xs font-bold text-gray-400 uppercase">Categoria</label>
+                            <label className="text-xs font-bold text-gray-700 dark:text-gray-400 uppercase">Categoria</label>
                             <div className="grid grid-cols-2 gap-2">
                                 {CATEGORIES.map(cat => (
                                     <button
@@ -174,8 +178,8 @@ export function CustomEventModal({ isOpen, onClose, onSave, initialDate }: Custo
                                         onClick={() => setCategory(cat.id)}
                                         className={`px-3 py-2 rounded-lg text-sm font-medium border text-left transition-all ${
                                             category === cat.id 
-                                                ? 'bg-white/10 border-white text-white' 
-                                                : 'bg-transparent border-white/10 text-gray-400 hover:border-white/30'
+                                                ? 'bg-gray-100 dark:bg-white/10 border-gray-900 dark:border-white text-gray-900 dark:text-white' 
+                                                : 'bg-transparent border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-white/30'
                                         }`}
                                         style={{ borderLeftColor: category === cat.id ? cat.color : undefined, borderLeftWidth: category === cat.id ? '4px' : '1px' }}
                                     >
@@ -191,14 +195,14 @@ export function CustomEventModal({ isOpen, onClose, onSave, initialDate }: Custo
                                         value={customCategory}
                                         onChange={(e) => setCustomCategory(e.target.value)}
                                         placeholder="Ex: Monitoria, Iniciação Científica..."
-                                        className="w-full px-4 py-2.5 bg-[#1A1A1A] border border-white/10 rounded-xl text-white text-sm focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none transition-all placeholder:text-gray-500"
+                                        className="w-full px-4 py-2.5 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white text-sm focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
                                     />
                                 </div>
                             )}
                         </div>
 
                         <div className="space-y-2">
-                            <label className="text-xs font-bold text-gray-400 uppercase">Recorrência</label>
+                            <label className="text-xs font-bold text-gray-700 dark:text-gray-400 uppercase">Recorrência</label>
                             <div className="grid grid-cols-2 gap-2">
                                 <button
                                     type="button"
@@ -206,7 +210,7 @@ export function CustomEventModal({ isOpen, onClose, onSave, initialDate }: Custo
                                     className={`px-3 py-2.5 rounded-xl text-xs font-bold transition-all border ${
                                         !isRecurring 
                                             ? 'bg-brand-blue text-white border-brand-blue shadow-md' 
-                                            : 'bg-transparent border-white/10 text-gray-400 hover:border-white/30'
+                                            : 'bg-transparent border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-white/30'
                                     }`}
                                 >
                                     Evento Único
@@ -223,7 +227,7 @@ export function CustomEventModal({ isOpen, onClose, onSave, initialDate }: Custo
                                     className={`px-3 py-2.5 rounded-xl text-xs font-bold transition-all border ${
                                         isRecurring 
                                             ? 'bg-brand-blue text-white border-brand-blue shadow-md' 
-                                            : 'bg-transparent border-white/10 text-gray-400 hover:border-white/30'
+                                            : 'bg-transparent border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:border-gray-400 dark:hover:border-white/30'
                                     }`}
                                 >
                                     Recorrente (Semanal)
@@ -231,7 +235,7 @@ export function CustomEventModal({ isOpen, onClose, onSave, initialDate }: Custo
                             </div>
 
                             {isRecurring && (
-                                <div className="p-3 bg-white/5 border border-white/10 rounded-xl space-y-2 animate-in fade-in duration-200">
+                                <div className="p-3 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl space-y-2 animate-in fade-in duration-200">
                                     <div className="flex items-center justify-between">
                                         <span className="text-[10px] font-black uppercase text-brand-blue tracking-wider">Repetir nos Dias:</span>
                                         <div className="flex gap-2 text-[10px]">
@@ -242,7 +246,7 @@ export function CustomEventModal({ isOpen, onClose, onSave, initialDate }: Custo
                                             >
                                                 Seg a Sex
                                             </button>
-                                            <span className="text-gray-600">|</span>
+                                            <span className="text-gray-400 dark:text-gray-600">|</span>
                                             <button
                                                 type="button"
                                                 onClick={() => setSelectedDays([0, 1, 2, 3, 4, 5, 6])}
@@ -277,7 +281,7 @@ export function CustomEventModal({ isOpen, onClose, onSave, initialDate }: Custo
                                                     className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all border ${
                                                         isSelected
                                                             ? 'bg-brand-blue text-white border-brand-blue'
-                                                            : 'bg-[#1A1A1A] text-gray-400 border-white/10 hover:border-white/30'
+                                                            : 'bg-gray-100 dark:bg-[#1A1A1A] text-gray-700 dark:text-gray-400 border-gray-200 dark:border-white/10 hover:border-gray-400 dark:hover:border-white/30'
                                                     }`}
                                                 >
                                                     {day.label}
@@ -291,22 +295,22 @@ export function CustomEventModal({ isOpen, onClose, onSave, initialDate }: Custo
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-gray-400 uppercase">{isRecurring ? 'Data Inicial' : 'Data *'}</label>
+                                <label className="text-xs font-bold text-gray-700 dark:text-gray-400 uppercase">{isRecurring ? 'Data Inicial' : 'Data *'}</label>
                                 <input
                                     type="date"
                                     value={date}
                                     onChange={(e) => setDate(e.target.value)}
-                                    className="w-full px-4 py-3 bg-[#1A1A1A] border border-white/10 rounded-xl text-white focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none"
+                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none"
                                     required={!isRecurring}
                                 />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-gray-400 uppercase">Início *</label>
+                                <label className="text-xs font-bold text-gray-700 dark:text-gray-400 uppercase">Início *</label>
                                 <input
                                     type="time"
                                     value={startTime}
                                     onChange={(e) => setStartTime(e.target.value)}
-                                    className="w-full px-4 py-3 bg-[#1A1A1A] border border-white/10 rounded-xl text-white focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none"
+                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none"
                                     required
                                 />
                             </div>
@@ -314,21 +318,21 @@ export function CustomEventModal({ isOpen, onClose, onSave, initialDate }: Custo
                         
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-gray-400 uppercase">Fim *</label>
+                                <label className="text-xs font-bold text-gray-700 dark:text-gray-400 uppercase">Fim *</label>
                                 <input
                                     type="time"
                                     value={endTime}
                                     onChange={(e) => setEndTime(e.target.value)}
-                                    className="w-full px-4 py-3 bg-[#1A1A1A] border border-white/10 rounded-xl text-white focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none"
+                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none"
                                     required
                                 />
                             </div>
                             <div className="space-y-1">
-                                <label className="text-xs font-bold text-gray-400 uppercase">Lembrete Push</label>
+                                <label className="text-xs font-bold text-gray-700 dark:text-gray-400 uppercase">Lembrete Push</label>
                                 <select
                                     value={reminder}
                                     onChange={(e) => setReminder(Number(e.target.value))}
-                                    className="w-full px-4 py-3 bg-[#1A1A1A] border border-white/10 rounded-xl text-white focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none"
+                                    className="w-full px-4 py-3 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none"
                                 >
                                     <option value={0}>Sem lembrete</option>
                                     <option value={15}>15 minutos antes</option>
@@ -340,23 +344,23 @@ export function CustomEventModal({ isOpen, onClose, onSave, initialDate }: Custo
                         </div>
 
                         <div className="space-y-1">
-                            <label className="text-xs font-bold text-gray-400 uppercase">Descrição (Opcional)</label>
+                            <label className="text-xs font-bold text-gray-700 dark:text-gray-400 uppercase">Descrição (Opcional)</label>
                             <textarea
                                 value={description}
                                 onChange={(e) => setDescription(e.target.value)}
                                 placeholder="Detalhes adicionais do evento..."
                                 rows={3}
-                                className="w-full px-4 py-3 bg-[#1A1A1A] border border-white/10 rounded-xl text-white focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none resize-none"
+                                className="w-full px-4 py-3 bg-gray-50 dark:bg-[#1A1A1A] border border-gray-200 dark:border-white/10 rounded-xl text-gray-900 dark:text-white focus:border-brand-blue focus:ring-1 focus:ring-brand-blue outline-none resize-none placeholder:text-gray-400 dark:placeholder:text-gray-500"
                             />
                         </div>
                     </form>
                 </div>
 
-                <div className="p-4 border-t border-white/5 bg-white/5 flex justify-end gap-3">
+                <div className="p-4 border-t border-gray-100 dark:border-white/5 bg-gray-50/50 dark:bg-white/5 flex justify-end gap-3">
                     <button
                         type="button"
                         onClick={onClose}
-                        className="px-5 py-2.5 rounded-xl font-bold text-sm text-gray-400 hover:text-white transition-colors"
+                        className="px-5 py-2.5 rounded-xl font-bold text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                     >
                         Cancelar
                     </button>
@@ -370,5 +374,6 @@ export function CustomEventModal({ isOpen, onClose, onSave, initialDate }: Custo
                 </div>
             </div>
         </div>
+        </ModalPortal>
     );
 }

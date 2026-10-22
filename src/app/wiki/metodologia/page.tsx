@@ -265,13 +265,13 @@ export default function MetodologiaPage() {
 
     return (
         <MainLayoutWrapper>
-            <div className="min-h-screen bg-[#121212] text-white selection:bg-brand-blue selection:text-white pb-24 font-open-sans">
+            <div className="min-h-screen bg-transparent text-gray-900 dark:text-white selection:bg-brand-blue selection:text-white pb-24 font-open-sans">
                 {/* Top Navigation & Breadcrumbs */}
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-                    <nav className="flex items-center gap-3 text-xs font-bold font-bukra uppercase tracking-[0.2em] text-gray-400 mb-8 flex-wrap">
+                    <nav className="flex items-center gap-3 text-xs font-bold font-bukra uppercase tracking-[0.2em] text-gray-500 dark:text-gray-400 mb-8 flex-wrap">
                         <Link
                             href="/gcif"
-                            className="flex items-center gap-2 hover:text-white transition-colors bg-white/5 border border-white/10 px-4 py-2 rounded-full text-brand-blue hover:bg-brand-blue/10"
+                            className="flex items-center gap-2 text-brand-blue hover:text-brand-blue/80 transition-colors bg-white/80 dark:bg-white/5 border border-gray-200 dark:border-white/10 px-4 py-2 rounded-full hover:bg-brand-blue/10 shadow-sm"
                         >
                             <ArrowLeft className="w-3.5 h-3.5" />
                             <span>Voltar ao CGIF</span>
@@ -279,43 +279,43 @@ export default function MetodologiaPage() {
                         <Link href="/gcif/wiki" className="hover:text-brand-blue transition-colors">
                             Wiki do IFUSP
                         </Link>
-                        <span className="text-gray-600">/</span>
-                        <span className="text-[#00A3FF] italic">Biblioteca & Metodologia</span>
+                        <span className="text-gray-400 dark:text-gray-600">/</span>
+                        <span className="text-brand-blue dark:text-[#00A3FF] italic">Biblioteca & Metodologia</span>
                     </nav>
 
                     {/* Hero Header */}
-                    <div className="relative rounded-[36px] bg-gradient-to-br from-[#1E1E1E] via-[#1A1A1A] to-[#121212] border border-white/10 p-8 sm:p-12 mb-10 overflow-hidden shadow-2xl">
-                        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-blue/10 rounded-full blur-[120px] pointer-events-none" />
-                        <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-brand-yellow/5 rounded-full blur-[100px] pointer-events-none" />
+                    <div className="relative rounded-[36px] bg-gradient-to-br from-blue-50/70 via-white to-gray-50 dark:from-[#1E1E1E] dark:via-[#1A1A1A] dark:to-[#121212] border border-gray-200 dark:border-white/10 p-8 sm:p-12 mb-10 overflow-hidden shadow-xl dark:shadow-2xl">
+                        <div className="absolute top-0 right-0 w-96 h-96 bg-brand-blue/10 dark:bg-brand-blue/5 rounded-full blur-[120px] pointer-events-none" />
+                        <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-brand-yellow/10 dark:bg-brand-yellow/5 rounded-full blur-[100px] pointer-events-none" />
 
                         <div className="relative z-10 max-w-4xl">
-                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-blue/15 border border-brand-blue/30 text-[#00A3FF] text-[10px] font-black uppercase tracking-widest mb-4">
+                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-blue/10 dark:bg-brand-blue/15 border border-brand-blue/30 text-brand-blue dark:text-[#00A3FF] text-[10px] font-black uppercase tracking-widest mb-4">
                                 <Sparkles className="w-3.5 h-3.5" />
                                 Guia Oficial de Sobrevivência Acadêmica 2026
                             </div>
-                            <h1 className="text-3xl sm:text-5xl font-black text-white font-bukra italic uppercase tracking-tighter mb-4 leading-tight">
+                            <h1 className="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white font-bukra italic uppercase tracking-tighter mb-4 leading-tight">
                                 Biblioteca do Instituto de Física & Como Pesquisar
                             </h1>
-                            <p className="text-sm sm:text-base text-gray-300 font-open-sans leading-relaxed max-w-3xl">
+                            <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed max-w-3xl">
                                 O guia prático completo sobre a <b>Biblioteca do Instituto de Física (IFUSP)</b>: regras oficiais de empréstimo (10 livros por 10 dias na graduação), acervo de 200 mil itens, caixa de devolução 24h, <b>Google Scholar com FullText@USP</b>, acesso remoto via <b>VPN/CAFe</b> e dicas de locais de estudo no campus.
                             </p>
 
                             {/* Quick Metrics Bar */}
-                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-8 border-t border-white/10">
+                            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-8 pt-8 border-t border-gray-200 dark:border-white/10">
                                 <div>
-                                    <div className="text-[10px] font-black font-bukra uppercase tracking-wider text-gray-400">Acervo IFUSP</div>
-                                    <div className="text-lg sm:text-xl font-black font-bukra text-white">+200 Mil Itens</div>
+                                    <div className="text-[10px] font-black font-bukra uppercase tracking-wider text-gray-500 dark:text-gray-400">Acervo IFUSP</div>
+                                    <div className="text-lg sm:text-xl font-black font-bukra text-gray-900 dark:text-white">+200 Mil Itens</div>
                                 </div>
                                 <div>
-                                    <div className="text-[10px] font-black font-bukra uppercase tracking-wider text-gray-400">Empréstimo Graduação</div>
+                                    <div className="text-[10px] font-black font-bukra uppercase tracking-wider text-gray-500 dark:text-gray-400">Empréstimo Graduação</div>
                                     <div className="text-lg sm:text-xl font-black font-bukra text-brand-yellow">10 Livros / 10 Dias</div>
                                 </div>
                                 <div>
-                                    <div className="text-[10px] font-black font-bukra uppercase tracking-wider text-gray-400">Renovações Online</div>
-                                    <div className="text-lg sm:text-xl font-black font-bukra text-[#00A3FF]">Até 3x no PBI</div>
+                                    <div className="text-[10px] font-black font-bukra uppercase tracking-wider text-gray-500 dark:text-gray-400">Renovações Online</div>
+                                    <div className="text-lg sm:text-xl font-black font-bukra text-brand-blue dark:text-[#00A3FF]">Até 3x no PBI</div>
                                 </div>
                                 <div>
-                                    <div className="text-[10px] font-black font-bukra uppercase tracking-wider text-gray-400">Rede de Bibliotecas</div>
+                                    <div className="text-[10px] font-black font-bukra uppercase tracking-wider text-gray-500 dark:text-gray-400">Rede de Bibliotecas</div>
                                     <div className="text-lg sm:text-xl font-black font-bukra text-brand-red">60 Bibliotecas USP</div>
                                 </div>
                             </div>
@@ -324,13 +324,13 @@ export default function MetodologiaPage() {
 
                     {/* Subnavigation Tabs */}
                     <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto scrollbar-hide py-2 mb-10">
-                        <div className="flex p-1.5 bg-[#1E1E1E]/90 backdrop-blur-xl border border-white/10 rounded-[22px] shadow-lg">
+                        <div className="flex p-1.5 bg-white/90 dark:bg-[#1E1E1E]/90 backdrop-blur-xl border border-gray-200 dark:border-white/10 rounded-[22px] shadow-lg">
                             <button
                                 onClick={() => setActiveTab('biblioteca')}
                                 className={`flex items-center gap-2 px-4 py-2.5 rounded-[16px] text-xs font-black uppercase tracking-wider transition-all font-bukra whitespace-nowrap ${
                                     activeTab === 'biblioteca'
                                         ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/30'
-                                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                        : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
                                 }`}
                             >
                                 <Library className="w-4 h-4" />
@@ -341,7 +341,7 @@ export default function MetodologiaPage() {
                                 className={`flex items-center gap-2 px-4 py-2.5 rounded-[16px] text-xs font-black uppercase tracking-wider transition-all font-bukra whitespace-nowrap ${
                                     activeTab === 'scholar'
                                         ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/30'
-                                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                        : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
                                 }`}
                             >
                                 <Search className="w-4 h-4" />
@@ -352,7 +352,7 @@ export default function MetodologiaPage() {
                                 className={`flex items-center gap-2 px-4 py-2.5 rounded-[16px] text-xs font-black uppercase tracking-wider transition-all font-bukra whitespace-nowrap ${
                                     activeTab === 'locais'
                                         ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/30'
-                                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                        : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
                                 }`}
                             >
                                 <MapPin className="w-4 h-4" />
@@ -363,7 +363,7 @@ export default function MetodologiaPage() {
                                 className={`flex items-center gap-2 px-4 py-2.5 rounded-[16px] text-xs font-black uppercase tracking-wider transition-all font-bukra whitespace-nowrap ${
                                     activeTab === 'remoto'
                                         ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/30'
-                                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                        : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
                                 }`}
                             >
                                 <Globe className="w-4 h-4" />
@@ -374,7 +374,7 @@ export default function MetodologiaPage() {
                                 className={`flex items-center gap-2 px-4 py-2.5 rounded-[16px] text-xs font-black uppercase tracking-wider transition-all font-bukra whitespace-nowrap ${
                                     activeTab === 'ferramentas'
                                         ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/30'
-                                        : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                        : 'text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
                                 }`}
                             >
                                 <Database className="w-4 h-4" />
@@ -407,20 +407,20 @@ export default function MetodologiaPage() {
                                 className="space-y-12"
                             >
                                 {/* Header da Biblioteca */}
-                                <div className="p-8 sm:p-10 rounded-[36px] bg-gradient-to-br from-[#1E1E1E] via-[#1A1A1A] to-[#121212] border border-white/10 shadow-2xl">
+                                <div className="p-8 sm:p-10 rounded-[36px] bg-gradient-to-br from-blue-50/70 via-white to-gray-50 dark:from-[#1E1E1E] dark:via-[#1A1A1A] dark:to-[#121212] border border-gray-200 dark:border-white/10 shadow-xl dark:shadow-2xl">
                                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
                                         <div className="space-y-4 max-w-3xl">
-                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/15 border border-brand-blue/30 text-[#00A3FF] text-[10px] font-black uppercase tracking-wider">
+                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 dark:bg-brand-blue/15 border border-brand-blue/30 text-brand-blue dark:text-[#00A3FF] text-[10px] font-black uppercase tracking-wider">
                                                 <Library className="w-3.5 h-3.5" />
                                                 Criada na década de 1970 • IFUSP
                                             </div>
-                                            <h2 className="text-2xl sm:text-3xl font-black text-white font-bukra uppercase italic">
+                                            <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white font-bukra uppercase italic">
                                                 Biblioteca do Instituto de Física
                                             </h2>
-                                            <p className="text-xs sm:text-sm text-gray-300 font-open-sans leading-relaxed">
+                                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed">
                                                 Considerada uma das mais completas do país na área de Física. Seu acervo conta com <b>mais de 200 mil itens</b> entre livros, periódicos, teses, dissertações, apostilas, impressos e vasta coleção eletrônica integrada ao SIBiUSP / ABCD USP.
                                             </p>
-                                            <div className="p-4 rounded-2xl bg-brand-yellow/10 border border-brand-yellow/30 text-xs text-brand-yellow font-medium leading-relaxed">
+                                            <div className="p-4 rounded-2xl bg-brand-yellow/10 border border-brand-yellow/30 text-xs text-yellow-800 dark:text-brand-yellow font-medium leading-relaxed">
                                                 📍 <b>Localização Atual:</b> Com o prédio principal em reforma, a biblioteca está alocada temporariamente no <b>Laboratório de Ressonância Magnética</b>, com previsão de retorno ao espaço original.
                                             </div>
                                         </div>
@@ -438,10 +438,10 @@ export default function MetodologiaPage() {
                                                 href="https://buscaintegrada.usp.br"
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="px-6 py-3.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all"
+                                                className="px-6 py-3.5 rounded-2xl bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all"
                                             >
                                                 <span>Buscar no PBI / Dedalus</span>
-                                                <Search className="w-4 h-4 text-[#00A3FF]" />
+                                                <Search className="w-4 h-4 text-brand-blue dark:text-[#00A3FF]" />
                                             </a>
                                         </div>
                                     </div>
@@ -449,7 +449,7 @@ export default function MetodologiaPage() {
 
                                 {/* Tabela de Prazos de Empréstimo */}
                                 <div>
-                                    <h3 className="text-xl font-black text-white font-bukra uppercase mb-6 flex items-center gap-3">
+                                    <h3 className="text-xl font-black text-gray-900 dark:text-white font-bukra uppercase mb-6 flex items-center gap-3">
                                         <Clock className="w-6 h-6 text-brand-yellow" />
                                         Categorias & Prazos de Empréstimo Unificado
                                     </h3>
@@ -457,20 +457,20 @@ export default function MetodologiaPage() {
                                         {BORROWING_CATEGORIES.map((cat, idx) => (
                                             <div
                                                 key={idx}
-                                                className={`p-6 rounded-[28px] border ${cat.color} transition-all flex flex-col justify-between shadow-xl`}
+                                                className={`p-6 rounded-[28px] border ${cat.color} transition-all flex flex-col justify-between shadow-lg dark:shadow-xl bg-white dark:bg-transparent`}
                                             >
                                                 <div>
                                                     <span className="text-[10px] font-black uppercase tracking-wider block mb-2 font-bukra">
                                                         {cat.role}
                                                     </span>
-                                                    <div className="text-3xl font-black font-bukra text-white mb-1">
+                                                    <div className="text-3xl font-black font-bukra text-gray-900 dark:text-white mb-1">
                                                         {cat.items}
                                                     </div>
-                                                    <div className="text-sm font-bold text-gray-300 font-open-sans">
+                                                    <div className="text-sm font-bold text-gray-600 dark:text-gray-300 font-open-sans">
                                                         Prazo: {cat.days}
                                                     </div>
                                                 </div>
-                                                <div className="pt-4 mt-4 border-t border-white/10 text-[11px] text-gray-400">
+                                                <div className="pt-4 mt-4 border-t border-gray-200 dark:border-white/10 text-[11px] text-gray-500 dark:text-gray-400">
                                                     Válido em todas as 60 bibliotecas da USP com cartão e-Card.
                                                 </div>
                                             </div>
@@ -479,57 +479,57 @@ export default function MetodologiaPage() {
                                 </div>
 
                                 {/* Como Encontrar um Livro (Número de Chamada) */}
-                                <div className="p-8 rounded-[36px] bg-[#1E1E1E] border border-white/10 shadow-2xl">
+                                <div className="p-8 rounded-[36px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-2xl">
                                     <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-10 h-10 rounded-xl bg-brand-blue/15 text-[#00A3FF] flex items-center justify-center border border-brand-blue/30">
+                                        <div className="w-10 h-10 rounded-xl bg-brand-blue/10 dark:bg-brand-blue/15 text-brand-blue dark:text-[#00A3FF] flex items-center justify-center border border-brand-blue/20 dark:border-brand-blue/30">
                                             <Tag className="w-5 h-5" />
                                         </div>
                                         <div>
-                                            <h3 className="text-lg font-black text-white font-bukra uppercase">
+                                            <h3 className="text-lg font-black text-gray-900 dark:text-white font-bukra uppercase">
                                                 Como Encontrar um Livro na Estante (Etiqueta da Lombada)
                                             </h3>
-                                            <p className="text-xs text-gray-400">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">
                                                 O número de chamada localizado na lombada determina a posição exata do livro nas prateleiras.
                                             </p>
                                         </div>
                                     </div>
 
                                     {/* Visual Callout Label */}
-                                    <div className="p-6 rounded-3xl bg-black/60 border border-white/10 mb-6">
+                                    <div className="p-6 rounded-3xl bg-gray-50 dark:bg-black/60 border border-gray-200 dark:border-white/10 mb-6">
                                         <div className="flex flex-wrap items-center justify-center gap-3 text-center sm:text-left">
-                                            <div className="p-3 rounded-2xl bg-brand-blue/20 border border-brand-blue/40">
-                                                <div className="text-xl font-black font-mono text-[#00A3FF]">370</div>
-                                                <div className="text-[9px] uppercase font-bold text-gray-400 mt-1">Assunto (CDU/CDD)</div>
+                                            <div className="p-3 rounded-2xl bg-brand-blue/10 dark:bg-brand-blue/20 border border-brand-blue/30 dark:border-brand-blue/40">
+                                                <div className="text-xl font-black font-mono text-brand-blue dark:text-[#00A3FF]">370</div>
+                                                <div className="text-[9px] uppercase font-bold text-gray-500 dark:text-gray-400 mt-1">Assunto (CDU/CDD)</div>
                                             </div>
-                                            <div className="p-3 rounded-2xl bg-brand-yellow/20 border border-brand-yellow/40">
-                                                <div className="text-xl font-black font-mono text-brand-yellow">S124e</div>
-                                                <div className="text-[9px] uppercase font-bold text-gray-400 mt-1">Nº do Autor (Cutter)</div>
+                                            <div className="p-3 rounded-2xl bg-brand-yellow/10 dark:bg-brand-yellow/20 border border-brand-yellow/30 dark:border-brand-yellow/40">
+                                                <div className="text-xl font-black font-mono text-yellow-700 dark:text-brand-yellow">S124e</div>
+                                                <div className="text-[9px] uppercase font-bold text-gray-500 dark:text-gray-400 mt-1">Nº do Autor (Cutter)</div>
                                             </div>
-                                            <div className="p-3 rounded-2xl bg-brand-red/20 border border-brand-red/40">
+                                            <div className="p-3 rounded-2xl bg-brand-red/10 dark:bg-brand-red/20 border border-brand-red/30 dark:border-brand-red/40">
                                                 <div className="text-xl font-black font-mono text-brand-red">v.2</div>
-                                                <div className="text-[9px] uppercase font-bold text-gray-400 mt-1">Volume da Coleção</div>
+                                                <div className="text-[9px] uppercase font-bold text-gray-500 dark:text-gray-400 mt-1">Volume da Coleção</div>
                                             </div>
-                                            <div className="p-3 rounded-2xl bg-white/10 border border-white/20">
-                                                <div className="text-xl font-black font-mono text-white">ex.3</div>
-                                                <div className="text-[9px] uppercase font-bold text-gray-400 mt-1">Nº do Exemplar</div>
+                                            <div className="p-3 rounded-2xl bg-gray-200/60 dark:bg-white/10 border border-gray-300 dark:border-white/20">
+                                                <div className="text-xl font-black font-mono text-gray-900 dark:text-white">ex.3</div>
+                                                <div className="text-[9px] uppercase font-bold text-gray-500 dark:text-gray-400 mt-1">Nº do Exemplar</div>
                                             </div>
                                         </div>
                                     </div>
 
                                     {/* Fitas de Circulação */}
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div className="p-4 rounded-2xl bg-black/40 border border-blue-500/30 flex items-center gap-3">
+                                        <div className="p-4 rounded-2xl bg-gray-50 dark:bg-black/40 border border-blue-500/30 flex items-center gap-3">
                                             <div className="w-4 h-10 rounded-full bg-blue-500 shrink-0" />
                                             <div>
-                                                <div className="text-xs font-black text-white font-bukra">Fita Azul na Lombada</div>
-                                                <div className="text-[11px] text-gray-400">Apenas para consulta no local (NÃO CIRCULA).</div>
+                                                <div className="text-xs font-black text-gray-900 dark:text-white font-bukra">Fita Azul na Lombada</div>
+                                                <div className="text-[11px] text-gray-500 dark:text-gray-400">Apenas para consulta no local (NÃO CIRCULA).</div>
                                             </div>
                                         </div>
-                                        <div className="p-4 rounded-2xl bg-black/40 border border-yellow-500/30 flex items-center gap-3">
+                                        <div className="p-4 rounded-2xl bg-gray-50 dark:bg-black/40 border border-yellow-500/30 flex items-center gap-3">
                                             <div className="w-4 h-10 rounded-full bg-yellow-500 shrink-0" />
                                             <div>
-                                                <div className="text-xs font-black text-white font-bukra">Fita Amarela na Lombada</div>
-                                                <div className="text-[11px] text-gray-400">Apenas para consulta no local (NÃO CIRCULA).</div>
+                                                <div className="text-xs font-black text-gray-900 dark:text-white font-bukra">Fita Amarela na Lombada</div>
+                                                <div className="text-[11px] text-gray-500 dark:text-gray-400">Apenas para consulta no local (NÃO CIRCULA).</div>
                                             </div>
                                         </div>
                                     </div>
@@ -537,54 +537,54 @@ export default function MetodologiaPage() {
 
                                 {/* Regras Cruciais: Renovações, Atrasos e Caixa de Devolução 24h */}
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                                    <div className="p-6 rounded-[28px] bg-[#1E1E1E] border border-white/10 shadow-xl space-y-3">
+                                    <div className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-xl space-y-3">
                                         <div className="w-10 h-10 rounded-xl bg-brand-blue/10 text-brand-blue flex items-center justify-center">
                                             <Layers className="w-5 h-5" />
                                         </div>
-                                        <h4 className="text-base font-black text-white font-bukra">
+                                        <h4 className="text-base font-black text-gray-900 dark:text-white font-bukra">
                                             Renovações & Reservas
                                         </h4>
-                                        <p className="text-xs text-gray-300 font-open-sans leading-relaxed">
+                                        <p className="text-xs text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed">
                                             São permitidas até <b>3 renovações online</b> no PBI (caso não haja reserva para o título). A renovação seguinte deve ser feita obrigatoriamente no balcão presencial com a apresentação dos livros.
                                         </p>
                                     </div>
 
-                                    <div className="p-6 rounded-[28px] bg-[#1E1E1E] border border-brand-red/30 shadow-xl space-y-3">
+                                    <div className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-brand-red/30 shadow-lg dark:shadow-xl space-y-3">
                                         <div className="w-10 h-10 rounded-xl bg-brand-red/10 text-brand-red flex items-center justify-center">
                                             <AlertTriangle className="w-5 h-5" />
                                         </div>
-                                        <h4 className="text-base font-black text-white font-bukra">
+                                        <h4 className="text-base font-black text-gray-900 dark:text-white font-bukra">
                                             Atrasos & Extravios
                                         </h4>
-                                        <p className="text-xs text-gray-300 font-open-sans leading-relaxed">
+                                        <p className="text-xs text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed">
                                             Conforme a <b>Portaria GR Nº 4830/2010</b>, cada dia de atraso por obra gera <b>1 dia de suspensão</b> em todas as bibliotecas da USP. Em caso de dano ou extravio (mesmo com B.O.), é obrigatório repor obra idêntica.
                                         </p>
                                     </div>
 
-                                    <div className="p-6 rounded-[28px] bg-[#1E1E1E] border border-brand-yellow/30 shadow-xl space-y-3">
+                                    <div className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-brand-yellow/30 shadow-lg dark:shadow-xl space-y-3">
                                         <div className="w-10 h-10 rounded-xl bg-brand-yellow/10 text-brand-yellow flex items-center justify-center">
                                             <Bookmark className="w-5 h-5" />
                                         </div>
-                                        <h4 className="text-base font-black text-white font-bukra">
+                                        <h4 className="text-base font-black text-gray-900 dark:text-white font-bukra">
                                             Caixa de Devolução 24h
                                         </h4>
-                                        <p className="text-xs text-gray-300 font-open-sans leading-relaxed">
+                                        <p className="text-xs text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed">
                                             Localizada no saguão da portaria na ala central do prédio principal. Coloque um livro por vez, deitado, com a lombada para dentro e feche a portinhola. Baixa efetuada em todos os dias úteis.
                                         </p>
                                     </div>
                                 </div>
 
                                 {/* Regulamento Interno */}
-                                <div className="p-6 rounded-3xl bg-black/40 border border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                                <div className="p-6 rounded-3xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                                     <div>
-                                        <div className="text-xs font-black uppercase tracking-wider text-gray-400 font-bukra mb-1">
+                                        <div className="text-xs font-black uppercase tracking-wider text-gray-600 dark:text-gray-400 font-bukra mb-1">
                                             Regulamento de Acesso ao Salão
                                         </div>
-                                        <div className="text-xs text-gray-300 font-open-sans">
+                                        <div className="text-xs text-gray-700 dark:text-gray-300 font-open-sans">
                                             🚫 <b>Não é permitido entrar com:</b> Bolsas, mochilas grandes, pastas/fichários volumosos e alimentos/bebidas. Utilize os armários com chave na entrada.
                                         </div>
                                     </div>
-                                    <div className="text-xs font-mono text-gray-400 shrink-0">
+                                    <div className="text-xs font-mono text-gray-500 dark:text-gray-400 shrink-0">
                                         Seg-Sex: 08h00 - 21h45
                                     </div>
                                 </div>
@@ -602,20 +602,20 @@ export default function MetodologiaPage() {
                                 className="space-y-12"
                             >
                                 {/* Dica de Ouro: FullText@USP */}
-                                <div className="p-8 rounded-[32px] bg-gradient-to-br from-[#0F4780]/20 via-[#1E1E1E] to-[#1E1E1E] border border-brand-blue/30 shadow-xl relative overflow-hidden">
+                                <div className="p-8 rounded-[32px] bg-gradient-to-br from-blue-50 via-white to-gray-50 dark:from-[#0F4780]/20 dark:via-[#1E1E1E] dark:to-[#1E1E1E] border border-brand-blue/30 shadow-lg dark:shadow-xl relative overflow-hidden">
                                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                                         <div className="flex items-start gap-5">
-                                            <div className="w-14 h-14 rounded-2xl bg-brand-blue/20 text-[#00A3FF] border border-brand-blue/30 flex items-center justify-center shrink-0">
+                                            <div className="w-14 h-14 rounded-2xl bg-brand-blue/15 dark:bg-brand-blue/20 text-brand-blue dark:text-[#00A3FF] border border-brand-blue/30 flex items-center justify-center shrink-0">
                                                 <GraduationCap className="w-7 h-7" />
                                             </div>
                                             <div>
-                                                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-brand-blue/20 text-[#00A3FF] text-[9px] font-black uppercase tracking-wider mb-2">
+                                                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-brand-blue/10 dark:bg-brand-blue/20 text-brand-blue dark:text-[#00A3FF] text-[9px] font-black uppercase tracking-wider mb-2">
                                                     Passo Essencial
                                                 </div>
-                                                <h3 className="text-xl sm:text-2xl font-black text-white font-bukra mb-2">
+                                                <h3 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white font-bukra mb-2">
                                                     Ative o recurso &quot;FullText@USP&quot; no Google Acadêmico
                                                 </h3>
-                                                <p className="text-xs sm:text-sm text-gray-300 font-open-sans leading-relaxed max-w-2xl">
+                                                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed max-w-2xl">
                                                     Muitos artigos da Elsevier, Springer, Nature e APS custam mais de $35 por download. A USP já assina e paga o acesso para você! Vá em <b>Configurações do Scholar &gt; Links de biblioteca &gt; pesquise &quot;Universidade de São Paulo&quot;</b> e marque a caixa. O botão de download em 1 clique aparecerá ao lado de cada artigo.
                                                 </p>
                                             </div>
@@ -636,11 +636,11 @@ export default function MetodologiaPage() {
                                 <div>
                                     <div className="flex items-center justify-between mb-6">
                                         <div>
-                                            <h2 className="text-xl sm:text-2xl font-black text-white font-bukra flex items-center gap-3">
+                                            <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white font-bukra flex items-center gap-3">
                                                 <Search className="w-6 h-6 text-brand-yellow" />
                                                 Operadores Booleanos & Filtros Avançados
                                             </h2>
-                                            <p className="text-xs sm:text-sm text-gray-400 font-open-sans mt-1">
+                                            <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-open-sans mt-1">
                                                 Economize horas filtrando papers irrelevantes com sintaxes de busca profissionais.
                                             </p>
                                         </div>
@@ -650,32 +650,32 @@ export default function MetodologiaPage() {
                                         {SEARCH_OPERATORS.map((op, idx) => (
                                             <div
                                                 key={idx}
-                                                className="p-6 rounded-[28px] bg-[#1E1E1E] border border-white/10 hover:border-brand-yellow/40 transition-all flex flex-col justify-between group shadow-xl"
+                                                className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 hover:border-brand-yellow/40 transition-all flex flex-col justify-between group shadow-lg dark:shadow-xl"
                                             >
                                                 <div>
                                                     <div className="flex items-center justify-between mb-3">
-                                                        <span className="px-3 py-1 rounded-xl bg-brand-yellow/15 border border-brand-yellow/30 text-brand-yellow font-black font-bukra text-xs">
+                                                        <span className="px-3 py-1 rounded-xl bg-brand-yellow/15 border border-brand-yellow/30 text-yellow-800 dark:text-brand-yellow font-black font-bukra text-xs">
                                                             {op.operator}
                                                         </span>
                                                         <button
                                                             onClick={() => handleCopy(op.example, idx)}
-                                                            className="text-gray-400 hover:text-white p-1.5 rounded-lg hover:bg-white/5 transition-colors"
+                                                            className="text-gray-400 hover:text-gray-900 dark:hover:text-white p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
                                                             title="Copiar exemplo"
                                                         >
                                                             {copiedIndex === idx ? <Check className="w-4 h-4 text-brand-green" /> : <Copy className="w-4 h-4" />}
                                                         </button>
                                                     </div>
-                                                    <p className="text-xs text-gray-300 font-open-sans leading-relaxed mb-4">
+                                                    <p className="text-xs text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed mb-4">
                                                         {op.description}
                                                     </p>
                                                 </div>
 
-                                                <div className="pt-4 border-t border-white/5">
-                                                    <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Exemplo de Uso:</div>
-                                                    <code className="text-xs font-mono text-brand-blue bg-black/40 px-2.5 py-1.5 rounded-lg block overflow-x-auto">
+                                                <div className="pt-4 border-t border-gray-100 dark:border-white/5">
+                                                    <div className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Exemplo de Uso:</div>
+                                                    <code className="text-xs font-mono text-brand-blue bg-gray-100 dark:bg-black/40 px-2.5 py-1.5 rounded-lg block overflow-x-auto">
                                                         {op.example}
                                                     </code>
-                                                    <p className="text-[11px] text-gray-400 italic mt-2">
+                                                    <p className="text-[11px] text-gray-500 dark:text-gray-400 italic mt-2">
                                                         💡 {op.tip}
                                                     </p>
                                                 </div>
@@ -685,16 +685,16 @@ export default function MetodologiaPage() {
                                 </div>
 
                                 {/* Construtor Interativo de Query */}
-                                <div className="p-8 rounded-[36px] bg-[#1E1E1E] border border-white/10 shadow-2xl">
+                                <div className="p-8 rounded-[36px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-2xl">
                                     <div className="flex items-center gap-3 mb-6">
                                         <div className="w-10 h-10 rounded-xl bg-brand-yellow/10 text-brand-yellow flex items-center justify-center border border-brand-yellow/20">
                                             <Zap className="w-5 h-5" />
                                         </div>
                                         <div>
-                                            <h3 className="text-lg font-black text-white font-bukra uppercase">
+                                            <h3 className="text-lg font-black text-gray-900 dark:text-white font-bukra uppercase">
                                                 Simulador & Construtor de Busca Acadêmica
                                             </h3>
-                                            <p className="text-xs text-gray-400">
+                                            <p className="text-xs text-gray-500 dark:text-gray-400">
                                                 Preencha os campos abaixo para gerar a sintaxe ideal e testar nos motores científicos.
                                             </p>
                                         </div>
@@ -702,41 +702,41 @@ export default function MetodologiaPage() {
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                                         <div>
-                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 font-bukra">Tema / Conceito</label>
+                                            <label className="block text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2 font-bukra">Tema / Conceito</label>
                                             <input
                                                 type="text"
                                                 value={queryTopic}
                                                 onChange={(e) => setQueryTopic(e.target.value)}
                                                 placeholder="Ex: superfluidity"
-                                                className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:border-brand-blue focus:outline-none"
+                                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white text-xs focus:border-brand-blue focus:outline-none"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 font-bukra">Autor</label>
+                                            <label className="block text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2 font-bukra">Autor</label>
                                             <input
                                                 type="text"
                                                 value={queryAuthor}
                                                 onChange={(e) => setQueryAuthor(e.target.value)}
                                                 placeholder="Ex: Feynman"
-                                                className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:border-brand-blue focus:outline-none"
+                                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white text-xs focus:border-brand-blue focus:outline-none"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 font-bukra">Ano / Período</label>
+                                            <label className="block text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2 font-bukra">Ano / Período</label>
                                             <input
                                                 type="text"
                                                 value={queryYear}
                                                 onChange={(e) => setQueryYear(e.target.value)}
                                                 placeholder="Ex: 2023"
-                                                className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:border-brand-blue focus:outline-none"
+                                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white text-xs focus:border-brand-blue focus:outline-none"
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2 font-bukra">Formato</label>
+                                            <label className="block text-[10px] font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-2 font-bukra">Formato</label>
                                             <select
                                                 value={queryFormat}
                                                 onChange={(e) => setQueryFormat(e.target.value)}
-                                                className="w-full px-4 py-3 rounded-xl bg-black/40 border border-white/10 text-white text-xs focus:border-brand-blue focus:outline-none"
+                                                className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white text-xs focus:border-brand-blue focus:outline-none"
                                             >
                                                 <option value="pdf">PDF (Artigos/Teses)</option>
                                                 <option value="">Qualquer Formato</option>
@@ -746,10 +746,10 @@ export default function MetodologiaPage() {
                                     </div>
 
                                     {/* Generated Output */}
-                                    <div className="p-4 rounded-2xl bg-black/60 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
+                                    <div className="p-4 rounded-2xl bg-gray-50 dark:bg-black/60 border border-gray-200 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4">
                                         <div className="w-full overflow-x-auto">
-                                            <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1">Query Booleana Gerada:</div>
-                                            <code className="text-sm font-mono text-brand-yellow">{builtQuery || '(digite os termos acima)'}</code>
+                                            <div className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Query Booleana Gerada:</div>
+                                            <code className="text-sm font-mono text-yellow-700 dark:text-brand-yellow font-bold">{builtQuery || '(digite os termos acima)'}</code>
                                         </div>
                                         <div className="flex items-center gap-3 shrink-0 w-full sm:w-auto">
                                             <button
@@ -783,11 +783,11 @@ export default function MetodologiaPage() {
                                 className="space-y-12"
                             >
                                 <div>
-                                    <h2 className="text-xl sm:text-2xl font-black text-white font-bukra flex items-center gap-3 mb-2">
+                                    <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white font-bukra flex items-center gap-3 mb-2">
                                         <MapPin className="w-6 h-6 text-brand-yellow" />
                                         Onde Estudar no IFUSP e na Cidade Universitária
                                     </h2>
-                                    <p className="text-xs sm:text-sm text-gray-400 font-open-sans mb-8">
+                                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-open-sans mb-8">
                                         Os melhores refúgios com tomadas, Wi-Fi Eduroam e ambiente silencioso para passar o dia estudando.
                                     </p>
 
@@ -795,20 +795,20 @@ export default function MetodologiaPage() {
                                         {STUDY_SPOTS.map((spot, idx) => (
                                             <div
                                                 key={idx}
-                                                className="p-6 rounded-[28px] bg-[#1E1E1E] border border-white/10 hover:border-brand-yellow/40 transition-all flex flex-col justify-between shadow-xl"
+                                                className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 hover:border-brand-yellow/40 transition-all flex flex-col justify-between shadow-lg dark:shadow-xl"
                                             >
                                                 <div>
-                                                    <span className="text-[10px] font-black uppercase tracking-wider text-brand-yellow font-bukra mb-2 block">
+                                                    <span className="text-[10px] font-black uppercase tracking-wider text-yellow-700 dark:text-brand-yellow font-bukra mb-2 block">
                                                         {spot.status}
                                                     </span>
-                                                    <h3 className="text-lg font-black text-white font-bukra mb-2">
+                                                    <h3 className="text-lg font-black text-gray-900 dark:text-white font-bukra mb-2">
                                                         {spot.name}
                                                     </h3>
-                                                    <p className="text-xs text-gray-300 font-open-sans leading-relaxed mb-4">
+                                                    <p className="text-xs text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed mb-4">
                                                         {spot.features}
                                                     </p>
                                                 </div>
-                                                <div className="pt-4 border-t border-white/5 text-[11px] text-gray-400 font-mono">
+                                                <div className="pt-4 border-t border-gray-100 dark:border-white/5 text-[11px] text-gray-500 dark:text-gray-400 font-mono">
                                                     🕒 {spot.hours}
                                                 </div>
                                             </div>
@@ -817,16 +817,16 @@ export default function MetodologiaPage() {
                                 </div>
 
                                 {/* Descontos na EDUSP & Festa do Livro da USP */}
-                                <div className="p-8 rounded-[36px] bg-gradient-to-r from-brand-yellow/10 via-[#1E1E1E] to-[#1E1E1E] border border-brand-yellow/30 shadow-2xl">
+                                <div className="p-8 rounded-[36px] bg-gradient-to-r from-yellow-50/70 via-white to-gray-50 dark:from-brand-yellow/10 dark:via-[#1E1E1E] dark:to-[#1E1E1E] border border-brand-yellow/30 shadow-lg dark:shadow-2xl">
                                     <div className="flex items-start gap-5">
-                                        <div className="w-14 h-14 rounded-2xl bg-brand-yellow/20 text-brand-yellow border border-brand-yellow/30 flex items-center justify-center shrink-0">
+                                        <div className="w-14 h-14 rounded-2xl bg-brand-yellow/15 dark:bg-brand-yellow/20 text-brand-yellow border border-brand-yellow/30 flex items-center justify-center shrink-0">
                                             <ShoppingBag className="w-7 h-7" />
                                         </div>
                                         <div>
-                                            <h3 className="text-xl font-black text-white font-bukra mb-2">
+                                            <h3 className="text-xl font-black text-gray-900 dark:text-white font-bukra mb-2">
                                                 Descontos Especiais em Livros Físicos para Alunos USP
                                             </h3>
-                                            <p className="text-xs sm:text-sm text-gray-300 font-open-sans leading-relaxed mb-4">
+                                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed mb-4">
                                                 Alunos da USP têm direito a <b>30% a 50% de desconto permanente</b> em livros da <b>Editora da USP (EDUSP)</b> na loja física (prédio da Biblioteca Brasiliana) ou virtual. Além disso, todo final de ano acontece a <b>Festa do Livro da USP</b>, onde centenas de editoras renomadas vendem títulos acadêmicos e literários com no mínimo <b>50% de desconto real</b>.
                                             </p>
                                             <div className="flex flex-wrap items-center gap-3">
@@ -843,7 +843,7 @@ export default function MetodologiaPage() {
                                                     href="https://festadolivro.usp.br"
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="px-5 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black text-xs uppercase tracking-wider flex items-center gap-2"
+                                                    className="px-5 py-2.5 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-black text-xs uppercase tracking-wider flex items-center gap-2"
                                                 >
                                                     <span>Festa do Livro USP</span>
                                                     <ExternalLink className="w-3.5 h-3.5" />
@@ -866,11 +866,11 @@ export default function MetodologiaPage() {
                                 className="space-y-12"
                             >
                                 <div>
-                                    <h2 className="text-xl sm:text-2xl font-black text-white font-bukra flex items-center gap-3 mb-2">
-                                        <Globe className="w-6 h-6 text-[#00A3FF]" />
+                                    <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white font-bukra flex items-center gap-3 mb-2">
+                                        <Globe className="w-6 h-6 text-brand-blue dark:text-[#00A3FF]" />
                                         Como Ler Artigos Pagos Diretamente da sua Casa
                                     </h2>
-                                    <p className="text-xs sm:text-sm text-gray-400 font-open-sans mb-8">
+                                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-open-sans mb-8">
                                         A USP investe milhões anualmente para garantir que seus alunos tenham acesso irrestrito aos maiores periódicos do planeta. Siga o roteiro abaixo para liberar seu acesso remoto.
                                     </p>
 
@@ -878,19 +878,19 @@ export default function MetodologiaPage() {
                                         {REMOTE_ACCESS_STEPS.map((step, idx) => (
                                             <div
                                                 key={idx}
-                                                className="p-8 rounded-[32px] bg-[#1E1E1E] border border-white/10 hover:border-brand-blue/50 transition-all flex flex-col justify-between shadow-xl relative overflow-hidden"
+                                                className="p-8 rounded-[32px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 hover:border-brand-blue/50 transition-all flex flex-col justify-between shadow-lg dark:shadow-xl relative overflow-hidden"
                                             >
-                                                <div className="absolute top-4 right-6 text-4xl font-black text-white/5 font-bukra">
+                                                <div className="absolute top-4 right-6 text-4xl font-black text-gray-200 dark:text-white/5 font-bukra">
                                                     {step.step}
                                                 </div>
                                                 <div className="relative z-10">
-                                                    <div className="w-10 h-10 rounded-xl bg-brand-blue/15 text-[#00A3FF] border border-brand-blue/30 flex items-center justify-center font-black font-bukra text-sm mb-4">
+                                                    <div className="w-10 h-10 rounded-xl bg-brand-blue/10 dark:bg-brand-blue/15 text-brand-blue dark:text-[#00A3FF] border border-brand-blue/20 dark:border-brand-blue/30 flex items-center justify-center font-black font-bukra text-sm mb-4">
                                                         {step.step}
                                                     </div>
-                                                    <h3 className="text-lg font-black text-white font-bukra mb-3">
+                                                    <h3 className="text-lg font-black text-gray-900 dark:text-white font-bukra mb-3">
                                                         {step.title}
                                                     </h3>
-                                                    <p className="text-xs text-gray-300 font-open-sans leading-relaxed">
+                                                    <p className="text-xs text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed">
                                                         {step.desc}
                                                     </p>
                                                 </div>
@@ -900,12 +900,12 @@ export default function MetodologiaPage() {
                                 </div>
 
                                 {/* Download VPN USP Box */}
-                                <div className="p-8 rounded-[36px] bg-[#1E1E1E] border border-white/10 shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
+                                <div className="p-8 rounded-[36px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-2xl flex flex-col md:flex-row items-center justify-between gap-6">
                                     <div>
-                                        <h4 className="text-lg font-black text-white font-bukra mb-2">
+                                        <h4 className="text-lg font-black text-gray-900 dark:text-white font-bukra mb-2">
                                             Guia de Instalação da VPN USP (STI)
                                         </h4>
-                                        <p className="text-xs text-gray-300 font-open-sans leading-relaxed max-w-2xl">
+                                        <p className="text-xs text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed max-w-2xl">
                                             Acesse o tutorial oficial da Superintendência de Tecnologia da Informação (STI) para configurar a VPN no Windows, Linux, macOS, Android e iOS.
                                         </p>
                                     </div>
@@ -933,11 +933,11 @@ export default function MetodologiaPage() {
                                 className="space-y-12"
                             >
                                 <div>
-                                    <h2 className="text-xl sm:text-2xl font-black text-white font-bukra flex items-center gap-3 mb-2">
+                                    <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white font-bukra flex items-center gap-3 mb-2">
                                         <Database className="w-6 h-6 text-brand-yellow" />
                                         Bases de Dados, Repositórios & Portais
                                     </h2>
-                                    <p className="text-xs sm:text-sm text-gray-400 font-open-sans mb-8">
+                                    <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-open-sans mb-8">
                                         Os principais portais oficiais e acadêmicos utilizados pela comunidade do Instituto de Física.
                                     </p>
 
@@ -948,24 +948,24 @@ export default function MetodologiaPage() {
                                                 href={tool.href}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
-                                                className="p-6 rounded-[28px] bg-[#1E1E1E] border border-white/10 hover:border-white/30 transition-all flex flex-col justify-between group shadow-xl hover:-translate-y-1"
+                                                className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 hover:border-brand-blue dark:hover:border-white/30 transition-all flex flex-col justify-between group shadow-lg dark:shadow-xl hover:-translate-y-1"
                                             >
                                                 <div>
                                                     <div className="flex items-center justify-between mb-4">
-                                                        <span className="text-[10px] font-black uppercase tracking-wider text-gray-400 font-bukra">
+                                                        <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-gray-400 font-bukra">
                                                             {tool.category}
                                                         </span>
-                                                        <ExternalLink className="w-4 h-4 text-gray-500 group-hover:text-white transition-colors" />
+                                                        <ExternalLink className="w-4 h-4 text-gray-400 group-hover:text-brand-blue dark:group-hover:text-white transition-colors" />
                                                     </div>
-                                                    <h3 className="text-lg font-black text-white font-bukra mb-2 group-hover:text-brand-yellow transition-colors">
+                                                    <h3 className="text-lg font-black text-gray-900 dark:text-white font-bukra mb-2 group-hover:text-brand-blue dark:group-hover:text-brand-yellow transition-colors">
                                                         {tool.name}
                                                     </h3>
-                                                    <p className="text-xs text-gray-300 font-open-sans leading-relaxed mb-6">
+                                                    <p className="text-xs text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed mb-6">
                                                         {tool.desc}
                                                     </p>
                                                 </div>
 
-                                                <div className="pt-4 border-t border-white/5 flex items-center justify-between text-xs font-black font-bukra text-brand-blue group-hover:translate-x-1 transition-transform">
+                                                <div className="pt-4 border-t border-gray-100 dark:border-white/5 flex items-center justify-between text-xs font-black font-bukra text-brand-blue group-hover:translate-x-1 transition-transform">
                                                     <span>Acessar Portal</span>
                                                     <ArrowLeft className="w-4 h-4 rotate-180" />
                                                 </div>
@@ -987,89 +987,89 @@ export default function MetodologiaPage() {
                                 className="space-y-12"
                             >
                                 <div>
-                                    <h2 className="text-xl sm:text-2xl font-black text-white font-bukra flex items-center gap-3 mb-6">
+                                    <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white font-bukra flex items-center gap-3 mb-6">
                                         <Phone className="w-6 h-6 text-brand-blue" />
                                         Atendimento & Contatos Oficiais da Biblioteca
                                     </h2>
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-                                        <div className="p-6 rounded-[28px] bg-[#1E1E1E] border border-white/10 shadow-xl space-y-2">
-                                            <div className="text-[10px] font-black uppercase tracking-wider text-gray-400 font-bukra">E-mail Principal</div>
+                                        <div className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-xl space-y-2">
+                                            <div className="text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-gray-400 font-bukra">E-mail Principal</div>
                                             <div className="text-sm font-bold text-brand-blue font-mono">bib@if.usp.br</div>
-                                            <p className="text-[11px] text-gray-400">Para dúvidas sobre empréstimos, renovações e pesquisas.</p>
+                                            <p className="text-[11px] text-gray-500 dark:text-gray-400">Para dúvidas sobre empréstimos, renovações e pesquisas.</p>
                                         </div>
 
-                                        <div className="p-6 rounded-[28px] bg-[#1E1E1E] border border-white/10 shadow-xl space-y-2">
-                                            <div className="text-[10px] font-black uppercase tracking-wider text-gray-400 font-bukra">WhatsApp & Balcão</div>
-                                            <div className="text-sm font-bold text-brand-yellow font-mono">(11) 3091-7137</div>
-                                            <p className="text-[11px] text-gray-400">Atendimento direto do balcão de empréstimos.</p>
+                                        <div className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-xl space-y-2">
+                                            <div className="text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-gray-400 font-bukra">WhatsApp & Balcão</div>
+                                            <div className="text-sm font-bold text-yellow-700 dark:text-brand-yellow font-mono">(11) 3091-7137</div>
+                                            <p className="text-[11px] text-gray-500 dark:text-gray-400">Atendimento direto do balcão de empréstimos.</p>
                                         </div>
 
-                                        <div className="p-6 rounded-[28px] bg-[#1E1E1E] border border-white/10 shadow-xl space-y-2">
-                                            <div className="text-[10px] font-black uppercase tracking-wider text-gray-400 font-bukra">Serviço de Atendimento</div>
-                                            <div className="text-sm font-bold text-white font-mono">(11) 3091-6923</div>
-                                            <p className="text-[11px] text-gray-400">Orientação bibliográfica e normalização.</p>
+                                        <div className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-xl space-y-2">
+                                            <div className="text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-gray-400 font-bukra">Serviço de Atendimento</div>
+                                            <div className="text-sm font-bold text-gray-900 dark:text-white font-mono">(11) 3091-6923</div>
+                                            <p className="text-[11px] text-gray-500 dark:text-gray-400">Orientação bibliográfica e normalização.</p>
                                         </div>
 
-                                        <div className="p-6 rounded-[28px] bg-[#1E1E1E] border border-white/10 shadow-xl space-y-2">
-                                            <div className="text-[10px] font-black uppercase tracking-wider text-gray-400 font-bukra">Programa ECOS (Saúde Mental)</div>
+                                        <div className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-xl space-y-2">
+                                            <div className="text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-gray-400 font-bukra">Programa ECOS (Saúde Mental)</div>
                                             <div className="text-sm font-bold text-brand-red font-mono">ecos.prip@usp.br</div>
-                                            <p className="text-[11px] text-gray-400">Acolhimento e suporte psicológico na USP.</p>
+                                            <p className="text-[11px] text-gray-500 dark:text-gray-400">Acolhimento e suporte psicológico na USP.</p>
                                         </div>
 
-                                        <div className="p-6 rounded-[28px] bg-[#1E1E1E] border border-white/10 shadow-xl space-y-2">
-                                            <div className="text-[10px] font-black uppercase tracking-wider text-gray-400 font-bukra">Seção de Graduação IFUSP</div>
-                                            <div className="text-sm font-bold text-[#00A3FF] font-mono">salunosif@usp.br</div>
-                                            <p className="text-[11px] text-gray-400">Matrículas, trancamentos e requerimentos.</p>
+                                        <div className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-xl space-y-2">
+                                            <div className="text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-gray-400 font-bukra">Seção de Graduação IFUSP</div>
+                                            <div className="text-sm font-bold text-brand-blue dark:text-[#00A3FF] font-mono">salunosif@usp.br</div>
+                                            <p className="text-[11px] text-gray-500 dark:text-gray-400">Matrículas, trancamentos e requerimentos.</p>
                                         </div>
 
-                                        <div className="p-6 rounded-[28px] bg-[#1E1E1E] border border-white/10 shadow-xl space-y-2">
-                                            <div className="text-[10px] font-black uppercase tracking-wider text-gray-400 font-bukra">Centro Acadêmico (CEFISMA)</div>
-                                            <div className="text-sm font-bold text-brand-yellow font-mono">cefisma@cefisma.org.br</div>
-                                            <p className="text-[11px] text-gray-400">Representação estudantil e vivência no IFUSP.</p>
+                                        <div className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-xl space-y-2">
+                                            <div className="text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-gray-400 font-bukra">Centro Acadêmico (CEFISMA)</div>
+                                            <div className="text-sm font-bold text-yellow-700 dark:text-brand-yellow font-mono">cefisma@cefisma.org.br</div>
+                                            <p className="text-[11px] text-gray-500 dark:text-gray-400">Representação estudantil e vivência no IFUSP.</p>
                                         </div>
                                     </div>
                                 </div>
 
                                 {/* Dúvidas Frequentes */}
                                 <div className="space-y-4">
-                                    <h3 className="text-xl font-black text-white font-bukra uppercase mb-4 flex items-center gap-3">
+                                    <h3 className="text-xl font-black text-gray-900 dark:text-white font-bukra uppercase mb-4 flex items-center gap-3">
                                         <HelpCircle className="w-6 h-6 text-brand-yellow" />
                                         Perguntas Frequentes dos Alunos
                                     </h3>
 
-                                    <div className="p-6 rounded-[28px] bg-[#1E1E1E] border border-white/10 shadow-lg">
-                                        <h4 className="text-base font-black text-white font-bukra mb-2">
+                                    <div className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-md dark:shadow-lg">
+                                        <h4 className="text-base font-black text-gray-900 dark:text-white font-bukra mb-2">
                                             1. Como sei se o livro que preciso está disponível na biblioteca do IF?
                                         </h4>
-                                        <p className="text-xs sm:text-sm text-gray-300 font-open-sans leading-relaxed">
+                                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed">
                                             Acesse o <b>Portal de Busca Integrada (buscaintegrada.usp.br)</b>, digite o título ou autor e filtre por &quot;Instituto de Física&quot;. O sistema mostrará a quantidade de exemplares, a localização na estante (ex: 530.1 N974c) e se estão emprestados ou disponíveis para retirada imediata.
                                         </p>
                                     </div>
 
-                                    <div className="p-6 rounded-[28px] bg-[#1E1E1E] border border-white/10 shadow-lg">
-                                        <h4 className="text-base font-black text-white font-bukra mb-2">
+                                    <div className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-md dark:shadow-lg">
+                                        <h4 className="text-base font-black text-gray-900 dark:text-white font-bukra mb-2">
                                             2. O que acontece se eu atrasar a devolução de um livro?
                                         </h4>
-                                        <p className="text-xs sm:text-sm text-gray-300 font-open-sans leading-relaxed">
+                                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed">
                                             O sistema da USP não cobra multa em dinheiro, mas aplica <b>suspensão de 1 dia para cada dia de atraso por obra</b> (Portaria GR nº 4830/2010), válida em todas as 60 bibliotecas da USP. Renove sempre antes da data limite pelo Dedalus!
                                         </p>
                                     </div>
 
-                                    <div className="p-6 rounded-[28px] bg-[#1E1E1E] border border-white/10 shadow-lg">
-                                        <h4 className="text-base font-black text-white font-bukra mb-2">
+                                    <div className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-md dark:shadow-lg">
+                                        <h4 className="text-base font-black text-gray-900 dark:text-white font-bukra mb-2">
                                             3. Posso devolver livros de outras unidades (IME, Poli, FFLCH) no IFUSP?
                                         </h4>
-                                        <p className="text-xs sm:text-sm text-gray-300 font-open-sans leading-relaxed">
+                                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed">
                                             <b>Sim!</b> Graças ao sistema de Empréstimo Unificado da ABCD USP, você pode devolver exemplares retirados em qualquer biblioteca da USP diretamente no balcão da Biblioteca do IFUSP ou na caixa de devolução 24h.
                                         </p>
                                     </div>
 
-                                    <div className="p-6 rounded-[28px] bg-[#1E1E1E] border border-white/10 shadow-lg">
-                                        <h4 className="text-base font-black text-white font-bukra mb-2">
+                                    <div className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-md dark:shadow-lg">
+                                        <h4 className="text-base font-black text-gray-900 dark:text-white font-bukra mb-2">
                                             4. Como exportar citações direto para o Overleaf / LaTeX?
                                         </h4>
-                                        <p className="text-xs sm:text-sm text-gray-300 font-open-sans leading-relaxed">
+                                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed">
                                             No Google Scholar, clique no ícone de aspas <b>&quot;Citar&quot;</b> abaixo do artigo e selecione <b>BibTeX</b>. Copie o bloco de código gerado e cole no arquivo <code>references.bib</code> do seu projeto no Overleaf.
                                         </p>
                                     </div>
@@ -1079,7 +1079,7 @@ export default function MetodologiaPage() {
                     </AnimatePresence>
 
                     {/* Feedback Rating */}
-                    <div className="mt-16 pt-8 border-t border-white/10">
+                    <div className="mt-16 pt-8 border-t border-gray-200 dark:border-white/10">
                         <ContentRating postId="wiki-metodologia" contentFormat="text" />
                     </div>
                 </div>

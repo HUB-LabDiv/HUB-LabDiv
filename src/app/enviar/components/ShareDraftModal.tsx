@@ -17,6 +17,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Copy, Check, ExternalLink, Share2, Eye, Sparkles, X, MessageCircle, RefreshCw } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 
 interface ShareDraftModalProps {
     isOpen: boolean;
@@ -105,149 +106,151 @@ export function ShareDraftModal({
     };
 
     return (
-        <AnimatePresence>
-            <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 15 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 15 }}
-                    className="w-full max-w-lg bg-[#181818] border border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col gap-6"
-                >
-                    {/* Glow de fundo */}
-                    <div className="absolute -top-24 -right-24 w-56 h-56 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
-                    <div className="absolute -bottom-24 -left-24 w-56 h-56 bg-brand-blue/15 rounded-full blur-3xl pointer-events-none" />
+        <ModalPortal>
+            <AnimatePresence>
+                <div className="fixed inset-0 z-[200] flex min-h-full items-center justify-center p-3 sm:p-6 bg-black/70 backdrop-blur-md overflow-y-auto">
+                    <motion.div
+                        initial={{ opacity: 0, scale: 0.95, y: 15 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.95, y: 15 }}
+                        className="w-full max-w-lg bg-white dark:bg-[#181818] border border-gray-200 dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden flex flex-col gap-6 m-auto max-h-[90vh] overflow-y-auto"
+                    >
+                        {/* Glow de fundo */}
+                        <div className="absolute -top-24 -right-24 w-56 h-56 bg-brand-yellow/10 dark:bg-brand-yellow/5 rounded-full blur-3xl pointer-events-none" />
+                        <div className="absolute -bottom-24 -left-24 w-56 h-56 bg-brand-blue/15 dark:bg-brand-blue/10 rounded-full blur-3xl pointer-events-none" />
 
-                    {/* Header */}
-                    <div className="flex items-start justify-between relative z-10">
-                        <div className="flex items-center gap-3">
-                            <div className="size-12 rounded-2xl bg-brand-yellow/15 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow shadow-lg shadow-brand-yellow/10">
-                                <Eye className="w-6 h-6" />
+                        {/* Header */}
+                        <div className="flex items-start justify-between relative z-10">
+                            <div className="flex items-center gap-3">
+                                <div className="size-12 rounded-2xl bg-brand-yellow/15 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow shadow-lg shadow-brand-yellow/10">
+                                    <Eye className="w-6 h-6" />
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bukra font-bold text-gray-900 dark:text-white tracking-tight flex items-center gap-2">
+                                        Site de Prévia do Rascunho
+                                    </h3>
+                                    <p className="text-xs text-gray-500 dark:text-gray-400 font-sans mt-0.5">
+                                        Envie para orientadores, colegas e revisores antes de publicar
+                                    </p>
+                                </div>
                             </div>
-                            <div>
-                                <h3 className="text-xl font-bukra font-bold text-white tracking-tight flex items-center gap-2">
-                                    Site de Prévia do Rascunho
-                                </h3>
-                                <p className="text-xs text-gray-400 font-sans mt-0.5">
-                                    Envie para orientadores, colegas e revisores antes de publicar
-                                </p>
-                            </div>
+
+                            <button
+                                onClick={onClose}
+                                className="size-8 rounded-full bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white flex items-center justify-center transition-colors"
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
                         </div>
 
-                        <button
-                            onClick={onClose}
-                            className="size-8 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white flex items-center justify-center transition-colors"
-                        >
-                            <X className="w-4 h-4" />
-                        </button>
-                    </div>
-
-                    {/* Conteúdo Principal */}
-                    <div className="space-y-4 relative z-10">
-                        {/* Caixa de Explicação */}
-                        <div className="p-4 bg-white/5 border border-white/5 rounded-2xl flex items-start gap-3 text-xs text-gray-300 leading-relaxed">
-                            <Sparkles className="w-5 h-5 text-brand-yellow shrink-0 mt-0.5" />
-                            <span>
-                                O destinatário terá acesso a uma <strong>página exclusiva e completa</strong> com todos os blocos, fórmulas e mídias, exatamente como o post aparecerá após publicado, sem que ele apareça no feed público.
-                            </span>
-                        </div>
-
-                        {isGenerating ? (
-                            <div className="p-8 bg-brand-yellow/5 border border-brand-yellow/20 rounded-2xl flex flex-col items-center justify-center gap-3 text-center">
-                                <div className="size-8 border-3 border-brand-yellow border-t-transparent rounded-full animate-spin" />
-                                <p className="text-xs font-bukra font-bold text-brand-yellow uppercase tracking-wider">
-                                    Sincronizando rascunho na nuvem...
-                                </p>
-                                <p className="text-[11px] text-gray-400 font-sans">
-                                    Gerando link protegido para visualização
-                                </p>
+                        {/* Conteúdo Principal */}
+                        <div className="space-y-4 relative z-10">
+                            {/* Caixa de Explicação */}
+                            <div className="p-4 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/5 rounded-2xl flex items-start gap-3 text-xs text-gray-700 dark:text-gray-300 leading-relaxed">
+                                <Sparkles className="w-5 h-5 text-brand-yellow shrink-0 mt-0.5" />
+                                <span>
+                                    O destinatário terá acesso a uma <strong>página exclusiva e completa</strong> com todos os blocos, fórmulas e mídias, exatamente como o post aparecerá após publicado, sem que ele apareça no feed público.
+                                </span>
                             </div>
-                        ) : previewUrl ? (
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between pl-1">
-                                    <label className="text-[11px] font-bold uppercase tracking-wider text-gray-400">
-                                        Link Único de Compartilhamento:
-                                    </label>
+
+                            {isGenerating ? (
+                                <div className="p-8 bg-brand-yellow/5 border border-brand-yellow/20 rounded-2xl flex flex-col items-center justify-center gap-3 text-center">
+                                    <div className="size-8 border-3 border-brand-yellow border-t-transparent rounded-full animate-spin" />
+                                    <p className="text-xs font-bukra font-bold text-brand-yellow uppercase tracking-wider">
+                                        Sincronizando rascunho na nuvem...
+                                    </p>
+                                    <p className="text-[11px] text-gray-500 dark:text-gray-400 font-sans">
+                                        Gerando link protegido para visualização
+                                    </p>
+                                </div>
+                            ) : previewUrl ? (
+                                <div className="space-y-3">
+                                    <div className="flex items-center justify-between pl-1">
+                                        <label className="text-[11px] font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
+                                            Link Único de Compartilhamento:
+                                        </label>
+                                        <button
+                                            type="button"
+                                            onClick={handleGenerate}
+                                            disabled={isGenerating}
+                                            className="text-[10px] font-bold text-brand-blue hover:text-brand-blue/80 dark:text-brand-blue-accent dark:hover:text-white transition-colors flex items-center gap-1 uppercase"
+                                            title="Atualizar rascunho na nuvem com as alterações mais recentes"
+                                        >
+                                            <RefreshCw className="w-3 h-3" />
+                                            <span>Atualizar Link</span>
+                                        </button>
+                                    </div>
+                                    <div className="flex items-center gap-2 bg-gray-50 dark:bg-[#121212] border border-gray-200 dark:border-white/10 rounded-2xl p-2 pl-4 focus-within:border-brand-yellow/50 transition-colors">
+                                        <input
+                                            type="text"
+                                            readOnly
+                                            value={previewUrl}
+                                            className="w-full bg-transparent text-xs text-brand-blue dark:text-brand-yellow font-mono outline-none select-all truncate font-bold"
+                                        />
+                                        <button
+                                            onClick={handleCopy}
+                                            className={`px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 ${
+                                                copied
+                                                    ? 'bg-emerald-500 text-white'
+                                                    : 'bg-brand-yellow text-gray-950 hover:bg-[#E5B800] shadow-md'
+                                            }`}
+                                        >
+                                            {copied ? (
+                                                <>
+                                                    <Check className="w-4 h-4" />
+                                                    <span>Copiado!</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Copy className="w-4 h-4" />
+                                                    <span>Copiar</span>
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="p-6 bg-brand-yellow/10 border border-brand-yellow/20 rounded-2xl text-center space-y-4">
+                                    <p className="text-xs text-gray-700 dark:text-gray-300">
+                                        Clique abaixo para salvar o estado atual do seu rascunho na nuvem e gerar o link de compartilhamento.
+                                    </p>
                                     <button
-                                        type="button"
                                         onClick={handleGenerate}
                                         disabled={isGenerating}
-                                        className="text-[10px] font-bold text-brand-blue-accent hover:text-white transition-colors flex items-center gap-1 uppercase"
-                                        title="Atualizar rascunho na nuvem com as alterações mais recentes"
+                                        className="px-6 py-3 bg-brand-yellow hover:bg-[#E5B800] text-gray-950 font-bukra font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg hover:scale-105 disabled:opacity-50 flex items-center justify-center gap-2 mx-auto cursor-pointer"
                                     >
-                                        <RefreshCw className="w-3 h-3" />
-                                        <span>Atualizar Link</span>
+                                        <Share2 className="w-4 h-4" />
+                                        <span>Gerar Link de Prévia</span>
                                     </button>
                                 </div>
-                                <div className="flex items-center gap-2 bg-[#121212] border border-white/10 rounded-2xl p-2 pl-4 focus-within:border-brand-yellow/50 transition-colors">
-                                    <input
-                                        type="text"
-                                        readOnly
-                                        value={previewUrl}
-                                        className="w-full bg-transparent text-xs text-brand-yellow font-mono outline-none select-all truncate"
-                                    />
-                                    <button
-                                        onClick={handleCopy}
-                                        className={`px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all flex items-center gap-1.5 shrink-0 ${
-                                            copied
-                                                ? 'bg-emerald-500 text-white'
-                                                : 'bg-brand-yellow text-gray-950 hover:bg-[#E5B800] shadow-md'
-                                        }`}
-                                    >
-                                        {copied ? (
-                                            <>
-                                                <Check className="w-4 h-4" />
-                                                <span>Copiado!</span>
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Copy className="w-4 h-4" />
-                                                <span>Copiar</span>
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="p-6 bg-brand-yellow/10 border border-brand-yellow/20 rounded-2xl text-center space-y-4">
-                                <p className="text-xs text-gray-300">
-                                    Clique abaixo para salvar o estado atual do seu rascunho na nuvem e gerar o link de compartilhamento.
-                                </p>
-                                <button
-                                    onClick={handleGenerate}
-                                    disabled={isGenerating}
-                                    className="px-6 py-3 bg-brand-yellow hover:bg-[#E5B800] text-gray-950 font-bukra font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-lg hover:scale-105 disabled:opacity-50 flex items-center justify-center gap-2 mx-auto cursor-pointer"
+                            )}
+                        </div>
+
+                        {/* Ações Inferiores */}
+                        {previewUrl && !isGenerating && (
+                            <div className="flex flex-col sm:flex-row items-center gap-2 pt-2 border-t border-gray-100 dark:border-white/5 relative z-10">
+                                <a
+                                    href={previewUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="w-full sm:w-1/2 px-4 py-3 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-800 dark:text-white text-xs font-bold rounded-xl transition-all border border-gray-200 dark:border-white/10 flex items-center justify-center gap-2 text-center cursor-pointer"
                                 >
-                                    <Share2 className="w-4 h-4" />
-                                    <span>Gerar Link de Prévia</span>
+                                    <ExternalLink className="w-4 h-4 text-brand-blue" />
+                                    <span>Visualizar Agora</span>
+                                </a>
+
+                                <button
+                                    onClick={handleWhatsAppShare}
+                                    className="w-full sm:w-1/2 px-4 py-3 bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#128C7E] dark:text-[#25D366] text-xs font-bold rounded-xl transition-all border border-[#25D366]/40 flex items-center justify-center gap-2 cursor-pointer"
+                                >
+                                    <MessageCircle className="w-4 h-4" />
+                                    <span>Enviar no WhatsApp</span>
                                 </button>
                             </div>
                         )}
-                    </div>
-
-                    {/* Ações Inferiores */}
-                    {previewUrl && !isGenerating && (
-                        <div className="flex flex-col sm:flex-row items-center gap-2 pt-2 border-t border-white/5 relative z-10">
-                            <a
-                                href={previewUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="w-full sm:w-1/2 px-4 py-3 bg-white/5 hover:bg-white/10 text-white text-xs font-bold rounded-xl transition-all border border-white/10 flex items-center justify-center gap-2 text-center cursor-pointer"
-                            >
-                                <ExternalLink className="w-4 h-4 text-brand-blue" />
-                                <span>Visualizar Agora</span>
-                            </a>
-
-                            <button
-                                onClick={handleWhatsAppShare}
-                                className="w-full sm:w-1/2 px-4 py-3 bg-[#25D366]/20 hover:bg-[#25D366]/30 text-[#25D366] text-xs font-bold rounded-xl transition-all border border-[#25D366]/40 flex items-center justify-center gap-2 cursor-pointer"
-                            >
-                                <MessageCircle className="w-4 h-4" />
-                                <span>Enviar no WhatsApp</span>
-                            </button>
-                        </div>
-                    )}
-                </motion.div>
-            </div>
-        </AnimatePresence>
+                    </motion.div>
+                </div>
+            </AnimatePresence>
+        </ModalPortal>
     );
 }

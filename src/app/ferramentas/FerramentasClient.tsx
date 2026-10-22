@@ -13,11 +13,12 @@
 
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { fetchUserAcademicdata } from '@/app/actions/disciplines';
 import { 
     X, Eye, Edit3, ChevronLeft, ChevronRight, Search, Plus, Trash2, Info, Loader2, BookOpen, 
     GraduationCap, CalendarDays, FileText, Table, Calendar, MessageSquareCode, Share2,
-    RefreshCw, Undo2, Settings, ChevronDown, CalendarX, Bell
+    RefreshCw, Undo2, Settings, ChevronDown, CalendarX, Bell, Route
 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
@@ -846,12 +847,34 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                 }
             `}</style>
 
-            <header className="flex flex-col md:flex-row items-center justify-between gap-6 print:hidden">
+            <header className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 print:hidden">
                 <div className="space-y-2">
-                    <h1 className="text-4xl font-display font-black text-gray-900 dark:text-white uppercase tracking-tighter">
-                        Grade <span className="text-brand-blue">Horária</span>
-                    </h1>
-                    <p className="text-gray-400 font-medium italic">Seu cockpit de navegação pelo IFUSP.</p>
+                    <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                        <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-black text-gray-900 dark:text-white uppercase tracking-tighter font-bukra">
+                            Acompanhamento
+                        </h1>
+
+                        {/* Seletor Semestral / Curso à direita do título */}
+                        <div className="inline-flex items-center p-1 rounded-2xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-sm backdrop-blur-md">
+                            <Link
+                                href="/ferramentas"
+                                className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-brand-yellow text-gray-950 font-bukra font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-sm flex items-center gap-2 transition-all"
+                            >
+                                <Calendar className="w-3.5 h-3.5" />
+                                <span>Semestral</span>
+                            </Link>
+                            <Link
+                                href="/ferramentas/trilhas"
+                                className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-bukra font-bold text-[11px] sm:text-xs uppercase tracking-wider hover:bg-gray-200/50 dark:hover:bg-white/5 flex items-center gap-2 transition-all"
+                            >
+                                <Route className="w-3.5 h-3.5" />
+                                <span>Curso</span>
+                            </Link>
+                        </div>
+                    </div>
+                    <p className="text-gray-500 dark:text-gray-400 font-medium text-xs sm:text-sm font-open-sans">
+                        Planejamento semanal de aulas, estudos e controle de faltas do seu semestre no IFUSP.
+                    </p>
                 </div>
 
             </header>

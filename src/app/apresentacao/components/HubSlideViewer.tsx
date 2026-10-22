@@ -428,7 +428,7 @@ export function HubSlideViewer() {
                         ESTUDO &amp; PESQUISA
                       </span>
                       <p className="text-xs text-gray-200 leading-relaxed font-semibold">
-                        Planejador de grade horária 1h:1h, acompanhamento de faltas, evolução no curso e Match Acadêmico ("Quero uma IC" e grupos de estudo).
+                        Planejador de grade horária 1h:1h, acompanhamento de faltas, evolução no curso e Match Acadêmico (&quot;Quero uma IC&quot; e grupos de estudo).
                       </p>
                     </div>
                   </div>

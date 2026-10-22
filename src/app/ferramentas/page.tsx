@@ -13,6 +13,11 @@ import { createServerSupabase } from '@/lib/supabase/server';
 import FerramentasClient from './FerramentasClient';
 import { redirect } from 'next/navigation';
 
+export const metadata = {
+    title: 'Acompanhamento Semestral | IFUSP',
+    description: 'Painel de Acompanhamento Semestral, Grade Horária e Gestão de Estudos do IFUSP.',
+};
+
 export default async function FerramentasPage() {
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();

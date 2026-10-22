@@ -14,6 +14,7 @@
  */
 
 import React, { useState, useMemo } from 'react';
+import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Laptop,
@@ -92,21 +93,37 @@ export function SoftwaresClientView({
     return (
         <div className="w-full space-y-6">
             {/* Header Hero Banner */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1E1E1E] via-[#161616] to-[#0d0d0d] border border-white/10 p-6 sm:p-8 shadow-2xl">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50 to-blue-50/20 dark:from-[#1E1E1E] dark:via-[#161616] dark:to-[#0d0d0d] border border-gray-200 dark:border-white/10 p-6 sm:p-8 shadow-xl dark:shadow-2xl">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-brand-blue/10 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div className="max-w-2xl">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/15 border border-brand-yellow/30 text-brand-yellow text-xs font-black uppercase tracking-wider mb-3">
-                            <Sparkles className="w-3.5 h-3.5 animate-pulse" />
-                            Biblioteca LabDiv • Softwares & Códigos Acadêmicos
+                        <div className="flex flex-wrap items-center gap-3 sm:gap-4 mb-2">
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-black font-bukra uppercase tracking-tighter text-gray-900 dark:text-white">
+                                Estudos
+                            </h1>
+
+                            {/* Seletor Anotações / Softwares à direita do título */}
+                            <div className="inline-flex items-center p-1 rounded-2xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-sm backdrop-blur-md">
+                                <Link
+                                    href="/ferramentas/anotacoes"
+                                    className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-bukra font-bold text-[11px] sm:text-xs uppercase tracking-wider hover:bg-gray-200/50 dark:hover:bg-white/5 flex items-center gap-2 transition-all"
+                                >
+                                    <BookOpen className="w-3.5 h-3.5" />
+                                    <span>Anotações</span>
+                                </Link>
+                                <Link
+                                    href="/ferramentas/softwares"
+                                    className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-brand-yellow text-gray-950 font-bukra font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-sm flex items-center gap-2 transition-all"
+                                >
+                                    <Laptop className="w-3.5 h-3.5" />
+                                    <span>Softwares</span>
+                                </Link>
+                            </div>
                         </div>
-                        <h1 className="text-2xl sm:text-4xl font-black text-white font-bukra tracking-tight">
-                            Softwares da Comunidade & Ferramentas
-                        </h1>
-                        <p className="text-xs sm:text-sm text-gray-300 font-open-sans mt-2 leading-relaxed">
-                            Descubra softwares didáticos e utilitários criados por alunos e pesquisadores da USP (como o <strong className="text-brand-yellow font-semibold">LumiFI</strong> e o <strong className="text-brand-yellow font-semibold">Aurtistic</strong>) e ferramentas indispensáveis para a graduação em Física e Ciências Exatas.
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans mt-2 leading-relaxed">
+                            Descubra softwares didáticos e utilitários criados por alunos e pesquisadores da USP (como o <strong className="text-brand-yellow-dark dark:text-brand-yellow font-semibold">LumiFI</strong> e o <strong className="text-brand-yellow-dark dark:text-brand-yellow font-semibold">Aurtistic</strong>) e ferramentas indispensáveis para a graduação em Física e Ciências Exatas.
                         </p>
                     </div>
 
@@ -114,17 +131,17 @@ export function SoftwaresClientView({
                     <div className="flex flex-col sm:flex-row md:flex-col gap-3 shrink-0">
                         <button
                             onClick={() => setIsSubmitModalOpen(true)}
-                            className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-brand-yellow hover:bg-[#FFE066] text-black font-black text-xs uppercase tracking-wider transition-all shadow-lg shadow-brand-yellow/20 hover:scale-105 active:scale-95"
+                            className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-brand-yellow hover:bg-[#FFE066] text-black font-black text-xs uppercase tracking-wider transition-all shadow-lg shadow-brand-yellow/20 hover:scale-105 active:scale-95 cursor-pointer"
                         >
                             <Plus className="w-4 h-4" />
                             <span>Enviar Software / Código</span>
                         </button>
 
-                        <div className="flex items-center justify-center gap-4 py-2 px-4 rounded-2xl bg-black/40 border border-white/5 text-xs text-gray-300">
+                        <div className="flex items-center justify-center gap-4 py-2 px-4 rounded-2xl bg-gray-100/90 dark:bg-black/40 border border-gray-200 dark:border-white/5 text-xs text-gray-700 dark:text-gray-300">
                             <div>
-                                <strong className="text-brand-yellow font-bold">{stats.comunitarios}</strong> da USP
+                                <strong className="text-amber-600 dark:text-brand-yellow font-bold">{stats.comunitarios}</strong> da USP
                             </div>
-                            <div className="w-1 h-1 rounded-full bg-gray-600" />
+                            <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-600" />
                             <div>
                                 <strong className="text-brand-blue font-bold">{stats.essenciais}</strong> Essenciais
                             </div>
@@ -144,12 +161,12 @@ export function SoftwaresClientView({
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             placeholder="Buscar por nome, autor, descrição, raio-x, cálculo..."
-                            className="w-full pl-10 pr-10 py-3 rounded-2xl bg-[#1E1E1E] border border-white/10 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none focus:border-brand-yellow transition-all"
+                            className="w-full pl-10 pr-10 py-3 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 text-xs sm:text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-yellow shadow-sm transition-all"
                         />
                         {searchQuery && (
                             <button
                                 onClick={() => setSearchQuery('')}
-                                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-white"
+                                className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-white"
                             >
                                 <X className="w-4 h-4" />
                             </button>
@@ -157,13 +174,13 @@ export function SoftwaresClientView({
                     </div>
 
                     {/* Type Filter Pills */}
-                    <div className="flex p-1 rounded-2xl bg-[#1E1E1E] border border-white/10 shrink-0">
+                    <div className="flex p-1 rounded-2xl bg-gray-100 dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shrink-0">
                         <button
                             onClick={() => setFilterType('all')}
                             className={`px-3 py-2 rounded-xl text-xs font-bold transition-all ${
                                 filterType === 'all'
                                     ? 'bg-brand-blue text-white shadow-sm'
-                                    : 'text-gray-400 hover:text-white'
+                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                             }`}
                         >
                             Todos ({softwares.length})
@@ -173,18 +190,18 @@ export function SoftwaresClientView({
                             className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${
                                 filterType === 'comunitario'
                                     ? 'bg-brand-yellow text-black font-black shadow-sm'
-                                    : 'text-gray-400 hover:text-white'
+                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                             }`}
                         >
-                            <Sparkles className="w-3 h-3" />
+                            <Sparkles className="w-3 h-3 text-amber-600 dark:text-black" />
                             USP ({stats.comunitarios})
                         </button>
                         <button
                             onClick={() => setFilterType('essencial')}
                             className={`px-3 py-2 rounded-xl text-xs font-bold transition-all ${
                                 filterType === 'essencial'
-                                    ? 'bg-white/20 text-white shadow-sm'
-                                    : 'text-gray-400 hover:text-white'
+                                    ? 'bg-brand-blue/80 dark:bg-white/20 text-white shadow-sm'
+                                    : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                             }`}
                         >
                             Essenciais ({stats.essenciais})
@@ -201,10 +218,10 @@ export function SoftwaresClientView({
                                 key={cat}
                                 onClick={() => setSelectedCategory(cat)}
                                 className={`
-                                    px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all
+                                    px-3.5 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer
                                     ${active
-                                        ? 'bg-white/20 text-white border border-white/30 shadow-sm'
-                                        : 'bg-[#1E1E1E]/80 text-gray-400 hover:text-white hover:bg-[#252525] border border-white/5'
+                                        ? 'bg-brand-blue text-white shadow-sm border border-brand-blue'
+                                        : 'bg-white dark:bg-[#1E1E1E]/80 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-[#252525] border border-gray-200 dark:border-white/5'
                                     }
                                 `}
                             >
@@ -217,9 +234,9 @@ export function SoftwaresClientView({
 
             {/* Grid of Cards */}
             {filteredSoftwares.length === 0 ? (
-                <div className="py-16 px-6 rounded-3xl bg-[#1E1E1E]/50 border border-white/5 text-center flex flex-col items-center justify-center">
-                    <Laptop className="w-12 h-12 text-gray-600 mb-3" />
-                    <h3 className="text-lg font-bold text-gray-300 font-bukra">
+                <div className="py-16 px-6 rounded-3xl bg-gray-50 dark:bg-[#1E1E1E]/50 border border-gray-200 dark:border-white/5 text-center flex flex-col items-center justify-center">
+                    <Laptop className="w-12 h-12 text-gray-400 dark:text-gray-600 mb-3" />
+                    <h3 className="text-lg font-bold text-gray-800 dark:text-gray-300 font-bukra">
                         Nenhum software encontrado
                     </h3>
                     <p className="text-xs text-gray-500 mt-1 max-w-sm font-open-sans">
@@ -231,7 +248,7 @@ export function SoftwaresClientView({
                             setSelectedCategory('Todos');
                             setFilterType('all');
                         }}
-                        className="mt-4 px-4 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold text-white transition-colors"
+                        className="mt-4 px-4 py-2 rounded-xl bg-gray-200 hover:bg-gray-300 dark:bg-white/10 dark:hover:bg-white/15 text-xs font-bold text-gray-900 dark:text-white transition-colors cursor-pointer"
                     >
                         Limpar Filtros
                     </button>

@@ -70,26 +70,26 @@ export function ConstelacoesLinguisticas({ glossario }: ConstelacoesProps) {
             
             <div className="flex flex-col md:flex-row justify-between items-center mb-10 relative z-10 gap-6">
                 <div>
-                    <h3 className="text-2xl md:text-3xl font-black uppercase text-white tracking-widest flex items-center gap-3">
+                    <h3 className="text-2xl md:text-3xl font-black uppercase text-gray-900 dark:text-white tracking-widest flex items-center gap-3">
                         <span className="material-symbols-outlined text-brand-yellow text-4xl">menu_book</span>
                         Glossário Hub
                     </h3>
-                    <p className="text-gray-400 mt-2 max-w-xl text-sm [text-shadow:var(--text-halo-strong)]">
+                    <p className="text-gray-500 dark:text-gray-400 mt-2 max-w-xl text-sm [text-shadow:var(--text-halo-strong)]">
                         Explore nosso dicionário vivo e descubra as traduções que conectam o saber acadêmico com a linguagem das ruas, da internet e da arte.
                     </p>
                 </div>
                 
                 {/* Switcher */}
-                <div className="flex bg-background-dark/50 p-1 rounded-xl border border-white/10 backdrop-blur">
+                <div className="flex bg-gray-100 dark:bg-background-dark/50 p-1 rounded-xl border border-gray-200 dark:border-white/10 backdrop-blur">
                     <button 
                         onClick={() => setViewMode('palavras')}
-                        className={`px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${viewMode === 'palavras' ? 'bg-brand-yellow text-black shadow-[0_0_15px_rgba(255,204,0,0.3)]' : 'text-gray-400 hover:text-white'}`}
+                        className={`px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${viewMode === 'palavras' ? 'bg-brand-yellow text-black shadow-[0_0_15px_rgba(255,204,0,0.3)]' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}
                     >
                         Modo Palavras
                     </button>
                     <button 
                         onClick={() => setViewMode('constelacoes')}
-                        className={`px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${viewMode === 'constelacoes' ? 'bg-brand-blue text-white shadow-[0_0_15px_rgba(15,71,128,0.5)]' : 'text-gray-400 hover:text-white'}`}
+                        className={`px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest transition-all ${viewMode === 'constelacoes' ? 'bg-brand-blue text-white shadow-[0_0_15px_rgba(15,71,128,0.5)]' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'}`}
                     >
                         Modo Constelações
                     </button>
@@ -108,10 +108,10 @@ export function ConstelacoesLinguisticas({ glossario }: ConstelacoesProps) {
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ duration: 0.5, delay: i * 0.1 }}
                                 key={palavra.id} 
-                                className={`relative bg-[#1E1E1E] rounded-3xl border border-white/10 p-8 shadow-2xl flex flex-col items-center text-center w-[350px] md:w-[450px] shrink-0 snap-center ${theme.borderHover} transition-colors group`}
+                                className={`relative bg-white dark:bg-[#1E1E1E] rounded-3xl border border-gray-200 dark:border-white/10 p-8 shadow-xl dark:shadow-2xl flex flex-col items-center text-center w-[350px] md:w-[450px] shrink-0 snap-center ${theme.borderHover} transition-colors group`}
                             >
                                 <div className={`z-10 bg-gradient-to-br ${theme.gradientStart} ${theme.gradientEnd} p-[2px] rounded-2xl ${theme.shadow} mb-8 transform group-hover:scale-105 transition-transform`}>
-                                    <div className="bg-background-dark px-8 py-4 rounded-[14px]">
+                                    <div className="bg-white dark:bg-background-dark px-8 py-4 rounded-[14px]">
                                         <h3 className={`text-2xl font-black uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r ${theme.textGradient}`}>
                                             {palavra.termo}
                                         </h3>
@@ -119,22 +119,22 @@ export function ConstelacoesLinguisticas({ glossario }: ConstelacoesProps) {
                                     </div>
                                 </div>
 
-                                <div className="w-full text-left bg-background-dark/30 p-5 rounded-xl border border-white/5 mb-6">
-                                    <p className="text-sm text-gray-300 leading-relaxed">
+                                <div className="w-full text-left bg-gray-50 dark:bg-background-dark/30 p-5 rounded-xl border border-gray-200 dark:border-white/5 mb-6">
+                                    <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                                         {palavra.codificacao_academica}
                                     </p>
                                 </div>
 
                                 {palavra.signos_constelacoes && palavra.signos_constelacoes.filter((c: any) => !c.is_rejected && !c.is_pending).length > 0 && (
-                                    <div className="w-full mt-auto pt-6 border-t border-white/5 relative text-left">
+                                    <div className="w-full mt-auto pt-6 border-t border-gray-200 dark:border-white/5 relative text-left">
                                         <h4 className="text-[11px] font-bold text-brand-blue uppercase tracking-widest mb-4">Traduções</h4>
                                         <div className="flex flex-col gap-3">
                                             {palavra.signos_constelacoes.filter((c: any) => !c.is_rejected && !c.is_pending).map((constelacao: any) => (
-                                                <div key={constelacao.id} className="bg-background-dark p-4 rounded-xl border border-white/5">
+                                                <div key={constelacao.id} className="bg-gray-50 dark:bg-background-dark p-4 rounded-xl border border-gray-200 dark:border-white/5">
                                                     <span className="inline-block px-2 py-0.5 bg-brand-blue/20 text-brand-blue text-[10px] font-black uppercase rounded mb-2">
                                                         {constelacao.constelacao}
                                                     </span>
-                                                    <p className="text-sm text-gray-400 leading-relaxed italic">
+                                                    <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed italic">
                                                         "{constelacao.descodificacao}"
                                                     </p>
                                                 </div>

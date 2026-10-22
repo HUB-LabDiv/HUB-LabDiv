@@ -316,12 +316,12 @@ export function LogsView() {
                             {recentDrops.length > 0 ? (
                                 recentDrops.map(drop => <ThreadNode key={drop.id} drop={drop} level={0} onRefresh={fetchDrops} setIsSyncing={setIsSyncing} />)
                             ) : (
-                                <div className="py-12 px-6 text-center bg-[#1E1E1E] border border-white/5 rounded-3xl space-y-3 shadow-xl my-4">
+                                <div className="py-12 px-6 text-center bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/5 rounded-3xl space-y-3 shadow-lg dark:shadow-xl my-4">
                                     <div className="w-12 h-12 rounded-full bg-brand-red/10 border border-brand-red/20 flex items-center justify-center mx-auto text-brand-red">
                                         <Radio className="w-5 h-5 animate-pulse" />
                                     </div>
-                                    <p className="font-mono text-xs uppercase tracking-widest text-gray-300 font-bold">Nenhuma transmissão captada nos últimos 7 dias.</p>
-                                    <p className="text-xs text-gray-400 max-w-sm mx-auto">Seja o primeiro a enviar uma descoberta ou notícia rápida no campo acima!</p>
+                                    <p className="font-mono text-xs uppercase tracking-widest text-gray-800 dark:text-gray-300 font-bold">Nenhuma transmissão captada nos últimos 7 dias.</p>
+                                    <p className="text-xs text-gray-600 dark:text-gray-400 max-w-sm mx-auto">Seja o primeiro a enviar uma descoberta ou notícia rápida no campo acima!</p>
                                 </div>
                             )}
                         </FeedSection>
@@ -331,19 +331,19 @@ export function LogsView() {
 
             <AnimatePresence>
                 {isSyncing && (
-                    <motion.div initial={{ opacity: 0, x: 50, scale: 0.9 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: 50, scale: 0.9 }} className="fixed top-6 right-6 z-[100] bg-background-dark/80 backdrop-blur-xl border border-brand-blue/30 rounded-2xl p-4 flex items-center gap-4 shadow-[0_0_30px_rgba(0,163,255,0.15)]">
+                    <motion.div initial={{ opacity: 0, x: 50, scale: 0.9 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: 50, scale: 0.9 }} className="fixed top-6 right-6 z-[100] bg-white/90 dark:bg-background-dark/80 backdrop-blur-xl border border-brand-blue/30 rounded-2xl p-4 flex items-center gap-4 shadow-xl dark:shadow-[0_0_30px_rgba(0,163,255,0.15)]">
                         <div className="relative w-10 h-10 flex items-center justify-center">
                             <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border border-brand-blue/30 rounded-full" />
                             <div className="relative">
                                 <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1, repeat: Infinity }} className="w-2 h-2 bg-brand-blue rounded-full shadow-[0_0_10px_#00A3FF]" />
-                                <Atom className="absolute -top-3 -left-3 w-8 h-8 text-white/10 animate-pulse" />
+                                <Atom className="absolute -top-3 -left-3 w-8 h-8 text-brand-blue/20 dark:text-white/10 animate-pulse" />
                             </div>
                         </div>
                         <div className="flex flex-col pr-2">
-                            <h2 className="text-[10px] font-black font-mono text-white uppercase tracking-[0.2em]">Sinc_Atômico</h2>
-                            <p className="text-[8px] font-mono text-gray-400 uppercase tracking-widest leading-none">Atualizando_Partículas...</p>
+                            <h2 className="text-[10px] font-black font-mono text-gray-900 dark:text-white uppercase tracking-[0.2em]">Sinc_Atômico</h2>
+                            <p className="text-[8px] font-mono text-gray-500 dark:text-gray-400 uppercase tracking-widest leading-none">Atualizando_Partículas...</p>
                         </div>
-                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/5 rounded-b-2xl overflow-hidden">
+                        <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-100 dark:bg-white/5 rounded-b-2xl overflow-hidden">
                             <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 4, ease: "linear" }} className="h-full bg-brand-blue shadow-[0_0_10px_#3b82f6]" />
                         </div>
                     </motion.div>
@@ -422,7 +422,7 @@ export function ThreadNode({ drop, level = 0, onRefresh, setIsSyncing }: { drop:
 
     return (
         <div className={`${marginClass} ${borderClass} pl-4 space-y-3`}>
-            <div className={`group relative glass-card p-6 rounded-[2.5rem] border-white/5 transition-all ${level === 0 ? 'bg-zinc-950/40 backdrop-blur-md' : 'bg-transparent border-transparent'}`}>
+            <div className={`group relative glass-card p-6 rounded-[2.5rem] border border-gray-200 dark:border-white/5 transition-all ${level === 0 ? 'bg-white dark:bg-zinc-950/40 backdrop-blur-md shadow-sm dark:shadow-none' : 'bg-transparent border-transparent'}`}>
                 <div className="flex gap-4 text-left items-start">
                     <div className="shrink-0">
                         <div className="w-10 h-10 rounded-xl bg-brand-red/10 flex items-center justify-center overflow-hidden border border-brand-red/20 shadow-inner">
@@ -442,7 +442,7 @@ export function ThreadNode({ drop, level = 0, onRefresh, setIsSyncing }: { drop:
                                     {drop.profiles.institute}
                                 </span>
                             )}
-                            <div className="flex items-center gap-2 text-[9px] font-black font-mono text-gray-500 bg-background-dark/20 px-2 py-1 rounded-lg border border-white/5 shrink-0">
+                            <div className="flex items-center gap-2 text-[9px] font-black font-mono text-gray-600 dark:text-gray-500 bg-gray-100 dark:bg-background-dark/20 px-2 py-1 rounded-lg border border-gray-200 dark:border-white/5 shrink-0">
                                 <Clock className="w-2.5 h-2.5 text-brand-red" />
                                 {new Date(drop.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                             </div>
@@ -452,7 +452,7 @@ export function ThreadNode({ drop, level = 0, onRefresh, setIsSyncing }: { drop:
                                 </div>
                             )}
                         </div>
-                        <p className={`font-medium break-words ${level === 0 ? 'text-gray-100 text-sm' : 'text-gray-400 text-xs'}`}>{drop.content}</p>
+                        <p className={`font-medium break-words ${level === 0 ? 'text-gray-900 dark:text-gray-100 text-sm' : 'text-gray-600 dark:text-gray-400 text-xs'}`}>{drop.content}</p>
 
                         <div className="flex items-center gap-4 pt-1">
                             <button onClick={handleToggleExpand} className="flex flex-col items-center gap-0.5 group/btn">
@@ -487,7 +487,7 @@ export function ThreadNode({ drop, level = 0, onRefresh, setIsSyncing }: { drop:
 
                 <div className={`overflow-hidden transition-all duration-300 ${showReplyInput ? 'mt-4 opacity-100' : 'max-h-0 opacity-0'}`} style={{ maxHeight: showReplyInput ? '500px' : '0' }}>
                     <form onSubmit={handleReply} className="flex gap-2">
-                        <input value={replyContent} onChange={(e) => setReplyContent(e.target.value)} placeholder="Adicionar ao fio..." className="flex-1 bg-background-dark/40 border border-white/10 rounded-xl px-4 py-2 text-xs focus:ring-1 focus:ring-brand-red outline-none text-white" maxLength={260} autoFocus={showReplyInput} />
+                        <input value={replyContent} onChange={(e) => setReplyContent(e.target.value)} placeholder="Adicionar ao fio..." className="flex-1 bg-gray-50 dark:bg-background-dark/40 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2 text-xs focus:ring-1 focus:ring-brand-red outline-none text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500" maxLength={260} autoFocus={showReplyInput} />
                         <button type="submit" disabled={isSubmittingReply || !replyContent.trim()} className="bg-brand-red p-2 rounded-xl text-white hover:scale-105 transition-all text-xs font-black flex items-center justify-center min-w-[36px]">
                             {isSubmittingReply ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
                         </button>

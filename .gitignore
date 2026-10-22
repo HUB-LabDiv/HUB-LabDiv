@@ -105,9 +105,6 @@ debug/*.txt
 !/public/.gitkeep
 /scripts/
 
-# Códigos mortos
-/deprecated/
-/old/
-/dead_code/
-/_deprecated/
+# Scraper caches and raw data
+scripts/scrapers/cache/
 

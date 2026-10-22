@@ -19,10 +19,11 @@ import { motion } from 'framer-motion';
 interface NetflixFeedProps {
     title: string;
     icon?: React.ReactNode;
+    filterBar?: React.ReactNode;
     children: React.ReactNode;
 }
 
-export function NetflixFeed({ title, icon, children }: NetflixFeedProps) {
+export function NetflixFeed({ title, icon, filterBar, children }: NetflixFeedProps) {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
 
     const scroll = (direction: 'left' | 'right') => {
@@ -64,6 +65,12 @@ export function NetflixFeed({ title, icon, children }: NetflixFeedProps) {
                     </button>
                 </div>
             </div>
+
+            {filterBar && (
+                <div className="pt-0">
+                    {filterBar}
+                </div>
+            )}
 
             <div className="relative group">
 

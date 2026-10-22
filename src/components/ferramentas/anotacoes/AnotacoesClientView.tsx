@@ -40,7 +40,8 @@ import {
     SlidersHorizontal,
     ChevronRight,
     Layers,
-    Share2
+    Share2,
+    Laptop
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { JupiterSyncModal } from '@/app/ferramentas/JupiterSyncModal';
@@ -148,22 +149,38 @@ export function AnotacoesClientView({
     return (
         <div className="w-full max-w-7xl mx-auto space-y-8 pb-16">
             {/* ─── 1. BANNER TOPO & SINCRONIZAÇÃO JÚPITER ─── */}
-            <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1E1E1E] via-[#161616] to-[#121212] border border-white/10 p-6 sm:p-8 shadow-2xl">
+            <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50 to-blue-50/20 dark:from-[#1E1E1E] dark:via-[#161616] dark:to-[#121212] border border-gray-200 dark:border-white/10 p-6 sm:p-8 shadow-xl dark:shadow-2xl">
                 {/* Glow decorativo de fundo */}
                 <div className="absolute top-0 right-0 -mt-8 -mr-8 w-72 h-72 bg-brand-blue/15 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute bottom-0 left-1/3 -mb-8 w-48 h-48 bg-brand-yellow/10 rounded-full blur-2xl pointer-events-none" />
 
                 <div className="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                     <div className="space-y-2 max-w-2xl">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/20 text-brand-blue border border-brand-blue/30 text-[10px] font-black font-bukra uppercase tracking-widest">
-                            <BookOpen className="w-3.5 h-3.5" />
-                            <span>Acervo Acadêmico Coletivo</span>
+                        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                            <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-black font-bukra uppercase tracking-tighter text-gray-900 dark:text-white">
+                                Estudos
+                            </h1>
+
+                            {/* Seletor Anotações / Softwares à direita do título */}
+                            <div className="inline-flex items-center p-1 rounded-2xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 shadow-sm backdrop-blur-md">
+                                <Link
+                                    href="/ferramentas/anotacoes"
+                                    className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-brand-yellow text-gray-950 font-bukra font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-sm flex items-center gap-2 transition-all"
+                                >
+                                    <BookOpen className="w-3.5 h-3.5" />
+                                    <span>Anotações</span>
+                                </Link>
+                                <Link
+                                    href="/ferramentas/softwares"
+                                    className="px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white font-bukra font-bold text-[11px] sm:text-xs uppercase tracking-wider hover:bg-gray-200/50 dark:hover:bg-white/5 flex items-center gap-2 transition-all"
+                                >
+                                    <Laptop className="w-3.5 h-3.5" />
+                                    <span>Softwares</span>
+                                </Link>
+                            </div>
                         </div>
-                        <h1 className="text-2xl sm:text-3xl font-black font-bukra uppercase tracking-wider text-white">
-                            Central de <span className="text-brand-yellow">Anotações</span> & Cadernos
-                        </h1>
-                        <p className="text-xs sm:text-sm text-gray-300 font-sans leading-relaxed">
-                            Acesse resumos de aulas, cadernos digitalizados, listas resolvidas e notas de monitoria catalogadas por matéria. Sincronize com o Júpiter para carregar sua grade atual.
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-sans leading-relaxed">
+                            Acesse resumos de aulas, cadernos digitalizados, listas resolvidas e notas de matérias do IFUSP e da USP catalogadas por matéria. Sincronize com o Júpiter para carregar sua grade atual.
                         </p>
                     </div>
 
@@ -180,9 +197,9 @@ export function AnotacoesClientView({
                 </div>
 
                 {/* Status Bar */}
-                <div className="relative z-10 mt-6 pt-4 border-t border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs font-sans text-gray-400">
+                <div className="relative z-10 mt-6 pt-4 border-t border-gray-200 dark:border-white/10 flex flex-wrap items-center justify-between gap-4 text-xs font-sans text-gray-600 dark:text-gray-400">
                     <div className="flex items-center gap-2">
-                        <div className={`size-2 rounded-full ${hasJupiterCache ? 'bg-emerald-400 animate-pulse' : 'bg-brand-yellow'}`} />
+                        <div className={`size-2 rounded-full ${hasJupiterCache ? 'bg-emerald-500 animate-pulse' : 'bg-brand-yellow'}`} />
                         <span>
                             {hasJupiterCache
                                 ? `JúpiterWeb ativo • ${enrolledSubjects.length} matérias em curso identificadas`
@@ -190,7 +207,7 @@ export function AnotacoesClientView({
                         </span>
                     </div>
                     {lastSyncedAt && (
-                        <span className="text-[11px] text-gray-500">
+                        <span className="text-[11px] text-gray-400 dark:text-gray-500">
                             Última atualização: {new Date(lastSyncedAt).toLocaleDateString('pt-BR')}
                         </span>
                     )}
@@ -201,12 +218,12 @@ export function AnotacoesClientView({
             <section className="space-y-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                        <GraduationCap className="w-5 h-5 text-brand-yellow" />
-                        <h2 className="text-lg sm:text-xl font-black font-bukra uppercase tracking-wider text-white">
+                        <GraduationCap className="w-5 h-5 text-amber-600 dark:text-brand-yellow" />
+                        <h2 className="text-lg sm:text-xl font-black font-bukra uppercase tracking-wider text-gray-900 dark:text-white">
                             Minhas Disciplinas em Curso
                         </h2>
                     </div>
-                    <span className="text-xs text-gray-400 font-sans">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 font-sans">
                         {enrolledSubjects.length} {enrolledSubjects.length === 1 ? 'matéria' : 'matérias'}
                     </span>
                 </div>
@@ -224,29 +241,29 @@ export function AnotacoesClientView({
                                     className={`relative p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-3 ${
                                         isSelected
                                             ? 'bg-brand-blue/15 border-brand-blue shadow-lg shadow-brand-blue/15 ring-2 ring-brand-blue/30'
-                                            : 'bg-[#1E1E1E]/90 hover:bg-[#252525] border-white/10 hover:border-brand-blue/40 shadow-sm'
+                                            : 'bg-white dark:bg-[#1E1E1E]/90 hover:bg-gray-50 dark:hover:bg-[#252525] border-gray-200 dark:border-white/10 hover:border-brand-blue/40 shadow-sm'
                                     }`}
                                 >
                                     <div className="space-y-1.5">
                                         <div className="flex items-center justify-between gap-2">
-                                            <span className="px-2.5 py-0.5 rounded-lg bg-white/10 text-brand-yellow font-bukra font-black text-[10px] tracking-wider uppercase">
+                                            <span className="px-2.5 py-0.5 rounded-lg bg-yellow-400/15 text-amber-700 dark:text-brand-yellow dark:bg-white/10 font-bukra font-black text-[10px] tracking-wider uppercase">
                                                 {sub.code}
                                             </span>
-                                            <span className="text-[10px] font-bukra font-bold text-gray-400 uppercase">
+                                            <span className="text-[10px] font-bukra font-bold text-gray-500 dark:text-gray-400 uppercase">
                                                 {sub.institute || 'IFUSP'}
                                             </span>
                                         </div>
-                                        <h3 className="text-sm font-bold font-sans text-white line-clamp-2 leading-snug">
+                                        <h3 className="text-sm font-bold font-sans text-gray-900 dark:text-white line-clamp-2 leading-snug">
                                             {sub.title}
                                         </h3>
                                     </div>
 
-                                    <div className="flex items-center justify-between pt-2 border-t border-white/5 text-[11px] font-sans">
-                                        <span className="text-gray-400 flex items-center gap-1.5">
+                                    <div className="flex items-center justify-between pt-2 border-t border-gray-100 dark:border-white/5 text-[11px] font-sans">
+                                        <span className="text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                                             <BookMarked className="w-3.5 h-3.5 text-brand-blue" />
-                                            <strong className="text-white">{sub.notesCount}</strong> {sub.notesCount === 1 ? 'anotação' : 'anotações'}
+                                            <strong className="text-gray-900 dark:text-white">{sub.notesCount}</strong> {sub.notesCount === 1 ? 'anotação' : 'anotações'}
                                         </span>
-                                        <span className={`text-[10px] font-bukra font-bold uppercase tracking-wider flex items-center gap-1 ${isSelected ? 'text-brand-yellow' : 'text-gray-500'}`}>
+                                        <span className={`text-[10px] font-bukra font-bold uppercase tracking-wider flex items-center gap-1 ${isSelected ? 'text-amber-600 dark:text-brand-yellow font-black' : 'text-gray-500'}`}>
                                             {isSelected ? 'Ativa' : 'Abrir'} <ChevronRight className="w-3 h-3" />
                                         </span>
                                     </div>
@@ -255,12 +272,12 @@ export function AnotacoesClientView({
                         })}
                     </div>
                 ) : (
-                    <div className="p-6 rounded-2xl bg-[#1E1E1E]/60 border border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+                    <div className="p-6 rounded-2xl bg-gray-50 dark:bg-[#1E1E1E]/60 border border-gray-200 dark:border-white/10 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
                         <div className="space-y-1">
-                            <p className="text-sm font-bold text-white font-sans">
+                            <p className="text-sm font-bold text-gray-900 dark:text-white font-sans">
                                 Nenhuma disciplina em curso configurada ainda
                             </p>
-                            <p className="text-xs text-gray-400 font-sans">
+                            <p className="text-xs text-gray-500 dark:text-gray-400 font-sans">
                                 Sincronize com o JúpiterWeb para carregar suas matérias automaticamente ou explore o catálogo abaixo.
                             </p>
                         </div>
@@ -276,22 +293,22 @@ export function AnotacoesClientView({
 
             {/* ─── 3. PAINEL DE ANOTAÇÕES DA MATÉRIA SELECIONADA ─── */}
             {selectedSubject && (
-                <section className="rounded-3xl bg-[#1E1E1E] border border-white/10 p-6 sm:p-8 space-y-6 shadow-xl">
+                <section className="rounded-3xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 p-6 sm:p-8 space-y-6 shadow-lg dark:shadow-xl">
                     {/* Header da Disciplina Selecionada */}
-                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-white/10">
+                    <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-gray-200 dark:border-white/10">
                         <div className="space-y-1.5">
                             <div className="flex items-center gap-2">
-                                <span className="px-3 py-1 rounded-xl bg-brand-yellow/20 text-brand-yellow text-xs font-black font-bukra uppercase tracking-wider border border-brand-yellow/30">
+                                <span className="px-3 py-1 rounded-xl bg-yellow-400/15 text-amber-700 dark:text-brand-yellow text-xs font-black font-bukra uppercase tracking-wider border border-brand-yellow/30">
                                     {selectedSubject.code}
                                 </span>
-                                <span className="text-xs text-gray-400 font-bukra font-bold uppercase">
+                                <span className="text-xs text-gray-500 dark:text-gray-400 font-bukra font-bold uppercase">
                                     {selectedSubject.institute || 'IFUSP'}
                                 </span>
                             </div>
-                            <h2 className="text-xl sm:text-2xl font-black font-bukra uppercase tracking-wide text-white">
+                            <h2 className="text-xl sm:text-2xl font-black font-bukra uppercase tracking-wide text-gray-900 dark:text-white">
                                 {selectedSubject.title}
                             </h2>
-                            <p className="text-xs text-gray-400 font-sans">
+                            <p className="text-xs text-gray-600 dark:text-gray-400 font-sans">
                                 Cadernos de aula, resumos teóricos, resoluções de listas e notas compartilhadas pela comunidade.
                             </p>
                         </div>
@@ -329,7 +346,7 @@ export function AnotacoesClientView({
                                         className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[11px] font-bukra font-bold uppercase tracking-wider transition-all cursor-pointer border ${
                                             isActive
                                                 ? 'bg-brand-blue text-white border-brand-blue shadow-md shadow-brand-blue/20'
-                                                : 'bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border-white/5'
+                                                : 'bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-gray-200 dark:border-white/5'
                                         }`}
                                     >
                                         {Icon && <Icon className="w-3 h-3" />}
@@ -341,18 +358,18 @@ export function AnotacoesClientView({
 
                         {/* Campo de Busca Rápida */}
                         <div className="relative w-full sm:w-64">
-                            <Search className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                            <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                             <input
                                 type="text"
                                 value={notesSearchQuery}
                                 onChange={e => setNotesSearchQuery(e.target.value)}
                                 placeholder="Buscar anotação..."
-                                className="w-full pl-9 pr-3 py-2 rounded-xl bg-white/5 border border-white/10 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-brand-blue transition-all"
+                                className="w-full pl-9 pr-3 py-2 rounded-xl bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-xs text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-blue shadow-sm transition-all"
                             />
                             {notesSearchQuery && (
                                 <button
                                     onClick={() => setNotesSearchQuery('')}
-                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-white"
                                 >
                                     <X className="w-3.5 h-3.5" />
                                 </button>
@@ -364,7 +381,7 @@ export function AnotacoesClientView({
                     {isLoadingNotes ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 py-8">
                             {[1, 2, 3].map(n => (
-                                <div key={n} className="h-44 rounded-2xl bg-white/5 animate-pulse border border-white/5" />
+                                <div key={n} className="h-44 rounded-2xl bg-gray-100 dark:bg-white/5 animate-pulse border border-gray-200 dark:border-white/5" />
                             ))}
                         </div>
                     ) : subjectNotes.length > 0 ? (
@@ -377,7 +394,7 @@ export function AnotacoesClientView({
                                     <motion.article
                                         key={post.id}
                                         whileHover={{ y: -3 }}
-                                        className="group rounded-2xl bg-[#171717] border border-white/10 hover:border-brand-blue/50 overflow-hidden flex flex-col justify-between transition-all shadow-md"
+                                        className="group rounded-2xl bg-gray-50/90 dark:bg-[#171717] border border-gray-200 dark:border-white/10 hover:border-brand-blue/50 overflow-hidden flex flex-col justify-between transition-all shadow-sm hover:shadow-md"
                                     >
                                         <div className="p-4 space-y-3">
                                             {/* Top info */}
@@ -394,12 +411,12 @@ export function AnotacoesClientView({
                                             <div>
                                                 <Link
                                                     href={`/arquivo/${post.id}`}
-                                                    className="text-sm font-black font-bukra text-white group-hover:text-brand-blue transition-colors line-clamp-2 leading-tight"
+                                                    className="text-sm font-black font-bukra text-gray-900 dark:text-white group-hover:text-brand-blue transition-colors line-clamp-2 leading-tight"
                                                 >
                                                     {post.title}
                                                 </Link>
                                                 {post.description && (
-                                                    <p className="text-xs text-gray-400 font-sans line-clamp-2 mt-1.5 leading-relaxed">
+                                                    <p className="text-xs text-gray-600 dark:text-gray-400 font-sans line-clamp-2 mt-1.5 leading-relaxed">
                                                         {post.description}
                                                     </p>
                                                 )}
@@ -407,21 +424,21 @@ export function AnotacoesClientView({
                                         </div>
 
                                         {/* Footer do Card */}
-                                        <div className="p-4 pt-3 border-t border-white/5 flex items-center justify-between text-xs text-gray-400">
+                                        <div className="p-4 pt-3 border-t border-gray-200 dark:border-white/5 flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
                                             <div className="flex items-center gap-2">
                                                 <Avatar
                                                     src={post.avatarUrl}
                                                     name={post.authors || 'Colaborador'}
                                                     size="xs"
                                                 />
-                                                <span className="text-[11px] font-sans text-gray-300 font-medium truncate max-w-[120px]">
+                                                <span className="text-[11px] font-sans text-gray-700 dark:text-gray-300 font-medium truncate max-w-[120px]">
                                                     {post.authors || 'Anônimo'}
                                                 </span>
                                             </div>
 
                                             <Link
                                                 href={`/arquivo/${post.id}`}
-                                                className="inline-flex items-center gap-1 text-[11px] font-bukra font-bold text-brand-yellow hover:underline uppercase tracking-wider"
+                                                className="inline-flex items-center gap-1 text-[11px] font-bukra font-bold text-amber-700 dark:text-brand-yellow hover:underline uppercase tracking-wider"
                                             >
                                                 <span>Acessar</span>
                                                 <ExternalLink className="w-3 h-3" />
@@ -432,13 +449,13 @@ export function AnotacoesClientView({
                             })}
                         </div>
                     ) : (
-                        <div className="py-12 px-6 rounded-2xl bg-white/5 border border-dashed border-white/10 text-center space-y-3">
-                            <BookOpen className="w-10 h-10 text-gray-600 mx-auto" />
+                        <div className="py-12 px-6 rounded-2xl bg-gray-50 dark:bg-white/5 border border-dashed border-gray-300 dark:border-white/10 text-center space-y-3">
+                            <BookOpen className="w-10 h-10 text-gray-400 dark:text-gray-600 mx-auto" />
                             <div className="space-y-1">
-                                <p className="text-sm font-bold text-white font-sans">
+                                <p className="text-sm font-bold text-gray-900 dark:text-white font-sans">
                                     Nenhuma anotação encontrada para esta matéria ainda
                                 </p>
-                                <p className="text-xs text-gray-400 font-sans max-w-md mx-auto">
+                                <p className="text-xs text-gray-600 dark:text-gray-400 font-sans max-w-md mx-auto">
                                     Seja o primeiro a compartilhar seu caderno, resumo de aula ou lista de exercícios resolvida!
                                 </p>
                             </div>
@@ -459,20 +476,20 @@ export function AnotacoesClientView({
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <div className="flex items-center gap-2.5">
                         <Building2 className="w-5 h-5 text-brand-blue" />
-                        <h2 className="text-lg sm:text-xl font-black font-bukra uppercase tracking-wider text-white">
+                        <h2 className="text-lg sm:text-xl font-black font-bukra uppercase tracking-wider text-gray-900 dark:text-white">
                             Explorador de Matérias da USP
                         </h2>
                     </div>
 
                     {/* Busca no Catálogo */}
                     <div className="relative w-full sm:w-72">
-                        <Search className="w-4 h-4 text-gray-500 absolute left-3 top-1/2 -translate-y-1/2" />
+                        <Search className="w-4 h-4 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
                         <input
                             type="text"
                             value={catalogSearchQuery}
                             onChange={e => setCatalogSearchQuery(e.target.value)}
                             placeholder="Buscar código ou matéria..."
-                            className="w-full pl-9 pr-3 py-2 rounded-xl bg-[#1E1E1E] border border-white/10 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-brand-blue transition-all"
+                            className="w-full pl-9 pr-3 py-2 rounded-xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 text-xs text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-brand-blue shadow-sm transition-all"
                         />
                     </div>
                 </div>
@@ -488,7 +505,7 @@ export function AnotacoesClientView({
                                 className={`px-4 py-2 rounded-xl text-xs font-bukra font-bold uppercase tracking-wider transition-all shrink-0 cursor-pointer border ${
                                     isActive
                                         ? 'bg-brand-blue text-white border-brand-blue shadow-md shadow-brand-blue/20'
-                                        : 'bg-[#1E1E1E] hover:bg-[#252525] text-gray-400 hover:text-white border-white/10'
+                                        : 'bg-white dark:bg-[#1E1E1E] hover:bg-gray-100 dark:hover:bg-[#252525] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border-gray-200 dark:border-white/10'
                                 }`}
                             >
                                 {inst}
@@ -512,28 +529,28 @@ export function AnotacoesClientView({
                                 className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-3 ${
                                     isSelected
                                         ? 'bg-brand-blue/15 border-brand-blue'
-                                        : 'bg-[#1E1E1E] hover:bg-[#252525] border-white/10'
+                                        : 'bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#252525] border-gray-200 dark:border-white/10 shadow-sm'
                                 }`}
                             >
                                 <div className="space-y-1">
                                     <div className="flex items-center justify-between">
-                                        <span className="px-2 py-0.5 rounded-lg bg-white/10 text-brand-yellow font-bukra font-black text-[10px] tracking-wider uppercase">
+                                        <span className="px-2 py-0.5 rounded-lg bg-yellow-400/15 text-amber-700 dark:text-brand-yellow dark:bg-white/10 font-bukra font-black text-[10px] tracking-wider uppercase">
                                             {item.code}
                                         </span>
-                                        <span className="text-[10px] font-bukra font-bold text-gray-400 uppercase">
+                                        <span className="text-[10px] font-bukra font-bold text-gray-500 dark:text-gray-400 uppercase">
                                             {item.institute || 'IFUSP'}
                                         </span>
                                     </div>
-                                    <h4 className="text-xs font-bold font-sans text-white line-clamp-2">
+                                    <h4 className="text-xs font-bold font-sans text-gray-900 dark:text-white line-clamp-2">
                                         {item.title}
                                     </h4>
                                 </div>
 
-                                <div className="flex items-center justify-between text-[10px] text-gray-400 pt-2 border-t border-white/5">
+                                <div className="flex items-center justify-between text-[10px] text-gray-500 dark:text-gray-400 pt-2 border-t border-gray-100 dark:border-white/5">
                                     <span>
-                                        <strong className="text-white">{item.notesCount}</strong> {item.notesCount === 1 ? 'material' : 'materiais'}
+                                        <strong className="text-gray-900 dark:text-white">{item.notesCount}</strong> {item.notesCount === 1 ? 'material' : 'materiais'}
                                     </span>
-                                    <span className="text-brand-yellow font-bukra font-bold uppercase">
+                                    <span className="text-amber-700 dark:text-brand-yellow font-bukra font-bold uppercase">
                                         Ver Acervo →
                                     </span>
                                 </div>

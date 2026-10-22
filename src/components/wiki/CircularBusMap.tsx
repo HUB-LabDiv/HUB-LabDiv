@@ -126,7 +126,7 @@ export const CircularBusMap: React.FC = () => {
                         setZoomLevel(1);
                     }
                 }}
-                className="relative rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-[#121212] cursor-pointer group/image transition-all hover:border-[#FFCC00]/40 shadow-lg"
+                className="relative rounded-2xl overflow-hidden border border-black/10 dark:border-white/10 bg-gray-100 dark:bg-[#121212] cursor-pointer group/image transition-all hover:border-[#FFCC00]/40 shadow-lg"
                 title="Clique para abrir e navegar no mapa com zoom"
             >
                 {/* Skeleton Loading State */}

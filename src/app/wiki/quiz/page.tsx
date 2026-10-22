@@ -15,7 +15,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
-import { Zap, Brain, Lock, ArrowRight } from 'lucide-react';
+import { Zap, Brain, Lock, ArrowRight, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { wikiCells, institutoCell } from '@/components/wiki/WikiView'; // Reuse cells from Wiki view
 
@@ -29,6 +29,17 @@ export default function QuizHubPage() {
         <MainLayoutWrapper>
             <div className="min-h-screen pt-24 px-4 pb-24">
                 <div className="max-w-6xl mx-auto">
+
+                    {/* Back Button to Interativo */}
+                    <div className="mb-6">
+                        <Link
+                            href="/gcif/interativo"
+                            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 font-bold text-xs uppercase tracking-wider border border-gray-200 dark:border-white/10 transition-all hover:-translate-x-1"
+                        >
+                            <ArrowLeft className="w-4 h-4 text-brand-red" />
+                            <span>Voltar ao Interativo</span>
+                        </Link>
+                    </div>
 
                     {/* Header */}
                     <div className="text-center mb-16 relative">

@@ -117,12 +117,12 @@ export function RelatedMaterialCard({ submission }: RelatedMaterialCardProps) {
                     </>
                 ) : (
                     /* Fallback Card com estética Lab-Div */
-                    <div className="w-full h-full relative overflow-hidden bg-gradient-to-br from-[#1E1E1E] via-[#161616] to-[#101010] p-5 flex flex-col justify-between">
+                    <div className="w-full h-full relative overflow-hidden bg-gradient-to-br from-gray-100 via-gray-50 to-gray-200 dark:from-[#1E1E1E] dark:via-[#161616] dark:to-[#101010] p-5 flex flex-col justify-between">
                         {/* Efeito de brilho radial de fundo */}
                         <div className={`absolute -right-8 -top-8 w-40 h-40 rounded-full bg-gradient-to-br ${accent.glow} blur-2xl pointer-events-none`} />
                         
                         {/* Fórmulas / marcas d'água científicas sutis */}
-                        <div className="absolute inset-0 select-none pointer-events-none opacity-5 font-mono text-[10px] p-2 leading-relaxed flex flex-wrap gap-3 overflow-hidden">
+                        <div className="absolute inset-0 select-none pointer-events-none opacity-5 font-mono text-[10px] p-2 leading-relaxed flex flex-wrap gap-3 overflow-hidden text-gray-900 dark:text-white">
                             <span>∇×B = μ₀J</span>
                             <span>ψ(x,t)</span>
                             <span>iℏ ∂ψ/∂t = Ĥψ</span>
@@ -144,7 +144,7 @@ export function RelatedMaterialCard({ submission }: RelatedMaterialCardProps) {
 
                         {/* Centro do Card: Ícone em destaque */}
                         <div className="relative z-10 my-auto flex flex-col items-center justify-center">
-                            <div className="w-12 h-12 rounded-2xl bg-white/5 dark:bg-white/5 border border-white/10 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
+                            <div className="w-12 h-12 rounded-2xl bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform duration-300">
                                 <span className={`material-symbols-outlined text-2xl ${accent.iconColor}`}>
                                     {badge.icon}
                                 </span>

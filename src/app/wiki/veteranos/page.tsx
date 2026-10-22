@@ -155,16 +155,16 @@ export default function VeteranosPage() {
 
     return (
         <MainLayoutWrapper>
-            <div className="min-h-screen bg-transparent text-white selection:bg-brand-blue selection:text-white pb-20">
+            <div className="min-h-screen bg-transparent text-gray-900 dark:text-white selection:bg-brand-blue selection:text-white pb-20">
                 {/* Header Substituto (abaixo da Navbar Global) */}
                 <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between mb-8 mt-4">
                     <div className="flex items-center gap-4">
-                        <Link href="/gcif/interativo" className="flex items-center gap-2 hover:bg-white/10 rounded-full transition-colors px-4 py-2 border border-white/10 bg-white/5">
+                        <Link href="/gcif/interativo" className="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors px-4 py-2 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 text-gray-800 dark:text-gray-200 shadow-sm">
                             <ArrowLeft className="w-5 h-5 text-gray-400" />
                             <span className="text-xs font-black uppercase tracking-widest text-brand-blue">Interativo</span>
                         </Link>
                         <h1 className="text-xl font-bold uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red flex items-center gap-2 hidden md:flex font-bukra">
-                            <Compass className="w-5 h-5 text-white" />
+                            <Compass className="w-5 h-5 text-gray-900 dark:text-white" />
                             USP 101
                         </h1>
                     </div>
@@ -185,10 +185,10 @@ export default function VeteranosPage() {
                             <Sparkles className="w-3.5 h-3.5" />
                             Todos os Institutos da Universidade de São Paulo
                         </div>
-                        <h2 className="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-white via-gray-200 to-gray-400 mb-4 font-bukra">
-                            USP 101: Conhecimento Transgeracional & Conselhos de Veteranos
+                        <h2 className="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-700 to-gray-500 dark:from-white dark:via-gray-200 dark:to-gray-400 mb-4 font-bukra">
+                            USP 101: Conhecimento Transgeracional &amp; Conselhos de Veteranos
                         </h2>
-                        <p className="text-gray-300 text-sm md:text-base max-w-2xl font-open-sans leading-relaxed">
+                        <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base max-w-2xl font-open-sans leading-relaxed">
                             Canais essenciais, atalhos acadêmicos e macetes transmitidos por quem já passou pelos perrengues — válidos para toda a USP ou específicos para o seu instituto.
                         </p>
                     </div>
@@ -200,19 +200,19 @@ export default function VeteranosPage() {
                             return (
                                 <div
                                     key={item.id}
-                                    className="p-6 rounded-3xl bg-[#1E1E1E]/95 border border-white/10 hover:border-white/20 transition-all shadow-xl flex flex-col sm:flex-row gap-5 items-stretch relative group"
+                                    className="p-6 rounded-3xl bg-white dark:bg-[#1E1E1E]/95 border border-gray-200 dark:border-white/10 hover:border-brand-yellow/40 transition-all shadow-lg dark:shadow-xl flex flex-col sm:flex-row gap-5 items-stretch relative group"
                                 >
                                     {/* Lado Esquerdo: Identificação do Atalho e Ação */}
-                                    <div className="flex sm:flex-col items-center sm:items-start justify-between sm:justify-between w-full sm:w-44 shrink-0 gap-3 border-b sm:border-b-0 sm:border-r border-white/10 pb-4 sm:pb-0 sm:pr-4">
+                                    <div className="flex sm:flex-col items-center sm:items-start justify-between sm:justify-between w-full sm:w-44 shrink-0 gap-3 border-b sm:border-b-0 sm:border-r border-gray-200 dark:border-white/10 pb-4 sm:pb-0 sm:pr-4">
                                         <div className="flex items-center sm:flex-col sm:items-start gap-3">
-                                            <div className="size-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-white group-hover:scale-105 transition-transform shrink-0">
-                                                <Icon className="w-6 h-6 text-white" />
+                                            <div className="size-12 rounded-2xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-900 dark:text-white group-hover:scale-105 transition-transform shrink-0">
+                                                <Icon className="w-6 h-6 text-gray-900 dark:text-white" />
                                             </div>
                                             <div>
                                                 <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border mb-1 ${item.badgeCor}`}>
                                                     Atalho
                                                 </span>
-                                                <h4 className="text-sm font-bold font-bukra text-white leading-tight">
+                                                <h4 className="text-sm font-bold font-bukra text-gray-900 dark:text-white leading-tight">
                                                     {item.nome}
                                                 </h4>
                                             </div>
@@ -229,12 +229,12 @@ export default function VeteranosPage() {
                                     </div>
 
                                     {/* Lado Direito: Texto com o Conselho de Veterano */}
-                                    <div className="flex-1 flex flex-col justify-center bg-black/30 p-4 rounded-2xl border border-white/5">
+                                    <div className="flex-1 flex flex-col justify-center bg-gray-50 dark:bg-black/30 p-4 rounded-2xl border border-gray-200 dark:border-white/5">
                                         <div className="flex items-center gap-1.5 mb-2 text-brand-yellow font-bukra font-bold text-[11px] uppercase tracking-wider">
                                             <Sparkles className="w-3.5 h-3.5" />
                                             <span>Conselho de Veterano</span>
                                         </div>
-                                        <p className="text-xs sm:text-sm text-gray-300 font-open-sans leading-relaxed">
+                                        <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-open-sans leading-relaxed">
                                             {item.conselho}
                                         </p>
                                     </div>
@@ -244,26 +244,26 @@ export default function VeteranosPage() {
                     </div>
 
                     {/* --- Seção de Conselhos da Comunidade USP --- */}
-                    <div className="space-y-6 pt-6 border-t border-white/10">
+                    <div className="space-y-6 pt-6 border-t border-gray-200 dark:border-white/10">
                         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                             <div>
-                                <h3 className="text-2xl font-black font-bukra uppercase text-white tracking-tight flex items-center gap-2">
+                                <h3 className="text-2xl font-black font-bukra uppercase text-gray-900 dark:text-white tracking-tight flex items-center gap-2">
                                     <MessageSquare className="w-6 h-6 text-brand-blue" />
                                     Mural de Conselhos da Comunidade
                                 </h3>
-                                <p className="text-xs sm:text-sm text-gray-400 font-open-sans mt-1">
+                                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-open-sans mt-1">
                                     Filtre por instituto da USP ou por categoria para encontrar o conselho exato que você precisa.
                                 </p>
                             </div>
 
-                            <span className="text-xs text-gray-400 font-mono shrink-0">
+                            <span className="text-xs text-gray-500 dark:text-gray-400 font-mono shrink-0">
                                 {filteredTips.length} conselhos exibidos
                             </span>
                         </div>
 
                         {/* Filtro 1: Institutos da USP */}
                         <div className="space-y-2">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                                 <Building2 className="w-3.5 h-3.5 text-brand-yellow" />
                                 Filtrar por Instituto:
                             </span>
@@ -272,8 +272,8 @@ export default function VeteranosPage() {
                                     onClick={() => setSelectedInstitute('todas')}
                                     className={`px-3.5 py-1.5 rounded-xl text-xs font-black font-bukra uppercase tracking-wider transition-all shrink-0 ${
                                         selectedInstitute === 'todas'
-                                            ? 'bg-white text-gray-950 shadow-md font-bold'
-                                            : 'bg-white/5 text-gray-400 hover:text-white border border-transparent'
+                                            ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-950 shadow-md font-bold'
+                                            : 'bg-gray-100 text-gray-600 hover:text-gray-900 dark:bg-white/5 dark:text-gray-400 dark:hover:text-white border border-gray-200 dark:border-transparent'
                                     }`}
                                 >
                                     Todos os Institutos
@@ -288,7 +288,7 @@ export default function VeteranosPage() {
                                             className={`px-3.5 py-1.5 rounded-xl text-xs font-black font-bukra uppercase tracking-wider transition-all shrink-0 flex items-center gap-1.5 ${
                                                 isSelected
                                                     ? 'bg-brand-blue text-white shadow-md border border-brand-blue/50'
-                                                    : 'bg-white/5 text-gray-400 hover:text-white border border-white/5'
+                                                    : 'bg-gray-100 text-gray-600 hover:text-gray-900 dark:bg-white/5 dark:text-gray-400 dark:hover:text-white border border-gray-200 dark:border-white/5'
                                             }`}
                                         >
                                             <span>{inst.shortLabel}</span>
@@ -301,7 +301,7 @@ export default function VeteranosPage() {
 
                         {/* Filtro 2: Categorias */}
                         <div className="space-y-2">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 flex items-center gap-1.5">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
                                 <Filter className="w-3.5 h-3.5 text-brand-blue" />
                                 Filtrar por Categoria:
                             </span>
@@ -310,8 +310,8 @@ export default function VeteranosPage() {
                                     onClick={() => setActiveFilter('todas')}
                                     className={`px-3.5 py-1.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all shrink-0 ${
                                         activeFilter === 'todas'
-                                            ? 'bg-white/20 text-white border border-white/30'
-                                            : 'bg-white/5 text-gray-400 hover:text-white'
+                                            ? 'bg-gray-900 text-white dark:bg-white/20 dark:text-white border border-gray-900 dark:border-white/30'
+                                            : 'bg-gray-100 text-gray-600 hover:text-gray-900 dark:bg-white/5 dark:text-gray-400 dark:hover:text-white border border-gray-200 dark:border-transparent'
                                     }`}
                                 >
                                     Todas as Categorias
@@ -327,7 +327,7 @@ export default function VeteranosPage() {
                                                     : cat.color === 'brand-red'
                                                     ? 'bg-brand-red/20 text-brand-red border border-brand-red/40'
                                                     : 'bg-brand-blue/20 text-brand-blue border border-brand-blue/40'
-                                                : 'bg-white/5 text-gray-400 hover:text-white'
+                                                : 'bg-gray-100 text-gray-600 hover:text-gray-900 dark:bg-white/5 dark:text-gray-400 dark:hover:text-white border border-gray-200 dark:border-transparent'
                                         }`}
                                     >
                                         {cat.label}
@@ -354,7 +354,7 @@ export default function VeteranosPage() {
                                             initial={{ opacity: 0, y: 20 }}
                                             animate={{ opacity: 1, y: 0 }}
                                             transition={{ delay: idx * 0.05 }}
-                                            className="break-inside-avoid p-6 sm:p-8 rounded-[32px] bg-[#1E1E1E] border border-white/5 hover:border-white/15 transition-all shadow-xl relative group flex flex-col justify-between"
+                                            className="break-inside-avoid p-6 sm:p-8 rounded-[32px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/5 hover:border-brand-blue/30 transition-all shadow-lg dark:shadow-xl relative group flex flex-col justify-between"
                                         >
                                             <div>
                                                 <div className="flex items-center justify-between gap-2 mb-3">
@@ -365,7 +365,7 @@ export default function VeteranosPage() {
                                                     </span>
 
                                                     {/* Upvotes */}
-                                                    <div className="flex items-center gap-1.5 text-gray-400 text-xs font-bold">
+                                                    <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 text-xs font-bold">
                                                         <ThumbsUp className={`w-3.5 h-3.5 ${isUpvoted ? 'text-brand-blue fill-brand-blue' : ''}`} />
                                                         <span className={isUpvoted ? 'text-brand-blue' : ''}>{tip.upvotes || 0}</span>
                                                     </div>
@@ -383,15 +383,15 @@ export default function VeteranosPage() {
                                                     </span>
                                                 </div>
 
-                                                <h3 className="text-lg font-bold font-bukra text-white mb-2 leading-snug group-hover:text-brand-blue transition-colors">
+                                                <h3 className="text-lg font-bold font-bukra text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-brand-blue transition-colors">
                                                     {tip.titulo}
                                                 </h3>
-                                                <p className="text-gray-300 text-xs sm:text-sm font-open-sans leading-relaxed mb-6 whitespace-pre-wrap">
+                                                <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-open-sans leading-relaxed mb-6 whitespace-pre-wrap">
                                                     {tip.conteudo}
                                                 </p>
                                             </div>
                                             
-                                            <div className="flex items-center justify-between pt-4 border-t border-white/10">
+                                            <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-white/10">
                                                 <span className="text-xs text-gray-500 font-medium truncate max-w-[180px]">
                                                     — {tip.autor_nome}
                                                 </span>
@@ -401,7 +401,7 @@ export default function VeteranosPage() {
                                                     className={`p-2 rounded-full transition-all ${
                                                         isUpvoted
                                                             ? 'bg-brand-blue/20 text-brand-blue cursor-default'
-                                                            : 'bg-white/5 text-white hover:bg-white/20 active:scale-95'
+                                                            : 'bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-white/20 active:scale-95'
                                                     }`}
                                                     title={isUpvoted ? 'Conselho apoiado!' : 'Apoiar este conselho'}
                                                 >
@@ -413,12 +413,12 @@ export default function VeteranosPage() {
                                 })}
                             </div>
                         ) : (
-                            <div className="py-24 text-center bg-[#1E1E1E]/60 rounded-[40px] border border-dashed border-white/10 p-8">
-                                <AlertCircle className="w-12 h-12 text-gray-600 mx-auto mb-4" />
-                                <h4 className="text-white font-bold font-bukra uppercase tracking-wider text-sm mb-1">
+                            <div className="py-24 text-center bg-gray-50 dark:bg-[#1E1E1E]/60 rounded-[40px] border border-dashed border-gray-300 dark:border-white/10 p-8">
+                                <AlertCircle className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
+                                <h4 className="text-gray-900 dark:text-white font-bold font-bukra uppercase tracking-wider text-sm mb-1">
                                     Nenhum conselho encontrado
                                 </h4>
-                                <p className="text-gray-400 font-open-sans text-xs max-w-sm mx-auto">
+                                <p className="text-gray-500 dark:text-gray-400 font-open-sans text-xs max-w-sm mx-auto">
                                     Não há dicas cadastradas para este instituto ou categoria. Seja o primeiro veterano a transmitir um conselho!
                                 </p>
                             </div>
@@ -427,17 +427,18 @@ export default function VeteranosPage() {
                 </main>
 
                 {/* Modal de Transmissão de Conselho (Multi-Instituto) */}
+                {/* Modal de Transmissão de Conselho (Multi-Instituto) */}
                 {isModalOpen && (
                     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => !isSubmitting && setIsModalOpen(false)} />
+                        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isSubmitting && setIsModalOpen(false)} />
                         <motion.div 
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="bg-[#1E1E1E] border border-white/10 p-6 sm:p-8 rounded-[32px] w-full max-w-lg relative z-10 shadow-2xl"
+                            className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 p-6 sm:p-8 rounded-[32px] w-full max-w-lg relative z-10 shadow-2xl text-left"
                         >
                             <button 
                                 onClick={() => setIsModalOpen(false)}
-                                className="absolute top-6 right-6 text-gray-500 hover:text-white transition-colors"
+                                className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                                 disabled={isSubmitting}
                             >
                                 <X className="w-6 h-6" />
@@ -447,27 +448,27 @@ export default function VeteranosPage() {
                                 <Sparkles className="w-4 h-4" />
                                 USP 101 • Transmissão de Conselho
                             </div>
-                            <h2 className="text-xl sm:text-2xl font-black italic uppercase tracking-tighter text-white font-bukra mb-1">
+                            <h2 className="text-xl sm:text-2xl font-black italic uppercase tracking-tighter text-gray-900 dark:text-white font-bukra mb-1">
                                 Transmitir Conselho
                             </h2>
-                            <p className="text-gray-400 text-xs font-open-sans mb-6 leading-relaxed">
+                            <p className="text-gray-500 dark:text-gray-400 text-xs font-open-sans mb-6 leading-relaxed">
                                 Sua experiência pode salvar o semestre de alguém. Escolha se o conselho é válido para toda a USP ou para um instituto específico.
                             </p>
 
                             <form onSubmit={handleSubmit} className="space-y-4">
                                 {/* Destino / Instituto */}
                                 <div>
-                                    <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-1.5 font-bukra">
+                                    <label className="block text-xs font-black uppercase tracking-widest text-gray-700 dark:text-gray-400 mb-1.5 font-bukra">
                                         Destino do Conselho (Instituto)
                                     </label>
                                     <select 
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white text-xs focus:border-brand-blue outline-none transition-colors font-open-sans"
+                                        className="w-full bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white text-xs focus:border-brand-blue outline-none transition-colors font-open-sans"
                                         value={newTip.instituto}
                                         onChange={e => setNewTip({...newTip, instituto: e.target.value})}
                                         disabled={isSubmitting}
                                     >
                                         {USP_INSTITUTES.map(inst => (
-                                            <option key={inst.id} value={inst.id} className="bg-gray-900 text-white">
+                                            <option key={inst.id} value={inst.id} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
                                                 {inst.name}
                                             </option>
                                         ))}
@@ -476,17 +477,17 @@ export default function VeteranosPage() {
 
                                 {/* Categoria */}
                                 <div>
-                                    <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-1.5 font-bukra">
+                                    <label className="block text-xs font-black uppercase tracking-widest text-gray-700 dark:text-gray-400 mb-1.5 font-bukra">
                                         Categoria
                                     </label>
                                     <select 
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white text-xs focus:border-brand-blue outline-none transition-colors font-open-sans"
+                                        className="w-full bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white text-xs focus:border-brand-blue outline-none transition-colors font-open-sans"
                                         value={newTip.categoria}
                                         onChange={e => setNewTip({...newTip, categoria: e.target.value})}
                                         disabled={isSubmitting}
                                     >
                                         {CATEGORIAS.map(c => (
-                                            <option key={c.id} value={c.id} className="bg-gray-900 text-white">
+                                            <option key={c.id} value={c.id} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
                                                 {c.label}
                                             </option>
                                         ))}
@@ -495,14 +496,14 @@ export default function VeteranosPage() {
 
                                 {/* Título */}
                                 <div>
-                                    <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-1.5 font-bukra">
+                                    <label className="block text-xs font-black uppercase tracking-widest text-gray-700 dark:text-gray-400 mb-1.5 font-bukra">
                                         Título do Conselho
                                     </label>
                                     <input 
                                         type="text" 
                                         required
                                         maxLength={100}
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white text-xs focus:border-brand-blue outline-none transition-colors font-open-sans"
+                                        className="w-full bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white text-xs focus:border-brand-blue outline-none transition-colors font-open-sans placeholder-gray-400 dark:placeholder-gray-500"
                                         placeholder="Ex: Como sobreviver a Física 1 ou Dicas do bandejão central"
                                         value={newTip.titulo}
                                         onChange={e => setNewTip({...newTip, titulo: e.target.value})}
@@ -512,14 +513,14 @@ export default function VeteranosPage() {
 
                                 {/* Conteúdo */}
                                 <div>
-                                    <label className="block text-xs font-black uppercase tracking-widest text-gray-400 mb-1.5 font-bukra">
+                                    <label className="block text-xs font-black uppercase tracking-widest text-gray-700 dark:text-gray-400 mb-1.5 font-bukra">
                                         Conselho / Dica de Veterano
                                     </label>
                                     <textarea 
                                         required
                                         maxLength={800}
                                         rows={4}
-                                        className="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-white text-xs focus:border-brand-blue outline-none transition-colors resize-none font-open-sans"
+                                        className="w-full bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white text-xs focus:border-brand-blue outline-none transition-colors resize-none font-open-sans placeholder-gray-400 dark:placeholder-gray-500"
                                         placeholder="Escreva detalhadamente o conselho, macetes de provas, materiais recomendados ou rotas de sobrevivência..."
                                         value={newTip.conteudo}
                                         onChange={e => setNewTip({...newTip, conteudo: e.target.value})}

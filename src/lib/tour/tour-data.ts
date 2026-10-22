@@ -886,19 +886,19 @@ export const CGIF_INSTITUTO_TOUR_STEPS: TourStepConfig[] = [
         }
     },
     {
-        element: '[data-tour="gcif-instituto-espacos"]',
+        element: '[data-tour="gcif-instituto-mapa"]',
         popover: {
-            title: '5. Espaços de Convivência & Criação',
-            description: 'Locais abertos à comunidade: Hackerspace, DigitalLab, CEFISMA (Amélia Império), Lab Demo e PROFIS.',
+            title: '5. Campus Interativo & Mapa do IFUSP',
+            description: 'Mapa geográfico interativo dos edifícios, blocos de aula, laboratórios didáticos, oficinas e auditórios.',
             side: 'top',
             align: 'center',
         }
     },
     {
-        element: '[data-tour="gcif-instituto-mapa"]',
+        element: '[data-tour="gcif-instituto-espacos"]',
         popover: {
-            title: '6. Campus Interativo & Mapa do IFUSP',
-            description: 'Mapa geográfico interativo dos edifícios, blocos de aula, laboratórios didáticos, oficinas e auditórios.',
+            title: '6. Espaços de Convivência & Criação',
+            description: 'Locais abertos à comunidade: Hackerspace, DigitalLab, CEFISMA (Amélia Império), Lab Demo e PROFIS.',
             side: 'top',
             align: 'center',
         }

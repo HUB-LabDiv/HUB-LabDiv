@@ -13,7 +13,7 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import toast from 'react-hot-toast';
@@ -27,7 +27,9 @@ import {
     MapPin,
     Building2,
     Users,
-    Clock
+    Clock,
+    Calendar,
+    Newspaper
 } from 'lucide-react';
 import { NetflixFeed } from '@/components/shared/NetflixFeed';
 import { ColisorIcon } from '@/components/icons/ColisorIcon';
@@ -35,6 +37,23 @@ import dynamic from 'next/dynamic';
 import { DepartmentGrid } from '@/components/wiki/instituto/DepartmentGrid';
 import { InstitutoTimeline } from '@/components/wiki/instituto/InstitutoTimeline';
 import { HistoricalPosts } from '@/components/wiki/instituto/HistoricalPosts';
+import { HackerspaceCard } from '@/components/espacos/HackerspaceCard';
+import { initiativesData } from '@/data/initiativesData';
+import { Initiative } from '@/types/initiatives';
+import { InitiativeCard } from '@/components/gcif/InitiativeCard';
+import { InitiativeDetailsModal } from '@/components/gcif/InitiativeDetailsModal';
+import { eventsData } from '@/data/eventsData';
+import { newsData } from '@/data/newsData';
+import { EventItem } from '@/types/events';
+import { NewsItem } from '@/types/news';
+import { EventCard } from '@/components/gcif/EventCard';
+import { EventDetailsModal } from '@/components/gcif/EventDetailsModal';
+import { NewsCard } from '@/components/gcif/NewsCard';
+import { NewsDetailsModal } from '@/components/gcif/NewsDetailsModal';
+import { spacesData } from '@/data/spacesData';
+import { SpaceItem } from '@/types/spaces';
+import { SpaceCard } from '@/components/gcif/SpaceCard';
+import { SpaceDetailsModal } from '@/components/gcif/SpaceDetailsModal';
 
 const CampusMap = dynamic(() => import('@/components/map/CampusMap').then(mod => mod.CampusMap), {
     ssr: false,
@@ -112,27 +131,44 @@ const getPlatformIcon = (platform: string) => {
 };
 
 export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
+    const [selectedInitiative, setSelectedInitiative] = useState<Initiative | null>(null);
+    const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
+    const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
+    const [selectedSpace, setSelectedSpace] = useState<SpaceItem | null>(null);
+    const [eventFilter, setEventFilter] = useState<string>('todos');
+    const [spaceFilter, setSpaceFilter] = useState<string>('todos');
+
+    const eventsList = Object.values(eventsData);
+    const filteredEvents = eventFilter === 'todos' 
+        ? eventsList 
+        : eventsList.filter(evt => evt.tipo === eventFilter);
+
+    const spacesList = Object.values(spacesData);
+    const filteredSpaces = spaceFilter === 'todos'
+        ? spacesList
+        : spacesList.filter(sp => sp.categoria === spaceFilter);
+
     return (
         <div className="w-full space-y-16 pb-16">
             {/* Header Hero */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1E1E1E] via-[#161616] to-[#0f0f0f] border border-white/10 p-6 sm:p-10 shadow-2xl flex flex-col xl:flex-row justify-between items-start gap-8">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50 to-blue-50/20 dark:from-[#1E1E1E] dark:via-[#161616] dark:to-[#0f0f0f] border border-gray-200 dark:border-white/10 p-6 sm:p-10 shadow-xl dark:shadow-2xl flex flex-col xl:flex-row justify-between items-start gap-8">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-brand-blue-ifusp/15 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="relative z-10 max-w-2xl">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue-ifusp/20 border border-brand-blue-ifusp/40 text-blue-300 text-xs font-black uppercase tracking-wider mb-3">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue-ifusp/15 border border-brand-blue-ifusp/30 text-brand-blue dark:text-blue-300 text-xs font-black uppercase tracking-wider mb-3">
                         <Landmark className="w-3.5 h-3.5" />
                         Instituto de Física da Universidade de São Paulo
                     </div>
-                    <h1 className="text-3xl sm:text-5xl font-black text-white font-bukra tracking-tight">
+                    <h1 className="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white font-bukra tracking-tight">
                         O Instituto, Iniciativas & Espaços
                     </h1>
-                    <p className="text-xs sm:text-sm text-gray-300 font-open-sans mt-3 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans mt-3 leading-relaxed">
                         Conheça a estrutura, história, departamentos, laboratórios, entidades estudantis e a comunidade de divulgadores que constroem a ciência no IFUSP.
                     </p>
                 </div>
 
                 <div className="relative z-10 w-full xl:w-auto">
-                    <div className="bg-[#111] border border-white/10 rounded-2xl p-4 flex flex-col gap-4 shadow-xl w-full xl:min-w-[340px]">
+                    <div className="bg-white dark:bg-[#111] border border-gray-200 dark:border-white/10 rounded-2xl p-4 flex flex-col gap-4 shadow-lg w-full xl:min-w-[340px]">
                         <div className="flex items-center gap-4">
                             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-brand-blue-ifusp to-brand-blue-ifusp/20 flex items-center justify-center border border-white/10 shadow-[0_0_15px_rgba(31,159,207,0.3)] shrink-0">
                                 <Landmark className="text-white w-5 h-5" />
@@ -142,19 +178,19 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
                                     Instituto_Identificado
                                     <span className="px-1.5 py-0.5 bg-brand-blue-ifusp/10 text-brand-blue-ifusp border border-brand-blue-ifusp/30 rounded text-[7px] font-black uppercase tracking-widest">PADRÃO DO HUB</span>
                                 </div>
-                                <div className="text-sm font-bold text-gray-200 font-bukra uppercase">
+                                <div className="text-sm font-bold text-gray-900 dark:text-gray-200 font-bukra uppercase">
                                     IFUSP
                                 </div>
                             </div>
                         </div>
-                        <div className="pt-3 border-t border-white/5 flex flex-col gap-2.5">
+                        <div className="pt-3 border-t border-gray-100 dark:border-white/5 flex flex-col gap-2.5">
                             <div className="flex items-start gap-2">
-                                <Info className="w-3.5 h-3.5 text-brand-yellow shrink-0 mt-0.5" />
-                                <p className="text-[10px] font-open-sans text-gray-400 leading-snug">
+                                <Info className="w-3.5 h-3.5 text-amber-600 dark:text-brand-yellow shrink-0 mt-0.5" />
+                                <p className="text-[10px] font-open-sans text-gray-600 dark:text-gray-400 leading-snug">
                                     Não é do IF? As informações de outros institutos estão em construção.
                                 </p>
                             </div>
-                            <button onClick={() => toast.success('Recurso em desenvolvimento! Em breve você poderá favoritar outros institutos.', { icon: '🚧' })} className="w-full bg-white/5 hover:bg-white/10 text-white border border-white/10 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 hover:border-white/30">
+                            <button onClick={() => toast.success('Recurso em desenvolvimento! Em breve você poderá favoritar outros institutos.', { icon: '🚧' })} className="w-full bg-gray-50 hover:bg-gray-100 dark:bg-white/5 dark:hover:bg-white/10 text-gray-800 dark:text-white border border-gray-200 dark:border-white/10 py-2 rounded-lg text-[10px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 hover:border-gray-300 dark:hover:border-white/30 cursor-pointer">
                                 Explorar Outro Instituto
                             </button>
                         </div>
@@ -167,113 +203,75 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
                 <DepartmentGrid />
             </div>
 
-            {/* 2. Iniciativas de Impacto */}
+            {/* 2. Agenda de Eventos & Colóquios */}
+            <div id="agenda-eventos" data-tour="gcif-instituto-eventos" className="space-y-4">
+                <NetflixFeed 
+                    title="Agenda & Colóquios" 
+                    icon={<div className="p-2 bg-amber-500/10 rounded-xl text-amber-500 dark:text-brand-yellow"><Calendar className="w-5 h-5" /></div>}
+                    filterBar={
+                        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-2">
+                            {[
+                                { id: 'todos', label: 'Todos', count: eventsList.length },
+                                { id: 'coloquio', label: 'Colóquios', count: eventsList.filter(e => e.tipo === 'coloquio').length },
+                                { id: 'convite-fisica', label: 'Convite à Física', count: eventsList.filter(e => e.tipo === 'convite-fisica').length },
+                                { id: 'seminario', label: 'Seminários', count: eventsList.filter(e => e.tipo === 'seminario').length },
+                                { id: 'workshop', label: 'Workshops', count: eventsList.filter(e => e.tipo === 'workshop').length },
+                                { id: 'institucional', label: 'Institucional', count: eventsList.filter(e => e.tipo === 'institucional').length },
+                            ].map(f => (
+                                <button
+                                    key={f.id}
+                                    onClick={() => setEventFilter(f.id)}
+                                    className={`px-3 py-1.5 rounded-full text-[11px] font-black uppercase tracking-wider font-bukra transition-all shrink-0 cursor-pointer ${
+                                        eventFilter === f.id
+                                            ? 'bg-[#FFCC00] text-[#0F4780] shadow-md scale-105'
+                                            : 'bg-white dark:bg-[#1E1E1E] text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/30'
+                                    }`}
+                                >
+                                    {f.label} ({f.count})
+                                </button>
+                            ))}
+                        </div>
+                    }
+                >
+                    {filteredEvents.map(event => (
+                        <EventCard 
+                            key={event.id}
+                            event={event}
+                            onOpenDetails={setSelectedEvent}
+                        />
+                    ))}
+                </NetflixFeed>
+            </div>
+
+            {/* 3. Notícias & Destaques Institucionais */}
+            <div id="noticias-ifusp" data-tour="gcif-instituto-noticias" className="space-y-6">
+                <NetflixFeed 
+                    title="Notícias & Destaques" 
+                    icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><Newspaper className="w-5 h-5" /></div>}
+                >
+                    {newsData.map(item => (
+                        <NewsCard 
+                            key={item.id}
+                            news={item}
+                            onOpenDetails={setSelectedNews}
+                        />
+                    ))}
+                </NetflixFeed>
+            </div>
+
+            {/* 4. Iniciativas de Impacto */}
             <div id="iniciativas-impacto" data-tour="gcif-instituto-iniciativas" className="space-y-6">
                 <NetflixFeed 
                     title="Iniciativas de Impacto" 
                     icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><ColisorIcon size={20} animate={false} /></div>}
                 >
-                    {/* Lab-Div Card */}
-                    <div className="snap-center shrink-0 w-[300px] md:w-[400px] bg-[#0F4780] rounded-[40px] p-8 shadow-[0_10px_30px_rgba(15,71,128,0.3)] relative overflow-hidden group flex flex-col justify-between transition-all hover:-translate-y-2">
-                        {/* Decorative background glow */}
-                        <div className="absolute -top-20 -right-20 w-64 h-64 bg-white/10 rounded-full blur-3xl group-hover:bg-white/20 transition-colors pointer-events-none" />
-                        
-                        <div className="relative z-10 flex flex-col items-center">
-                            <div className="mb-8 group-hover:scale-105 transition-transform origin-center select-none w-full">
-                                <div className="flex items-baseline justify-center text-[56px] md:text-[64px] font-black leading-none tracking-tighter font-bukra drop-shadow-md">
-                                    <span className="text-white relative z-10">La</span>
-                                    
-                                    <div className="relative flex items-baseline justify-center mx-[2px]">
-                                        {/* Cyan rectangle */}
-                                        <div className="absolute w-[70%] h-[120%] bg-[#22a5d8] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 shadow-sm"></div>
-                                        
-                                        {/* b and d overlapping with isolation */}
-                                        <div className="relative z-10 flex items-baseline isolate">
-                                            <span className="text-[#F14343] relative z-10">b</span>
-                                            <span className="text-[#FFCC00] relative z-20 mix-blend-multiply" style={{ marginLeft: '-0.35em' }}>d</span>
-                                        </div>
-                                    </div>
-                                    
-                                    <span className="text-white relative z-10">iv</span>
-                                </div>
-                                <div className="text-[9px] md:text-[10px] font-black tracking-[0.4em] text-white/95 uppercase mt-3 font-sans text-center">
-                                    Expressão e Divulgação
-                                </div>
-                            </div>
-                            <p className="text-xs text-white/90 font-open-sans leading-relaxed mb-6 text-center">
-                                Comunicação científica inspirada no MIT. Tutoria entre pares, escrita e design.
-                            </p>
-                        </div>
-                        <Link href="/iniciativas/labdiv" className="relative z-10 mt-auto w-full px-6 py-3.5 bg-[#FFCC00] hover:bg-[#ffe066] text-[#0F4780] rounded-xl font-black uppercase tracking-widest text-[11px] text-center shadow-lg transition-all group-hover:scale-105">
-                            Conhecer o LabDiv
-                        </Link>
-                    </div>
-
-                    {/* Show da Física Card (Neon Edition) */}
-                    <div className="snap-center shrink-0 w-[300px] md:w-[400px] bg-[#0a0a0c] rounded-[40px] p-8 border border-[#002ffe] shadow-[0_0_20px_rgba(0,47,254,0.25)] relative overflow-hidden group flex flex-col justify-between transition-all hover:shadow-[0_0_30px_rgba(1,243,0,0.3)] hover:border-[#01f300]">
-                        {/* Brilho interno de fundo */}
-                        <div className="absolute top-0 right-0 w-48 h-48 bg-[#f60011]/10 rounded-full blur-3xl group-hover:bg-[#01f300]/10 transition-colors pointer-events-none" />
-                        
-                        <div className="relative z-10">
-                            <div className="size-16 bg-black border border-white/10 rounded-2xl p-3 flex items-center justify-center text-white mb-6 group-hover:rotate-6 transition-transform shadow-[inset_0_0_15px_rgba(246,0,17,0.3)]">
-                                <span className="material-symbols-outlined text-4xl drop-shadow-[0_0_8px_#f60011]">experiment</span>
-                            </div>
-                            <h3 className="text-[22px] font-black uppercase mb-2 font-bukra tracking-wider">
-                                <span className="text-white" style={{ textShadow: '0 0 10px #f60011' }}>Show</span>{' '}
-                                <span className="text-white" style={{ textShadow: '0 0 10px #002ffe' }}>de</span>{' '}
-                                <span className="text-white" style={{ textShadow: '0 0 10px #01f300' }}>Física</span>
-                            </h3>
-                            <p className="text-xs text-gray-300 font-open-sans leading-relaxed mb-6">Demonstrações de fenômenos físicos de maneira lúdica e interativa. Monte seu show ou participe das interações ao vivo.</p>
-                        </div>
-                        <Link href="/iniciativas/show-da-fisica" className="relative z-10 mt-auto px-6 py-3 bg-black text-white rounded-xl font-black uppercase tracking-widest text-[10px] text-center transition-all border border-[#01f300] hover:bg-[#01f300] hover:text-black shadow-[0_0_15px_rgba(1,243,0,0.4)] group-hover:scale-105">
-                            Conhecer o Show
-                        </Link>
-                    </div>
-
-                    {/* Boletim Supernova */}
-                    <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-[#1E1E1E] rounded-[40px] p-8 border border-white/10 shadow-xl flex flex-col justify-between group relative overflow-hidden">
-                        <div className="absolute top-0 right-0 bg-brand-blue/90 text-white text-[9px] font-bold uppercase tracking-widest py-1.5 px-4 rounded-bl-2xl shadow-md backdrop-blur-sm z-10">
-                            Em breve no HUB
-                        </div>
-                        <div>
-                            <div className="size-14 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-6">
-                                <span className="material-symbols-outlined text-3xl">newspaper</span>
-                            </div>
-                            <h3 className="text-xl font-black italic uppercase mb-2 text-white font-bukra">Supernova</h3>
-                            <p className="text-xs text-gray-400 font-open-sans leading-relaxed mb-6">O boletim crítico e cultural do CEFISMA. A voz ativa da graduação.</p>
-                        </div>
-                        <a href="https://cefisma.com.br" target="_blank" rel="noopener noreferrer" className="mt-auto px-6 py-3 border border-brand-blue/20 text-brand-blue rounded-xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-blue/10 transition-colors">Ler Supernova</a>
-                    </div>
-
-                    {/* BIFUSP */}
-                    <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-[#1E1E1E] rounded-[40px] p-8 border border-white/10 shadow-xl flex flex-col justify-between group relative overflow-hidden">
-                        <div className="absolute top-0 right-0 bg-brand-blue/90 text-white text-[9px] font-bold uppercase tracking-widest py-1.5 px-4 rounded-bl-2xl shadow-md backdrop-blur-sm z-10">
-                            Em breve no HUB
-                        </div>
-                        <div>
-                            <div className="size-14 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-6">
-                                <span className="material-symbols-outlined text-3xl">library_books</span>
-                            </div>
-                            <h3 className="text-xl font-black italic uppercase mb-2 text-white font-bukra">BIFUSP</h3>
-                            <p className="text-xs text-gray-400 font-open-sans leading-relaxed mb-6">A base de dados física. Biblioteca central do Instituto de Física.</p>
-                        </div>
-                        <a href="https://portal.if.usp.br/biblioteca/" target="_blank" rel="noopener noreferrer" className="mt-auto px-6 py-3 border border-brand-blue/20 text-brand-blue rounded-xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-blue/10 transition-colors">Consultar</a>
-                    </div>
-
-                    {/* Grupo Noether */}
-                    <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-[#1E1E1E] rounded-[40px] p-8 border border-white/10 shadow-xl flex flex-col justify-between group relative overflow-hidden">
-                        <div className="absolute top-0 right-0 bg-brand-yellow/90 text-black text-[9px] font-bold uppercase tracking-widest py-1.5 px-4 rounded-bl-2xl shadow-md backdrop-blur-sm z-10">
-                            Em breve no HUB
-                        </div>
-                        <div>
-                            <div className="size-14 bg-brand-yellow/10 rounded-2xl flex items-center justify-center text-brand-yellow mb-6">
-                                <span className="material-symbols-outlined text-3xl">group</span>
-                            </div>
-                            <h3 className="text-xl font-black italic uppercase mb-2 text-white font-bukra">Grupo Noether</h3>
-                            <p className="text-xs text-gray-400 font-open-sans leading-relaxed mb-6">Mulheres na Física. Apoio, visibilidade e debates para as alunas do IFUSP.</p>
-                        </div>
-                        <a href="https://www.instagram.com/gnoether_/" target="_blank" rel="noopener noreferrer" className="mt-auto px-6 py-3 border border-brand-yellow/30 text-brand-yellow rounded-xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-yellow/10 transition-colors">Acessar Instagram</a>
-                    </div>
+                    {Object.values(initiativesData).map((initiative) => (
+                        <InitiativeCard 
+                            key={initiative.id} 
+                            initiative={initiative} 
+                            onOpenDetails={setSelectedInitiative} 
+                        />
+                    ))}
                 </NetflixFeed>
             </div>
 
@@ -284,19 +282,19 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
                     icon={<div className="p-2 bg-brand-red/10 rounded-xl text-brand-red"><Sparkles className="w-5 h-5" /></div>}
                 >
                     {influencers.map((influencer, index) => (
-                        <div key={index} className="flex flex-col items-center text-center group snap-center shrink-0 w-[280px] p-8 bg-[#1E1E1E] rounded-[40px] border border-white/10 shadow-xl hover:border-brand-yellow/30 transition-all">
-                            <div className={`relative w-20 h-20 rounded-full mb-4 flex items-center justify-center text-xl font-bold text-white bg-${influencer.color} ring-4 ring-black/20 group-hover:scale-105 transition-transform`}>
+                        <div key={index} className="flex flex-col items-center text-center group snap-center shrink-0 w-[280px] p-8 bg-white dark:bg-[#1E1E1E] rounded-[40px] border border-gray-200 dark:border-white/10 shadow-md hover:shadow-xl dark:shadow-xl hover:border-brand-yellow/40 transition-all">
+                            <div className={`relative w-20 h-20 rounded-full mb-4 flex items-center justify-center text-xl font-bold text-white bg-${influencer.color} ring-4 ring-black/10 dark:ring-black/20 group-hover:scale-105 transition-transform shadow-md`}>
                                 {influencer.imagePlaceholder}
                             </div>
-                            <h3 className="text-base font-black uppercase tracking-tight mb-1 text-white font-bukra">{influencer.name}</h3>
+                            <h3 className="text-base font-black uppercase tracking-tight mb-1 text-gray-900 dark:text-white font-bukra">{influencer.name}</h3>
                             <p className={`text-[10px] font-black uppercase tracking-wider text-${influencer.color} mb-3`}>{influencer.role}</p>
-                            <p className="text-xs text-gray-400 leading-relaxed font-open-sans line-clamp-3 mb-6">{influencer.bio}</p>
+                            <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed font-open-sans line-clamp-3 mb-6">{influencer.bio}</p>
                             <div className="mt-auto w-full pt-2">
                                 <a 
                                     href={influencer.link} 
                                     target="_blank" 
                                     rel="noopener noreferrer" 
-                                    className="w-full py-2.5 px-4 rounded-2xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 hover:border-brand-yellow/30 transition-all text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 group-hover:bg-white/10"
+                                    className="w-full py-2.5 px-4 rounded-2xl bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white border border-gray-200 hover:border-gray-300 dark:border-white/10 dark:hover:border-brand-yellow/30 transition-all text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2"
                                 >
                                     {getPlatformIcon(influencer.platform)}
                                     <span className="font-open-sans font-bold text-xs tracking-wider">Conhecer</span>
@@ -307,104 +305,73 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
                 </NetflixFeed>
             </div>
 
-            {/* 3. Espaços do IF */}
-            <div id="espacos-convivencia" data-tour="gcif-instituto-espacos" className="space-y-6">
-                <NetflixFeed 
-                    title="Espaços de Convivência & Criação" 
-                    icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><Info className="w-5 h-5" /></div>}
-                >
-                    {/* Hackerspace */}
-                    <div className="snap-center shrink-0 w-[300px] bg-[#1E1E1E] rounded-[40px] p-8 border border-white/10 shadow-xl flex flex-col justify-between group hover:border-brand-yellow/30 transition-all">
-                        <div>
-                            <div className="size-14 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-6 group-hover:scale-110 transition-transform">
-                                <span className="material-symbols-outlined text-3xl">memory</span>
-                            </div>
-                            <h3 className="text-lg font-black uppercase mb-2 text-white font-bukra">Hackerspace</h3>
-                            <p className="text-xs text-gray-400 leading-relaxed mb-6 font-open-sans">Cultura maker no IF. Arduinos, 3D e colaboração radical.</p>
-                        </div>
-                        <a href="https://hackerspace.if.usp.br" target="_blank" rel="noopener noreferrer" className="mt-auto text-brand-blue font-black uppercase tracking-wider text-xs flex items-center gap-1.5 hover:underline">Visitar <ArrowRight className="w-4 h-4" /></a>
-                    </div>
-
-                    {/* DigitalLab */}
-                    <div className="snap-center shrink-0 w-[300px] bg-[#1E1E1E] rounded-[40px] p-8 border border-white/10 shadow-xl flex flex-col justify-between group opacity-60">
-                        <div>
-                            <div className="size-14 bg-brand-red/10 rounded-2xl flex items-center justify-center text-brand-red mb-6">
-                                <span className="material-symbols-outlined text-3xl">desktop_windows</span>
-                            </div>
-                            <h3 className="text-lg font-black uppercase mb-2 text-white font-bukra">DigitalLab</h3>
-                            <p className="text-xs text-gray-400 leading-relaxed mb-6 font-open-sans">Espaço no Inova. Experiências digitais e audiovisual.</p>
-                        </div>
-                        <div className="mt-auto text-brand-red text-[10px] font-black uppercase tracking-widest">
-                            Em fase de ignição
-                        </div>
-                    </div>
-
-                    {/* CEFISMA - Amélia Império */}
-                    <div className="snap-center shrink-0 w-[300px] bg-[#1E1E1E] rounded-[40px] p-8 border border-white/10 shadow-xl flex flex-col justify-between group hover:border-brand-blue/30 transition-all">
-                        <div>
-                            <div className="size-14 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-6 group-hover:scale-110 transition-transform">
-                                <span className="material-symbols-outlined text-3xl">groups</span>
-                            </div>
-                            <h3 className="text-lg font-black uppercase mb-2 text-white font-bukra">Amélia Império</h3>
-                            <p className="text-xs text-gray-400 leading-relaxed mb-6 font-open-sans">O Centro Acadêmico da Física (CEFISMA). Representação estudantil e convivência.</p>
-                        </div>
-                        <a href="https://cefisma.com.br" target="_blank" rel="noopener noreferrer" className="mt-auto text-brand-blue font-black uppercase tracking-wider text-xs flex items-center gap-1.5 hover:underline">Conhecer <ArrowRight className="w-4 h-4" /></a>
-                    </div>
-
-                    {/* Lab Demo */}
-                    <div className="snap-center shrink-0 w-[300px] bg-[#1E1E1E] rounded-[40px] p-8 border border-white/10 shadow-xl flex flex-col justify-between group">
-                        <div>
-                            <div className="size-14 bg-brand-red/10 rounded-2xl flex items-center justify-center text-brand-red mb-6">
-                                <span className="material-symbols-outlined text-3xl">rocket_launch</span>
-                            </div>
-                            <h3 className="text-lg font-black uppercase mb-2 text-white font-bukra">Lab Demo</h3>
-                            <p className="text-xs text-gray-400 leading-relaxed mb-6 font-open-sans">Demonstrações lúdicas e experimentos interativos de física.</p>
-                        </div>
-                        <a href="https://portal.if.usp.br/demonstracoes/" target="_blank" rel="noopener noreferrer" className="mt-auto text-brand-red font-black uppercase tracking-wider text-xs flex items-center gap-1.5 hover:underline">Ver Fenômenos <ArrowRight className="w-4 h-4" /></a>
-                    </div>
-
-                    {/* PROFIS */}
-                    <div className="snap-center shrink-0 w-[300px] bg-[#1E1E1E] rounded-[40px] p-8 border border-white/10 shadow-xl flex flex-col justify-between group hover:border-brand-yellow/30 transition-all">
-                        <div>
-                            <div className="size-14 bg-brand-yellow/10 rounded-2xl flex items-center justify-center text-brand-yellow mb-6 group-hover:scale-110 transition-transform">
-                                <span className="material-symbols-outlined text-3xl">school</span>
-                            </div>
-                            <h3 className="text-lg font-black uppercase mb-2 text-white font-bukra">PROFIS</h3>
-                            <p className="text-xs text-gray-400 leading-relaxed mb-6 font-open-sans">O espaço Pró-Física. Ambiente dedicado ao acolhimento e suporte dos estudantes da Licenciatura.</p>
-                        </div>
-                        <a href="https://fep.if.usp.br/~profis/" target="_blank" rel="noopener noreferrer" className="mt-auto text-brand-yellow font-black uppercase tracking-wider text-xs flex items-center gap-1.5 hover:underline">
-                            Conhecer a PROFIS <ArrowRight className="w-4 h-4" />
-                        </a>
-                    </div>
-                </NetflixFeed>
-            </div>
-
-            {/* 4. Campus Interativo & Mapa */}
+            {/* 3. Campus Interativo & Mapa */}
             <div id="mapa-campus" data-tour="gcif-instituto-mapa" className="space-y-6">
                 <div className="flex items-center gap-4">
                     <div className="p-3 bg-brand-blue/10 rounded-2xl text-brand-blue">
                         <MapPin className="w-6 h-6" />
                     </div>
                     <div>
-                        <h2 className="text-2xl sm:text-3xl font-black text-white font-bukra italic uppercase tracking-tighter">
+                        <h2 className="text-2xl sm:text-3xl font-black text-gray-900 dark:text-white font-bukra italic uppercase tracking-tighter">
                             Campus Interativo & Mapa
                         </h2>
-                        <p className="text-xs sm:text-sm text-gray-400 font-open-sans">
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-open-sans">
                             Navegue pelas descobertas e registros através da geografia do Instituto.
                         </p>
                     </div>
                 </div>
 
-                <div className="w-full max-w-4xl mx-auto aspect-square rounded-3xl overflow-hidden relative shadow-2xl border border-white/10 bg-[#1B2B1B]/40">
+                <div className="w-full max-w-4xl mx-auto aspect-square rounded-3xl overflow-hidden relative shadow-2xl border border-gray-200 dark:border-white/10 bg-gray-100 dark:bg-[#1B2B1B]/40">
                     <CampusMap items={mapItems} />
                 </div>
             </div>
 
+            {/* 6. Espaços Físicos & Infraestrutura do IFUSP */}
+            <div id="espacos-convivencia" data-tour="gcif-instituto-espacos" className="space-y-4">
+                <NetflixFeed 
+                    title="Espaços Físicos & Infraestrutura" 
+                    icon={<div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-600 dark:text-emerald-400"><Building2 className="w-5 h-5" /></div>}
+                    filterBar={
+                        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-2">
+                            {[
+                                { id: 'todos', label: 'Todos', count: spacesList.length },
+                                { id: 'estudo-biblioteca', label: 'Estudo & Biblioteca', count: spacesList.filter(s => s.categoria === 'estudo-biblioteca').length },
+                                { id: 'auditorio', label: 'Auditórios', count: spacesList.filter(s => s.categoria === 'auditorio').length },
+                                { id: 'maker-convivencia', label: 'Maker & Convivência', count: spacesList.filter(s => s.categoria === 'maker-convivencia').length },
+                                { id: 'oficina-tecnica', label: 'Oficinas Técnicas', count: spacesList.filter(s => s.categoria === 'oficina-tecnica').length },
+                                { id: 'laboratorio-pesquisa', label: 'Pesquisa & Pelletron', count: spacesList.filter(s => s.categoria === 'laboratorio-pesquisa').length },
+                                { id: 'servico-alimentacao', label: 'Alimentação', count: spacesList.filter(s => s.categoria === 'servico-alimentacao').length },
+                            ].map(f => (
+                                <button
+                                    key={f.id}
+                                    onClick={() => setSpaceFilter(f.id)}
+                                    className={`px-3 py-1.5 rounded-full text-[11px] font-black uppercase tracking-wider font-bukra transition-all shrink-0 cursor-pointer ${
+                                        spaceFilter === f.id
+                                            ? 'bg-[#FFCC00] text-[#0F4780] shadow-md scale-105'
+                                            : 'bg-white dark:bg-[#1E1E1E] text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/30'
+                                    }`}
+                                >
+                                    {f.label} ({f.count})
+                                </button>
+                            ))}
+                        </div>
+                    }
+                >
+                    {filteredSpaces.map(space => (
+                        <SpaceCard 
+                            key={space.id}
+                            space={space}
+                            onOpenDetails={setSelectedSpace}
+                        />
+                    ))}
+                </NetflixFeed>
+            </div>
+
             {/* 5. Linha do Tempo & Marcos Históricos (Último lugar da página com aviso de Em Desenvolvimento) */}
-            <div id="historico-instituto" className="space-y-12 border-t border-white/10 pt-16">
+            <div id="historico-instituto" className="space-y-12 border-t border-gray-200 dark:border-white/10 pt-16">
                 {/* Banner / Aviso de Em Desenvolvimento */}
-                <div className="relative overflow-hidden rounded-3xl bg-[#1E1E1E] border border-brand-yellow/30 p-6 sm:p-8 shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-                    <div className="absolute top-0 right-0 w-72 h-72 bg-brand-yellow/5 rounded-full blur-3xl pointer-events-none" />
+                <div className="relative overflow-hidden rounded-3xl bg-white dark:bg-[#1E1E1E] border border-brand-yellow/30 p-6 sm:p-8 shadow-xl dark:shadow-2xl flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+                    <div className="absolute top-0 right-0 w-72 h-72 bg-brand-yellow/10 dark:bg-brand-yellow/5 rounded-full blur-3xl pointer-events-none" />
                     <div className="flex items-start sm:items-center gap-4 relative z-10">
                         <div className="size-14 rounded-2xl bg-brand-yellow/10 border border-brand-yellow/30 flex items-center justify-center shrink-0 text-brand-yellow">
                             <Clock className="w-7 h-7" />
@@ -414,12 +381,12 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
                                 <span className="px-2.5 py-0.5 rounded-full bg-brand-yellow/20 border border-brand-yellow/40 text-brand-yellow text-[10px] font-black uppercase tracking-wider font-bukra">
                                     Em Desenvolvimento
                                 </span>
-                                <span className="text-xs text-gray-400 font-open-sans">Acervo em Curadoria</span>
+                                <span className="text-xs text-gray-600 dark:text-gray-400 font-open-sans">Acervo em Curadoria</span>
                             </div>
-                            <h3 className="text-xl sm:text-2xl font-black text-white font-bukra italic uppercase tracking-tight">
+                            <h3 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white font-bukra italic uppercase tracking-tight">
                                 Linha do Tempo & Marcos Históricos
                             </h3>
-                            <p className="text-xs sm:text-sm text-gray-400 font-open-sans mt-1 max-w-2xl leading-relaxed">
+                            <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-open-sans mt-1 max-w-2xl leading-relaxed">
                                 A reconstrução cronológica e os registros históricos do IFUSP estão em fase de validação e catalogação pelo Lab-Div. Novos marcos, documentos e depoimentos serão integrados em breve.
                             </p>
                         </div>
@@ -427,6 +394,34 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
                 </div>
 
             </div>
+
+            {/* Modal de Detalhes do Evento */}
+            <EventDetailsModal 
+                event={selectedEvent}
+                isOpen={!!selectedEvent}
+                onClose={() => setSelectedEvent(null)}
+            />
+
+            {/* Modal de Detalhes da Notícia */}
+            <NewsDetailsModal 
+                news={selectedNews}
+                isOpen={!!selectedNews}
+                onClose={() => setSelectedNews(null)}
+            />
+
+            {/* Modal de Detalhes da Iniciativa */}
+            <InitiativeDetailsModal 
+                initiative={selectedInitiative}
+                isOpen={!!selectedInitiative}
+                onClose={() => setSelectedInitiative(null)}
+            />
+
+            {/* Modal de Detalhes do Espaço Físico */}
+            <SpaceDetailsModal 
+                space={selectedSpace}
+                isOpen={!!selectedSpace}
+                onClose={() => setSelectedSpace(null)}
+            />
         </div>
     );
 }

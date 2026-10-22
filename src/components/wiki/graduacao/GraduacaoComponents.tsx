@@ -45,22 +45,22 @@ export function CourseMetricsGrid({ metrics }: { metrics: CourseMetric[] }) {
                     <motion.div
                         key={idx}
                         whileHover={{ y: -2 }}
-                        className="p-4 sm:p-5 rounded-2xl bg-[#1E1E1E] border border-white/5 transition-all shadow-lg flex flex-col justify-between"
+                        className="p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/5 transition-all shadow-md dark:shadow-lg flex flex-col justify-between"
                     >
                         <div className="flex items-center justify-between mb-2">
-                            <span className="text-[10px] font-black uppercase tracking-wider text-gray-400 font-open-sans">
+                            <span className="text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-gray-400 font-open-sans">
                                 {m.label}
                             </span>
-                            <div className={`p-2 rounded-xl bg-black/30 ${colorClass}`}>
+                            <div className={`p-2 rounded-xl bg-gray-100 dark:bg-black/30 ${colorClass}`}>
                                 {m.icon}
                             </div>
                         </div>
                         <div>
-                            <div className="text-lg sm:text-xl font-black text-white font-bukra tracking-tight">
+                            <div className="text-lg sm:text-xl font-black text-gray-900 dark:text-white font-bukra tracking-tight">
                                 {m.value}
                             </div>
                             {m.sub && (
-                                <span className="text-[11px] text-gray-400 font-open-sans mt-0.5 block">
+                                <span className="text-[11px] text-gray-500 dark:text-gray-400 font-open-sans mt-0.5 block">
                                     {m.sub}
                                 </span>
                             )}
@@ -112,11 +112,11 @@ export function SemestersAccordion({
                 return (
                     <div
                         key={sem.semestre}
-                        className="rounded-2xl border border-white/5 bg-[#1E1E1E] overflow-hidden transition-all"
+                        className="rounded-2xl border border-gray-200 dark:border-white/5 bg-white dark:bg-[#1E1E1E] overflow-hidden transition-all shadow-sm"
                     >
                         <button
                             onClick={() => toggleSemestre(sem.semestre)}
-                            className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-white/[0.02] transition-colors"
+                            className="w-full px-5 py-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-white/[0.02] transition-colors"
                         >
                             <div className="flex items-center gap-3">
                                 <div
@@ -131,11 +131,11 @@ export function SemestersAccordion({
                                     {typeof sem.semestre === 'number' ? `${sem.semestre}º` : sem.semestre}
                                 </div>
                                 <div>
-                                    <h4 className="text-sm sm:text-base font-bold text-white font-bukra">
+                                    <h4 className="text-sm sm:text-base font-bold text-gray-900 dark:text-white font-bukra">
                                         {sem.titulo}
                                     </h4>
                                     {sem.subtitulo && (
-                                        <p className="text-[11px] text-gray-400 font-open-sans">
+                                        <p className="text-[11px] text-gray-500 dark:text-gray-400 font-open-sans">
                                             {sem.subtitulo}
                                         </p>
                                     )}
@@ -143,12 +143,12 @@ export function SemestersAccordion({
                             </div>
 
                             <div className="flex items-center gap-3">
-                                <span className="hidden sm:inline-block text-[10px] font-mono text-gray-400 bg-black/40 px-2.5 py-1 rounded-lg border border-white/5">
+                                <span className="hidden sm:inline-block text-[10px] font-mono text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-black/40 px-2.5 py-1 rounded-lg border border-gray-200 dark:border-white/5">
                                     {totalAula} CA {totalTrab > 0 ? `+ ${totalTrab} CT` : ''}
                                 </span>
                                 <ChevronDown
                                     className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${
-                                        isOpen ? 'rotate-180 text-white' : ''
+                                        isOpen ? 'rotate-180 text-gray-900 dark:text-white' : ''
                                     }`}
                                 />
                             </div>
@@ -161,39 +161,39 @@ export function SemestersAccordion({
                                     animate={{ height: 'auto', opacity: 1 }}
                                     exit={{ height: 0, opacity: 0 }}
                                     transition={{ duration: 0.25 }}
-                                    className="border-t border-white/5 px-5 py-4 bg-black/20"
+                                    className="border-t border-gray-100 dark:border-white/5 px-5 py-4 bg-gray-50/50 dark:bg-black/20"
                                 >
                                     <div className="overflow-x-auto">
                                         <table className="w-full text-left text-xs font-open-sans">
                                             <thead>
-                                                <tr className="border-b border-white/5 text-[10px] uppercase text-gray-400 font-bukra">
+                                                <tr className="border-b border-gray-100 dark:border-white/5 text-[10px] uppercase text-gray-500 dark:text-gray-400 font-bukra">
                                                     <th className="pb-2.5">Código</th>
                                                     <th className="pb-2.5">Disciplina</th>
                                                     <th className="pb-2.5 text-center">Unidade</th>
                                                     <th className="pb-2.5 text-center">Créditos (CA/CT)</th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="divide-y divide-white/5">
+                                            <tbody className="divide-y divide-gray-100 dark:divide-white/5">
                                                 {sem.disciplinas.map((disc, idx) => (
-                                                    <tr key={idx} className="hover:bg-white/[0.015] transition-colors">
-                                                        <td className="py-2.5 font-mono text-[11px] text-gray-300 font-bold whitespace-nowrap">
+                                                    <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-white/[0.015] transition-colors">
+                                                        <td className="py-2.5 font-mono text-[11px] text-gray-600 dark:text-gray-300 font-bold whitespace-nowrap">
                                                             {disc.codigo || '—'}
                                                         </td>
-                                                        <td className="py-2.5 text-white pr-4">
+                                                        <td className="py-2.5 text-gray-900 dark:text-white pr-4">
                                                             <div className="font-semibold text-[13px]">{disc.nome}</div>
                                                             {disc.observacao && (
-                                                                <div className="text-[11px] text-gray-400 italic mt-0.5">
+                                                                <div className="text-[11px] text-gray-500 dark:text-gray-400 italic mt-0.5">
                                                                     {disc.observacao}
                                                                 </div>
                                                             )}
                                                         </td>
                                                         <td className="py-2.5 text-center whitespace-nowrap">
-                                                            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-white/5 text-gray-300 border border-white/5">
+                                                            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-white/5">
                                                                 {disc.unidade || 'IFUSP'}
                                                             </span>
                                                         </td>
                                                         <td className="py-2.5 text-center font-mono font-bold whitespace-nowrap">
-                                                            <span className="text-white">{disc.creditosAula} CA</span>
+                                                            <span className="text-gray-900 dark:text-white">{disc.creditosAula} CA</span>
                                                             {disc.creditosTrab ? (
                                                                 <span className="text-brand-yellow ml-1">
                                                                     + {disc.creditosTrab} CT
@@ -228,10 +228,10 @@ export function CalloutRule({
 }) {
     const borderClass =
         color === 'brand-yellow'
-            ? 'border-brand-yellow/30 bg-gradient-to-r from-brand-yellow/10 via-[#1E1E1E] to-[#1E1E1E]'
+            ? 'border-brand-yellow/30 bg-gradient-to-r from-brand-yellow/10 via-white to-white dark:via-[#1E1E1E] dark:to-[#1E1E1E]'
             : color === 'brand-red'
-            ? 'border-brand-red/30 bg-gradient-to-r from-brand-red/10 via-[#1E1E1E] to-[#1E1E1E]'
-            : 'border-[#0F4780]/40 bg-gradient-to-r from-[#0F4780]/20 via-[#1E1E1E] to-[#1E1E1E]';
+            ? 'border-brand-red/30 bg-gradient-to-r from-brand-red/10 via-white to-white dark:via-[#1E1E1E] dark:to-[#1E1E1E]'
+            : 'border-[#0F4780]/40 bg-gradient-to-r from-[#0F4780]/15 via-white to-white dark:via-[#1E1E1E] dark:to-[#1E1E1E]';
 
     const textClass =
         color === 'brand-yellow'
@@ -241,18 +241,18 @@ export function CalloutRule({
             : 'text-brand-blue-accent';
 
     return (
-        <div className={`p-5 rounded-2xl border ${borderClass} shadow-xl my-6 flex items-start gap-4`}>
-            <div className={`p-2 rounded-xl bg-black/40 ${textClass} shrink-0 mt-0.5`}>
+        <div className={`p-5 rounded-2xl border ${borderClass} shadow-md dark:shadow-xl my-6 flex items-start gap-4`}>
+            <div className={`p-2 rounded-xl bg-gray-100 dark:bg-black/40 ${textClass} shrink-0 mt-0.5`}>
                 <Info className="w-5 h-5" />
             </div>
             <div>
                 <span className={`text-[10px] font-black uppercase tracking-widest ${textClass} font-open-sans block mb-1`}>
                     {tag}
                 </span>
-                <h4 className="text-base font-bold text-white font-bukra mb-1">
+                <h4 className="text-base font-bold text-gray-900 dark:text-white font-bukra mb-1">
                     {title}
                 </h4>
-                <p className="text-xs sm:text-sm text-gray-300 font-open-sans leading-relaxed">
+                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed">
                     {description}
                 </p>
             </div>
@@ -276,22 +276,22 @@ export function DownloadCard({
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="group p-4 sm:p-5 rounded-2xl bg-[#1E1E1E] border border-white/5 hover:border-white/20 transition-all flex items-center justify-between gap-4 shadow-lg hover:-translate-y-0.5"
+            className="group p-4 sm:p-5 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/5 hover:border-brand-yellow/40 transition-all flex items-center justify-between gap-4 shadow-sm hover:shadow-md hover:-translate-y-0.5"
         >
             <div className="flex items-center gap-3.5 min-w-0">
-                <div className="p-3 rounded-xl bg-black/40 text-brand-yellow group-hover:scale-105 transition-transform shrink-0">
+                <div className="p-3 rounded-xl bg-gray-100 dark:bg-black/40 text-brand-yellow group-hover:scale-105 transition-transform shrink-0">
                     {isExternal ? <ExternalLink className="w-5 h-5" /> : <Download className="w-5 h-5" />}
                 </div>
                 <div className="truncate">
-                    <h5 className="text-sm font-bold text-white font-bukra truncate group-hover:text-brand-yellow transition-colors">
+                    <h5 className="text-sm font-bold text-gray-900 dark:text-white font-bukra truncate group-hover:text-brand-yellow transition-colors">
                         {title}
                     </h5>
-                    <p className="text-[11px] text-gray-400 font-open-sans truncate">
+                    <p className="text-[11px] text-gray-500 dark:text-gray-400 font-open-sans truncate">
                         {subtitle}
                     </p>
                 </div>
             </div>
-            <span className="text-[10px] uppercase font-bold text-gray-400 bg-white/5 px-3 py-1.5 rounded-xl border border-white/5 shrink-0 group-hover:bg-brand-yellow group-hover:text-gray-900 group-hover:border-brand-yellow transition-all">
+            <span className="text-[10px] uppercase font-bold text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-white/5 px-3 py-1.5 rounded-xl border border-gray-200 dark:border-white/5 shrink-0 group-hover:bg-brand-yellow group-hover:text-gray-900 group-hover:border-brand-yellow transition-all">
                 {isExternal ? 'Acessar' : 'Baixar PDF'}
             </span>
         </a>

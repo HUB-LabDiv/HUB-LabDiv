@@ -57,7 +57,7 @@ export function BootLoader() {
     if (!isVisible) return null;
 
     return (
-        <div className="fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-[#121212] transition-opacity duration-500 ease-in-out">
+        <div className="fixed inset-0 z-[999999] flex flex-col items-center justify-center bg-white dark:bg-[#121212] transition-colors duration-300">
             <div className="relative w-24 h-24 sm:w-32 sm:h-32 mb-6">
                 <Image
                     src="/icone-HUBLabDiv.svg"
@@ -67,7 +67,7 @@ export function BootLoader() {
                     priority
                 />
             </div>
-            <div className="w-48 h-1.5 bg-gray-800 rounded-full overflow-hidden">
+            <div className="w-48 h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden shadow-inner">
                 <div className="h-full bg-gradient-to-r from-[#0F4780] via-[#F14343] to-[#FFCC00] w-full animate-shimmer-labdiv" />
             </div>
         </div>

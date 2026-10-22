@@ -29,8 +29,6 @@ import {
   Layers,
   Clock,
   CheckCircle2,
-  Send,
-  Compass,
   Quote
 } from 'lucide-react';
 
@@ -325,9 +323,11 @@ export function PlanoAulaSlideViewer() {
 
   const currentSlide = PLANO_AULA_SLIDES[currentIndex];
 
-  useEffect(() => {
+  const [prevIndex, setPrevIndex] = useState<number>(currentIndex);
+  if (prevIndex !== currentIndex) {
+    setPrevIndex(currentIndex);
     setActiveSubImageIndex(0);
-  }, [currentIndex]);
+  }
 
   const activeImageObj = currentSlide.bookImages && currentSlide.bookImages.length > 0
     ? currentSlide.bookImages[activeSubImageIndex]
@@ -561,7 +561,7 @@ export function PlanoAulaSlideViewer() {
                         Texto de Apoio da Página (Plano de Aula)
                       </h4>
                       <p className="text-sm text-gray-100 font-medium leading-relaxed italic relative z-10">
-                        "{activeExplanatoryText}"
+                        &quot;{activeExplanatoryText}&quot;
                       </p>
                     </div>
                   )}

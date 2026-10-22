@@ -123,7 +123,7 @@ export function SoftwareGuideView({
             </div>
 
             {/* Hero Header */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1E1E1E] via-[#161616] to-[#101010] border border-white/10 p-6 sm:p-10 shadow-2xl">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50 to-blue-50/20 dark:from-[#1E1E1E] dark:via-[#161616] dark:to-[#101010] border border-gray-200 dark:border-white/10 p-6 sm:p-10 shadow-xl dark:shadow-2xl">
                 {isComunitario && (
                     <div className="absolute top-0 right-0 w-80 h-80 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
                 )}
@@ -133,23 +133,23 @@ export function SoftwareGuideView({
                     <div className="flex flex-wrap items-center justify-between gap-3">
                         <div className="flex flex-wrap items-center gap-2">
                             {isComunitario ? (
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-brand-yellow/15 text-brand-yellow border border-brand-yellow/30 shadow-sm">
-                                    <Sparkles className="w-3.5 h-3.5 text-brand-yellow animate-pulse" />
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-brand-yellow/15 text-amber-700 dark:text-brand-yellow border border-brand-yellow/30 shadow-sm">
+                                    <Sparkles className="w-3.5 h-3.5 text-amber-600 dark:text-brand-yellow animate-pulse" />
                                     Projeto Desenvolvido no IFUSP
                                 </span>
                             ) : (
-                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-brand-blue/20 text-[#00A3FF] border border-brand-blue/40">
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-brand-blue/15 text-brand-blue border border-brand-blue/30">
                                     <ShieldCheck className="w-3.5 h-3.5" />
                                     Ferramenta Essencial
                                 </span>
                             )}
 
-                            <span className="px-3 py-1 rounded-full text-xs font-bold text-gray-300 bg-white/5 border border-white/10">
+                            <span className="px-3 py-1 rounded-full text-xs font-bold text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10">
                                 {software.category}
                             </span>
 
                             {software.pricing_type && (
-                                <span className="px-3 py-1 rounded-full text-xs font-semibold text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
+                                <span className="px-3 py-1 rounded-full text-xs font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-500/10 border border-emerald-500/20">
                                     {software.pricing_type}
                                 </span>
                             )}
@@ -160,10 +160,10 @@ export function SoftwareGuideView({
                             onClick={handleUpvote}
                             disabled={isLiking}
                             className={`
-                                flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all
+                                flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-bold transition-all cursor-pointer
                                 ${upvoted
                                     ? 'bg-brand-red/20 text-brand-red border border-brand-red/40 shadow-md shadow-brand-red/20 scale-105'
-                                    : 'bg-white/10 hover:bg-white/15 text-gray-300 hover:text-white border border-white/10'
+                                    : 'bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/15 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-white/10'
                                 }
                             `}
                         >
@@ -174,29 +174,29 @@ export function SoftwareGuideView({
 
                     {/* Title & Tagline */}
                     <div>
-                        <h1 className="text-3xl sm:text-5xl font-black text-white font-bukra tracking-tight">
+                        <h1 className="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white font-bukra tracking-tight">
                             {software.title}
                         </h1>
-                        <p className="text-sm sm:text-lg text-gray-300 font-open-sans mt-3 leading-relaxed max-w-3xl">
+                        <p className="text-sm sm:text-lg text-gray-600 dark:text-gray-300 font-open-sans mt-3 leading-relaxed max-w-3xl">
                             {software.tagline}
                         </p>
                     </div>
 
                     {/* Author & Platforms */}
-                    <div className="flex flex-wrap items-center gap-4 pt-2 text-xs text-gray-400">
+                    <div className="flex flex-wrap items-center gap-4 pt-2 text-xs text-gray-500 dark:text-gray-400">
                         <div className="flex items-center gap-2">
                             <span>Criado por:</span>
-                            <strong className="text-white font-bold text-sm">{software.author_name}</strong>
+                            <strong className="text-gray-900 dark:text-white font-bold text-sm">{software.author_name}</strong>
                         </div>
 
-                        <div className="w-1 h-1 rounded-full bg-gray-600" />
+                        <div className="w-1 h-1 rounded-full bg-gray-400 dark:bg-gray-600" />
 
                         <div className="flex items-center gap-1.5 flex-wrap">
                             <span>Disponível para:</span>
                             {software.platforms.map((plat) => (
                                 <span
                                     key={plat}
-                                    className="px-2 py-0.5 rounded-md text-[11px] font-bold text-gray-200 bg-white/10"
+                                    className="px-2 py-0.5 rounded-md text-[11px] font-bold text-gray-700 dark:text-gray-200 bg-gray-100 dark:bg-white/10 border border-gray-200 dark:border-transparent"
                                 >
                                     {plat}
                                 </span>
@@ -205,7 +205,7 @@ export function SoftwareGuideView({
                     </div>
 
                     {/* Main CTA Action Buttons */}
-                    <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-white/10">
+                    <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-gray-100 dark:border-white/10">
                         <a
                             href={software.access_url}
                             target="_blank"
@@ -221,7 +221,7 @@ export function SoftwareGuideView({
                                 href={software.repository_url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs sm:text-sm transition-all border border-white/10 hover:border-white/20"
+                                className="flex items-center gap-2 px-5 py-3.5 rounded-2xl bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/15 text-gray-900 dark:text-white font-bold text-xs sm:text-sm transition-all border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20"
                             >
                                 <Github className="w-4 h-4" />
                                 <span>Código Fonte & GitHub</span>
@@ -233,7 +233,7 @@ export function SoftwareGuideView({
 
             {/* Screenshots Gallery if available */}
             {software.screenshots && software.screenshots.length > 0 && (
-                <div className="p-6 sm:p-8 rounded-3xl bg-[#1E1E1E] border border-white/10 shadow-xl">
+                <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-xl">
                     <SoftwareScreenshots
                         screenshots={software.screenshots}
                         softwareTitle={software.title}
@@ -243,9 +243,9 @@ export function SoftwareGuideView({
 
             {/* Key Features Block */}
             {software.features_list && software.features_list.length > 0 && (
-                <div className="p-6 sm:p-8 rounded-3xl bg-[#1E1E1E] border border-white/10 shadow-xl">
-                    <h3 className="text-xl font-bold text-white font-bukra mb-6 flex items-center gap-2">
-                        <Layers className="w-5 h-5 text-brand-yellow" />
+                <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-xl">
+                    <h3 className="text-xl font-bold text-gray-900 dark:text-white font-bukra mb-6 flex items-center gap-2">
+                        <Layers className="w-5 h-5 text-amber-600 dark:text-brand-yellow" />
                         Módulos & Principais Recursos
                     </h3>
 
@@ -253,13 +253,13 @@ export function SoftwareGuideView({
                         {software.features_list.map((feat, idx) => (
                             <div
                                 key={idx}
-                                className="p-4 rounded-2xl bg-black/40 border border-white/5 space-y-1 hover:border-brand-yellow/30 transition-colors"
+                                className="p-4 rounded-2xl bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/5 space-y-1 hover:border-brand-yellow/40 transition-colors"
                             >
-                                <div className="flex items-center gap-2 text-white font-bold text-sm font-bukra">
-                                    <CheckCircle2 className="w-4 h-4 text-brand-yellow shrink-0" />
+                                <div className="flex items-center gap-2 text-gray-900 dark:text-white font-bold text-sm font-bukra">
+                                    <CheckCircle2 className="w-4 h-4 text-amber-600 dark:text-brand-yellow shrink-0" />
                                     <span>{feat.title}</span>
                                 </div>
-                                <p className="text-xs text-gray-300 font-open-sans pl-6 leading-relaxed">
+                                <p className="text-xs text-gray-600 dark:text-gray-300 font-open-sans pl-6 leading-relaxed">
                                     {feat.description}
                                 </p>
                             </div>
@@ -269,25 +269,25 @@ export function SoftwareGuideView({
             )}
 
             {/* Full Usage Guide / Tutorial */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-[#1E1E1E] border border-white/10 shadow-xl">
-                <h3 className="text-xl font-bold text-white font-bukra mb-4 flex items-center gap-2">
-                    <BookOpen className="w-5 h-5 text-brand-yellow" />
+            <div className="p-6 sm:p-8 rounded-3xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-xl">
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white font-bukra mb-4 flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-amber-600 dark:text-brand-yellow" />
                     Como Usar & Dicas de Estudo
                 </h3>
 
-                <div className="prose prose-invert max-w-none text-xs sm:text-sm text-gray-300 font-open-sans leading-relaxed whitespace-pre-line space-y-4">
+                <div className="prose dark:prose-invert max-w-none text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed whitespace-pre-line space-y-4">
                     {software.guide_markdown || software.description}
                 </div>
             </div>
 
             {/* Where to get & Installation info */}
-            <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-brand-blue/20 to-brand-yellow/10 border border-brand-blue/30 shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
+            <div className="p-6 sm:p-8 rounded-3xl bg-gradient-to-r from-blue-50 via-white to-amber-50/50 dark:from-brand-blue/20 dark:to-brand-yellow/10 border border-brand-blue/20 dark:border-brand-blue/30 shadow-lg dark:shadow-xl flex flex-col sm:flex-row sm:items-center justify-between gap-6">
                 <div>
-                    <h4 className="text-lg font-bold text-white font-bukra flex items-center gap-2">
-                        <Download className="w-5 h-5 text-brand-yellow" />
+                    <h4 className="text-lg font-bold text-gray-900 dark:text-white font-bukra flex items-center gap-2">
+                        <Download className="w-5 h-5 text-amber-600 dark:text-brand-yellow" />
                         Onde Conseguir & Como Executar
                     </h4>
-                    <p className="text-xs text-gray-300 font-open-sans mt-1">
+                    <p className="text-xs text-gray-600 dark:text-gray-300 font-open-sans mt-1">
                         O {software.title} está disponível gratuitamente para toda a comunidade.
                     </p>
                 </div>

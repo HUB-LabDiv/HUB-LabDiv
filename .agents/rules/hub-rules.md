@@ -29,3 +29,4 @@ variações de peso.
 - **Tipagem:** Interfaces em `src/types`. Validação Zod obrigatória em todas Server Actions.
 ## 3. Licensa AGPLv3
 - deixar em cada arquivo novo um aviso de que o programa é um software livre
+## 4. tenha em mente os temas claro e escuro ao adicionar qualquer elemento ao HUB, certifique-se que funciona nos dois modos antes de finalizar                        ## 5. pergunte o máximo possivel antes de fazer algo caso tenha duvidas                              

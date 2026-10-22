@@ -32,6 +32,7 @@ import { NetflixFeed } from '@/components/shared/NetflixFeed';
 import { WikiView } from '@/components/wiki/WikiView';
 import { InstitutoView } from '@/components/wiki/instituto/InstitutoView';
 import { ConstelacoesLinguisticas } from './ConstelacoesLinguisticas';
+import { HackerspaceCard } from '@/components/espacos/HackerspaceCard';
 import dynamic from 'next/dynamic';
 
 const CampusMap = dynamic(() => import('@/components/map/CampusMap').then(mod => mod.CampusMap), {
@@ -118,9 +119,9 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
     const navItems = [
         { id: 'oportunidades', label: 'Oportunidades', href: '#oportunidades', icon: 'campaign', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
         { id: 'iniciativas', label: 'Iniciativas', href: '#iniciativas', icon: 'groups', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
-        { id: 'espaços', label: 'Espaços', href: '#espaços', icon: 'location_city', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'influenciadores', label: 'Influenciadores', href: '#influenciadores', icon: 'record_voice_over', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'mapa', label: 'Mapa', href: '#mapa', icon: 'map', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
+        { id: 'espaços', label: 'Espaços', href: '#espaços', icon: 'location_city', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'constelacoes', label: 'Glossário', href: '#constelacoes', icon: 'menu_book', activeClass: 'text-brand-yellow bg-brand-yellow/10 border-brand-yellow/30', hoverClass: 'hover:text-brand-yellow hover:bg-brand-yellow/5' },
         { id: 'wiki-hub-section', label: 'Wiki', href: '#wiki-hub-section', icon: 'hub', activeClass: 'text-brand-blue bg-brand-blue/10 border-brand-blue/30', hoverClass: 'hover:text-brand-blue hover:bg-brand-blue/5' },
         { id: 'teste-radiacao', label: 'Teste', href: '#teste-radiacao', icon: 'quiz', activeClass: 'text-brand-red bg-brand-red/10 border-brand-red/20', hoverClass: 'hover:text-brand-red hover:bg-brand-red/5' },
@@ -351,22 +352,56 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
 
 
 
-            {/* 4. Espaços Section */}
+            {/* 4. Influenciadores Feed */}
+            <section id="influenciadores" data-tour="cgif-section-influenciadores" className="scroll-mt-28">
+                <NetflixFeed 
+                title="Influenciadores do IF" 
+                icon={<div className="p-3 bg-brand-red/10 rounded-2xl text-brand-red"><Sparkles className="w-8 h-8" /></div>}
+            >
+                {influencers.map((influencer, index) => (
+                    <div key={index} className="flex flex-col items-center text-center group snap-center shrink-0 w-[280px] p-8 bg-white dark:bg-[#1E1E1E] rounded-[40px] border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none hover:border-brand-yellow/30 transition-all">
+                        <div className={`relative w-24 h-24 rounded-full mb-6 flex items-center justify-center text-2xl font-bold text-white bg-${influencer.color} ring-4 ring-black/5 dark:ring-black/20 group-hover:scale-105 transition-transform`}>
+                            {influencer.imagePlaceholder}
+                        </div>
+                        <h3 className="text-lg font-black uppercase tracking-tight mb-1 text-gray-900 dark:text-white">{influencer.name}</h3>
+                        <p className={`text-[10px] font-black uppercase tracking-[0.2em] text-${influencer.color} mb-4`}>{influencer.role}</p>
+                        <p className="text-xs text-gray-600 dark:text-gray-500 leading-relaxed font-medium line-clamp-3 mb-6">{influencer.bio}</p>
+                        <div className="mt-auto">
+                            <a href={influencer.link} target="_blank" rel="noopener noreferrer" className={`size-10 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-white dark:hover:text-white hover:bg-${influencer.color} transition-all`}>
+                                {getPlatformIcon(influencer.platform)}
+                            </a>
+                        </div>
+                    </div>
+                ))}
+                </NetflixFeed>
+            </section>
+
+            {/* 5. Mapa Interativo Section */}
+            <section id="mapa" data-tour="cgif-section-mapa" className="space-y-12 scroll-mt-28">
+                <div className="flex items-center gap-4">
+                    <div className="p-3 bg-brand-blue/10 rounded-2xl text-brand-blue">
+                        <span className="material-symbols-outlined text-3xl">map</span>
+                    </div>
+                    <div>
+                        <h2 className="text-3xl font-black italic uppercase tracking-tighter">Campus Interativo</h2>
+                        <p className="text-gray-500 font-medium [text-shadow:var(--text-halo-strong)]">Navegue pelas descobertas e registros através da geografia do Instituto.</p>
+                    </div>
+                </div>
+
+                <div className="w-full max-w-4xl mx-auto aspect-square rounded-3xl overflow-hidden relative shadow-2xl border border-gray-100 dark:border-gray-800 bg-[#D5ED9E]/20 dark:bg-[#1B2B1B]/40">
+                    <CampusMap items={mapItems} />
+                </div>
+            </section>
+
+            {/* 6. Espaços Section (Abaixo do Mapa) */}
             <section id="espaços" data-tour="cgif-section-espacos" className="space-y-16 scroll-mt-28">
                 <div className="space-y-20">
                     <NetflixFeed 
                         title="Espaços do IF" 
                         icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><Info className="w-5 h-5" /></div>}
                     >
-                        {/* Hackerspace */}
-                        <div className="snap-center shrink-0 w-[300px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-8 border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group hover:border-brand-yellow/30 transition-all">
-                            <div className="size-16 bg-brand-blue/10 rounded-2xl flex items-center justify-center text-brand-blue mb-6 group-hover:scale-110 transition-transform">
-                                <span className="material-symbols-outlined text-4xl">memory</span>
-                            </div>
-                            <h3 className="text-xl font-black uppercase mb-3 text-gray-900 dark:text-gray-200">Hackerspace</h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-500 leading-relaxed mb-8 font-medium">Cultura maker no IF. Arduinos, 3D e colaboração radical.</p>
-                            <a href="https://hackerspace.if.usp.br" target="_blank" className="mt-auto text-brand-blue font-black uppercase tracking-tighter flex items-center gap-2 hover:underline font-bold">Visitar <ArrowRight className="w-4 h-4" /></a>
-                        </div>
+                        {/* Hackerspace Themed Card */}
+                        <HackerspaceCard />
 
                         {/* DigitalLab - Espaço no Inova */}
                         <div className="snap-center shrink-0 w-[300px] bg-white dark:bg-[#1E1E1E] rounded-[40px] p-8 border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none flex flex-col group opacity-50 grayscale">
@@ -413,47 +448,6 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                             <a href="https://fep.if.usp.br/~profis/" target="_blank" className="px-8 py-3 bg-gray-100 dark:bg-brand-yellow/10 hover:bg-gray-200 dark:hover:bg-brand-yellow/20 text-gray-900 dark:text-brand-yellow border border-transparent dark:border-brand-yellow/30 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-colors inline-block">Conhecer a PROFIS</a>
                         </div>
                     </NetflixFeed>
-                </div>
-            </section>
-
-            {/* 5. Influenciadores Feed */}
-            <section id="influenciadores" data-tour="cgif-section-influenciadores" className="scroll-mt-28">
-                <NetflixFeed 
-                title="Influenciadores do IF" 
-                icon={<div className="p-3 bg-brand-red/10 rounded-2xl text-brand-red"><Sparkles className="w-8 h-8" /></div>}
-            >
-                {influencers.map((influencer, index) => (
-                    <div key={index} className="flex flex-col items-center text-center group snap-center shrink-0 w-[280px] p-8 bg-white dark:bg-[#1E1E1E] rounded-[40px] border border-gray-200 dark:border-white/20 shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none hover:border-brand-yellow/30 transition-all">
-                        <div className={`relative w-24 h-24 rounded-full mb-6 flex items-center justify-center text-2xl font-bold text-white bg-${influencer.color} ring-4 ring-black/5 dark:ring-black/20 group-hover:scale-105 transition-transform`}>
-                            {influencer.imagePlaceholder}
-                        </div>
-                        <h3 className="text-lg font-black uppercase tracking-tight mb-1 text-gray-900 dark:text-white">{influencer.name}</h3>
-                        <p className={`text-[10px] font-black uppercase tracking-[0.2em] text-${influencer.color} mb-4`}>{influencer.role}</p>
-                        <p className="text-xs text-gray-600 dark:text-gray-500 leading-relaxed font-medium line-clamp-3 mb-6">{influencer.bio}</p>
-                        <div className="mt-auto">
-                            <a href={influencer.link} target="_blank" rel="noopener noreferrer" className={`size-10 rounded-full bg-gray-100 dark:bg-white/5 flex items-center justify-center text-gray-600 dark:text-gray-400 hover:text-white dark:hover:text-white hover:bg-${influencer.color} transition-all`}>
-                                {getPlatformIcon(influencer.platform)}
-                            </a>
-                        </div>
-                    </div>
-                ))}
-                </NetflixFeed>
-            </section>
-
-            {/* NEW: Mapa Interativo Section */}
-            <section id="mapa" data-tour="cgif-section-mapa" className="space-y-12 mb-32 scroll-mt-28">
-                <div className="flex items-center gap-4">
-                    <div className="p-3 bg-brand-blue/10 rounded-2xl text-brand-blue">
-                        <span className="material-symbols-outlined text-3xl">map</span>
-                    </div>
-                    <div>
-                        <h2 className="text-3xl font-black italic uppercase tracking-tighter">Campus Interativo</h2>
-                        <p className="text-gray-500 font-medium [text-shadow:var(--text-halo-strong)]">Navegue pelas descobertas e registros através da geografia do Instituto.</p>
-                    </div>
-                </div>
-
-                <div className="w-full max-w-4xl mx-auto aspect-square rounded-3xl overflow-hidden relative shadow-2xl border border-gray-100 dark:border-gray-800 bg-[#D5ED9E]/20 dark:bg-[#1B2B1B]/40">
-                    <CampusMap items={mapItems} />
                 </div>
             </section>
 

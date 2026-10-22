@@ -85,7 +85,7 @@ const wikiEntries = [
     },
     {
         title: 'O Instituto de Física',
-        href: '/wiki/instituto',
+        href: '/gcif/instituto',
         desc: 'História, departamentos, espaços e organização do IFUSP.',
         keywords: ['ifusp', 'instituto', 'física', 'departamento', 'auditório', 'história', 'mapa'],
         content: 'em desenvolvimento organização Instituto Física Diretoria Conselhos Comissões história pioneirismo excelência departamentos centros pesquisa cotidiano',

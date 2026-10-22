@@ -13,7 +13,7 @@ import Image from 'next/image';
 
 export default function Loading() {
     return (
-        <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#121212]">
+        <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-white dark:bg-[#121212] transition-colors duration-300">
             <div className="relative w-24 h-24 sm:w-32 sm:h-32 mb-6">
                 <Image
                     src="/icone-HUBLabDiv.svg"
@@ -23,7 +23,7 @@ export default function Loading() {
                     priority
                 />
             </div>
-            <div className="w-48 h-1.5 bg-gray-800 rounded-full overflow-hidden">
+            <div className="w-48 h-1.5 bg-gray-200 dark:bg-gray-800 rounded-full overflow-hidden shadow-inner">
                 <div className="h-full bg-gradient-to-r from-[#0F4780] via-[#F14343] to-[#FFCC00] w-full animate-shimmer-labdiv" />
             </div>
         </div>

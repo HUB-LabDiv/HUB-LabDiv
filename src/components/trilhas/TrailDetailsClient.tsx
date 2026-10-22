@@ -280,7 +280,7 @@ export default function TrailDetailsClient({
                                         <button
                                             disabled={isUpdatingStatus}
                                             onClick={() => toggleStatus('concluida')}
-                                            className="px-4 py-2 bg-gray-100 dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 text-gray-400 hover:border-green-500/50 hover:text-white rounded-lg font-black font-mono text-[10px] uppercase transition-all flex items-center gap-2"
+                                            className="px-4 py-2 bg-gray-100 dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-400 hover:border-green-500/50 hover:text-green-600 dark:hover:text-white rounded-lg font-black font-mono text-[10px] uppercase transition-all flex items-center gap-2"
                                         >
                                             <CheckCircle2 size={14} />
                                             [FEITO]
@@ -290,7 +290,7 @@ export default function TrailDetailsClient({
                                             onClick={() => toggleStatus('cursando')}
                                             className={`px-4 py-2 border rounded-lg font-black font-mono text-[10px] uppercase transition-all flex items-center gap-2 ${status === 'cursando'
                                                 ? 'bg-brand-blue-accent/20 border-brand-blue-accent/50 text-brand-blue-accent shadow-[0_0_20px_rgba(31,159,207,0.2)]'
-                                                : 'bg-[#1E1E1E] text-gray-400 border border-gray-800 hover:border-brand-blue-accent/50 hover:text-white'
+                                                : 'bg-gray-100 dark:bg-[#1E1E1E] text-gray-700 dark:text-gray-400 border border-gray-200 dark:border-gray-800 hover:border-brand-blue-accent/50 hover:text-brand-blue dark:hover:text-white'
                                                 }`}
                                         >
                                             <Play size={14} fill={status === 'cursando' ? 'currentColor' : 'none'} />
@@ -393,8 +393,8 @@ export default function TrailDetailsClient({
                                                                     return (
                                                                         <div key={code} className="flex items-center gap-2">
                                                                             {eqData ? (
-                                                                                <Link href={`/ferramentas/trilhas/${eqData.id}`} className="px-2 py-1 bg-[#1E1E1E] border border-cyan-500/10 rounded flex items-center gap-2 group/eqlink hover:border-cyan-500/40 transition-colors">
-                                                                                    <span className="font-mono text-[10px] font-bold text-gray-300 group-hover/eqlink:text-cyan-400">{code}</span>
+                                                                                <Link href={`/ferramentas/trilhas/${eqData.id}`} className="px-2 py-1 bg-gray-100 dark:bg-[#1E1E1E] border border-cyan-500/20 rounded flex items-center gap-2 group/eqlink hover:border-cyan-500/40 transition-colors">
+                                                                                    <span className="font-mono text-[10px] font-bold text-gray-800 dark:text-gray-300 group-hover/eqlink:text-cyan-600 dark:group-hover/eqlink:text-cyan-400">{code}</span>
                                                                                     <span className="text-[10px] text-gray-500 max-w-[120px] truncate">{eqData.title}</span>
                                                                                 </Link>
                                                                             ) : (
@@ -721,7 +721,7 @@ export default function TrailDetailsClient({
                                     ))}
                                 </div>
                             ) : (
-                                <div className="p-10 border border-gray-800/30 rounded-3xl bg-[#1E1E1E]/20 text-center space-y-2">
+                                <div className="p-10 border border-gray-200 dark:border-gray-800/30 rounded-3xl bg-gray-50 dark:bg-[#1E1E1E]/20 text-center space-y-2">
                                     <div className="inline-flex items-center gap-2 px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
                                         <Unlock size={12} className="text-green-500" />
                                         <span className="font-mono text-[9px] text-green-500 font-bold uppercase tracking-widest">Acesso Livre</span>
@@ -817,7 +817,7 @@ export default function TrailDetailsClient({
                                                 onClick={() => toggleStatus('cursando')}
                                                 className={`flex-1 flex items-center justify-center gap-2 py-3 font-black font-mono text-[10px] uppercase rounded-lg transition-all ${status === 'cursando'
                                                     ? 'bg-[#00A3FF] text-white shadow-[0_0_20px_rgba(0,163,255,0.4)]'
-                                                    : 'bg-[#1E1E1E] text-gray-400 border border-gray-800 hover:border-[#00A3FF]/50 hover:text-white'
+                                                    : 'bg-gray-100 dark:bg-[#1E1E1E] text-gray-700 dark:text-gray-400 border border-gray-200 dark:border-gray-800 hover:border-[#00A3FF]/50 hover:text-brand-blue dark:hover:text-white'
                                                     }`}
                                             >
                                                 <Play size={12} fill={status === 'cursando' ? 'currentColor' : 'none'} />
@@ -830,19 +830,19 @@ export default function TrailDetailsClient({
 
                             {/* Prerequisites Sidebar Card (if any) */}
                             {hasPrerequisites && (
-                                <div className="bg-[#1E1E1E] p-6 rounded-xl border border-[#FF4B4B]/15 space-y-4">
+                                <div className="bg-white dark:bg-[#1E1E1E] p-6 rounded-xl border border-gray-200 dark:border-[#FF4B4B]/15 space-y-4">
                                     <h4 className="font-mono text-[10px] text-[#FF4B4B] uppercase tracking-widest font-bold">[PRÉ-REQUISITOS]</h4>
                                     <div className="space-y-2">
                                         {prerequisiteTrails.map((prereq) => (
                                             <Link
                                                 key={prereq.course_code}
                                                 href={`/ferramentas/trilhas/${prereq.id}`}
-                                                className="flex items-center gap-2 p-2 rounded bg-background-dark border border-gray-800 hover:border-[#FF4B4B]/30 transition-all group"
+                                                className="flex items-center gap-2 p-2 rounded bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-gray-800 hover:border-[#FF4B4B]/30 transition-all group"
                                             >
                                                 <Lock size={10} className="text-[#FF4B4B]/50 shrink-0" />
                                                 <div className="min-w-0">
-                                                    <span className="block font-mono text-[8px] text-gray-600">{prereq.course_code}</span>
-                                                    <span className="block text-[10px] text-gray-400 truncate group-hover:text-white transition-colors">{prereq.title}</span>
+                                                    <span className="block font-mono text-[8px] text-gray-500 dark:text-gray-600">{prereq.course_code}</span>
+                                                    <span className="block text-[10px] text-gray-700 dark:text-gray-400 truncate group-hover:text-brand-red dark:group-hover:text-white transition-colors">{prereq.title}</span>
                                                 </div>
                                             </Link>
                                         ))}
@@ -852,8 +852,8 @@ export default function TrailDetailsClient({
 
                             {/* Equivalences Sidebar Card */}
                             {hasEquivalences && (
-                                <div className="bg-[#1E1E1E] p-6 rounded-xl border border-cyan-500/15 space-y-4">
-                                    <h4 className="font-mono text-[10px] text-cyan-400 uppercase tracking-widest font-bold flex items-center gap-2">
+                                <div className="bg-white dark:bg-[#1E1E1E] p-6 rounded-xl border border-gray-200 dark:border-cyan-500/15 space-y-4">
+                                    <h4 className="font-mono text-[10px] text-cyan-600 dark:text-cyan-400 uppercase tracking-widest font-bold flex items-center gap-2">
                                         <Link2 size={12} /> [EMARANHAMENTO]
                                     </h4>
                                     <p className="text-[10px] text-gray-500 font-mono">

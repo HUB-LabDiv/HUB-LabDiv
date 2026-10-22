@@ -127,19 +127,19 @@ export function GcifWikiView() {
     return (
         <div className="w-full space-y-12 pb-16">
             {/* Header Hero */}
-            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1E1E1E] via-[#161616] to-[#0f0f0f] border border-white/10 p-6 sm:p-10 shadow-2xl">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-white via-slate-50 to-blue-50/20 dark:from-[#1E1E1E] dark:via-[#161616] dark:to-[#0f0f0f] border border-gray-200 dark:border-white/10 p-6 sm:p-10 shadow-xl dark:shadow-2xl">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-brand-blue/10 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="relative z-10 max-w-3xl">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/15 border border-brand-blue/30 text-[#00A3FF] text-xs font-black uppercase tracking-wider mb-3">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/15 border border-brand-blue/30 text-brand-blue dark:text-[#00A3FF] text-xs font-black uppercase tracking-wider mb-3">
                         <BookOpen className="w-3.5 h-3.5" />
                         O Síncrotron de Conhecimento • IFUSP
                     </div>
-                    <h1 className="text-3xl sm:text-5xl font-black text-white font-bukra tracking-tight">
+                    <h1 className="text-3xl sm:text-5xl font-black text-gray-900 dark:text-white font-bukra tracking-tight">
                         WIKI <span className="text-gradient-brand">HUB</span>
                     </h1>
-                    <p className="text-xs sm:text-sm text-gray-300 font-open-sans mt-3 leading-relaxed">
+                    <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans mt-3 leading-relaxed">
                         O repositório definitivo para sobrevivência universitária, pesquisa acadêmica, ética científica, bolsas e permanência estudantil no IFUSP.
                     </p>
                 </div>
@@ -149,23 +149,23 @@ export function GcifWikiView() {
             <div data-tour="gcif-wiki-sincrotron" className="space-y-6">
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                     <div>
-                        <h2 className="text-xl sm:text-2xl font-black text-white font-bukra flex items-center gap-2">
+                        <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white font-bukra flex items-center gap-2">
                             <Atom className="w-6 h-6 text-brand-blue" />
                             Tópicos de Conhecimento
                         </h2>
-                        <p className="text-xs sm:text-sm text-gray-400 font-open-sans mt-1.5 max-w-2xl leading-relaxed">
+                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-open-sans mt-1.5 max-w-2xl leading-relaxed">
                             Base de conhecimento viva do IFUSP dividida em 3 eixos essenciais. Navegue por sobrevivência universitária, formação científica e divulgação acadêmica.
                         </p>
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
-                        <span className="text-xs text-gray-400 font-bold shrink-0">
+                        <span className="text-xs text-gray-500 dark:text-gray-400 font-bold shrink-0">
                             {filteredCells.length} de {wikiCells.length} tópicos
                         </span>
                         {/* Navigation Arrows */}
                         <div className="flex items-center gap-2">
                             <button
                                 onClick={() => scroll('left')}
-                                className="p-2 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-200 dark:hover:bg-white/10 hover:scale-105 active:scale-95 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white shadow-sm"
+                                className="p-2 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-200 dark:hover:bg-white/10 hover:scale-105 active:scale-95 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white shadow-sm cursor-pointer"
                                 aria-label="Rolar para esquerda"
                                 title="Rolar para esquerda"
                             >
@@ -173,7 +173,7 @@ export function GcifWikiView() {
                             </button>
                             <button
                                 onClick={() => scroll('right')}
-                                className="p-2 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-200 dark:hover:bg-white/10 hover:scale-105 active:scale-95 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white shadow-sm"
+                                className="p-2 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-200 dark:hover:bg-white/10 hover:scale-105 active:scale-95 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white shadow-sm cursor-pointer"
                                 aria-label="Rolar para direita"
                                 title="Rolar para direita"
                             >
@@ -187,10 +187,10 @@ export function GcifWikiView() {
                 <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
                     <button
                         onClick={() => setSelectedCategory('all')}
-                        className={`px-4 py-2 rounded-xl text-xs font-bold font-bukra uppercase tracking-wider transition-all shrink-0 ${
+                        className={`px-4 py-2 rounded-xl text-xs font-bold font-bukra uppercase tracking-wider transition-all shrink-0 cursor-pointer ${
                             selectedCategory === 'all'
-                                ? 'bg-white/15 text-white border border-white/20 shadow-md'
-                                : 'bg-white/5 text-gray-400 hover:text-white border border-transparent'
+                                ? 'bg-brand-blue text-white shadow-md border border-brand-blue'
+                                : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-transparent'
                         }`}
                     >
                         Todos ({wikiCells.length})
@@ -202,14 +202,14 @@ export function GcifWikiView() {
                             <button
                                 key={cat.id}
                                 onClick={() => setSelectedCategory(cat.id)}
-                                className={`px-4 py-2 rounded-xl text-xs font-bold font-bukra uppercase tracking-wider transition-all shrink-0 flex items-center gap-2 ${
+                                className={`px-4 py-2 rounded-xl text-xs font-bold font-bukra uppercase tracking-wider transition-all shrink-0 flex items-center gap-2 cursor-pointer ${
                                     isSelected
                                         ? cat.color === 'brand-yellow'
-                                            ? 'bg-brand-yellow/20 text-brand-yellow border border-brand-yellow/40'
+                                            ? 'bg-brand-yellow/20 text-amber-700 dark:text-brand-yellow border border-brand-yellow/40'
                                             : cat.color === 'brand-red'
                                             ? 'bg-brand-red/20 text-brand-red border border-brand-red/40'
                                             : 'bg-brand-blue/20 text-brand-blue border border-brand-blue/40'
-                                        : 'bg-white/5 text-gray-400 hover:text-white border border-transparent'
+                                        : 'bg-gray-100 dark:bg-white/5 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white border border-gray-200 dark:border-transparent'
                                 }`}
                             >
                                 <span className={`w-2 h-2 rounded-full ${
@@ -243,9 +243,9 @@ export function GcifWikiView() {
                                         href={cell.href}
                                         className={`
                                             group relative flex flex-col justify-between h-full rounded-3xl p-6 sm:p-8
-                                            bg-[#1E1E1E]/90 hover:bg-[#232323]
-                                            border border-white/10 ${colors.borderHover}
-                                            transition-all duration-300 shadow-xl hover:shadow-2xl
+                                            bg-white dark:bg-[#1E1E1E]/90 hover:bg-gray-50/90 dark:hover:bg-[#232323]
+                                            border border-gray-200 dark:border-white/10 ${colors.borderHover}
+                                            transition-all duration-300 shadow-md hover:shadow-xl dark:shadow-xl dark:hover:shadow-2xl
                                         `}
                                     >
                                         <div>
@@ -262,34 +262,34 @@ export function GcifWikiView() {
                                                             setReportModalOpen(true, 'outro', { id: cell.id, titulo: cell.title, local: 'Célula da Wiki' });
                                                         }}
                                                         title="Sugerir Alteração / Reportar Erro"
-                                                        className="text-gray-500 hover:text-brand-red transition-colors p-1"
+                                                        className="text-gray-400 hover:text-brand-red transition-colors p-1 cursor-pointer"
                                                     >
                                                         <Flag size={14} />
                                                     </button>
-                                                    <div className="w-10 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                                                    <div className="w-10 h-1.5 rounded-full bg-gray-200 dark:bg-white/10 overflow-hidden">
                                                         <div className={`w-full h-full ${colors.progressBar}`} />
                                                     </div>
                                                 </div>
                                             </div>
 
                                             {/* Title & Subtitle */}
-                                            <h3 className={`text-xl font-bold text-white font-bukra ${colors.textHover} transition-colors mb-1`}>
+                                            <h3 className={`text-xl font-bold text-gray-900 dark:text-white font-bukra ${colors.textHover} transition-colors mb-1`}>
                                                 {cell.title}
                                             </h3>
-                                            <p className="text-[10px] font-black uppercase tracking-wider text-gray-400 mb-4">
+                                            <p className="text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-4">
                                                 {cell.subtitle}
                                             </p>
 
                                             {/* Description */}
-                                            <p className="text-xs text-gray-300 font-open-sans leading-relaxed mb-6 line-clamp-3">
+                                            <p className="text-xs text-gray-600 dark:text-gray-300 font-open-sans leading-relaxed mb-6 line-clamp-3">
                                                 {cell.description}
                                             </p>
 
                                             {/* Details Bullet points */}
                                             {cell.details && (
-                                                <div className="space-y-1.5 mb-6 p-3 rounded-2xl bg-black/30 border border-white/5">
+                                                <div className="space-y-1.5 mb-6 p-3 rounded-2xl bg-gray-50 dark:bg-black/30 border border-gray-200 dark:border-white/5">
                                                     {cell.details.map((detail: string, dIdx: number) => (
-                                                        <div key={dIdx} className="flex items-start gap-1.5 text-[11px] text-gray-400 font-medium">
+                                                        <div key={dIdx} className="flex items-start gap-1.5 text-[11px] text-gray-600 dark:text-gray-400 font-medium">
                                                             <CheckCircle2 className={`w-3.5 h-3.5 ${colors.text} shrink-0 mt-0.5`} />
                                                             <span className="line-clamp-1">{detail}</span>
                                                         </div>
@@ -299,7 +299,7 @@ export function GcifWikiView() {
                                         </div>
 
                                         {/* CTA Footer */}
-                                        <div className="pt-4 border-t border-white/10 flex items-center justify-between">
+                                        <div className="pt-4 border-t border-gray-100 dark:border-white/10 flex items-center justify-between">
                                             <span className={`text-[10px] font-black ${colors.ctaText} uppercase tracking-widest`}>
                                                 {cell.cta}
                                             </span>
@@ -315,7 +315,7 @@ export function GcifWikiView() {
                 </div>
 
                 {/* Card Final: Escrever / Propor Novo Tópico para a Wiki */}
-                <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-brand-blue/10 via-[#1E1E1E] to-[#121212] border-2 border-dashed border-brand-blue/30 hover:border-brand-blue transition-all shadow-xl group mt-8">
+                <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-blue-50/60 via-white to-gray-50 dark:from-brand-blue/10 dark:via-[#1E1E1E] dark:to-[#121212] border-2 border-dashed border-brand-blue/30 hover:border-brand-blue transition-all shadow-lg dark:shadow-xl group mt-8">
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 relative z-10">
                         <div className="flex items-center gap-4">
                             <div className="w-14 h-14 rounded-2xl bg-brand-blue/20 border border-brand-blue/40 text-brand-blue flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
@@ -325,10 +325,10 @@ export function GcifWikiView() {
                                 <span className="text-[10px] font-black uppercase tracking-widest text-brand-blue">
                                     Colabore com a Comunidade
                                 </span>
-                                <h3 className="text-xl sm:text-2xl font-black font-bukra text-white uppercase italic tracking-tight">
+                                <h3 className="text-xl sm:text-2xl font-black font-bukra text-gray-900 dark:text-white uppercase italic tracking-tight">
                                     Escrever ou Propor Novo Tópico
                                 </h3>
-                                <p className="text-xs sm:text-sm text-gray-300 font-open-sans mt-1 max-w-xl leading-relaxed">
+                                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans mt-1 max-w-xl leading-relaxed">
                                     Sentiu falta de algum guia, laboratório, conselho ou conteúdo essencial? Envie sua proposta para a moderação da Wiki no Eixo de Informação.
                                 </p>
                             </div>
@@ -340,7 +340,7 @@ export function GcifWikiView() {
                                 setTargetTopicTitle(undefined);
                                 setIsProposalModalOpen(true);
                             }}
-                            className="px-6 py-3 rounded-2xl bg-brand-blue hover:bg-brand-blue/80 text-white text-xs font-black uppercase tracking-wider shadow-lg shadow-brand-blue/25 flex items-center gap-2 transition-all shrink-0 hover:scale-105 active:scale-95"
+                            className="px-6 py-3 rounded-2xl bg-brand-blue hover:bg-brand-blue/80 text-white text-xs font-black uppercase tracking-wider shadow-lg shadow-brand-blue/25 flex items-center gap-2 transition-all shrink-0 hover:scale-105 active:scale-95 cursor-pointer"
                         >
                             <Edit3 className="w-4 h-4" />
                             Escrever Tópico
@@ -359,7 +359,7 @@ export function GcifWikiView() {
             />
 
             {/* USP 101: Conselhos de Veteranos (Multi-Instituto) */}
-            <div data-tour="gcif-wiki-usp101" className="space-y-4 pt-6 border-t border-white/10">
+            <div data-tour="gcif-wiki-usp101" className="space-y-4 pt-6 border-t border-gray-200 dark:border-white/10">
                 <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
@@ -370,7 +370,7 @@ export function GcifWikiView() {
                     <div className="absolute -inset-0.5 bg-brand-yellow/25 rounded-[32px] blur opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <Link
                         href="/wiki/veteranos"
-                        className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-[#1E1E1E] border border-white/10 hover:border-brand-yellow/60 transition-all overflow-hidden text-left shadow-2xl"
+                        className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 hover:border-brand-yellow/60 transition-all overflow-hidden text-left shadow-xl dark:shadow-2xl"
                     >
                         <div className="absolute top-0 right-0 w-80 h-80 bg-brand-yellow/5 rounded-full blur-[100px] pointer-events-none" />
                         <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
@@ -382,10 +382,10 @@ export function GcifWikiView() {
                                     <Sparkles className="w-3 h-3" />
                                     Todos os Institutos da USP • Vivência &amp; Sobrevivência
                                 </div>
-                                <h3 className="text-2xl sm:text-4xl font-black text-white font-bukra italic uppercase tracking-tighter mb-2 group-hover:text-brand-yellow transition-colors">
+                                <h3 className="text-2xl sm:text-4xl font-black text-gray-900 dark:text-white font-bukra italic uppercase tracking-tighter mb-2 group-hover:text-brand-yellow transition-colors">
                                     USP 101 &amp; Dicas de Veteranos
                                 </h3>
-                                <p className="text-xs sm:text-sm text-gray-300 font-open-sans max-w-xl leading-relaxed">
+                                <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-300 font-open-sans max-w-xl leading-relaxed">
                                     Central colaborativa de conselhos transgeracionais. Encontre ou envie macetes acadêmicos para a USP como um todo ou direcionados para o seu instituto (IFUSP, Poli, IME, IQ, FFLCH e outros).
                                 </p>
                             </div>
