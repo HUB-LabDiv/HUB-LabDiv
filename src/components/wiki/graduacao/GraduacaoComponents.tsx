@@ -19,7 +19,8 @@ import {
     ChevronDown,
     Download,
     ExternalLink,
-    Info
+    Info,
+    Award
 } from 'lucide-react';
 
 export interface CourseMetric {
@@ -77,6 +78,7 @@ export interface DisciplineItem {
     nome: string;
     creditosAula: number;
     creditosTrab?: number;
+    horasExtensao?: number;
     unidade?: string;
     tipo?: 'obrigatória' | 'optativa' | 'extensão' | 'estágio';
     observacao?: string;
@@ -155,6 +157,7 @@ export function SemestersAccordion({
                 const isOpen = openSemestre === sem.semestre;
                 const totalAula = sem.disciplinas.reduce((acc, d) => acc + d.creditosAula, 0);
                 const totalTrab = sem.disciplinas.reduce((acc, d) => acc + (d.creditosTrab || 0), 0);
+                const totalExtensao = sem.disciplinas.reduce((acc, d) => acc + (d.horasExtensao || 0), 0);
 
                 return (
                     <div
@@ -189,10 +192,21 @@ export function SemestersAccordion({
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3">
-                                <span className="hidden sm:inline-block text-[10px] font-mono text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-black/40 px-2.5 py-1 rounded-lg border border-gray-200 dark:border-white/5">
-                                    {totalAula} CA {totalTrab > 0 ? `+ ${totalTrab} CT` : ''}
-                                </span>
+                            <div className="flex items-center gap-2 sm:gap-3">
+                                <div className="flex items-center gap-1.5 flex-wrap justify-end">
+                                    <span className="hidden sm:inline-block text-[10px] font-mono text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-black/40 px-2.5 py-1 rounded-lg border border-gray-200 dark:border-white/5">
+                                        {totalAula} CA {totalTrab > 0 ? `+ ${totalTrab} CT` : ''}
+                                    </span>
+                                    {totalExtensao > 0 && (
+                                        <span
+                                            title="Horas de Atividades Extensionistas (AEx) acumuladas neste semestre"
+                                            className="inline-flex items-center gap-1 text-[10px] font-mono font-bold text-brand-red bg-brand-red/10 border border-brand-red/20 px-2.5 py-1 rounded-lg"
+                                        >
+                                            <Award className="w-3 h-3 text-brand-red shrink-0" />
+                                            {totalExtensao}h AEx
+                                        </span>
+                                    )}
+                                </div>
                                 <ChevronDown
                                     className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${
                                         isOpen ? 'rotate-180 text-gray-900 dark:text-white' : ''
@@ -257,6 +271,11 @@ export function SemestersAccordion({
                                                                 {disc.creditosTrab ? (
                                                                     <span className="text-brand-yellow ml-1">
                                                                         + {disc.creditosTrab} CT
+                                                                    </span>
+                                                                ) : null}
+                                                                {disc.horasExtensao && disc.horasExtensao > 0 ? (
+                                                                    <span className="block sm:inline sm:ml-1.5 text-[10px] text-brand-red font-semibold">
+                                                                        ({disc.horasExtensao}h AEx)
                                                                     </span>
                                                                 ) : null}
                                                             </td>

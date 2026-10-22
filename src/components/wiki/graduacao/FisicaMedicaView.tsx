@@ -204,6 +204,7 @@ export default function FisicaMedicaView() {
                     nome: item.nome,
                     creditosAula: item.creditosAula,
                     creditosTrab: item.creditosTrabalho,
+                    horasExtensao: item.horasExtensao || 0,
                     unidade: item.unidade,
                     tipo: item.tipo === 'obrigatoria' ? 'obrigatória' : 'optativa',
                     observacao: item.observacao
@@ -213,6 +214,7 @@ export default function FisicaMedicaView() {
                 codigo: code,
                 nome: code,
                 creditosAula: 4,
+                horasExtensao: 0,
                 unidade: 'IFUSP'
             };
         })

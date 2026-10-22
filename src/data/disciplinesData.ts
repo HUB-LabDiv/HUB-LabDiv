@@ -13,6 +13,23 @@
 
 import { DisciplineItem } from "@/types/curriculum";
 
+/**
+ * Catálogo Canônico Oficial de Disciplinas da Graduação do IFUSP (Hub Lab-Div V3.0)
+ *
+ * ESCOPO CANÔNICO ATUAL (66 Disciplinas Mapeadas):
+ * - Atende com 100% de precisão e integridade todo o núcleo obrigatório dos 3 cursos
+ *   de graduação do Instituto de Física da USP:
+ *   1. Bacharelado em Física (Integral 8 Semestres / Noturno 10 Semestres - Habilitação 43011 / 43012)
+ *   2. Licenciatura em Física (Diurno 8 Semestres / Noturno 10 Semestres - Habilitação 43021 / 43022)
+ *   3. Bacharelado em Física Médica (Integral 10 Semestres - Parceria IFUSP & FMUSP)
+ *
+ * EXPANSÃO INCREMENTAL:
+ * - As disciplinas optativas eletivas das trilhas de ênfase (ex: Física de Partículas,
+ *   Matéria Condensada, Óptica Quântica, Astrofísica, Física Teórica, etc.) e optativas livres
+ *   podem ser incrementalmente expandidas nesta mesma base `disciplinesData.ts`, mantendo
+ *   a mesma tipagem estrita com Zod/TypeScript e integração imediata com a busca global (Ctrl+K),
+ *   modal de detalhes e grafo de pré-requisitos.
+ */
 export const disciplinesData: Record<string, DisciplineItem> = {
   "4300151": {
     codigo: "4300151",
