@@ -13,13 +13,14 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import React, { Suspense, useState } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Atom, Microscope, GraduationCap } from 'lucide-react';
 import BachareladoView from './BachareladoView';
 import FisicaMedicaView from './FisicaMedicaView';
 import LicenciaturaView from './LicenciaturaView';
+import { DisciplineDetailsModal } from '@/components/gcif/DisciplineDetailsModal';
 
 export type CourseType = 'bacharelado' | 'fisica-medica' | 'licenciatura';
 
@@ -77,12 +78,20 @@ function GraduacaoCursosContentInner() {
     const pathname = usePathname();
 
     const paramCurso = searchParams.get('curso') as CourseType | null;
+    const paramDisciplina = searchParams.get('disciplina');
     const activeFromUrl: CourseType =
         paramCurso && ['bacharelado', 'fisica-medica', 'licenciatura'].includes(paramCurso)
             ? paramCurso
             : 'bacharelado';
 
     const [selectedCourse, setSelectedCourse] = useState<CourseType>(activeFromUrl);
+    const [globalModalDiscipline, setGlobalModalDiscipline] = useState<string | null>(paramDisciplina);
+
+    useEffect(() => {
+        if (paramDisciplina) {
+            setGlobalModalDiscipline(paramDisciplina);
+        }
+    }, [paramDisciplina]);
 
     const handleSelectCourse = (courseId: CourseType) => {
         setSelectedCourse(courseId);
@@ -181,6 +190,20 @@ function GraduacaoCursosContentInner() {
                     {selectedCourse === 'licenciatura' && <LicenciaturaView />}
                 </motion.div>
             </AnimatePresence>
+
+            {/* Modal Global Acionado por Parâmetro URL ou Busca Direta */}
+            <DisciplineDetailsModal
+                disciplineCode={globalModalDiscipline}
+                onClose={() => {
+                    setGlobalModalDiscipline(null);
+                    const params = new URLSearchParams(searchParams.toString());
+                    params.delete('disciplina');
+                    router.replace(`${pathname}?${params.toString()}`, { scroll: false });
+                }}
+                onSelectDiscipline={(codigo) => {
+                    setGlobalModalDiscipline(codigo);
+                }}
+            />
         </div>
     );
 }

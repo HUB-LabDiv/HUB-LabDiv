@@ -13,7 +13,7 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Microscope,
     Activity,
@@ -35,6 +35,9 @@ import {
     CourseMetric,
     SemesterBlock
 } from './GraduacaoComponents';
+import { coursesData } from '@/data/coursesData';
+import { disciplinesData } from '@/data/disciplinesData';
+import { DisciplineDetailsModal } from '@/components/gcif/DisciplineDetailsModal';
 
 const FISMED_METRICS: CourseMetric[] = [
     {
@@ -186,6 +189,35 @@ const FISMED_SEMESTRES: SemesterBlock[] = [
 ];
 
 export default function FisicaMedicaView() {
+    const [selectedDisciplineCode, setSelectedDisciplineCode] = useState<string | null>(null);
+
+    const gradeAtual = coursesData['fisica-medica'].gradesPorTurno['integral'];
+    const semestresAtuais: SemesterBlock[] = gradeAtual.semestres.map(sem => ({
+        semestre: sem.semestre,
+        titulo: sem.titulo,
+        subtitulo: sem.subtitulo,
+        disciplinas: sem.disciplinasCodigos.map(code => {
+            const item = disciplinesData[code];
+            if (item) {
+                return {
+                    codigo: item.codigo,
+                    nome: item.nome,
+                    creditosAula: item.creditosAula,
+                    creditosTrab: item.creditosTrabalho,
+                    unidade: item.unidade,
+                    tipo: item.tipo === 'obrigatoria' ? 'obrigatória' : 'optativa',
+                    observacao: item.observacao
+                };
+            }
+            return {
+                codigo: code,
+                nome: code,
+                creditosAula: 4,
+                unidade: 'IFUSP'
+            };
+        })
+    }));
+
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Header de Identificação do Curso */}
@@ -314,7 +346,11 @@ export default function FisicaMedicaView() {
                     </span>
                 </div>
 
-                <SemestersAccordion semestres={FISMED_SEMESTRES} accentColor="brand-red" />
+                <SemestersAccordion
+                    semestres={semestresAtuais}
+                    accentColor="brand-red"
+                    onSelectDiscipline={setSelectedDisciplineCode}
+                />
             </div>
 
             {/* Curricularização da Extensão, Estágio e TCC */}
@@ -450,6 +486,13 @@ export default function FisicaMedicaView() {
                     />
                 </div>
             </div>
+
+            {/* Modal de Detalhes da Disciplina & Grafo de Pré-requisitos */}
+            <DisciplineDetailsModal
+                disciplineCode={selectedDisciplineCode}
+                onClose={() => setSelectedDisciplineCode(null)}
+                onSelectDiscipline={setSelectedDisciplineCode}
+            />
         </div>
     );
 }

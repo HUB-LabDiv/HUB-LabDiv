@@ -13,7 +13,7 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
     GraduationCap,
     School,
@@ -32,8 +32,12 @@ import {
     CalloutRule,
     DownloadCard,
     CourseMetric,
-    SemesterBlock
+    SemesterBlock,
+    ShiftSelector
 } from './GraduacaoComponents';
+import { coursesData } from '@/data/coursesData';
+import { disciplinesData } from '@/data/disciplinesData';
+import { DisciplineDetailsModal } from '@/components/gcif/DisciplineDetailsModal';
 
 const LIC_METRICS: CourseMetric[] = [
     {
@@ -164,6 +168,36 @@ const LIC_SEMESTRES: SemesterBlock[] = [
 ];
 
 export default function LicenciaturaView() {
+    const [selectedShift, setSelectedShift] = useState<'diurno' | 'noturno'>('diurno');
+    const [selectedDisciplineCode, setSelectedDisciplineCode] = useState<string | null>(null);
+
+    const gradeAtual = coursesData.licenciatura.gradesPorTurno[selectedShift];
+    const semestresAtuais: SemesterBlock[] = gradeAtual.semestres.map(sem => ({
+        semestre: sem.semestre,
+        titulo: sem.titulo,
+        subtitulo: sem.subtitulo,
+        disciplinas: sem.disciplinasCodigos.map(code => {
+            const item = disciplinesData[code];
+            if (item) {
+                return {
+                    codigo: item.codigo,
+                    nome: item.nome,
+                    creditosAula: item.creditosAula,
+                    creditosTrab: item.creditosTrabalho,
+                    unidade: item.unidade,
+                    tipo: item.tipo === 'obrigatoria' ? 'obrigatória' : 'optativa',
+                    observacao: item.observacao
+                };
+            }
+            return {
+                codigo: code,
+                nome: code,
+                creditosAula: 4,
+                unidade: 'IFUSP'
+            };
+        })
+    }));
+
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Header de Identificação do Curso */}
@@ -355,15 +389,29 @@ export default function LicenciaturaView() {
                             Progressão Semestral da Licenciatura
                         </h3>
                         <p className="text-xs text-gray-400 font-open-sans mt-0.5">
-                            Matriz curricular diurna (8 semestres) e noturna (10 semestres) com carga de estágio e PCC.
+                            Selecione o turno abaixo e clique em qualquer disciplina para ver ementa, créditos e pré-requisitos.
                         </p>
                     </div>
                     <span className="text-[11px] font-mono text-gray-400 bg-black/40 px-3 py-1.5 rounded-xl border border-white/5 shrink-0">
-                        Total Obrigatório: 124 CA + 18 CT (2.400 Horas)
+                        {selectedShift === 'diurno' ? 'Diurno: 8 Semestres (4 Anos)' : 'Noturno: 10 Semestres (5 Anos)'} • 124 CA + 18 CT
                     </span>
                 </div>
 
-                <SemestersAccordion semestres={LIC_SEMESTRES} accentColor="brand-yellow" />
+                <ShiftSelector
+                    shifts={[
+                        { id: 'diurno', label: 'Diurno', sub: '4 Anos • 8 Semestres' },
+                        { id: 'noturno', label: 'Noturno', sub: '5 Anos • 10 Semestres' }
+                    ]}
+                    activeShift={selectedShift}
+                    onSelectShift={(id) => setSelectedShift(id as 'diurno' | 'noturno')}
+                    accentColor="brand-yellow"
+                />
+
+                <SemestersAccordion
+                    semestres={semestresAtuais}
+                    accentColor="brand-yellow"
+                    onSelectDiscipline={setSelectedDisciplineCode}
+                />
             </div>
 
             {/* Programas de Apoio e Bolsas */}
@@ -441,6 +489,13 @@ export default function LicenciaturaView() {
                     />
                 </div>
             </div>
+
+            {/* Modal de Detalhes da Disciplina & Grafo de Pré-requisitos */}
+            <DisciplineDetailsModal
+                disciplineCode={selectedDisciplineCode}
+                onClose={() => setSelectedDisciplineCode(null)}
+                onSelectDiscipline={setSelectedDisciplineCode}
+            />
         </div>
     );
 }

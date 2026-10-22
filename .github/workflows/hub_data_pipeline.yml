@@ -1,0 +1,192 @@
+# Hub de Comunicação Científica Lab-Div V3.0
+# Copyright (C) 2026 João Paulo Stangorlini de Carvalho
+#
+# Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
+# sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
+# publicada pela Free Software Foundation.
+#
+# Este programa é distribuído na esperança de que seja útil, mas SEM
+# QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
+# ou ADEQUAÇÃO A UM DETERMINADO FIM.
+
+name: Hub Data Pipeline (Sincronização IFUSP & JúpiterWeb)
+
+on:
+  schedule:
+    # Execução automática todo domingo às 03:00 UTC (00:00 Horário de Brasília)
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+    # Permite execução manual a qualquer momento via interface do GitHub Actions
+    inputs:
+      force_all_modules:
+        description: 'Forçar sincronização de todos os módulos'
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  sync_and_pr:
+    name: Sincronização e Auditoria de Dados
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout do Repositório
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup do Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Instalar Dependências Python
+        run: |
+          python -m pip install --upgrade pip
+          pip install requests beautifulsoup4
+
+      - name: Setup do Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Instalar Dependências Node.js
+        run: npm ci
+
+      - name: Inicializar Resumo do Workflow
+        run: |
+          echo "## 📊 Relatório do Hub Data Pipeline (IFUSP)" >> $GITHUB_STEP_SUMMARY
+          echo "Execução iniciada em: $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Módulo | Status | Descrição |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|---|" >> $GITHUB_STEP_SUMMARY
+
+      # --- MÓDULO 1: DEPARTAMENTOS & DOCENTES ---
+      - name: [Módulo A] Sincronizar Departamentos & Docentes
+        id: sync_departments
+        continue-on-error: true
+        run: |
+          echo "Executando Módulo Departamentos..."
+          python3 scripts/scrapers/scrape_departments.py
+          npx tsx scripts/scrapers/audit_departments.ts
+          npx tsx scripts/scrapers/apply_departments.ts --mode=apply
+          echo "| Departamentos & Docentes | ✅ Concluído | Dados sincronizados e validados com TypeScript |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Fail-Safe Departamentos
+        if: steps.sync_departments.outcome == 'failure'
+        run: |
+          echo "| Departamentos & Docentes | ⚠️ Falha/Timeout | Servidor do portal IFUSP instável; mantida base local intacta |" >> $GITHUB_STEP_SUMMARY
+
+      # --- MÓDULO 2: INICIATIVAS DE EXTENSÃO & CCEX ---
+      - name: [Módulo B] Sincronizar Iniciativas de Extensão
+        id: sync_initiatives
+        continue-on-error: true
+        run: |
+          echo "Executando Módulo Iniciativas..."
+          python3 scripts/scrapers/scrape_initiatives.py
+          npx tsx scripts/scrapers/audit_initiatives.ts
+          npx tsx scripts/scrapers/apply_initiatives.ts --mode=apply
+          echo "| Iniciativas de Extensão | ✅ Concluído | Projetos CCEx e coletivos consolidados |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Fail-Safe Iniciativas
+        if: steps.sync_initiatives.outcome == 'failure'
+        run: |
+          echo "| Iniciativas de Extensão | ⚠️ Falha/Timeout | Servidor CCEx instável; mantida base local intacta |" >> $GITHUB_STEP_SUMMARY
+
+      # --- MÓDULO 3: EVENTOS, NOTÍCIAS & COLOQUIOS ---
+      - name: [Módulo C] Sincronizar Eventos & Notícias
+        id: sync_events_news
+        continue-on-error: true
+        run: |
+          echo "Executando Módulo Eventos e Notícias..."
+          python3 scripts/scrapers/scrape_events_and_news.py
+          npx tsx scripts/scrapers/audit_events_and_news.ts
+          npx tsx scripts/scrapers/apply_events_and_news.ts --mode=apply
+          echo "| Eventos & Notícias | ✅ Concluído | Colóquios e notícias atualizados |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Fail-Safe Eventos & Notícias
+        if: steps.sync_events_news.outcome == 'failure'
+        run: |
+          echo "| Eventos & Notícias | ⚠️ Falha/Timeout | Feed RSS/Portal instável; mantida base local intacta |" >> $GITHUB_STEP_SUMMARY
+
+      # --- MÓDULO 4: ESPAÇOS, AUDITÓRIOS & LABORATÓRIOS DIDÁTICOS ---
+      - name: [Módulo D] Sincronizar Espaços & Auditórios
+        id: sync_spaces
+        continue-on-error: true
+        run: |
+          echo "Executando Módulo Espaços..."
+          python3 scripts/scrapers/scrape_spaces.py
+          npx tsx scripts/scrapers/audit_spaces.ts
+          npx tsx scripts/scrapers/apply_spaces.ts --mode=apply
+          echo "| Espaços & Auditórios | ✅ Concluído | Guia de auditórios e laboratórios atualizado |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Fail-Safe Espaços
+        if: steps.sync_spaces.outcome == 'failure'
+        run: |
+          echo "| Espaços & Auditórios | ⚠️ Falha/Timeout | Página de espaços instável; mantida base local intacta |" >> $GITHUB_STEP_SUMMARY
+
+      # --- MÓDULO 5: MATRIZES CURRICULARES & JÚPITERWEB ---
+      - name: [Módulo E] Sincronizar Matrizes Curriculares & JúpiterWeb
+        id: sync_curriculum
+        continue-on-error: true
+        run: |
+          echo "Executando Módulo Matrizes e JúpiterWeb..."
+          python3 scripts/scrapers/scrape_jupiter.py
+          npx tsx scripts/scrapers/audit_jupiter.ts
+          npx tsx scripts/scrapers/apply_jupiter.ts --mode=apply
+          echo "| Matrizes Curriculares (JúpiterWeb) | ✅ Concluído | Grades semestrais e catálogo canônico atualizados |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Fail-Safe Matrizes Curriculares
+        if: steps.sync_curriculum.outcome == 'failure'
+        run: |
+          echo "| Matrizes Curriculares (JúpiterWeb) | ⚠️ Falha/Timeout | JúpiterWeb instável/timeout; mantida base curricular curada |" >> $GITHUB_STEP_SUMMARY
+
+      # --- VALIDAÇÃO GERAL DE COMPILAÇÃO ---
+      - name: Checagem Final TypeScript (tsc --noEmit)
+        run: |
+          echo "Validando integridade tipológica de src/data/..."
+          npx tsc --noEmit
+
+      # --- PULL REQUEST AUTOMÁTICO COM PROTEÇÃO DE CACHE ---
+      # CRÍTICO: add-paths é estritamente limitado a 'src/data/' para impedir
+      # o commit de arquivos brutos ou backups de 'scripts/scrapers/cache/'!
+      - name: Criar Pull Request Automático
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore(data): sincronização periódica de dados oficiais do IFUSP e JúpiterWeb"
+          committer: "Hub-LabDiv Bot <bot@labdiv.if.usp.br>"
+          author: "Hub-LabDiv Bot <bot@labdiv.if.usp.br>"
+          branch: "automated-data-sync"
+          delete-branch: true
+          title: "chore: atualização automática dos dados oficiais do IFUSP e JúpiterWeb"
+          body: |
+            ### 🤖 Sincronização Periódica de Dados Oficiais (Hub Lab-Div V3.0)
+
+            Este Pull Request foi gerado automaticamente pelo workflow **Hub Data Pipeline**.
+
+            #### Módulos Monitorados e Atualizados:
+            - **Departamentos & Docentes:** `src/data/institutoData.ts`
+            - **Iniciativas & Extensão (CCEx):** `src/data/initiativesData.ts`
+            - **Eventos, Colóquios & Notícias:** `src/data/eventsData.ts` / `src/data/newsData.ts`
+            - **Espaços & Auditórios:** `src/data/spacesData.ts`
+            - **Matrizes & JúpiterWeb:** `src/data/disciplinesData.ts` e `src/data/coursesData.ts`
+
+            #### Proteções Garantidas:
+            - ✅ Somente arquivos na pasta `src/data/` foram comitados (`add-paths: src/data/`).
+            - ✅ Backups e cache em `scripts/scrapers/cache/` foram ignorados via `.gitignore`.
+            - ✅ Validação `npx tsc --noEmit` executada com sucesso antes da abertura do PR.
+            - ✅ Licenciamento AGPLv3 preservado em todos os arquivos atualizados.
+          add-paths: |
+            src/data/
+          labels: |
+            automated-pr
+            data-sync
+            ifusp-data

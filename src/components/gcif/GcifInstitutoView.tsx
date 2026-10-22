@@ -357,13 +357,20 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
                         </div>
                     }
                 >
-                    {filteredSpaces.map(space => (
-                        <SpaceCard 
-                            key={space.id}
-                            space={space}
-                            onOpenDetails={setSelectedSpace}
-                        />
-                    ))}
+                    {/* Hackerspace Themed Card como Primeiro Espaço de Destaque */}
+                    {(spaceFilter === 'todos' || spaceFilter === 'maker-convivencia') && (
+                        <HackerspaceCard />
+                    )}
+
+                    {filteredSpaces
+                        .filter(space => space.id !== 'hackerspace-ifusp')
+                        .map(space => (
+                            <SpaceCard 
+                                key={space.id}
+                                space={space}
+                                onOpenDetails={setSelectedSpace}
+                            />
+                        ))}
                 </NetflixFeed>
             </div>
 

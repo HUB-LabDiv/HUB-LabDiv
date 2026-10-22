@@ -13,7 +13,7 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
     Atom,
     Clock,
@@ -35,8 +35,12 @@ import {
     CalloutRule,
     DownloadCard,
     CourseMetric,
-    SemesterBlock
+    SemesterBlock,
+    ShiftSelector
 } from './GraduacaoComponents';
+import { coursesData } from '@/data/coursesData';
+import { disciplinesData } from '@/data/disciplinesData';
+import { DisciplineDetailsModal } from '@/components/gcif/DisciplineDetailsModal';
 
 const BACH_METRICS: CourseMetric[] = [
     {
@@ -162,6 +166,36 @@ const BACH_SEMESTRES: SemesterBlock[] = [
 ];
 
 export default function BachareladoView() {
+    const [selectedShift, setSelectedShift] = useState<'integral' | 'noturno'>('integral');
+    const [selectedDisciplineCode, setSelectedDisciplineCode] = useState<string | null>(null);
+
+    const gradeAtual = coursesData.bacharelado.gradesPorTurno[selectedShift];
+    const semestresAtuais: SemesterBlock[] = gradeAtual.semestres.map(sem => ({
+        semestre: sem.semestre,
+        titulo: sem.titulo,
+        subtitulo: sem.subtitulo,
+        disciplinas: sem.disciplinasCodigos.map(code => {
+            const item = disciplinesData[code];
+            if (item) {
+                return {
+                    codigo: item.codigo,
+                    nome: item.nome,
+                    creditosAula: item.creditosAula,
+                    creditosTrab: item.creditosTrabalho,
+                    unidade: item.unidade,
+                    tipo: item.tipo === 'obrigatoria' ? 'obrigatória' : 'optativa',
+                    observacao: item.observacao
+                };
+            }
+            return {
+                codigo: code,
+                nome: code,
+                creditosAula: 4,
+                unidade: 'IFUSP'
+            };
+        })
+    }));
+
     return (
         <div className="space-y-8 animate-in fade-in duration-500">
             {/* Header de Identificação do Curso */}
@@ -313,15 +347,29 @@ export default function BachareladoView() {
                             Progressão Semestral Recomendada (PPP 2026)
                         </h3>
                         <p className="text-xs text-gray-400 font-open-sans mt-0.5">
-                            Clique em cada semestre para inspecionar os códigos do JúpiterWeb, unidades ministrantes e créditos.
+                            Selecione o turno abaixo e clique em qualquer disciplina para ver ementa, créditos e pré-requisitos.
                         </p>
                     </div>
                     <span className="text-[11px] font-mono text-gray-400 bg-black/40 px-3 py-1.5 rounded-xl border border-white/5 shrink-0">
-                        Total Mínimo: 136 CA (2040h) + 8 CT (240h)
+                        {selectedShift === 'integral' ? 'Integral: 8 Semestres (4 Anos)' : 'Noturno: 10 Semestres (5 Anos)'} • 136 CA + 8 CT
                     </span>
                 </div>
 
-                <SemestersAccordion semestres={BACH_SEMESTRES} accentColor="brand-blue" />
+                <ShiftSelector
+                    shifts={[
+                        { id: 'integral', label: 'Integral (Diurno)', sub: '4 Anos • 8 Semestres' },
+                        { id: 'noturno', label: 'Noturno', sub: '5 Anos • 10 Semestres' }
+                    ]}
+                    activeShift={selectedShift}
+                    onSelectShift={(id) => setSelectedShift(id as 'integral' | 'noturno')}
+                    accentColor="brand-blue"
+                />
+
+                <SemestersAccordion
+                    semestres={semestresAtuais}
+                    accentColor="brand-blue"
+                    onSelectDiscipline={setSelectedDisciplineCode}
+                />
             </div>
 
             {/* Curricularização da Extensão e AAC */}
@@ -458,6 +506,13 @@ export default function BachareladoView() {
                     />
                 </div>
             </div>
+
+            {/* Modal de Detalhes da Disciplina & Grafo de Pré-requisitos */}
+            <DisciplineDetailsModal
+                disciplineCode={selectedDisciplineCode}
+                onClose={() => setSelectedDisciplineCode(null)}
+                onSelectDiscipline={setSelectedDisciplineCode}
+            />
         </div>
     );
 }

@@ -16,6 +16,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { disciplinesData } from '@/data/disciplinesData';
 
 // ── Wiki content for deep keyword + body-text search ──
 // `content` contains all text rendered on each wiki page for full-text search
@@ -393,6 +394,18 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
             return titleMatch || descMatch || kwMatch || contentMatch;
         });
 
+    // Disciplinas & Matrizes Curriculares (JúpiterWeb)
+    const filteredDisciplines = qNorm.length < 2
+        ? []
+        : Object.values(disciplinesData).filter(d => {
+            const codeMatch = normalizeSearchText(d.codigo).includes(qNorm);
+            const nameMatch = normalizeSearchText(d.nome).includes(qNorm);
+            const deptMatch = normalizeSearchText(d.departamento || '').includes(qNorm);
+            const unidadeMatch = normalizeSearchText(d.unidade).includes(qNorm);
+            const ementaMatch = normalizeSearchText(d.ementa).includes(qNorm);
+            return codeMatch || nameMatch || deptMatch || unidadeMatch || ementaMatch;
+        }).slice(0, 6);
+
     // Extract a snippet around the matched term with highlight
     const getContentSnippet = (content: string, searchTerm: string): React.ReactNode | null => {
         const lowerContent = content.toLowerCase();
@@ -545,6 +558,42 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                                                 )}
                                             </div>
                                             <span className="material-symbols-outlined text-gray-600 text-[16px] group-hover:text-brand-yellow transition-colors mt-1">arrow_forward</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Section 2.5: Disciplinas & Matrizes (JúpiterWeb) */}
+                        {filteredDisciplines.length > 0 && (
+                            <div className="px-3 pt-3 pb-1 border-t border-white/5">
+                                <h3 className="px-2 mb-2 text-[10px] font-black uppercase text-brand-yellow tracking-[0.2em] flex items-center justify-between">
+                                    <span>🔬 Disciplinas & JúpiterWeb ({filteredDisciplines.length})</span>
+                                    <span className="text-[9px] font-mono font-normal text-gray-500 lowercase">abrir ementa</span>
+                                </h3>
+                                <div className="flex flex-col">
+                                    {filteredDisciplines.map((disc, idx) => (
+                                        <button
+                                            key={idx}
+                                            onClick={() => handleNavigate(`/wiki/ifusp?disciplina=${disc.codigo}`)}
+                                            className="w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-xl hover:bg-white/5 active:bg-white/10 transition-all text-left group"
+                                        >
+                                            <div className="flex items-center gap-3 min-w-0">
+                                                <span className="font-mono text-xs font-bold text-brand-blue-accent group-hover:text-brand-yellow bg-black/40 px-2 py-1 rounded-md border border-white/10 shrink-0">
+                                                    {disc.codigo}
+                                                </span>
+                                                <div className="min-w-0 flex-1">
+                                                    <span className="text-sm font-bold text-gray-200 group-hover:text-white transition-colors block truncate">
+                                                        {disc.nome}
+                                                    </span>
+                                                    <span className="text-[11px] text-gray-500 block truncate font-open-sans">
+                                                        {disc.unidade} {disc.departamento ? `• Depto. ${disc.departamento}` : ''} • {disc.creditosAula} CA {disc.creditosTrabalho > 0 ? `+ ${disc.creditosTrabalho} CT` : ''}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <span className="material-symbols-outlined text-gray-600 text-[16px] group-hover:text-brand-yellow transition-colors shrink-0">
+                                                arrow_forward
+                                            </span>
                                         </button>
                                     ))}
                                 </div>

@@ -89,12 +89,59 @@ export interface SemesterBlock {
     disciplinas: DisciplineItem[];
 }
 
+export function ShiftSelector({
+    shifts,
+    activeShift,
+    onSelectShift,
+    accentColor = 'brand-blue'
+}: {
+    shifts: { id: string; label: string; sub?: string }[];
+    activeShift: string;
+    onSelectShift: (id: string) => void;
+    accentColor?: 'brand-yellow' | 'brand-blue' | 'brand-red';
+}) {
+    return (
+        <div className="flex flex-wrap items-center gap-2 p-1.5 rounded-2xl bg-black/40 border border-white/5 my-4">
+            {shifts.map(s => {
+                const isActive = activeShift === s.id;
+                let activeClasses = 'bg-[#0F4780] text-white shadow-md';
+                if (accentColor === 'brand-yellow') {
+                    activeClasses = 'bg-brand-yellow text-black font-bold shadow-md';
+                } else if (accentColor === 'brand-red') {
+                    activeClasses = 'bg-brand-red text-white shadow-md';
+                }
+
+                return (
+                    <button
+                        key={s.id}
+                        onClick={() => onSelectShift(s.id)}
+                        className={`px-4 py-2 rounded-xl transition-all font-bukra text-xs flex flex-col sm:flex-row items-center gap-1 sm:gap-2 ${
+                            isActive
+                                ? activeClasses
+                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                        }`}
+                    >
+                        <span>{s.label}</span>
+                        {s.sub && (
+                            <span className={`text-[10px] font-open-sans font-normal opacity-80 ${isActive ? '' : 'text-gray-500'}`}>
+                                ({s.sub})
+                            </span>
+                        )}
+                    </button>
+                );
+            })}
+        </div>
+    );
+}
+
 export function SemestersAccordion({
     semestres,
-    accentColor = 'brand-yellow'
+    accentColor = 'brand-yellow',
+    onSelectDiscipline
 }: {
     semestres: SemesterBlock[];
     accentColor?: 'brand-yellow' | 'brand-blue' | 'brand-red';
+    onSelectDiscipline?: (codigo: string) => void;
 }) {
     const [openSemestre, setOpenSemestre] = useState<number | string>(semestres[0]?.semestre || 1);
 
@@ -171,37 +218,59 @@ export function SemestersAccordion({
                                                     <th className="pb-2.5">Disciplina</th>
                                                     <th className="pb-2.5 text-center">Unidade</th>
                                                     <th className="pb-2.5 text-center">Créditos (CA/CT)</th>
+                                                    <th className="pb-2.5 text-right pr-2">Ação</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="divide-y divide-gray-100 dark:divide-white/5">
-                                                {sem.disciplinas.map((disc, idx) => (
-                                                    <tr key={idx} className="hover:bg-gray-50 dark:hover:bg-white/[0.015] transition-colors">
-                                                        <td className="py-2.5 font-mono text-[11px] text-gray-600 dark:text-gray-300 font-bold whitespace-nowrap">
-                                                            {disc.codigo || '—'}
-                                                        </td>
-                                                        <td className="py-2.5 text-gray-900 dark:text-white pr-4">
-                                                            <div className="font-semibold text-[13px]">{disc.nome}</div>
-                                                            {disc.observacao && (
-                                                                <div className="text-[11px] text-gray-500 dark:text-gray-400 italic mt-0.5">
-                                                                    {disc.observacao}
+                                                {sem.disciplinas.map((disc, idx) => {
+                                                    const isClickable = Boolean(disc.codigo && onSelectDiscipline);
+                                                    return (
+                                                        <tr
+                                                            key={idx}
+                                                            onClick={() => isClickable && disc.codigo && onSelectDiscipline?.(disc.codigo)}
+                                                            className={`transition-colors group ${
+                                                                isClickable
+                                                                    ? 'hover:bg-[#0F4780]/15 dark:hover:bg-white/[0.04] cursor-pointer'
+                                                                    : 'hover:bg-gray-50 dark:hover:bg-white/[0.015]'
+                                                            }`}
+                                                        >
+                                                            <td className="py-2.5 font-mono text-[11px] text-gray-600 dark:text-gray-300 font-bold whitespace-nowrap">
+                                                                {disc.codigo || '—'}
+                                                            </td>
+                                                            <td className="py-2.5 text-gray-900 dark:text-white pr-4">
+                                                                <div className="font-semibold text-[13px] group-hover:text-brand-blue-accent dark:group-hover:text-brand-yellow transition-colors flex items-center gap-1.5">
+                                                                    {disc.nome}
                                                                 </div>
-                                                            )}
-                                                        </td>
-                                                        <td className="py-2.5 text-center whitespace-nowrap">
-                                                            <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-white/5">
-                                                                {disc.unidade || 'IFUSP'}
-                                                            </span>
-                                                        </td>
-                                                        <td className="py-2.5 text-center font-mono font-bold whitespace-nowrap">
-                                                            <span className="text-gray-900 dark:text-white">{disc.creditosAula} CA</span>
-                                                            {disc.creditosTrab ? (
-                                                                <span className="text-brand-yellow ml-1">
-                                                                    + {disc.creditosTrab} CT
+                                                                {disc.observacao && (
+                                                                    <div className="text-[11px] text-gray-500 dark:text-gray-400 italic mt-0.5">
+                                                                        {disc.observacao}
+                                                                    </div>
+                                                                )}
+                                                            </td>
+                                                            <td className="py-2.5 text-center whitespace-nowrap">
+                                                                <span className="text-[10px] uppercase font-mono px-2 py-0.5 rounded bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-white/5">
+                                                                    {disc.unidade || 'IFUSP'}
                                                                 </span>
-                                                            ) : null}
-                                                        </td>
-                                                    </tr>
-                                                ))}
+                                                            </td>
+                                                            <td className="py-2.5 text-center font-mono font-bold whitespace-nowrap">
+                                                                <span className="text-gray-900 dark:text-white">{disc.creditosAula} CA</span>
+                                                                {disc.creditosTrab ? (
+                                                                    <span className="text-brand-yellow ml-1">
+                                                                        + {disc.creditosTrab} CT
+                                                                    </span>
+                                                                ) : null}
+                                                            </td>
+                                                            <td className="py-2.5 text-right whitespace-nowrap pr-2">
+                                                                {isClickable ? (
+                                                                    <span className="inline-flex items-center gap-1 text-[10px] font-bukra font-bold px-2 py-1 rounded-lg bg-white/5 text-gray-400 group-hover:bg-[#0F4780]/30 group-hover:text-brand-blue-accent group-hover:border-[#0F4780]/40 border border-white/5 transition-colors">
+                                                                        <Info className="w-3 h-3" />
+                                                                        <span className="hidden sm:inline">Detalhes</span>
+                                                                    </span>
+                                                                ) : null}
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })}
                                             </tbody>
                                         </table>
                                     </div>
