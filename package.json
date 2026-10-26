@@ -12,6 +12,7 @@
     "audit-logs": "node scripts/audit.js",
     "scraper:audit": "npx tsx scripts/scrapers/run_pipeline.ts --skip-scrape",
     "scraper:pipeline": "npx tsx scripts/scrapers/run_pipeline.ts",
+    "test:qa": "npx tsx scripts/qa/test-full-stack.ts && npx tsx scripts/qa/test-headless-components.tsx",
     "start": "next start",
     "lint": "eslint"
   },
