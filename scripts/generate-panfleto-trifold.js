@@ -1410,12 +1410,12 @@ async function main() {
     headless: chromium.headless
   });
 
-  // Render Face 1 PNG (300 DPI) & Vector PDF (Page 1)
+  // Render Face 1 PNG (Ultra-HD / 450 DPI) & Vector PDF (Page 1)
   const pageExterno = await browser.newPage();
-  await pageExterno.setViewport({ width: 1754, height: 1240, deviceScaleFactor: 2 });
+  await pageExterno.setViewport({ width: 1754, height: 1240, deviceScaleFactor: 3 });
   await pageExterno.goto(`file://${pathExterno}`, { waitUntil: 'networkidle0', timeout: 60000 });
   await pageExterno.evaluateHandle('document.fonts.ready');
-  await new Promise(r => setTimeout(r, 600));
+  await new Promise(r => setTimeout(r, 800));
 
   const pathPngExterno = path.join(OUT_DIR, '2Dpanfleto-externo.png');
   await pageExterno.screenshot({
@@ -1423,16 +1423,24 @@ async function main() {
     type: 'png',
     clip: { x: 0, y: 0, width: 1754, height: 1240 }
   });
-  console.log('Rendered PNG Face 1: ' + pathPngExterno);
+  console.log('Rendered Ultra-HD PNG Face 1 (5262x3720): ' + pathPngExterno);
 
+  const pathPdfExterno = path.join(OUT_DIR, '2Dpanfleto-externo.temp.pdf');
+  await pageExterno.pdf({
+    path: pathPdfExterno,
+    width: '1754px',
+    height: '1240px',
+    printBackground: true,
+    margin: { top: 0, right: 0, bottom: 0, left: 0 }
+  });
   await pageExterno.close();
 
-  // Render Face 2 PNG (300 DPI)
+  // Render Face 2 PNG (Ultra-HD / 450 DPI) & Vector PDF (Page 2)
   const pageInterno = await browser.newPage();
-  await pageInterno.setViewport({ width: 1754, height: 1240, deviceScaleFactor: 2 });
+  await pageInterno.setViewport({ width: 1754, height: 1240, deviceScaleFactor: 3 });
   await pageInterno.goto(`file://${pathInterno}`, { waitUntil: 'networkidle0', timeout: 60000 });
   await pageInterno.evaluateHandle('document.fonts.ready');
-  await new Promise(r => setTimeout(r, 600));
+  await new Promise(r => setTimeout(r, 800));
 
   const pathPngInterno = path.join(OUT_DIR, '2Dpanfleto-interno.png');
   await pageInterno.screenshot({
@@ -1440,22 +1448,30 @@ async function main() {
     type: 'png',
     clip: { x: 0, y: 0, width: 1754, height: 1240 }
   });
-  console.log('Rendered PNG Face 2: ' + pathPngInterno);
+  console.log('Rendered Ultra-HD PNG Face 2 (5262x3720): ' + pathPngInterno);
+
+  const pathPdfInterno = path.join(OUT_DIR, '2Dpanfleto-interno.temp.pdf');
+  await pageInterno.pdf({
+    path: pathPdfInterno,
+    width: '1754px',
+    height: '1240px',
+    printBackground: true,
+    margin: { top: 0, right: 0, bottom: 0, left: 0 }
+  });
   await pageInterno.close();
 
   await browser.close();
 
-  // 3. Generate 2-Page 300 DPI PDF directly from PNGs (Page 1 = Externo, Page 2 = Interno)
-  // This guarantees 100% pixel-perfect identity between PDF and PNG formats.
+  // 3. Generate 2-Page Ultra-HD PDF directly from PNGs (100% identical pixel-perfect to PNGs)
   const pathPdf = path.join(OUT_DIR, '2Dpanfleto.pdf');
-  const pyScript = `
+  const pyCmd = `python3 -c "
 from PIL import Image
 p1 = Image.open(r'${pathPngExterno}').convert('RGB')
 p2 = Image.open(r'${pathPngInterno}').convert('RGB')
-p1.save(r'${pathPdf}', 'PDF', save_all=True, append_images=[p2], resolution=300.0, quality=100)
-`;
-  execSync('python3', { input: pyScript, stdio: ['pipe', 'inherit', 'inherit'] });
-  console.log('Rendered 2-Page PDF (100% identical to PNGs): ' + pathPdf);
+p1.save(r'${pathPdf}', 'PDF', save_all=True, append_images=[p2], resolution=450.0)
+print('Generated 100% PNG-Identical PDF: ${pathPdf}')
+"`;
+  execSync(pyCmd, { stdio: 'inherit' });
 
   // 4. Mirror deliverables to active conversation artifacts dirs
   const activeArtifactDirs = [

@@ -29,7 +29,9 @@ import {
     Users,
     Clock,
     Calendar,
-    Newspaper
+    Newspaper,
+    Search,
+    X
 } from 'lucide-react';
 import { NetflixFeed } from '@/components/shared/NetflixFeed';
 import { ColisorIcon } from '@/components/icons/ColisorIcon';
@@ -137,6 +139,8 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
     const [selectedSpace, setSelectedSpace] = useState<SpaceItem | null>(null);
     const [eventFilter, setEventFilter] = useState<string>('todos');
     const [spaceFilter, setSpaceFilter] = useState<string>('todos');
+    const [newsFilter, setNewsFilter] = useState<string>('todas');
+    const [newsSearch, setNewsSearch] = useState<string>('');
 
     const eventsList = Object.values(eventsData);
     const filteredEvents = eventFilter === 'todos' 
@@ -147,6 +151,25 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
     const filteredSpaces = spaceFilter === 'todos'
         ? spacesList
         : spacesList.filter(sp => sp.categoria === spaceFilter);
+
+    const filteredNews = newsData.filter(item => {
+        const matchesCategory = newsFilter === 'todas' || item.categoria?.toLowerCase() === newsFilter.toLowerCase();
+        const matchesSearch = !newsSearch.trim() || 
+            item.titulo.toLowerCase().includes(newsSearch.toLowerCase()) ||
+            item.resumo.toLowerCase().includes(newsSearch.toLowerCase()) ||
+            (item.autor && item.autor.toLowerCase().includes(newsSearch.toLowerCase())) ||
+            item.tags.some(tag => tag.toLowerCase().includes(newsSearch.toLowerCase()));
+        return matchesCategory && matchesSearch;
+    });
+
+    const newsCategories = [
+        { id: 'todas', label: 'Todas' },
+        { id: 'Institucional', label: 'Institucional' },
+        { id: 'Pesquisa', label: 'Pesquisa' },
+        { id: 'Premiação', label: 'Premiação' },
+        { id: 'Extensão', label: 'Extensão' },
+        { id: 'Ensino', label: 'Ensino' },
+    ];
 
     return (
         <div className="w-full space-y-16 pb-16">
@@ -244,18 +267,89 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
             </div>
 
             {/* 3. Notícias & Destaques Institucionais */}
-            <div id="noticias-ifusp" data-tour="gcif-instituto-noticias" className="space-y-6">
+            <div id="noticias-ifusp" data-tour="gcif-instituto-noticias" className="space-y-4">
                 <NetflixFeed 
                     title="Notícias & Destaques" 
                     icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><Newspaper className="w-5 h-5" /></div>}
+                    filterBar={
+                        <div className="space-y-3 pb-2">
+                            {/* Barra de Busca de Notícias */}
+                            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center justify-between">
+                                <div className="relative flex-1 max-w-md">
+                                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                                    <input 
+                                        type="text"
+                                        value={newsSearch}
+                                        onChange={(e) => setNewsSearch(e.target.value)}
+                                        placeholder="Buscar notícias por título, resumo ou palavra-chave..."
+                                        className="w-full pl-10 pr-9 py-2 rounded-2xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0F4780]/30 dark:focus:ring-[#FFCC00]/30 transition-all font-open-sans"
+                                    />
+                                    {newsSearch && (
+                                        <button
+                                            onClick={() => setNewsSearch('')}
+                                            className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-white cursor-pointer"
+                                            title="Limpar busca"
+                                        >
+                                            <X className="w-3.5 h-3.5" />
+                                        </button>
+                                    )}
+                                </div>
+                                <div className="text-[11px] font-mono font-bold text-gray-500 dark:text-gray-400 shrink-0">
+                                    Exibindo {filteredNews.length} de {newsData.length} notícias
+                                </div>
+                            </div>
+
+                            {/* Categorias */}
+                            <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
+                                {newsCategories.map(cat => {
+                                    const count = cat.id === 'todas' 
+                                        ? newsData.length 
+                                        : newsData.filter(n => n.categoria?.toLowerCase() === cat.id.toLowerCase()).length;
+                                    if (count === 0 && cat.id !== 'todas') return null;
+                                    const isActive = newsFilter.toLowerCase() === cat.id.toLowerCase();
+                                    return (
+                                        <button
+                                            key={cat.id}
+                                            onClick={() => setNewsFilter(cat.id)}
+                                            className={`px-3 py-1.5 rounded-full text-[11px] font-black uppercase tracking-wider font-bukra transition-all shrink-0 cursor-pointer ${
+                                                isActive
+                                                    ? 'bg-[#0F4780] text-white dark:bg-[#FFCC00] dark:text-[#0F4780] shadow-md scale-105'
+                                                    : 'bg-white dark:bg-[#1E1E1E] text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/30'
+                                            }`}
+                                        >
+                                            {cat.label} ({count})
+                                        </button>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    }
                 >
-                    {newsData.map(item => (
-                        <NewsCard 
-                            key={item.id}
-                            news={item}
-                            onOpenDetails={setSelectedNews}
-                        />
-                    ))}
+                    {filteredNews.length > 0 ? (
+                        filteredNews.map(item => (
+                            <NewsCard 
+                                key={item.id}
+                                news={item}
+                                onOpenDetails={setSelectedNews}
+                            />
+                        ))
+                    ) : (
+                        <div className="w-full py-10 flex flex-col items-center justify-center text-center p-6 bg-white dark:bg-[#1E1E1E] rounded-3xl border border-dashed border-gray-300 dark:border-white/10 shrink-0 min-w-full">
+                            <Newspaper className="w-10 h-10 text-gray-400 mb-2 stroke-[1.5]" />
+                            <p className="text-sm font-bold text-gray-800 dark:text-gray-200 font-bukra">
+                                Nenhuma notícia encontrada para sua busca
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400 font-open-sans mt-1">
+                                Tente usar termos mais amplos ou limpe os filtros aplicados.
+                            </p>
+                            <button
+                                onClick={() => { setNewsSearch(''); setNewsFilter('todas'); }}
+                                className="mt-4 px-4 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/15 text-xs font-bold text-gray-700 dark:text-gray-200 transition-all cursor-pointer font-bukra uppercase"
+                            >
+                                Limpar Busca e Filtros
+                            </button>
+                        </div>
+                    )}
                 </NetflixFeed>
             </div>
 

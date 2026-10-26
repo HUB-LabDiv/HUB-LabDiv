@@ -1,85 +1,150 @@
-# 🌌 Hub de Comunicação Científica - Lab-Div (IF-USP)
+# 🌌 Hub de Comunicação Científica — Lab-Div (IF-USP)
 
-> Da gaveta do laboratório para a palma da mão da sociedade. Onde o arquivo morto ganha vida.
+> **Aviso para a comunidade desenvolvedores com interesse no HUB, favor respeitar as regras e entender o projeto antes de contribuir. Em caso de dúvidas, pergunte e por favorrr leia tudo antes de codar, boa sorte e ansioso para suas contribuições :).**
 
-O **Hub Lab-Div** não é apenas uma plataforma; é o novo sistema nervoso da comunicação científica do Instituto de Física da USP. Nascido da vontade de conectar a excelente pesquisa feira nos laboratórios com estudantes, pesquisadores e a esfera pública, o projeto centraliza, moderniza e distribui o conhecimento de forma viva e interativa.
+O **Hub Lab-Div** é uma plataforma digital que foi desenvolvida como um webapp/app para ser/tentar ser o coração da comunicação científica do **Instituto de Física da Universidade de São Paulo (IFUSP)**. Projetado para conectar a pesquisa científica de fronteira, a vivência universitária e a sociedade, o Hub reúne uma rede social que visa possibilitar uma verdadeira comunicação cientifica dialógica, ferramentas para auxilio dos acadêmicos e por fim reunir todo tipo de informação util sobre o ambiente universitario que atualmente se encontra espalhada por toda a internet em editais/sites/portais/projetos...
+
+Distribuído sob a licença livre **GNU Affero General Public License v3.0 (AGPLv3)**.
 
 ---
 
 ## 🎯 Por Que Esse Hub Existe?
-Atualmente, o Instituto de Física produz materiais visuais incríveis (fotos de instrumentos de ponta, experimentos, apostilas e registros históricos), mas eles estavam dispersos ou inacessíveis. 
 
-Nós criamos o Hub para responder a uma simples pergunta: **"O que acontece de tão fascinante dentro do IF que nós não conseguimos ver?"**
+Historicamente, o IFUSP produz um acervo riquíssimo de dados, imagens de experimentos, apostilas,contando com equipamentos de ponta (como o Acelerador Pelletron, o tokamak e muitos outros) que resultam em pesquisas científicas de impacto global. No entanto, grande parte desse patrimônio é ou permanecia dispersa em pastas inacessíveis ou confinada aos laboratórios.
 
-A resposta é este ecossistema. Ele foi desenhado para:
-- **Resgatar a Memória:** Preservar fotografias, vídeos e catálogos que contam a história das pesquisas.
-- **Acelerar Pesquisas:** Ser uma biblioteca de referência rápida para estudantes que precisam de assets (recursos visuais) corretos e de alta qualidade para seus TCCs, mestrados e teses.
-- **Democratizar a Ciência:** Transformar a "Caixa Preta" de um equipamento complexo em algo compreensível para toda a sociedade por meio da divulgação.
-
----
-
-## ✨ O Que Você Encontra Aqui?
-
-O Hub foi pensado para te dar o controle e a descoberta:
-
-1. **Galeria Orbital (Descoberta)**
-   Esqueça as pastas confusas de Drive. Nosso principal catálogo é uma linha do tempo envolvente onde você pode filtrar arquivos por:
-   - Formato (Fotos, Vídeos, PDFs).
-   - Ano de publicacao  
-   - Categoria
-
-2. **Seu Laboratório Pessoal (Engajamento)**
-   O Hub não é passivo, é a sua ferramenta. 
-   - Salve suas imagens favoritas para baixar depois numa pasta "Coleção Privada".
-   - Deixe o seu *átomo* (Curtida) nos materiais que foram úteis. O algoritmo usará isso para mostrar aos próximos alunos os melhores arquivos primeiro!
-
-3. **Submissão Colaborativa (O Futuro)**
-   Nós construímos estradas, mas são vocês que trazem a carga. Seja você um monitor da Pós, um pesquisador titular, ou um aluno da graduação com uma bela foto do Acelerador Linear (Pelletron) ao pôr do sol, **você pode lançar os seus achados à órbita.** A Moderação garante o rigor científico, mas a autoria é 100% sua, acumulando *Pontos de Reputação (XP)* na plataforma.
-
-## 🚀 Arquitetura Técnica (Monorepo)
-
-O Hub Lab-Div foi construído utilizando tecnologias modernas visando performance, facilidade de manutenção e integração fluida entre as plataformas Web e Mobile.
-
-**Stack Principal:**
-- **Framework:** Next.js 14+ (App Router, Server Components).
-- **Estilização:** Tailwind CSS v4.0.
-- **Banco de Dados & Autenticação:** Supabase (PostgreSQL com Row Level Security - RLS).
-- **Mobile:** Capacitor v6 (Wrapper nativo).
-
-### Como o App Mobile Funciona
-Atualmente, o projeto utiliza uma arquitetura híbrida (Thin Client). O aplicativo Android (na pasta `android/`) é uma "casca" gerada pelo **Capacitor**, que aponta diretamente para o domínio hospedado na Vercel (via `capacitor.config.ts`).
-Isso significa que:
-1. Nenhuma alteração no código Web (React/Next.js) precisa ser recompilada no Android Studio para refletir no aplicativo.
-2. Basta enviar o código para o GitHub (Push), a Vercel atualiza, e o aplicativo no celular é atualizado em tempo real.
+O Hub Lab-Div foi concebido para resolver três missões centrais:
+1. **Preservar a Memória & Acervo:** Digitalizar, categorizar e eternizar registros históricos, fotografias e documentações técnicas do instituto.
+2. **Potencializar a Vida Acadêmica:** Centralizar a grade horária (sincronizada com o JúpiterWeb), trilhas de formação, catálogo de softwares científicos, editais e manuais curriculares na Wiki central.
+3. **Democratizar a Ciência Pública:** Traduzir a complexidade do laboratório em narrativas didáticas para estudantes da educação básica, comunidade uspiana e o público geral.
 
 ---
 
-## 🛠️ Como Executar o Projeto
+## 🏛️ Os 3 Eixos da Plataforma
 
-### 1. Rodando a Aplicação Web (Localmente)
-Para rodar o ambiente de desenvolvimento Next.js no seu computador:
+O ecossistema é estruturado em torno de três eixos temáticos com identidade visual própria (Material Design 3 + Cores Oficiais LabDiv):
+
+- 🔵 **Eixo 01 — Social & Comunidade (`#0F4780`):** Feed vivo da comunidade universitária com publicações em **Fluxo** (mídias didáticas), **Logs** (relatos rápidos) e **Arte Científica**; central de interações com o chat em tempo real **Emaranhamento Quântico** e o canal tira-dúvidas **Pergunte a um Cientista**.
+- 🔴 **Eixo 02 — Informativo & Dados (`#F14343`):** Central de Graduação (GCIF), editais, Wiki do IFUSP, mural de oportunidades para alunos e pesquisadores, colóquios, criadores de conteúdo e o **Grande Colisor de Ideias**.
+- 🟡 **Eixo 03 — Ferramentas & Destaques (`#FFCC00`):** Simulador de Grade Horária 1h:1h com controle de faltas e exportação para PDF/Júpiter, Catálogo de Softwares Científicos, Match Acadêmico de Grupos de Estudo e a **Arena de Desafios Científicos**.
+
+---
+
+## 🛠️ Guia de Manutenção e Arquitetura
+
+O projeto adota uma arquitetura monorepo moderna, com foco em tipagem estrita, performance de borda e paridade entre Web e Mobile:
+
+- **Frontend Web:** Next.js 16+ (App Router, React Server Components como padrão, Client Components isolados nas folhas).
+- **Design System:** Híbrido LabDiv IDV + Google Material Design 3 (M3), com Tailwind CSS v4, suporte estrito a **Dual-Theme** (Claro e Escuro `#121212`) e ergonomia tátil mínima de `48x48px` em dispositivos móveis (`375px`).
+- **Backend & Banco de Dados:** Supabase (PostgreSQL 15+) com Row Level Security (RLS) habilitado em todas as tabelas e Storage Buckets.
+- **App Android:** Capacitor v8 (arquitetura híbrida Thin Client conectada à Vercel e suporte a notificações push nativas e DayNight Theme).
+- **Pipelines de Dados:** Scrapers em Python/TypeScript para sincronização periódica de disciplinas, docentes e colóquios via GitHub Actions.
+
+### Comandos Essenciais
+
 ```bash
-# Instale as dependências
+# 1. Instalar dependências
 npm install
 
-# Rode o servidor de desenvolvimento
+# 2. Executar servidor de desenvolvimento local
 npm run dev
-```
-O projeto estará disponível em `http://localhost:3000`.
 
-### 2. Rodando o Aplicativo Android
-Se você precisar alterar ícones, configurações nativas ou gerar um novo APK:
-1. Abra a pasta `android/` no **Android Studio**.
-2. Sincronize o Gradle.
-3. Clique no botão "Play" verde para emular ou construir o APK.
-*(Nota: O APK final será gerado na pasta `android/app/build/outputs/apk/debug/HUB-LabDiv-debug.apk`)*
+# 3. Validar tipagem TypeScript estrita (deve sempre compilar com 0 erros)
+npx tsc --noEmit
+
+# 4. Executar pipeline de scrapers e auditoria do JúpiterWeb/IFUSP
+npm run scraper:pipeline
+npm run scraper:audit
+
+# 5. Build de produção
+npm run build
+```
+
+### Regra de Ouro das Migrations SQL
+
+Todas as novas migrações de banco de dados devem residir **obrigatoriamente** em:
+```
+supabase/migrations/newsqls/
+```
+Cada arquivo de migração é consolidado continuamente até atingir a trava estrita de **700 linhas**. Ao atingir esse limite, um novo arquivo sequencial (ex.: `god-sql-mk11.sql`) deve ser inaugurado, garantindo rastreabilidade e histórico limpo.
+Para o caso de uma contribuição publica da comunidade, favor deixar em um arquivo separado na pasta supabase/migrations/newsqls/ com um nome que faça sentido (ex.: [DATA_EVENTO]-community-contribution.sql) e que não conflite com as migrações existentes.
+
+---
+
+## 🔒 Governança de Dados: O Que é Público vs. O Que é Privado
+
+Em conformidade com a **Lei Geral de Proteção de Dados (LGPD)** e boas práticas de segurança defensiva:
+
+### 🌐 Conteúdo Público (Acesso Livre)
+- Acervo científico aprovado pela moderação (fotos, PDFs, artigos e vídeos).
+- Verbetes e manuais da Wiki Central e do GCIF.
+- Oportunidades acadêmicas e editais já homologados.
+- Perguntas públicas aprovadas do *Pergunte a um Cientista*.
+- Grafo de conhecimento e constelação semântica de tópicos da Física.
+
+### 🔐 Conteúdo Privado e Protegido (Restrito)
+- **Torre de Controle (`/admin`):** Painel administrativo centralizado com autenticação blindada (`requireAdminOrModerator`) e auditoria de ações de moderação.
+- **Verificação Docente & Comprovantes:** Uploads de holerites/comprovantes docentes residem em bucket criptografado e são **deletados de forma definitiva e imediata** assim que a análise for concluída, mantendo no banco apenas metadados de auditoria.
+- **Fila de Moderação:** Todo conteúdo gerado por usuários (novas submissões, edições de perfil, oportunidades, comentários e denúncias) cai em uma fila unificada isolada até decisão humana.
+- **Segredos e Credenciais:** Variáveis de ambiente (`.env.local`), chaves de serviço do Supabase, senhas de aplicação SMTP e keystores Android (`.keystore` / `.jks`) jamais são expostas em commits ou logs públicos.
+
+---
+
+## 🤖 Declaração de Transparência sobre o Uso de IA Assistida
+
+O ecossistema do Hub Lab-Div reúne uma densidade funcional extraordinária: aplicação web progressiva, aplicativo Android nativo, inteligência na detecção docente, três eixos com dezenas de utilitários, monitoramento automático de SLAs por e-mail e integração contínua com sistemas legados da universidade.
+
+Para viabilizar o lançamento a tempo e garantir a entrega de uma plataforma dessa envergadura para o IFUSP, **ferramentas de inteligência artificial generativa foram empregadas ativamente como forma de ampliar a capacidade técnica e produtividade da equipe de desenvolvimento do HUB LabDiv**.
+
+No entanto, **não há geração cega de código:**
+- Cada linha de lógica de negócios, política RLS no banco de dados, componente de interface e rota de API foi **arquitetada, inspecionada, testada e validada manualmente** por desenvolvedores humanos.
+- A IA operou como copiloto de implementação sob regras rígidas de engenharia; o discernimento técnico, a revisão de segurança e a coerência científica são inteiramente humanos.
+
+---
+
+## 🚫 Política de Tolerância Zero ao "Slop de IA" (Anti-Slop Policy)
+
+Apoiamos o uso de inteligência artificial como acelerador do desenvolvimento e seu papel em tornar esse projeto viavel é inegavel. No entanto, **rejeitamos veementemente o "slop de IA"** — código descuidado, sem contexto e gerado sem supervisão. 
+
+Pull Requests e solicitações que apresentem qualquer um dos comportamentos abaixo serão **rejeitados sumariamente sem revisão adicional**:
+
+1. ❌ **Código Sem Anotações e Contexto:** Arquivos novos ou funções alteradas sem comentários claros explicando **o que o código faz, por que faz e qual problema resolve**.
+2. ❌ **Código Não Testado:** PRs que não passem no `npx tsc --noEmit` ou que apresentem quebras em tempo de execução no navegador/app.
+3. ❌ **Código Sem Sentido Arquitetural:** Injeção de pacotes desnecessários, reescrita descontextualizada de componentes existentes, violações do App Router do Next.js (como uso indevido de `useEffect` para busca de dados) ou fuga dos padrões Material Design 3 do Hub.
+4. ❌ **Alucinações de Banco de Dados:** Migrations que não respeitem integridade referencial, que criem tabelas sem RLS ou que violem a convenção de migrations do repositório.
+
+Se você utilizar IA para auxiliar na sua contribuição, **assuma a responsabilidade pelo que gerou**: revise cada linha, teste localmente e documente o propósito técnico.
+
+---
+
+## 🌟 Contribuições, Reconhecimento & Roadmap de Gamificação (XP)
+
+Acreditamos na construção comunitária do conhecimento e valorizamos cada pessoa que dedica seu tempo para melhorar a plataforma do IFUSP.
+
+### Como Tratamos as Solicitações (Issues e PRs)
+- Todas as solicitações são analisadas individualmente pela equipe do Lab-Div.
+- Sugestões pedagógicas e correções de bugs têm prioridade alta.
+- Alterações em regras de negócio ou de segurança passam por double-check antes de qualquer merge na branch `main`.
+
+### Reconhecimento Público
+- **Mural de Contribuidores:** Todo desenvolvedor, designer ou cientista que tiver um PR aceito terá seu nome, perfil e contribuição divulgados publicamente na documentação e na seção de créditos do Hub.
+
+### 🎮 Roadmap Futuro: Sistema de XP e Rankings
+Para engajar ainda mais a comunidade acadêmica e de desenvolvedores, lançaremos no futuro:
+- **Sistema de Reputação & XP:** Pontuação dinâmica atribuída a membros da comunidade por:
+  - Submissão de materiais científicos aprovados no Acervo.
+  - Revisão comunitária de conteúdos e reporte assertivo de inconsistências.
+  - Contribuições aceitas no repositório de código aberto.
+  - Respostas didáticas a dúvidas no *Pergunte a um Cientista*.
+- **Rankings Gamificados:** Destaques periódicos no perfil de usuários (Átomo de Ouro, Guardião do Acervo, Mantenedor do Hub), valorizando publicamente quem constrói a divulgação científica da universidade.
 
 ---
 
 ## 📜 Licença
 
-Este projeto é licenciado sob a **GNU Affero General Public License v3.0 (AGPLv3)**.
+Este projeto é software livre, distribuído sob os termos da licença **GNU Affero General Public License v3.0 (AGPLv3)**.
 
-Você é livre para usar, modificar e distribuir este software. No entanto, qualquer versão modificada (mesmo que seja oferecida apenas como um serviço na rede) deve disponibilizar o código-fonte sob a mesma licença.
+Para ler a íntegra dos termos e condições, consulte o arquivo [LICENSE](./LICENSE).
 
-Para mais detalhes, consulte o arquivo [LICENSE](./LICENSE) fornecido com este repositório.
+---
+
+*Hub de Comunicação Científica Lab-Div — Instituto de Física da Universidade de São Paulo (IFUSP).*

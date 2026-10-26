@@ -14,6 +14,8 @@
  */
 
 import { createServerSupabase } from '@/lib/supabase/server';
+import { createAdminSupabase } from '@/lib/supabase/admin';
+import { requireAdminOrModerator } from '@/app/actions/admin';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { CreateTipDTO } from '@/types/veterans';
@@ -144,9 +146,13 @@ export async function upvoteTip(id: string) {
  */
 export async function getAdminTips(statusFilter?: string) {
     try {
-        const supabase = await createServerSupabase();
-        
-        let query = supabase.from('dicas_veteranos').select('*').order('created_at', { ascending: false });
+        const auth = await requireAdminOrModerator();
+        if (!auth.authorized) {
+            return { success: false, error: auth.error || 'Acesso negado.' };
+        }
+
+        const adminSupabase = createAdminSupabase();
+        let query = adminSupabase.from('dicas_veteranos').select('*').order('created_at', { ascending: false });
         
         if (statusFilter && statusFilter !== 'all') {
             query = query.eq('status', statusFilter);
@@ -167,18 +173,18 @@ export async function getAdminTips(statusFilter?: string) {
  */
 export async function updateTipStatus(id: string, status: 'pending' | 'approved' | 'rejected') {
     try {
+        const auth = await requireAdminOrModerator();
+        if (!auth.authorized) {
+            return { success: false, error: auth.error || 'Acesso negado.' };
+        }
+
         const parsed = updateTipStatusSchema.safeParse({ id, status });
         if (!parsed.success) {
             return { success: false, error: parsed.error.issues[0]?.message || 'Dados inválidos.' };
         }
 
-        const supabase = await createServerSupabase();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) {
-            return { success: false, error: 'Acesso negado.' };
-        }
-
-        const { error } = await supabase
+        const adminSupabase = createAdminSupabase();
+        const { error } = await adminSupabase
             .from('dicas_veteranos')
             .update({ status: parsed.data.status })
             .eq('id', parsed.data.id);

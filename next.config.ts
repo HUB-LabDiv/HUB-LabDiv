@@ -73,6 +73,8 @@ const nextConfig: NextConfig = {
       { source: '/leaderboard', destination: '/lab', permanent: true },
       { source: '/auth/parent', destination: '/', permanent: true },
       { source: '/auth/parent/:path*', destination: '/', permanent: true },
+      { source: '/ifusp-101', destination: '/wiki/veteranos', permanent: true },
+      { source: '/wiki/ifusp-101', destination: '/wiki/veteranos', permanent: true },
     ];
   },
   async headers() {

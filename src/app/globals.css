@@ -1002,3 +1002,20 @@ body[data-institution="ifusp"]::before {
 .screen-gesture-hand-vertical {
   animation: screenSwipeVerticalAnim 1.7s cubic-bezier(0.25, 1, 0.5, 1) infinite !important;
 }
+
+/* 🌀 Animação de rotação com pausa a cada 7s para bordas em degradê LabDiv */
+@keyframes borderSpinPause {
+  0% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(360deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-border-spin-pause {
+  animation: borderSpinPause 7s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
+}

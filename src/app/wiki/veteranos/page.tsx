@@ -13,8 +13,8 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import React, { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useState, useMemo } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
     ArrowLeft,
     MessageSquare,
@@ -25,11 +25,15 @@ import {
     AlertCircle,
     Search,
     Compass,
-    BookOpen,
     ExternalLink,
     Sparkles,
     Building2,
-    Filter
+    Filter,
+    Share2,
+    Check,
+    Archive,
+    GraduationCap,
+    Clock
 } from 'lucide-react';
 import Link from 'next/link';
 import { toast } from 'react-hot-toast';
@@ -43,51 +47,76 @@ const CATEGORIAS = [
     { id: 'academica', label: 'Acadêmica', color: 'brand-red' }
 ];
 
-const CONSELHOS_RAPIDOS = [
+/**
+ * Dicas históricas essenciais mantidas nativamente no feed sob o autor "Perfil Legado"
+ */
+const DICAS_LEGADO: VeteransTip[] = [
     {
-        id: 'scholar',
-        nome: 'Google Scholar',
+        id: 'legado-scholar',
+        titulo: 'Google Scholar: Como liberar o FullText@USP e achar provas antigas',
+        conteudo: 'Configure a Universidade de São Paulo (SIBiUSP) nas preferências de Bibliotecas do Scholar para liberar o botão "FullText @ USP" em papers pagos. Dica de ouro: use aspas duplas ("termo exato") para achar resoluções de provas antigas e artigos de IC do IFUSP rapidamente.',
+        categoria: 'academica',
+        instituto: 'geral',
+        autor_nome: 'Perfil Legado',
+        upvotes: 94,
+        status: 'approved',
+        created_at: '2026-01-01T00:00:00Z',
         url: 'https://scholar.google.com.br',
-        icon: Search,
-        badgeCor: 'bg-brand-blue/15 text-brand-blue border-brand-blue/30',
-        botaoCor: 'bg-brand-blue hover:bg-brand-blue/80 text-white shadow-lg shadow-brand-blue/20',
-        conselho: 'Configure a Universidade de São Paulo (SIBiUSP) nas preferências de Bibliotecas do Scholar para liberar o botão "FullText @ USP" em papers pagos. Dica de ouro: use aspas duplas ("termo exato") para achar resoluções de provas antigas e artigos de IC do IFUSP rapidamente.'
+        urlLabel: 'Acessar Google Scholar',
+        is_legacy: true
     },
     {
-        id: 'portal',
-        nome: 'Portal do IFUSP',
-        url: 'https://portal.if.usp.br',
-        icon: Compass,
-        badgeCor: 'bg-brand-blue/15 text-brand-blue border-brand-blue/30',
-        botaoCor: 'bg-white/10 hover:bg-white/20 text-white border border-white/10',
-        conselho: 'Salve nos seus favoritos a aba de Graduação > Calendário e Oferecimento de Disciplinas e os Editais de Monitoria/PUB. As listas de turmas, salas de aula, bancas e datas de trancamento saem no portal dias antes de aparecerem no JúpiterWeb.'
-    },
-    {
-        id: 'scihub',
-        nome: 'Sci-Hub',
+        id: 'legado-scihub',
+        titulo: 'Sci-Hub: Acesso a papers fechados via busca direta por DOI',
+        conteudo: 'Nunca tente buscar pelo título longo ou palavras-chave gerais. Copie diretamente o código DOI do artigo (ex: 10.1103/...) na barra de pesquisa; é o método garantido para abrir o PDF instantaneamente sem cair em bloqueios ou instabilidades de servidor.',
+        categoria: 'academica',
+        instituto: 'geral',
+        autor_nome: 'Perfil Legado',
+        upvotes: 88,
+        status: 'approved',
+        created_at: '2026-01-01T00:00:00Z',
         url: 'https://sci-hub.box',
-        icon: BookOpen,
-        badgeCor: 'bg-brand-red/15 text-brand-red border-brand-red/30',
-        botaoCor: 'bg-brand-red/20 hover:bg-brand-red/30 text-brand-red border border-brand-red/30',
-        conselho: 'Nunca tente buscar pelo título longo ou palavras-chave gerais. Copie diretamente o código DOI do artigo (ex: 10.1103/...) na barra de pesquisa; é o método garantido para abrir o PDF instantaneamente sem cair em bloqueios.'
+        urlLabel: 'Acessar Sci-Hub',
+        is_legacy: true
     },
     {
-        id: 'salunos',
-        nome: 'Seção de Alunos',
+        id: 'legado-portal-ifusp',
+        titulo: 'Portal do IFUSP: Salas, turmas e editais antes do JúpiterWeb',
+        conteudo: 'Salve nos seus favoritos a aba de Graduação > Calendário e Oferecimento de Disciplinas e os Editais de Monitoria/PUB. As listas de turmas, salas de aula, bancas e datas de trancamento saem no portal dias antes de aparecerem no JúpiterWeb.',
+        categoria: 'comunicacao',
+        instituto: 'ifusp',
+        autor_nome: 'Perfil Legado',
+        upvotes: 67,
+        status: 'approved',
+        created_at: '2026-01-01T00:00:00Z',
+        url: 'https://portal.if.usp.br',
+        urlLabel: 'Acessar Portal do IFUSP',
+        is_legacy: true
+    },
+    {
+        id: 'legado-salunos',
+        titulo: 'Seção de Alunos: Formate seu e-mail para resposta ágil e prioritária',
+        conteudo: 'Ao mandar e-mail para a Seção de Alunos, coloque obrigatoriamente Nome Completo, Número USP e Curso logo na primeira linha. Pedidos já formatados com o código da disciplina (ex: FEP0111) são processados com prioridade e respondidos com muito mais agilidade.',
+        categoria: 'permanencia',
+        instituto: 'ifusp',
+        autor_nome: 'Perfil Legado',
+        upvotes: 73,
+        status: 'approved',
+        created_at: '2026-01-01T00:00:00Z',
         url: 'mailto:salunosif@usp.br?subject=Dúvida%20Acadêmica%20-%20IFUSP&body=Olá,%20saudações%20equipe%20da%20Seção%20de%20Alunos,%0D%0A%0D%0ASou%20aluno(a)%20do%20IFUSP.%0D%0ANome:%20%0D%0ANUSP:%20%0D%0ACurso:%20%0D%0ADisciplina/Turma:%20%0D%0A%0D%0ADúvida/Solicitação:%20',
-        icon: MessageSquare,
-        badgeCor: 'bg-brand-yellow/15 text-brand-yellow border-brand-yellow/30',
-        botaoCor: 'bg-brand-yellow hover:bg-brand-yellow/90 text-gray-950 font-bold shadow-lg shadow-brand-yellow/20',
-        conselho: 'Ao mandar e-mail para a Seção de Alunos, coloque obrigatoriamente Nome Completo, Número USP e Curso logo na primeira linha. Pedidos já formatados com o código da disciplina (ex: FEP0111) são processados com prioridade e respondidos com muito mais agilidade.'
+        urlLabel: 'Escrever para Seção de Alunos',
+        is_legacy: true
     }
 ];
 
 export default function VeteranosPage() {
     const [tips, setTips] = useState<VeteransTip[]>([]);
     const [isLoading, setIsLoading] = useState(true);
-    const [activeFilter, setActiveFilter] = useState<string>('todas');
+    const [activeCategory, setActiveCategory] = useState<string>('todas');
     const [selectedInstitute, setSelectedInstitute] = useState<string>('todas');
-    
+    const [searchQuery, setSearchQuery] = useState<string>('');
+    const [copiedTipId, setCopiedTipId] = useState<string | null>(null);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [newTip, setNewTip] = useState({
@@ -108,33 +137,52 @@ export default function VeteranosPage() {
         if (res.success) {
             setTips((res.data || []) as VeteransTip[]);
         } else {
-            toast.error('Erro ao carregar dicas');
+            toast.error('Erro ao carregar dicas da comunidade');
         }
         setIsLoading(false);
     };
 
-    const handleUpvote = async (id: string) => {
+    const handleUpvote = async (id: string, isLegacy?: boolean) => {
         if (upvotedTips.includes(id)) return;
+
+        setUpvotedTips(prev => [...prev, id]);
+
+        if (isLegacy) {
+            toast.success('Você apoiou este conselho do acervo histórico!', { icon: '⭐' });
+            return;
+        }
 
         const originalTips = [...tips];
         setTips(tips.map(t => t.id === id ? { ...t, upvotes: t.upvotes + 1 } : t));
-        setUpvotedTips([...upvotedTips, id]);
 
         const res = await upvoteTip(id);
         if (!res.success) {
             setTips(originalTips);
-            setUpvotedTips(upvotedTips.filter(t => t !== id));
+            setUpvotedTips(prev => prev.filter(t => t !== id));
             toast.error(res.error || 'Erro ao curtir. Você está logado?');
+        } else {
+            toast.success('Conselho apoiado!', { icon: '👍' });
+        }
+    };
+
+    const handleShare = (tip: VeteransTip) => {
+        if (typeof window === 'undefined') return;
+        const shareText = `*${tip.titulo}*\n\n${tip.conteudo}\n\n— ${tip.autor_nome} (IFUSP 101 - HUB LabDiv)`;
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(shareText);
+            setCopiedTipId(tip.id);
+            toast.success('Dica copiada para a área de transferência!', { icon: '📋' });
+            setTimeout(() => setCopiedTipId(null), 2500);
         }
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setIsSubmitting(true);
-        
+
         const res = await submitTip(newTip);
         if (res.success) {
-            toast.success('Conselho enviado! Será analisado pelos moderadores.');
+            toast.success('Conselho transmitido! Ele foi para a fila de moderação da Torre de Controle.');
             setIsModalOpen(false);
             setNewTip({ titulo: '', conteudo: '', categoria: 'comunicacao', instituto: 'geral' });
         } else {
@@ -143,11 +191,28 @@ export default function VeteranosPage() {
         setIsSubmitting(false);
     };
 
-    const filteredTips = tips.filter(tip => {
-        const matchesCategory = activeFilter === 'todas' || tip.categoria === activeFilter;
-        const matchesInstitute = selectedInstitute === 'todas' || (tip.instituto || 'geral') === selectedInstitute;
-        return matchesCategory && matchesInstitute;
-    });
+    // Unifica dicas legadas nativas com dicas da comunidade
+    const allUnifiedTips = useMemo(() => {
+        const communityMap = new Set(tips.map(t => t.id));
+        const filteredLegacy = DICAS_LEGADO.filter(leg => !communityMap.has(leg.id));
+        return [...filteredLegacy, ...tips];
+    }, [tips]);
+
+    // Filtra por instituto, categoria e termo de busca
+    const filteredTips = useMemo(() => {
+        const query = searchQuery.trim().toLowerCase();
+        return allUnifiedTips.filter(tip => {
+            const tipInst = tip.instituto || 'geral';
+            const matchesInstitute = selectedInstitute === 'todas' || tipInst === selectedInstitute;
+            const matchesCategory = activeCategory === 'todas' || tip.categoria === activeCategory;
+            const matchesSearch = !query || 
+                tip.titulo.toLowerCase().includes(query) ||
+                tip.conteudo.toLowerCase().includes(query) ||
+                tip.autor_nome.toLowerCase().includes(query);
+
+            return matchesInstitute && matchesCategory && matchesSearch;
+        });
+    }, [allUnifiedTips, selectedInstitute, activeCategory, searchQuery]);
 
     const getInstituteInfo = (id?: string) => {
         return USP_INSTITUTES.find(inst => inst.id === (id || 'geral')) || USP_INSTITUTES[0];
@@ -155,391 +220,430 @@ export default function VeteranosPage() {
 
     return (
         <MainLayoutWrapper>
-            <div className="min-h-screen bg-transparent text-gray-900 dark:text-white selection:bg-brand-blue selection:text-white pb-20">
-                {/* Header Substituto (abaixo da Navbar Global) */}
-                <div className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between mb-8 mt-4">
-                    <div className="flex items-center gap-4">
-                        <Link href="/gcif/interativo" className="flex items-center gap-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors px-4 py-2 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 text-gray-800 dark:text-gray-200 shadow-sm">
-                            <ArrowLeft className="w-5 h-5 text-gray-400" />
-                            <span className="text-xs font-black uppercase tracking-widest text-brand-blue">Interativo</span>
+            <div className="min-h-screen bg-transparent text-gray-900 dark:text-white selection:bg-brand-blue selection:text-white pb-24">
+                {/* Header Superior Ergonômico M3 */}
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between mb-4 sm:mb-6 mt-2">
+                    <div className="flex items-center gap-3">
+                        <Link 
+                            href="/gcif/interativo" 
+                            className="flex items-center gap-1.5 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors px-3 py-1.5 border border-gray-200 dark:border-white/10 bg-white dark:bg-white/5 text-gray-800 dark:text-gray-200 shadow-sm text-xs font-black font-bukra uppercase tracking-wider"
+                        >
+                            <ArrowLeft className="w-4 h-4 text-brand-blue" />
+                            <span>Interativo</span>
                         </Link>
-                        <h1 className="text-xl font-bold uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-yellow to-brand-red flex items-center gap-2 hidden md:flex font-bukra">
-                            <Compass className="w-5 h-5 text-gray-900 dark:text-white" />
-                            USP 101
+                        <div className="h-4 w-[1px] bg-gray-300 dark:bg-white/10 hidden sm:block" />
+                        <h1 className="text-sm sm:text-base font-black uppercase tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-brand-blue via-brand-red to-brand-yellow flex items-center gap-2 font-bukra">
+                            <Compass className="w-4 h-4 text-[#FFCC00]" />
+                            <span>IFUSP 101</span>
                         </h1>
                     </div>
+
                     <button 
                         onClick={() => setIsModalOpen(true)}
-                        className="px-4 py-2 md:px-6 md:py-3 bg-brand-yellow text-gray-950 font-black uppercase tracking-widest text-xs rounded-full hover:bg-brand-yellow/90 transition-all flex items-center gap-2 shadow-lg shadow-brand-yellow/20 hover:scale-105 active:scale-95"
+                        className="px-3.5 sm:px-5 py-2 sm:py-2.5 bg-gradient-to-r from-[#FFCC00] to-amber-500 hover:brightness-105 text-[#0F4780] font-black uppercase tracking-wider text-[11px] sm:text-xs rounded-2xl transition-all flex items-center gap-2 shadow-md shadow-amber-500/20 active:scale-95 font-bukra cursor-pointer"
                     >
-                        <Send className="w-4 h-4" />
-                        <span className="hidden md:block">Transmitir Conselho</span>
-                        <span className="md:hidden">Enviar</span>
+                        <Send className="w-3.5 h-3.5" />
+                        <span>Transmitir Conselho</span>
                     </button>
                 </div>
 
-                {/* Main Content */}
-                <main className="max-w-6xl mx-auto px-6 space-y-12">
-                    <div className="text-center md:text-left">
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-yellow/15 border border-brand-yellow/30 text-brand-yellow text-xs font-black uppercase tracking-wider mb-3">
-                            <Sparkles className="w-3.5 h-3.5" />
-                            Todos os Institutos da Universidade de São Paulo
+                {/* Banner de Apresentação */}
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 mb-6">
+                    <div className="p-6 sm:p-8 rounded-[32px] bg-gradient-to-b from-white/90 via-white/50 to-transparent dark:from-[#1E1E1E]/90 dark:via-[#161616]/50 dark:to-transparent border border-gray-200/80 dark:border-white/10 shadow-lg backdrop-blur-xl">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-700 dark:text-[#FFCC00] text-[10px] font-black uppercase tracking-wider mb-2 font-bukra">
+                            <Sparkles className="w-3 h-3" />
+                            Feed Vertical de Dicas Rápidas • Conhecimento Transgeracional
                         </div>
-                        <h2 className="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-gray-900 via-gray-700 to-gray-500 dark:from-white dark:via-gray-200 dark:to-gray-400 mb-4 font-bukra">
-                            USP 101: Conhecimento Transgeracional &amp; Conselhos de Veteranos
+                        <h2 className="text-2xl sm:text-3xl md:text-4xl font-black italic uppercase tracking-tighter text-gray-900 dark:text-white font-bukra mb-2">
+                            IFUSP 101: Dicas de Veteranos
                         </h2>
-                        <p className="text-gray-600 dark:text-gray-300 text-sm md:text-base max-w-2xl font-open-sans leading-relaxed">
-                            Canais essenciais, atalhos acadêmicos e macetes transmitidos por quem já passou pelos perrengues — válidos para toda a USP ou específicos para o seu instituto.
+                        <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-open-sans leading-relaxed max-w-2xl">
+                            Macetes práticos de estudo, resolução de perrengues e atalhos essenciais consolidados pela comunidade. Use os filtros de instituto abaixo para navegar direto ao que interessa.
                         </p>
-                    </div>
 
-                    {/* Quick Advice Cards: Atalho à esquerda com Conselho ao lado */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        {CONSELHOS_RAPIDOS.map((item) => {
-                            const Icon = item.icon;
-                            return (
-                                <div
-                                    key={item.id}
-                                    className="p-6 rounded-3xl bg-white dark:bg-[#1E1E1E]/95 border border-gray-200 dark:border-white/10 hover:border-brand-yellow/40 transition-all shadow-lg dark:shadow-xl flex flex-col sm:flex-row gap-5 items-stretch relative group"
+                        {/* Barra de Pesquisa Rápida */}
+                        <div className="mt-5 relative">
+                            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Buscar por termo (ex: scholar, sci-hub, cálculo, provas, monitoria)..."
+                                className="w-full pl-11 pr-4 py-2.5 rounded-2xl bg-white dark:bg-black/30 border border-gray-200 dark:border-white/10 text-xs text-gray-900 dark:text-white placeholder-gray-400 focus:outline-none focus:border-brand-blue font-open-sans shadow-inner transition-colors"
+                            />
+                            {searchQuery && (
+                                <button 
+                                    onClick={() => setSearchQuery('')}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-white"
                                 >
-                                    {/* Lado Esquerdo: Identificação do Atalho e Ação */}
-                                    <div className="flex sm:flex-col items-center sm:items-start justify-between sm:justify-between w-full sm:w-44 shrink-0 gap-3 border-b sm:border-b-0 sm:border-r border-gray-200 dark:border-white/10 pb-4 sm:pb-0 sm:pr-4">
-                                        <div className="flex items-center sm:flex-col sm:items-start gap-3">
-                                            <div className="size-12 rounded-2xl bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 flex items-center justify-center text-gray-900 dark:text-white group-hover:scale-105 transition-transform shrink-0">
-                                                <Icon className="w-6 h-6 text-gray-900 dark:text-white" />
-                                            </div>
-                                            <div>
-                                                <span className={`inline-block px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider border mb-1 ${item.badgeCor}`}>
-                                                    Atalho
-                                                </span>
-                                                <h4 className="text-sm font-bold font-bukra text-gray-900 dark:text-white leading-tight">
-                                                    {item.nome}
-                                                </h4>
-                                            </div>
-                                        </div>
-                                        <a
-                                            href={item.url}
-                                            target="_blank"
-                                            rel="noopener noreferrer"
-                                            className={`w-auto sm:w-full text-center px-4 py-2 sm:py-2.5 rounded-xl text-[10px] sm:text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all sm:mt-3 shrink-0 hover:scale-[1.02] active:scale-95 ${item.botaoCor}`}
-                                        >
-                                            <span>Acessar</span>
-                                            <ExternalLink className="w-3.5 h-3.5" />
-                                        </a>
-                                    </div>
-
-                                    {/* Lado Direito: Texto com o Conselho de Veterano */}
-                                    <div className="flex-1 flex flex-col justify-center bg-gray-50 dark:bg-black/30 p-4 rounded-2xl border border-gray-200 dark:border-white/5">
-                                        <div className="flex items-center gap-1.5 mb-2 text-brand-yellow font-bukra font-bold text-[11px] uppercase tracking-wider">
-                                            <Sparkles className="w-3.5 h-3.5" />
-                                            <span>Conselho de Veterano</span>
-                                        </div>
-                                        <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-open-sans leading-relaxed">
-                                            {item.conselho}
-                                        </p>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    {/* --- Seção de Conselhos da Comunidade USP --- */}
-                    <div className="space-y-6 pt-6 border-t border-gray-200 dark:border-white/10">
-                        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
-                            <div>
-                                <h3 className="text-2xl font-black font-bukra uppercase text-gray-900 dark:text-white tracking-tight flex items-center gap-2">
-                                    <MessageSquare className="w-6 h-6 text-brand-blue" />
-                                    Mural de Conselhos da Comunidade
-                                </h3>
-                                <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-open-sans mt-1">
-                                    Filtre por instituto da USP ou por categoria para encontrar o conselho exato que você precisa.
-                                </p>
-                            </div>
-
-                            <span className="text-xs text-gray-500 dark:text-gray-400 font-mono shrink-0">
-                                {filteredTips.length} conselhos exibidos
-                            </span>
+                                    <X className="w-3.5 h-3.5" />
+                                </button>
+                            )}
                         </div>
+                    </div>
+                </div>
 
-                        {/* Filtro 1: Institutos da USP */}
-                        <div className="space-y-2">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                                <Building2 className="w-3.5 h-3.5 text-brand-yellow" />
+                {/* Filtros: 1. Institutos (Filtro Principal Solicitado) e 2. Categorias */}
+                <div className="max-w-4xl mx-auto px-4 sm:px-6 space-y-4 mb-8">
+                    {/* Filtro por Instituto */}
+                    <div className="space-y-1.5">
+                        <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 flex items-center gap-1.5 font-bukra">
+                                <Building2 className="w-3.5 h-3.5 text-brand-blue" />
                                 Filtrar por Instituto:
                             </span>
-                            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-                                <button
-                                    onClick={() => setSelectedInstitute('todas')}
-                                    className={`px-3.5 py-1.5 rounded-xl text-xs font-black font-bukra uppercase tracking-wider transition-all shrink-0 ${
-                                        selectedInstitute === 'todas'
-                                            ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-950 shadow-md font-bold'
-                                            : 'bg-gray-100 text-gray-600 hover:text-gray-900 dark:bg-white/5 dark:text-gray-400 dark:hover:text-white border border-gray-200 dark:border-transparent'
-                                    }`}
-                                >
-                                    Todos os Institutos
-                                </button>
-                                {USP_INSTITUTES.map((inst) => {
-                                    const isSelected = selectedInstitute === inst.id;
-                                    const count = tips.filter(t => (t.instituto || 'geral') === inst.id).length;
-                                    return (
-                                        <button
-                                            key={inst.id}
-                                            onClick={() => setSelectedInstitute(inst.id)}
-                                            className={`px-3.5 py-1.5 rounded-xl text-xs font-black font-bukra uppercase tracking-wider transition-all shrink-0 flex items-center gap-1.5 ${
-                                                isSelected
-                                                    ? 'bg-brand-blue text-white shadow-md border border-brand-blue/50'
-                                                    : 'bg-gray-100 text-gray-600 hover:text-gray-900 dark:bg-white/5 dark:text-gray-400 dark:hover:text-white border border-gray-200 dark:border-white/5'
-                                            }`}
-                                        >
-                                            <span>{inst.shortLabel}</span>
-                                            <span className="text-[10px] opacity-70 font-mono">({count})</span>
-                                        </button>
-                                    );
-                                })}
-                            </div>
-                        </div>
-
-                        {/* Filtro 2: Categorias */}
-                        <div className="space-y-2">
-                            <span className="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-                                <Filter className="w-3.5 h-3.5 text-brand-blue" />
-                                Filtrar por Categoria:
+                            <span className="text-[11px] font-mono text-gray-400">
+                                {filteredTips.length} dicas
                             </span>
-                            <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-                                <button 
-                                    onClick={() => setActiveFilter('todas')}
-                                    className={`px-3.5 py-1.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all shrink-0 ${
-                                        activeFilter === 'todas'
-                                            ? 'bg-gray-900 text-white dark:bg-white/20 dark:text-white border border-gray-900 dark:border-white/30'
-                                            : 'bg-gray-100 text-gray-600 hover:text-gray-900 dark:bg-white/5 dark:text-gray-400 dark:hover:text-white border border-gray-200 dark:border-transparent'
-                                    }`}
-                                >
-                                    Todas as Categorias
-                                </button>
-                                {CATEGORIAS.map(cat => (
+                        </div>
+                        <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1.5 pt-0.5">
+                            <button
+                                onClick={() => setSelectedInstitute('todas')}
+                                className={`px-3.5 py-1.5 rounded-full text-[11px] font-black font-bukra uppercase tracking-wider transition-all shrink-0 cursor-pointer ${
+                                    selectedInstitute === 'todas'
+                                        ? 'bg-[#FFCC00] text-[#0F4780] shadow-md scale-105 border border-[#FFCC00]'
+                                        : 'bg-white dark:bg-[#1E1E1E] text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20'
+                                }`}
+                            >
+                                Todos ({allUnifiedTips.length})
+                            </button>
+                            {USP_INSTITUTES.map((inst) => {
+                                const isSelected = selectedInstitute === inst.id;
+                                const count = allUnifiedTips.filter(t => (t.instituto || 'geral') === inst.id).length;
+                                return (
                                     <button
-                                        key={cat.id}
-                                        onClick={() => setActiveFilter(cat.id)}
-                                        className={`px-3.5 py-1.5 rounded-xl text-xs font-black font-bukra uppercase tracking-widest transition-all shrink-0 ${
-                                            activeFilter === cat.id
-                                                ? cat.color === 'brand-yellow'
-                                                    ? 'bg-brand-yellow/20 text-brand-yellow border border-brand-yellow/40'
-                                                    : cat.color === 'brand-red'
-                                                    ? 'bg-brand-red/20 text-brand-red border border-brand-red/40'
-                                                    : 'bg-brand-blue/20 text-brand-blue border border-brand-blue/40'
-                                                : 'bg-gray-100 text-gray-600 hover:text-gray-900 dark:bg-white/5 dark:text-gray-400 dark:hover:text-white border border-gray-200 dark:border-transparent'
+                                        key={inst.id}
+                                        onClick={() => setSelectedInstitute(inst.id)}
+                                        className={`px-3 py-1.5 rounded-full text-[11px] font-black font-bukra uppercase tracking-wider transition-all shrink-0 flex items-center gap-1.5 cursor-pointer ${
+                                            isSelected
+                                                ? 'bg-[#0F4780] text-white shadow-md border border-[#0F4780] scale-105'
+                                                : 'bg-white dark:bg-[#1E1E1E] text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/20'
                                         }`}
                                     >
-                                        {cat.label}
+                                        <span>{inst.shortLabel}</span>
+                                        <span className="text-[10px] opacity-75 font-mono">({count})</span>
                                     </button>
-                                ))}
-                            </div>
+                                );
+                            })}
                         </div>
+                    </div>
 
-                        {/* Grid de Dicas */}
-                        {isLoading ? (
-                            <div className="flex justify-center items-center py-32">
-                                <Loader2 className="w-8 h-8 text-brand-blue animate-spin" />
-                            </div>
-                        ) : filteredTips.length > 0 ? (
-                            <div className="columns-1 md:columns-2 lg:columns-3 gap-6 space-y-6">
-                                {filteredTips.map((tip, idx) => {
-                                    const isUpvoted = upvotedTips.includes(tip.id);
-                                    const categoryColor = CATEGORIAS.find(c => c.id === tip.categoria)?.color || 'brand-blue';
-                                    const instituteInfo = getInstituteInfo(tip.instituto);
-                                    
-                                    return (
-                                        <motion.div 
-                                            key={tip.id}
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: idx * 0.05 }}
-                                            className="break-inside-avoid p-6 sm:p-8 rounded-[32px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/5 hover:border-brand-blue/30 transition-all shadow-lg dark:shadow-xl relative group flex flex-col justify-between"
-                                        >
-                                            <div>
-                                                <div className="flex items-center justify-between gap-2 mb-3">
-                                                    {/* Badge de Instituto */}
-                                                    <span className="inline-flex items-center gap-1 text-[9px] font-black uppercase tracking-wider bg-brand-yellow/15 text-brand-yellow border border-brand-yellow/30 px-2.5 py-0.5 rounded-full font-bukra">
-                                                        <Building2 className="w-3 h-3" />
-                                                        {instituteInfo.shortLabel}
-                                                    </span>
+                    {/* Filtro por Categoria */}
+                    <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pt-1">
+                        <button 
+                            onClick={() => setActiveCategory('todas')}
+                            className={`px-3 py-1 rounded-full text-[10px] font-black font-bukra uppercase tracking-wider transition-all shrink-0 cursor-pointer ${
+                                activeCategory === 'todas'
+                                    ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900 shadow-sm'
+                                    : 'bg-gray-100 text-gray-600 dark:bg-white/5 dark:text-gray-400 border border-gray-200 dark:border-transparent'
+                            }`}
+                        >
+                            Todas as Categorias
+                        </button>
+                        {CATEGORIAS.map(cat => (
+                            <button
+                                key={cat.id}
+                                onClick={() => setActiveCategory(cat.id)}
+                                className={`px-3 py-1 rounded-full text-[10px] font-black font-bukra uppercase tracking-wider transition-all shrink-0 cursor-pointer ${
+                                    activeCategory === cat.id
+                                        ? cat.color === 'brand-yellow'
+                                            ? 'bg-amber-500/20 text-amber-800 dark:text-[#FFCC00] border border-amber-500/40'
+                                            : cat.color === 'brand-red'
+                                            ? 'bg-red-500/20 text-red-700 dark:text-red-400 border border-red-500/40'
+                                            : 'bg-blue-500/20 text-[#0F4780] dark:text-blue-300 border border-blue-500/40'
+                                        : 'bg-gray-100 text-gray-600 dark:bg-white/5 dark:text-gray-400 border border-gray-200 dark:border-transparent'
+                                }`}
+                            >
+                                {cat.label}
+                            </button>
+                        ))}
+                    </div>
+                </div>
 
-                                                    {/* Upvotes */}
-                                                    <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 text-xs font-bold">
-                                                        <ThumbsUp className={`w-3.5 h-3.5 ${isUpvoted ? 'text-brand-blue fill-brand-blue' : ''}`} />
-                                                        <span className={isUpvoted ? 'text-brand-blue' : ''}>{tip.upvotes || 0}</span>
+                {/* --- FEED VERTICAL DE DICAS RÁPIDAS (Layout Linear Ergonômico M3) --- */}
+                <main className="max-w-4xl mx-auto px-4 sm:px-6">
+                    {isLoading ? (
+                        <div className="flex flex-col justify-center items-center py-24 gap-3">
+                            <Loader2 className="w-8 h-8 text-brand-blue animate-spin" />
+                            <p className="text-xs text-gray-400 font-bukra uppercase tracking-wider">
+                                Sincronizando dicas do IFUSP 101...
+                            </p>
+                        </div>
+                    ) : filteredTips.length > 0 ? (
+                        <div className="space-y-4 sm:space-y-5">
+                            {filteredTips.map((tip, idx) => {
+                                const isUpvoted = upvotedTips.includes(tip.id);
+                                const isLegacy = tip.is_legacy || tip.autor_nome === 'Perfil Legado';
+                                const instituteInfo = getInstituteInfo(tip.instituto);
+
+                                return (
+                                    <motion.article 
+                                        key={tip.id}
+                                        initial={{ opacity: 0, y: 15 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: Math.min(idx * 0.04, 0.4) }}
+                                        className={`w-full p-5 sm:p-7 rounded-[28px] sm:rounded-[32px] transition-all shadow-md backdrop-blur-xl relative flex flex-col justify-between ${
+                                            isLegacy
+                                                ? 'bg-gradient-to-br from-amber-50/40 via-white to-white dark:from-[#1E1E1E] dark:via-[#1A1A1A] dark:to-[#161616] border-2 border-amber-500/30 dark:border-amber-500/20 hover:border-amber-500/50'
+                                                : 'bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 hover:border-brand-blue/40'
+                                        }`}
+                                    >
+                                        <div>
+                                            {/* Topo do Card: Identificação do Autor + Tags */}
+                                            <div className="flex items-center justify-between gap-3 mb-3.5 flex-wrap">
+                                                <div className="flex items-center gap-2.5 min-w-0">
+                                                    {/* Avatar do Autor */}
+                                                    <div className={`size-8 sm:size-9 rounded-xl flex items-center justify-center shrink-0 shadow-sm ${
+                                                        isLegacy
+                                                            ? 'bg-gradient-to-br from-[#FFCC00] to-amber-600 text-gray-950 font-black'
+                                                            : 'bg-gradient-to-br from-[#0F4780] to-[#1F9FCF] text-white'
+                                                    }`}>
+                                                        {isLegacy ? (
+                                                            <Archive className="size-4" />
+                                                        ) : (
+                                                            <GraduationCap className="size-4" />
+                                                        )}
+                                                    </div>
+
+                                                    <div className="min-w-0">
+                                                        <div className="flex items-center gap-1.5">
+                                                            <span className="font-bukra font-black text-xs text-gray-900 dark:text-white truncate">
+                                                                {tip.autor_nome}
+                                                            </span>
+                                                            {isLegacy && (
+                                                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/15 text-amber-700 dark:text-[#FFCC00] border border-amber-500/30 text-[9px] font-black uppercase font-bukra">
+                                                                    <Sparkles className="size-2.5" />
+                                                                    Perfil Legado
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                        <span className="text-[10px] text-gray-500 dark:text-gray-400 font-open-sans flex items-center gap-1">
+                                                            <Clock className="size-2.5" />
+                                                            {isLegacy ? 'Acervo Permanente' : 'Veterano Colaborador'}
+                                                        </span>
                                                     </div>
                                                 </div>
 
-                                                <div className="mb-3">
-                                                    <span className={`text-[9px] font-black uppercase tracking-widest ${
-                                                        categoryColor === 'brand-yellow' 
-                                                            ? 'text-brand-yellow bg-brand-yellow/10' 
-                                                            : categoryColor === 'brand-red' 
-                                                            ? 'text-brand-red bg-brand-red/10' 
-                                                            : 'text-brand-blue bg-brand-blue/10'
-                                                    } px-2.5 py-0.5 rounded-full font-bukra`}>
+                                                {/* Badges de Metadados: Instituto & Categoria */}
+                                                <div className="flex items-center gap-1.5 shrink-0">
+                                                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-300 text-[10px] font-black font-bukra uppercase tracking-wider">
+                                                        <Building2 className="size-3 text-brand-blue" />
+                                                        {instituteInfo.shortLabel}
+                                                    </span>
+
+                                                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider font-bukra ${
+                                                        tip.categoria === 'academica'
+                                                            ? 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20'
+                                                            : tip.categoria === 'permanencia'
+                                                            ? 'bg-amber-500/10 text-amber-700 dark:text-[#FFCC00] border border-amber-500/20'
+                                                            : 'bg-blue-500/10 text-brand-blue dark:text-blue-300 border border-blue-500/20'
+                                                    }`}>
                                                         {tip.categoria}
                                                     </span>
                                                 </div>
-
-                                                <h3 className="text-lg font-bold font-bukra text-gray-900 dark:text-white mb-2 leading-snug group-hover:text-brand-blue transition-colors">
-                                                    {tip.titulo}
-                                                </h3>
-                                                <p className="text-gray-600 dark:text-gray-300 text-xs sm:text-sm font-open-sans leading-relaxed mb-6 whitespace-pre-wrap">
-                                                    {tip.conteudo}
-                                                </p>
                                             </div>
-                                            
-                                            <div className="flex items-center justify-between pt-4 border-t border-gray-200 dark:border-white/10">
-                                                <span className="text-xs text-gray-500 font-medium truncate max-w-[180px]">
-                                                    — {tip.autor_nome}
-                                                </span>
-                                                <button 
-                                                    onClick={() => handleUpvote(tip.id)}
-                                                    disabled={isUpvoted}
-                                                    className={`p-2 rounded-full transition-all ${
-                                                        isUpvoted
-                                                            ? 'bg-brand-blue/20 text-brand-blue cursor-default'
-                                                            : 'bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-white hover:bg-gray-200 dark:hover:bg-white/20 active:scale-95'
-                                                    }`}
-                                                    title={isUpvoted ? 'Conselho apoiado!' : 'Apoiar este conselho'}
+
+                                            {/* Título do Conselho */}
+                                            <h3 className="text-base sm:text-lg font-bold font-bukra text-gray-900 dark:text-white mb-2 leading-snug">
+                                                {tip.titulo}
+                                            </h3>
+
+                                            {/* Conteúdo Detalhado */}
+                                            <p className="text-xs sm:text-sm text-gray-700 dark:text-gray-300 font-open-sans leading-relaxed mb-4 whitespace-pre-wrap">
+                                                {tip.conteudo}
+                                            </p>
+
+                                            {/* Botão de Ação Rápida para Dicas com Link Externo (Google Scholar, Sci-Hub, Portal, etc.) */}
+                                            {tip.url && (
+                                                <div className="mb-4">
+                                                    <a
+                                                        href={tip.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-gradient-to-r from-amber-500/15 to-amber-500/5 hover:from-amber-500/25 hover:to-amber-500/15 text-amber-800 dark:text-[#FFCC00] border border-amber-500/30 text-xs font-black uppercase tracking-wider font-bukra transition-all shadow-sm active:scale-95 cursor-pointer"
+                                                    >
+                                                        <span>{tip.urlLabel || 'Acessar Link Externo'}</span>
+                                                        <ExternalLink className="size-3.5" />
+                                                    </a>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Rodapé do Card: Upvotes & Ações */}
+                                        <div className="flex items-center justify-between pt-3.5 border-t border-gray-100 dark:border-white/5">
+                                            <button 
+                                                onClick={() => handleUpvote(tip.id, isLegacy)}
+                                                className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-black font-bukra uppercase tracking-wider transition-all cursor-pointer active:scale-95 ${
+                                                    isUpvoted
+                                                        ? 'bg-brand-blue/15 text-brand-blue border border-brand-blue/30 shadow-sm'
+                                                        : 'bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-white/10'
+                                                }`}
+                                                title="Apoiar este conselho"
+                                            >
+                                                <ThumbsUp className={`size-3.5 ${isUpvoted ? 'fill-current text-brand-blue' : ''}`} />
+                                                <span>{tip.upvotes || 0}</span>
+                                                <span className="hidden sm:inline">Apoios</span>
+                                            </button>
+
+                                            <div className="flex items-center gap-2">
+                                                <button
+                                                    onClick={() => handleShare(tip)}
+                                                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white text-xs font-bold font-bukra transition-all cursor-pointer"
+                                                    title="Copiar e compartilhar conselho"
                                                 >
-                                                    <ThumbsUp className={`w-4 h-4 ${isUpvoted ? 'fill-current' : ''}`} />
+                                                    {copiedTipId === tip.id ? (
+                                                        <>
+                                                            <Check className="size-3.5 text-emerald-500" />
+                                                            <span className="text-emerald-500 text-[10px]">Copiado!</span>
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <Share2 className="size-3.5" />
+                                                            <span className="text-[10px] hidden sm:inline">Compartilhar</span>
+                                                        </>
+                                                    )}
                                                 </button>
                                             </div>
-                                        </motion.div>
-                                    );
-                                })}
-                            </div>
-                        ) : (
-                            <div className="py-24 text-center bg-gray-50 dark:bg-[#1E1E1E]/60 rounded-[40px] border border-dashed border-gray-300 dark:border-white/10 p-8">
-                                <AlertCircle className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-4" />
-                                <h4 className="text-gray-900 dark:text-white font-bold font-bukra uppercase tracking-wider text-sm mb-1">
-                                    Nenhum conselho encontrado
-                                </h4>
-                                <p className="text-gray-500 dark:text-gray-400 font-open-sans text-xs max-w-sm mx-auto">
-                                    Não há dicas cadastradas para este instituto ou categoria. Seja o primeiro veterano a transmitir um conselho!
-                                </p>
-                            </div>
-                        )}
-                    </div>
+                                        </div>
+                                    </motion.article>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div className="py-20 text-center bg-gray-50 dark:bg-[#1E1E1E]/60 rounded-[32px] border border-dashed border-gray-300 dark:border-white/10 p-8">
+                            <AlertCircle className="w-10 h-10 text-gray-400 dark:text-gray-600 mx-auto mb-3" />
+                            <h4 className="text-gray-900 dark:text-white font-bold font-bukra uppercase tracking-wider text-sm mb-1">
+                                Nenhum conselho encontrado
+                            </h4>
+                            <p className="text-gray-500 dark:text-gray-400 font-open-sans text-xs max-w-sm mx-auto mb-4">
+                                Não há dicas com os filtros ou termos pesquisados. Transmita sua dica e seja o primeiro veterano a colaborar!
+                            </p>
+                            <button
+                                onClick={() => { setSelectedInstitute('todas'); setActiveCategory('todas'); setSearchQuery(''); }}
+                                className="px-4 py-2 rounded-xl bg-brand-blue text-white text-xs font-black font-bukra uppercase tracking-wider shadow-sm"
+                            >
+                                Limpar Filtros
+                            </button>
+                        </div>
+                    )}
                 </main>
 
                 {/* Modal de Transmissão de Conselho (Multi-Instituto) */}
-                {/* Modal de Transmissão de Conselho (Multi-Instituto) */}
-                {isModalOpen && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-                        <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isSubmitting && setIsModalOpen(false)} />
-                        <motion.div 
-                            initial={{ opacity: 0, scale: 0.95 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 p-6 sm:p-8 rounded-[32px] w-full max-w-lg relative z-10 shadow-2xl text-left"
-                        >
-                            <button 
-                                onClick={() => setIsModalOpen(false)}
-                                className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
-                                disabled={isSubmitting}
+                <AnimatePresence>
+                    {isModalOpen && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+                            <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => !isSubmitting && setIsModalOpen(false)} />
+                            <motion.div 
+                                initial={{ opacity: 0, scale: 0.95 }}
+                                animate={{ opacity: 1, scale: 1 }}
+                                exit={{ opacity: 0, scale: 0.95 }}
+                                className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 p-6 sm:p-8 rounded-[32px] w-full max-w-lg relative z-10 shadow-2xl text-left"
                             >
-                                <X className="w-6 h-6" />
-                            </button>
-                            
-                            <div className="flex items-center gap-2 mb-2 text-brand-yellow text-xs font-black uppercase tracking-widest font-bukra">
-                                <Sparkles className="w-4 h-4" />
-                                USP 101 • Transmissão de Conselho
-                            </div>
-                            <h2 className="text-xl sm:text-2xl font-black italic uppercase tracking-tighter text-gray-900 dark:text-white font-bukra mb-1">
-                                Transmitir Conselho
-                            </h2>
-                            <p className="text-gray-500 dark:text-gray-400 text-xs font-open-sans mb-6 leading-relaxed">
-                                Sua experiência pode salvar o semestre de alguém. Escolha se o conselho é válido para toda a USP ou para um instituto específico.
-                            </p>
-
-                            <form onSubmit={handleSubmit} className="space-y-4">
-                                {/* Destino / Instituto */}
-                                <div>
-                                    <label className="block text-xs font-black uppercase tracking-widest text-gray-700 dark:text-gray-400 mb-1.5 font-bukra">
-                                        Destino do Conselho (Instituto)
-                                    </label>
-                                    <select 
-                                        className="w-full bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white text-xs focus:border-brand-blue outline-none transition-colors font-open-sans"
-                                        value={newTip.instituto}
-                                        onChange={e => setNewTip({...newTip, instituto: e.target.value})}
-                                        disabled={isSubmitting}
-                                    >
-                                        {USP_INSTITUTES.map(inst => (
-                                            <option key={inst.id} value={inst.id} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
-                                                {inst.name}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                {/* Categoria */}
-                                <div>
-                                    <label className="block text-xs font-black uppercase tracking-widest text-gray-700 dark:text-gray-400 mb-1.5 font-bukra">
-                                        Categoria
-                                    </label>
-                                    <select 
-                                        className="w-full bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white text-xs focus:border-brand-blue outline-none transition-colors font-open-sans"
-                                        value={newTip.categoria}
-                                        onChange={e => setNewTip({...newTip, categoria: e.target.value})}
-                                        disabled={isSubmitting}
-                                    >
-                                        {CATEGORIAS.map(c => (
-                                            <option key={c.id} value={c.id} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
-                                                {c.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                {/* Título */}
-                                <div>
-                                    <label className="block text-xs font-black uppercase tracking-widest text-gray-700 dark:text-gray-400 mb-1.5 font-bukra">
-                                        Título do Conselho
-                                    </label>
-                                    <input 
-                                        type="text" 
-                                        required
-                                        maxLength={100}
-                                        className="w-full bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white text-xs focus:border-brand-blue outline-none transition-colors font-open-sans placeholder-gray-400 dark:placeholder-gray-500"
-                                        placeholder="Ex: Como sobreviver a Física 1 ou Dicas do bandejão central"
-                                        value={newTip.titulo}
-                                        onChange={e => setNewTip({...newTip, titulo: e.target.value})}
-                                        disabled={isSubmitting}
-                                    />
-                                </div>
-
-                                {/* Conteúdo */}
-                                <div>
-                                    <label className="block text-xs font-black uppercase tracking-widest text-gray-700 dark:text-gray-400 mb-1.5 font-bukra">
-                                        Conselho / Dica de Veterano
-                                    </label>
-                                    <textarea 
-                                        required
-                                        maxLength={800}
-                                        rows={4}
-                                        className="w-full bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white text-xs focus:border-brand-blue outline-none transition-colors resize-none font-open-sans placeholder-gray-400 dark:placeholder-gray-500"
-                                        placeholder="Escreva detalhadamente o conselho, macetes de provas, materiais recomendados ou rotas de sobrevivência..."
-                                        value={newTip.conteudo}
-                                        onChange={e => setNewTip({...newTip, conteudo: e.target.value})}
-                                        disabled={isSubmitting}
-                                    />
-                                </div>
-                                
                                 <button 
-                                    type="submit" 
+                                    onClick={() => setIsModalOpen(false)}
+                                    className="absolute top-6 right-6 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
                                     disabled={isSubmitting}
-                                    className="w-full mt-2 bg-brand-yellow text-gray-950 font-black uppercase tracking-widest py-3.5 rounded-xl hover:bg-brand-yellow/90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand-yellow/20 hover:scale-102 active:scale-95 text-xs font-bukra"
                                 >
-                                    {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-                                    {isSubmitting ? 'Enviando...' : 'Publicar Conselho no USP 101'}
+                                    <X className="w-6 h-6" />
                                 </button>
-                            </form>
-                        </motion.div>
-                    </div>
-                )}
+                                
+                                <div className="flex items-center gap-2 mb-2 text-brand-yellow text-xs font-black uppercase tracking-widest font-bukra">
+                                    <Sparkles className="w-4 h-4" />
+                                    IFUSP 101 • Transmissão de Conselho
+                                </div>
+                                <h2 className="text-xl sm:text-2xl font-black italic uppercase tracking-tighter text-gray-900 dark:text-white font-bukra mb-1">
+                                    Transmitir Conselho
+                                </h2>
+                                <p className="text-gray-500 dark:text-gray-400 text-xs font-open-sans mb-6 leading-relaxed">
+                                    Sua experiência pode salvar o semestre de alguém. Escolha se o conselho é válido para toda a USP ou para um instituto específico.
+                                </p>
+
+                                <form onSubmit={handleSubmit} className="space-y-4">
+                                    {/* Destino / Instituto */}
+                                    <div>
+                                        <label className="block text-xs font-black uppercase tracking-widest text-gray-700 dark:text-gray-400 mb-1.5 font-bukra">
+                                            Destino do Conselho (Instituto)
+                                        </label>
+                                        <select 
+                                            className="w-full bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white text-xs focus:border-brand-blue outline-none transition-colors font-open-sans"
+                                            value={newTip.instituto}
+                                            onChange={e => setNewTip({...newTip, instituto: e.target.value})}
+                                            disabled={isSubmitting}
+                                        >
+                                            {USP_INSTITUTES.map(inst => (
+                                                <option key={inst.id} value={inst.id} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+                                                    {inst.name}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    {/* Categoria */}
+                                    <div>
+                                        <label className="block text-xs font-black uppercase tracking-widest text-gray-700 dark:text-gray-400 mb-1.5 font-bukra">
+                                            Categoria
+                                        </label>
+                                        <select 
+                                            className="w-full bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white text-xs focus:border-brand-blue outline-none transition-colors font-open-sans"
+                                            value={newTip.categoria}
+                                            onChange={e => setNewTip({...newTip, categoria: e.target.value})}
+                                            disabled={isSubmitting}
+                                        >
+                                            {CATEGORIAS.map(c => (
+                                                <option key={c.id} value={c.id} className="bg-white dark:bg-gray-900 text-gray-900 dark:text-white">
+                                                    {c.label}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    {/* Título */}
+                                    <div>
+                                        <label className="block text-xs font-black uppercase tracking-widest text-gray-700 dark:text-gray-400 mb-1.5 font-bukra">
+                                            Título do Conselho
+                                        </label>
+                                        <input 
+                                            type="text" 
+                                            required
+                                            maxLength={100}
+                                            className="w-full bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white text-xs focus:border-brand-blue outline-none transition-colors font-open-sans placeholder-gray-400 dark:placeholder-gray-500"
+                                            placeholder="Ex: Como sobreviver a Física 1 ou Dicas do bandejão central"
+                                            value={newTip.titulo}
+                                            onChange={e => setNewTip({...newTip, titulo: e.target.value})}
+                                            disabled={isSubmitting}
+                                        />
+                                    </div>
+
+                                    {/* Conteúdo */}
+                                    <div>
+                                        <label className="block text-xs font-black uppercase tracking-widest text-gray-700 dark:text-gray-400 mb-1.5 font-bukra">
+                                            Conselho / Dica de Veterano
+                                        </label>
+                                        <textarea 
+                                            required
+                                            maxLength={800}
+                                            rows={4}
+                                            className="w-full bg-gray-50 dark:bg-black/40 border border-gray-200 dark:border-white/10 rounded-xl p-3 text-gray-900 dark:text-white text-xs focus:border-brand-blue outline-none transition-colors resize-none font-open-sans placeholder-gray-400 dark:placeholder-gray-500"
+                                            placeholder="Escreva detalhadamente o conselho, macetes de provas, materiais recomendados ou rotas de sobrevivência..."
+                                            value={newTip.conteudo}
+                                            onChange={e => setNewTip({...newTip, conteudo: e.target.value})}
+                                            disabled={isSubmitting}
+                                        />
+                                    </div>
+                                    
+                                    <button 
+                                        type="submit" 
+                                        disabled={isSubmitting}
+                                        className="w-full mt-2 bg-gradient-to-r from-[#FFCC00] to-amber-500 text-[#0F4780] font-black uppercase tracking-widest py-3.5 rounded-xl hover:brightness-105 transition-all flex items-center justify-center gap-2 shadow-lg shadow-amber-500/20 active:scale-95 text-xs font-bukra cursor-pointer"
+                                    >
+                                        {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+                                        <span>{isSubmitting ? 'Enviando à Moderação...' : 'Publicar Conselho no IFUSP 101'}</span>
+                                    </button>
+                                </form>
+                            </motion.div>
+                        </div>
+                    )}
+                </AnimatePresence>
             </div>
         </MainLayoutWrapper>
     );

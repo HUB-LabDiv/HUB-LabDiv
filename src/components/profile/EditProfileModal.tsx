@@ -18,18 +18,19 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'react-hot-toast';
-import { Loader2, X, User, FileText, Globe, Link as LinkIcon, Building2, ShieldCheck, Star, Mail, Phone, FileUp, Info, Users, Microscope, Briefcase, Zap, Github, Linkedin, Youtube, Instagram, MessageSquare } from 'lucide-react';
+import { Loader2, X, User, FileText, Globe, Link as LinkIcon, Building2, ShieldCheck, Star, Mail, Phone, FileUp, Info, Users, Microscope, Briefcase, Zap, Github, Linkedin, Youtube, Instagram, MessageSquare, GraduationCap, CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
-import { updateProfile, getProfileWithPseudonyms, uploadEnrollmentProof, updateProfileAsAdmin } from '@/app/actions/profiles';
+import { updateProfile, getProfileWithPseudonyms, uploadEnrollmentProof, updateProfileAsAdmin, submitTeacherVerification } from '@/app/actions/profiles';
 import { getUserPseudonyms, createPseudonym } from '@/app/actions/submissions';
 import { createServerSupabase } from '@/lib/supabase/server';
 import { supabase } from '@/lib/supabase';
-import { Profile } from '@/types';
+import { Profile, UserPersona } from '@/types';
 import { ModalPortal } from '@/components/ui/ModalPortal';
 
 const profileSchema = z.object({
     email: z.string().optional(),
     full_name: z.string().min(3, "Nome deve ter pelo menos 3 caracteres").max(100),
+    persona: z.enum(['aluno', 'professor', 'curioso', 'iniciativa']).optional(),
     bio: z.string().max(200, "Bio muito longa (máx 200)").default(''),
     username: z.string().max(30, "Apelido muito longo").default(''),
     use_nickname: z.boolean().default(false),
@@ -115,6 +116,42 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     const [isUploadingAvatar, setIsUploadingAvatar] = useState(false);
     const avatarInputRef = React.useRef<HTMLInputElement>(null);
+
+    // Teacher verification state
+    const [isUploadingTeacherProof, setIsUploadingTeacherProof] = useState(false);
+    const teacherProofInputRef = React.useRef<HTMLInputElement>(null);
+
+    const handleTeacherProofUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (file.size > 10 * 1024 * 1024) {
+            toast.error('O arquivo de comprovante não pode exceder 10MB.');
+            return;
+        }
+
+        setIsUploadingTeacherProof(true);
+        try {
+            const formData = new FormData();
+            formData.append('proof', file);
+
+            const res = await submitTeacherVerification(formData);
+            if (res.success) {
+                toast.success('Comprovante docente enviado para análise com sucesso!');
+                setProfileData((prev: any) => ({
+                    ...prev,
+                    teacher_verification_status: 'pending'
+                }));
+            } else {
+                toast.error(res.error || 'Erro ao enviar comprovante docente.');
+            }
+        } catch (err: any) {
+            toast.error(err.message || 'Erro inesperado ao enviar arquivo.');
+        } finally {
+            setIsUploadingTeacherProof(false);
+            if (teacherProofInputRef.current) teacherProofInputRef.current.value = '';
+        }
+    };
 
     // Comprime a imagem no browser via Canvas API antes do upload
     const compressImage = (file: File, maxSizePx = 512, quality = 0.8): Promise<File> => {
@@ -307,6 +344,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
             setValue('seeking_mentor', profile.seeking_mentor || false);
             setValue('is_labdiv', profile.is_labdiv || false);
             setValue('is_visible', profile.is_visible ?? true);
+            setValue('persona', (profile.persona as any) || (profile.is_usp_member ? 'aluno' : 'curioso'));
             setValue('user_category', profile.user_category || 'curioso');
             setValue('cultural_language', profile.cultural_language || 'jovem');
             setValue('seeking_assistant', profile.seeking_assistant || false);
@@ -632,9 +670,155 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                 </p>
                             </div>
 
+                            {/* 4 PERSONAS LABDIV */}
+                            <div className="space-y-3 pt-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 flex items-center gap-2">
+                                    <GraduationCap className="w-3.5 h-3.5 text-brand-blue" /> Sua Persona Oficial no HUB
+                                </label>
+
+                                {adminMode ? (
+                                    <div className="flex items-center gap-2">
+                                        <select
+                                            {...register('persona')}
+                                            className="w-full bg-gray-50 dark:bg-background-dark/20 border border-brand-red/30 rounded-2xl px-4 py-3 text-sm focus:border-brand-red outline-none transition-all cursor-pointer font-black text-gray-900 dark:text-white uppercase tracking-tight"
+                                        >
+                                            <option value="aluno">Aluno USP</option>
+                                            <option value="professor">Professor / Docente</option>
+                                            <option value="curioso">Curioso / Visitante</option>
+                                            <option value="iniciativa">Iniciativa Institucional</option>
+                                        </select>
+                                        <span className="text-[8px] font-black bg-brand-red/10 text-brand-red px-2 py-0.5 rounded uppercase font-mono h-fit shrink-0">Admin Persona</span>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        <div className="p-4 bg-gray-50 dark:bg-background-dark/30 border border-gray-100 dark:border-white/5 rounded-2xl flex flex-col gap-2">
+                                            <div className="flex items-center justify-between">
+                                                <div className="flex items-center gap-2.5">
+                                                    <span className={`w-2.5 h-2.5 rounded-full ${
+                                                        watch('persona') === 'professor' ? 'bg-[#FFCC00]' :
+                                                        watch('persona') === 'aluno' ? 'bg-[#0F4780]' :
+                                                        watch('persona') === 'iniciativa' ? 'bg-[#F14343]' :
+                                                        'bg-gray-400'
+                                                    }`} />
+                                                    <span className="text-sm font-black uppercase tracking-tight text-gray-900 dark:text-white font-bukra">
+                                                        {watch('persona') === 'professor' ? 'Docente / Professor USP' :
+                                                         watch('persona') === 'aluno' ? 'Aluno USP' :
+                                                         watch('persona') === 'iniciativa' ? 'Iniciativa Institucional' :
+                                                         'Curioso / Visitante'}
+                                                    </span>
+                                                </div>
+                                                <span className={`text-[9px] font-black px-2.5 py-0.5 rounded-full uppercase font-mono border ${
+                                                    watch('persona') === 'professor' ? 'bg-[#FFCC00]/15 text-[#FFCC00] border-[#FFCC00]/30' :
+                                                    watch('persona') === 'aluno' ? 'bg-[#0F4780]/15 text-[#0F4780] border-[#0F4780]/30' :
+                                                    watch('persona') === 'iniciativa' ? 'bg-[#F14343]/15 text-[#F14343] border-[#F14343]/30' :
+                                                    'bg-gray-500/15 text-gray-400 border-gray-500/30'
+                                                }`}>
+                                                    Persona Ativa
+                                                </span>
+                                            </div>
+
+                                            {/* Alternância Aluno/Curioso para quem tem e-mail USP */}
+                                            {isUspUser && watch('persona') !== 'professor' && watch('persona') !== 'iniciativa' && (
+                                                <div className="pt-2 border-t border-gray-100 dark:border-white/5 flex items-center gap-2">
+                                                    <span className="text-[10px] text-gray-400 font-bold">Alternar:</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setValue('persona', 'aluno')}
+                                                        className={`px-3 py-1 rounded-xl text-[11px] font-black uppercase transition-all ${
+                                                            watch('persona') === 'aluno'
+                                                                ? 'bg-[#0F4780] text-white shadow-sm'
+                                                                : 'bg-white dark:bg-white/5 text-gray-500 hover:text-gray-900 dark:hover:text-white border border-gray-100 dark:border-white/5'
+                                                        }`}
+                                                    >
+                                                        Aluno USP
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setValue('persona', 'curioso')}
+                                                        className={`px-3 py-1 rounded-xl text-[11px] font-black uppercase transition-all ${
+                                                            watch('persona') === 'curioso'
+                                                                ? 'bg-gray-700 text-white shadow-sm'
+                                                                : 'bg-white dark:bg-white/5 text-gray-500 hover:text-gray-900 dark:hover:text-white border border-gray-100 dark:border-white/5'
+                                                        }`}
+                                                    >
+                                                        Curioso
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+
+                                        {/* Status de Verificação Docente */}
+                                        {profileData?.persona === 'professor' ? (
+                                            <div className="p-3 bg-[#FFCC00]/10 border border-[#FFCC00]/25 rounded-2xl flex items-center gap-2.5">
+                                                <CheckCircle2 className="w-4 h-4 text-[#FFCC00] shrink-0" />
+                                                <p className="text-[11px] font-bold text-[#FFCC00] uppercase tracking-tight">
+                                                    Docente Verificado IFUSP/USP com acesso a recursos acadêmicos exclusivos.
+                                                </p>
+                                            </div>
+                                        ) : profileData?.teacher_verification_status === 'pending' ? (
+                                            <div className="p-3 bg-brand-yellow/10 border border-brand-yellow/30 rounded-2xl flex items-center gap-2.5 animate-pulse">
+                                                <Clock className="w-4 h-4 text-brand-yellow shrink-0" />
+                                                <p className="text-[11px] font-bold text-brand-yellow uppercase tracking-tight">
+                                                    Comprovante docente em análise pela moderação do HUB.
+                                                </p>
+                                            </div>
+                                        ) : isUspUser ? (
+                                            <div className="p-3.5 bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl space-y-2.5">
+                                                <div className="flex items-start justify-between gap-2">
+                                                    <div>
+                                                        <p className="text-xs font-black uppercase tracking-tight text-gray-900 dark:text-white flex items-center gap-1.5">
+                                                            <GraduationCap className="w-3.5 h-3.5 text-brand-yellow" /> É Docente da USP?
+                                                        </p>
+                                                        <p className="text-[11px] text-gray-400 mt-0.5 leading-snug">
+                                                            Envie holerite, ata de posse ou declaração funcional para receber o selo oficial de Professor.
+                                                        </p>
+                                                    </div>
+                                                    {profileData?.teacher_verification_status === 'rejected' && (
+                                                        <span className="text-[8px] font-bold bg-brand-red/15 text-brand-red px-2 py-0.5 rounded-full uppercase shrink-0">
+                                                            Recusado
+                                                        </span>
+                                                    )}
+                                                </div>
+
+                                                <input
+                                                    type="file"
+                                                    ref={teacherProofInputRef}
+                                                    onChange={handleTeacherProofUpload}
+                                                    accept=".pdf,image/png,image/jpeg,image/webp"
+                                                    className="hidden"
+                                                />
+
+                                                <button
+                                                    type="button"
+                                                    disabled={isUploadingTeacherProof}
+                                                    onClick={() => teacherProofInputRef.current?.click()}
+                                                    className="w-full py-2.5 px-4 rounded-xl border border-dashed border-[#FFCC00]/50 hover:border-[#FFCC00] bg-[#FFCC00]/5 hover:bg-[#FFCC00]/10 text-xs font-black text-[#FFCC00] uppercase tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer disabled:opacity-50"
+                                                >
+                                                    {isUploadingTeacherProof ? (
+                                                        <>
+                                                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                                                            Enviando Comprovante...
+                                                        </>
+                                                    ) : (
+                                                        <>
+                                                            <FileUp className="w-3.5 h-3.5" />
+                                                            {profileData?.teacher_verification_status === 'rejected' ? 'Reenviar Comprovante Docente' : 'Enviar Comprovante de Docência'}
+                                                        </>
+                                                    )}
+                                                </button>
+                                                <p className="text-[9px] text-gray-400 text-center font-mono">
+                                                    LGPD: O arquivo é expurgado do servidor imediatamente após a avaliação da moderação.
+                                                </p>
+                                            </div>
+                                        ) : null}
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Categoria Acadêmica Detalhada */}
                             <div className="space-y-2">
                                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 flex items-center gap-2">
-                                    <Users className="w-3 h-3" /> Sua Categoria
+                                    <Users className="w-3 h-3" /> Categoria Acadêmica
                                 </label>
                                 {adminMode ? (
                                     <div className="flex items-center gap-2">
@@ -655,7 +839,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                 ) : (
                                     <div className="px-4 py-3 bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl flex items-center justify-between">
                                         <span className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-tight">
-                                            {watch('user_category').replace('_', ' ')}
+                                            {watch('user_category')?.replace('_', ' ') || 'Curioso'}
                                         </span>
                                         <span className="text-[8px] font-black bg-brand-blue/10 text-brand-blue px-2 py-0.5 rounded uppercase font-mono">ID LabDiv</span>
                                     </div>

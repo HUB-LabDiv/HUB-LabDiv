@@ -16,7 +16,7 @@ import { createServerSupabase } from '@/lib/supabase/server';
 import { createAdminSupabase } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
-import { Profile, Freshman } from '@/types';
+import { Profile, Freshman, UserPersona } from '@/types';
 import { sendAdminNotification } from '@/lib/notifications.server';
 import { sendAutomaticNotification } from './notifications';
 import { verifyAdminToken } from '@/lib/auth/admin-token';
@@ -77,16 +77,20 @@ const ALLOWED_PROFILE_UPDATE_FIELDS = new Set([
     'areas_of_interest',
     'available_to_mentor',
     'seeking_mentor',
-    'is_visible',
     'is_public',
-    'hobbies_gallery'
+    'hobbies_gallery',
+    'persona'
 ]);
 
-function filterAllowedProfileFields(rawUpdates: Record<string, any>): Record<string, any> {
+function filterAllowedProfileFields(rawUpdates: Record<string, any>, isAdmin: boolean = false): Record<string, any> {
     const clean: Record<string, any> = {};
     if (!rawUpdates || typeof rawUpdates !== 'object') return clean;
     for (const key of Object.keys(rawUpdates)) {
         if (ALLOWED_PROFILE_UPDATE_FIELDS.has(key) && rawUpdates[key] !== undefined) {
+            // Trava de segurança: persona 'iniciativa' ou 'professor' requer validação de admin
+            if (key === 'persona' && !isAdmin && (rawUpdates[key] === 'iniciativa' || rawUpdates[key] === 'professor')) {
+                continue;
+            }
             clean[key] = rawUpdates[key];
         }
     }
@@ -194,7 +198,7 @@ export async function updateProfile(updates: Partial<Profile>) {
     return { success: true, data };
 }
 
-export async function approveProfile(profileId: string) {
+export async function approveProfile(profileId: string, assignedPersona?: UserPersona) {
     const isAdmin = await checkIsAdmin();
     if (!isAdmin) {
         return { error: 'Acesso negado: Requer privilégios de administrador.' };
@@ -219,6 +223,14 @@ export async function approveProfile(profileId: string) {
         pending_edits: null,
         review_status: 'approved'
     };
+
+    if (assignedPersona) {
+        finalData.persona = assignedPersona;
+        if (assignedPersona === 'professor') {
+            finalData.teacher_verification_status = 'approved';
+            finalData.verified_at = new Date().toISOString();
+        }
+    }
 
     if (pending_avatar_url) {
         finalData.avatar_url = pending_avatar_url;
@@ -1220,4 +1232,172 @@ export async function updatePushToken(token: string) {
     }
 
     return { success: true };
+}
+
+/**
+ * 🎓 Submete comprovante para validação da Persona Professor
+ * Armazena temporariamente no bucket privado criptografado 'teacher-verifications'
+ */
+export async function submitTeacherVerification(formData: FormData) {
+    try {
+        const supabase = await createServerSupabase();
+        const { data: { user } } = await supabase.auth.getUser();
+
+        if (!user || !user.email) {
+            return { success: false, error: 'Você precisa estar autenticado.' };
+        }
+
+        // Validação de e-mail institucional USP
+        const isUspEmail = user.email.endsWith('@usp.br') || user.email.includes('.usp.br');
+        if (!isUspEmail) {
+            return { 
+                success: false, 
+                error: 'A validação docente requer obrigatoriamente um e-mail institucional @usp.br.' 
+            };
+        }
+
+        const file = formData.get('proof') as File | null;
+        if (!file || file.size === 0) {
+            return { success: false, error: 'Por favor, selecione um arquivo de comprovante.' };
+        }
+
+        // Limite de 10MB
+        if (file.size > 10 * 1024 * 1024) {
+            return { success: false, error: 'O arquivo não pode exceder 10MB.' };
+        }
+
+        // Formatos aceitos
+        const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'];
+        if (!allowedTypes.includes(file.type)) {
+            return { success: false, error: 'Formato não suportado. Envie um arquivo PDF, JPG, PNG ou WEBP.' };
+        }
+
+        const fileExt = file.name.split('.').pop() || 'pdf';
+        const fileName = `${user.id}/${Date.now()}_comprovante.${fileExt}`;
+
+        // Upload no bucket privado criptografado
+        const { error: uploadError } = await supabase.storage
+            .from('teacher-verifications')
+            .upload(fileName, file, { upsert: true });
+
+        if (uploadError) {
+            console.error('[Docente] Erro de upload do comprovante:', uploadError);
+            return { success: false, error: 'Falha ao salvar o comprovante no armazenamento seguro.' };
+        }
+
+        // Atualiza o perfil com status pendente
+        const { error: updateError } = await supabase
+            .from('profiles')
+            .update({
+                teacher_proof_path: fileName,
+                teacher_verification_status: 'pending'
+            })
+            .eq('id', user.id);
+
+        if (updateError) {
+            console.error('[Docente] Erro ao atualizar status de verificação:', updateError);
+            return { success: false, error: 'Erro ao registrar solicitação de verificação.' };
+        }
+
+        // Notifica admins
+        try {
+            const { sendAdminNotification } = await import('@/lib/notifications.server');
+            await sendAdminNotification({
+                type: 'profile_update',
+                userName: user.email.split('@')[0],
+                details: `Nova solicitação de verificação docente (${user.email})`
+            });
+        } catch (e) {
+            // Notificação não bloqueante
+        }
+
+        revalidatePath('/lab');
+        revalidatePath('/admin');
+        revalidatePath('/admin/profiles');
+
+        return { 
+            success: true, 
+            message: 'Comprovante enviado com sucesso! Seus dados foram encaminhados para a Torre de Controle.' 
+        };
+    } catch (err: any) {
+        console.error('[Docente] Erro inesperado na verificação:', err);
+        return { success: false, error: err.message || 'Erro inesperado no servidor.' };
+    }
+}
+
+/**
+ * ⚖️ Modera uma solicitação de verificação docente (Exclusivo Admin)
+ * Realiza a exclusão física imediata do comprovante conforme a LGPD
+ */
+export async function reviewTeacherVerification(profileId: string, decision: 'approve' | 'reject') {
+    const isAdmin = await checkIsAdmin();
+    if (!isAdmin) {
+        return { success: false, error: 'Acesso negado: Requer privilégios de administrador.' };
+    }
+
+    try {
+        const { createAdminSupabase } = await import('@/lib/supabase/admin');
+        const adminSupabase = createAdminSupabase();
+        const cookieStore = await import('next/headers').then(m => m.cookies());
+        const sessionToken = cookieStore.get('admin_session')?.value || cookieStore.get('admin_bypass')?.value;
+        const { verifyAdminToken } = await import('@/lib/auth/admin-token');
+        const tokenCheck = await verifyAdminToken(sessionToken);
+
+        // 1. Busca caminho do arquivo para expurgo
+        const { data: profile } = await adminSupabase
+            .from('profiles')
+            .select('teacher_proof_path, email, full_name')
+            .eq('id', profileId)
+            .single();
+
+        const proofPath = profile?.teacher_proof_path;
+
+        // 2. Expurgo Físico Imediato no Storage (LGPD)
+        if (proofPath) {
+            try {
+                await adminSupabase.storage
+                    .from('teacher-verifications')
+                    .remove([proofPath]);
+                console.log(`[LGPD Expurgo] Comprovante docente removido fisicamente: ${proofPath}`);
+            } catch (storageErr) {
+                console.error('[LGPD Expurgo] Falha ao remover arquivo físico do storage:', storageErr);
+            }
+        }
+
+        // 3. Atualiza o perfil no banco com metadados de auditoria
+        const now = new Date().toISOString();
+        const updatePayload: Record<string, any> = {
+            teacher_proof_path: null,
+            teacher_verification_status: decision === 'approve' ? 'approved' : 'rejected',
+            verified_at: now
+        };
+
+        if (decision === 'approve') {
+            updatePayload.persona = 'professor';
+        }
+
+        const { error: updateError } = await adminSupabase
+            .from('profiles')
+            .update(updatePayload)
+            .eq('id', profileId);
+
+        if (updateError) {
+            console.error('[Docente] Erro ao atualizar perfil pós-revisão:', updateError);
+            return { success: false, error: 'Falha ao atualizar status no banco de dados.' };
+        }
+
+        revalidatePath('/admin');
+        revalidatePath('/admin/profiles');
+        revalidatePath('/lab');
+
+        return { 
+            success: true, 
+            message: decision === 'approve' 
+                ? 'Docente aprovado com sucesso! Comprovante expurgado do armazenamento (LGPD).' 
+                : 'Solicitação rejeitada e comprovante expurgado com sucesso.' 
+        };
+    } catch (err: any) {
+        console.error('[Docente] Erro na revisão docente:', err);
+        return { success: false, error: err.message || 'Erro inesperado ao processar.' };
+    }
 }

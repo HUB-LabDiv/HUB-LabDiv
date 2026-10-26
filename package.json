@@ -1,6 +1,6 @@
 {
   "name": "hub-lab-div",
-  "version": "6.6.2",
+  "version": "6.7.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -10,6 +10,8 @@
     "postbuild": "npm run audit-logs && node scripts/clean.js",
     "clean": "node scripts/clean.js",
     "audit-logs": "node scripts/audit.js",
+    "scraper:audit": "npx tsx scripts/scrapers/run_pipeline.ts --skip-scrape",
+    "scraper:pipeline": "npx tsx scripts/scrapers/run_pipeline.ts",
     "start": "next start",
     "lint": "eslint"
   },

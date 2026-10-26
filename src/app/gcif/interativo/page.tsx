@@ -14,6 +14,7 @@
 import React from 'react';
 import { GcifInterativoView } from '@/components/gcif/GcifInterativoView';
 import { supabase } from '@/lib/supabase';
+import { createServerSupabase } from '@/lib/supabase/server';
 
 export const metadata = {
     title: 'Interativo & Oportunidades | Grande Colisor do IF',
@@ -23,21 +24,52 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function GcifInterativoPage() {
-    // Fetch Oportunidades
+    // 1. Fetch Oportunidades
     const { data: oportunidades } = await supabase
         .from('oportunidades')
         .select('*')
+        .or('status.eq.approved,status.is.null')
         .order('created_at', { ascending: false })
-        .limit(6);
+        .limit(30);
 
-    // Fetch Glossary
+    // 2. Fetch Glossary
     const { getGlossary } = await import('@/app/enviar/actions/glossaryActions');
     const { data: palavras_geradoras } = await getGlossary();
+
+    // 3. Detectar Persona do Perfil do Usuário
+    let detectedPersona: 'curioso' | 'aluno' | 'professor' = 'curioso';
+    try {
+        const serverSupabase = await createServerSupabase();
+        const { data: { user } } = await serverSupabase.auth.getUser();
+        if (user) {
+            const { data: profile } = await serverSupabase
+                .from('profiles')
+                .select('persona, user_category')
+                .eq('id', user.id)
+                .single();
+
+            if (profile) {
+                if (profile.persona) {
+                    detectedPersona = profile.persona as any;
+                } else if (profile.user_category) {
+                    const cat = String(profile.user_category).toLowerCase();
+                    if (cat.includes('docente') || cat.includes('professor') || cat.includes('pesquisador')) {
+                        detectedPersona = 'professor';
+                    } else if (cat.includes('aluno') || cat.includes('pos_graduacao') || cat.includes('graduacao')) {
+                        detectedPersona = 'aluno';
+                    }
+                }
+            }
+        }
+    } catch {
+        // Fallback silencioso para curioso se deslogado
+    }
 
     return (
         <GcifInterativoView
             oportunidades={oportunidades || []}
             glossario={palavras_geradoras || []}
+            initialPersona={detectedPersona}
         />
     );
 }

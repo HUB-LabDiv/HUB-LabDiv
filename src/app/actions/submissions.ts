@@ -1033,6 +1033,9 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
             });
 
             if (initialStatus === 'pendente') {
+                const { checkModerationQueueThresholds } = await import('@/lib/moderation-queue-monitor');
+                void checkModerationQueueThresholds().catch(() => {});
+
                 await sendAutomaticNotification({
                     userId: user.id,
                     title: 'Conteúdo em Análise ⏳',
@@ -1080,11 +1083,11 @@ export async function updateSubmission(id: string, formData: any) {
         
     if (!existingPost) return { error: { message: "Post não encontrado" } };
     
-    if (existingPost.user_id !== user.id) {
-        const { data: profile } = await serverSupabase.from('profiles').select('role').eq('id', user.id).single();
-        if (profile?.role !== 'admin') {
-            return { error: { message: "Você só pode editar seus próprios posts." } };
-        }
+    const { data: userProfile } = await serverSupabase.from('profiles').select('role').eq('id', user.id).single();
+    const isAdmin = userProfile?.role === 'admin' || userProfile?.role === 'moderator';
+
+    if (existingPost.user_id !== user.id && !isAdmin) {
+        return { error: { message: "Você só pode editar seus próprios posts." } };
     }
 
     const {
@@ -1111,34 +1114,78 @@ export async function updateSubmission(id: string, formData: any) {
         quiz
     };
 
-    const { data: updatedSub, error } = await serverSupabase
+    // Se for Administrador ou Moderador, aplica imediatamente no post público
+    if (isAdmin) {
+        const { data: updatedSub, error } = await serverSupabase
+            .from('submissions')
+            .update({
+                ...updatePayload,
+                pending_edits: null
+            })
+            .eq('id', id)
+            .select()
+            .single();
+
+        if (error) {
+            return { error: { database: [`Erro DB (${error.code}): ${error.message}`] } };
+        }
+
+        // Update Reflexoes
+        if (reflexoes && Array.isArray(reflexoes)) {
+            await serverSupabase.from('reflexoes_inline').delete().eq('post_id', id);
+            if (reflexoes.length > 0) {
+                await serverSupabase.from('reflexoes_inline').insert(reflexoes.map(r => ({
+                    ...r,
+                    post_id: id
+                })));
+            }
+        }
+
+        revalidatePath('/');
+        revalidatePath(`/arquivo/${id}`);
+        revalidatePath('/lab');
+
+        return { success: true, data: updatedSub };
+    }
+
+    // Para usuários comuns (Autores), salva as edições em pending_edits (objeto JSON direto)
+    // mantendo a postagem pública ativa inalterada até a validação na Torre de Controle
+    const { data: stagedSub, error: stageError } = await serverSupabase
         .from('submissions')
-        .update(updatePayload)
+        .update({
+            pending_edits: updatePayload
+        })
         .eq('id', id)
         .select()
         .single();
 
-    if (error) {
-        return { error: { database: [`Erro DB (${error.code}): ${error.message}`] } };
+    if (stageError) {
+        return { error: { database: [`Erro ao submeter edição (${stageError.code}): ${stageError.message}`] } };
     }
 
-    // Update Reflexoes
-    if (reflexoes && Array.isArray(reflexoes)) {
-        // Simple strategy: delete old and insert new
-        await serverSupabase.from('reflexoes_inline').delete().eq('post_id', id);
-        if (reflexoes.length > 0) {
-            await serverSupabase.from('reflexoes_inline').insert(reflexoes.map(r => ({
-                ...r,
-                post_id: id
-            })));
-        }
+    // Notifica admins sobre a edição pendente
+    try {
+        const { sendAdminNotification } = await import('@/lib/notifications.server');
+        await sendAdminNotification({
+            type: 'submission',
+            authors: authors || user.email?.split('@')[0] || 'Autor',
+            title: `[Edição Pendente] ${title || 'Post'}`
+        });
+        const { checkModerationQueueThresholds } = await import('@/lib/moderation-queue-monitor');
+        void checkModerationQueueThresholds().catch(() => {});
+    } catch (e) {
+        // Notificação não bloqueante
     }
 
-    revalidatePath('/');
-    revalidatePath(`/arquivo/${id}`);
     revalidatePath('/lab');
+    revalidatePath('/admin');
 
-    return { success: true, data: updatedSub };
+    return { 
+        success: true, 
+        isPendingReview: true,
+        message: 'Alterações enviadas para a Torre de Controle! Seu post atual continua visível enquanto a edição é revisada.',
+        data: stagedSub 
+    };
 }
 
 export async function fetchUserSubmissions(userId: string): Promise<{ post: PostDTO }[]> {

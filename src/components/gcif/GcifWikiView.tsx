@@ -20,6 +20,8 @@ import {
     BookOpen,
     ChevronLeft,
     ChevronRight,
+    ChevronDown,
+    ChevronUp,
     Search,
     ShieldCheck,
     Zap,
@@ -146,40 +148,42 @@ export function GcifWikiView() {
             </div>
 
             {/* Wiki Matrix Grid (Síncrotron) */}
+            {/* Wiki Matrix Grid (Síncrotron - Feed Horizontal) */}
             <div data-tour="gcif-wiki-sincrotron" className="space-y-6">
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
-                    <div>
-                        <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white font-bukra flex items-center gap-2">
-                            <Atom className="w-6 h-6 text-brand-blue" />
-                            Tópicos de Conhecimento
-                        </h2>
-                        <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-open-sans mt-1.5 max-w-2xl leading-relaxed">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                    <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white font-bukra flex items-center gap-2">
+                                <Atom className="w-6 h-6 text-brand-blue" />
+                                Tópicos de Conhecimento
+                            </h2>
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-500/15 border border-blue-500/30 text-brand-blue dark:text-[#00A3FF] text-[10px] font-black uppercase tracking-wider font-bukra">
+                                {wikiCells.length} TÓPICOS
+                            </span>
+                        </div>
+                        <p className="text-xs text-gray-600 dark:text-gray-400 font-open-sans mt-0.5 max-w-2xl leading-relaxed">
                             Base de conhecimento viva do IFUSP dividida em 3 eixos essenciais. Navegue por sobrevivência universitária, formação científica e divulgação acadêmica.
                         </p>
                     </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                        <span className="text-xs text-gray-500 dark:text-gray-400 font-bold shrink-0">
-                            {filteredCells.length} de {wikiCells.length} tópicos
-                        </span>
-                        {/* Navigation Arrows */}
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => scroll('left')}
-                                className="p-2 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-200 dark:hover:bg-white/10 hover:scale-105 active:scale-95 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white shadow-sm cursor-pointer"
-                                aria-label="Rolar para esquerda"
-                                title="Rolar para esquerda"
-                            >
-                                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-                            </button>
-                            <button
-                                onClick={() => scroll('right')}
-                                className="p-2 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 hover:bg-gray-200 dark:hover:bg-white/10 hover:scale-105 active:scale-95 transition-all text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white shadow-sm cursor-pointer"
-                                aria-label="Rolar para direita"
-                                title="Rolar para direita"
-                            >
-                                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5" />
-                            </button>
-                        </div>
+
+                    {/* Controles de Navegação Horizontal */}
+                    <div className="flex items-center gap-2 shrink-0">
+                        <button
+                            onClick={() => scroll('left')}
+                            className="p-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-white/10 transition-all active:scale-95 cursor-pointer shadow-sm"
+                            aria-label="Rolar para esquerda"
+                            title="Rolar para esquerda"
+                        >
+                            <ChevronLeft className="w-4 h-4" />
+                        </button>
+                        <button
+                            onClick={() => scroll('right')}
+                            className="p-2 rounded-xl bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-white/10 transition-all active:scale-95 cursor-pointer shadow-sm"
+                            aria-label="Rolar para direita"
+                            title="Rolar para direita"
+                        >
+                            <ChevronRight className="w-4 h-4" />
+                        </button>
                     </div>
                 </div>
 
@@ -221,9 +225,10 @@ export function GcifWikiView() {
                     })}
                 </div>
 
+                {/* Strip Horizontal com Snap */}
                 <div 
                     ref={scrollContainerRef}
-                    className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-6 overflow-x-auto md:overflow-visible pb-4 md:pb-0 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory scroll-smooth no-scrollbar"
+                    className="flex gap-6 overflow-x-auto pb-6 pt-1 -mx-4 px-4 sm:mx-0 sm:px-0 snap-x snap-mandatory scroll-smooth no-scrollbar"
                 >
                     <AnimatePresence mode="popLayout">
                         {filteredCells.map((cell: any, idx: number) => {
@@ -347,6 +352,7 @@ export function GcifWikiView() {
                         </button>
                     </div>
                 </div>
+
             </div>
 
             {/* Modal de Proposta / Complemento */}

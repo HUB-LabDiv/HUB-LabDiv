@@ -14,6 +14,8 @@
  */
 
 import { createServerSupabase } from '@/lib/supabase/server';
+import { createAdminSupabase } from '@/lib/supabase/admin';
+import { requireAdminOrModerator } from '@/app/actions/admin';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { AcademicSoftware, SoftwareFeedback, SubmitSoftwareInput } from '@/types/softwares';
@@ -582,17 +584,18 @@ export async function submitSoftwareFeedback(input: {
     }
 }
 
+const SoftwareIdSchema = z.string().uuid('ID de software inválido.');
+
 /**
  * Get all pending community softwares (ADMIN ONLY)
  */
 export async function getPendingSoftwares() {
     try {
-        const supabase = await createServerSupabase();
-        
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return [];
+        const auth = await requireAdminOrModerator();
+        if (!auth.authorized) return [];
 
-        const { data, error } = await supabase
+        const adminSupabase = createAdminSupabase();
+        const { data, error } = await adminSupabase
             .from('academic_softwares')
             .select(`
                 *,
@@ -617,14 +620,21 @@ export async function getPendingSoftwares() {
  */
 export async function approveSoftware(softwareId: string) {
     try {
-        const supabase = await createServerSupabase();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return { success: false, error: 'Acesso negado' };
+        const auth = await requireAdminOrModerator();
+        if (!auth.authorized) {
+            return { success: false, error: auth.error || 'Acesso negado' };
+        }
 
-        const { error } = await supabase
+        const parsedId = SoftwareIdSchema.safeParse(softwareId);
+        if (!parsedId.success) {
+            return { success: false, error: parsedId.error.issues[0]?.message || 'ID inválido' };
+        }
+
+        const adminSupabase = createAdminSupabase();
+        const { error } = await adminSupabase
             .from('academic_softwares')
             .update({ status: 'aprovado' })
-            .eq('id', softwareId);
+            .eq('id', parsedId.data);
 
         if (error) {
             return { success: false, error: error.message };
@@ -644,14 +654,21 @@ export async function approveSoftware(softwareId: string) {
  */
 export async function rejectSoftware(softwareId: string) {
     try {
-        const supabase = await createServerSupabase();
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) return { success: false, error: 'Acesso negado' };
+        const auth = await requireAdminOrModerator();
+        if (!auth.authorized) {
+            return { success: false, error: auth.error || 'Acesso negado' };
+        }
 
-        const { error } = await supabase
+        const parsedId = SoftwareIdSchema.safeParse(softwareId);
+        if (!parsedId.success) {
+            return { success: false, error: parsedId.error.issues[0]?.message || 'ID inválido' };
+        }
+
+        const adminSupabase = createAdminSupabase();
+        const { error } = await adminSupabase
             .from('academic_softwares')
             .update({ status: 'rejeitado' })
-            .eq('id', softwareId);
+            .eq('id', parsedId.data);
 
         if (error) {
             return { success: false, error: error.message };

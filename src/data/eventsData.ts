@@ -61,7 +61,34 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: true,
-    tags: ["Física", "Coloquio"],
+    tags: ["Coloquio", "Física"],
+  },
+  "einstein-e-a-invencao-do-movimento-estocastico-seminario-de": {
+    id: "einstein-e-a-invencao-do-movimento-estocastico-seminario-de",
+    titulo:
+      "Einstein e a Invenção do Movimento Estocástico | Seminário de Física Estatística",
+    tipo: "seminario",
+    data: "28/10/2026",
+    horario: "15:00",
+    local: {
+      nome: "Sala De",
+      formato: "hibrido",
+    },
+    palestrante: {
+      nome: "Prof. Mário José de Oliveira",
+      afiliacao: "",
+      titulacao: "Prof.",
+    },
+    resumo:
+      "Apresentamos a emergência do movimento estocástico nos artigos de Einstein sobre o movimento browniano. Discutimos também as contribuições de Smoluchowski, de Langevin e de Geertruida de Haas-Lorentz. Mostramos que o ponto crucial nos argumentos de Einstein, que levaram à equação de difusão, é que a variância da variável aleatória associada aos incrementos na posição das partículas durante um intervalo de tempo é proporcional a esse intervalo. Esse resultado está implícito nas equações de Langevin que também nos conduzem à equação de difusão. A argumentação utilizada por Einstein foi empregada",
+    links: {
+      oficial:
+        "https://portal.if.usp.br/ifusp/pt-br/evento-agregado/einstein-e-inven%C3%A7%C3%A3o-do-movimento-estoc%C3%A1stico-semin%C3%A1rio-de-f%C3%ADsica-estat%C3%ADstica",
+      transmissao: "https://www.youtube.com/@ifusp_oficial/streams",
+      anexoPdf: "",
+    },
+    destaque: false,
+    tags: ["Seminario", "Física"],
   },
   "fisica-do-cotidiano-ciclo-de-palestras": {
     id: "fisica-do-cotidiano-ciclo-de-palestras",
@@ -110,7 +137,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: true,
-    tags: ["Física", "Coloquio"],
+    tags: ["Coloquio", "Física"],
   },
   "altermagnetism-an-unconventional-quantum-state-of-matter-col": {
     id: "altermagnetism-an-unconventional-quantum-state-of-matter-col",
@@ -138,7 +165,7 @@ export const eventsData: Record<string, EventItem> = {
         "https://portal.if.usp.br/ifusp/sites/portal.if.usp.br.ifusp/files/Convite-Coloquio-GW-1.pdf",
     },
     destaque: true,
-    tags: ["Física", "Gleb Wataghin", "Coloquio"],
+    tags: ["Coloquio", "Física", "Gleb Wataghin"],
   },
   "semana-da-fisica-2026-ifusp": {
     id: "semana-da-fisica-2026-ifusp",
@@ -213,7 +240,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: false,
-    tags: ["Relatividade", "Física", "Convite Fisica"],
+    tags: ["Convite Fisica", "Física", "Relatividade"],
   },
   "a-victorian-theory-in-a-quantum-world-thermodynamic-uncertai": {
     id: "a-victorian-theory-in-a-quantum-world-thermodynamic-uncertai",
@@ -266,7 +293,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: true,
-    tags: ["Física", "Coloquio"],
+    tags: ["Coloquio", "Física"],
   },
   "withstanding-the-extreme-advanced-materials-for-nasa-s-next": {
     id: "withstanding-the-extreme-advanced-materials-for-nasa-s-next",
@@ -293,7 +320,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: true,
-    tags: ["Física", "Coloquio"],
+    tags: ["Coloquio", "Física"],
   },
   "cruzando-fronteiras-uma-historia-do-brasil-no-cern-coloquio": {
     id: "cruzando-fronteiras-uma-historia-do-brasil-no-cern-coloquio",
@@ -320,7 +347,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: true,
-    tags: ["Física", "Coloquio"],
+    tags: ["Coloquio", "Física"],
   },
   "relatividade-teoria-e-realidade-convite-a-fisica": {
     id: "relatividade-teoria-e-realidade-convite-a-fisica",
@@ -346,7 +373,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: false,
-    tags: ["Relatividade", "Física", "Convite Fisica"],
+    tags: ["Convite Fisica", "Física", "Relatividade"],
   },
   "opinion-distrust-and-discrimination-in-interacting-neural-ne": {
     id: "opinion-distrust-and-discrimination-in-interacting-neural-ne",
@@ -423,7 +450,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: true,
-    tags: ["Física", "Coloquio"],
+    tags: ["Coloquio", "Física"],
   },
   "emaranhamento-para-o-bem-ou-para-o-mal-seguranca-e-privacida": {
     id: "emaranhamento-para-o-bem-ou-para-o-mal-seguranca-e-privacida",
@@ -450,7 +477,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: false,
-    tags: ["Física Quântica", "Física", "Convite Fisica"],
+    tags: ["Convite Fisica", "Física", "Física Quântica"],
   },
   "multi-neutron-clusters-in-neutron-rich-nuclei-coloquio-ifusp": {
     id: "multi-neutron-clusters-in-neutron-rich-nuclei-coloquio-ifusp",
@@ -476,7 +503,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: true,
-    tags: ["Física", "Coloquio"],
+    tags: ["Coloquio", "Física"],
   },
   "poisson-electrodynamics-coloquio-do-dfma": {
     id: "poisson-electrodynamics-coloquio-do-dfma",
@@ -502,7 +529,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: true,
-    tags: ["Física", "Coloquio"],
+    tags: ["Coloquio", "Física"],
   },
   "as-redes-neurais-que-impulsionam-a-ia-convite-a-fisica": {
     id: "as-redes-neurais-que-impulsionam-a-ia-convite-a-fisica",
@@ -528,7 +555,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: false,
-    tags: ["Física", "Convite Fisica"],
+    tags: ["Convite Fisica", "Física"],
   },
   "ajustando-estados-quanticos-com-pressao-de-semimetais-de-wey": {
     id: "ajustando-estados-quanticos-com-pressao-de-semimetais-de-wey",
@@ -609,7 +636,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: true,
-    tags: ["Física", "Coloquio"],
+    tags: ["Coloquio", "Física"],
   },
   "little-bangs-o-principio-do-universo-no-laboratorio-convite": {
     id: "little-bangs-o-principio-do-universo-no-laboratorio-convite",
@@ -636,7 +663,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: false,
-    tags: ["Física", "Convite Fisica"],
+    tags: ["Convite Fisica", "Física"],
   },
   "mathematical-quantum-field-theory-from-principles-to-the-con": {
     id: "mathematical-quantum-field-theory-from-principles-to-the-con",
@@ -663,7 +690,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: true,
-    tags: ["Física", "Coloquio"],
+    tags: ["Coloquio", "Física"],
   },
   "beyond-n-point-functions-renormalized-eft-for-galaxy-cluster": {
     id: "beyond-n-point-functions-renormalized-eft-for-galaxy-cluster",
@@ -690,7 +717,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: true,
-    tags: ["Física", "Coloquio"],
+    tags: ["Coloquio", "Física"],
   },
   "gps-geometria-tempo-e-relatividade-no-bolso-convite-a-fisica": {
     id: "gps-geometria-tempo-e-relatividade-no-bolso-convite-a-fisica",
@@ -716,7 +743,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: false,
-    tags: ["Relatividade", "Física", "Convite Fisica"],
+    tags: ["Convite Fisica", "Física", "Relatividade"],
   },
   "the-standard-model-gauge-group-and-the-exceptional-jordan-al": {
     id: "the-standard-model-gauge-group-and-the-exceptional-jordan-al",
@@ -742,7 +769,7 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: true,
-    tags: ["Física", "Coloquio"],
+    tags: ["Coloquio", "Física"],
   },
   "mecanica-quantica-macroscopica-coloquio-ifusp": {
     id: "mecanica-quantica-macroscopica-coloquio-ifusp",
@@ -768,32 +795,6 @@ export const eventsData: Record<string, EventItem> = {
       anexoPdf: "",
     },
     destaque: true,
-    tags: ["Física", "Coloquio"],
-  },
-  "60-anos-da-sociedade-brasileira-de-fisica": {
-    id: "60-anos-da-sociedade-brasileira-de-fisica",
-    titulo: "60 anos da Sociedade Brasileira de Física",
-    tipo: "institucional",
-    data: "quinta-feira, 20 Agosto, 2026 - 08:30",
-    horario: "18:00",
-    local: {
-      nome: "Auditório Abrahão de Moraes",
-      formato: "hibrido",
-    },
-    palestrante: {
-      nome: "sua presença nesta celebração",
-      afiliacao: "",
-      titulacao: "",
-    },
-    resumo:
-      "Em nome da Sociedade Brasileira de Física (SBF), tenho o prazer de convidá-lo(a)s para participar da comemoração dos 60 anos da Sociedade Brasileira de Física.",
-    links: {
-      oficial:
-        "https://portal.if.usp.br/ifusp/pt-br/evento/60-anos-da-sociedade-brasileira-de-f%C3%ADsica",
-      transmissao: "https://www.youtube.com/@ifusp_oficial/streams",
-      anexoPdf: "",
-    },
-    destaque: false,
-    tags: ["Física", "Institucional"],
+    tags: ["Coloquio", "Física"],
   },
 };

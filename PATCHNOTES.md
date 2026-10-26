@@ -2,6 +2,88 @@
 
 ---
 
+## 🚀 Versão 6.7.0 (Build 21) — *Torre de Controle em Lote (Swipe M3), 4 Personas, Validação Docente LGPD & Seção Interativa*
+**Data de Lançamento:** 26 de Outubro de 2026  
+**Ambiente:** Web (Next.js 16+) & Android Mobile (Capacitor / Google Play Store)  
+**Licença:** GNU Affero General Public License v3 (AGPLv3)
+
+---
+
+### 🛡️ 1. Nova Torre de Controle `/admin` com Fila de Moderação em Swipe (M3)
+* **Gestos Móveis & Atalhos de Teclado:**
+  - Fila unificada de aprovação com suporte a gestos touch em `375px` via Framer Motion (Swipe Right para Aprovar, Swipe Left para Rejeitar).
+  - Atalhos no desktop: <kbd>A</kbd> (Aprovar), <kbd>R</kbd> (Rejeitar com justificativa opcional), <kbd>S</kbd> (Pular/Mover ao fim), <kbd>Ctrl+Z</kbd> (Desfazer).
+* **Staging Queue & Execução Atômica em Lote:**
+  - Persistência das marcações em `localStorage` (`hub_admin_swipe_staging_queue`) protegendo contra recarregamento acidental.
+  - Barra de ações flutuante M3 com botão "⚡ Executar Ações em Lote" via RPC PostgreSQL `batch_moderate_queue`.
+  - Interceptação de edições de postagens (`pending_edits`), denúncias, palavras geradoras, arestas de constelação, feedbacks de softwares e oportunidades.
+* **Expurgo Imediato de Arquivos (LGPD):**
+  - Remoção física definitiva do arquivo de comprovante docente no bucket `teacher-verifications` no exato momento da aprovação ou rejeição, preservando apenas metadados de auditoria no perfil.
+
+---
+
+### 🎓 2. Arquitetura de 4 Personas & Validação Docente
+* **4 Personas Oficiais LabDiv:**
+  - `aluno` (estudantes com e-mail `@usp.br` / subdomínios).
+  - `professor` (docentes IFUSP/USP validados com documento comprobatório).
+  - `curioso` (visitantes, comunidade externa e interessados em ciência).
+  - `iniciativa` (coletivos e projetos institucionais, restrito à Torre de Controle).
+* **Trava Anti-Escalação de Privilégios (PostgreSQL):**
+  - Trigger `protect_profile_privileges` impedindo que usuários sem papel de admin alterem diretamente sua persona para `professor` ou `iniciativa`, ou aprovem status docente.
+* **Interface de Perfil & Upload Seguro:**
+  - Redesenho do seletor de persona e categoria em `EditProfileModal.tsx`.
+  - Envio de comprovante oficial (PDF/JPG/PNG até 10MB) direcionado ao bucket privado criptografado `teacher-verifications`.
+
+---
+
+### 📑 3. Eixo 02 Informativo (`#F14343`) — Subseção "Interativo" Segmentada
+* **Navegação Adaptativa M3 (Segmented Buttons):**
+  - Aba **Curiosos:** Ações de extensão CCEx, cursos livres, visitas guiadas e Show da Física.
+  - Aba **Alunos:** Bolsas PUB, PIBIC, monitorias e oportunidades acadêmicas.
+  - Aba **Professores:** Editais de fomento e **Central de Formulários Operacionais do IFUSP** (Manutenção Predial/Cadeiras, Almoxarifado/Compras, Reserva de Salas Didáticas e DTI).
+* **Design System & Acessibilidade:**
+  - Padrões M3 Dual-Theme (Modo Claro `#F8FAFC`, Modo Escuro `#121212`), tipografia oficial `29LT Bukra Semi Wide Bold` e `Open Sans`, e skeletons para trocas fluidas de contexto.
+
+---
+
+### 🤖 4. Scraper Automático & Pipeline Unificado de Dados
+* **CLI Runner & Comandos NPM:**
+  - Criação do script `scripts/scrapers/run_pipeline.ts` com suporte a `--mode=audit` (dry-run) e `--mode=apply`.
+  - Novos atalhos `npm run scraper:audit` e `npm run scraper:pipeline`.
+  - Validação estrita via Zod para 100% dos dados de Departamentos, Docentes, Eventos, Iniciativas, Espaços e JúpiterWeb.
+
+---
+
+### 🎨 5. UI/UX: Cards Horizontais com Snap & Banners com Micro-Animações
+* **Restauração de Feeds Horizontais:**
+  - Tópicos de Conhecimento, Espaços Físicos, Canais de Divulgação, Iniciativas, Notícias, Agenda e Oportunidades restaurados para o formato horizontal com `snap-x snap-mandatory`, navegação lateral suave e compatibilidade mobile `375px`.
+* **Banners Dinâmicos:**
+  - "Como Usar o HUB" com borda gradiente cônica animada periódica (~7s) mapeando as cores oficiais dos 3 eixos (Azul `#0F4780`, Vermelho `#F14343`, Amarelo `#FFCC00`).
+  - "Aviso de Revisão Comunitária" com micro-animação pulsante e gradiente puro.
+* **Departamentos no Mobile:**
+  - Grid compacto de 2 colunas por 3 linhas em telas de `375px`.
+* **USP 101 (Dicas de Veteranos):**
+  - Feed vertical de dicas rápidas com filtro por instituto, contadores de upvote e preservação dos acervos históricos (Google Scholar e Sci-Hub).
+
+---
+
+### 🔒 6. Auditoria de Segurança Full-Stack (/audit-sec) & Notificações de Fila
+* **Blindagem RBAC & RLS:**
+  - Bloqueio de aprovação/rejeição de dicas e softwares acadêmicos exclusivamente para administradores/moderadores validados via `requireAdminOrModerator()` e `createAdminSupabase()`.
+  - Reforço de RLS nas tabelas `dicas_veteranos` e `academic_softwares` com `public.is_admin()`.
+  - Cabeçalhos de licença GNU AGPLv3 adicionados aos componentes pendentes.
+* **Sistema de Notificações de Moderação:**
+  - Monitoramento contínuo da fila com alertas por e-mail ao acumular > 5 itens, disparo duplo aos 10 itens e alarmes temporais para itens represados há mais de 10 e 30 minutos.
+
+---
+
+### 📱 7. Android Capacitor & Dual-Theme Nativo
+* **Splash Screen DayNight:**
+  - Criação de `values-night/colors.xml` e ajuste de `values/colors.xml` para transição nativa perfeita entre modo claro e escuro.
+  - Sincronização Capacitor (`npx cap sync android`) e validação completa no Gradle 9.6.1 / AGP 9.4.1.
+
+---
+
 ## 🚀 Versão 6.6.2 (Build 20) — *Governança de Acesso do Show de Física & Redirecionamento Oficial*
 **Data de Lançamento:** 19 de Outubro de 2026  
 **Ambiente:** Web (Next.js 14+) & Android Mobile (Capacitor / Google Play Store)  

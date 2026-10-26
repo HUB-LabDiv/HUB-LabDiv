@@ -13,7 +13,7 @@ import Image from 'next/image';
 
 export default function Loading() {
     return (
-        <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-white dark:bg-[#121212] transition-colors duration-300">
+        <div className="fixed inset-0 z-[99999] flex flex-col items-center justify-center bg-[#F8FAFC] dark:bg-[#121212] transition-colors duration-300">
             <div className="relative w-24 h-24 sm:w-32 sm:h-32 mb-6">
                 <Image
                     src="/icone-HUBLabDiv.svg"

@@ -69,7 +69,7 @@ jobs:
           echo "|---|---|---|" >> $GITHUB_STEP_SUMMARY
 
       # --- MÓDULO 1: DEPARTAMENTOS & DOCENTES ---
-      - name: [Módulo A] Sincronizar Departamentos & Docentes
+      - name: "[Módulo A] Sincronizar Departamentos & Docentes"
         id: sync_departments
         continue-on-error: true
         run: |
@@ -85,7 +85,7 @@ jobs:
           echo "| Departamentos & Docentes | ⚠️ Falha/Timeout | Servidor do portal IFUSP instável; mantida base local intacta |" >> $GITHUB_STEP_SUMMARY
 
       # --- MÓDULO 2: INICIATIVAS DE EXTENSÃO & CCEX ---
-      - name: [Módulo B] Sincronizar Iniciativas de Extensão
+      - name: "[Módulo B] Sincronizar Iniciativas de Extensão"
         id: sync_initiatives
         continue-on-error: true
         run: |
@@ -101,7 +101,7 @@ jobs:
           echo "| Iniciativas de Extensão | ⚠️ Falha/Timeout | Servidor CCEx instável; mantida base local intacta |" >> $GITHUB_STEP_SUMMARY
 
       # --- MÓDULO 3: EVENTOS, NOTÍCIAS & COLOQUIOS ---
-      - name: [Módulo C] Sincronizar Eventos & Notícias
+      - name: "[Módulo C] Sincronizar Eventos & Notícias"
         id: sync_events_news
         continue-on-error: true
         run: |
@@ -117,7 +117,7 @@ jobs:
           echo "| Eventos & Notícias | ⚠️ Falha/Timeout | Feed RSS/Portal instável; mantida base local intacta |" >> $GITHUB_STEP_SUMMARY
 
       # --- MÓDULO 4: ESPAÇOS, AUDITÓRIOS & LABORATÓRIOS DIDÁTICOS ---
-      - name: [Módulo D] Sincronizar Espaços & Auditórios
+      - name: "[Módulo D] Sincronizar Espaços & Auditórios"
         id: sync_spaces
         continue-on-error: true
         run: |
@@ -133,7 +133,7 @@ jobs:
           echo "| Espaços & Auditórios | ⚠️ Falha/Timeout | Página de espaços instável; mantida base local intacta |" >> $GITHUB_STEP_SUMMARY
 
       # --- MÓDULO 5: MATRIZES CURRICULARES & JÚPITERWEB ---
-      - name: [Módulo E] Sincronizar Matrizes Curriculares & JúpiterWeb
+      - name: "[Módulo E] Sincronizar Matrizes Curriculares & JúpiterWeb"
         id: sync_curriculum
         continue-on-error: true
         run: |

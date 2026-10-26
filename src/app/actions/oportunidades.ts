@@ -24,6 +24,7 @@ const submitOportunidadeSchema = z.object({
     data: z.string().max(80).optional().default(''),
     local: z.string().max(100).optional().default(''),
     link: z.string().url('URL inválida').or(z.literal('')).optional().default(''),
+    target_persona: z.enum(['curioso', 'aluno', 'professor', 'geral']).optional().default('geral')
 });
 
 export type SubmitOportunidadeInput = z.infer<typeof submitOportunidadeSchema>;
@@ -56,6 +57,9 @@ export async function submitOportunidade(rawInput: unknown) {
             data: data.data?.trim() || null,
             local: data.local?.trim() || null,
             link: data.link?.trim() || null,
+            target_persona: data.target_persona,
+            user_id: user.id,
+            status: 'pending' // Encaminhado para a moderação da Torre de Controle
         };
 
         const { error } = await supabase
@@ -67,8 +71,25 @@ export async function submitOportunidade(rawInput: unknown) {
             return { success: false, error: 'Falha ao registrar oportunidade no banco de dados.' };
         }
 
+        try {
+            const { sendAdminNotification } = await import('@/lib/notifications.server');
+            await sendAdminNotification({
+                type: 'hub_improvement',
+                title: `Nova oportunidade: "${data.titulo}"`,
+                details: data.descricao
+            });
+            const { checkModerationQueueThresholds } = await import('@/lib/moderation-queue-monitor');
+            void checkModerationQueueThresholds().catch(() => {});
+        } catch {
+            // Notificação não bloqueante
+        }
+
         revalidatePath('/gcif/interativo');
-        return { success: true };
+        revalidatePath('/admin');
+        return { 
+            success: true,
+            message: 'Oportunidade enviada para moderação com sucesso!' 
+        };
     } catch (err: any) {
         console.error('Erro inesperado ao cadastrar oportunidade:', err);
         return { success: false, error: err.message || 'Erro inesperado no servidor.' };

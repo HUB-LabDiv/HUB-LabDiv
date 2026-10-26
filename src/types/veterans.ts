@@ -46,6 +46,9 @@ export interface VeteransTip {
     upvotes: number;
     status: TipStatus | string;
     created_at: string;
+    url?: string;
+    urlLabel?: string;
+    is_legacy?: boolean;
 }
 
 export interface CreateTipDTO {

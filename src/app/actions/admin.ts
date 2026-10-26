@@ -17,6 +17,8 @@ import { createAdminSupabase } from '@/lib/supabase/admin';
 import { createAdminToken, verifyAdminToken, AdminRole } from '@/lib/auth/admin-token';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
+import { detectFacultyMember } from '@/lib/facultyDetector';
+import { checkModerationQueueThresholds } from '@/lib/moderation-queue-monitor';
 
 const BulkActionSchema = z.object({
     submission_ids: z.array(z.string().uuid()).min(1, "Selecione ao menos um item"),
@@ -299,6 +301,533 @@ export async function getAdminSessionRole(): Promise<{ role: string | null }> {
     }
 
     return { role: null };
+}
+
+const QueueDecisionSchema = z.object({
+    itemId: z.string().uuid(),
+    itemType: z.enum([
+        'submission',
+        'submission_edit',
+        'profile',
+        'profile_edit',
+        'teacher_verification',
+        'comment',
+        'software',
+        'software_feedback',
+        'oportunidade',
+        'dica',
+        'micro_article',
+        'pergunta',
+        'palavra_geradora',
+        'constelacao_edge',
+        'challenge_submission',
+        'wiki_proposal',
+        'report'
+    ]),
+    decision: z.enum(['approve', 'reject']),
+    feedback: z.string().optional(),
+    proofPath: z.string().optional(),
+    editedPayload: z.any().optional()
+});
+
+const BatchModerateQueueSchema = z.array(QueueDecisionSchema);
+
+/**
+ * ⚡ Executa a moderação em lote atômica na Torre de Controle
+ * Processa a Swipe Staging Queue via RPC e realiza expurgo físico de arquivos (LGPD)
+ */
+export async function executeBatchModeration(actions: z.infer<typeof QueueDecisionSchema>[]) {
+    const auth = await requireAdminOrModerator();
+    if (!auth.authorized) {
+        return { success: false, error: auth.error };
+    }
+
+    const parsed = BatchModerateQueueSchema.safeParse(actions);
+    if (!parsed.success) {
+        return { success: false, error: parsed.error.issues[0]?.message || 'Ações inválidas na fila.' };
+    }
+
+    const adminSupabase = createAdminSupabase();
+
+    // 1. Executa a RPC transacional no banco
+    const rpcPayload = parsed.data.map(a => ({
+        item_id: a.itemId,
+        item_type: a.itemType,
+        decision: a.decision,
+        feedback: a.feedback || null
+    }));
+
+    const { data: rpcResult, error: rpcError } = await adminSupabase.rpc('batch_moderate_queue', {
+        actions: rpcPayload
+    });
+
+    if (rpcError) {
+        console.warn('[Torre de Controle] RPC batch_moderate_queue indisponível ou com erro, aplicando fallback resiliente:', rpcError);
+        // Fallback direto via Supabase Client para garantir execução mesmo antes da migration
+        for (const item of parsed.data) {
+            try {
+                if (item.itemType === 'profile') {
+                    const isPromo = item.feedback === 'promote_professor' || item.editedPayload?.promote_to_professor;
+                    await adminSupabase.from('profiles').update({
+                        review_status: item.decision === 'approve' ? 'approved' : 'rejected',
+                        pending_edits: null,
+                        ...(item.decision === 'approve' && isPromo ? { 
+                            persona: 'professor', 
+                            teacher_verification_status: 'approved', 
+                            verified_at: new Date().toISOString() 
+                        } : {})
+                    }).eq('id', item.itemId);
+                } else if (item.itemType === 'submission') {
+                    await adminSupabase.from('submissions').update({
+                        status: item.decision === 'approve' ? 'aprovado' : 'rejeitado',
+                        admin_feedback: item.feedback || null
+                    }).eq('id', item.itemId);
+                } else if (item.itemType === 'submission_edit') {
+                    if (item.decision === 'approve') {
+                        const { data: sub } = await adminSupabase.from('submissions').select('pending_edits').eq('id', item.itemId).single();
+                        if (sub?.pending_edits) {
+                            await adminSupabase.from('submissions').update({
+                                ...sub.pending_edits,
+                                pending_edits: null
+                            }).eq('id', item.itemId);
+                        }
+                    } else {
+                        await adminSupabase.from('submissions').update({ pending_edits: null }).eq('id', item.itemId);
+                    }
+                } else if (item.itemType === 'profile_edit') {
+                    if (item.decision === 'approve') {
+                        const { data: prof } = await adminSupabase.from('profiles').select('pending_edits').eq('id', item.itemId).single();
+                        if (prof?.pending_edits) {
+                            await adminSupabase.from('profiles').update({
+                                ...prof.pending_edits,
+                                pending_edits: null,
+                                review_status: 'approved'
+                            }).eq('id', item.itemId);
+                        }
+                    } else {
+                        await adminSupabase.from('profiles').update({ pending_edits: null }).eq('id', item.itemId);
+                    }
+                } else if (item.itemType === 'teacher_verification') {
+                    await adminSupabase.from('profiles').update({
+                        persona: item.decision === 'approve' ? 'professor' : undefined,
+                        teacher_verification_status: item.decision === 'approve' ? 'approved' : 'rejected',
+                        verified_at: new Date().toISOString()
+                    }).eq('id', item.itemId);
+                } else if (item.itemType === 'comment') {
+                    await adminSupabase.from('comments').update({
+                        status: item.decision === 'approve' ? 'aprovado' : 'rejeitado'
+                    }).eq('id', item.itemId);
+                } else if (item.itemType === 'oportunidade') {
+                    await adminSupabase.from('oportunidades').update({
+                        status: item.decision === 'approve' ? 'approved' : 'rejected'
+                    }).eq('id', item.itemId);
+                } else if (item.itemType === 'software') {
+                    await adminSupabase.from('academic_softwares').update({
+                        status: item.decision === 'approve' ? 'aprovado' : 'rejeitado'
+                    }).eq('id', item.itemId);
+                } else if (item.itemType === 'software_feedback') {
+                    await adminSupabase.from('software_feedbacks').update({
+                        status: item.decision === 'approve' ? 'approved' : 'rejected'
+                    }).eq('id', item.itemId);
+                } else if (item.itemType === 'dica') {
+                    await adminSupabase.from('dicas_veteranos').update({
+                        status: item.decision === 'approve' ? 'approved' : 'rejected'
+                    }).eq('id', item.itemId);
+                } else if (item.itemType === 'micro_article') {
+                    await adminSupabase.from('micro_articles').update({
+                        status: item.decision === 'approve' ? 'approved' : 'rejected'
+                    }).eq('id', item.itemId);
+                } else if (item.itemType === 'pergunta') {
+                    await adminSupabase.from('perguntas').update({
+                        status: item.decision === 'approve' ? 'respondida' : 'rejeitada'
+                    }).eq('id', item.itemId);
+                } else if (item.itemType === 'palavra_geradora') {
+                    if (item.decision === 'approve') {
+                        await adminSupabase.from('palavras_geradoras').update({ is_pending: false }).eq('id', item.itemId);
+                    } else {
+                        await adminSupabase.from('palavras_geradoras').delete().eq('id', item.itemId);
+                    }
+                } else if (item.itemType === 'constelacao_edge') {
+                    if (item.decision === 'approve') {
+                        await adminSupabase.from('constelacao_edges').update({ is_pending: false }).eq('id', item.itemId);
+                    } else {
+                        await adminSupabase.from('constelacao_edges').delete().eq('id', item.itemId);
+                    }
+                } else if (item.itemType === 'report') {
+                    await adminSupabase.from('reports').update({
+                        status: item.decision === 'approve' ? 'resolved' : 'dismissed'
+                    }).eq('id', item.itemId);
+                }
+            } catch (fallbackErr) {
+                console.error(`[Torre de Controle Fallback] Erro ao moderar item ${item.itemId}:`, fallbackErr);
+            }
+        }
+    }
+
+    // 2. Expurgo Físico no Storage (LGPD) para Teacher Verifications
+    const teacherVerifications = parsed.data.filter(a => a.itemType === 'teacher_verification');
+    for (const tv of teacherVerifications) {
+        try {
+            let path = tv.proofPath;
+            if (!path) {
+                const { data: profile } = await adminSupabase
+                    .from('profiles')
+                    .select('teacher_proof_path')
+                    .eq('id', tv.itemId)
+                    .single();
+                path = profile?.teacher_proof_path;
+            }
+
+            if (path) {
+                await adminSupabase.storage.from('teacher-verifications').remove([path]);
+                await adminSupabase.from('profiles').update({ teacher_proof_path: null }).eq('id', tv.itemId);
+                console.log(`[LGPD Expurgo] Comprovante docente deletado com sucesso: ${path}`);
+            }
+        } catch (storageErr) {
+            console.error('[LGPD Expurgo] Erro ao remover comprovante do storage:', storageErr);
+        }
+    }
+
+    // 3. Revalidações das rotas do ecossistema
+    revalidatePath('/admin');
+    revalidatePath('/admin/moderacao');
+    revalidatePath('/admin/profiles');
+    revalidatePath('/gcif/interativo');
+    revalidatePath('/lab');
+    revalidatePath('/');
+
+    return { 
+        success: true, 
+        result: rpcResult 
+    };
+}
+
+/**
+ * 🛰️ Carrega o feed unificado de todas as pendências da Torre de Controle
+ */
+export async function fetchUnifiedModerationQueue(): Promise<{ success: boolean; items: any[]; error?: string }> {
+    const auth = await requireAdminOrModerator();
+    if (!auth.authorized) {
+        return { success: false, items: [], error: auth.error };
+    }
+
+    const adminSupabase = createAdminSupabase();
+
+    try {
+        const [
+            subsRes,
+            subEditsRes,
+            profEditsRes,
+            pendingProfilesRes,
+            teacherVerifsRes,
+            commentsRes,
+            softwaresRes,
+            feedbacksRes,
+            oportunidadesRes,
+            dicasRes,
+            dropsRes,
+            perguntasRes,
+            palavrasRes,
+            constelacaoEdgesRes,
+            challengesRes,
+            propostasRes,
+            reportsRes
+        ] = await Promise.all([
+            adminSupabase.from('submissions').select('id, title, authors, created_at, category').eq('status', 'pendente').limit(30),
+            adminSupabase.from('submissions').select('id, title, authors, pending_edits, created_at').not('pending_edits', 'is', null).limit(20),
+            adminSupabase.from('profiles').select('id, full_name, email, pending_edits, created_at').not('pending_edits', 'is', null).limit(20),
+            adminSupabase.from('profiles').select('id, full_name, email, is_usp_member, user_category, persona, institute, course, created_at').eq('review_status', 'pending').limit(30),
+            adminSupabase.from('profiles').select('id, full_name, email, teacher_proof_path, created_at').eq('teacher_verification_status', 'pending').limit(20),
+            adminSupabase.from('comments').select('id, author_name, content, created_at, submission_id').eq('status', 'pendente').limit(30),
+            adminSupabase.from('academic_softwares').select('id, title, author_name, created_at, category').eq('status', 'pendente').limit(20),
+            adminSupabase.from('software_feedbacks').select('id, comment, feedback_type, created_at, software_id').eq('status', 'pending').limit(20),
+            adminSupabase.from('oportunidades').select('id, titulo, descricao, tipo, created_at').eq('status', 'pending').limit(20),
+            adminSupabase.from('dicas_veteranos').select('id, titulo, conteudo, created_at').eq('status', 'pending').limit(20),
+            adminSupabase.from('micro_articles').select('id, content, created_at, author_id').eq('status', 'pending').limit(20),
+            adminSupabase.from('perguntas').select('id, pergunta, nome_autor, created_at').eq('status', 'pendente').limit(20),
+            adminSupabase.from('palavras_geradoras').select('id, palavra, created_at').eq('is_pending', true).limit(20),
+            adminSupabase.from('constelacao_edges').select('id, termo_origem, termo_destino, peso, created_at').eq('is_pending', true).limit(20),
+            adminSupabase.from('challenge_submissions').select('id, challenge_id, researcher_id, status, created_at').eq('status', 'pending').limit(20),
+            adminSupabase.from('wiki_topic_proposals').select('id, title, motivation, created_at').eq('status', 'pendente').limit(20),
+            adminSupabase.from('reports').select('id, reason, item_type, created_at').eq('status', 'pending').limit(20)
+        ]);
+
+        const items: any[] = [];
+
+        // 1. Submissões Novas (Informativo)
+        (subsRes.data || []).forEach(s => {
+            items.push({
+                id: s.id,
+                type: 'submission',
+                title: s.title || 'Nova Submissão',
+                subtitle: `Categoria: ${s.category || 'Geral'}`,
+                authorName: s.authors || 'Autor Anônimo',
+                createdAt: s.created_at,
+                axis: 'informativo'
+            });
+        });
+
+        // 2. Edições de Submissão (Informativo)
+        (subEditsRes.data || []).forEach(s => {
+            items.push({
+                id: s.id,
+                type: 'submission_edit',
+                title: `Edição: ${s.title}`,
+                subtitle: 'Alteração de post aguardando revisão',
+                authorName: s.authors || 'Autor',
+                details: s.pending_edits,
+                createdAt: s.created_at,
+                axis: 'informativo'
+            });
+        });
+
+        // 3. Verificação de Docentes (Personas)
+        (teacherVerifsRes.data || []).forEach(t => {
+            items.push({
+                id: t.id,
+                type: 'teacher_verification',
+                title: `Validação Docente: ${t.full_name || 'Professor'}`,
+                subtitle: t.email,
+                authorName: t.full_name || 'Docente',
+                authorEmail: t.email,
+                proofPath: t.teacher_proof_path,
+                createdAt: t.created_at,
+                axis: 'personas'
+            });
+        });
+
+        // 4. Edições de Perfil (Personas)
+        (profEditsRes.data || []).forEach(p => {
+            items.push({
+                id: p.id,
+                type: 'profile_edit',
+                title: `Edição de Perfil: ${p.full_name || p.email}`,
+                subtitle: 'Atualização de dados cadastrais',
+                authorName: p.full_name || p.email,
+                details: p.pending_edits,
+                createdAt: p.created_at,
+                axis: 'personas'
+            });
+        });
+
+        // 4.1 Novos Perfis Pendentes (Personas)
+        (pendingProfilesRes.data || []).forEach(p => {
+            const facultyMatch = detectFacultyMember(p.email, p.full_name);
+            items.push({
+                id: p.id,
+                type: 'profile',
+                title: facultyMatch 
+                    ? `🎓 Docente Detectado: ${p.full_name || facultyMatch.researcher.nome}`
+                    : `Novo Perfil: ${p.full_name || p.email || 'Usuário'}`,
+                subtitle: facultyMatch 
+                    ? `Docente do IFUSP (${facultyMatch.department.sigla} - ${facultyMatch.department.nome}). Sugestão: Promover a Professor.`
+                    : `E-mail: ${p.email} • Categoria: ${p.user_category || p.persona || 'Curioso'} • ${p.is_usp_member ? 'Membro USP' : 'Externo'}`,
+                authorName: p.full_name || p.email,
+                authorEmail: p.email,
+                facultyMatch,
+                createdAt: p.created_at,
+                axis: 'personas'
+            });
+        });
+
+        // 5. Comentários (Comunidade)
+        (commentsRes.data || []).forEach(c => {
+            items.push({
+                id: c.id,
+                type: 'comment',
+                title: 'Novo Comentário',
+                subtitle: c.content,
+                authorName: c.author_name || 'Comentarista',
+                createdAt: c.created_at,
+                axis: 'comunidade'
+            });
+        });
+
+        // 6. Softwares Acadêmicos (Ferramentas)
+        (softwaresRes.data || []).forEach(sw => {
+            items.push({
+                id: sw.id,
+                type: 'software',
+                title: sw.title,
+                subtitle: `Software - ${sw.category}`,
+                authorName: sw.author_name || 'Desenvolvedor',
+                createdAt: sw.created_at,
+                axis: 'ferramentas'
+            });
+        });
+
+        // 7. Feedbacks de Software (Ferramentas)
+        (feedbacksRes.data || []).forEach(fb => {
+            items.push({
+                id: fb.id,
+                type: 'software_feedback',
+                title: `Relato de Teste: ${fb.feedback_type || 'Geral'}`,
+                subtitle: fb.comment,
+                authorName: 'Usuário',
+                createdAt: fb.created_at,
+                axis: 'ferramentas'
+            });
+        });
+
+        // 8. Oportunidades (Informativo)
+        (oportunidadesRes.data || []).forEach(op => {
+            items.push({
+                id: op.id,
+                type: 'oportunidade',
+                title: op.titulo,
+                subtitle: `Tipo: ${op.tipo} - ${op.descricao}`,
+                authorName: 'Comunidade',
+                createdAt: op.created_at,
+                axis: 'informativo'
+            });
+        });
+
+        // 9. Dicas de Veteranos (Comunidade)
+        (dicasRes.data || []).forEach(d => {
+            items.push({
+                id: d.id,
+                type: 'dica',
+                title: d.titulo,
+                subtitle: d.conteudo,
+                authorName: 'Veterano',
+                createdAt: d.created_at,
+                axis: 'comunidade'
+            });
+        });
+
+        // 10. Drops / Micro-artigos (Comunidade)
+        (dropsRes.data || []).forEach(dr => {
+            items.push({
+                id: dr.id,
+                type: 'micro_article',
+                title: 'Drop da Comunidade',
+                subtitle: dr.content,
+                authorName: 'Membro',
+                createdAt: dr.created_at,
+                axis: 'comunidade'
+            });
+        });
+
+        // 11. Perguntas a um Cientista (Informativo)
+        (perguntasRes.data || []).forEach(pq => {
+            items.push({
+                id: pq.id,
+                type: 'pergunta',
+                title: 'Dúvida da Comunidade',
+                subtitle: pq.pergunta,
+                authorName: pq.nome_autor || 'Curioso',
+                createdAt: pq.created_at,
+                axis: 'informativo'
+            });
+        });
+
+        // 12. Palavras Geradoras (Comunidade)
+        (palavrasRes.data || []).forEach(pal => {
+            items.push({
+                id: pal.id,
+                type: 'palavra_geradora',
+                title: `Termo Científico: ${pal.palavra}`,
+                subtitle: 'Sugestão para o Glossário',
+                authorName: 'Comunidade',
+                createdAt: pal.created_at,
+                axis: 'comunidade'
+            });
+        });
+
+        // 12.1 Constelações Linguísticas (Comunidade)
+        (constelacaoEdgesRes.data || []).forEach(edge => {
+            items.push({
+                id: edge.id,
+                type: 'constelacao_edge',
+                title: `Nova Conexão: ${edge.termo_origem} ↔ ${edge.termo_destino}`,
+                subtitle: `Conexão semântica sugerida (Peso: ${edge.peso})`,
+                authorName: 'Membro da Comunidade',
+                createdAt: edge.created_at,
+                axis: 'comunidade'
+            });
+        });
+
+        // 12.2 Desafios da Arena (Ferramentas)
+        (challengesRes.data || []).forEach(ch => {
+            items.push({
+                id: ch.id,
+                type: 'challenge_submission',
+                title: 'Submissão de Desafio da Arena',
+                subtitle: 'Código/solução submetida para avaliação',
+                authorName: 'Participante da Arena',
+                createdAt: ch.created_at,
+                axis: 'ferramentas'
+            });
+        });
+
+        // 13. Propostas Wiki (Informativo)
+        (propostasRes.data || []).forEach(pr => {
+            items.push({
+                id: pr.id,
+                type: 'wiki_proposal',
+                title: `Proposta Wiki: ${pr.title}`,
+                subtitle: pr.motivation || 'Sem motivação',
+                authorName: 'Pesquisador',
+                createdAt: pr.created_at,
+                axis: 'informativo'
+            });
+        });
+
+        // 14. Denúncias e Reports (Informativo)
+        (reportsRes.data || []).forEach(rep => {
+            items.push({
+                id: rep.id,
+                type: 'report',
+                title: `Denúncia: ${rep.item_type}`,
+                subtitle: rep.reason,
+                authorName: 'Alerta da Comunidade',
+                createdAt: rep.created_at,
+                axis: 'informativo'
+            });
+        });
+
+        // Ordena tudo cronologicamente (mais antigos primeiro para resolução da fila)
+        items.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+        // Dispara monitoramento de limiares em background (sem bloquear o cliente)
+        void checkModerationQueueThresholds().catch(err => {
+            console.error('[Torre de Controle] Erro silencioso no monitor de fila:', err);
+        });
+
+        return { success: true, items };
+    } catch (err: any) {
+        console.error('[Torre de Controle] Erro ao buscar fila unificada:', err);
+        return { success: false, items: [], error: err.message };
+    }
+}
+
+/**
+ * 🔒 Gera URL assinada temporária para visualização de comprovante docente (LGPD)
+ */
+export async function getTeacherProofSignedUrl(path: string): Promise<{ success: boolean; url?: string; error?: string }> {
+    const auth = await requireAdminOrModerator();
+    if (!auth.authorized) {
+        return { success: false, error: auth.error };
+    }
+
+    if (!path) {
+        return { success: false, error: 'Caminho do arquivo inválido.' };
+    }
+
+    try {
+        const adminSupabase = createAdminSupabase();
+        const { data, error } = await adminSupabase.storage
+            .from('teacher-verifications')
+            .createSignedUrl(path, 60 * 15); // 15 minutos
+
+        if (error || !data?.signedUrl) {
+            return { success: false, error: error?.message || 'Erro ao gerar link seguro para o arquivo.' };
+        }
+
+        return { success: true, url: data.signedUrl };
+    } catch (err: any) {
+        return { success: false, error: err.message || 'Erro ao obter comprovante.' };
+    }
 }
 
 

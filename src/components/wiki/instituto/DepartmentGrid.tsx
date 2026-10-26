@@ -33,42 +33,42 @@ const departments = [
         id: 'FAP',
         name: 'Física Aplicada',
         description: 'Desenvolvimento de tecnologias a partir de princípios físicos fundamentais.',
-        icon: <Cpu className="w-6 h-6" />,
+        Icon: Cpu,
         metrics: { researchers: 42, labs: 12 }
     },
     {
         id: 'FMT',
         name: 'Física dos Materiais',
         description: 'Estudo da estrutura e propriedades macroscópicas da matéria.',
-        icon: <Layers className="w-6 h-6" />,
+        Icon: Layers,
         metrics: { researchers: 38, labs: 15 }
     },
     {
         id: 'FEP',
         name: 'Física Experimental',
         description: 'Investigação empírica dos fenômenos físicos em diversas escalas.',
-        icon: <Microscope className="w-6 h-6" />,
+        Icon: Microscope,
         metrics: { researchers: 55, labs: 20 }
     },
     {
         id: 'FGE',
         name: 'Física Geral',
         description: 'Fundamentos da física clássica e moderna e ensino de física.',
-        icon: <Globe className="w-6 h-6" />,
+        Icon: Globe,
         metrics: { researchers: 30, labs: 8 }
     },
     {
         id: 'DFMA',
         name: 'Física Matemática',
         description: 'Pesquisa fundamentada em cosmologia, teoria quântica de campos e informação quântica.',
-        icon: <Atom className="w-6 h-6" />,
+        Icon: Atom,
         metrics: { researchers: 14, labs: 0 }
     },
     {
         id: 'FNC',
         name: 'Física Nuclear',
         description: 'Estudo das propriedades e interações dos núcleos atômicos.',
-        icon: <Magnet className="w-6 h-6" />,
+        Icon: Magnet,
         metrics: { researchers: 35, labs: 10 }
     }
 ];
@@ -76,18 +76,26 @@ const departments = [
 export function DepartmentGrid() {
     const { trackEvent } = useTelemetry();
     const { setReportModalOpen } = useNavigationStore();
+
     return (
-        <section className="py-12">
-            <div className="flex items-center gap-3 mb-8">
-               <div className="h-[2px] w-8 bg-brand-blue"></div>
-               <h2 className="text-xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter">Departamentos</h2>
+        <section className="py-6 sm:py-10 md:py-12">
+            <div className="flex items-center gap-2.5 sm:gap-3 mb-4 sm:mb-6 md:mb-8">
+               <div className="h-[2px] w-6 sm:w-8 bg-brand-blue"></div>
+               <h2 className="text-lg sm:text-xl font-black text-gray-900 dark:text-white italic uppercase tracking-tighter font-bukra">
+                   Departamentos
+               </h2>
+               <span className="text-[10px] sm:text-xs font-black uppercase tracking-wider text-gray-500 dark:text-gray-400 font-bukra px-2 py-0.5 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10">
+                   IFUSP (6)
+               </span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* Grid: 2 colunas no mobile (3 linhas) e 2 a 3 colunas em telas maiores */}
+            <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 md:gap-6">
                 {departments.map((dept, idx) => {
                     const deptData = institutoData[dept.id.toLowerCase()];
                     const researchersCount = deptData ? deptData.pesquisadores.length : dept.metrics.researchers;
                     const labsCount = deptData ? deptData.laboratorios.length : dept.metrics.labs;
+                    const Icon = dept.Icon;
 
                     return (
                         <Link 
@@ -96,53 +104,69 @@ export function DepartmentGrid() {
                             className="block group"
                             onClick={() => trackEvent('DEPT_FILTER', { dept_id: dept.id, dept_name: dept.name })}
                         >
-                             <motion.div
-                                initial={{ opacity: 0, y: 20 }}
+                            <motion.div
+                                initial={{ opacity: 0, y: 15 }}
                                 whileInView={{ opacity: 1, y: 0 }}
                                 viewport={{ once: true }}
-                                transition={{ delay: idx * 0.1 }}
-                                className="glass-card p-6 rounded-[32px] border-gray-100 dark:border-white/5 hover:border-brand-blue/30 bg-white/40 dark:bg-[#1E1E1E]/40 hover:bg-gray-100 dark:hover:bg-[#1E1E1E]/60 transition-all duration-500 cursor-pointer h-full"
+                                transition={{ delay: idx * 0.05 }}
+                                className="glass-card p-3 sm:p-5 md:p-6 rounded-2xl sm:rounded-[28px] md:rounded-[32px] border-gray-100 dark:border-white/5 hover:border-brand-blue/30 bg-white/40 dark:bg-[#1E1E1E]/40 hover:bg-gray-100 dark:hover:bg-[#1E1E1E]/60 transition-all duration-300 cursor-pointer h-full flex flex-col justify-between active:scale-[0.98]"
                             >
-                                <div className="flex items-center gap-4 mb-4">
-                                    <div className="p-3 rounded-2xl bg-gray-100 dark:bg-white/5 group-hover:bg-brand-blue/20 transition-colors">
-                                        <span className="text-gray-500 dark:text-gray-400 group-hover:text-brand-blue transition-colors">
-                                            {dept.icon}
-                                        </span>
+                                <div>
+                                    {/* Top line: Icon + Sigla + Report Flag */}
+                                    <div className="flex items-center justify-between gap-2 mb-2 sm:mb-3">
+                                        <div className="flex items-center gap-2 min-w-0">
+                                            <div className="p-1.5 sm:p-2.5 md:p-3 rounded-xl sm:rounded-2xl bg-gray-100 dark:bg-white/5 group-hover:bg-brand-blue/20 transition-colors shrink-0">
+                                                <span className="text-gray-500 dark:text-gray-400 group-hover:text-brand-blue transition-colors">
+                                                    <Icon className="size-4 sm:size-5 md:size-6" />
+                                                </span>
+                                            </div>
+                                            <span className="text-[10px] sm:text-xs font-black text-brand-blue/80 dark:text-blue-300 uppercase tracking-wider font-bukra truncate">
+                                                {dept.id}
+                                            </span>
+                                        </div>
+
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                setReportModalOpen(true, 'outro', { id: dept.id, titulo: dept.name, local: 'Departamento' });
+                                            }}
+                                            title="Sugerir Alteração / Reportar Erro"
+                                            className="text-gray-400 hover:text-brand-red transition-colors p-1 sm:p-1.5 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 shrink-0"
+                                        >
+                                            <Flag className="size-3 sm:size-3.5" />
+                                        </button>
                                     </div>
-                                    <div className="flex-1">
-                                        <h3 className="text-lg font-bold text-gray-900 dark:text-white leading-tight underline-offset-4 group-hover:underline group-hover:text-brand-blue transition-all">{dept.name}</h3>
-                                        <span className="text-[10px] font-black text-brand-blue/60 uppercase tracking-widest">{dept.id}</span>
-                                    </div>
-                                    <button
-                                        onClick={(e) => {
-                                            e.preventDefault();
-                                            e.stopPropagation();
-                                            setReportModalOpen(true, 'outro', { id: dept.id, titulo: dept.name, local: 'Departamento' });
-                                        }}
-                                        title="Sugerir Alteração / Reportar Erro"
-                                        className="text-gray-500 hover:text-brand-red transition-colors p-2"
-                                    >
-                                        <Flag size={14} />
-                                    </button>
+
+                                    {/* Department Name */}
+                                    <h3 className="text-xs sm:text-base md:text-lg font-bold text-gray-900 dark:text-white leading-tight underline-offset-4 group-hover:underline group-hover:text-brand-blue transition-all font-bukra line-clamp-1 mb-1 sm:mb-2">
+                                        {dept.name}
+                                    </h3>
+
+                                    {/* Description */}
+                                    <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 dark:text-gray-400 leading-tight sm:leading-relaxed mb-3 sm:mb-5 line-clamp-2 h-7 sm:h-9 md:h-11 overflow-hidden font-open-sans">
+                                        {dept.description}
+                                    </p>
                                 </div>
 
-                                <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed mb-6 h-12 overflow-hidden">
-                                    {dept.description}
-                                </p>
-
-                                <div className="flex flex-wrap items-center gap-2">
-                                    <div className="px-3 py-1.5 rounded-xl bg-brand-red/10 border border-brand-red/20">
-                                        <span className="text-[10px] font-black text-brand-red flex items-center gap-1.5">
-                                            <div className="size-1 bg-brand-red rounded-full"></div>
-                                            {researchersCount} PESQUISADORES
+                                {/* Metrics Badges (Compact on mobile) */}
+                                <div className="flex flex-wrap items-center gap-1 sm:gap-2 pt-1 border-t border-gray-100/60 dark:border-white/5">
+                                    <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl bg-brand-red/10 border border-brand-red/20">
+                                        <span className="text-[8px] sm:text-[10px] font-black text-brand-red flex items-center gap-1 font-bukra tracking-tight">
+                                            <div className="size-1 bg-brand-red rounded-full shrink-0"></div>
+                                            <span>{researchersCount}</span>
+                                            <span className="hidden sm:inline">PESQUISADORES</span>
+                                            <span className="sm:hidden">PESQ.</span>
                                         </span>
                                     </div>
                                     
                                     {labsCount > 0 && (
-                                        <div className="px-3 py-1.5 rounded-xl bg-brand-yellow/10 border border-brand-yellow/20">
-                                            <span className="text-[10px] font-black text-brand-yellow flex items-center gap-1.5">
-                                                <div className="size-1 bg-brand-yellow rounded-full"></div>
-                                                {labsCount} LABORATÓRIOS
+                                        <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-lg sm:rounded-xl bg-brand-yellow/10 border border-brand-yellow/20">
+                                            <span className="text-[8px] sm:text-[10px] font-black text-amber-700 dark:text-brand-yellow flex items-center gap-1 font-bukra tracking-tight">
+                                                <div className="size-1 bg-amber-500 dark:bg-brand-yellow rounded-full shrink-0"></div>
+                                                <span>{labsCount}</span>
+                                                <span className="hidden sm:inline">LABORATÓRIOS</span>
+                                                <span className="sm:hidden">LABS</span>
                                             </span>
                                         </div>
                                     )}

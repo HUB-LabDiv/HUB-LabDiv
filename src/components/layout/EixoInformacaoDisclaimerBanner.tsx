@@ -72,41 +72,61 @@ export function EixoInformacaoDisclaimerBanner() {
     };
 
     return (
-        <div className="w-[calc(100%-4.5rem)] md:w-full mx-auto md:mx-0 mb-3 sm:mb-4 bg-white/85 dark:bg-[#1E1E1E]/90 border border-brand-yellow/40 dark:border-brand-yellow/30 rounded-2xl shadow-lg backdrop-blur-2xl transition-all animate-in fade-in slide-in-from-top-2 duration-300 overflow-hidden">
-            <div className="px-3 sm:px-5 py-2 sm:py-2.5 flex flex-col xl:flex-row xl:items-center justify-between gap-2 sm:gap-3 text-xs">
-                {/* Lado Esquerdo: Ícone + Título + Mensagem Explicativa */}
-                <div className="flex items-start sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                    <span className="flex items-center justify-center size-6 sm:size-7 rounded-lg sm:rounded-xl bg-brand-yellow/15 text-brand-yellow border border-brand-yellow/30 shrink-0 shadow-sm mt-0.5 sm:mt-0">
-                        <AlertTriangle className="size-3.5 sm:size-4" />
-                    </span>
-                    <div className="flex flex-col xl:flex-row xl:items-center gap-1 xl:gap-2.5 min-w-0">
-                        <span className="font-bukra font-bold text-[10px] sm:text-xs text-brand-yellow tracking-wide uppercase shrink-0">
-                            Aviso de Revisão Comunitária
+        <div className="w-[calc(100%-4.5rem)] md:w-full mx-auto md:mx-0 mb-3 sm:mb-4 relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500/15 via-red-500/10 to-amber-500/15 dark:from-amber-500/20 dark:via-red-500/15 dark:to-amber-500/20 border-2 border-amber-400/80 dark:border-amber-400/70 shadow-[0_0_25px_rgba(255,204,0,0.22)] backdrop-blur-2xl transition-all animate-in fade-in slide-in-from-top-2 duration-300">
+            {/* Faixa decorativa superior com gradiente animado */}
+            <div className="h-1 w-full bg-gradient-to-r from-[#FFCC00] via-[#F14343] to-[#FFCC00] animate-pulse" />
+
+            <div className="px-3.5 sm:px-5 py-3 sm:py-3.5 flex flex-col xl:flex-row xl:items-center justify-between gap-3 text-xs">
+                {/* Lado Esquerdo: Ícone Grande com Cores dos Eixos + Título + Mensagem Explicativa */}
+                <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                    <div className="relative shrink-0 mt-0.5 sm:mt-0">
+                        <span className="flex items-center justify-center size-10 sm:size-11 rounded-2xl bg-gradient-to-br from-[#FFCC00] to-[#F14343] text-gray-950 shadow-md shadow-amber-500/40 border border-white/20">
+                            <AlertTriangle className="size-5 sm:size-6 text-gray-950 stroke-[2.5] animate-bounce" style={{ animationDuration: '2.5s' }} />
                         </span>
-                        <span className="text-gray-700 dark:text-gray-300 text-[11px] font-open-sans leading-snug">
-                            Todos os conteúdos do Eixo de Informação ainda carecem de revisão permanente. Aconselhamos checar a veracidade das informações com fontes oficiais da USP antes de repassá-las ou de tomar decisões que afetem sua graduação.
+                        <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F14343] opacity-75" />
+                            <span className="relative inline-flex rounded-full h-3 w-3 bg-[#F14343] border border-white dark:border-black" />
                         </span>
+                    </div>
+
+                    <div className="flex flex-col gap-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                            <span className="font-bukra font-black text-xs sm:text-sm text-amber-600 dark:text-[#FFCC00] tracking-wide uppercase">
+                                Aviso de Revisão Comunitária
+                            </span>
+                            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/15 border border-red-500/30 text-red-600 dark:text-red-400 font-mono text-[9px] font-black uppercase tracking-wider">
+                                <span className="size-1.5 rounded-full bg-red-500 animate-pulse" />
+                                Moderação Aberta
+                            </span>
+                        </div>
+                        <p className="text-gray-800 dark:text-gray-200 text-xs font-open-sans leading-relaxed">
+                            Todos os conteúdos do Eixo de Informação carecem de revisão permanente. Cheque a veracidade das informações com fontes oficiais da USP antes de repassá-las ou de tomar decisões acadêmicas.
+                        </p>
                     </div>
                 </div>
 
                 {/* Lado Direito: Ação de Report / Sugerir Correção + Fechar */}
-                <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 self-end xl:self-auto">
+                <div className="flex items-center gap-2 shrink-0 self-end xl:self-auto">
                     <button
                         onClick={handleReport}
-                        className="inline-flex items-center justify-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-xl bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-200 text-[9px] sm:text-[10px] font-black font-bukra uppercase tracking-wider border border-gray-200 dark:border-white/10 active:scale-95 transition-all cursor-pointer shadow-sm shrink-0"
+                        className="inline-flex items-center justify-center gap-1.5 px-3.5 sm:px-4 py-2 rounded-xl text-gray-950 text-[10px] sm:text-[11px] font-black font-bukra uppercase tracking-wider shadow-[0_4px_14px_rgba(241,67,67,0.35)] active:scale-95 transition-all cursor-pointer shrink-0 border-0 outline-none overflow-hidden hover:brightness-110"
+                        style={{
+                            background: 'linear-gradient(90deg, #F14343 0%, #F14343 35%, #FFCC00 100%)',
+                            backgroundRepeat: 'no-repeat'
+                        }}
                         title="Apontar erro ou sugerir revisão para este conteúdo"
                     >
-                        <ShieldAlert className="size-3 text-brand-yellow shrink-0" />
+                        <ShieldAlert className="size-4 text-gray-950 shrink-0" />
                         <span>Sugerir Correção</span>
                     </button>
 
                     <button
                         onClick={handleDismiss}
-                        className="p-1 sm:p-1.5 rounded-lg text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors shrink-0"
+                        className="p-1.5 rounded-xl text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white hover:bg-black/5 dark:hover:bg-white/10 transition-colors shrink-0 cursor-pointer"
                         title="Ocultar aviso de revisão"
                         aria-label="Fechar aviso de revisão"
                     >
-                        <X className="size-3.5" />
+                        <X className="size-4" />
                     </button>
                 </div>
             </div>

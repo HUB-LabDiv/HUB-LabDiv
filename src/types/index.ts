@@ -25,6 +25,9 @@ export interface HobbyCard {
     description?: string;
 }
 
+export type UserPersona = 'aluno' | 'professor' | 'curioso' | 'iniciativa';
+export type TeacherVerificationStatus = 'none' | 'pending' | 'approved' | 'rejected';
+
 export interface Profile {
     id: string;
     email: string;
@@ -70,6 +73,11 @@ export interface Profile {
     seeking_scholarship: boolean;
     interest_in_team: boolean;
     user_category: 'curioso' | 'licenciatura' | 'bacharelado' | 'pos_graduacao' | 'docente_pesquisador' | 'aluno_usp' | 'pesquisador' | 'fisica_medica' | 'outro_instituto';
+    persona: UserPersona;
+    teacher_proof_path?: string;
+    teacher_verification_status?: TeacherVerificationStatus;
+    verified_at?: string;
+    verified_by?: string;
     seeking_ic: boolean;
     seeking_assistant: boolean;
     ic_research_area?: string;
@@ -95,7 +103,6 @@ export interface Profile {
     guardian_email?: string;
     push_token?: string;
     created_at: string;
-
 }
 
 export interface Freshman {
@@ -148,6 +155,7 @@ export interface Submission {
     ai_suggested_alt?: string;
     ai_status?: 'pending' | 'processing' | 'completed' | 'error';
     ai_last_processed?: string;
+    pending_edits?: any;
     created_at: string;
 }
 
@@ -268,4 +276,47 @@ export type ThemeInstitution = 'ifusp' | 'ime' | 'iag' | 'igc' | 'io';
 export interface PersonalizacaoStoreState {
     institution: ThemeInstitution;
     setInstitution: (inst: ThemeInstitution) => void;
+}
+
+// 🛡️ TORRE DE CONTROLE & MODERAÇÃO UNIFICADA
+export type ModerationItemType = 
+    | 'submission'
+    | 'submission_edit'
+    | 'profile'
+    | 'profile_edit'
+    | 'teacher_verification'
+    | 'comment'
+    | 'software'
+    | 'software_feedback'
+    | 'oportunidade'
+    | 'dica'
+    | 'micro_article'
+    | 'pergunta'
+    | 'palavra_geradora'
+    | 'constelacao_edge'
+    | 'challenge_submission'
+    | 'wiki_proposal'
+    | 'report';
+
+export interface ModerationQueueItem {
+    id: string;
+    type: ModerationItemType;
+    title: string;
+    subtitle: string;
+    authorName: string;
+    authorEmail?: string;
+    createdAt: string;
+    details?: Record<string, any>;
+    proofPath?: string;
+    facultyMatch?: any;
+    axis: 'comunidade' | 'informativo' | 'ferramentas' | 'personas';
+}
+
+export interface QueueDecision {
+    itemId: string;
+    itemType: ModerationItemType;
+    decision: 'approve' | 'reject';
+    feedback?: string;
+    proofPath?: string;
+    editedPayload?: Record<string, any>;
 }

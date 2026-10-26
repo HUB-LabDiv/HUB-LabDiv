@@ -96,7 +96,10 @@ export async function GET(request: NextRequest) {
                 return conflictResponse;
             }
 
-            const profileUpdate: any = { is_usp_member: isUspDomain };
+            const profileUpdate: any = { 
+                is_usp_member: isUspDomain,
+                persona: isUspDomain ? 'aluno' : 'curioso'
+            };
             if (categoryHint) {
                 profileUpdate.user_category = categoryHint;
             }

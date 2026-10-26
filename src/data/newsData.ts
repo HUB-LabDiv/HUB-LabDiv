@@ -15,6 +15,60 @@ import { NewsItem } from "@/types/news";
 
 export const newsData: NewsItem[] = [
   {
+    id: "nickelzinc-catalysts-favor-co-production-via-carbide-formati",
+    titulo:
+      "Nickel–Zinc Catalysts Favor CO Production via Carbide Formation in CO2 Hydrogenation",
+    data: "15/11/2026",
+    resumo:
+      "Nickel–Zinc Catalysts Favor CO Production via Carbide Formation in CO2 HydrogenationLink:http://portal.if.usp.br/imprensa/node/4983Término:15/11/2026Leia maissobre Nickel–Zinc Catalysts Favor CO Production via Carbide Formation in CO2 Hydrogenation",
+    categoria: "Institucional",
+    imagem: "",
+    linkOficial:
+      "https://portal.if.usp.br/ifusp/pt-br/not%C3%ADcia-agregada/nickel%E2%80%93zinc-catalysts-favor-co-production-carbide-formation-co2-hydrogenation",
+    autor: "Assessoria de Comunicação IFUSP",
+    tags: ["IFUSP", "Institucional"],
+  },
+  {
+    id: "ciclo-de-seminarios-de-fisica-aplicada-da-teoria-a-inovacao",
+    titulo: "Ciclo de seminários de física aplicada: da teoria à inovação",
+    data: "30/11/2026",
+    resumo:
+      "Ciclo de seminários de física aplicada: da teoria à inovaçãoLink:http://portal.if.usp.br/imprensa/node/4975Término:30/11/2026Leia maissobre Ciclo de seminários de física aplicada: da teoria à inovação",
+    categoria: "Institucional",
+    imagem: "",
+    linkOficial:
+      "https://portal.if.usp.br/ifusp/pt-br/not%C3%ADcia-agregada/ciclo-de-semin%C3%A1rios-de-f%C3%ADsica-aplicada-da-teoria-%C3%A0-inova%C3%A7%C3%A3o",
+    autor: "Assessoria de Comunicação IFUSP",
+    tags: ["IFUSP", "Institucional"],
+  },
+  {
+    id: "docente-do-ifusp-e-premiado-na-16a-edicao-do-premio-professo",
+    titulo:
+      "Docente do IFUSP é premiado na 16ª edição do Prêmio Professor Rubens Murillo Marques",
+    data: "30/11/2026",
+    resumo:
+      "Docente do IFUSP é premiado na 16ª edição do Prêmio Professor Rubens Murillo MarquesLink:http://portal.if.usp.br/imprensa/node/4978Término:30/11/2026Leia maissobre Docente do IFUSP é premiado na 16ª edição do Prêmio Professor Rubens Murillo Marques",
+    categoria: "Premiação",
+    imagem: "",
+    linkOficial:
+      "https://portal.if.usp.br/ifusp/pt-br/not%C3%ADcia-agregada/docente-do-ifusp-%C3%A9-premiado-na-16%C2%AA-edi%C3%A7%C3%A3o-do-pr%C3%AAmio-professor-rubens-murillo",
+    autor: "Assessoria de Comunicação IFUSP",
+    tags: ["IFUSP", "Premiação"],
+  },
+  {
+    id: "descerramento-da-placa-de-reinauguracao-da-biblioteca-do-ifu",
+    titulo: "Descerramento da Placa de Reinauguração da Biblioteca do IFUSP",
+    data: "30/10/2026",
+    resumo:
+      "Descerramento da Placa de Reinauguração da Biblioteca do IFUSPLink:http://portal.if.usp.br/imprensa/node/4997Término:30/10/2026Leia maissobre Descerramento da Placa de Reinauguração da Biblioteca do IFUSP",
+    categoria: "Institucional",
+    imagem: "",
+    linkOficial:
+      "https://portal.if.usp.br/ifusp/pt-br/not%C3%ADcia-agregada/descerramento-da-placa-de-reinaugura%C3%A7%C3%A3o-da-biblioteca-do-ifusp",
+    autor: "Assessoria de Comunicação IFUSP",
+    tags: ["IFUSP", "Institucional", "BIFUSP"],
+  },
+  {
     id: "o-descerramento-da-placa-de-reinauguracao-da-biblioteca-do-i",
     titulo: "O Descerramento da Placa de Reinauguração da Biblioteca do IFUSP",
     data: "30/10/2026",
@@ -192,99 +246,43 @@ export const newsData: NewsItem[] = [
     tags: ["IFUSP", "Pesquisa"],
   },
   {
-    id: "nickelzinc-catalysts-favor-co-production-via-carbide-formati",
-    titulo:
-      "Nickel–Zinc Catalysts Favor CO Production via Carbide Formation in CO2 Hydrogenation",
-    data: "15/11/2026",
+    id: "nota-do-dfep-sobre-o-falecimento-da-profa-alinka-lepine",
+    titulo: "Nota do DFEP sobre o falecimento da Profa. Alinka Lepine",
+    data: "2026-10-30",
     resumo:
-      "Nickel–Zinc Catalysts Favor CO Production via Carbide Formation in CO2 HydrogenationLink:http://portal.if.usp.br/imprensa/node/4983Término:15/11/2026Leia maissobre Nickel–Zinc Catalysts Favor CO Production via Carbide Formation in CO2 Hydrogenation",
+      "Nota do DFEP sobre o falecimento da Profa. Alinka LepineÉ com profundo pesar que o Departamento de Física Experimental (DFEP) recebeu a notícia do falecimento da Profa. Alinka Lepine. Sua trajetória, profundamente enraizada no IFUSP, é reconhecida nacional e internacionalmente, especialmente por sua liderança em Física Nuclear. A Profa. Lepine dest",
     categoria: "Institucional",
     imagem: "",
     linkOficial:
-      "https://portal.if.usp.br/ifusp/pt-br/not%C3%ADcia-agregada/nickel%E2%80%93zinc-catalysts-favor-co-production-carbide-formation-co2-hydrogenation",
+      "https://portal.if.usp.br/ifusp/pt-br/not%C3%ADcia/nota-do-dfep-sobre-o-falecimento-da-profa-alinka-lepine",
     autor: "Assessoria de Comunicação IFUSP",
     tags: ["IFUSP", "Institucional"],
   },
   {
-    id: "por-tras-dos-bastidores-da-nature",
-    titulo: '"Por trás dos bastidores da Nature"',
-    data: "10/10/2026",
+    id: "nomeacao-do-prof-galvao-para-chefia-da-cnpq",
+    titulo: "Nomeação do Prof. Galvão para chefia da CNPQ",
+    data: "2026-10-30",
     resumo:
-      '"Por trás dos bastidores da Nature"Link:http://portal.if.usp.br/imprensa/node/4982Término:10/10/2026Leia maissobre "Por trás dos bastidores da Nature"',
+      "Nomeação do Prof. Galvão para chefia da CNPQÉ com satisfação que divulgamos a nomeação do Prof.Leia maissobre Nomeação do Prof. Galvão para chefia da CNPQ",
     categoria: "Institucional",
     imagem: "",
     linkOficial:
-      "https://portal.if.usp.br/ifusp/pt-br/not%C3%ADcia-agregada/por-tr%C3%A1s-dos-bastidores-da-nature",
+      "https://portal.if.usp.br/ifusp/pt-br/not%C3%ADcia/nomea%C3%A7%C3%A3o-do-prof-galv%C3%A3o-para-chefia-da-cnpq",
     autor: "Assessoria de Comunicação IFUSP",
     tags: ["IFUSP", "Institucional"],
   },
   {
-    id: "ciclo-de-seminarios-de-fisica-aplicada-da-teoria-a-inovacao",
-    titulo: "Ciclo de seminários de física aplicada: da teoria à inovação",
-    data: "30/11/2026",
+    id: "ato-publico-em-defesa-da-democracia-segunda-feira-12h-largo",
+    titulo:
+      "Ato Público em defesa da Democracia – Segunda-feira – 12h – Largo São Francisco",
+    data: "2026-10-30",
     resumo:
-      "Ciclo de seminários de física aplicada: da teoria à inovaçãoLink:http://portal.if.usp.br/imprensa/node/4975Término:30/11/2026Leia maissobre Ciclo de seminários de física aplicada: da teoria à inovação",
+      "Ato Público em defesa da Democracia – Segunda-feira – 12h – Largo São FranciscoTodos e todas juntos e juntasLeia maissobre Ato Público em defesa da Democracia – Segunda-feira – 12h – Largo São Francisco",
     categoria: "Institucional",
     imagem: "",
     linkOficial:
-      "https://portal.if.usp.br/ifusp/pt-br/not%C3%ADcia-agregada/ciclo-de-semin%C3%A1rios-de-f%C3%ADsica-aplicada-da-teoria-%C3%A0-inova%C3%A7%C3%A3o",
+      "https://portal.if.usp.br/ifusp/pt-br/not%C3%ADcia/ato-p%C3%BAblico-em-defesa-da-democracia-%E2%80%93-segunda-feira-%E2%80%93-12h-%E2%80%93-largo-s%C3%A3o-francisco",
     autor: "Assessoria de Comunicação IFUSP",
     tags: ["IFUSP", "Institucional"],
-  },
-  {
-    id: "docente-do-ifusp-recebe-premio-de-melhor-apresentacao-em-con",
-    titulo:
-      "Docente do IFUSP recebe prêmio de melhor apresentação em conferência internacional",
-    data: "10/10/2026",
-    resumo:
-      "Docente do IFUSP recebe prêmio de melhor apresentação em conferência internacionalLink:http://portal.if.usp.br/imprensa/node/4981Término:10/10/2026Leia maissobre Docente do IFUSP recebe prêmio de melhor apresentação em conferência internacional",
-    categoria: "Premiação",
-    imagem: "",
-    linkOficial:
-      "https://portal.if.usp.br/ifusp/pt-br/not%C3%ADcia-agregada/docente-do-ifusp-recebe-pr%C3%AAmio-de-melhor-apresenta%C3%A7%C3%A3o-em-confer%C3%AAncia-internacional",
-    autor: "Assessoria de Comunicação IFUSP",
-    tags: ["IFUSP", "Premiação"],
-  },
-  {
-    id: "pesquisador-colaborador-do-ifusp-tem-materia-publicada-em-re",
-    titulo:
-      "Pesquisador colaborador do IFUSP tem matéria publicada em revista on-line",
-    data: "30/09/2026",
-    resumo:
-      "Pesquisador colaborador do IFUSP tem matéria publicada em revista on-lineLink:http://portal.if.usp.br/imprensa/node/4980Término:30/09/2026Leia maissobre Pesquisador colaborador do IFUSP tem matéria publicada em revista on-line",
-    categoria: "Pesquisa",
-    imagem: "",
-    linkOficial:
-      "https://portal.if.usp.br/ifusp/pt-br/not%C3%ADcia-agregada/pesquisador-colaborador-do-ifusp-tem-mat%C3%A9ria-publicada-em-revista-line",
-    autor: "Assessoria de Comunicação IFUSP",
-    tags: ["IFUSP", "Pesquisa"],
-  },
-  {
-    id: "eleicao-dos-representantes-de-pos-doutorado-junto-ao-conselh",
-    titulo:
-      "Eleição dos representantes de pós-doutorado junto ao Conselho de Pesquisa e Inovação",
-    data: "19/10/2026",
-    resumo:
-      "Eleição dos representantes de pós-doutorado junto ao Conselho de Pesquisa e InovaçãoLink:http://portal.if.usp.br/imprensa/node/4979Término:19/10/2026Leia maissobre Eleição dos representantes de pós-doutorado junto ao Conselho de Pesquisa e Inovação",
-    categoria: "Pesquisa",
-    imagem: "",
-    linkOficial:
-      "https://portal.if.usp.br/ifusp/pt-br/not%C3%ADcia-agregada/elei%C3%A7%C3%A3o-dos-representantes-de-p%C3%B3s-doutorado-junto-ao-conselho-de-pesquisa-e",
-    autor: "Assessoria de Comunicação IFUSP",
-    tags: ["IFUSP", "Pesquisa"],
-  },
-  {
-    id: "docente-do-ifusp-e-premiado-na-16a-edicao-do-premio-professo",
-    titulo:
-      "Docente do IFUSP é premiado na 16ª edição do Prêmio Professor Rubens Murillo Marques",
-    data: "30/11/2026",
-    resumo:
-      "Docente do IFUSP é premiado na 16ª edição do Prêmio Professor Rubens Murillo MarquesLink:http://portal.if.usp.br/imprensa/node/4978Término:30/11/2026Leia maissobre Docente do IFUSP é premiado na 16ª edição do Prêmio Professor Rubens Murillo Marques",
-    categoria: "Premiação",
-    imagem: "",
-    linkOficial:
-      "https://portal.if.usp.br/ifusp/pt-br/not%C3%ADcia-agregada/docente-do-ifusp-%C3%A9-premiado-na-16%C2%AA-edi%C3%A7%C3%A3o-do-pr%C3%AAmio-professor-rubens-murillo",
-    autor: "Assessoria de Comunicação IFUSP",
-    tags: ["IFUSP", "Premiação"],
   },
 ];
