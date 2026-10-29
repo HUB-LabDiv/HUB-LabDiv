@@ -16,6 +16,7 @@ import { fetchUserSubmissions, getFollowStats } from '@/app/actions/submissions'
 import { fetchUserDrops } from '@/app/actions/drops';
 import { getUserInterest } from '@/app/actions/recommendations';
 import { fetchUserAcademicdata } from '@/app/actions/disciplines';
+import { sanitizeProfileForViewer } from '@/lib/profile-visibility';
 
 interface LabPageProps {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -38,12 +39,16 @@ export default async function LabPage({ searchParams }: LabPageProps) {
 
     // 1. Fetch primary profiles (Wait concurrently)
     const [
-        { data: currProfile },
-        { data: profileData }
+        { data: rawCurrProfile },
+        { data: rawProfileData }
     ] = await Promise.all([
         supabase.from('profiles').select('*').eq('id', currentUser.id).maybeSingle(),
         supabase.from('profiles').select('*').eq('id', targetUserId).maybeSingle()
     ]);
+
+    const isViewerAdmin = rawCurrProfile?.role === 'admin' || rawCurrProfile?.role === 'moderator';
+    const currProfile = sanitizeProfileForViewer(rawCurrProfile, currentUser.id, isViewerAdmin);
+    const profileData = sanitizeProfileForViewer(rawProfileData, currentUser.id, isViewerAdmin);
     
     // 2. Fetch independent secondary data concurrently
     const [

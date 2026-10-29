@@ -19,6 +19,7 @@ import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
 import { verifyAdminToken } from '@/lib/auth/admin-token';
 import { z } from 'zod';
+import { getProfileDisplayName } from '@/lib/profile-visibility';
 
 const AddCommentSchema = z.object({
     submissionId: z.string().uuid("ID de submissão inválido"),
@@ -65,11 +66,23 @@ export async function addComment(submissionId: string, authorName: string, conte
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 
+    let resolvedAuthorName = validated.data.authorName;
+    if (user) {
+        const { data: profile } = await supabase
+            .from('profiles')
+            .select('full_name, username, use_nickname')
+            .eq('id', user.id)
+            .single();
+        if (profile) {
+            resolvedAuthorName = getProfileDisplayName(profile) || resolvedAuthorName;
+        }
+    }
+
     const { error } = await supabase
         .from('comments')
         .insert([{
             submission_id: validated.data.submissionId,
-            author_name: validated.data.authorName,
+            author_name: resolvedAuthorName,
             content: validated.data.content,
             inline_paragraph_id: validated.data.inlineParagraphId || null,
             user_id: user?.id || null,

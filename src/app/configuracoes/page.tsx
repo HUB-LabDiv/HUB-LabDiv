@@ -33,6 +33,7 @@ import { IFUSPLogo } from '@/components/icons/IFUSPLogo';
 import { getNotificationPreferences, updateNotificationPreferences, NotificationPreferences } from '@/app/actions/webpush';
 import { runOnboardingTour } from '@/lib/tour/tour-runner';
 import { useOnboarding } from '@/hooks/useOnboarding';
+import { getProfileDisplayName } from '@/lib/profile-visibility';
 
 type ConfigTab = 'gerais' | 'armazenamento' | 'conta';
 
@@ -677,7 +678,7 @@ export default function ConfigPage() {
                                         <h2 className="text-xl font-bold text-white font-bukra">Seu Laboratório</h2>
                                         <p className="text-sm text-gray-400 font-sans">
                                             {user 
-                                                ? ((profile?.use_nickname && profile?.username) ? profile.username : (profile?.full_name || user.email))
+                                                ? (getProfileDisplayName(profile) || user.email)
                                                 : 'Visitante (Não conectado)'}
                                         </p>
                                     </div>

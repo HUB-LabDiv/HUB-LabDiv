@@ -31,6 +31,7 @@ import { useTelemetry } from '@/hooks/useTelemetry';
 import { IFUSPLogo } from '../icons/IFUSPLogo';
 import { usePersonalizacaoStore } from '@/store/usePersonalizacaoStore';
 import { CacheManagerModal } from '../pwa/CacheManagerModal';
+import { getProfileDisplayName } from '@/lib/profile-visibility';
 
 /**
  * V8.0 Header - Fort Knox Edition
@@ -109,9 +110,7 @@ export function Header() {
                 if (profile) {
                     setUser(prev => prev ? {
                         ...prev,
-                        full_name: (profile.use_nickname && profile.username)
-                            ? profile.username
-                            : (profile.full_name || prev.full_name),
+                        full_name: getProfileDisplayName(profile),
                         avatar_url: profile.avatar_url || prev.avatar_url,
                         xp: profile.xp || 0,
                         level: profile.level || 1,

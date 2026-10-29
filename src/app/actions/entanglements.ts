@@ -15,6 +15,7 @@
 import { createServerSupabase } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import { getProfileDisplayName } from '@/lib/profile-visibility';
 
 export async function fetchRecentEntanglements() {
     const supabaseServer = await createServerSupabase();
@@ -77,8 +78,8 @@ export async function fetchRecentEntanglements() {
 
         return {
             id: p.id,
-            name: (p.use_nickname && p.username) ? p.username : (p.full_name || 'Usuário'),
-            handle: p.email ? `@${p.email.split('@')[0]}` : '@usuario',
+            name: getProfileDisplayName(p),
+            handle: p.username ? `@${p.username}` : '',
             avatar: p.avatar_url,
             xp: p.xp,
             level: p.level,

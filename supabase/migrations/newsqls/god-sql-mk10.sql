@@ -200,7 +200,38 @@ ADD COLUMN IF NOT EXISTS teacher_verification_status TEXT DEFAULT 'none'
 ADD COLUMN IF NOT EXISTS verified_at TIMESTAMP WITH TIME ZONE,
 ADD COLUMN IF NOT EXISTS verified_by UUID REFERENCES public.profiles(id),
 ADD COLUMN IF NOT EXISTS pending_edits JSONB DEFAULT NULL,
-ADD COLUMN IF NOT EXISTS review_status TEXT DEFAULT 'pending';
+ADD COLUMN IF NOT EXISTS review_status TEXT DEFAULT 'pending',
+ADD COLUMN IF NOT EXISTS member_initiatives TEXT[] DEFAULT '{}';
+
+-- 9.1.1 Tabela de Solicitações de Novas Iniciativas (Eixo 04 — Governança)
+CREATE TABLE IF NOT EXISTS public.initiative_requests (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    initiative_name TEXT NOT NULL,
+    acronym TEXT,
+    description TEXT NOT NULL,
+    responsible_name TEXT NOT NULL,
+    contact_info TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+    admin_feedback TEXT,
+    reviewed_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    reviewed_at TIMESTAMPTZ,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT timezone('utc'::text, now())
+);
+
+ALTER TABLE public.initiative_requests ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Users can insert initiative requests" ON public.initiative_requests;
+CREATE POLICY "Users can insert initiative requests" ON public.initiative_requests
+    FOR INSERT TO authenticated WITH CHECK (auth.uid() = user_id);
+
+DROP POLICY IF EXISTS "Users view own or admin views all initiative requests" ON public.initiative_requests;
+CREATE POLICY "Users view own or admin views all initiative requests" ON public.initiative_requests
+    FOR SELECT TO authenticated USING (auth.uid() = user_id OR public.is_admin());
+
+DROP POLICY IF EXISTS "Admins manage initiative requests" ON public.initiative_requests;
+CREATE POLICY "Admins manage initiative requests" ON public.initiative_requests
+    FOR ALL TO authenticated USING (public.is_admin()) WITH CHECK (public.is_admin());
 
 -- 9.2 Migração de Dados Legados (user_category -> persona)
 UPDATE public.profiles
@@ -381,16 +412,70 @@ BEGIN
                 IF item.decision = 'approve' THEN
                     UPDATE public.profiles 
                     SET full_name = COALESCE(pending_edits->>'full_name', full_name),
+                        username = COALESCE(pending_edits->>'username', username),
+                        use_nickname = COALESCE(NULLIF(pending_edits->>'use_nickname', '')::boolean, use_nickname),
                         bio = COALESCE(pending_edits->>'bio', bio),
                         course = COALESCE(pending_edits->>'course', course),
                         institute = COALESCE(pending_edits->>'institute', institute),
-                        avatar_url = COALESCE(pending_edits->>'avatar_url', avatar_url),
+                        entrance_year = COALESCE(NULLIF(pending_edits->>'entrance_year', '')::integer, entrance_year),
+                        education_level = COALESCE(pending_edits->>'education_level', education_level),
+                        external_institution = COALESCE(pending_edits->>'external_institution', external_institution),
+                        whatsapp = COALESCE(pending_edits->>'whatsapp', whatsapp),
+                        lattes_url = COALESCE(pending_edits->>'lattes_url', lattes_url),
+                        linkedin_url = COALESCE(pending_edits->>'linkedin_url', linkedin_url),
+                        github_url = COALESCE(pending_edits->>'github_url', github_url),
+                        youtube_url = COALESCE(pending_edits->>'youtube_url', youtube_url),
+                        tiktok_url = COALESCE(pending_edits->>'tiktok_url', tiktok_url),
+                        instagram_url = COALESCE(pending_edits->>'instagram_url', instagram_url),
+                        portfolio_url = COALESCE(pending_edits->>'portfolio_url', portfolio_url),
+                        available_to_mentor = COALESCE(NULLIF(pending_edits->>'available_to_mentor', '')::boolean, available_to_mentor),
+                        seeking_mentor = COALESCE(NULLIF(pending_edits->>'seeking_mentor', '')::boolean, seeking_mentor),
+                        seeking_ic = COALESCE(NULLIF(pending_edits->>'seeking_ic', '')::boolean, seeking_ic),
+                        seeking_assistant = COALESCE(NULLIF(pending_edits->>'seeking_assistant', '')::boolean, seeking_assistant),
+                        research_line = COALESCE(pending_edits->>'research_line', research_line),
+                        office_room = COALESCE(pending_edits->>'office_room', office_room),
+                        laboratory_name = COALESCE(pending_edits->>'laboratory_name', laboratory_name),
+                        department = COALESCE(pending_edits->>'department', department),
+                        interest_area = COALESCE(pending_edits->>'interest_area', interest_area),
+                        cultural_language = COALESCE(pending_edits->>'cultural_language', cultural_language),
+                        user_category = COALESCE(pending_edits->>'user_category', user_category),
+                        artistic_interests = CASE
+                            WHEN pending_edits ? 'artistic_interests' AND jsonb_typeof(pending_edits->'artistic_interests') = 'array'
+                            THEN ARRAY(SELECT jsonb_array_elements_text(pending_edits->'artistic_interests'))
+                            ELSE artistic_interests
+                        END,
+                        member_initiatives = CASE
+                            WHEN pending_edits ? 'member_initiatives' AND jsonb_typeof(pending_edits->'member_initiatives') = 'array'
+                            THEN ARRAY(SELECT jsonb_array_elements_text(pending_edits->'member_initiatives'))
+                            ELSE member_initiatives
+                        END,
+                        is_labdiv = CASE
+                            WHEN pending_edits ? 'member_initiatives' AND jsonb_typeof(pending_edits->'member_initiatives') = 'array'
+                            THEN (pending_edits->'member_initiatives') ? 'labdiv'
+                            ELSE is_labdiv
+                        END,
+                        hobbies_gallery = CASE
+                            WHEN pending_edits ? 'hobbies_gallery' THEN (pending_edits->'hobbies_gallery')
+                            ELSE hobbies_gallery
+                        END,
+                        avatar_url = COALESCE(pending_edits->>'pending_avatar_url', pending_edits->>'avatar_url', avatar_url),
                         pending_edits = NULL,
                         review_status = 'approved'
                     WHERE id = item.item_id;
                 ELSE
-                    UPDATE public.profiles SET pending_edits = NULL WHERE id = item.item_id;
+                    UPDATE public.profiles
+                    SET pending_edits = NULL,
+                        review_status = 'approved'
+                    WHERE id = item.item_id;
                 END IF;
+
+            ELSIF item.item_type = 'initiative_request' THEN
+                UPDATE public.initiative_requests
+                SET status = CASE WHEN item.decision = 'approve' THEN 'approved' ELSE 'rejected' END,
+                    admin_feedback = COALESCE(item.feedback, admin_feedback),
+                    reviewed_by = v_admin_id,
+                    reviewed_at = timezone('utc'::text, now())
+                WHERE id = item.item_id;
 
             ELSIF item.item_type = 'profile' THEN
                 UPDATE public.profiles 

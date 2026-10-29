@@ -28,6 +28,7 @@ import { ArtesHobbiesTab } from '@/components/profile/ArtesHobbiesTab';
 import { Profile } from '@/types';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { toast } from 'react-hot-toast';
+import { getProfileDisplayName } from '@/lib/profile-visibility';
 
 export function LabTabContent() {
     const router = useRouter();
@@ -146,7 +147,7 @@ export function LabTabContent() {
                     <div className="shrink-0">
                         <Avatar
                             src={viewedProfile.avatar_url}
-                            name={(viewedProfile.use_nickname && viewedProfile.username) ? viewedProfile.username : viewedProfile.full_name || 'Usuário'}
+                            name={getProfileDisplayName(viewedProfile)}
                             size="custom"
                             customSize="w-32 h-32 md:w-36 md:h-36"
                             xp={viewedProfile.xp}
@@ -158,7 +159,7 @@ export function LabTabContent() {
                     <div className="flex-1 text-center md:text-left space-y-4">
                         <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
                             <h2 className="text-2xl md:text-3xl font-black text-gray-900 dark:text-white uppercase tracking-tighter">
-                                {(viewedProfile.use_nickname && viewedProfile.username) ? viewedProfile.username : viewedProfile.full_name}
+                                {getProfileDisplayName(viewedProfile)}
                             </h2>
                             <span className="px-2 py-0.5 bg-brand-blue/10 text-brand-blue text-[10px] font-black rounded uppercase tracking-widest border border-brand-blue/20">
                                 Laboratório Pessoal

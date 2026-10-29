@@ -16,10 +16,12 @@ import { createServerSupabase } from '@/lib/supabase/server';
 import { createAdminSupabase } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
+import { z } from 'zod';
 import { Profile, Freshman, UserPersona } from '@/types';
 import { sendAdminNotification } from '@/lib/notifications.server';
 import { sendAutomaticNotification } from './notifications';
 import { verifyAdminToken } from '@/lib/auth/admin-token';
+import { sanitizeProfileForViewer, getProfileDisplayName } from '@/lib/profile-visibility';
 
 const ALLOWED_PROFILE_UPDATE_FIELDS = new Set([
     'full_name',
@@ -52,6 +54,7 @@ const ALLOWED_PROFILE_UPDATE_FIELDS = new Set([
     'preferred_tags',
     'avatar_url',
     'pending_avatar_url',
+    '_submitted_at',
     'is_adult',
     'user_category',
     'is_usp_member',
@@ -78,9 +81,39 @@ const ALLOWED_PROFILE_UPDATE_FIELDS = new Set([
     'available_to_mentor',
     'seeking_mentor',
     'is_public',
+    'is_visible',
     'hobbies_gallery',
-    'persona'
+    'persona',
+    'member_initiatives'
 ]);
+
+/**
+ * Campos virtuais que só podem existir dentro do JSONB `pending_edits`
+ * e JAMAIS devem ser enviados como colunas físicas no `.update()` de `public.profiles`.
+ */
+const VIRTUAL_PENDING_FIELDS = new Set([
+    'pending_avatar_url',
+    '_submitted_at',
+    'institution',
+    'program',
+    'course_level',
+    'enrollment_year',
+    'website_url',
+    'preferred_tags',
+    'phone',
+    'public_email',
+    'areas_of_interest'
+]);
+
+function stripVirtualProfileFields(payload: Record<string, any>): Record<string, any> {
+    const clean: Record<string, any> = {};
+    for (const [key, val] of Object.entries(payload)) {
+        if (!VIRTUAL_PENDING_FIELDS.has(key) && val !== undefined) {
+            clean[key] = val;
+        }
+    }
+    return clean;
+}
 
 function filterAllowedProfileFields(rawUpdates: Record<string, any>, isAdmin: boolean = false): Record<string, any> {
     const clean: Record<string, any> = {};
@@ -125,7 +158,7 @@ async function checkIsAdmin(): Promise<boolean> {
     }
 }
 
-export async function updateProfile(updates: Partial<Profile>) {
+export async function updateProfile(updates: Partial<Profile> & { pending_avatar_url?: string }) {
     const supabase = await createServerSupabase();
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -133,8 +166,10 @@ export async function updateProfile(updates: Partial<Profile>) {
         return { error: 'Não autorizado' };
     }
 
+    const isAdmin = await checkIsAdmin();
+
     // Filtra estritamente apenas os campos permitidos para atualização (bloqueia role, id, is_labdiv)
-    const sanitizedUpdates = filterAllowedProfileFields(updates as Record<string, any>);
+    const sanitizedUpdates = filterAllowedProfileFields(updates as Record<string, any>, isAdmin);
     if (Object.keys(sanitizedUpdates).length === 0) {
         return { error: 'Nenhum campo válido fornecido para atualização.' };
     }
@@ -142,33 +177,61 @@ export async function updateProfile(updates: Partial<Profile>) {
     // Get current profile status
     const { data: currentProfile } = await supabase
         .from('profiles')
-        .select('review_status, pending_edits, full_name')
+        .select('*')
         .eq('id', user.id)
         .single();
 
     // Check for auto-approve flag or admin status
     const { data: settings } = await supabase.from('system_settings').select('auto_approve_profiles_until').eq('id', 'default').single();
     const isAutoApproveActive = settings?.auto_approve_profiles_until && new Date() < new Date(settings.auto_approve_profiles_until);
-    const isAdmin = await checkIsAdmin();
 
     let updatePayload: any = {};
-    
+
     if (isAutoApproveActive || isAdmin) {
+        const { pending_avatar_url } = sanitizedUpdates;
+        const physicalFields = stripVirtualProfileFields(sanitizedUpdates);
+        if (pending_avatar_url) {
+            physicalFields.avatar_url = pending_avatar_url;
+        }
+        if (Array.isArray(physicalFields.member_initiatives)) {
+            physicalFields.is_labdiv = physicalFields.member_initiatives.includes('labdiv');
+        }
         updatePayload = {
-            ...sanitizedUpdates,
+            ...physicalFields,
             pending_edits: null,
             review_status: 'approved'
         };
     } else {
-        // Self-reported profile details update directly so user sees immediate results
-        // while also syncing pending_edits for moderation audit
-        updatePayload = {
+        // 🔒 Moderação Unificada Obrigatória:
+        // Usuários comuns NÃO alteram colunas públicas diretamente.
+        // Fazemos merge cumulativo em `pending_edits` preservando alterações pendentes anteriores.
+        const existingPending = filterAllowedProfileFields(currentProfile?.pending_edits || {}, false);
+        const mergedPendingEdits: Record<string, any> = {
+            ...existingPending,
             ...sanitizedUpdates,
-            pending_edits: {
-                ...filterAllowedProfileFields(currentProfile?.pending_edits || {}),
-                ...sanitizedUpdates
-            },
-            review_status: currentProfile?.review_status === 'approved' ? 'approved' : 'pending'
+            _submitted_at: new Date().toISOString()
+        };
+
+        // Se nesta submissão não veio nova foto, mantém eventual pending_avatar_url anterior
+        // e evita sobrescrever avatar_url dentro de pending_edits com a foto antiga
+        if (!sanitizedUpdates.pending_avatar_url && existingPending.pending_avatar_url) {
+            mergedPendingEdits.pending_avatar_url = existingPending.pending_avatar_url;
+        }
+        if (mergedPendingEdits.pending_avatar_url) {
+            delete mergedPendingEdits.avatar_url;
+        }
+
+        // Caso seja o primeiro preenchimento de um perfil recém-criado sem full_name,
+        // grava full_name inicial na coluna para identificação básica, mantendo o resto em pending_edits
+        const initialBootstrap: Record<string, any> = {};
+        if (!currentProfile?.full_name && sanitizedUpdates.full_name) {
+            initialBootstrap.full_name = sanitizedUpdates.full_name;
+        }
+
+        updatePayload = {
+            ...initialBootstrap,
+            pending_edits: mergedPendingEdits,
+            review_status: 'pending'
         };
     }
 
@@ -185,17 +248,21 @@ export async function updateProfile(updates: Partial<Profile>) {
     }
 
     revalidatePath('/lab');
+    revalidatePath('/admin');
     revalidatePath('/admin/profiles');
 
     // Notify Admins
     const isFirstTime = !currentProfile?.full_name;
     await sendAdminNotification({
         type: isFirstTime ? 'profile_creation' : 'profile_update',
-        userName: data.full_name || user.email?.split('@')[0] || 'Novo Usuário',
+        userName: data.full_name || sanitizedUpdates.full_name || user.email?.split('@')[0] || 'Novo Usuário',
         details: isFirstTime ? user.email : undefined
     });
 
-    return { success: true, data };
+    return {
+        success: true,
+        data: sanitizeProfileForViewer(data, user.id, isAdmin)
+    };
 }
 
 export async function approveProfile(profileId: string, assignedPersona?: UserPersona) {
@@ -215,11 +282,12 @@ export async function approveProfile(profileId: string, assignedPersona?: UserPe
 
     const pendingEdits = profile.pending_edits || {};
     // Higieniza qualquer edição pendente contra campos restritos como 'role'
-    const sanitizedEdits = filterAllowedProfileFields(pendingEdits);
-    const { pending_avatar_url, ...otherEdits } = sanitizedEdits;
+    const sanitizedEdits = filterAllowedProfileFields(pendingEdits, true);
+    const { pending_avatar_url } = sanitizedEdits;
+    const physicalEdits = stripVirtualProfileFields(sanitizedEdits);
 
     const finalData: any = {
-        ...otherEdits,
+        ...physicalEdits,
         pending_edits: null,
         review_status: 'approved'
     };
@@ -236,6 +304,10 @@ export async function approveProfile(profileId: string, assignedPersona?: UserPe
         finalData.avatar_url = pending_avatar_url;
     }
 
+    if (Array.isArray(finalData.member_initiatives)) {
+        finalData.is_labdiv = finalData.member_initiatives.includes('labdiv');
+    }
+
     const { error } = await adminSupabase
         .from('profiles')
         .update(finalData)
@@ -245,7 +317,7 @@ export async function approveProfile(profileId: string, assignedPersona?: UserPe
 
     // Update the author name on all past submissions
     const mergedProfile = { ...profile, ...finalData };
-    const newPublicName = mergedProfile.use_nickname ? mergedProfile.username : mergedProfile.full_name;
+    const newPublicName = getProfileDisplayName(mergedProfile);
     
     if (newPublicName) {
         await adminSupabase
@@ -254,11 +326,75 @@ export async function approveProfile(profileId: string, assignedPersona?: UserPe
             .eq('user_id', profileId);
     }
 
+    try {
+        await sendAutomaticNotification({
+            userId: profileId,
+            title: 'Perfil Aprovado pela Moderação! ✅',
+            message: 'Suas alterações recentes de perfil (foto, bio, iniciativas ou dados acadêmicos) foram aprovadas e já estão visíveis publicamente no HUB.',
+            link: '/lab',
+            type: 'system'
+        });
+    } catch {
+        // non-blocking
+    }
+
     revalidatePath('/');
     revalidatePath('/lab');
+    revalidatePath('/admin');
     revalidatePath('/admin/profiles');
-    revalidatePath('/orbit'); // Revalidate orbit view too
+    revalidatePath('/orbit');
     return { success: true };
+}
+
+export async function rejectProfile(profileId: string, feedback?: string) {
+    const isAdmin = await checkIsAdmin();
+    if (!isAdmin) {
+        return { error: 'Acesso negado: Requer privilégios de administrador.' };
+    }
+
+    const adminSupabase = createAdminSupabase();
+    const { data: profile } = await adminSupabase
+        .from('profiles')
+        .select('id, full_name, review_status, pending_edits')
+        .eq('id', profileId)
+        .single();
+
+    if (!profile) return { error: 'Perfil não encontrado' };
+
+    // Se o usuário já tinha um perfil configurado e apenas submeteu edições em pending_edits,
+    // descartamos pending_edits e restauramos review_status = 'approved' mantendo o perfil público anterior intacto.
+    const hadExistingProfile = Boolean(profile.full_name && profile.pending_edits);
+    const nextStatus = hadExistingProfile ? 'approved' : 'rejected';
+
+    const { error } = await adminSupabase
+        .from('profiles')
+        .update({
+            pending_edits: null,
+            review_status: nextStatus
+        })
+        .eq('id', profileId);
+
+    if (error) return { error: error.message };
+
+    try {
+        await sendAutomaticNotification({
+            userId: profileId,
+            title: 'Atualização de Perfil Não Aprovada ⚠️',
+            message: feedback
+                ? `A moderação analisou suas edições recentes de perfil: ${feedback}`
+                : 'Suas edições recentes de perfil não foram aprovadas pela moderação. Seu perfil público anterior permanece ativo.',
+            link: '/lab',
+            type: 'system'
+        });
+    } catch {
+        // non-blocking
+    }
+
+    revalidatePath('/');
+    revalidatePath('/lab');
+    revalidatePath('/admin');
+    revalidatePath('/admin/profiles');
+    return { success: true, restoredStatus: nextStatus };
 }
 
 export async function enableAutoApprove(hours: number, pass: string) {
@@ -370,10 +506,10 @@ export async function getProfileWithPseudonyms() {
 
     if (pError) return { error: pError.message };
 
-    // Merge pending_edits so the user sees their latest draft in the modal
+    // Merge pending_edits via sanitizeProfileForViewer (viewerId === user.id => owner preview)
+    const sanitizedOwnerProfile = sanitizeProfileForViewer(profile, user.id, false);
     const profileWithEdits = {
-        ...profile,
-        ...(profile.pending_edits || {}),
+        ...sanitizedOwnerProfile,
         email: user.email // Inject explicit email from Auth
     };
 
@@ -406,7 +542,7 @@ export async function deleteProfile(profileId: string) {
         return { error: error.message };
     }
 
-    revalidatePath('/admin/papeis');
+    revalidatePath('/admin/profiles');
     return { success: true };
 }
 
@@ -447,7 +583,7 @@ export async function toggleProfileVisibility(profileId: string, isVisible: bool
 
     if (error) return { error: error.message };
 
-    revalidatePath('/admin/papeis');
+    revalidatePath('/admin/profiles');
     revalidatePath(`/autor/${profileId}`);
     return { success: true };
 }
@@ -463,7 +599,7 @@ export async function toggleLabdivMember(profileId: string, isLabdiv: boolean) {
 
     if (error) return { error: error.message };
 
-    revalidatePath('/admin/papeis');
+    revalidatePath('/admin/profiles');
     return { success: true };
 }
 
@@ -471,24 +607,37 @@ export async function updateProfileAsAdmin(profileId: string, updates: Partial<P
     if (!await checkIsAdmin()) return { error: 'Não autorizado' };
 
     const supabase = await createServerSupabase();
+    const memberInitiatives = Array.isArray(updates.member_initiatives) ? updates.member_initiatives : undefined;
+    const isLabdivValue = memberInitiatives ? memberInitiatives.includes('labdiv') : updates.is_labdiv;
+
     const { error } = await supabase
         .from('profiles')
         .update({
             full_name: updates.full_name,
             username: updates.username,
+            use_nickname: updates.use_nickname,
+            avatar_url: updates.avatar_url,
             bio: updates.bio,
             institute: updates.institute,
             course: updates.course,
             whatsapp: updates.whatsapp,
             entrance_year: updates.entrance_year,
             lattes_url: updates.lattes_url,
+            linkedin_url: updates.linkedin_url,
+            github_url: updates.github_url,
+            instagram_url: updates.instagram_url,
+            portfolio_url: updates.portfolio_url,
             artistic_interests: updates.artistic_interests,
+            cultural_language: updates.cultural_language,
+            persona: updates.persona,
+            member_initiatives: memberInitiatives,
             role: updates.role,
-            is_labdiv: updates.is_labdiv,
+            is_labdiv: isLabdivValue,
             is_visible: updates.is_visible,
             available_to_mentor: updates.available_to_mentor,
             seeking_mentor: updates.seeking_mentor,
             review_status: updates.review_status,
+            pending_edits: null,
             education_level: updates.education_level,
             external_institution: updates.external_institution,
             user_category: updates.user_category,
@@ -508,7 +657,7 @@ export async function updateProfileAsAdmin(profileId: string, updates: Partial<P
 
     if (error) return { error: error.message };
 
-    revalidatePath('/admin/papeis');
+    revalidatePath('/admin/profiles');
     revalidatePath('/lab');
     revalidatePath(`/autor/${profileId}`);
     return { success: true };
@@ -998,6 +1147,8 @@ export async function fetchStudentsSeekingIC() {
 
     if (!user) return { error: 'Não autorizado' };
 
+    const isAdmin = await checkIsAdmin();
+
     // Get IDs of students who already have an approved advisor
     const { data: activeAdoptions } = await supabase
         .from('research_adoptions')
@@ -1009,7 +1160,7 @@ export async function fetchStudentsSeekingIC() {
     let query = supabase
         .from('profiles')
         .select('*, pending_edits')
-        .or('seeking_ic.eq.true,pending_edits->>seeking_ic.eq.true')
+        .eq('seeking_ic', true)
         .in('review_status', ['approved', 'pending'])
         .eq('is_visible', true);
 
@@ -1024,11 +1175,8 @@ export async function fetchStudentsSeekingIC() {
         return { error: 'Erro ao buscar alunos interessados em IC' };
     }
 
-    // Merge pending edits
-    const data = (rawData || []).map(p => ({
-        ...p,
-        ...(p.pending_edits || {})
-    }));
+    // Strict visibility isolation: never expose pending_edits to third-party viewers
+    const data = (rawData || []).map(p => sanitizeProfileForViewer(p, user.id, isAdmin));
 
     return { success: true, data };
 }
@@ -1039,10 +1187,12 @@ export async function fetchResearchersSeekingAssistants() {
 
     if (!user) return { error: 'Não autorizado' };
 
+    const isAdmin = await checkIsAdmin();
+
     const { data: rawData, error } = await supabase
         .from('profiles')
         .select('*, pending_edits')
-        .or('seeking_assistant.eq.true,pending_edits->>seeking_assistant.eq.true')
+        .eq('seeking_assistant', true)
         .in('review_status', ['approved', 'pending'])
         .eq('is_visible', true)
         .order('created_at', { ascending: false });
@@ -1052,11 +1202,8 @@ export async function fetchResearchersSeekingAssistants() {
         return { error: 'Erro ao buscar pesquisadores buscando ajudantes' };
     }
 
-    // Merge pending edits for real-time visibility
-    const data = (rawData || []).map(p => ({
-        ...p,
-        ...(p.pending_edits || {})
-    }));
+    // Strict visibility isolation: never expose pending_edits to third-party viewers
+    const data = (rawData || []).map(p => sanitizeProfileForViewer(p, user.id, isAdmin));
 
     return { success: true, data };
 }
@@ -1067,6 +1214,8 @@ export async function getStudentMiniPortfolio(studentId: string) {
 
     if (!user) return { error: 'Não autorizado' };
 
+    const isAdmin = await checkIsAdmin();
+
     // Fetch profile details - Select * to ensure we get everything and pending_edits
     const { data: rawProfile, error: pError } = await supabase
         .from('profiles')
@@ -1076,11 +1225,8 @@ export async function getStudentMiniPortfolio(studentId: string) {
 
     if (pError || !rawProfile) return { error: 'Perfil não encontrado' };
 
-    // Merge pending_edits for real-time consistency
-    const profile = {
-        ...rawProfile,
-        ...(rawProfile.pending_edits || {})
-    };
+    // Strict visibility isolation: only merge pending_edits if studentId === user.id
+    const profile = sanitizeProfileForViewer(rawProfile, user.id, isAdmin);
 
     // Fetch completed disciplines
     const { data: completed, error: cError } = await supabase
@@ -1401,3 +1547,91 @@ export async function reviewTeacherVerification(profileId: string, decision: 'ap
         return { success: false, error: err.message || 'Erro inesperado ao processar.' };
     }
 }
+
+/**
+ * 🔬 Lazy Load do Mini-Lab Pessoal para o Accordion de Moderação (/admin/profiles)
+ * Executado sob demanda via Server Action no clique da seta (Zero useEffect).
+ */
+export async function getProfileMiniLabData(profileId: string) {
+    if (!await checkIsAdmin()) return { error: 'Não autorizado' };
+
+    const adminClient = createAdminSupabase();
+
+    const [subsRes, followersRes, followingRes, pseudonymsRes] = await Promise.all([
+        adminClient
+            .from('submissions')
+            .select('id, title, status, media_type, media_url, created_at, views, category')
+            .eq('user_id', profileId)
+            .order('created_at', { ascending: false })
+            .limit(12),
+        adminClient
+            .from('follows')
+            .select('*', { count: 'exact', head: true })
+            .eq('following_id', profileId),
+        adminClient
+            .from('follows')
+            .select('*', { count: 'exact', head: true })
+            .eq('follower_id', profileId),
+        adminClient
+            .from('pseudonyms')
+            .select('id, name, is_active')
+            .eq('user_id', profileId)
+    ]);
+
+    return {
+        success: true,
+        submissions: subsRes.data || [],
+        followersCount: followersRes.count || 0,
+        followingCount: followingRes.count || 0,
+        pseudonyms: pseudonymsRes.data || []
+    };
+}
+
+/**
+ * 🏛️ Solicitação de Inclusão de Nova Iniciativa ou Espaço no HUB (Eixo 04 — Governança)
+ */
+const InitiativeRequestSchema = z.object({
+    initiative_name: z.string().min(2, 'Informe o nome da iniciativa ou espaço').max(120),
+    acronym: z.string().max(24).optional().nullable(),
+    description: z.string().min(10, 'Descreva brevemente o que a iniciativa faz (mín. 10 caracteres)').max(1000),
+    responsible_name: z.string().min(2, 'Informe o nome da pessoa responsável/coordenadora').max(120),
+    contact_info: z.string().min(4, 'Informe um e-mail USP, WhatsApp ou Instagram para contato').max(180),
+});
+
+export async function submitInitiativeRequest(rawInput: z.infer<typeof InitiativeRequestSchema>) {
+    const supabase = await createServerSupabase();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return { error: 'Não autorizado. Faça login para enviar.' };
+
+    const parsed = InitiativeRequestSchema.safeParse(rawInput);
+    if (!parsed.success) {
+        return { error: parsed.error.issues[0]?.message || 'Dados inválidos.' };
+    }
+
+    const { error } = await supabase
+        .from('initiative_requests')
+        .insert({
+            requester_id: user.id,
+            initiative_name: parsed.data.initiative_name.trim(),
+            acronym: parsed.data.acronym?.trim() || null,
+            description: parsed.data.description.trim(),
+            responsible_name: parsed.data.responsible_name.trim(),
+            contact_info: parsed.data.contact_info.trim(),
+            status: 'pending'
+        });
+
+    if (error) {
+        console.error('Error submitting initiative request:', error);
+        return { error: 'Não foi possível enviar a solicitação agora.' };
+    }
+
+    await sendAdminNotification({
+        type: 'profile_update',
+        userName: parsed.data.responsible_name,
+        details: `Solicitou inclusão da iniciativa "${parsed.data.initiative_name}" (${parsed.data.contact_info}) no Eixo 04.`
+    }).catch(err => console.error('Admin initiative notification error:', err));
+
+    revalidatePath('/admin');
+    return { success: true };
+}
+

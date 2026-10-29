@@ -14,38 +14,44 @@
 import 'server-only';
 import { createAdminSupabase } from '@/lib/supabase/admin';
 import { sendAdminNotification } from '@/lib/notifications.server';
+import { signEmailActionToken } from '@/lib/auth/email-action-token';
+import { ModerationItemType } from '@/types';
 
 interface QueueMonitorState {
-    lastVolume5Alert: number;
-    lastVolume10Alert: number;
-    lastSla10Alert: number;
-    lastSla30Alert: number;
+    lastDigestSentAt: number;
     isChecking: boolean;
 }
 
 const state: QueueMonitorState = {
-    lastVolume5Alert: 0,
-    lastVolume10Alert: 0,
-    lastSla10Alert: 0,
-    lastSla30Alert: 0,
-    isChecking: false
+    lastDigestSentAt: 0,
+    isChecking: false,
 };
 
-// Intervalos de cooldown para prevenir inundações de email
-const COOLDOWN_VOLUME_5_MS = 30 * 60 * 1000;   // 30 min
-const COOLDOWN_VOLUME_10_MS = 15 * 60 * 1000;  // 15 min
-const COOLDOWN_SLA_10_MS = 15 * 60 * 1000;     // 15 min
-const COOLDOWN_SLA_30_MS = 20 * 60 * 1000;     // 20 min
-const REPEAT_DELAY_MS = 2 * 60 * 1000;         // 2 minutos de intervalo para o segundo e-mail
+// Cooldown de 30 minutos entre resumos para nunca inundar a caixa de entrada
+const COOLDOWN_DIGEST_MS = 30 * 60 * 1000;
+
+function formatHumanDuration(ageMinutes: number): string {
+    if (ageMinutes <= 1) return 'há poucos instantes';
+    if (ageMinutes < 60) return `há ${ageMinutes} min`;
+    const hours = Math.floor(ageMinutes / 60);
+    if (hours < 24) return `há ${hours}h`;
+    const days = Math.floor(hours / 24);
+    return days === 1 ? 'há 1 dia' : `há ${days} dias`;
+}
+
+interface DigestQueueItem {
+    id: string;
+    type: ModerationItemType;
+    label: string;
+    title: string;
+    author: string;
+    summary: string;
+    timestampMs: number;
+}
 
 /**
- * 🛰️ Monitor de Limiares da Fila de Moderação da Torre de Controle
- * 
- * Regras implementadas:
- * 1. > 5 itens na fila: Dispara 1 e-mail de alerta.
- * 2. >= 10 itens na fila: Dispara 2 e-mails espaçados por 2 minutos.
- * 3. Item > 10 min na fila: Dispara 1 e-mail de aviso de tempo/SLA.
- * 4. Item >= 30 min na fila: Dispara 2 e-mails espaçados por 2 minutos.
+ * 📡 Monitor de Resumo Inteligente da Fila de Moderação (Torre de Controle LabDiv)
+ * Envia um Digest limpo com botões assinados (HMAC-SHA256) para aprovar/rejeitar cada item direto do e-mail.
  */
 export async function checkModerationQueueThresholds(): Promise<{
     checked: boolean;
@@ -60,181 +66,289 @@ export async function checkModerationQueueThresholds(): Promise<{
 
     try {
         const adminSupabase = createAdminSupabase();
+        const now = Date.now();
 
-        // Consulta paralela de todas as fontes de aprovação pendentes
         const [
             subsRes,
             subEditsRes,
             profEditsRes,
             pendingProfilesRes,
             teacherVerifsRes,
+            initiativeReqsRes,
             commentsRes,
             softwaresRes,
-            feedbacksRes,
             oportunidadesRes,
             dicasRes,
             dropsRes,
             perguntasRes,
-            palavrasRes,
-            constelacaoEdgesRes,
-            challengesRes,
-            propostasRes,
-            reportsRes
         ] = await Promise.all([
-            adminSupabase.from('submissions').select('created_at').eq('status', 'pendente').order('created_at', { ascending: true }).limit(50),
-            adminSupabase.from('submissions').select('created_at').not('pending_edits', 'is', null).order('created_at', { ascending: true }).limit(20),
-            adminSupabase.from('profiles').select('created_at').not('pending_edits', 'is', null).order('created_at', { ascending: true }).limit(20),
-            adminSupabase.from('profiles').select('created_at').eq('review_status', 'pending').order('created_at', { ascending: true }).limit(30),
-            adminSupabase.from('profiles').select('created_at').eq('teacher_verification_status', 'pending').order('created_at', { ascending: true }).limit(20),
-            adminSupabase.from('comments').select('created_at').eq('status', 'pendente').order('created_at', { ascending: true }).limit(30),
-            adminSupabase.from('academic_softwares').select('created_at').eq('status', 'pendente').order('created_at', { ascending: true }).limit(20),
-            adminSupabase.from('software_feedbacks').select('created_at').eq('status', 'pending').order('created_at', { ascending: true }).limit(20),
-            adminSupabase.from('oportunidades').select('created_at').eq('status', 'pending').order('created_at', { ascending: true }).limit(20),
-            adminSupabase.from('dicas_veteranos').select('created_at').eq('status', 'pending').order('created_at', { ascending: true }).limit(20),
-            adminSupabase.from('micro_articles').select('created_at').eq('status', 'pending').order('created_at', { ascending: true }).limit(20),
-            adminSupabase.from('perguntas').select('created_at').eq('status', 'pendente').order('created_at', { ascending: true }).limit(20),
-            adminSupabase.from('palavras_geradoras').select('created_at').eq('is_pending', true).order('created_at', { ascending: true }).limit(20),
-            adminSupabase.from('constelacao_edges').select('created_at').eq('is_pending', true).order('created_at', { ascending: true }).limit(20),
-            adminSupabase.from('challenge_submissions').select('created_at').eq('status', 'pending').order('created_at', { ascending: true }).limit(20),
-            adminSupabase.from('wiki_topic_proposals').select('created_at').eq('status', 'pendente').order('created_at', { ascending: true }).limit(20),
-            adminSupabase.from('reports').select('created_at').eq('status', 'pending').order('created_at', { ascending: true }).limit(20)
+            adminSupabase.from('submissions').select('id, title, authors, category, created_at').eq('status', 'pendente').limit(20),
+            adminSupabase.from('submissions').select('id, title, authors, created_at').not('pending_edits', 'is', null).limit(15),
+            adminSupabase.from('profiles').select('id, full_name, email, pending_edits, created_at').not('pending_edits', 'is', null).limit(20),
+            adminSupabase.from('profiles').select('id, full_name, email, created_at').eq('review_status', 'pending').limit(20),
+            adminSupabase.from('profiles').select('id, full_name, email, created_at').eq('teacher_verification_status', 'pending').limit(10),
+            adminSupabase.from('initiative_requests').select('id, initiative_name, responsible_name, contact_info, created_at').eq('status', 'pending').limit(15),
+            adminSupabase.from('comments').select('id, author_name, content, created_at').eq('status', 'pendente').limit(20),
+            adminSupabase.from('academic_softwares').select('id, title, author_name, created_at').eq('status', 'pendente').limit(10),
+            adminSupabase.from('oportunidades').select('id, titulo, tipo, created_at').eq('status', 'pending').limit(10),
+            adminSupabase.from('dicas_veteranos').select('id, titulo, created_at').eq('status', 'pending').limit(10),
+            adminSupabase.from('micro_articles').select('id, content, created_at').eq('status', 'pending').limit(10),
+            adminSupabase.from('perguntas').select('id, pergunta, nome_autor, created_at').eq('status', 'pendente').limit(10),
         ]);
 
-        const allResults = [
-            subsRes.data || [],
-            subEditsRes.data || [],
-            profEditsRes.data || [],
-            pendingProfilesRes.data || [],
-            teacherVerifsRes.data || [],
-            commentsRes.data || [],
-            softwaresRes.data || [],
-            feedbacksRes.data || [],
-            oportunidadesRes.data || [],
-            dicasRes.data || [],
-            dropsRes.data || [],
-            perguntasRes.data || [],
-            palavrasRes.data || [],
-            constelacaoEdgesRes.data || [],
-            challengesRes.data || [],
-            propostasRes.data || [],
-            reportsRes.data || []
-        ];
+        const digestItems: DigestQueueItem[] = [];
 
-        let totalCount = 0;
-        let oldestTimestamp: number | null = null;
-        const now = Date.now();
+        (subsRes.data || []).forEach((s) => {
+            digestItems.push({
+                id: s.id,
+                type: 'submission',
+                label: 'Nova Publicação',
+                title: s.title || 'Submissão Científica',
+                author: s.authors || 'Autor',
+                summary: `Categoria: ${s.category || 'Geral'}`,
+                timestampMs: new Date(s.created_at).getTime() || now,
+            });
+        });
 
-        for (const list of allResults) {
-            totalCount += list.length;
-            for (const item of list) {
-                if (item?.created_at) {
-                    const itemTime = new Date(item.created_at).getTime();
-                    if (!isNaN(itemTime)) {
-                        if (oldestTimestamp === null || itemTime < oldestTimestamp) {
-                            oldestTimestamp = itemTime;
-                        }
-                    }
-                }
-            }
+        (subEditsRes.data || []).forEach((s) => {
+            digestItems.push({
+                id: s.id,
+                type: 'submission_edit',
+                label: 'Edição de Post',
+                title: s.title || 'Post',
+                author: s.authors || 'Autor',
+                summary: 'Alteração de conteúdo aguardando validação',
+                timestampMs: new Date(s.created_at).getTime() || now,
+            });
+        });
+
+        const profileEditIds = new Set<string>();
+        (profEditsRes.data || []).forEach((p) => {
+            profileEditIds.add(p.id);
+            const editKeys = Object.keys(p.pending_edits || {}).filter((k) => k !== '_submitted_at');
+            const submittedAtStr = p.pending_edits?._submitted_at;
+            const ts = submittedAtStr ? new Date(submittedAtStr).getTime() : now;
+            digestItems.push({
+                id: p.id,
+                type: 'profile_edit',
+                label: 'Edição de Perfil',
+                title: p.full_name || p.email || 'Membro',
+                author: p.email || '',
+                summary: `Campos alterados: ${editKeys.join(', ') || 'dados cadastrais'}`,
+                timestampMs: isNaN(ts) ? now : ts,
+            });
+        });
+
+        (pendingProfilesRes.data || [])
+            .filter((p) => !profileEditIds.has(p.id))
+            .forEach((p) => {
+                digestItems.push({
+                    id: p.id,
+                    type: 'profile',
+                    label: 'Novo Perfil',
+                    title: p.full_name || p.email || 'Novo Usuário',
+                    author: p.email || '',
+                    summary: 'Cadastro aguardando aprovação inicial',
+                    timestampMs: new Date(p.created_at).getTime() || now,
+                });
+            });
+
+        (teacherVerifsRes.data || []).forEach((t) => {
+            digestItems.push({
+                id: t.id,
+                type: 'teacher_verification',
+                label: 'Validação Docente',
+                title: t.full_name || 'Docente USP',
+                author: t.email || '',
+                summary: 'Comprovante docente anexado para revisão (LGPD)',
+                timestampMs: new Date(t.created_at).getTime() || now,
+            });
+        });
+
+        (initiativeReqsRes.data || []).forEach((req: any) => {
+            digestItems.push({
+                id: req.id,
+                type: 'initiative_request',
+                label: 'Nova Iniciativa (Eixo 04)',
+                title: req.initiative_name,
+                author: `${req.responsible_name} (${req.contact_info})`,
+                summary: 'Solicitação de inclusão de iniciativa/espaço no HUB',
+                timestampMs: new Date(req.created_at).getTime() || now,
+            });
+        });
+
+        (commentsRes.data || []).forEach((c) => {
+            digestItems.push({
+                id: c.id,
+                type: 'comment',
+                label: 'Comentário',
+                title: `Comentário de ${c.author_name || 'Membro'}`,
+                author: c.author_name || 'Membro',
+                summary: (c.content || '').slice(0, 120),
+                timestampMs: new Date(c.created_at).getTime() || now,
+            });
+        });
+
+        (softwaresRes.data || []).forEach((sw) => {
+            digestItems.push({
+                id: sw.id,
+                type: 'software',
+                label: 'Software Acadêmico',
+                title: sw.title,
+                author: sw.author_name || 'Autor',
+                summary: 'Ferramenta submetida para o catálogo',
+                timestampMs: new Date(sw.created_at).getTime() || now,
+            });
+        });
+
+        (oportunidadesRes.data || []).forEach((op) => {
+            digestItems.push({
+                id: op.id,
+                type: 'oportunidade',
+                label: 'Oportunidade',
+                title: op.titulo,
+                author: op.tipo || 'Mural',
+                summary: 'Nova oportunidade acadêmica pendente',
+                timestampMs: new Date(op.created_at).getTime() || now,
+            });
+        });
+
+        (dicasRes.data || []).forEach((d) => {
+            digestItems.push({
+                id: d.id,
+                type: 'dica',
+                label: 'Dica de Veterano',
+                title: d.titulo,
+                author: 'Veterano USP',
+                summary: 'Dica pendente no guia USP 101',
+                timestampMs: new Date(d.created_at).getTime() || now,
+            });
+        });
+
+        (dropsRes.data || []).forEach((dr) => {
+            digestItems.push({
+                id: dr.id,
+                type: 'micro_article',
+                label: 'Drop da Comunidade',
+                title: 'Micro-artigo submetido',
+                author: 'Membro',
+                summary: (dr.content || '').slice(0, 120),
+                timestampMs: new Date(dr.created_at).getTime() || now,
+            });
+        });
+
+        (perguntasRes.data || []).forEach((pq) => {
+            digestItems.push({
+                id: pq.id,
+                type: 'pergunta',
+                label: 'Pergunte a um Cientista',
+                title: pq.nome_autor || 'Dúvida Científica',
+                author: pq.nome_autor || 'Curioso',
+                summary: (pq.pergunta || '').slice(0, 120),
+                timestampMs: new Date(pq.created_at).getTime() || now,
+            });
+        });
+
+        const totalCount = digestItems.length;
+        if (totalCount === 0) {
+            return { checked: true, totalCount: 0, oldestAgeMinutes: 0 };
         }
 
-        const oldestAgeMinutes = oldestTimestamp ? Math.floor((now - oldestTimestamp) / (60 * 1000)) : 0;
+        const oldestTs = Math.min(...digestItems.map((i) => i.timestampMs));
+        const oldestAgeMinutes = Math.max(0, Math.floor((now - oldestTs) / (60 * 1000)));
 
-        // -------------------------------------------------------------------------
-        // REGRA 1 & 2: MONITORAMENTO DE VOLUME
-        // -------------------------------------------------------------------------
-        if (totalCount >= 10) {
-            // >= 10 itens: Disparar 2 e-mails espaçados por 2 minutos
-            if (now - state.lastVolume10Alert > COOLDOWN_VOLUME_10_MS) {
-                state.lastVolume10Alert = now;
-                state.lastVolume5Alert = now; // Suprime o alerta menor
+        // Dispara o Digest somente se respeitar o cooldown de 30 minutos
+        if (now - state.lastDigestSentAt >= COOLDOWN_DIGEST_MS) {
+            state.lastDigestSentAt = now;
 
-                // 1º Envio Imediato
-                await sendAdminNotification({
-                    type: 'queue_volume_alert',
-                    title: `🚨 URGENTE: Fila de Moderação com ${totalCount} itens (Aviso 1 de 2)`,
-                    content: `Atenção: A Torre de Controle atingiu nível crítico com ${totalCount} itens pendentes de aprovação.`,
-                    details: `Um segundo e-mail de reforço será disparado em 2 minutos caso a fila permaneça acumulada.`
-                });
+            const rawBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hub-lab-div.vercel.app';
+            const baseUrl = rawBaseUrl.split(' ')[0].replace(/\/$/, '');
 
-                // 2º Envio em 2 minutos
-                setTimeout(async () => {
-                    try {
-                        await sendAdminNotification({
-                            type: 'queue_volume_alert',
-                            title: `🚨 URGENTE: Fila de Moderação ainda com ${totalCount}+ itens (Aviso 2 de 2 - Reforço)`,
-                            content: `Reforço do alerta de volume: A fila da moderação ainda possui mais de 10 pendências acumuladas.`,
-                            details: `Por favor, acesse o painel da Torre de Controle para analisar as submissões pendentes.`
-                        });
-                    } catch (err) {
-                        console.error('[QueueMonitor] Falha ao enviar segundo e-mail de volume crítico:', err);
-                    }
-                }, REPEAT_DELAY_MS);
-            }
-        } else if (totalCount > 5) {
-            // > 5 itens: Disparar 1 e-mail
-            if (now - state.lastVolume5Alert > COOLDOWN_VOLUME_5_MS) {
-                state.lastVolume5Alert = now;
-                await sendAdminNotification({
-                    type: 'queue_volume_alert',
-                    title: `⚠️ Fila de Moderação com ${totalCount} itens pendentes`,
-                    content: `A Torre de Controle acumulou mais de 5 itens aguardando aprovação (${totalCount} pendentes no total).`,
-                    details: `Acesse o Painel Administrativo para aprovar ou rejeitar os materiais.`
-                });
-            }
-        }
+            const batchApproveToken = signEmailActionToken({
+                itemId: 'all',
+                itemType: 'all',
+                decision: 'approve_all',
+                generatedAt: now,
+                batchItems: digestItems.slice(0, 30).map((item) => ({
+                    itemId: item.id,
+                    itemType: item.type,
+                })),
+            });
 
-        // -------------------------------------------------------------------------
-        // REGRA 3 & 4: MONITORAMENTO DE SLA DE TEMPO
-        // -------------------------------------------------------------------------
-        if (oldestAgeMinutes >= 30) {
-            // >= 30 min: Disparar 2 e-mails espaçados por 2 minutos
-            if (now - state.lastSla30Alert > COOLDOWN_SLA_30_MS) {
-                state.lastSla30Alert = now;
-                state.lastSla10Alert = now; // Suprime o alerta de 10min
+            const cardsHtml = digestItems
+                .slice(0, 12)
+                .map((item) => {
+                    const itemAgeMin = Math.max(0, Math.floor((now - item.timestampMs) / (60 * 1000)));
+                    const approveToken = signEmailActionToken({
+                        itemId: item.id,
+                        itemType: item.type,
+                        decision: 'approve',
+                        title: item.title,
+                        generatedAt: now,
+                    });
+                    const rejectToken = signEmailActionToken({
+                        itemId: item.id,
+                        itemType: item.type,
+                        decision: 'reject',
+                        title: item.title,
+                        generatedAt: now,
+                    });
 
-                // 1º Envio Imediato
-                await sendAdminNotification({
-                    type: 'queue_sla_alert',
-                    title: `🚨 SLA CRÍTICO: Item aguardando há mais de ${oldestAgeMinutes} minutos (Aviso 1 de 2)`,
-                    content: `Alerta de SLA Excedido: Existe pelo menos uma submissão parada na fila há mais de 30 minutos sem moderação.`,
-                    details: `Tempo do item mais antigo: ${oldestAgeMinutes} minutos. Um segundo aviso será enviado em 2 minutos.`
-                });
+                    return `
+                        <div style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 14px; background-color: #f8fafc;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                                <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #0F4780; background: #e0f2fe; padding: 2px 8px; border-radius: 99px;">
+                                    ${item.label}
+                                </span>
+                                <span style="font-size: 11px; color: #64748b; font-weight: 600;">
+                                    ⏳ ${formatHumanDuration(itemAgeMin)}
+                                </span>
+                            </div>
+                            <p style="margin: 4px 0; font-size: 15px; font-weight: 800; color: #0f172a;">${item.title}</p>
+                            ${item.author ? `<p style="margin: 0 0 6px 0; font-size: 12px; color: #475569;"><strong>Responsável/Autor:</strong> ${item.author}</p>` : ''}
+                            <p style="margin: 0 0 12px 0; font-size: 13px; color: #334155; line-height: 1.4;">${item.summary}</p>
+                            <div style="display: flex; gap: 8px;">
+                                <a href="${baseUrl}/admin/email-action?token=${encodeURIComponent(approveToken)}" style="display: inline-block; padding: 8px 14px; background-color: #16a34a; color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 800;">
+                                    ✅ Aprovar
+                                </a>
+                                <a href="${baseUrl}/admin/email-action?token=${encodeURIComponent(rejectToken)}" style="display: inline-block; padding: 8px 14px; background-color: #F14343; color: #ffffff; text-decoration: none; border-radius: 6px; font-size: 12px; font-weight: 800;">
+                                    ❌ Rejeitar
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                })
+                .join('');
 
-                // 2º Envio em 2 minutos
-                setTimeout(async () => {
-                    try {
-                        await sendAdminNotification({
-                            type: 'queue_sla_alert',
-                            title: `🚨 SLA CRÍTICO: Item parado na fila há mais de 30 minutos (Aviso 2 de 2 - Reforço)`,
-                            content: `Reforço de SLA: As submissões pendentes ainda não foram moderadas após o alerta inicial.`,
-                            details: `Por favor, revise a Torre de Controle para evitar gargalos na experiência dos usuários.`
-                        });
-                    } catch (err) {
-                        console.error('[QueueMonitor] Falha ao enviar segundo e-mail de SLA crítico:', err);
-                    }
-                }, REPEAT_DELAY_MS);
-            }
-        } else if (oldestAgeMinutes > 10) {
-            // > 10 min: Disparar 1 e-mail
-            if (now - state.lastSla10Alert > COOLDOWN_SLA_10_MS) {
-                state.lastSla10Alert = now;
-                await sendAdminNotification({
-                    type: 'queue_sla_alert',
-                    title: `⏰ Alerta de SLA: Item aguardando há ${oldestAgeMinutes} minutos`,
-                    content: `Aviso de tempo: Há submissões aguardando aprovação na fila há mais de 10 minutos.`,
-                    details: `Tempo do item mais antigo: ${oldestAgeMinutes} minutos.`
-                });
-            }
+            const digestHtml = `
+                <h2 style="color: #0f172a; margin-top: 0; font-size: 20px;">📡 Torre de Controle: ${totalCount} item(ns) aguardando revisão</h2>
+                <p style="color: #475569; line-height: 1.6; font-size: 14px;">
+                    Confira abaixo os itens pendentes na fila unificada. Você pode aprovar ou rejeitar individualmente com um clique seguro ou aprovar o lote deste resumo.
+                </p>
+                <div style="margin: 20px 0; text-align: center;">
+                    <a href="${baseUrl}/admin/email-action?token=${encodeURIComponent(batchApproveToken)}" style="display: inline-block; padding: 12px 24px; background-color: #FFCC00; color: #1E1E1E; text-decoration: none; border-radius: 8px; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">
+                        ⚡ Aprovar Todos deste Resumo (${Math.min(totalCount, 30)})
+                    </a>
+                </div>
+                <div style="margin-top: 20px;">
+                    ${cardsHtml}
+                </div>
+            `;
+
+            await sendAdminNotification({
+                type: 'queue_digest',
+                title: `📡 Torre de Controle LabDiv: ${totalCount} item(ns) aguardando revisão`,
+                customHtml: digestHtml,
+            });
         }
 
         return {
             checked: true,
             totalCount,
-            oldestAgeMinutes
+            oldestAgeMinutes,
         };
     } catch (error) {
-        console.error('[QueueMonitor] Erro na checagem da fila:', error);
+        console.error('[QueueMonitor] Erro na geração do digest da fila:', error);
         return { checked: false, totalCount: 0, oldestAgeMinutes: 0 };
     } finally {
         state.isChecking = false;

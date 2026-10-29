@@ -703,14 +703,78 @@ function SwipeDeckCard({
                         Alterações Propostas (Diff):
                     </p>
                     <div className="text-xs font-mono bg-white dark:bg-[#121212] p-3 rounded-xl border border-gray-100 dark:border-white/5 max-h-36 overflow-y-auto space-y-1">
-                        {Object.entries(item.details).map(([key, val]) => (
-                            <div key={key} className="flex flex-col border-b border-gray-100 dark:border-white/5 pb-1">
-                                <span className="text-[10px] text-brand-blue font-bold">{key}:</span>
-                                <span className="text-gray-700 dark:text-gray-300 text-[11px]">
-                                    {typeof val === 'object' ? JSON.stringify(val) : String(val)}
-                                </span>
-                            </div>
-                        ))}
+                        {Object.entries(item.details)
+                            .filter(([key]) => key !== '_submitted_at')
+                            .map(([key, val]) => (
+                                <div key={key} className="flex flex-col border-b border-gray-100 dark:border-white/5 pb-1">
+                                    <span className="text-[10px] text-brand-blue font-bold">{key}:</span>
+                                    <span className="text-gray-700 dark:text-gray-300 text-[11px] break-all">
+                                        {typeof val === 'object' ? JSON.stringify(val) : String(val)}
+                                    </span>
+                                </div>
+                            ))}
+                    </div>
+                </div>
+            )}
+
+            {item.type === 'initiative_request' && item.details && (
+                <div className="mb-6 p-4 rounded-2xl bg-purple-500/10 border border-purple-500/30 space-y-3">
+                    <div className="flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-purple-400">
+                            🏛️ Solicitação de Inclusão de Iniciativa (Eixo 04)
+                        </span>
+                        {item.details.acronym && (
+                            <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[10px] font-black font-mono">
+                                {item.details.acronym}
+                            </span>
+                        )}
+                    </div>
+                    <div className="text-xs text-gray-700 dark:text-gray-200 space-y-1">
+                        <p>
+                            <strong className="text-gray-400">Responsável:</strong> {item.details.responsible_name}
+                        </p>
+                        <p>
+                            <strong className="text-gray-400">Contato informado:</strong> {item.details.contact_info}
+                        </p>
+                    </div>
+                    <div className="flex flex-wrap gap-2 pt-1">
+                        {(() => {
+                            const contact = String(item.details.contact_info || '').trim();
+                            const digits = contact.replace(/\D/g, '');
+                            const isEmail = contact.includes('@') && contact.includes('.');
+                            const isPhone = digits.length >= 10 && digits.length <= 13;
+                            const href = isEmail
+                                ? `mailto:${contact}?subject=${encodeURIComponent(`Iniciativa no HUB LabDiv: ${item.details.initiative_name}`)}`
+                                : isPhone
+                                ? `https://wa.me/${digits.startsWith('55') ? digits : `55${digits}`}`
+                                : null;
+
+                            return (
+                                <>
+                                    {href && (
+                                        <a
+                                            href={href}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-colors"
+                                        >
+                                            <ExternalLink className="w-3 h-3" />
+                                            {isEmail ? 'Enviar E-mail' : 'Abrir WhatsApp'}
+                                        </a>
+                                    )}
+                                    <button
+                                        type="button"
+                                        onClick={() => {
+                                            navigator.clipboard.writeText(contact);
+                                            toast.success('Contato copiado para a área de transferência!');
+                                        }}
+                                        className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/20 text-gray-800 dark:text-gray-200 border border-gray-300 dark:border-white/10 text-[10px] font-black uppercase tracking-wider cursor-pointer"
+                                    >
+                                        Copiar Contato
+                                    </button>
+                                </>
+                            );
+                        })()}
                     </div>
                 </div>
             )}

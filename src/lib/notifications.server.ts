@@ -26,7 +26,7 @@ const transporter = nodemailer.createTransport({
 
 const adminEmails = ['hublabdiv@gmail.com'];
 
-export type NotificationType = 'submission' | 'question' | 'comment' | 'profile_update' | 'profile_creation' | 'bug_report' | 'arena_suggestion' | 'hub_improvement' | 'drop_submission' | 'thread_reply' | 'jupiter_sync_error' | 'beta_registration' | 'queue_volume_alert' | 'queue_sla_alert';
+export type NotificationType = 'submission' | 'question' | 'comment' | 'profile_update' | 'profile_creation' | 'bug_report' | 'arena_suggestion' | 'hub_improvement' | 'drop_submission' | 'thread_reply' | 'jupiter_sync_error' | 'beta_registration' | 'queue_volume_alert' | 'queue_sla_alert' | 'queue_digest';
 
 export interface NotificationData {
     type: NotificationType;
@@ -40,6 +40,7 @@ export interface NotificationData {
     details?: string;
     url?: string;
     targetEmail?: string;
+    customHtml?: string;
 }
 
 export async function sendAdminNotification(data: NotificationData) {
@@ -93,7 +94,7 @@ export async function sendAdminNotification(data: NotificationData) {
 
         case 'profile_creation':
             subject = `🆕 Hub: Novo Cadastro - ${data.userName}`;
-            dashboardLink = `${baseUrl}/admin/papeis`;
+            dashboardLink = `${baseUrl}/admin/profiles`;
             emailTemplate = `
                 <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Novo Usuário Cadastrado</h2>
                 <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">Um novo usuário completou seu cadastro no Hub e aguarda aprovação.</p>
@@ -105,7 +106,7 @@ export async function sendAdminNotification(data: NotificationData) {
 
         case 'profile_update':
             subject = `👤 Hub: Atualização de Perfil - ${data.userName}`;
-            dashboardLink = `${baseUrl}/admin/papeis`;
+            dashboardLink = `${baseUrl}/admin/profiles`;
             emailTemplate = `
                 <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Perfil Editado</h2>
                 <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">O usuário <strong>${data.userName}</strong> atualizou suas informações de perfil e aguarda revisão.</p>
@@ -153,7 +154,7 @@ export async function sendAdminNotification(data: NotificationData) {
                 </div>`;
             break;
         }
-            
+
         case 'arena_suggestion':
             subject = `🏆 Arena: Nova Proposta de Desafio - ${data.title}`;
             dashboardLink = `${baseUrl}/admin/desafios`;
@@ -178,7 +179,7 @@ export async function sendAdminNotification(data: NotificationData) {
                 </div>
                 <p style="font-size: 12px; color: #718096;">Enviado por: ${data.userName}</p>`;
             break;
-            
+
         case 'drop_submission':
             subject = `📝 Hub: Novo Log (Drop) - @${data.userName}`;
             dashboardLink = `${baseUrl}/admin/drops`;
@@ -225,34 +226,16 @@ export async function sendAdminNotification(data: NotificationData) {
                     <strong>Dica:</strong> Se não conseguir baixar de primeira, aguarde alguns minutos, o Play Store pode levar um tempo para propagar a permissão.
                 </div>`;
             break;
-            
-        case 'queue_volume_alert': {
-            const isCritical = (data.content || '').includes('10') || (data.title || '').includes('URGENTE') || (data.details || '').includes('10');
-            const alertColor = isCritical ? '#F14343' : '#FFCC00';
-            subject = `${isCritical ? '🚨' : '⚠️'} Hub Moderação: ${data.title || 'Volume da Fila de Aprovação'}`;
-            dashboardLink = `${baseUrl}/admin`;
-            emailTemplate = `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">${isCritical ? '🚨 Acúmulo Crítico na Fila de Aprovação (10+ itens)' : '⚠️ Fila de Moderação em Alerta (> 5 itens)'}</h2>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">${data.content || 'A fila de aprovação acumulou pendências que precisam de atenção.'}</p>
-                <div style="background-color: ${isCritical ? '#FEF2F2' : '#FFFBEB'}; border-left: 4px solid ${alertColor}; padding: 16px; margin: 24px 0; border-radius: 4px;">
-                    <p style="margin: 0 0 8px 0; font-size: 14px;"><strong style="color: #1a1a1a;">Status:</strong> <span style="color: ${alertColor}; font-weight: bold;">${isCritical ? 'Ação Imediata Necessária' : 'Atenção Requerida'}</span></p>
-                    ${data.details ? `<p style="margin: 0; font-size: 14px; color: #4a5568;">${data.details}</p>` : ''}
-                </div>`;
-            break;
-        }
 
+        case 'queue_digest':
+        case 'queue_volume_alert':
         case 'queue_sla_alert': {
-            const isCritical = (data.title || '').includes('CRÍTICO') || (data.content || '').includes('30') || (data.details || '').includes('30');
-            const alertColor = isCritical ? '#F14343' : '#FFCC00';
-            subject = `${isCritical ? '🚨' : '⏰'} Hub SLA: ${data.title || 'Atraso na Fila de Aprovação'}`;
+            subject = data.title || `📡 Torre de Controle LabDiv: Itens aguardando revisão`;
             dashboardLink = `${baseUrl}/admin`;
-            emailTemplate = `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">${isCritical ? '🚨 Estouro de SLA Crítico (Item parado há ≥ 30 min)' : '⏰ Alerta de Tempo de Espera (Item parado há > 10 min)'}</h2>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">${data.content || 'Há itens aguardando aprovação além do tempo aceitável na Torre de Controle.'}</p>
-                <div style="background-color: ${isCritical ? '#FEF2F2' : '#FFFBEB'}; border-left: 4px solid ${alertColor}; padding: 16px; margin: 24px 0; border-radius: 4px;">
-                    <p style="margin: 0 0 8px 0; font-size: 14px;"><strong style="color: #1a1a1a;">Urgência:</strong> <span style="color: ${alertColor}; font-weight: bold;">${isCritical ? 'Crítica (≥ 30 min na fila)' : 'Aviso (> 10 min na fila)'}</span></p>
-                    ${data.details ? `<p style="margin: 0; font-size: 14px; color: #4a5568;">${data.details}</p>` : ''}
-                </div>`;
+            emailTemplate = data.customHtml || `
+                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">📡 Resumo da Fila de Moderação</h2>
+                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">${data.content || 'Existem novos itens aguardando revisão na Torre de Controle.'}</p>
+                ${data.details ? `<p style="margin: 12px 0 0 0; font-size: 14px; color: #4a5568;">${data.details}</p>` : ''}`;
             break;
         }
 

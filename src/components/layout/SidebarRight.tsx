@@ -289,8 +289,7 @@ export const SidebarRight = ({ tags: propTags, authors: propAuthors }: SidebarRi
                                                 isLabDiv={user.is_labdiv}
                                             />
                                             <div className="flex flex-col overflow-hidden">
-                                                <span className="text-xs font-bold text-gray-900 dark:text-white truncate max-w-[100px]" title={user.name}>{user.name}</span>
-                                                <span className="text-[10px] text-gray-500 truncate max-w-[100px]">{user.handle}</span>
+                                                <span className="text-xs font-bold text-gray-900 dark:text-white truncate max-w-[130px]" title={user.name}>{user.name}</span>
                                             </div>
                                         </Link>
 

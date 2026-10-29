@@ -26,6 +26,7 @@ import { Avatar } from '@/components/ui/Avatar';
 import { User, Loader2, Search, X, Users, Plus, Send } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
+import { getProfileDisplayName } from '@/lib/profile-visibility';
 
 function EmaranhamentoContent() {
     const searchParams = useSearchParams();
@@ -313,9 +314,7 @@ function EmaranhamentoContent() {
                                         ) : groupMessages.length > 0 ? (
                                             groupMessages.map((msg) => {
                                                 const senderProfile = msg.sender || {};
-                                                const displayName = senderProfile.use_nickname && senderProfile.username
-                                                    ? senderProfile.username
-                                                    : senderProfile.full_name || 'Anônimo';
+                                                const displayName = getProfileDisplayName(senderProfile);
                                                 return (
                                                     <div key={msg.id} className="flex items-start gap-3 animate-in fade-in slide-in-from-bottom-2 duration-300">
                                                         {senderProfile.avatar_url ? (
@@ -409,7 +408,7 @@ function EmaranhamentoContent() {
                                                     )}
                                                     <div className="flex-1 min-w-0">
                                                         <div className="text-xs font-bold text-white truncate group-hover:text-brand-blue transition-colors">
-                                                            {user.use_nickname && user.username ? user.username : user.full_name}
+                                                            {getProfileDisplayName(user)}
                                                         </div>
                                                         <div className="flex items-center gap-2 mt-0.5">
                                                             <span className={`text-[8px] font-black uppercase px-1.5 py-0.5 rounded border ${getCategoryColor(user.user_category)}`}>
@@ -565,7 +564,9 @@ function EmaranhamentoContent() {
                                                     </div>
                                                     <div className="flex flex-col min-w-0 flex-1">
                                                         <span className="text-xs font-black text-white uppercase truncate">{conv.name}</span>
-                                                        <span className="text-[10px] text-gray-400 italic truncate opacity-80">{conv.lastMessage || conv.handle}</span>
+                                                        {conv.lastMessage && (
+                                                            <span className="text-[10px] text-gray-400 italic truncate opacity-80">{conv.lastMessage}</span>
+                                                        )}
                                                     </div>
                                                     <span className="material-symbols-outlined text-brand-blue/40 text-sm">arrow_forward</span>
                                                 </button>

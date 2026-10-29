@@ -2,6 +2,45 @@
 
 ---
 
+## 🚀 Versão 6.7.1 (Build 22) — *Privacidade de Apelidos, Moderação V3 de Perfis, Badges de Iniciativas & Skills Antigravity*
+**Data de Lançamento:** 28 de Outubro de 2026  
+**Ambiente:** Web (Next.js 16+) & Android Mobile (Capacitor / Google Play Store)  
+**Licença:** GNU Affero General Public License v3 (AGPLv3)
+
+---
+
+### 🛡️ 1. Proteção de Identidade e Privacidade de Apelidos
+* **Prioridade Absoluta do Apelido (`username`):**
+  - Quando o usuário define um apelido, este é exibido universalmente em todo o HUB (Cards, Feed, Lab Pessoal, Comentários, Busca e Moderação), mantendo o nome civil protegido e restrito a auditorias administrativas.
+  - Eliminado o vazamento de prefixos de e-mail como `@handle` nas barras laterais e no componente *Usuários em Órbita*.
+* **Identidade & Privacidade M3 no Perfil (`EditProfileModal`):**
+  - Módulo interativo com cards de escolha clara (*Usar Meu Apelido* vs *Usar Nome Real*) e Live Preview em tempo real do que a comunidade vê versus o que é privado.
+* **Exceção Acadêmica no Match Acadêmico (`MatchAcademicoTab`):**
+  - Pesquisadores e orientadores exibem obrigatoriamente o nome real civil completo para validação institucional e busca no currículo Lattes.
+* **Correção de Sessão / Impersonate:**
+  - Encerramento de impersonação corrigido para redirecionar para `/admin/profiles`, eliminando rota 404 legada.
+
+---
+
+### 🔬 2. Moderação de Perfis V3 & Badges de Iniciativas
+* **Isolamento Estrito de Visibilidade:**
+  - Implementação de `sanitizeProfileForViewer` para que dados em análise (`pending_edits`) sejam visíveis apenas ao próprio autor e aos moderadores.
+  - Banner M3 no Lab Pessoal informando quando há rascunho sob revisão.
+* **Badges de Vínculo com Iniciativas & Espaços:**
+  - Suporte visual aos selos de *LabDiv*, *Show da Física*, *HS (Hackerspace)* e *Profis*, com aprovação obrigatória pela Torre de Controle.
+* **Miniatura do Lab (`AdminProfileMiniLab`):**
+  - Inspeção rápida de dados, métricas e publicações de usuários no painel de moderação sem `useEffect` de data fetching.
+* **Aprovações Rápidas por E-mail:**
+  - Suporte a tokens HMAC assinados com chave efêmera para decisões diretas da caixa de entrada de moderação.
+
+---
+
+### ⚡ 3. Atualização Arquitetural Antigravity
+* **Migração de Workflows para Skills:**
+  - Atualização completa dos fluxos legados para o formato moderno `.agents/skills/*/SKILL.md` com suporte nativo aos slash commands `/att-git`, `/att-teste`, `/audit-sec`, `/check-ui`, `/fix-android`, `/plan` e `/sql-mig`.
+
+---
+
 ## 🚀 Versão 6.7.0 (Build 21) — *Torre de Controle em Lote (Swipe M3), 4 Personas, Validação Docente LGPD & Seção Interativa*
 **Data de Lançamento:** 26 de Outubro de 2026  
 **Ambiente:** Web (Next.js 16+) & Android Mobile (Capacitor / Google Play Store)  

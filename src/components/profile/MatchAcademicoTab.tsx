@@ -27,6 +27,7 @@ import {
 import { fetchClassmates } from '@/app/actions/match';
 import * as CalendarActions from '@/app/actions/calendar';
 import { Avatar } from "@/components/ui/Avatar";
+import { getProfileDisplayName, isResearcherProfile } from '@/lib/profile-visibility';
 import { 
     GraduationCap, 
     ArrowRight, 
@@ -253,6 +254,10 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
         const isPending = person.adoptionStatus === 'pending';
         const p = person.profile || person; 
         
+        // Pesquisadores no Match Acadêmico devem sempre exibir o nome real completo
+        const isThisResearcher = isResearcherProfile(p) || (type === 'ic' && !isResearcher);
+        const displayName = getProfileDisplayName(p, { forceRealName: isThisResearcher });
+        
         // New logic for adoption status
         const isAdopted = type === 'adoption' && person.adoptionStatus === 'approved';
         const isPendingAdoption = type === 'adoption' && person.adoptionStatus === 'pending';
@@ -330,7 +335,7 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
                     <div className={`flex items-center gap-4 mb-6 ${(isMyHelper && isPending) ? 'pointer-events-auto' : ''}`}>
                     <Avatar
                         src={p.avatar_url}
-                        name={p.use_nickname ? p.username : p.full_name}
+                        name={displayName}
                         size="md"
                         xp={p.xp}
                         level={p.level}
@@ -338,8 +343,13 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
                     />
                     <div className="flex-1 min-w-0">
                         <h3 className="font-display font-medium text-gray-900 dark:text-white truncate">
-                            {p.use_nickname ? p.username : p.full_name}
+                            {displayName}
                         </h3>
+                        {isThisResearcher && p.username && displayName !== p.username && (
+                            <p className="text-[10px] text-brand-blue font-mono font-bold truncate">
+                                @{p.username}
+                            </p>
+                        )}
                     </div>
                 </div>
 
@@ -669,29 +679,47 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
                             className="bg-white dark:bg-[#1E1E1E] w-full max-w-2xl rounded-[40px] shadow-2xl overflow-hidden border border-white/5 max-h-[90vh] flex flex-col"
                         >
                             {/* Header */}
-                            <div className="p-8 border-b border-gray-50 dark:border-white/5 flex items-center justify-between bg-gray-50/50 dark:bg-white/[0.02]">
-                                <div className="flex items-center gap-4">
-                                    <Avatar
-                                        src={selectedPerson.profile.avatar_url}
-                                        name={selectedPerson.profile.use_nickname ? selectedPerson.profile.username : selectedPerson.profile.full_name}
-                                        size="lg"
-                                    />
-                                    <div>
-                                        <h2 className="text-xl font-display font-black text-gray-900 dark:text-white uppercase tracking-tight">
-                                            {selectedPerson.profile.use_nickname ? selectedPerson.profile.username : selectedPerson.profile.full_name}
-                                        </h2>
-                                        <p className="text-[10px] text-brand-blue font-bold uppercase tracking-widest">
-                                            {selectedPerson.profile.course} • {selectedPerson.profile.institute}
-                                        </p>
+                            {(() => {
+                                const isSelectedResearcher = isResearcherProfile(selectedPerson.profile);
+                                const modalDisplayName = getProfileDisplayName(selectedPerson.profile, { forceRealName: isSelectedResearcher });
+                                return (
+                                    <div className="p-8 border-b border-gray-50 dark:border-white/5 flex items-center justify-between bg-gray-50/50 dark:bg-white/[0.02]">
+                                        <div className="flex items-center gap-4">
+                                            <Avatar
+                                                src={selectedPerson.profile.avatar_url}
+                                                name={modalDisplayName}
+                                                size="lg"
+                                            />
+                                            <div>
+                                                <div className="flex items-center gap-2 flex-wrap">
+                                                    <h2 className="text-xl font-display font-black text-gray-900 dark:text-white uppercase tracking-tight">
+                                                        {modalDisplayName}
+                                                    </h2>
+                                                    {isSelectedResearcher && (
+                                                        <span className="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider bg-brand-yellow/15 text-[#B45309] dark:text-brand-yellow border border-brand-yellow/30">
+                                                            🔬 Pesquisador / Docente
+                                                        </span>
+                                                    )}
+                                                </div>
+                                                {isSelectedResearcher && selectedPerson.profile.username && modalDisplayName !== selectedPerson.profile.username && (
+                                                    <p className="text-[10px] text-brand-blue font-mono font-bold">
+                                                        @{selectedPerson.profile.username}
+                                                    </p>
+                                                )}
+                                                <p className="text-[10px] text-brand-blue font-bold uppercase tracking-widest mt-0.5">
+                                                    {selectedPerson.profile.laboratory_name || selectedPerson.profile.course || 'Pesquisador'} • {selectedPerson.profile.institute || 'IFUSP'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <button
+                                            onClick={() => setSelectedPerson(null)}
+                                            className="p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors"
+                                        >
+                                            <X className="w-6 h-6 text-gray-400" />
+                                        </button>
                                     </div>
-                                </div>
-                                <button
-                                    onClick={() => setSelectedPerson(null)}
-                                    className="p-2 hover:bg-gray-100 dark:hover:bg-white/5 rounded-full transition-colors"
-                                >
-                                    <X className="w-6 h-6 text-gray-400" />
-                                </button>
-                            </div>
+                                );
+                            })()}
 
                             {/* Content */}
                             <div className="p-8 overflow-y-auto hidden-scrollbar space-y-8">

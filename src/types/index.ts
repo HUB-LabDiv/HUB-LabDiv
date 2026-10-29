@@ -27,6 +27,22 @@ export interface HobbyCard {
 
 export type UserPersona = 'aluno' | 'professor' | 'curioso' | 'iniciativa';
 export type TeacherVerificationStatus = 'none' | 'pending' | 'approved' | 'rejected';
+export type InitiativeId = 'labdiv' | 'show_da_fisica' | 'hs' | 'profis';
+
+export interface InitiativeRequest {
+    id: string;
+    user_id?: string;
+    initiative_name: string;
+    acronym?: string;
+    description: string;
+    responsible_name: string;
+    contact_info: string;
+    status: 'pending' | 'approved' | 'rejected';
+    admin_feedback?: string;
+    reviewed_by?: string;
+    reviewed_at?: string;
+    created_at: string;
+}
 
 export interface Profile {
     id: string;
@@ -93,6 +109,7 @@ export interface Profile {
 
     interest_area?: string;
     areas_of_interest?: string[];
+    member_initiatives?: string[];
     pending_edits?: any;
     hobbies_gallery?: HobbyCard[];
     is_adult?: boolean;
@@ -285,6 +302,7 @@ export type ModerationItemType =
     | 'profile'
     | 'profile_edit'
     | 'teacher_verification'
+    | 'initiative_request'
     | 'comment'
     | 'software'
     | 'software_feedback'

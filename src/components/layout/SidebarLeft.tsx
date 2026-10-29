@@ -593,9 +593,11 @@ function SidebarLeftInner({ userId }: { userId?: string }) {
                                                         </span>
                                                     )}
                                                 </div>
-                                                <span className="text-[10px] text-gray-400 font-medium truncate italic opacity-80 group-hover:opacity-100">
-                                                    {profile.lastMessage || profile.handle}
-                                                </span>
+                                                {profile.lastMessage && (
+                                                    <span className="text-[10px] text-gray-400 font-medium truncate italic opacity-80 group-hover:opacity-100">
+                                                        {profile.lastMessage}
+                                                    </span>
+                                                )}
                                             </div>
                                         )}
                                     </Link>

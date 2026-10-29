@@ -16,6 +16,7 @@ import React, { useState, useEffect } from 'react';
 import { fetchChallenges, submitToChallenge, voteSubmission, proposeChallenge, fetchArenaSuggestions, submitHubAdoption } from '@/app/actions/arena';
 import { submitHubSuggestion } from '@/app/actions/feedback';
 import { Avatar } from "@/components/ui/Avatar";
+import { getProfileDisplayName } from '@/lib/profile-visibility';
 import { Loader2, Trophy, MessageSquare, ThumbsUp, Plus, Calendar, AlertCircle, Microscope, UserPlus, Settings, Lightbulb, ClipboardList, BookOpen, Sparkles } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { format } from 'date-fns';
@@ -289,7 +290,7 @@ export default function ArenaClient({ profile }: { profile: any }) {
                                                 </div>
                                                 <Avatar 
                                                     src={challenge.creator?.avatar_url} 
-                                                    name={challenge.creator?.use_nickname ? challenge.creator.username : challenge.creator?.full_name} 
+                                                    name={getProfileDisplayName(challenge.creator)} 
                                                     size="md"
                                                 />
                                             </div>

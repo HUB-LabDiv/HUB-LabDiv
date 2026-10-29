@@ -43,8 +43,8 @@ export function ImpersonationBanner({ impersonatedName }: ImpersonationBannerPro
                 style: { background: '#121212', color: '#fff', border: '1px solid #FFD700' }
             });
 
-            // Force a full reload to reset all state/client
-            window.location.href = '/admin/papeis';
+            // Force a full reload to reset all state/client to Profiles Moderation
+            window.location.href = '/admin/profiles';
         } catch (error: any) {
             toast.error('Erro ao encerrar sessão: ' + error.message);
             setIsStopping(false);

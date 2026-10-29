@@ -22,6 +22,7 @@ import { z } from 'zod';
 import { sendAutomaticNotification } from './notifications';
 import { postMatchesMediaTypes } from '@/lib/media-utils';
 import { verifyAdminToken } from '@/lib/auth/admin-token';
+import { getProfileDisplayName } from '@/lib/profile-visibility';
 
 export interface AdminUpdate {
     status?: string;
@@ -690,8 +691,8 @@ export const getUsersInOrbit = unstable_cache(
 
         return profiles?.map(p => ({
             id: p.id,
-            name: (p.use_nickname && p.username) ? p.username : (p.full_name || p.username || 'Usuário'),
-            handle: p.email ? `@${p.email.split('@')[0]}` : '@usuario',
+            name: getProfileDisplayName(p),
+            handle: p.username ? `@${p.username}` : '',
             avatar: p.avatar_url,
             xp: p.xp,
             level: p.level,
@@ -718,8 +719,8 @@ export async function searchProfiles(query: string) {
 
     return profiles?.map(p => ({
         id: p.id,
-        name: (p.use_nickname && p.username) ? p.username : (p.full_name || 'Usuário'),
-        handle: p.email ? `@${p.email.split('@')[0]}` : '@colaborador',
+        name: getProfileDisplayName(p),
+        handle: p.username ? `@${p.username}` : '',
         avatar: p.avatar_url,
         xp: p.xp,
         level: p.level,
@@ -870,14 +871,14 @@ export async function getProfileById(id: string) {
     const supabaseServer = await createServerSupabase();
     const { data } = await supabaseServer
         .from('profiles')
-        .select('id, full_name, email, avatar_url')
+        .select('id, full_name, username, use_nickname, email, avatar_url')
         .eq('id', id)
         .single();
 
     return data ? {
         id: data.id,
-        name: data.full_name || 'Usuário',
-        handle: data.email ? `@${data.email.split('@')[0]}` : '@usuario',
+        name: getProfileDisplayName(data),
+        handle: data.username ? `@${data.username}` : '',
         avatar: data.avatar_url,
     } : null;
 }

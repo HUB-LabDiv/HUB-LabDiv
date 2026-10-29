@@ -20,7 +20,7 @@ import { PostDTO } from '@/dtos/media';
 import { parseMediaUrl, getYoutubeThumbnail, getOptimizedUrl } from '@/lib/media-utils';
 import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
 
-import { Grid, Star, Image as ImageIcon, FileText, Heart, MessageSquare, Info, Camera, ShieldCheck, Play, Linkedin, Github, Youtube, Instagram, Globe, Share2, GraduationCap, Eye, Edit, BarChart2, Filter, Trash2, Check, X, Plus, Loader2, Pencil } from 'lucide-react';
+import { Grid, Star, Image as ImageIcon, FileText, Heart, MessageSquare, Info, Camera, ShieldCheck, Play, Linkedin, Github, Youtube, Instagram, Globe, Share2, GraduationCap, Eye, Edit, BarChart2, Filter, Trash2, Check, X, Plus, Loader2, Pencil, Clock } from 'lucide-react';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
 import { RadiationBadge } from '@/components/gamification/RadiationBadge';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
@@ -28,6 +28,8 @@ import { RadiationTab } from '@/components/gamification/RadiationTab';
 import { ThreadNode, Drop } from '@/components/comunidade/LogsView';
 import { Profile } from '@/types';
 import { Avatar } from "@/components/ui/Avatar";
+import { InitiativeBadges } from '@/components/ui/InitiativeBadges';
+import { hasActivePendingEdits, getProfileDisplayName } from '@/lib/profile-visibility';
 import { User } from '@supabase/supabase-js';
 import { EditSubmissionModal } from '@/components/profile/EditSubmissionModal';
 import { NetworkModal } from '@/components/profile/NetworkModal';
@@ -294,23 +296,54 @@ export function LabClientView({
             userId={currentUser.id}
         >
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
+                {isViewingOwn && (viewedProfile?.review_status === 'pending' || hasActivePendingEdits(viewedProfile?.pending_edits)) && (
+                    <div className="mb-6 p-4 rounded-2xl bg-[#FFCC00]/15 dark:bg-[#1E1E1E] border border-[#FFCC00]/50 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div className="flex items-start gap-3">
+                            <div className="p-2 rounded-xl bg-[#FFCC00]/25 text-[#B45309] dark:text-[#FFCC00] shrink-0">
+                                <Clock className="w-5 h-5" />
+                            </div>
+                            <p className="text-xs text-gray-800 dark:text-gray-200 leading-relaxed">
+                                <strong className="text-[#92400E] dark:text-[#FFCC00] uppercase tracking-wider">⏳ Alterações em análise:</strong>{' '}
+                                Suas edições recentes (foto, nome, bio ou dados) estão aguardando aprovação da moderação.{' '}
+                                <strong className="underline decoration-[#FFCC00]">Esta prévia atualizada está visível apenas para você</strong> — os demais usuários continuam vendo a última versão aprovada do seu perfil.
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setIsEditModalOpen(true)}
+                            className="shrink-0 px-3 py-1.5 rounded-xl bg-[#FFCC00] text-[#1E1E1E] text-[10px] font-black uppercase tracking-wider hover:brightness-105 transition-all cursor-pointer"
+                        >
+                            Revisar Edições
+                        </button>
+                    </div>
+                )}
+
                 <div data-tour="lab-profile-header" className="bg-white dark:bg-background-dark rounded-3xl p-8 shadow-sm border border-gray-100 dark:border-gray-800 mb-8">
                     <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 sm:gap-12 max-w-3xl mx-auto">
                         <div className="relative shrink-0">
                             <Avatar
                                 src={viewedProfile?.avatar_url}
-                                name={(viewedProfile?.use_nickname && viewedProfile?.username) ? viewedProfile.username : (viewedProfile?.full_name || 'Usuário')}
+                                name={getProfileDisplayName(viewedProfile)}
                                 size="custom"
                                 customSize="w-32 h-32 sm:w-40 sm:h-40"
                                 xp={viewedProfile?.xp}
                                 level={viewedProfile?.level}
                                 isLabDiv={viewedProfile?.is_labdiv}
                             />
+                            {isViewingOwn && (viewedProfile?.pending_edits?.pending_avatar_url || viewedProfile?.pending_edits?.avatar_url) && (
+                                <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 whitespace-nowrap px-2.5 py-0.5 rounded-full bg-[#1E1E1E] text-[#FFCC00] border border-[#FFCC00]/60 text-[9px] font-black uppercase tracking-wider shadow-md flex items-center gap-1">
+                                    <Clock className="w-2.5 h-2.5" /> Foto pendente • Só você vê
+                                </span>
+                            )}
                         </div>
                         <div className="flex-1 text-center sm:text-left space-y-4 sm:pt-2">
                             <div>
-                                <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 dark:text-white flex flex-wrap items-center gap-2">
-                                    {(viewedProfile?.use_nickname && viewedProfile?.username) ? viewedProfile.username : (viewedProfile?.full_name || 'Usuário')}
+                                <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 dark:text-white flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                                    {getProfileDisplayName(viewedProfile)}
+                                    {isViewingOwn && (viewedProfile?.pending_edits?.full_name || viewedProfile?.pending_edits?.username) && (
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FFCC00]/20 text-[#B45309] dark:text-[#FFCC00] border border-[#FFCC00]/40 text-[9px] font-black uppercase">
+                                            <Clock className="w-2.5 h-2.5" /> Pendente • Visível só para você
+                                        </span>
+                                    )}
                                     <span className="text-xs font-black uppercase text-brand-blue bg-brand-blue/10 px-2 py-1 rounded">
                                         {viewedProfile?.id === currentUser.id ? 'Laboratório Pessoal' : 'Laboratório Externo'}
                                     </span>
@@ -320,6 +353,47 @@ export function LabClientView({
                                         </span>
                                     )}
                                 </h1>
+
+                                <div className="mt-2 flex flex-wrap items-center justify-center sm:justify-start gap-1.5">
+                                    <InitiativeBadges
+                                        initiatives={viewedProfile?.member_initiatives}
+                                        isLabdivLegacy={viewedProfile?.is_labdiv}
+                                        pendingInitiatives={viewedProfile?.pending_edits?.member_initiatives}
+                                        isOwnerView={isViewingOwn}
+                                        size="md"
+                                    />
+                                </div>
+
+                                {isViewingOwn && (
+                                    <div className="mt-2 flex items-center justify-center sm:justify-start gap-2 flex-wrap">
+                                        {viewedProfile?.use_nickname && viewedProfile?.username ? (
+                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-yellow/15 border border-brand-yellow/30 text-xs font-bold text-[#B45309] dark:text-[#FFCC00]">
+                                                <span>Apelido público ativo: <strong>@{viewedProfile.username}</strong></span>
+                                                <span className="text-[9px] font-black uppercase bg-[#1E1E1E] text-[#FFCC00] px-2 py-0.5 rounded-full border border-[#FFCC00]/40">
+                                                    🔒 Nome real protegido
+                                                </span>
+                                            </span>
+                                        ) : viewedProfile?.username ? (
+                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gray-100 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-xs text-gray-500">
+                                                <span>Exibindo nome real: <strong>{viewedProfile?.full_name}</strong></span>
+                                                <button
+                                                    onClick={() => handleInlineUpdate('use_nickname', true, 'Apelido ativado como seu nome público!')}
+                                                    className="text-[10px] text-brand-blue dark:text-[#FFCC00] font-black hover:underline cursor-pointer"
+                                                >
+                                                    (Ativar @{viewedProfile.username} para ocultar)
+                                                </button>
+                                            </span>
+                                        ) : (
+                                            <button
+                                                onClick={() => setIsEditModalOpen(true)}
+                                                className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-bold text-brand-yellow bg-brand-yellow/10 hover:bg-brand-yellow/20 border border-dashed border-brand-yellow/40 rounded-xl transition-all cursor-pointer"
+                                            >
+                                                <Plus className="w-3.5 h-3.5" />
+                                                <span>Definir Apelido (Ocultar Nome Real na Comunidade)</span>
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
 
                                 {isViewingOwn && (
                                     <div className="mt-1 flex items-center gap-2">
@@ -371,7 +445,7 @@ export function LabClientView({
                                                         <button
                                                             onClick={() => {
                                                                 setNicknameInput(viewedProfile.username || '');
-                                                                setUseNicknameInput(viewedProfile.use_nickname || false);
+                                                                setUseNicknameInput(viewedProfile.use_nickname ?? true);
                                                                 setEditingNickname(true);
                                                             }}
                                                             className="text-gray-500 hover:text-brand-yellow p-0.5 rounded transition-colors"

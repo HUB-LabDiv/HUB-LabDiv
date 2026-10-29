@@ -12,14 +12,19 @@
  */
 
 
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useState, useMemo, useTransition } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
-import { approveProfile, getEnrollmentProofUrl, enableAutoApprove, disableAutoApprove, getAutoApproveStatus, updateProfileCategory } from '@/app/actions/profiles';
+import { approveProfile, rejectProfile, impersonateUser, getProfileMiniLabData, getEnrollmentProofUrl, enableAutoApprove, disableAutoApprove, getAutoApproveStatus, updateProfileCategory } from '@/app/actions/profiles';
 import { getAdminSessionRole } from '@/app/actions/admin';
-import { Loader2, Check, X, AlertCircle, Info, ExternalLink, Edit, GraduationCap, Sparkles, Building2, PhoneCall } from 'lucide-react';
+import { Loader2, Check, X, AlertCircle, Info, ExternalLink, Edit, GraduationCap, Sparkles, Building2, PhoneCall, ChevronDown, UserCheck } from 'lucide-react';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
 import { detectFacultyMember, FacultyMatch } from '@/lib/facultyDetector';
+import { AdminProfileMiniLab, MiniLabLoadedData } from '@/components/admin/AdminProfileMiniLab';
+import { InitiativeBadges } from '@/components/ui/InitiativeBadges';
+import { Avatar } from '@/components/ui/Avatar';
+import { getProfileDisplayName } from '@/lib/profile-visibility';
 
 interface Profile {
     id: string;
@@ -53,9 +58,18 @@ interface Profile {
     avatar_url?: string;
     pending_edits?: any;
     hobbies_gallery?: any[];
+    member_initiatives?: string[];
+    is_labdiv?: boolean;
+    xp?: number;
+    level?: number;
+    persona?: any;
+    cultural_language?: any;
+    external_institution?: string;
+    interest_area?: string;
 }
 
 export default function ProfileApprovalPage() {
+    const router = useRouter();
     const [profiles, setProfiles] = useState<Profile[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isProcessing, setIsProcessing] = useState<string | null>(null);
@@ -71,7 +85,51 @@ export default function ProfileApprovalPage() {
     const [editingProfileId, setEditingProfileId] = useState<string | null>(null);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+    // Accordion & Mini-Lab states (Zero useEffect for data fetching)
+    const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
+    const [miniLabCache, setMiniLabCache] = useState<Record<string, MiniLabLoadedData>>({});
+    const [loadingMiniLabId, setLoadingMiniLabId] = useState<string | null>(null);
+    const [, startTransition] = useTransition();
+
     const [isAdminRole, setIsAdminRole] = useState(false);
+
+    const handleToggleExpand = (profileId: string) => {
+        const nextOpen = !expandedIds[profileId];
+        setExpandedIds(prev => ({ ...prev, [profileId]: nextOpen }));
+
+        if (nextOpen && !miniLabCache[profileId]) {
+            setLoadingMiniLabId(profileId);
+            startTransition(async () => {
+                const res = await getProfileMiniLabData(profileId);
+                if ('success' in res && res.success) {
+                    setMiniLabCache(prev => ({
+                        ...prev,
+                        [profileId]: {
+                            submissions: res.submissions as any[],
+                            followersCount: res.followersCount || 0,
+                            followingCount: res.followingCount || 0,
+                            pseudonyms: res.pseudonyms as any[]
+                        }
+                    }));
+                } else {
+                    toast.error('Erro ao carregar miniatura do Lab.');
+                }
+                setLoadingMiniLabId(null);
+            });
+        }
+    };
+
+    const handleImpersonate = async (profile: Profile) => {
+        const loadingToast = toast.loading(`Iniciando sessão como ${profile.full_name || profile.email}...`);
+        const res = await impersonateUser(profile.id);
+        toast.dismiss(loadingToast);
+        if ('success' in res && res.success) {
+            toast.success(`Impersonando ${profile.full_name || profile.email}! Redirecionando para o Lab...`);
+            router.push('/lab');
+        } else {
+            toast.error(('error' in res && res.error) ? res.error : 'Erro ao impersonar usuário');
+        }
+    };
 
     const fetchProfiles = async () => {
         setIsLoading(true);
@@ -169,18 +227,12 @@ export default function ProfileApprovalPage() {
 
     const handleReject = async (id: string) => {
         setIsProcessing(id);
-        const { error } = await supabase
-            .from('profiles')
-            .update({
-                review_status: 'rejected',
-                pending_edits: null
-            })
-            .eq('id', id);
+        const res = await rejectProfile(id);
 
-        if (error) {
-            toast.error("Erro ao rejeitar perfil.");
+        if ('error' in res && res.error) {
+            toast.error(res.error || "Erro ao rejeitar perfil.");
         } else {
-            toast.success("Perfil rejeitado.");
+            toast.success("Edições pendentes rejeitadas.");
             setProfiles(prev => prev.filter(p => p.id !== id));
         }
         setIsProcessing(null);
@@ -290,18 +342,22 @@ export default function ProfileApprovalPage() {
         return profilesWithFaculty.filter(item => item.facultyMatch === null);
     }, [profilesWithFaculty]);
 
-    const renderProfileCard = (profile: Profile, facultyMatch: FacultyMatch | null) => (
-        <div key={profile.id} className={`backdrop-blur-md rounded-[32px] overflow-hidden group transition-all duration-300 ${
+    const renderProfileCard = (profile: Profile, facultyMatch: FacultyMatch | null) => {
+        const isExpanded = Boolean(expandedIds[profile.id]);
+        const pendingAvatar = profile.pending_edits?.pending_avatar_url || profile.pending_edits?.avatar_url;
+
+        return (
+        <div key={profile.id} className={`backdrop-blur-md rounded-[28px] overflow-hidden group transition-all duration-300 ${
             facultyMatch 
                 ? 'bg-amber-500/5 dark:bg-amber-500/[0.03] border-2 border-amber-500/40 shadow-xl shadow-amber-500/5' 
-                : 'bg-white/40 dark:bg-card-dark/5 border border-gray-200 dark:border-white/5 hover:border-brand-blue/30'
+                : 'bg-white/60 dark:bg-card-dark/10 border border-gray-200 dark:border-white/10 hover:border-brand-blue/40'
         }`}>
             {/* Banner Inteligente se houver match com docente IFUSP */}
             {facultyMatch && (
-                <div className="bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-transparent border-b border-amber-500/20 px-8 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="bg-gradient-to-r from-amber-500/20 via-amber-500/10 to-transparent border-b border-amber-500/20 px-6 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                     <div className="flex items-start gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-amber-500/20 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/30">
-                            <GraduationCap className="w-5 h-5" />
+                        <div className="w-9 h-9 rounded-2xl bg-amber-500/20 text-amber-500 flex items-center justify-center shrink-0 border border-amber-500/30">
+                            <GraduationCap className="w-4 h-4" />
                         </div>
                         <div>
                             <div className="flex items-center gap-2 flex-wrap">
@@ -336,148 +392,237 @@ export default function ProfileApprovalPage() {
                 </div>
             )}
 
-            <div className="p-8 flex flex-col lg:flex-row gap-8">
-                <div className="flex-1 space-y-6">
-                    <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 bg-brand-blue/10 rounded-2xl flex items-center justify-center">
-                            <span className="text-xl font-black text-brand-blue uppercase">{profile.full_name?.charAt(0) || 'U'}</span>
+            <div className="p-5 sm:p-6">
+                {/* Accordion Summary Header */}
+                <div
+                    onClick={() => handleToggleExpand(profile.id)}
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer select-none"
+                >
+                    <div className="flex items-center gap-3.5 min-w-0">
+                        <div className="relative shrink-0">
+                            <Avatar
+                                src={pendingAvatar || profile.avatar_url}
+                                name={getProfileDisplayName(profile)}
+                                size="custom"
+                                customSize="w-12 h-12"
+                                xp={profile.xp}
+                                level={profile.level}
+                                isLabDiv={profile.is_labdiv}
+                            />
+                            {pendingAvatar && (
+                                <span className="absolute -bottom-1 -right-1 w-3.5 h-3.5 rounded-full bg-brand-green border-2 border-[#1E1E1E]" title="Nova foto pendente" />
+                            )}
                         </div>
-                        <div>
-                            <h3 className="text-xl font-black text-gray-900 dark:text-white uppercase tracking-tight leading-none mb-1">{profile.full_name || 'Usuário Sem Nome'}</h3>
+                        <div className="min-w-0">
                             <div className="flex items-center gap-2 flex-wrap">
-                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest">{profile.email}</span>
-                                {profile.username && (
-                                    <span className="px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/20">
-                                        @ {profile.username}{profile.use_nickname ? ' ✓ visível' : ' (oculto)'}
-                                    </span>
-                                )}
-                                <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest ${profile.is_usp_member ? 'bg-brand-blue/20 text-brand-blue' : 'bg-gray-800 text-gray-500'}`}>
+                                <h3 className="text-base sm:text-lg font-black text-gray-900 dark:text-white uppercase tracking-tight leading-tight truncate">
+                                    {getProfileDisplayName(profile)}
+                                </h3>
+                                <InitiativeBadges
+                                    initiatives={profile.pending_edits?.member_initiatives ?? profile.member_initiatives}
+                                    isLabdivLegacy={profile.is_labdiv}
+                                    size="sm"
+                                />
+                            </div>
+                            <div className="flex items-center gap-2 flex-wrap mt-1">
+                                <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest truncate">{profile.email}</span>
+                                {(() => {
+                                    const effectiveUsername = profile.pending_edits?.username || profile.username;
+                                    const effectiveUseNickname = profile.pending_edits?.use_nickname ?? profile.use_nickname;
+                                    const realName = profile.pending_edits?.full_name || profile.full_name;
+
+                                    if (effectiveUsername && (effectiveUseNickname || effectiveUseNickname !== false)) {
+                                        return (
+                                            <span className="px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest bg-brand-yellow/15 text-[#B45309] dark:text-brand-yellow border border-brand-yellow/30">
+                                                @ {effectiveUsername} • Nome Real: {realName || 'N/A'} (Protegido)
+                                            </span>
+                                        );
+                                    }
+                                    if (effectiveUsername) {
+                                        return (
+                                            <span className="px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest bg-gray-100 dark:bg-white/5 text-gray-400 border border-gray-200 dark:border-white/10">
+                                                Nome Real Visível • Apelido @{effectiveUsername} inativo
+                                            </span>
+                                        );
+                                    }
+                                    return (
+                                        <span className="px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest bg-gray-100 dark:bg-white/5 text-gray-400 border border-gray-200 dark:border-white/10">
+                                            Nome Completo Visível
+                                        </span>
+                                    );
+                                })()}
+                                <span className={`px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest ${profile.is_usp_member ? 'bg-brand-blue/20 text-brand-blue' : 'bg-gray-800 text-gray-400'}`}>
                                     {profile.is_usp_member ? 'Membro USP' : 'Curioso'}
                                 </span>
+                                {profile.review_status === 'pending' && (
+                                    <span className="px-2 py-0.5 rounded-lg text-[8px] font-black uppercase tracking-widest bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                                        ⏳ Pendente
+                                    </span>
+                                )}
                             </div>
                         </div>
                     </div>
 
-                    {profile.pending_edits ? (
-                        <div className="space-y-6">
-                            <div className="flex items-center justify-between border-b border-white/5 pb-2">
-                                <p className="text-brand-blue text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
-                                    <Info className="w-3 h-3" /> Mudanças Propostas
-                                </p>
-                                <span className="text-[8px] font-black bg-brand-blue/10 text-brand-blue px-2 py-0.5 rounded uppercase">Revisão Necessária</span>
-                            </div>
+                    {/* Quick Action Buttons + Expand Chevron */}
+                    <div className="flex items-center justify-end gap-2 shrink-0 flex-wrap">
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleImpersonate(profile);
+                            }}
+                            className="px-3 py-2 rounded-xl bg-[#FFCC00]/15 hover:bg-[#FFCC00]/25 text-[#B45309] dark:text-[#FFCC00] border border-[#FFCC00]/40 text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer"
+                            title="Entrar na conta deste usuário (Impersonar)"
+                        >
+                            <UserCheck className="w-3.5 h-3.5" />
+                            <span>Impersonar</span>
+                        </button>
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleEditProfile(profile.id);
+                            }}
+                            className="px-3 py-2 rounded-xl bg-brand-blue/10 hover:bg-brand-blue/20 text-brand-blue border border-brand-blue/30 text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer"
+                            title="Editar perfil como Admin"
+                        >
+                            <Edit className="w-3.5 h-3.5" />
+                            <span>Editar</span>
+                        </button>
+                        <button
+                            type="button"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleToggleExpand(profile.id);
+                            }}
+                            className={`px-3 py-2 rounded-xl border text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer ${
+                                isExpanded
+                                    ? 'bg-brand-blue text-white border-brand-blue shadow-md shadow-brand-blue/20'
+                                    : 'bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-700 dark:text-gray-300 border-gray-200 dark:border-white/10'
+                            }`}
+                            title="Expandir Miniatura do Lab Pessoal"
+                        >
+                            <span>{isExpanded ? 'Fechar Lab' : 'Ver Lab'}</span>
+                            <ChevronDown className={`w-4 h-4 transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`} />
+                        </button>
+                    </div>
+                </div>
 
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {profile.pending_edits.pending_avatar_url && (
-                                    <div className="col-span-full bg-white/5 p-4 rounded-2xl border border-brand-green/20 space-y-3">
-                                        <p className="text-[10px] font-black uppercase tracking-widest text-[#0055ff] flex items-center gap-2">
-                                            <span className="material-symbols-outlined text-[14px]">photo_camera</span>
-                                            Foto de Perfil
-                                        </p>
-                                        <div className="grid grid-cols-2 gap-6">
-                                            <div className="space-y-2 flex flex-col items-center">
-                                                <span className="text-[8px] uppercase text-gray-500 font-bold">Foto Atual</span>
-                                                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/10 bg-white/5 flex items-center justify-center">
-                                                    {profile.avatar_url ? (
-                                                        <img src={profile.avatar_url} alt="Avatar atual" className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        <span className="text-3xl font-black text-gray-500 uppercase">{profile.full_name?.charAt(0) || '?'}</span>
-                                                    )}
-                                                </div>
-                                            </div>
-                                            <div className="space-y-2 flex flex-col items-center">
-                                                <span className="text-[8px] uppercase text-brand-green font-bold">Nova Foto</span>
-                                                <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-brand-green/40 bg-brand-green/5 flex items-center justify-center">
-                                                    <img src={profile.pending_edits.pending_avatar_url} alt="Nova foto" className="w-full h-full object-cover" />
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-
-                                {renderDiff(profile.bio, profile.pending_edits.bio, 'Biografia')}
-                                {renderDiff(profile.username, profile.pending_edits.username, 'Apelido (Nickname)')}
-                                {renderDiff(profile.institute, profile.pending_edits.institute, 'Instituto / Afiliação')}
-                                {renderDiff(profile.course, profile.pending_edits.course, 'Curso / Habilitação')}
-                                {renderDiff(profile.whatsapp, profile.pending_edits.whatsapp, 'WhatsApp')}
-                                {renderDiff(profile.entrance_year, profile.pending_edits.entrance_year, 'Ano de Ingresso')}
-                                {renderDiff(profile.artistic_interests?.join(', '), profile.pending_edits.artistic_interests?.join(', '), 'Hobbies e Artes')}
-                                {renderDiff(profile.lattes_url, profile.pending_edits.lattes_url, 'URL Lattes')}
-                                {renderDiff(profile.linkedin_url, profile.pending_edits.linkedin_url, 'LinkedIn')}
-                                {renderDiff(profile.github_url, profile.pending_edits.github_url, 'GitHub')}
-                                {renderDiff(profile.youtube_url, profile.pending_edits.youtube_url, 'YouTube')}
-                                {renderDiff(profile.instagram_url, profile.pending_edits.instagram_url, 'Instagram')}
-                                {renderDiff(profile.tiktok_url, profile.pending_edits.tiktok_url, 'TikTok')}
-                                {renderDiff(profile.portfolio_url, profile.pending_edits.portfolio_url, 'Site Pessoal / Portfólio')}
-                                {renderDiff(profile.available_to_mentor, profile.pending_edits.available_to_mentor, 'Quero Adotar Bixo')}
-                                {renderDiff(profile.seeking_mentor, profile.pending_edits.seeking_mentor, 'Bixo querendo Adoção')}
-                                
-                                {profile.pending_edits.hobbies_gallery && renderHobbiesDiff(profile.hobbies_gallery, profile.pending_edits.hobbies_gallery)}
-
-                                {profile.pending_edits.use_nickname !== undefined && profile.pending_edits.use_nickname !== profile.use_nickname && (
-                                    <div className="bg-white/5 p-4 rounded-2xl border border-brand-blue/20 col-span-full flex items-center justify-between group/toggle">
-                                        <div className="flex flex-col">
-                                            <span className="text-[10px] font-black uppercase tracking-widest text-brand-blue">Visibilidade do Apelido</span>
-                                            <span className="text-[9px] text-gray-500 font-medium">Define se o nome real ou apelido aparece nos posts</span>
-                                        </div>
-                                        <div className="flex items-center gap-3">
-                                            <span className="text-[8px] font-bold text-gray-500 uppercase">De: {profile.use_nickname ? 'SIM' : 'NÃO'}</span>
-                                            <span className="material-symbols-outlined text-sm text-gray-600">arrow_forward</span>
-                                            <span className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${profile.pending_edits.use_nickname ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20' : 'bg-gray-800 text-gray-400'}`}>
-                                                Para: {profile.pending_edits.use_nickname ? 'SIM' : 'NÃO'}
-                                            </span>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
+                {/* Diffs Pendentes (sempre visíveis quando houver pending_edits) */}
+                {profile.pending_edits && Object.keys(profile.pending_edits).filter(k => k !== '_submitted_at').length > 0 && (
+                    <div className="mt-5 pt-4 border-t border-gray-200/60 dark:border-white/10 space-y-4">
+                        <div className="flex items-center justify-between">
+                            <p className="text-brand-blue text-[10px] font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                                <Info className="w-3 h-3" /> Mudanças Propostas
+                            </p>
+                            <span className="text-[8px] font-black bg-brand-blue/10 text-brand-blue px-2 py-0.5 rounded uppercase">Revisão Necessária</span>
                         </div>
-                    ) : (
-                        <div className="p-6 bg-brand-blue/5 rounded-[24px] border border-brand-blue/10 border-dashed space-y-4">
-                            <div className="text-center">
-                                <p className="text-[10px] font-black text-brand-blue uppercase tracking-[0.3em]">Novo Cadastro Detectado</p>
-                                <p className="text-[9px] text-gray-500 mt-1 uppercase">Revise as informações básicas acima antes de aprovar.</p>
-                            </div>
-                            {profile.username && (
-                                <div className="flex items-center justify-between bg-white/5 px-4 py-3 rounded-2xl border border-brand-yellow/20">
-                                    <div className="flex flex-col">
-                                        <span className="text-[10px] font-black uppercase tracking-widest text-brand-yellow">Apelido (Nickname)</span>
-                                        <span className="text-xs text-white font-medium mt-0.5">@{profile.username}</span>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {(profile.pending_edits.pending_avatar_url || profile.pending_edits.avatar_url) && (
+                                <div className="col-span-full bg-white/5 p-4 rounded-2xl border border-brand-green/20 space-y-3">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-[#0055ff] flex items-center gap-2">
+                                        <span className="material-symbols-outlined text-[14px]">photo_camera</span>
+                                        Foto de Perfil
+                                    </p>
+                                    <div className="grid grid-cols-2 gap-6">
+                                        <div className="space-y-2 flex flex-col items-center">
+                                            <span className="text-[8px] uppercase text-gray-500 font-bold">Foto Atual</span>
+                                            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-white/10 bg-white/5 flex items-center justify-center">
+                                                {profile.avatar_url ? (
+                                                    <img src={profile.avatar_url} alt="Avatar atual" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <span className="text-3xl font-black text-gray-500 uppercase">{profile.full_name?.charAt(0) || '?'}</span>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <div className="space-y-2 flex flex-col items-center">
+                                            <span className="text-[8px] uppercase text-brand-green font-bold">Nova Foto</span>
+                                            <div className="w-24 h-24 rounded-full overflow-hidden border-2 border-brand-green/40 bg-brand-green/5 flex items-center justify-center">
+                                                <img src={profile.pending_edits.pending_avatar_url || profile.pending_edits.avatar_url} alt="Nova foto" className="w-full h-full object-cover" />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <span className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${profile.use_nickname ? 'bg-brand-blue text-white' : 'bg-gray-800 text-gray-400'}`}>
-                                        Exibir: {profile.use_nickname ? 'SIM' : 'NÃO'}
-                                    </span>
+                                </div>
+                            )}
+
+                            {renderDiff(profile.full_name, profile.pending_edits.full_name, 'Nome Completo')}
+                            {renderDiff(profile.bio, profile.pending_edits.bio, 'Biografia')}
+                            {renderDiff(profile.username, profile.pending_edits.username, 'Apelido (Nickname)')}
+                            {renderDiff(profile.member_initiatives?.join(', '), profile.pending_edits.member_initiatives?.join(', '), 'Vínculos com Iniciativas')}
+                            {renderDiff(profile.cultural_language, profile.pending_edits.cultural_language, 'Signo Linguístico')}
+                            {renderDiff(profile.institute, profile.pending_edits.institute, 'Instituto / Afiliação')}
+                            {renderDiff(profile.course, profile.pending_edits.course, 'Curso / Habilitação')}
+                            {renderDiff(profile.whatsapp, profile.pending_edits.whatsapp, 'WhatsApp')}
+                            {renderDiff(profile.entrance_year, profile.pending_edits.entrance_year, 'Ano de Ingresso')}
+                            {renderDiff(profile.artistic_interests?.join(', '), profile.pending_edits.artistic_interests?.join(', '), 'Hobbies e Artes')}
+                            {renderDiff(profile.lattes_url, profile.pending_edits.lattes_url, 'URL Lattes')}
+                            {renderDiff(profile.linkedin_url, profile.pending_edits.linkedin_url, 'LinkedIn')}
+                            {renderDiff(profile.github_url, profile.pending_edits.github_url, 'GitHub')}
+                            {renderDiff(profile.youtube_url, profile.pending_edits.youtube_url, 'YouTube')}
+                            {renderDiff(profile.instagram_url, profile.pending_edits.instagram_url, 'Instagram')}
+                            {renderDiff(profile.tiktok_url, profile.pending_edits.tiktok_url, 'TikTok')}
+                            {renderDiff(profile.portfolio_url, profile.pending_edits.portfolio_url, 'Site Pessoal / Portfólio')}
+                            {renderDiff(profile.available_to_mentor, profile.pending_edits.available_to_mentor, 'Quero Adotar Bixo')}
+                            {renderDiff(profile.seeking_mentor, profile.pending_edits.seeking_mentor, 'Bixo querendo Adoção')}
+                            
+                            {profile.pending_edits.hobbies_gallery && renderHobbiesDiff(profile.hobbies_gallery, profile.pending_edits.hobbies_gallery)}
+
+                            {profile.pending_edits.use_nickname !== undefined && profile.pending_edits.use_nickname !== profile.use_nickname && (
+                                <div className="bg-white/5 p-4 rounded-2xl border border-brand-blue/20 col-span-full flex items-center justify-between group/toggle">
+                                    <div className="flex flex-col">
+                                        <span className="text-[10px] font-black uppercase tracking-widest text-brand-blue">Visibilidade do Apelido</span>
+                                        <span className="text-[9px] text-gray-500 font-medium">Define se o nome real ou apelido aparece nos posts</span>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <span className="text-[8px] font-bold text-gray-500 uppercase">De: {profile.use_nickname ? 'SIM' : 'NÃO'}</span>
+                                        <span className="material-symbols-outlined text-sm text-gray-600">arrow_forward</span>
+                                        <span className={`px-3 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-widest ${profile.pending_edits.use_nickname ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/20' : 'bg-gray-800 text-gray-400'}`}>
+                                            Para: {profile.pending_edits.use_nickname ? 'SIM' : 'NÃO'}
+                                        </span>
+                                    </div>
                                 </div>
                             )}
                         </div>
-                    )}
+                    </div>
+                )}
 
-                </div>
+                {/* Expansão Accordion: Miniatura do Lab Pessoal */}
+                {isExpanded && (
+                    <AdminProfileMiniLab
+                        profile={profile as any}
+                        isLoading={loadingMiniLabId === profile.id}
+                        data={miniLabCache[profile.id]}
+                        onImpersonate={(p) => handleImpersonate(p as any)}
+                        onEditProfile={(p) => handleEditProfile(p.id)}
+                    />
+                )}
             </div>
 
             {/* Ações (apenas se for pending) */}
             {profile.review_status === 'pending' && (
-                <div className="p-6 bg-[#0055ff]/5 border-t border-[#0055ff]/20 flex flex-col sm:flex-row justify-end items-stretch sm:items-center gap-3 shrink-0">
+                <div className="px-6 py-4 bg-[#0055ff]/5 border-t border-[#0055ff]/20 flex flex-col sm:flex-row justify-end items-stretch sm:items-center gap-3 shrink-0">
                     <button
                         disabled={isProcessing === profile.id}
                         onClick={() => handleReject(profile.id)}
-                        className="px-5 py-3 bg-brand-red/10 text-brand-red hover:bg-brand-red hover:text-white rounded-xl font-black uppercase tracking-widest text-xs transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="px-5 py-2.5 bg-brand-red/10 text-brand-red hover:bg-brand-red hover:text-white rounded-xl font-black uppercase tracking-widest text-xs transition-all disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
                     >
                         <X className="w-4 h-4" />
-                        Rejeitar
+                        Rejeitar Edição
                     </button>
                     <button
                         disabled={isProcessing === profile.id}
                         onClick={() => handleApprove(profile.id)}
-                        className="px-5 py-3 bg-white/10 hover:bg-white/20 text-gray-200 font-black text-xs rounded-xl uppercase tracking-widest transition-all border border-white/10 flex items-center justify-center gap-2"
+                        className="px-5 py-2.5 bg-brand-blue hover:bg-brand-blue/90 text-white font-black text-xs rounded-xl uppercase tracking-widest transition-all shadow-lg shadow-brand-blue/20 flex items-center justify-center gap-2 cursor-pointer"
                     >
                         {isProcessing === profile.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
-                        Aprovar Normal
+                        Aprovar Alterações
                     </button>
                     {facultyMatch && (
                         <button
                             disabled={isProcessing === profile.id}
                             onClick={() => handleApprove(profile.id, 'professor')}
-                            className="px-6 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-black text-xs rounded-xl uppercase tracking-widest transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2"
+                            className="px-6 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-black text-xs rounded-xl uppercase tracking-widest transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center gap-2 cursor-pointer"
                         >
                             {isProcessing === profile.id ? <Loader2 className="w-4 h-4 animate-spin" /> : <GraduationCap className="w-4 h-4" />}
                             Aprovar & Promover a Professor
@@ -486,7 +631,8 @@ export default function ProfileApprovalPage() {
                 </div>
             )}
         </div>
-    );
+        );
+    };
 
     return (
         <div className="p-8 max-w-6xl mx-auto min-h-screen bg-transparent">

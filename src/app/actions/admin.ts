@@ -311,6 +311,7 @@ const QueueDecisionSchema = z.object({
         'profile',
         'profile_edit',
         'teacher_verification',
+        'initiative_request',
         'comment',
         'software',
         'software_feedback',
@@ -395,18 +396,36 @@ export async function executeBatchModeration(actions: z.infer<typeof QueueDecisi
                         await adminSupabase.from('submissions').update({ pending_edits: null }).eq('id', item.itemId);
                     }
                 } else if (item.itemType === 'profile_edit') {
+                    const { data: prof } = await adminSupabase.from('profiles').select('pending_edits, full_name').eq('id', item.itemId).single();
                     if (item.decision === 'approve') {
-                        const { data: prof } = await adminSupabase.from('profiles').select('pending_edits').eq('id', item.itemId).single();
                         if (prof?.pending_edits) {
-                            await adminSupabase.from('profiles').update({
-                                ...prof.pending_edits,
+                            const { pending_avatar_url, _submitted_at, ...cleanEdits } = prof.pending_edits;
+                            const updatePayload: Record<string, any> = {
+                                ...cleanEdits,
                                 pending_edits: null,
                                 review_status: 'approved'
-                            }).eq('id', item.itemId);
+                            };
+                            if (pending_avatar_url) {
+                                updatePayload.avatar_url = pending_avatar_url;
+                            }
+                            if (Array.isArray(cleanEdits.member_initiatives)) {
+                                updatePayload.is_labdiv = cleanEdits.member_initiatives.includes('labdiv');
+                            }
+                            await adminSupabase.from('profiles').update(updatePayload).eq('id', item.itemId);
                         }
                     } else {
-                        await adminSupabase.from('profiles').update({ pending_edits: null }).eq('id', item.itemId);
+                        const alreadyHadApprovedProfile = Boolean(prof?.full_name && prof.full_name.trim().length > 0);
+                        await adminSupabase.from('profiles').update({
+                            pending_edits: null,
+                            review_status: alreadyHadApprovedProfile ? 'approved' : 'rejected'
+                        }).eq('id', item.itemId);
                     }
+                } else if (item.itemType === 'initiative_request') {
+                    await adminSupabase.from('initiative_requests').update({
+                        status: item.decision === 'approve' ? 'approved' : 'rejected',
+                        admin_notes: item.feedback || null,
+                        reviewed_at: new Date().toISOString()
+                    }).eq('id', item.itemId);
                 } else if (item.itemType === 'teacher_verification') {
                     await adminSupabase.from('profiles').update({
                         persona: item.decision === 'approve' ? 'professor' : undefined,
@@ -520,6 +539,7 @@ export async function fetchUnifiedModerationQueue(): Promise<{ success: boolean;
             profEditsRes,
             pendingProfilesRes,
             teacherVerifsRes,
+            initiativeReqsRes,
             commentsRes,
             softwaresRes,
             feedbacksRes,
@@ -538,6 +558,7 @@ export async function fetchUnifiedModerationQueue(): Promise<{ success: boolean;
             adminSupabase.from('profiles').select('id, full_name, email, pending_edits, created_at').not('pending_edits', 'is', null).limit(20),
             adminSupabase.from('profiles').select('id, full_name, email, is_usp_member, user_category, persona, institute, course, created_at').eq('review_status', 'pending').limit(30),
             adminSupabase.from('profiles').select('id, full_name, email, teacher_proof_path, created_at').eq('teacher_verification_status', 'pending').limit(20),
+            adminSupabase.from('initiative_requests').select('*').eq('status', 'pending').limit(20),
             adminSupabase.from('comments').select('id, author_name, content, created_at, submission_id').eq('status', 'pendente').limit(30),
             adminSupabase.from('academic_softwares').select('id, title, author_name, created_at, category').eq('status', 'pendente').limit(20),
             adminSupabase.from('software_feedbacks').select('id, comment, feedback_type, created_at, software_id').eq('status', 'pending').limit(20),
@@ -605,13 +626,35 @@ export async function fetchUnifiedModerationQueue(): Promise<{ success: boolean;
                 subtitle: 'Atualização de dados cadastrais',
                 authorName: p.full_name || p.email,
                 details: p.pending_edits,
-                createdAt: p.created_at,
+                createdAt: p.pending_edits?._submitted_at || p.created_at,
                 axis: 'personas'
             });
         });
 
-        // 4.1 Novos Perfis Pendentes (Personas)
-        (pendingProfilesRes.data || []).forEach(p => {
+        // 4.05 Solicitações de Inclusão de Iniciativa (Personas & Governança — Eixo 04)
+        (initiativeReqsRes.data || []).forEach((req: any) => {
+            items.push({
+                id: req.id,
+                type: 'initiative_request',
+                title: `🏛️ Nova Iniciativa: ${req.initiative_name}${req.acronym ? ` (${req.acronym})` : ''}`,
+                subtitle: req.description,
+                authorName: req.responsible_name,
+                authorEmail: req.contact_info,
+                details: {
+                    initiative_name: req.initiative_name,
+                    acronym: req.acronym,
+                    description: req.description,
+                    responsible_name: req.responsible_name,
+                    contact_info: req.contact_info
+                },
+                createdAt: req.created_at,
+                axis: 'personas'
+            });
+        });
+
+        // 4.1 Novos Perfis Pendentes (Personas) — evita duplicar se já entrou como profile_edit
+        const profileEditIds = new Set((profEditsRes.data || []).map(p => p.id));
+        (pendingProfilesRes.data || []).filter(p => !profileEditIds.has(p.id)).forEach(p => {
             const facultyMatch = detectFacultyMember(p.email, p.full_name);
             items.push({
                 id: p.id,
@@ -789,11 +832,6 @@ export async function fetchUnifiedModerationQueue(): Promise<{ success: boolean;
         // Ordena tudo cronologicamente (mais antigos primeiro para resolução da fila)
         items.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
 
-        // Dispara monitoramento de limiares em background (sem bloquear o cliente)
-        void checkModerationQueueThresholds().catch(err => {
-            console.error('[Torre de Controle] Erro silencioso no monitor de fila:', err);
-        });
-
         return { success: true, items };
     } catch (err: any) {
         console.error('[Torre de Controle] Erro ao buscar fila unificada:', err);
@@ -829,5 +867,84 @@ export async function getTeacherProofSignedUrl(path: string): Promise<{ success:
         return { success: false, error: err.message || 'Erro ao obter comprovante.' };
     }
 }
+
+/**
+ * ✉️ Executa uma decisão de moderação disparada a partir de um botão assinado (HMAC-SHA256) no E-mail da Torre de Controle.
+ * Chamado exclusivamente via POST/form action para evitar execução acidental por scanners de antivírus em GET.
+ */
+export async function executeEmailModerationAction(token: string): Promise<{
+    success: boolean;
+    message?: string;
+    error?: string;
+    processedCount?: number;
+}> {
+    const { verifyEmailActionToken } = await import('@/lib/auth/email-action-token');
+    const verification = verifyEmailActionToken(token);
+
+    if (!verification.valid || !verification.payload) {
+        return { success: false, error: verification.error || 'Token inválido ou expirado.' };
+    }
+
+    const payload = verification.payload;
+    const adminSupabase = createAdminSupabase();
+
+    try {
+        let actionsToRun: { item_id: string; item_type: string; decision: 'approve' | 'reject'; feedback: string | null }[] = [];
+
+        if (payload.decision === 'approve_all') {
+            if (Array.isArray(payload.batchItems) && payload.batchItems.length > 0) {
+                actionsToRun = payload.batchItems.map((b) => ({
+                    item_id: b.itemId,
+                    item_type: b.itemType,
+                    decision: 'approve',
+                    feedback: null,
+                }));
+            } else {
+                return {
+                    success: false,
+                    error: 'Nenhum item elegível estava vinculado ao lote deste e-mail.',
+                };
+            }
+        } else {
+            actionsToRun = [
+                {
+                    item_id: payload.itemId,
+                    item_type: payload.itemType,
+                    decision: payload.decision,
+                    feedback: payload.decision === 'reject' ? 'Rejeitado via ação rápida de e-mail da Torre de Controle.' : null,
+                },
+            ];
+        }
+
+        const { error: rpcError } = await adminSupabase.rpc('batch_moderate_queue', {
+            actions: actionsToRun,
+        });
+
+        if (rpcError) {
+            console.error('[EmailAction] Erro na RPC batch_moderate_queue:', rpcError);
+            return { success: false, error: 'Erro ao executar a moderação no banco de dados.' };
+        }
+
+        revalidatePath('/admin');
+        revalidatePath('/admin/profiles');
+        revalidatePath('/lab');
+        revalidatePath('/');
+
+        return {
+            success: true,
+            processedCount: actionsToRun.length,
+            message:
+                payload.decision === 'approve_all'
+                    ? `${actionsToRun.length} item(ns) do resumo foram aprovados com sucesso!`
+                    : payload.decision === 'approve'
+                    ? `Item "${payload.title || payload.itemId.slice(0, 8)}" aprovado com sucesso!`
+                    : `Item "${payload.title || payload.itemId.slice(0, 8)}" rejeitado com sucesso!`,
+        };
+    } catch (err: any) {
+        console.error('[EmailAction] Exceção ao processar token:', err);
+        return { success: false, error: err.message || 'Erro inesperado ao processar ação.' };
+    }
+}
+
 
 

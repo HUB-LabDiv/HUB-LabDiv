@@ -93,7 +93,7 @@ export async function sendAdminNotification(data: NotificationData) {
 
         case 'profile_creation':
             subject = `🆕 Hub: Novo Cadastro - ${data.userName}`;
-            dashboardLink = `${baseUrl}/admin/papeis`;
+            dashboardLink = `${baseUrl}/admin/profiles`;
             emailTemplate = `
                 <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Novo Usuário Cadastrado</h2>
                 <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">Um novo usuário completou seu cadastro no Hub e aguarda aprovação.</p>
@@ -105,7 +105,7 @@ export async function sendAdminNotification(data: NotificationData) {
 
         case 'profile_update':
             subject = `👤 Hub: Atualização de Perfil - ${data.userName}`;
-            dashboardLink = `${baseUrl}/admin/papeis`;
+            dashboardLink = `${baseUrl}/admin/profiles`;
             emailTemplate = `
                 <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Perfil Editado</h2>
                 <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">O usuário <strong>${data.userName}</strong> atualizou suas informações de perfil e aguarda revisão.</p>

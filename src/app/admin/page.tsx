@@ -51,6 +51,7 @@ interface DashboardCounts {
     pendentesPerfis: number;
     teacherVerifsPendentes: number;
     profileEditsPendentes: number;
+    initiativeReqsPendentes: number;
     aprovados: number;
     rejeitados: number;
     tempoMedioAprovacao: string;
@@ -85,6 +86,7 @@ export default function AdminDashboardOverview() {
         pendentesPerfis: 0,
         teacherVerifsPendentes: 0,
         profileEditsPendentes: 0,
+        initiativeReqsPendentes: 0,
         aprovados: 0,
         rejeitados: 0,
         tempoMedioAprovacao: '-',
@@ -103,7 +105,7 @@ export default function AdminDashboardOverview() {
                     comPendentesRes, dicasRes, microArticlesRes, palavrasRes, constelacoesRes, logsPendentesRes,
                     pergPendentesRes, pergRespondidasRes, oportunidadesRes, wikiPropostasRes, reportsPendentesRes,
                     softwaresRes, softwareFeedbacksRes, arenaRes, trilhasRes, tagsRes,
-                    profilesPendentesRes, teacherVerifsRes, profileEditsRes,
+                    profilesPendentesRes, teacherVerifsRes, profileEditsRes, initiativeReqsRes,
                     tempoEsperaRes, subsWithAuthorsRes
                 ] = await Promise.all([
                     // Submissões
@@ -138,6 +140,7 @@ export default function AdminDashboardOverview() {
                     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('review_status', 'pending'),
                     supabase.from('profiles').select('*', { count: 'exact', head: true }).eq('teacher_verification_status', 'pending'),
                     supabase.from('profiles').select('*', { count: 'exact', head: true }).not('pending_edits', 'is', null),
+                    supabase.from('initiative_requests').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
 
                     // Métricas
                     supabase.from('submissions').select('created_at, updated_at').eq('status', 'aprovado').limit(100),
@@ -215,6 +218,7 @@ export default function AdminDashboardOverview() {
                     pendentesPerfis: profilesPendentesRes.count || 0,
                     teacherVerifsPendentes: teacherVerifsRes.count || 0,
                     profileEditsPendentes: profileEditsRes.count || 0,
+                    initiativeReqsPendentes: initiativeReqsRes.count || 0,
                     aprovados: aprovadosRes.count || 0,
                     rejeitados: rejeitadosRes.count || 0,
                     tempoMedioAprovacao: tempoMedioStr,
@@ -232,7 +236,7 @@ export default function AdminDashboardOverview() {
     const totalComunidade = counts.comentariosPendentes + counts.dicasPendentes + counts.microArticlesPendentes + counts.palavrasPendentes + counts.constelacoesPendentes + counts.logsPendentes;
     const totalInformativo = counts.pendentes + counts.subEditsPendentes + counts.perguntasPendentes + counts.oportunidadesPendentes + counts.knowledgePendentes + counts.reportsPendentes;
     const totalFerramentas = counts.softwaresPendentes + counts.softwareFeedbacksPendentes + counts.arenaPendentes;
-    const totalPerfis = counts.pendentesPerfis + counts.teacherVerifsPendentes + counts.profileEditsPendentes;
+    const totalPerfis = counts.pendentesPerfis + counts.teacherVerifsPendentes + counts.profileEditsPendentes + counts.initiativeReqsPendentes;
     const totalPendenciasGerais = totalComunidade + totalInformativo + totalFerramentas + totalPerfis;
 
     const axisGroups = [
@@ -294,8 +298,8 @@ export default function AdminDashboardOverview() {
                 { title: 'Novos Cadastros USP', subtitle: 'Aprovação de Perfis', count: counts.pendentesPerfis, icon: 'how_to_reg', href: '/admin/profiles', urgent: counts.pendentesPerfis > 0 },
                 { title: 'Validações Docentes', subtitle: 'Comprovantes IFUSP', count: counts.teacherVerifsPendentes, icon: 'badge', href: '/admin/profiles', urgent: counts.teacherVerifsPendentes > 0 },
                 { title: 'Edições de Perfil', subtitle: 'Mudança de Dados/Hobbies', count: counts.profileEditsPendentes, icon: 'person_edit', href: '/admin/profiles', urgent: counts.profileEditsPendentes > 0 },
+                { title: 'Novas Iniciativas', subtitle: 'Solicitações de Espaços', count: counts.initiativeReqsPendentes, icon: 'domain_add', href: '/admin', urgent: counts.initiativeReqsPendentes > 0 },
                 { title: 'Submissões Aprovadas', subtitle: 'Acervo Público Ativo', count: counts.aprovados, icon: 'verified', href: '/admin/moderacao?tab=submissoes', urgent: false },
-                { title: 'Submissões Arquivadas', subtitle: 'Rejeitadas no Fluxo', count: counts.rejeitados, icon: 'block', href: '/admin/moderacao?tab=submissoes', urgent: false },
                 { title: 'Tempo Médio', subtitle: 'Resposta de Moderação', count: counts.tempoMedioAprovacao, icon: 'timer', href: '#', urgent: false },
             ]
         }

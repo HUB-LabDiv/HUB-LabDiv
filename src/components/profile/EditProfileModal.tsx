@@ -18,14 +18,16 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'react-hot-toast';
-import { Loader2, X, User, FileText, Globe, Link as LinkIcon, Building2, ShieldCheck, Star, Mail, Phone, FileUp, Info, Users, Microscope, Briefcase, Zap, Github, Linkedin, Youtube, Instagram, MessageSquare, GraduationCap, CheckCircle2, Clock, AlertTriangle } from 'lucide-react';
+import { Loader2, X, User, FileText, Globe, Link as LinkIcon, Building2, ShieldCheck, Star, Mail, Phone, FileUp, Info, Users, Microscope, Briefcase, Zap, Github, Linkedin, Youtube, Instagram, MessageSquare, GraduationCap, CheckCircle2, Clock, AlertTriangle, ChevronDown, Send, Sparkles, Terminal, Eye } from 'lucide-react';
 import { TikTokIcon } from '@/components/icons/TikTokIcon';
-import { updateProfile, getProfileWithPseudonyms, uploadEnrollmentProof, updateProfileAsAdmin, submitTeacherVerification } from '@/app/actions/profiles';
+import { updateProfile, getProfileWithPseudonyms, uploadEnrollmentProof, updateProfileAsAdmin, submitTeacherVerification, submitInitiativeRequest } from '@/app/actions/profiles';
 import { getUserPseudonyms, createPseudonym } from '@/app/actions/submissions';
 import { createServerSupabase } from '@/lib/supabase/server';
 import { supabase } from '@/lib/supabase';
-import { Profile, UserPersona } from '@/types';
+import { Profile, UserPersona, InitiativeId } from '@/types';
 import { ModalPortal } from '@/components/ui/ModalPortal';
+import { INITIATIVE_LIST, INITIATIVES_CATALOG } from '@/components/ui/InitiativeBadges';
+import { hasActivePendingEdits, getProfileDisplayName } from '@/lib/profile-visibility';
 
 const profileSchema = z.object({
     email: z.string().optional(),
@@ -62,6 +64,7 @@ const profileSchema = z.object({
     seeking_assistant: z.boolean().default(false),
     interest_area: z.string().max(100).optional(),
     cultural_language: z.enum(['nerd_geek', 'artistica', 'jovem', 'academica']).default('jovem'),
+    member_initiatives: z.array(z.string()).default([]),
 }).superRefine((data, ctx) => {
     const isUsp = data.email?.endsWith('@usp.br') || data.email?.endsWith('@if.usp.br');
     const isResearcher = data.user_category === 'pesquisador' || data.user_category === 'docente_pesquisador';
@@ -120,6 +123,45 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
     // Teacher verification state
     const [isUploadingTeacherProof, setIsUploadingTeacherProof] = useState(false);
     const teacherProofInputRef = React.useRef<HTMLInputElement>(null);
+
+    // Nova Iniciativa request box state (Eixo 04 — Governança)
+    const [showInitiativeRequestBox, setShowInitiativeRequestBox] = useState(false);
+    const [isSubmittingInitiativeReq, setIsSubmittingInitiativeReq] = useState(false);
+    const [initiativeReqForm, setInitiativeReqForm] = useState({
+        initiative_name: '',
+        acronym: '',
+        description: '',
+        responsible_name: '',
+        contact_info: '',
+    });
+
+    const handleInitiativeRequestSubmit = async () => {
+        if (!initiativeReqForm.initiative_name.trim() || !initiativeReqForm.description.trim() || !initiativeReqForm.responsible_name.trim() || !initiativeReqForm.contact_info.trim()) {
+            toast.error('Preencha todos os campos obrigatórios da iniciativa.');
+            return;
+        }
+        setIsSubmittingInitiativeReq(true);
+        try {
+            const res = await submitInitiativeRequest(initiativeReqForm);
+            if ('error' in res && res.error) {
+                toast.error(res.error);
+            } else {
+                toast.success('Solicitação enviada para a Governança (Eixo 04)!');
+                setInitiativeReqForm({
+                    initiative_name: '',
+                    acronym: '',
+                    description: '',
+                    responsible_name: '',
+                    contact_info: '',
+                });
+                setShowInitiativeRequestBox(false);
+            }
+        } catch (err: any) {
+            toast.error(err.message || 'Erro ao enviar solicitação.');
+        } finally {
+            setIsSubmittingInitiativeReq(false);
+        }
+    };
 
     const handleTeacherProofUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -243,6 +285,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
             user_category: 'curioso',
             seeking_assistant: false,
             interest_area: '',
+            member_initiatives: [],
         }
     });
 
@@ -306,8 +349,10 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
             setValue('email', profile.email || '');
             setValue('full_name', profile.full_name || '');
             setValue('bio', profile.bio || '');
+            const hasUsername = Boolean(profile.username && profile.username.trim().length > 0);
             setValue('username', profile.username || '');
-            setValue('use_nickname', profile.use_nickname || false);
+            // Se a pessoa possui apelido, o padrão é sempre ativá-lo como identidade pública (nome real protegido)
+            setValue('use_nickname', hasUsername ? (profile.use_nickname ?? true) : false);
 
             setValue('education_level', profile.education_level || '');
             setValue('external_institution', profile.external_institution || '');
@@ -343,6 +388,11 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
             setValue('available_to_mentor', profile.available_to_mentor || false);
             setValue('seeking_mentor', profile.seeking_mentor || false);
             setValue('is_labdiv', profile.is_labdiv || false);
+            const initList: string[] = Array.isArray(profile.member_initiatives) ? [...profile.member_initiatives] : [];
+            if (profile.is_labdiv && !initList.includes('labdiv')) {
+                initList.push('labdiv');
+            }
+            setValue('member_initiatives', initList);
             setValue('is_visible', profile.is_visible ?? true);
             setValue('persona', (profile.persona as any) || (profile.is_usp_member ? 'aluno' : 'curioso'));
             setValue('user_category', profile.user_category || 'curioso');
@@ -369,9 +419,10 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
         setIsCreatingNickname(true);
         const res = await createPseudonym(name);
         if (res.success && res.data) {
-            toast.success("Enviado para a moderação!");
+            toast.success("Apelido cadastrado e definido como seu nome público!");
             setPseudonyms(prev => [...prev, res.data]);
-            setValue('username', res.data.name);
+            setValue('username', res.data.name, { shouldDirty: true });
+            setValue('use_nickname', true, { shouldDirty: true });
             setValue('new_nickname', '');
             
             // Auto-save the new nickname to profile so it goes to admin approval immediately
@@ -415,8 +466,18 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
         // Remove new_nickname and email (read-only) and map fields to profileData
         const { new_nickname, email, artistic_interests_str, entrance_year, other_institute, education_level, external_institution, research_line, interest_area, office_room, laboratory_name, department, ...restData } = data;
 
+        const typedNickname = new_nickname?.trim();
+        const finalUsername = typedNickname || data.username?.trim() || '';
+        const finalUseNickname = finalUsername ? (data.use_nickname !== false) : false;
+
         const updatedProfileData: any = {
             ...restData,
+            username: finalUsername,
+            use_nickname: finalUseNickname,
+            member_initiatives: Array.isArray(data.member_initiatives) ? data.member_initiatives : [],
+            is_labdiv: Array.isArray(data.member_initiatives)
+                ? data.member_initiatives.includes('labdiv')
+                : Boolean(data.is_labdiv),
             research_line,
             interest_area,
             office_room,
@@ -424,7 +485,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
             department,
             institute: data.institute === 'Outros' ? other_institute : data.institute,
             // Em modo admin, aplica o avatar direto. Para usuários, mantém o avatar atual —
-            // a nova URL vai para pending_edits.avatar_url via campo separado abaixo.
+            // a nova URL vai para pending_edits.pending_avatar_url via campo separado abaixo.
             avatar_url: adminMode ? avatarUrl : (profileData?.avatar_url || null),
             usp_proof_url: profileData?.usp_proof_url || null,
             entrance_year: entrance_year ? parseInt(entrance_year, 10) : null,
@@ -485,11 +546,11 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                     </div>
                 ) : (
                     <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto hidden-scrollbar">
-                        {currentStatus === 'pending' && (
-                            <div className="p-4 bg-brand-yellow/10 border border-brand-yellow/20 rounded-2xl flex items-center gap-3 animate-pulse">
-                                <ShieldCheck className="w-5 h-5 text-brand-yellow" />
-                                <p className="text-[10px] font-bold text-brand-yellow uppercase tracking-tight">
-                                    Seu perfil tem alterações pendentes de aprovação pelo administrador.
+                        {(currentStatus === 'pending' || hasActivePendingEdits(profileData?.pending_edits)) && !adminMode && (
+                            <div className="p-4 bg-[#FFCC00]/15 dark:bg-[#FFCC00]/10 border border-[#FFCC00]/40 rounded-2xl flex items-start gap-3">
+                                <Clock className="w-5 h-5 text-[#B45309] dark:text-[#FFCC00] shrink-0 mt-0.5" />
+                                <p className="text-[11px] font-bold text-[#92400E] dark:text-[#FFCC00] leading-relaxed">
+                                    ⏳ <span className="font-black uppercase">Alterações em análise:</span> Suas edições recentes (foto, nome, bio, iniciativas ou dados) estão aguardando aprovação da moderação. <span className="underline">Esta prévia atualizada está visível apenas para você</span> — os demais usuários continuam vendo a última versão aprovada do seu perfil.
                                 </p>
                             </div>
                         )}
@@ -582,58 +643,154 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                 />
                             </div>
 
-                            <div className={`space-y-2 ${!adminMode && 'opacity-70'}`}>
-                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 flex items-center gap-2">
-                                    <User className="w-3 h-3" /> Nome Completo {!adminMode && '(Bloqueado)'}
+                            <div className="space-y-2">
+                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 flex items-center justify-between gap-2">
+                                    <span className="flex items-center gap-2">
+                                        <User className="w-3 h-3" /> Nome Completo
+                                    </span>
+                                    {!adminMode && (
+                                        <span className="text-[9px] font-bold text-[#B45309] dark:text-[#FFCC00] uppercase">
+                                            Sujeito à aprovação
+                                        </span>
+                                    )}
                                 </label>
                                 <input
                                     {...register('full_name')}
-                                    readOnly={!adminMode}
-                                    className={`w-full bg-gray-100 dark:bg-white/5 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm outline-none ${!adminMode ? 'cursor-not-allowed text-gray-400' : 'focus:border-brand-blue/50 text-gray-900 dark:text-white font-bold'}`}
+                                    className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all text-gray-900 dark:text-white font-bold"
                                 />
+                                {errors.full_name && <p className="text-[10px] text-brand-red font-bold uppercase ml-1">{errors.full_name.message}</p>}
                             </div>
 
-                            <div className="p-4 bg-brand-blue/5 border border-brand-blue/10 rounded-2xl space-y-4">
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-3">
-                                        <div className="w-8 h-8 bg-brand-blue/10 rounded-lg flex items-center justify-center">
-                                            <ShieldCheck className="w-4 h-4 text-brand-blue" />
+                            {/* IDENTIDADE PÚBLICA & NOME DE EXIBIÇÃO NO HUB */}
+                            <div className="p-4 bg-brand-blue/5 dark:bg-white/[0.02] border border-brand-blue/20 dark:border-white/10 rounded-2xl space-y-3.5">
+                                <div className="space-y-1">
+                                    <div className="flex items-center justify-between gap-2">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-7 h-7 bg-brand-blue/15 text-brand-blue rounded-lg flex items-center justify-center">
+                                                <ShieldCheck className="w-4 h-4" />
+                                            </div>
+                                            <span className="text-xs font-black text-gray-900 dark:text-white uppercase tracking-tight">
+                                                Nome Público no HUB (Identidade & Privacidade)
+                                            </span>
                                         </div>
-                                        <div>
-                                            <span className="block text-xs font-black text-gray-900 dark:text-white uppercase tracking-tight">Mudar o nome público</span>
-                                            <span className="text-[10px] text-gray-400 font-medium whitespace-nowrap overflow-hidden">Oculte o nome que está na sua conta da google</span>
-                                        </div>
+                                        <span className="text-[8px] font-black uppercase px-2 py-0.5 rounded-full bg-brand-blue/15 text-brand-blue font-mono">
+                                            Privacidade
+                                        </span>
                                     </div>
-                                    <label className="relative inline-flex items-center cursor-pointer">
-                                        <input type="checkbox" {...register('use_nickname')} className="sr-only peer" />
-                                        <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none dark:bg-gray-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand-blue"></div>
-                                    </label>
+                                    <p className="text-[11px] text-gray-600 dark:text-gray-300 leading-relaxed">
+                                        Você decide como quer aparecer na comunidade. Caso opte por um <strong>Apelido</strong>, ele será exibido <strong>sempre no lugar do seu nome</strong> em todos os posts, comentários e perfil. Seu nome real ficará <strong>protegido</strong> e visível apenas para você e a administração.
+                                    </p>
                                 </div>
 
-                                {useNickname && (
-                                    <div className="space-y-4 pt-2 animate-in slide-in-from-top-2 duration-300">
-                                        <div className="flex gap-2">
-                                            <input
-                                                {...register('new_nickname')}
-                                                placeholder="Mudança de nome"
-                                                className="flex-1 bg-white dark:bg-background-dark/40 border border-gray-100 dark:border-white/10 rounded-xl px-3 py-2 text-xs outline-none focus:border-brand-blue/50 transition-all font-bold"
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={handleCreateNickname}
-                                                disabled={isCreatingNickname || !watch('new_nickname')}
-                                                className="px-4 py-2 bg-brand-blue text-white rounded-xl text-[10px] font-black uppercase hover:bg-brand-blue/80 disabled:opacity-50 transition-all"
-                                            >
-                                                {isCreatingNickname ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Mudar'}
-                                            </button>
+                                {/* Opções de Seleção: Apelido vs Nome Completo */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+                                    <button
+                                        type="button"
+                                        onClick={() => setValue('use_nickname', true, { shouldDirty: true })}
+                                        className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                                            watch('use_nickname')
+                                                ? 'bg-brand-blue/15 dark:bg-brand-blue/25 border-brand-blue text-brand-blue dark:text-white ring-2 ring-brand-blue/30'
+                                                : 'bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-400 hover:border-brand-blue/40'
+                                        }`}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs font-black uppercase tracking-tight flex items-center gap-1.5">
+                                                🛡️ Usar Meu Apelido
+                                            </span>
+                                            {watch('use_nickname') && (
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-brand-blue" />
+                                            )}
                                         </div>
-                                        <div className="mt-3 pt-3 border-t border-brand-blue/10 flex flex-col gap-1">
-                                            <span className="text-[9px] font-black uppercase tracking-widest text-gray-400">Seu nome público atual</span>
-                                            <span className="text-xs font-bold text-gray-900 dark:text-white">{watch('username') || 'Nenhum'}</span>
+                                        <p className="text-[10px] leading-snug opacity-80 font-medium">
+                                            {watch('username')
+                                                ? `Aparecerá como @${watch('username')}. Nome real 100% oculto.`
+                                                : 'Defina seu apelido abaixo. Seu nome real ficará 100% oculto.'}
+                                        </p>
+                                        <span className="text-[8px] font-black uppercase bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 px-1.5 py-0.2 rounded w-fit">
+                                            Recomendado
+                                        </span>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setValue('use_nickname', false, { shouldDirty: true })}
+                                        className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex flex-col justify-between gap-1.5 ${
+                                            !watch('use_nickname')
+                                                ? 'bg-brand-yellow/15 dark:bg-brand-yellow/20 border-brand-yellow text-gray-900 dark:text-white ring-2 ring-brand-yellow/30'
+                                                : 'bg-white dark:bg-[#1E1E1E] border-gray-200 dark:border-white/10 text-gray-700 dark:text-gray-400 hover:border-gray-400'
+                                        }`}
+                                    >
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-xs font-black uppercase tracking-tight flex items-center gap-1.5">
+                                                👤 Usar Nome Real
+                                            </span>
+                                            {!watch('use_nickname') && (
+                                                <CheckCircle2 className="w-3.5 h-3.5 text-brand-yellow" />
+                                            )}
                                         </div>
-                                        <input type="hidden" {...register('username')} />
+                                        <p className="text-[10px] leading-snug opacity-80 font-medium">
+                                            Seu nome completo ({watch('full_name') || 'Nome'}) ficará público para todos.
+                                        </p>
+                                        <span className="text-[8px] font-black uppercase bg-gray-200 dark:bg-white/10 text-gray-600 dark:text-gray-400 px-1.5 py-0.2 rounded w-fit">
+                                            Sem anonimato
+                                        </span>
+                                    </button>
+                                </div>
+
+                                {/* Campo para cadastrar / alterar apelido */}
+                                <div className="space-y-2 pt-2 border-t border-gray-200/60 dark:border-white/10">
+                                    <div className="flex items-center justify-between">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">
+                                            {watch('username') ? `Apelido Atual: @${watch('username')}` : 'Cadastrar Apelido:'}
+                                        </label>
+                                        {watch('username') && (
+                                            <span className="text-[9px] font-bold text-brand-blue uppercase">
+                                                {watch('use_nickname') ? '✓ Ativo e público' : 'Inativo (usando nome real)'}
+                                            </span>
+                                        )}
                                     </div>
-                                )}
+                                    <div className="flex gap-2">
+                                        <input
+                                            {...register('new_nickname')}
+                                            placeholder={watch('username') ? 'Digitar outro apelido...' : 'Digite o apelido desejado...'}
+                                            className="flex-1 bg-white dark:bg-background-dark/40 border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs outline-none focus:border-brand-blue transition-all font-bold text-gray-900 dark:text-white"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={handleCreateNickname}
+                                            disabled={isCreatingNickname || !watch('new_nickname')}
+                                            className="px-4 py-2 bg-brand-blue text-white rounded-xl text-[10px] font-black uppercase hover:bg-brand-blue/80 disabled:opacity-50 transition-all cursor-pointer"
+                                        >
+                                            {isCreatingNickname ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Salvar Apelido'}
+                                        </button>
+                                    </div>
+                                    <input type="hidden" {...register('username')} />
+                                </div>
+
+                                {/* Banner de Prévia em Tempo Real (O que a comunidade vê vs O que é privado) */}
+                                <div className="p-3 rounded-xl bg-gray-100 dark:bg-black/30 border border-gray-200 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                                    <div className="flex items-center gap-2 min-w-0">
+                                        <Eye className="w-4 h-4 text-brand-blue shrink-0" />
+                                        <div className="min-w-0">
+                                            <span className="text-[9px] font-black uppercase text-gray-400 block tracking-wider">
+                                                Visível para a comunidade:
+                                            </span>
+                                            <span className="font-black text-gray-900 dark:text-white truncate block">
+                                                {watch('use_nickname') && (watch('username') || watch('new_nickname'))
+                                                    ? `@${watch('username') || watch('new_nickname')}`
+                                                    : watch('full_name') || 'Nome Completo'}
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div className="sm:text-right border-t sm:border-t-0 pt-1 sm:pt-0 border-gray-200 dark:border-white/5">
+                                        <span className="text-[9px] font-black uppercase text-gray-400 block tracking-wider">
+                                            Nome Real Registrado:
+                                        </span>
+                                        <span className="text-[10px] font-bold text-gray-600 dark:text-gray-300">
+                                            {watch('full_name')} {watch('use_nickname') ? '(🔒 Oculto para terceiros)' : '(Público)'}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
 
                             <div className="space-y-2">
@@ -650,24 +807,298 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                             </div>
                         </div>
 
-                        {/* 2. IDENTIDADE PROTEGIDA */}
-                        <div className="space-y-4">
-                            <div className="space-y-2">
-                                <label className="text-[10px] font-black uppercase tracking-widest text-gray-400 ml-1 flex items-center gap-2">
-                                    <MessageSquare className="w-3 h-3" /> Qual a sua linguagem?
-                                </label>
-                                <select
-                                    {...register('cultural_language')}
-                                    className="w-full bg-gray-50 dark:bg-background-dark/20 border border-gray-100 dark:border-white/5 rounded-2xl px-4 py-3 text-sm focus:border-brand-blue/50 outline-none transition-all cursor-pointer font-bold text-gray-900 dark:text-white uppercase tracking-tight"
-                                >
-                                    <option value="jovem">Jovem</option>
-                                    <option value="nerd_geek">Nerd/Geek</option>
-                                    <option value="artistica">Artística</option>
-                                    <option value="academica">Acadêmica</option>
-                                </select>
-                                <p className="text-[13px] text-gray-300 dark:text-white/90 font-medium ml-1 leading-tight mt-1">
-                                    A plataforma traduz termos complexos para a sua linguagem, para que todos entendam a língua da ciência!
-                                </p>
+                        {/* 2. IDENTIDADE PROTEGIDA, INICIATIVAS & SISTEMA DE SIGNOS LINGUÍSTICOS */}
+                        <div className="space-y-5">
+                            {/* BLOCO 1 & 2: VÍNCULO COM INICIATIVAS & ESPAÇOS + SOLICITAÇÃO */}
+                            <div className="p-4 bg-gray-50/80 dark:bg-white/[0.02] border border-gray-200/70 dark:border-white/10 rounded-2xl space-y-3.5">
+                                <div className="flex items-start justify-between gap-2">
+                                    <div>
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-900 dark:text-white flex items-center gap-1.5">
+                                            <Building2 className="w-3.5 h-3.5 text-brand-blue" /> Vínculo com Iniciativas & Espaços
+                                        </label>
+                                        <p className="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5 leading-snug">
+                                            Selecione os grupos de extensão, espaços ou projetos dos quais você faz parte.
+                                            {!adminMode && ' Novos vínculos passam por validação no Eixo 04 (Governança).'}
+                                        </p>
+                                    </div>
+                                    {!adminMode && Array.isArray(profileData?.pending_edits?.member_initiatives) && (
+                                        <span className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FFCC00]/20 text-[#B45309] dark:text-[#FFCC00] border border-[#FFCC00]/40 text-[9px] font-black uppercase">
+                                            <Clock className="w-2.5 h-2.5" /> Em revisão
+                                        </span>
+                                    )}
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    {INITIATIVE_LIST.map((initMeta) => {
+                                        const currentInits: string[] = watch('member_initiatives') || [];
+                                        const isSelected = currentInits.includes(initMeta.id);
+
+                                        return (
+                                            <button
+                                                key={initMeta.id}
+                                                type="button"
+                                                onClick={() => {
+                                                    const next = isSelected
+                                                        ? currentInits.filter((i) => i !== initMeta.id)
+                                                        : [...currentInits, initMeta.id];
+                                                    setValue('member_initiatives', next, { shouldDirty: true });
+                                                    if (initMeta.id === 'labdiv') {
+                                                        setValue('is_labdiv', !isSelected, { shouldDirty: true });
+                                                    }
+                                                }}
+                                                className={`p-3 rounded-xl border text-left transition-all flex items-center justify-between gap-2 cursor-pointer ${
+                                                    isSelected ? initMeta.chipSelectedClasses : initMeta.chipUnselectedClasses
+                                                }`}
+                                            >
+                                                <div className="flex items-center gap-2.5 min-w-0">
+                                                    <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${initMeta.dotClasses}`} />
+                                                    <div className="min-w-0">
+                                                        <span className="block text-xs font-black uppercase tracking-tight truncate">
+                                                            {initMeta.shortLabel}
+                                                        </span>
+                                                        <span className="block text-[9px] opacity-75 font-medium truncate">
+                                                            {initMeta.id === 'labdiv' && 'Divulgação Científica IFUSP'}
+                                                            {initMeta.id === 'show_da_fisica' && 'Demonstrações & Experimentos'}
+                                                            {initMeta.id === 'hs' && 'Hackerspace • Hardware & Código'}
+                                                            {initMeta.id === 'profis' && 'Programa de Ensino Superior'}
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                                <div className={`w-4 h-4 rounded-md border flex items-center justify-center shrink-0 ${
+                                                    isSelected ? 'border-current bg-current/15' : 'border-gray-300 dark:border-white/20'
+                                                }`}>
+                                                    {isSelected && <CheckCircle2 className="w-3 h-3" />}
+                                                </div>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                {/* Caixinha Retrátil: Solicitar Inclusão de Nova Iniciativa */}
+                                <div className="pt-2 border-t border-gray-200/60 dark:border-white/10">
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowInitiativeRequestBox((prev) => !prev)}
+                                        className="w-full flex items-center justify-between text-left py-1.5 px-2 rounded-xl hover:bg-gray-100 dark:hover:bg-white/5 transition-colors"
+                                    >
+                                        <span className="text-[10px] font-black uppercase tracking-wider text-brand-blue dark:text-[#FFCC00] flex items-center gap-1.5">
+                                            <Sparkles className="w-3.5 h-3.5" />
+                                            Faz parte de outra iniciativa ou espaço que ainda não está no HUB? Envie para a Governança
+                                        </span>
+                                        <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform ${showInitiativeRequestBox ? 'rotate-180' : ''}`} />
+                                    </button>
+
+                                    <AnimatePresence>
+                                        {showInitiativeRequestBox && (
+                                            <motion.div
+                                                initial={{ opacity: 0, height: 0 }}
+                                                animate={{ opacity: 1, height: 'auto' }}
+                                                exit={{ opacity: 0, height: 0 }}
+                                                className="overflow-hidden"
+                                            >
+                                                <div className="mt-3 p-3.5 bg-white dark:bg-[#161616] border border-gray-200 dark:border-white/10 rounded-2xl space-y-3">
+                                                    <p className="text-[10px] text-gray-500 dark:text-gray-400 leading-relaxed">
+                                                        Sua solicitação irá direto para o <strong className="text-gray-900 dark:text-white">Eixo 04 (Perfis, Personas & Governança)</strong> na Torre de Controle para que a equipe valide e cadastre o selo oficial.
+                                                    </p>
+                                                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                                                        <div className="sm:col-span-2">
+                                                            <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">Nome da Iniciativa / Espaço *</label>
+                                                            <input
+                                                                type="text"
+                                                                value={initiativeReqForm.initiative_name}
+                                                                onChange={(e) => setInitiativeReqForm((s) => ({ ...s, initiative_name: e.target.value }))}
+                                                                placeholder="Ex: Grupo de Astronomia Amadora"
+                                                                className="w-full mt-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs font-bold outline-none focus:border-brand-blue"
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">Sigla (Opcional)</label>
+                                                            <input
+                                                                type="text"
+                                                                value={initiativeReqForm.acronym}
+                                                                onChange={(e) => setInitiativeReqForm((s) => ({ ...s, acronym: e.target.value }))}
+                                                                placeholder="Ex: GAA"
+                                                                className="w-full mt-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs font-bold outline-none focus:border-brand-blue"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div>
+                                                        <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">O que a iniciativa faz / onde atua? *</label>
+                                                        <textarea
+                                                            rows={2}
+                                                            value={initiativeReqForm.description}
+                                                            onChange={(e) => setInitiativeReqForm((s) => ({ ...s, description: e.target.value }))}
+                                                            placeholder="Descreva as atividades, instituto de origem e objetivo..."
+                                                            className="w-full mt-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs outline-none focus:border-brand-blue resize-none"
+                                                        />
+                                                    </div>
+
+                                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                                        <div>
+                                                            <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">Responsável / Coordenador(a) *</label>
+                                                            <input
+                                                                type="text"
+                                                                value={initiativeReqForm.responsible_name}
+                                                                onChange={(e) => setInitiativeReqForm((s) => ({ ...s, responsible_name: e.target.value }))}
+                                                                placeholder="Nome completo"
+                                                                className="w-full mt-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs font-bold outline-none focus:border-brand-blue"
+                                                            />
+                                                        </div>
+                                                        <div>
+                                                            <label className="text-[9px] font-black uppercase tracking-widest text-gray-400 ml-1">Contato (E-mail USP / WhatsApp / @Insta) *</label>
+                                                            <input
+                                                                type="text"
+                                                                value={initiativeReqForm.contact_info}
+                                                                onChange={(e) => setInitiativeReqForm((s) => ({ ...s, contact_info: e.target.value }))}
+                                                                placeholder="email@usp.br ou (11) 99999-9999"
+                                                                className="w-full mt-1 bg-gray-50 dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl px-3 py-2 text-xs font-bold outline-none focus:border-brand-blue"
+                                                            />
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex justify-end pt-1">
+                                                        <button
+                                                            type="button"
+                                                            disabled={isSubmittingInitiativeReq}
+                                                            onClick={handleInitiativeRequestSubmit}
+                                                            className="px-4 py-2 bg-[#0F4780] hover:bg-[#0F4780]/90 text-white rounded-xl text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all disabled:opacity-50 cursor-pointer"
+                                                        >
+                                                            {isSubmittingInitiativeReq ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+                                                            Enviar para Governança (Eixo 04)
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+                            </div>
+
+                            {/* BLOCO 3: SISTEMA DE SIGNOS LINGUÍSTICOS E MEDIAÇÃO SEMIÓTICA */}
+                            <div className="p-4 bg-gray-50/80 dark:bg-white/[0.02] border border-gray-200/70 dark:border-white/10 rounded-2xl space-y-4">
+                                <div className="space-y-1">
+                                    <div className="flex items-center justify-between gap-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-900 dark:text-white flex items-center gap-1.5">
+                                            <MessageSquare className="w-3.5 h-3.5 text-[#F14343]" /> Sistema de Signos Linguísticos & Mediação Semiótica
+                                        </label>
+                                        <span className="text-[8px] font-black uppercase px-2 py-0.5 rounded-full bg-[#0F4780]/10 dark:bg-[#FFCC00]/15 text-[#0F4780] dark:text-[#FFCC00] font-mono">
+                                            Semiótica LabDiv
+                                        </span>
+                                    </div>
+                                    <p className="text-[11px] text-gray-600 dark:text-gray-300 leading-relaxed">
+                                        Esta escolha alimenta o motor de <strong>Mediação Semiótica do HUB</strong>: adaptamos o vocabulário, os signos e as metáforas científicas cruzando o seu <strong>repertório cultural</strong> com a sua <strong>área de interesse</strong>.
+                                    </p>
+                                </div>
+
+                                {/* 4 Cards Interativos M3 */}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                                    {[
+                                        {
+                                            id: 'jovem',
+                                            icon: '⚡',
+                                            title: 'Jovem / Dinâmica',
+                                            tone: 'Direto, visual, cotidiano e conectado ao agora',
+                                            example: '"Entropia é tipo o seu quarto: sem energia extra pra arrumar, o caos só cresce."',
+                                            activeRing: 'border-[#FFCC00] bg-[#FFCC00]/10 dark:bg-[#FFCC00]/10 ring-2 ring-[#FFCC00]/30',
+                                        },
+                                        {
+                                            id: 'nerd_geek',
+                                            icon: '🎮',
+                                            title: 'Nerd / Geek',
+                                            tone: 'Referências de Sci-Fi, Games, RPG, Fantasia e Pop Tech',
+                                            example: '"O tunelamento quântico é basicamente atravessar a parede da dungeon com 1% de chance no dado."',
+                                            activeRing: 'border-[#0F4780] dark:border-[#3B82F6] bg-[#0F4780]/10 dark:bg-[#3B82F6]/15 ring-2 ring-[#3B82F6]/30',
+                                        },
+                                        {
+                                            id: 'artistica',
+                                            icon: '🎨',
+                                            title: 'Artística / Sensível',
+                                            tone: 'Estética, sinestesia, música, cinema e poesia visual',
+                                            example: '"Ondas gravitacionais são acordes silenciosos vibrando no tecido do espaço-tempo."',
+                                            activeRing: 'border-[#F14343] bg-[#F14343]/10 dark:bg-[#F14343]/15 ring-2 ring-[#F14343]/30',
+                                        },
+                                        {
+                                            id: 'academica',
+                                            icon: '🏛️',
+                                            title: 'Acadêmica / Formal',
+                                            tone: 'Rigor conceitual, nomenclatura técnica e precisão analítica',
+                                            example: '"A evolução temporal do estado quântico obedece estritamente à equação unitária de Schrödinger."',
+                                            activeRing: 'border-emerald-600 dark:border-emerald-400 bg-emerald-500/10 ring-2 ring-emerald-500/30',
+                                        },
+                                    ].map((card) => {
+                                        const isSelected = watch('cultural_language') === card.id;
+                                        return (
+                                            <button
+                                                key={card.id}
+                                                type="button"
+                                                onClick={() => setValue('cultural_language', card.id as any, { shouldDirty: true })}
+                                                className={`p-3 rounded-2xl border text-left transition-all flex flex-col justify-between gap-2 cursor-pointer ${
+                                                    isSelected
+                                                        ? card.activeRing
+                                                        : 'bg-white dark:bg-[#181818] border-gray-200 dark:border-white/10 hover:border-gray-300 dark:hover:border-white/25'
+                                                }`}
+                                            >
+                                                <div className="space-y-1">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-xs font-black uppercase tracking-tight text-gray-900 dark:text-white flex items-center gap-1.5">
+                                                            <span>{card.icon}</span> {card.title}
+                                                        </span>
+                                                        {isSelected && (
+                                                            <CheckCircle2 className="w-4 h-4 text-brand-blue dark:text-[#FFCC00] shrink-0" />
+                                                        )}
+                                                    </div>
+                                                    <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 leading-snug">
+                                                        {card.tone}
+                                                    </p>
+                                                </div>
+                                                <p className="text-[10px] italic text-gray-600 dark:text-gray-300 bg-black/[0.03] dark:bg-white/[0.04] p-2 rounded-xl border border-black/5 dark:border-white/5 leading-snug">
+                                                    {card.example}
+                                                </p>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+
+                                {/* Campo rápido de Área de Interesse sincronizado + Emulador de Analogia ao vivo */}
+                                <div className="pt-1 space-y-2.5">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                                        <label className="text-[10px] font-black uppercase tracking-widest text-gray-500 dark:text-gray-400">
+                                            Cruzar signo com sua Área de Interesse / Hobby:
+                                        </label>
+                                        <input
+                                            {...register('interest_area')}
+                                            placeholder="Ex: Astrofísica, Música, RPG, Robótica..."
+                                            className="sm:w-64 bg-white dark:bg-[#181818] border border-gray-200 dark:border-white/10 rounded-xl px-3 py-1.5 text-xs font-bold text-gray-900 dark:text-white outline-none focus:border-brand-blue"
+                                        />
+                                    </div>
+
+                                    {(() => {
+                                        const lang = watch('cultural_language') || 'jovem';
+                                        const rawInterest = (watch('interest_area') || watch('artistic_interests_str') || 'Física & Universo').split(',')[0].trim() || 'Física & Universo';
+
+                                        const analogyMap: Record<string, string> = {
+                                            jovem: `Quando você ler sobre um fenômeno complexo, o HUB vai conectar o conceito direto com "${rawInterest}" de um jeito descomplicado, visual e sem enrolação.`,
+                                            nerd_geek: `Conceitos densos serão traduzidos usando mecânicas de mundo, lore e sistemas inspirados em "${rawInterest}" — como uma skill tree científica.`,
+                                            artistica: `A ciência será apresentada pela lente estética e sensorial de "${rawInterest}", traduzindo equações em ritmo, contraste, forma e movimento.`,
+                                            academica: `Os conteúdos priorizarão o formalismo teórico, referências primárias e conexões interdisciplinares diretas com a pesquisa em "${rawInterest}".`,
+                                        };
+
+                                        return (
+                                            <div className="p-3 rounded-xl bg-gradient-to-r from-[#0F4780]/10 via-[#F14343]/5 to-[#FFCC00]/10 border border-[#0F4780]/20 dark:border-white/10 flex items-start gap-2.5">
+                                                <Sparkles className="w-4 h-4 text-[#0F4780] dark:text-[#FFCC00] shrink-0 mt-0.5" />
+                                                <div className="text-[11px] leading-snug">
+                                                    <span className="font-black uppercase text-gray-900 dark:text-white">
+                                                        Emulador Semiótico ({lang.replace('_', '/').toUpperCase()} × {rawInterest}):{' '}
+                                                    </span>
+                                                    <span className="text-gray-700 dark:text-gray-300 font-medium">
+                                                        {analogyMap[lang] || analogyMap.jovem}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        );
+                                    })()}
+                                </div>
                             </div>
 
                             {/* 4 PERSONAS LABDIV */}
