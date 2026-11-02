@@ -42,6 +42,7 @@ export default function AdminLayoutClient({
         { name: 'Aprovação de Perfis', href: '/admin/profiles', icon: 'manage_accounts' },
         { name: 'Central de Denúncias & Reports', href: '/admin/reports', icon: 'flag' },
         { name: 'Telemetria do Sistema', href: '/admin/telemetria', icon: 'query_stats' },
+        { name: 'Portal Storage & Portfólio', href: '/storage', icon: 'dns', adminOnly: true },
         { name: 'Configurações Admin', href: '/admin/config', icon: 'settings', adminOnly: true },
     ];
 

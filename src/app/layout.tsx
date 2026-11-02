@@ -121,6 +121,8 @@ export default async function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="preconnect" href="https://res.cloudinary.com" />
+        <link rel="preconnect" href="https://storage.hublabdiv.com.br" />
+        <link rel="dns-prefetch" href="https://storage.hublabdiv.com.br" />
         <link rel="dns-prefetch" href="https://bqszadfunqgtfpaorwvx.supabase.co" />
         <script
           dangerouslySetInnerHTML={{

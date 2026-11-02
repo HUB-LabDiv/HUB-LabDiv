@@ -2,6 +2,34 @@
 
 ---
 
+## 🚀 Versão 6.7.2 (Build 23) — *Storage Híbrido Resiliente (Dual-Write Fire Stick + Cloudinary) & Rota /storage*
+**Data de Lançamento:** 1 de Novembro de 2026  
+**Ambiente:** Web (Next.js 16+) & Android Mobile (Capacitor / Google Play Store)  
+**Licença:** GNU Affero General Public License v3 (AGPLv3)
+
+---
+
+### 💾 1. Armazenamento Híbrido Resiliente (Fire TV Stick + Cloudinary)
+* **Dual-Write Assíncrono com Triplo Fallback:**
+  - Todo upload de foto ou documento enviado pela plataforma é gravado paralelamente no Cloudinary (CDN primário de alta velocidade) e espelhado via API segura no HD externo do servidor próprio Fire TV Stick (backup físico independente).
+  - Em caso de instabilidade ou bloqueio em qualquer ponta, o Supabase Storage atua como terceiro nível de contingência automática.
+* **Failover Inteligente no Front-end (`MediaCard` & `CommentsSection`):**
+  - Fallback transparente no cliente caso a URL primária falhe (`onError`), alternando imediatamente para a `backup_url` do Fire Stick sem quebrar a interface.
+* **Torre de Controle — Card de Storage Híbrido (`HybridStorageCard`):**
+  - Monitoramento em tempo real do status de conexão (`online`/`offline`) do servidor Fire Stick.
+  - Botão de sincronização em lote (`Espelhar Lote (10)`) para backfill de mídias históricas.
+
+---
+
+### 🌐 2. Rota de Atalho & Redirecionamento `/storage`
+* **Redirecionamento Rápido:**
+  - A rota `/storage` na plataforma redireciona instantaneamente para `https://storage.hublabdiv.com.br` (ou para o servidor local em ambiente de desenvolvimento).
+* **Atalhos no Painel Administrativo:**
+  - Atalho dedicado "Portal Storage & Portfólio" incorporado à barra lateral e ao menu mobile da Torre de Controle.
+  - Botão de acesso direto "Abrir Portal" integrado ao `HybridStorageCard`.
+
+---
+
 ## 🚀 Versão 6.7.1 (Build 22) — *Privacidade de Apelidos, Moderação V3 de Perfis, Badges de Iniciativas & Skills Antigravity*
 **Data de Lançamento:** 28 de Outubro de 2026  
 **Ambiente:** Web (Next.js 16+) & Android Mobile (Capacitor / Google Play Store)  

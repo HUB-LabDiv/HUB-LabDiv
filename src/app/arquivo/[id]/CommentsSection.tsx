@@ -15,6 +15,7 @@
 import { useState } from 'react';
 import { addComment } from '@/app/actions/comments';
 import { triggerNotification } from '@/lib/notifications.client';
+import { uploadFileToCloudinary } from '@/lib/cloudinary-upload';
 import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
@@ -49,30 +50,15 @@ export function CommentsSection({ submissionId, submissionTitle, initialComments
 
             // Handle image upload if a file is selected
             if (selectedFile) {
-                const formData = new FormData();
-                formData.append('file', selectedFile);
-                formData.append('upload_preset', process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!);
-                const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
-
-                if (cloudName && process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET) {
-                    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
-                        method: 'POST',
-                        body: formData
-                    });
-
-                    if (!res.ok) throw new Error('Falha ao enviar a imagem.');
-                    const data = await res.json();
-
-                    // Optimize Cloudinary URL
-                    const urlParts = data.secure_url.split('/upload/');
-                    const finalUrl = urlParts.length === 2
-                        ? `${urlParts[0]}/upload/f_auto,q_auto/${urlParts[1]}`
-                        : data.secure_url;
-
+                try {
+                    const finalUrl = await uploadFileToCloudinary(selectedFile, 'image');
                     // Append image as Markdown
                     finalContent += `\n\n![Imagem anexada](${finalUrl})`;
-                } else {
-                    console.warn("Cloudinary env vars missing. Skipping image upload.");
+                } catch (uploadErr: any) {
+                    console.error('[CommentsSection] Erro no upload da imagem anexada:', uploadErr);
+                    setError(uploadErr?.message || 'Falha ao processar upload da imagem anexada.');
+                    setIsSubmitting(false);
+                    return;
                 }
             }
 

@@ -338,3 +338,6 @@ export interface QueueDecision {
     proofPath?: string;
     editedPayload?: Record<string, any>;
 }
+
+export * from './storage';
+

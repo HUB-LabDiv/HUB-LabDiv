@@ -99,10 +99,11 @@ export function getAvatarUrl(url: string | null | undefined): string {
         return processedUrl;
     }
 
-    // Direct CDN for Supabase, Cloudinary, and Dicebear
+    // Direct CDN for Supabase, Cloudinary, Fire Stick, and Dicebear
     if (
         processedUrl.includes('.supabase.co') ||
         processedUrl.includes('cloudinary.com') ||
+        processedUrl.includes('storage.hublabdiv.com.br') ||
         processedUrl.includes('api.dicebear.com')
     ) {
         return processedUrl;

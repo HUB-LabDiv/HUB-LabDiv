@@ -248,6 +248,7 @@ export async function getUserPseudonyms() {
 }
 
 import { v2 as cloudinary } from 'cloudinary';
+import { deleteFromFirestick } from '@/lib/firestick-storage';
 
 // Opcional: configurar globalmente se as envs estiverem disponíveis no startup
 if (process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
@@ -257,6 +258,80 @@ if (process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
         api_secret: process.env.CLOUDINARY_API_SECRET,
     });
 }
+
+/**
+ * Remove fisicamente mídias tanto no Cloudinary quanto no HD do Fire Stick
+ */
+async function deletePhysicalMedia(supabaseServer: any, mediaUrl: string | null, mediaType: string | null) {
+    if (!mediaUrl) return;
+    try {
+        let urls: string[] = [];
+        try {
+            urls = JSON.parse(mediaUrl);
+        } catch {
+            if (mediaUrl.startsWith('["') || mediaUrl.startsWith('[')) {
+                urls = JSON.parse(mediaUrl);
+            } else {
+                urls = [mediaUrl];
+            }
+        }
+
+        const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+        const apiKey = process.env.CLOUDINARY_API_KEY;
+        const apiSecret = process.env.CLOUDINARY_API_SECRET;
+        if (cloudName && apiKey && apiSecret) {
+            cloudinary.config({
+                cloud_name: cloudName,
+                api_key: apiKey,
+                api_secret: apiSecret,
+            });
+        }
+
+        for (const url of urls) {
+            if (typeof url !== 'string' || !url) continue;
+
+            // 1. Se for mídia Cloudinary
+            if (url.includes('cloudinary.com')) {
+                if (cloudName && apiKey && apiSecret) {
+                    try {
+                        const parts = url.split('/upload/');
+                        if (parts.length > 1) {
+                            let publicIdPath = parts[1].replace(/^v\d+\//, '');
+                            const publicId = publicIdPath.replace(/\.[^/.]+$/, "");
+                            const resourceType = ['image', 'pdf'].includes(mediaType || '') ? 'image' : 'raw';
+                            await cloudinary.uploader.destroy(publicId, { invalidate: true, resource_type: resourceType });
+                        }
+                    } catch {}
+                }
+
+                // Checa se há espelho no Fire Stick e remove
+                try {
+                    const { data: mirror } = await supabaseServer
+                        .from('media_storage_mirrors')
+                        .select('backup_url, firestick_filename')
+                        .eq('primary_url', url)
+                        .maybeSingle();
+
+                    if (mirror?.backup_url || mirror?.firestick_filename) {
+                        await deleteFromFirestick(mirror.backup_url || mirror.firestick_filename);
+                    }
+                    await supabaseServer.from('media_storage_mirrors').delete().eq('primary_url', url);
+                } catch {}
+            }
+
+            // 2. Se for mídia direta do Fire Stick
+            if (url.includes('storage.hublabdiv.com.br') || url.includes('/media/')) {
+                try {
+                    await deleteFromFirestick(url);
+                    await supabaseServer.from('media_storage_mirrors').delete().eq('primary_url', url);
+                } catch {}
+            }
+        }
+    } catch {
+        // Ignora erros de exclusão física para não travar a exclusão do registro no banco
+    }
+}
+
 
 export async function deleteSubmissionAdmin(id: string) {
     try {
@@ -273,46 +348,9 @@ export async function deleteSubmissionAdmin(id: string) {
         const { data: sub } = await supabaseServer.from('submissions').select('media_url, media_type').eq('id', id).single();
         if (!sub) return { error: "Submissão não encontrada" };
 
-        // 3. Deletar Arquivos Físicos do Cloudinary (se aplicável)
+        // 3. Deletar Arquivos Físicos de forma híbrida (Cloudinary + Fire Stick)
         if (sub.media_url && ['image', 'pdf', 'zip', 'sdocx'].includes(sub.media_type)) {
-            try {
-                // Ensure config is present (in case global init failed or wasn't executed)
-                cloudinary.config({
-                    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-                    api_key: process.env.CLOUDINARY_API_KEY,
-                    api_secret: process.env.CLOUDINARY_API_SECRET,
-                });
-
-                let urls: string[] = [];
-                try {
-                    urls = JSON.parse(sub.media_url);
-                } catch {
-                    // Try parsing as simple array string if single URL or not JSON format
-                    if (sub.media_url.startsWith('["') || sub.media_url.startsWith('[')) {
-                        urls = JSON.parse(sub.media_url);
-                    } else {
-                        urls = [sub.media_url];
-                    }
-                }
-
-                for (const url of urls) {
-                    if (typeof url === 'string' && url.includes('cloudinary.com')) {
-                        const parts = url.split('/upload/');
-                        if (parts.length > 1) {
-                            let publicIdPath = parts[1];
-                            publicIdPath = publicIdPath.replace(/^v\d+\//, '');
-                            // Remove a extensão (o Cloudinary destroy precisa só do Public ID sem a extensão por padrão para image)
-                            const publicId = publicIdPath.replace(/\.[^/.]+$/, "");
-
-                            const resourceType = ['image', 'pdf'].includes(sub.media_type) ? 'image' : 'raw';
-
-                            await cloudinary.uploader.destroy(publicId, { invalidate: true, resource_type: resourceType });
-                        }
-                    }
-                }
-            } catch (mediaErr) {
-                // Ignore media delete errors
-            }
+            await deletePhysicalMedia(supabaseServer, sub.media_url, sub.media_type);
         }
 
         // 4. Deletar do banco de dados Submissions
@@ -338,28 +376,9 @@ export async function deleteOwnSubmission(id: string) {
         if (!sub) return { error: "Submissão não encontrada" };
         if (sub.user_id !== user.id) return { error: "Acesso negado: Você não é o autor deste post." };
 
-        // Deletar Arquivos Físicos do Cloudinary (se aplicável)
+        // Deletar Arquivos Físicos de forma híbrida (Cloudinary + Fire Stick)
         if (sub.media_url && ['image', 'pdf', 'zip', 'sdocx'].includes(sub.media_type)) {
-            try {
-                cloudinary.config({
-                    cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-                    api_key: process.env.CLOUDINARY_API_KEY,
-                    api_secret: process.env.CLOUDINARY_API_SECRET,
-                });
-                let urls: string[] = [];
-                try { urls = JSON.parse(sub.media_url); } catch { urls = [sub.media_url]; }
-                for (const url of urls) {
-                    if (typeof url === 'string' && url.includes('cloudinary.com')) {
-                        const parts = url.split('/upload/');
-                        if (parts.length > 1) {
-                            let publicIdPath = parts[1].replace(/^v\d+\//, '');
-                            const publicId = publicIdPath.replace(/\.[^/.]+$/, "");
-                            const resourceType = ['image', 'pdf'].includes(sub.media_type) ? 'image' : 'raw';
-                            await cloudinary.uploader.destroy(publicId, { invalidate: true, resource_type: resourceType });
-                        }
-                    }
-                }
-            } catch (mediaErr) {}
+            await deletePhysicalMedia(supabaseServer, sub.media_url, sub.media_type);
         }
 
         const { error } = await supabaseServer.from('submissions').delete().eq('id', id);

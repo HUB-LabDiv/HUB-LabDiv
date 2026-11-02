@@ -45,6 +45,7 @@ const ScientificContent = dynamic(() => import( "@/components/shared/ScientificC
 import { Avatar } from "@/components/ui/Avatar";
 
 import { parseMediaUrl, getYoutubeThumbnail, getOptimizedUrl } from '@/lib/media-utils';
+import { resolveBackupMediaUrl } from '@/app/actions/media';
 const ShareMenu = dynamic(() => import( "@/components/shared/ShareMenu").then(mod => mod.ShareMenu));
 import { LocalErrorBoundary } from '@/components/shared/LocalErrorBoundary';
 import { m, AnimatePresence } from 'framer-motion';
@@ -216,12 +217,28 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
     }, [urls, currentImageIndex, post.mediaType, post.title]);
 
     const [hasImageError, setHasImageError] = useState(false);
+    const [fallbackBackupUrl, setFallbackBackupUrl] = useState<string | null>(null);
 
     useEffect(() => {
         setHasImageError(false);
+        setFallbackBackupUrl(null);
     }, [displayUrl]);
 
     const optimizedDisplayUrl = useMemo(() => getOptimizedUrl(displayUrl, 600, 70, post.category, post.mediaType), [displayUrl, post.category, post.mediaType]);
+    const activeDisplayUrl = fallbackBackupUrl || optimizedDisplayUrl;
+
+    const handleImageError = useCallback(async () => {
+        if (!fallbackBackupUrl && displayUrl && displayUrl.includes('cloudinary.com')) {
+            try {
+                const res = await resolveBackupMediaUrl(displayUrl);
+                if (res.success && res.backupUrl) {
+                    setFallbackBackupUrl(res.backupUrl);
+                    return;
+                }
+            } catch {}
+        }
+        setHasImageError(true);
+    }, [displayUrl, fallbackBackupUrl]);
 
     // Use dynamic category styles
     const categoryStyle = post.category ? (CATEGORY_STYLES[post.category] || DEFAULT_STYLE) : DEFAULT_STYLE;
@@ -405,7 +422,7 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                     priority ? (
                         <div className="relative w-full h-full">
                             <Image
-                                src={optimizedDisplayUrl}
+                                src={activeDisplayUrl}
                                 alt={`${post.title} - image ${currentImageIndex + 1}`}
                                 fill
                                 sizes="(max-width: 640px) 100vw, 50vw"
@@ -413,7 +430,7 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                                 priority={true}
                                 fetchPriority="high"
                                 loading="eager"
-                                onError={() => setHasImageError(true)}
+                                onError={handleImageError}
                             />
                         </div>
                     ) : (
@@ -421,24 +438,14 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                             className="relative w-full h-full"
                         >
                             <Image
-                                src={optimizedDisplayUrl}
+                                src={activeDisplayUrl}
                                 alt={`${post.title} - image ${currentImageIndex + 1}`}
                                 fill
                                 sizes="(max-width: 640px) 100vw, 50vw"
                                 className="object-cover object-center transition-transform duration-700 group-hover:scale-105"
                                 priority={priority}
                                 fetchPriority="auto"
-                                onError={() => {
-                                    // Try resilient local fallback before giving up
-                                    if (post.title) {
-                                        const cleanTitle = post.title.toLowerCase().trim();
-                                        const kitFallback = KITDIV_LOCAL_COVERS[cleanTitle];
-                                        if (kitFallback && optimizedDisplayUrl !== kitFallback) {
-                                            // The image will re-render with kitFallback if we set displayUrl or error
-                                        }
-                                    }
-                                    setHasImageError(true);
-                                }}
+                                onError={handleImageError}
                             />
                         </div>
                     )

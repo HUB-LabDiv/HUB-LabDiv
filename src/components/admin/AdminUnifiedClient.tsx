@@ -34,6 +34,7 @@ import { DeleteUserModal } from '@/components/admin/DeleteUserModal';
 import { EditProfileModal } from '@/components/profile/EditProfileModal';
 import { TelemetryManager } from './settings/TelemetryManager';
 import { CloudinaryCleanupCard } from '@/components/admin/CloudinaryCleanupCard';
+import { HybridStorageCard } from '@/components/admin/HybridStorageCard';
 import { useSwipe } from '@/hooks/useSwipe';
 
 interface Profile {
@@ -440,6 +441,9 @@ export function AdminUnifiedClient() {
                 </section>
             ) : activeTab === 'perigo' ? (
                 <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
+                    {/* Painel de Storage Híbrido (Fire Stick + Cloudinary) */}
+                    <HybridStorageCard />
+
                     {/* Painel de Limpeza de Armazenamento Cloudinary */}
                     <CloudinaryCleanupCard />
 

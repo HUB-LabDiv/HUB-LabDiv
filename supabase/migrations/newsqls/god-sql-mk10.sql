@@ -592,3 +592,41 @@ CREATE POLICY "Admin gerencia softwares academicos"
     ON public.academic_softwares FOR ALL TO authenticated
     USING (public.is_admin())
     WITH CHECK (public.is_admin());
+
+-- ==============================================================================
+-- 9.9 ARMAZENAMENTO HÍBRIDO: ESPELHAMENTO CLOUDINARY <-> FIRE STICK STORAGE
+-- ==============================================================================
+CREATE TABLE IF NOT EXISTS public.media_storage_mirrors (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    primary_url TEXT NOT NULL UNIQUE,
+    primary_provider TEXT NOT NULL CHECK (primary_provider IN ('cloudinary', 'firestick', 'supabase')),
+    backup_url TEXT,
+    firestick_filename TEXT,
+    mime_type TEXT,
+    size_bytes BIGINT,
+    mirror_status TEXT NOT NULL DEFAULT 'synced' CHECK (mirror_status IN ('synced', 'pending', 'primary_only')),
+    uploaded_by UUID REFERENCES public.profiles(id) ON DELETE SET NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_media_mirrors_primary_url ON public.media_storage_mirrors(primary_url);
+CREATE INDEX IF NOT EXISTS idx_media_mirrors_status ON public.media_storage_mirrors(mirror_status);
+
+ALTER TABLE public.media_storage_mirrors ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "Leitura publica mapeamento de midia" ON public.media_storage_mirrors;
+CREATE POLICY "Leitura publica mapeamento de midia"
+    ON public.media_storage_mirrors FOR SELECT
+    USING (true);
+
+DROP POLICY IF EXISTS "Usuarios registram espelho de upload" ON public.media_storage_mirrors;
+CREATE POLICY "Usuarios registram espelho de upload"
+    ON public.media_storage_mirrors FOR INSERT TO authenticated
+    WITH CHECK (auth.uid() = uploaded_by OR public.is_admin());
+
+DROP POLICY IF EXISTS "Admin gerencia espelhos de storage" ON public.media_storage_mirrors;
+CREATE POLICY "Admin gerencia espelhos de storage"
+    ON public.media_storage_mirrors FOR ALL TO authenticated
+    USING (public.is_admin())
+    WITH CHECK (public.is_admin());
+

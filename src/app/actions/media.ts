@@ -16,6 +16,7 @@ import { v2 as cloudinary } from 'cloudinary';
 import { createServerSupabase } from '@/lib/supabase/server';
 import { z } from 'zod';
 import { revalidatePath } from 'next/cache';
+import { uploadToFirestick } from '@/lib/firestick-storage';
 
 const submissionSchema = z.object({
     submission_id: z.string().uuid(),
@@ -203,70 +204,124 @@ export async function uploadMediaServerAction(formData: FormData) {
     const isPdf = file.type === 'application/pdf' || file.name?.toLowerCase().endsWith('.pdf');
     const effectiveResourceType = isPdf ? 'raw' : rawResourceType;
 
+    const arrayBuffer = await file.arrayBuffer();
+    const buffer = Buffer.from(arrayBuffer);
+
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
     const apiKey = process.env.CLOUDINARY_API_KEY;
     const apiSecret = process.env.CLOUDINARY_API_SECRET;
 
-    let cloudinaryError: string | null = null;
-
-    // 1. Tentar upload seguro direto pelo SDK Server-Side do Cloudinary
-    if (cloudName && apiKey && apiSecret) {
-        try {
-            cloudinary.config({
-                cloud_name: cloudName,
-                api_key: apiKey,
-                api_secret: apiSecret,
-                secure: true,
-            });
-
-            const arrayBuffer = await file.arrayBuffer();
-            const buffer = Buffer.from(arrayBuffer);
-
-            const uploadOptions: any = {
-                folder: 'assets/submissions',
-                resource_type: effectiveResourceType as any,
-            };
-            if (isPdf) {
-                uploadOptions.format = 'pdf';
-            }
-
-            const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
-                const uploadStream = cloudinary.uploader.upload_stream(
-                    uploadOptions,
-                    (error, res) => {
-                        if (error) {
-                            console.error('[Cloudinary Server Upload Error Detail]', error);
-                            reject(error);
-                        } else if (res?.secure_url) {
-                            resolve(res);
-                        } else {
-                            reject(new Error('Upload sem URL de retorno.'));
-                        }
-                    }
-                );
-                uploadStream.end(buffer);
-            });
-
-            return { url: result.secure_url };
-        } catch (err: any) {
-            cloudinaryError = err?.message || String(err);
-            console.warn('[Cloudinary Stream Upload Falhou, tentando fallback Supabase Storage]:', cloudinaryError);
+    // Tarefa 1: Upload Cloudinary (CDN Global Primário)
+    const cloudinaryTask = (async (): Promise<string> => {
+        if (!cloudName || !apiKey || !apiSecret) {
+            throw new Error('Credenciais Cloudinary não configuradas.');
         }
-    } else {
-        cloudinaryError = 'Credenciais Cloudinary (API Key/Secret) não encontradas nas variáveis de ambiente.';
+
+        cloudinary.config({
+            cloud_name: cloudName,
+            api_key: apiKey,
+            api_secret: apiSecret,
+            secure: true,
+        });
+
+        const uploadOptions: any = {
+            folder: 'assets/submissions',
+            resource_type: effectiveResourceType as any,
+        };
+        if (isPdf) {
+            uploadOptions.format = 'pdf';
+        }
+
+        return new Promise<string>((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+                uploadOptions,
+                (error, res) => {
+                    if (error) {
+                        reject(error);
+                    } else if (res?.secure_url) {
+                        resolve(res.secure_url);
+                    } else {
+                        reject(new Error('Cloudinary sem URL de retorno.'));
+                    }
+                }
+            );
+            uploadStream.end(buffer);
+        });
+    })();
+
+    // Tarefa 2: Upload Fire TV Stick (Backup Ativo em HD Físico)
+    const firestickTask = uploadToFirestick(buffer, file.name || 'upload.bin', file.type || 'application/octet-stream');
+
+    // Execução em Paralelo (Dual-Write)
+    const [cldResult, fsResult] = await Promise.allSettled([cloudinaryTask, firestickTask]);
+
+    const cldUrl = cldResult.status === 'fulfilled' ? cldResult.value : null;
+    const cldError = cldResult.status === 'rejected' ? (cldResult.reason?.message || String(cldResult.reason)) : null;
+
+    const fsResponse = fsResult.status === 'fulfilled' ? fsResult.value : null;
+    const fsUrl = (fsResponse?.success && fsResponse?.url) ? fsResponse.url : null;
+    const fsError = fsResult.status === 'rejected' ? (fsResult.reason?.message || String(fsResult.reason)) : (fsResponse?.error || null);
+
+    if (cldError) {
+        console.warn('[Storage Híbrido: Cloudinary falhou, avaliando contingência]:', cldError);
+    }
+    if (fsError) {
+        console.warn('[Storage Híbrido: Fire Stick backup falhou ou offline]:', fsError);
     }
 
-    // 2. Fallback: Supabase Storage (bucket 'submissions' - bucket público dedicado)
+    // Cenário 1: Cloudinary OK (Primário)
+    if (cldUrl) {
+        // Registra par de espelho no Supabase (não-bloqueante para velocidade)
+        try {
+            await supabase.from('media_storage_mirrors').insert({
+                primary_url: cldUrl,
+                primary_provider: 'cloudinary',
+                backup_url: fsUrl || null,
+                firestick_filename: fsResponse?.filename || null,
+                mime_type: file.type || null,
+                size_bytes: file.size || buffer.length,
+                mirror_status: fsUrl ? 'synced' : 'pending',
+                uploaded_by: user.id
+            });
+        } catch (dbErr) {
+            console.warn('[Storage Híbrido: Erro ao registrar espelho no banco]:', dbErr);
+        }
+
+        return { url: cldUrl };
+    }
+
+    // Cenário 2: Cloudinary FALHOU, mas Fire Stick está ONLINE (Failover Imediato)
+    if (fsUrl) {
+        console.info('[Storage Híbrido: Failover ativado com sucesso para o Fire Stick!]', fsUrl);
+        try {
+            await supabase.from('media_storage_mirrors').insert({
+                primary_url: fsUrl,
+                primary_provider: 'firestick',
+                backup_url: null,
+                firestick_filename: fsResponse?.filename || null,
+                mime_type: file.type || null,
+                size_bytes: file.size || buffer.length,
+                mirror_status: 'primary_only',
+                uploaded_by: user.id
+            });
+        } catch (dbErr) {
+            console.warn('[Storage Híbrido: Erro ao registrar espelho do Fire Stick no banco]:', dbErr);
+        }
+
+        return { url: fsUrl };
+    }
+
+    // Cenário 3: Ambos falharam -> 3º Fallback de Emergência: Supabase Storage
+    console.warn('[Storage Híbrido: Cloudinary e Fire Stick indisponíveis. Tentando 3º fallback Supabase Storage]');
     let supabaseError: string | null = null;
     try {
         const fileExt = file.name ? (file.name.split('.').pop() || 'bin') : 'bin';
         const fileName = `${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${fileExt}`;
         const filePath = `media/${fileName}`;
 
-        const arrayBuffer = await file.arrayBuffer();
         const { error: storageErr } = await supabase.storage
             .from('submissions')
-            .upload(filePath, arrayBuffer, {
+            .upload(filePath, buffer, {
                 contentType: file.type || 'application/octet-stream',
                 upsert: true
             });
@@ -277,17 +332,50 @@ export async function uploadMediaServerAction(formData: FormData) {
                 .getPublicUrl(filePath);
 
             if (publicUrlData?.publicUrl) {
+                try {
+                    await supabase.from('media_storage_mirrors').insert({
+                        primary_url: publicUrlData.publicUrl,
+                        primary_provider: 'supabase',
+                        backup_url: null,
+                        mirror_status: 'pending',
+                        uploaded_by: user.id
+                    });
+                } catch {}
+
                 return { url: publicUrlData.publicUrl };
             }
         } else {
             supabaseError = storageErr.message;
-            console.error('[Supabase Storage Upload Error]', storageErr);
         }
     } catch (supaErr: any) {
         supabaseError = supaErr?.message || String(supaErr);
-        console.error('[Supabase Storage Exception]', supaErr);
     }
 
-    const detailMsg = supabaseError || cloudinaryError || 'Verifique as permissões de armazenamento e conexão de rede.';
-    return { error: `Não foi possível realizar o upload do arquivo: ${detailMsg}` };
+    const detailMsg = cldError || fsError || supabaseError || 'Verifique as permissões de armazenamento e conexão de rede.';
+    return { error: `Não foi possível realizar o upload da mídia em nenhum dos servidores: ${detailMsg}` };
 }
+
+/**
+ * Resolução dinâmica de backup caso uma mídia do Cloudinary falhe no frontend.
+ */
+export async function resolveBackupMediaUrl(failedUrl: string): Promise<{ success: boolean; backupUrl?: string; error?: string }> {
+    if (!failedUrl) return { success: false, error: 'URL ausente.' };
+
+    try {
+        const supabase = await createServerSupabase();
+        const { data, error } = await supabase
+            .from('media_storage_mirrors')
+            .select('backup_url, primary_url')
+            .eq('primary_url', failedUrl)
+            .maybeSingle();
+
+        if (error || !data || !data.backup_url) {
+            return { success: false, error: 'Espelho de backup não encontrado no Fire Stick.' };
+        }
+
+        return { success: true, backupUrl: data.backup_url };
+    } catch (err: any) {
+        return { success: false, error: err?.message || 'Erro ao resolver espelho.' };
+    }
+}
+

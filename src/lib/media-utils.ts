@@ -152,6 +152,11 @@ export const getOptimizedUrl = (url: string, width = 800, quality = 70, category
         return cdnUrl.replace('/upload/', `/upload/w_${width},q_${finalQuality},f_auto/`);
     }
 
+    // Fire Stick On-Premise Storage - Entrega estática direta com cache
+    if (url.includes('storage.hublabdiv.com.br')) {
+        return url;
+    }
+
     // Supabase Storage - Default to no transformation to avoid 400s unless using render endpoint
     if (url.includes('/storage/v1/object/public/')) {
         return url;
@@ -214,6 +219,7 @@ export function getPostMediaFormats(post: {
             low.endsWith('.gif') ||
             low.endsWith('.svg') ||
             low.includes('cloudinary.com') ||
+            low.includes('storage.hublabdiv.com.br') ||
             low.includes('unsplash.com')
         ) {
             formats.add('image');
