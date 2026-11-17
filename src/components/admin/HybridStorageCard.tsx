@@ -127,7 +127,7 @@ export function HybridStorageCard() {
                         href="/storage"
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-4 py-2.5 bg-gradient-to-r from-amber-500/15 to-purple-600/15 hover:from-amber-500/25 hover:to-purple-600/25 text-amber-700 dark:text-amber-300 border border-amber-500/30 rounded-xl font-bukra font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-sm"
+                        className="px-4 py-2.5 bg-gradient-to-r from-[#FFCC00]/15 to-[#1F9FCF]/15 hover:from-[#FFCC00]/25 hover:to-[#1F9FCF]/25 text-[#1E1E1E] dark:text-[#FFCC00] border border-[#FFCC00]/40 rounded-xl font-bukra font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-all shadow-sm"
                         title="Abrir Portal Web do Fire Stick em nova aba"
                     >
                         <span className="material-symbols-outlined text-[16px]">open_in_new</span>

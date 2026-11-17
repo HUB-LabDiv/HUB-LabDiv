@@ -92,7 +92,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="LANÇAR À ÓRBITA"
-            android:textColor="#3B82F6"
+            android:textColor="#1F9FCF"
             android:textSize="10sp"
             android:textStyle="bold"
             android:layout_marginTop="2dp" />

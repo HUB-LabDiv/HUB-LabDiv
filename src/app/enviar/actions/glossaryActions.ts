@@ -12,10 +12,10 @@
  */
 
 
-import { createServerSupabase } from '@/lib/supabase/server';
+import { createServerSupabase, createSupabaseStatic } from '@/lib/supabase/server';
 
 export async function getGlossary() {
-    const supabase = await createServerSupabase();
+    const supabase = await createSupabaseStatic();
 
     // Fetch all words. We also fetch pending ones so the user who added them can see them.
     // Wait, if it's pending, maybe we shouldn't show it to EVERYONE?

@@ -14,6 +14,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { ScrollJellyCard } from '@/components/ui/ScrollJellyCard';
 import { fetchUserAcademicdata } from '@/app/actions/disciplines';
 import { 
     X, Eye, Edit3, ChevronLeft, ChevronRight, Search, Plus, Trash2, Info, Loader2, BookOpen, 
@@ -940,7 +941,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                 </p>
                                 <button
                                     onClick={() => setIsSubjectModalOpen(true)}
-                                    className="flex items-center gap-2 px-4 py-2 bg-[#00A3FF]/10 text-[#00A3FF] border border-[#00A3FF]/20 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#00A3FF] hover:text-white transition-all shrink-0"
+                                    className="flex items-center gap-2 px-4 py-2 bg-[#1F9FCF]/10 text-[#1F9FCF] border border-[#1F9FCF]/20 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-[#1F9FCF] hover:text-white transition-all shrink-0"
                                 >
                                     <Search className="w-3 h-3" />
                                     Buscar Turmas
@@ -962,10 +963,17 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                 <ChevronRight size={20} />
                             </button>
                             <div id="enrollment-list" ref={enrollmentListRef} className="flex flex-row overflow-x-auto snap-x gap-4 pb-4 scrollbar-hide scroll-smooth relative px-8 sm:px-0">
-                                {customBlocks.map((block) => {
+                                {customBlocks.map((block, idx) => {
                                     const colorData = getStableColor(block.id, block.title);
                                     return (
-                                        <div key={block.id} className="space-y-2 snap-start">
+                                        <ScrollJellyCard
+                                            key={block.id}
+                                            axis="horizontal"
+                                            containerRef={enrollmentListRef}
+                                            staggerIndex={idx}
+                                            className="snap-start shrink-0"
+                                        >
+                                        <div className="space-y-2">
                                             <div 
                                                 onClick={() => {
                                                     if (isMobile) {
@@ -1020,6 +1028,7 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                                 )}
                                             </div>
                                         </div>
+                                        </ScrollJellyCard>
                                     );
                                 })}
                                 {academicData?.inProgress?.length > 0 ? (

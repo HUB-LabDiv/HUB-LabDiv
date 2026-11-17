@@ -16,6 +16,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { ScrollJellyCard } from '@/components/ui/ScrollJellyCard';
 import {
     BookOpen,
     ChevronLeft,
@@ -53,17 +54,17 @@ const colorVariants: Record<string, {
     dotBg: string;
 }> = {
     'brand-blue': {
-        text: 'text-[#00A3FF]',
-        textHover: 'group-hover:text-[#00A3FF]',
-        bg: 'bg-brand-blue/10',
-        bgHover: 'group-hover:bg-brand-blue/20',
-        border: 'border-brand-blue/30',
-        borderHover: 'hover:border-brand-blue/60',
-        pillBg: 'bg-brand-blue/15 text-[#00A3FF]',
-        ctaText: 'text-[#00A3FF]',
-        ctaBg: 'bg-brand-blue/10 text-[#00A3FF]',
-        progressBar: 'bg-[#00A3FF]',
-        dotBg: 'bg-brand-blue',
+        text: 'text-[#1F9FCF]',
+        textHover: 'group-hover:text-[#1F9FCF]',
+        bg: 'bg-[#1F9FCF]/10',
+        bgHover: 'group-hover:bg-[#1F9FCF]/20',
+        border: 'border-[#1F9FCF]/30',
+        borderHover: 'hover:border-[#1F9FCF]/60',
+        pillBg: 'bg-[#1F9FCF]/15 text-[#1F9FCF]',
+        ctaText: 'text-[#1F9FCF]',
+        ctaBg: 'bg-[#1F9FCF]/10 text-[#1F9FCF]',
+        progressBar: 'bg-[#1F9FCF]',
+        dotBg: 'bg-[#0F4780]',
     },
     'brand-yellow': {
         text: 'text-brand-yellow',
@@ -134,7 +135,7 @@ export function GcifWikiView() {
                 <div className="absolute bottom-0 left-1/3 w-64 h-64 bg-brand-yellow/10 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="relative z-10 max-w-3xl">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/15 border border-brand-blue/30 text-brand-blue dark:text-[#00A3FF] text-xs font-black uppercase tracking-wider mb-3">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#1F9FCF]/15 border border-[#1F9FCF]/30 text-[#0F4780] dark:text-[#1F9FCF] text-xs font-black uppercase tracking-wider mb-3">
                         <BookOpen className="w-3.5 h-3.5" />
                         O Síncrotron de Conhecimento • IFUSP
                     </div>
@@ -157,7 +158,7 @@ export function GcifWikiView() {
                                 <Atom className="w-6 h-6 text-brand-blue" />
                                 Tópicos de Conhecimento
                             </h2>
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-blue-500/15 border border-blue-500/30 text-brand-blue dark:text-[#00A3FF] text-[10px] font-black uppercase tracking-wider font-bukra">
+                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#1F9FCF]/15 border border-[#1F9FCF]/30 text-[#0F4780] dark:text-[#1F9FCF] text-[10px] font-black uppercase tracking-wider font-bukra">
                                 {wikiCells.length} TÓPICOS
                             </span>
                         </div>
@@ -234,16 +235,17 @@ export function GcifWikiView() {
                         {filteredCells.map((cell: any, idx: number) => {
                             const colors = colorVariants[cell.color] || colorVariants['brand-blue'];
                             return (
-                                <motion.div
+                                <ScrollJellyCard
                                     key={cell.id}
-                                    layout
-                                    data-tour={cell.id === 'metodologia' ? 'gcif-wiki-guias' : undefined}
-                                    initial={{ opacity: 0, scale: 0.95, y: 15 }}
-                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.95, y: 15 }}
-                                    transition={{ duration: 0.3, delay: idx * 0.03 }}
+                                    axis="horizontal"
+                                    containerRef={scrollContainerRef}
+                                    staggerIndex={idx}
                                     className="snap-start shrink-0 w-[280px] xs:w-[290px] sm:w-[320px] md:w-auto md:shrink flex flex-col"
                                 >
+                                    <div
+                                        data-tour={cell.id === 'metodologia' ? 'gcif-wiki-guias' : undefined}
+                                        className="h-full flex flex-col"
+                                    >
                                     <Link
                                         href={cell.href}
                                         className={`
@@ -313,7 +315,8 @@ export function GcifWikiView() {
                                             </div>
                                         </div>
                                     </Link>
-                                </motion.div>
+                                    </div>
+                                </ScrollJellyCard>
                             );
                         })}
                     </AnimatePresence>

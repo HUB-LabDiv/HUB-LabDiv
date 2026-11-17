@@ -44,10 +44,10 @@ export async function GET(request: Request) {
                         gap: '24px',
                         marginBottom: '48px'
                     }}>
-                        <div style={{ display: 'flex', width: '32px', height: '32px', borderRadius: '4px', backgroundColor: '#e63946' }}></div>
-                        <div style={{ display: 'flex', width: '32px', height: '32px', borderRadius: '4px', backgroundColor: '#4361ee' }}></div>
-                        <div style={{ display: 'flex', width: '32px', height: '32px', borderRadius: '8px', backgroundColor: '#ffb703' }}></div>
-                        <h2 style={{ fontSize: '36px', color: '#ffb703', textTransform: 'uppercase', letterSpacing: '4px', fontWeight: 800, marginLeft: '16px' }}>
+                        <div style={{ display: 'flex', width: '32px', height: '32px', borderRadius: '4px', backgroundColor: '#F14343' }}></div>
+                        <div style={{ display: 'flex', width: '32px', height: '32px', borderRadius: '4px', backgroundColor: '#1F9FCF' }}></div>
+                        <div style={{ display: 'flex', width: '32px', height: '32px', borderRadius: '8px', backgroundColor: '#FFCC00' }}></div>
+                        <h2 style={{ fontSize: '36px', color: '#FFCC00', textTransform: 'uppercase', letterSpacing: '4px', fontWeight: 800, marginLeft: '16px' }}>
                             {category}
                         </h2>
                     </div>

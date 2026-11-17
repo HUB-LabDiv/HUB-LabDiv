@@ -346,7 +346,7 @@ export function HubFlowchartViewer() {
                 blue: 'border-brand-blue/50 bg-brand-blue/15 text-brand-blue-accent',
                 red: 'border-brand-red/50 bg-brand-red/15 text-brand-red',
                 yellow: 'border-brand-yellow/50 bg-brand-yellow/15 text-brand-yellow',
-                purple: 'border-indigo-500/50 bg-indigo-500/15 text-indigo-300'
+                purple: 'border-[#1F9FCF]/50 bg-[#1F9FCF]/15 text-[#1F9FCF]'
               }[branch.color];
 
               return (

@@ -83,7 +83,7 @@ export const CookieBanner = () => {
                     </button>
                     <button
                         onClick={handleAcceptAll}
-                        className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-[#0F4780] text-white font-bukra font-bold hover:bg-[#0c3966] transition-all flex items-center justify-center gap-3 active:scale-95 shadow-lg shadow-[#0F4780]/20 uppercase tracking-widest text-xs"
+                        className="w-full sm:w-auto px-8 py-4 rounded-2xl bg-[#0F4780] text-white font-bukra font-bold hover:bg-[#0C3A68] transition-all flex items-center justify-center gap-3 active:scale-95 shadow-lg shadow-[#0F4780]/20 uppercase tracking-widest text-xs"
                     >
                         <span className="material-symbols-outlined text-[18px]">gpp_good</span>
                         Aceitar Essenciais

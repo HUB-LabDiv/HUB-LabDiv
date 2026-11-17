@@ -167,12 +167,12 @@ export function CacheManagerModal({ isOpen, onClose }: CacheManagerModalProps) {
                     {/* Header */}
                 <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-white/10 bg-gray-50/50 dark:bg-[#121212]">
                     <div className="flex items-center gap-3">
-                        <div className="p-3 bg-[#00A3FF]/10 border border-[#00A3FF]/20 rounded-2xl text-[#00A3FF]">
+                        <div className="p-3 bg-[#1F9FCF]/10 border border-[#1F9FCF]/20 rounded-2xl text-[#1F9FCF]">
                             <HardDrive className="w-6 h-6" />
                         </div>
                         <div>
                             <h2 className="text-xl font-display font-black text-gray-900 dark:text-white uppercase tracking-tight">
-                                Gerenciador de <span className="text-[#00A3FF]">Arquivos & Cache</span>
+                                Gerenciador de <span className="text-[#1F9FCF]">Arquivos & Cache</span>
                             </h2>
                             <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">
                                 Monitore o espaço utilizado offline e ajuste a economia de dados.
@@ -217,7 +217,7 @@ export function CacheManagerModal({ isOpen, onClose }: CacheManagerModalProps) {
                     <button
                         onClick={() => handleToggleServiceWorker(!isSwEnabled)}
                         className={`w-12 h-7 flex items-center rounded-full p-1 transition-colors cursor-pointer shrink-0 ${
-                            isSwEnabled ? 'bg-[#00A3FF] justify-end' : 'bg-gray-200 dark:bg-white/20 justify-start'
+                            isSwEnabled ? 'bg-[#1F9FCF] justify-end' : 'bg-gray-200 dark:bg-white/20 justify-start'
                         }`}
                     >
                         <div className="w-5 h-5 bg-white rounded-full shadow-md"></div>
@@ -250,7 +250,7 @@ export function CacheManagerModal({ isOpen, onClose }: CacheManagerModalProps) {
                                         </span>
                                     </div>
                                     <p className="text-[11px] text-gray-500 dark:text-gray-400">{item.description}</p>
-                                    <div className="text-[10px] font-mono text-[#00A3FF] font-bold">Tamanho: {item.sizeFormatted}</div>
+                                    <div className="text-[10px] font-mono text-[#1F9FCF] font-bold">Tamanho: {item.sizeFormatted}</div>
                                 </div>
                                 <button
                                     onClick={() => handleClearSingleCache(item.name)}

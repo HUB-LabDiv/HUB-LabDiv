@@ -15,6 +15,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getSplashMotionProps } from '@/components/ui/SplashExpand';
 import {
     MessageSquarePlus,
     Send,
@@ -126,7 +127,7 @@ export function SoftwareFeedbackSection({
 
                 <button
                     onClick={() => setIsFormOpen(!isFormOpen)}
-                    className="flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-brand-yellow hover:bg-[#FFE066] text-black font-black text-xs uppercase tracking-wider transition-all shadow-md shadow-brand-yellow/20 self-start sm:self-auto"
+                    className="flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-brand-yellow hover:bg-[#FCE055] text-black font-black text-xs uppercase tracking-wider transition-all shadow-md shadow-brand-yellow/20 self-start sm:self-auto"
                 >
                     <MessageSquarePlus className="w-4 h-4" />
                     <span>{isFormOpen ? 'Fechar Formulário' : 'Enviar Relato de Teste'}</span>
@@ -137,9 +138,7 @@ export function SoftwareFeedbackSection({
             <AnimatePresence>
                 {isFormOpen && (
                     <motion.form
-                        initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
-                        exit={{ opacity: 0, height: 0 }}
+                        {...getSplashMotionProps('top right', '24px')}
                         onSubmit={handleSubmit}
                         className="mb-8 p-5 sm:p-6 rounded-3xl bg-[#1E1E1E] border border-brand-yellow/30 shadow-xl overflow-hidden"
                     >

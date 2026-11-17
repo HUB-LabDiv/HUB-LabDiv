@@ -118,24 +118,24 @@ export async function sendAdminNotification(data: NotificationData) {
             subject = `🚨 Hub: Report de Bug - ${data.userName || 'Anônimo'}`;
             dashboardLink = `${baseUrl}/admin/reports`;
             emailTemplate = `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Anomalia Reportada (Bug/Feedback)</h2>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">Um novo report foi enviado através do módulo de emergência.</p>
-                <div style="background-color: #FEF2F2; border: 1px solid #FEE2E2; padding: 20px; margin: 24px 0; border-radius: 8px; color: #991B1B;">
+                <h2 style="color: #121212; margin-top: 0; font-size: 20px;">Anomalia Reportada (Bug/Feedback)</h2>
+                <p style="color: #475569; line-height: 1.6; font-size: 15px;">Um novo report foi enviado através do módulo de emergência.</p>
+                <div style="background-color: #F8FAFC; border: 1px solid #F14343; border-left: 4px solid #F14343; padding: 20px; margin: 24px 0; border-radius: 8px; color: #F14343;">
                     <strong style="display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 12px;">Descrição:</strong>
                     "${data.content}"
                 </div>
-                <p style="font-size: 12px; color: #718096;">URL: ${data.url || 'N/A'}</p>`;
+                <p style="font-size: 12px; color: #64748B;">URL: ${data.url || 'N/A'}</p>`;
             break;
             
         case 'arena_suggestion':
             subject = `🏆 Arena: Nova Proposta de Desafio - ${data.title}`;
             dashboardLink = `${baseUrl}/admin/desafios`;
             emailTemplate = `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Nova Proposta de Desafio</h2>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">O pesquisador <strong>${data.userName}</strong> enviou uma nova proposta para a Arena.</p>
-                <div style="background-color: #f8fafc; border-left: 4px solid #FFCC00; padding: 16px; margin: 24px 0; border-radius: 4px;">
-                    <p style="margin: 0 0 8px 0; font-size: 14px;"><strong style="color: #1a1a1a;">Título:</strong> <span style="color: #4a5568;">${data.title}</span></p>
-                    <p style="margin: 0; font-size: 14px;"><strong style="color: #1a1a1a;">Descrição:</strong> <span style="color: #4a5568;">${data.content}</span></p>
+                <h2 style="color: #121212; margin-top: 0; font-size: 20px;">Nova Proposta de Desafio</h2>
+                <p style="color: #475569; line-height: 1.6; font-size: 15px;">O pesquisador <strong>${data.userName}</strong> enviou uma nova proposta para a Arena.</p>
+                <div style="background-color: #F8FAFC; border-left: 4px solid #FFCC00; padding: 16px; margin: 24px 0; border-radius: 4px;">
+                    <p style="margin: 0 0 8px 0; font-size: 14px;"><strong style="color: #121212;">Título:</strong> <span style="color: #475569;">${data.title}</span></p>
+                    <p style="margin: 0; font-size: 14px;"><strong style="color: #121212;">Descrição:</strong> <span style="color: #475569;">${data.content}</span></p>
                 </div>`;
             break;
 
@@ -143,22 +143,22 @@ export async function sendAdminNotification(data: NotificationData) {
             subject = `💡 Hub: Sugestão de Melhoria - ${data.userName}`;
             dashboardLink = `${baseUrl}/admin/desafios`;
             emailTemplate = `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Sugestão de Melhoria do HUB</h2>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">Um pesquisador enviou uma ideia para melhorar a plataforma.</p>
-                <div style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 20px; margin: 24px 0; border-radius: 8px; color: #0369a1;">
+                <h2 style="color: #121212; margin-top: 0; font-size: 20px;">Sugestão de Melhoria do HUB</h2>
+                <p style="color: #475569; line-height: 1.6; font-size: 15px;">Um pesquisador enviou uma ideia para melhorar a plataforma.</p>
+                <div style="background-color: #F8FAFC; border: 1px solid #1F9FCF; border-left: 4px solid #1F9FCF; padding: 20px; margin: 24px 0; border-radius: 8px; color: #0F4780;">
                     <strong style="display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 12px;">Sugestão:</strong>
                     "${data.content}"
                 </div>
-                <p style="font-size: 12px; color: #718096;">Enviado por: ${data.userName}</p>`;
+                <p style="font-size: 12px; color: #64748B;">Enviado por: ${data.userName}</p>`;
             break;
             
         case 'drop_submission':
             subject = `📝 Hub: Novo Log (Drop) - @${data.userName}`;
             dashboardLink = `${baseUrl}/admin/drops`;
             emailTemplate = `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Novo Log Enviado (Drop)</h2>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">O pesquisador <strong>@${data.userName}</strong> postou uma nova atualização rápida que aguarda moderação.</p>
-                <div style="background-color: #f8fafc; border-left: 4px solid #F14343; padding: 20px; margin: 24px 0; border-radius: 8px; font-style: italic; color: #2d3748;">
+                <h2 style="color: #121212; margin-top: 0; font-size: 20px;">Novo Log Enviado (Drop)</h2>
+                <p style="color: #475569; line-height: 1.6; font-size: 15px;">O pesquisador <strong>@${data.userName}</strong> postou uma nova atualização rápida que aguarda moderação.</p>
+                <div style="background-color: #F8FAFC; border-left: 4px solid #F14343; padding: 20px; margin: 24px 0; border-radius: 8px; font-style: italic; color: #334155;">
                     "${data.content}"
                 </div>`;
             break;
@@ -167,19 +167,19 @@ export async function sendAdminNotification(data: NotificationData) {
             subject = `🧵 Hub: Novo Fio (Thread) - @${data.userName}`;
             dashboardLink = `${baseUrl}/admin/drops`;
             emailTemplate = `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Nova Resposta em Fio (Thread)</h2>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">O pesquisador <strong>@${data.userName}</strong> respondeu a um log existente. A thread aguarda moderação.</p>
-                <div style="background-color: #f0f9ff; border-left: 4px solid #0F4780; padding: 20px; margin: 24px 0; border-radius: 8px; font-style: italic; color: #2d3748;">
+                <h2 style="color: #121212; margin-top: 0; font-size: 20px;">Nova Resposta em Fio (Thread)</h2>
+                <p style="color: #475569; line-height: 1.6; font-size: 15px;">O pesquisador <strong>@${data.userName}</strong> respondeu a um log existente. A thread aguarda moderação.</p>
+                <div style="background-color: #F8FAFC; border-left: 4px solid #0F4780; padding: 20px; margin: 24px 0; border-radius: 8px; font-style: italic; color: #334155;">
                     "${data.content}"
                 </div>`;
             break;
     }
 
     const finalHtml = `
-        <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; border: 1px solid #eaeaea; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
             <div style="background-color: #0F4780; padding: 32px 24px; text-align: center;">
                 <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -0.5px;">LAB-DIV HUB</h1>
-                <p style="color: #8bb8e8; margin: 6px 0 0 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Instituto de Física | USP</p>
+                <p style="color: #1F9FCF; margin: 6px 0 0 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Instituto de Física | USP</p>
             </div>
             <div style="padding: 40px 32px; background-color: #ffffff;">
                 ${emailTemplate}

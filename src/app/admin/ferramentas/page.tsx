@@ -78,17 +78,17 @@ export default function AdminFerramentasHubPage() {
                 </Link>
                 
                 {/* Moderação do Observatório */}
-                <Link href="/admin/observatorio" className="group p-8 rounded-3xl bg-white dark:bg-card-dark border border-gray-100 dark:border-white/5 hover:border-teal-500 transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
+                <Link href="/admin/observatorio" className="group p-8 rounded-3xl bg-white dark:bg-card-dark border border-gray-100 dark:border-white/5 hover:border-[#1F9FCF] transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all">
-                        <Telescope className="w-32 h-32 text-teal-500" />
+                        <Telescope className="w-32 h-32 text-[#1F9FCF]" />
                     </div>
                     <div className="flex flex-col h-full relative z-10">
-                        <div className="p-4 bg-teal-500/10 rounded-2xl w-max mb-6">
-                            <Telescope className="w-8 h-8 text-teal-500" />
+                        <div className="p-4 bg-[#1F9FCF]/10 rounded-2xl w-max mb-6">
+                            <Telescope className="w-8 h-8 text-[#1F9FCF]" />
                         </div>
                         <h2 className="text-xl font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-2">Moderação do Observatório</h2>
                         <p className="text-sm text-gray-500 mb-8 flex-grow">Gerencie telescópios virtuais, eventos celestes e submissões do Observatório.</p>
-                        <div className="flex items-center gap-2 text-teal-500 font-bold text-xs uppercase tracking-widest">
+                        <div className="flex items-center gap-2 text-[#1F9FCF] font-bold text-xs uppercase tracking-widest">
                             Acessar Painel <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </div>
                     </div>

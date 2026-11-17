@@ -98,6 +98,7 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
     const [showCollectionManager, setShowCollectionManager] = useState(false);
     const [showDownloadModal, setShowDownloadModal] = useState(false);
     const [showAtomAnimation, setShowAtomAnimation] = useState(false);
+    const [starJustActivated, setStarJustActivated] = useState(false);
     const [showAuthorMenu, setShowAuthorMenu] = useState(false);
 
     const isAuthor = userId === post.userId;
@@ -504,16 +505,36 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                             onClick={(e) => {
                                 e.preventDefault();
                                 e.stopPropagation();
+                                if (!liked) {
+                                    setShowAtomAnimation(true);
+                                    setTimeout(() => setShowAtomAnimation(false), 900);
+                                }
                                 handleLike();
                             }}
                         />
-                        <Link href={`/arquivo/${post.id}#comments`} onClick={(e) => e.stopPropagation()} className="text-gray-700 dark:text-gray-200 hover:text-brand-red flex items-center gap-1.5 transition-colors cursor-pointer">
-                            <Pencil className="w-5 h-5" />
-                            <span className="text-[11px] font-black tabular-nums">{post.commentCount || 0}</span>
-                        </Link>
-                        <button onClick={(e) => { e.stopPropagation(); setShowShareMenu(true); }} aria-label="Compartilhar" className="text-gray-700 dark:text-gray-200 hover:text-brand-blue cursor-pointer"><Rocket className="w-6 h-6" /></button>
-    
-                        {displayUrl && <button onClick={(e) => { e.stopPropagation(); setShowDownloadModal(true); }} aria-label="Baixar Arquivo" className="text-gray-700 dark:text-gray-200 hover:text-brand-yellow cursor-pointer"><Download className="w-6 h-6" /></button>}
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowShareMenu(true);
+                            }}
+                            aria-label="Compartilhar"
+                            className="text-[#F14343] hover:brightness-110 transition-all cursor-pointer"
+                        >
+                            <Rocket className="w-6 h-6" />
+                        </button>
+
+                        {displayUrl && (
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowDownloadModal(true);
+                                }}
+                                aria-label="Baixar Arquivo"
+                                className="text-[#1F9FCF] hover:brightness-110 transition-all cursor-pointer"
+                            >
+                                <Download className="w-6 h-6" />
+                            </button>
+                        )}
                     </div>
                     <div className="flex items-center gap-4">
                         <button
@@ -521,15 +542,26 @@ export const MediaCard = React.memo(({ post, priority = false, isLikedByUser = f
                                 e.stopPropagation();
                                 openContentReport(post.id);
                             }}
-                            className="text-gray-400 hover:text-brand-red transition-colors flex items-center gap-1 group"
+                            className="text-[#F14343]/85 hover:text-[#F14343] transition-colors flex items-center gap-1 group cursor-pointer"
                             title="Reportar Problema"
                         >
                             <Flag className="w-5 h-5 group-hover:scale-110 transition-transform" />
                         </button>
 
-                        <button onClick={(e) => { e.stopPropagation(); handleSave(); }} aria-label={saved ? "Remover Favorito" : "Adicionar aos Favoritos"} className="flex items-center gap-1 text-gray-700 dark:text-gray-200 hover:text-brand-yellow cursor-pointer">
-                            <Star className={`w-6 h-6 ${saved ? 'fill-current text-brand-yellow' : ''}`} />
-                            <span className="text-xs font-bold tabular-nums">{saves}</span>
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                if (!saved) {
+                                    setStarJustActivated(true);
+                                    setTimeout(() => setStarJustActivated(false), 650);
+                                }
+                                handleSave();
+                            }}
+                            aria-label={saved ? "Remover Favorito" : "Adicionar aos Favoritos"}
+                            className="flex items-center gap-1 text-[#FFCC00] hover:brightness-110 cursor-pointer"
+                        >
+                            <Star className={`w-6 h-6 ${saved ? 'fill-current text-[#FFCC00]' : 'text-[#FFCC00]'} ${starJustActivated ? 'animate-star-sparkle' : ''}`} />
+                            <span className="text-xs font-bold tabular-nums text-gray-700 dark:text-gray-200">{saves}</span>
                         </button>
                     </div>
                 </div>

@@ -191,7 +191,7 @@ export function CorrectionsManager() {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className="w-full pl-12 pr-4 py-3 bg-white/40 dark:bg-card-dark/5 backdrop-blur-md border border-gray-100 dark:border-gray-800 rounded-2xl outline-none focus:ring-2 focus:ring-brand-blue/20 focus:border-brand-blue transition-all text-sm shadow-sm text-gray-900 dark:text-white"
-                        style={{'--tw-ring-color': 'rgba(37, 99, 235, 0.2)'} as any}
+                        style={{'--tw-ring-color': 'rgba(31, 159, 207, 0.2)'} as any}
                     />
                 </div>
                 

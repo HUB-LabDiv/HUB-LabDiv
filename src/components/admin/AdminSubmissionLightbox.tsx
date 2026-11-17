@@ -665,7 +665,7 @@ export function AdminSubmissionLightbox({
                                             setIsActioning(false);
                                             onClose();
                                         }}
-                                        className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-red-50 text-red-700 hover:bg-red-100 dark:bg-red-900/20 dark:text-brand-red transition-colors text-sm font-medium disabled:opacity-50"
+                                        className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-brand-red/10 text-brand-red hover:bg-brand-red/20 transition-colors text-sm font-medium disabled:opacity-50"
                                     >
                                         <Ban className="w-5 h-5" /> Rejeitar
                                     </button>
@@ -683,7 +683,7 @@ export function AdminSubmissionLightbox({
                                     </button>
                                     <button
                                         onClick={() => { onReject?.(item.id); onClose(); }}
-                                        className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-brand-red hover:bg-red-100 dark:hover:bg-red-900/40 border border-red-200 dark:border-red-800 transition-colors text-sm font-medium"
+                                        className="flex-1 flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-brand-red/10 text-brand-red hover:bg-brand-red/20 border border-brand-red/25 transition-colors text-sm font-medium"
                                     >
                                         <Ban className="w-5 h-5" /> Rejeitar
                                     </button>
@@ -700,7 +700,7 @@ export function AdminSubmissionLightbox({
                                     </button>
                                     <button
                                         onClick={() => setShowDeleteConfirm(true)}
-                                        className="w-full flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-brand-red hover:bg-red-100 dark:hover:bg-red-900/40 border border-red-200 dark:border-red-800 transition-colors text-sm font-medium"
+                                        className="w-full flex items-center justify-center gap-1.5 px-4 py-3 rounded-xl bg-brand-red/10 text-brand-red hover:bg-brand-red/20 border border-brand-red/25 transition-colors text-sm font-medium"
                                     >
                                         <Trash2 className="w-5 h-5" /> Deletar Definitivamente
                                     </button>
@@ -727,9 +727,9 @@ export function AdminSubmissionLightbox({
             {/* Confirmation Modal for Permanent Deletion */}
             {showDeleteConfirm && (
                 <div className="fixed inset-0 z-[200] flex items-center justify-center bg-background-dark/80 backdrop-blur-sm p-4">
-                    <div className="bg-white dark:bg-form-dark p-8 rounded-3xl max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200 border-2 border-red-100 dark:border-red-900/30">
+                    <div className="bg-white dark:bg-form-dark p-8 rounded-3xl max-w-md w-full shadow-2xl animate-in zoom-in-95 duration-200 border-2 border-brand-red/20">
                         <div className="flex flex-col items-center text-center">
-                            <div className="w-16 h-16 bg-red-100 dark:bg-red-900/30 rounded-full flex items-center justify-center mb-6">
+                            <div className="w-16 h-16 bg-brand-red/15 rounded-full flex items-center justify-center mb-6">
                                 <Trash2 className="w-8 h-8 text-brand-red dark:text-brand-red" />
                             </div>
                             <h3 className="text-2xl font-black text-gray-900 dark:text-white mb-3">Deleção Permanente</h3>
@@ -749,7 +749,7 @@ export function AdminSubmissionLightbox({
                                 <button
                                     onClick={handleDelete}
                                     disabled={isDeleting}
-                                    className="flex-1 px-6 py-3 rounded-xl font-bold bg-brand-red hover:bg-red-700 text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                    className="flex-1 px-6 py-3 rounded-xl font-bold bg-brand-red hover:bg-[#D93838] text-white transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                                 >
                                     {isDeleting ? (
                                         <>

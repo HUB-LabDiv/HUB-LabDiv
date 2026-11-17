@@ -96,10 +96,13 @@ export function MonteSeuShowClient({ orbitronClassName = '' }: MonteSeuShowClien
         email: string;
     } | null>(null);
 
-    // Regras de bloqueio da Moderação
+    // Regras de bloqueio da Moderação + Status em tempo real dos aparatos (Aurtistic <-> HUB)
     const [availabilityRules, setAvailabilityRules] = useState<AvailabilityRule[]>([]);
+    const [liveExperimentStatus, setLiveExperimentStatus] = useState<
+        Record<string, { status: 'disponivel' | 'manutencao' | 'indisponivel'; notes?: string }>
+    >({});
 
-    // Carregar cache e regras
+    // Carregar cache, regras e sincronia em tempo real dos Bastidores
     useEffect(() => {
         try {
             const savedForm = localStorage.getItem('hub_show_form_cache');
@@ -110,14 +113,35 @@ export function MonteSeuShowClient({ orbitronClassName = '' }: MonteSeuShowClien
             console.error('Falha ao ler cache', e);
         }
 
-        // Buscar bloqueios no Supabase
-        const fetchRules = async () => {
-            const res = await getAvailabilityRules();
-            if (res.success && res.data) {
-                setAvailabilityRules(res.data);
+        const fetchLiveStatus = async () => {
+            try {
+                const [rulesRes, syncRes] = await Promise.all([
+                    getAvailabilityRules(),
+                    fetch('/api/iniciativas/show-ops-sync', { cache: 'no-store' }).then((r) => r.json()).catch(() => null),
+                ]);
+                if (rulesRes.success && rulesRes.data) {
+                    setAvailabilityRules(rulesRes.data);
+                }
+                if (syncRes?.ok) {
+                    const nextMap: Record<string, { status: 'disponivel' | 'manutencao' | 'indisponivel'; notes?: string }> = {};
+                    const internals = Array.isArray(syncRes.internals) ? syncRes.internals : [];
+                    (Array.isArray(syncRes.experiments) ? syncRes.experiments : []).forEach(
+                        (exp: { slug: string; maintenance_status?: 'disponivel' | 'manutencao' | 'indisponivel' }) => {
+                            const noteObj = internals.find((n: { experiment_slug: string; maintenance_notes?: string }) => n.experiment_slug === exp.slug);
+                            if (exp.maintenance_status) {
+                                nextMap[exp.slug] = { status: exp.maintenance_status, notes: noteObj?.maintenance_notes };
+                            }
+                        }
+                    );
+                    setLiveExperimentStatus(nextMap);
+                }
+            } catch {
+                // ignora falha transitória
             }
         };
-        fetchRules();
+        fetchLiveStatus();
+        const interval = setInterval(fetchLiveStatus, 15000);
+        return () => clearInterval(interval);
     }, []);
 
     // Salvar cache sempre que mudar
@@ -146,6 +170,15 @@ export function MonteSeuShowClient({ orbitronClassName = '' }: MonteSeuShowClien
     }, [bookingSuccess]);
 
     const toggleExperiment = (act: ShowActType, id: string) => {
+        const liveState = liveExperimentStatus[id];
+        if (liveState && liveState.status !== 'disponivel') {
+            toast.error(
+                liveState.status === 'manutencao'
+                    ? `Aparato em manutenção${liveState.notes ? `: ${liveState.notes}` : '.'}`
+                    : `Aparato indisponível no momento${liveState.notes ? `: ${liveState.notes}` : '.'}`
+            );
+            return;
+        }
         const key = ACT_KEYS[act];
         const max = ACT_MAX_LIMITS[act];
 
@@ -528,19 +561,23 @@ export function MonteSeuShowClient({ orbitronClassName = '' }: MonteSeuShowClien
                             {currentExperiments.map((exp) => {
                                 const actKey = ACT_KEYS[exp.act];
                                 const isSelected = selected[actKey].includes(exp.id);
+                                const liveState = liveExperimentStatus[exp.id];
+                                const isBlocked = Boolean(liveState && liveState.status !== 'disponivel');
 
                                 return (
                                     <div
                                         key={exp.id}
                                         onClick={() => toggleExperiment(exp.act, exp.id)}
-                                        className={`group relative rounded-xl overflow-hidden cursor-pointer bg-[#101014] transition-all duration-300 border flex flex-col ${
-                                            isSelected
-                                                ? exp.themeColor === 'green'
-                                                    ? 'neon-border-green -translate-y-1'
-                                                    : exp.themeColor === 'blue'
-                                                    ? 'neon-border-blue -translate-y-1'
-                                                    : 'neon-border-red -translate-y-1'
-                                                : 'border-white/10 hover:border-white/30 hover:-translate-y-0.5'
+                                        className={`group relative rounded-xl overflow-hidden bg-[#101014] transition-all duration-300 border flex flex-col ${
+                                            isBlocked
+                                                ? 'border-amber-500/50 opacity-75 cursor-not-allowed'
+                                                : isSelected
+                                                    ? exp.themeColor === 'green'
+                                                        ? 'neon-border-green -translate-y-1 cursor-pointer'
+                                                        : exp.themeColor === 'blue'
+                                                        ? 'neon-border-blue -translate-y-1 cursor-pointer'
+                                                        : 'neon-border-red -translate-y-1 cursor-pointer'
+                                                    : 'border-white/10 hover:border-white/30 hover:-translate-y-0.5 cursor-pointer'
                                         }`}
                                     >
                                         {/* Foto do Experimento */}
@@ -556,11 +593,21 @@ export function MonteSeuShowClient({ orbitronClassName = '' }: MonteSeuShowClien
                                             />
                                             <div className="absolute inset-0 bg-gradient-to-t from-[#101014] via-black/30 to-transparent" />
                                             
-                                            {/* Badge do Conceito */}
+                                            {/* Badge do Conceito + Status de Manutenção em Tempo Real */}
                                             <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
                                                 <span className="px-2.5 py-1 bg-black/80 backdrop-blur-md border border-white/20 rounded-md text-[10px] font-sans font-semibold text-gray-200 tracking-wide uppercase">
                                                     {exp.concept}
                                                 </span>
+                                                {isBlocked && (
+                                                    <span className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider border ${
+                                                        liveState?.status === 'manutencao'
+                                                            ? 'bg-amber-500/90 text-black border-amber-300'
+                                                            : 'bg-red-600/90 text-white border-red-400'
+                                                    }`}>
+                                                        {liveState?.status === 'manutencao' ? 'EM MANUTENÇÃO' : 'INDISPONÍVEL'}
+                                                        {liveState?.notes ? ` • ${liveState.notes}` : ''}
+                                                    </span>
+                                                )}
                                                 {availabilityRules.some(r => r.experiment_id === exp.id) && (
                                                     <span className="px-2.5 py-1 bg-[#f60011]/90 backdrop-blur-md border border-white/20 rounded-md text-[10px] font-sans font-bold text-white tracking-wide uppercase flex items-center gap-1 shadow-lg shadow-red-500/20">
                                                         <AlertCircle className="w-3 h-3" /> Agenda Restrita

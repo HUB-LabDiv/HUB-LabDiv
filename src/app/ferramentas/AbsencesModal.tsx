@@ -318,7 +318,7 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                 </div>
 
                 {/* Formula Explanation Banner */}
-                <div className="px-6 py-2.5 bg-brand-blue/10 border-b border-brand-blue/20 flex items-center gap-2 text-[11px] text-[#00A3FF]">
+                <div className="px-6 py-2.5 bg-brand-blue/10 border-b border-brand-blue/20 flex items-center gap-2 text-[11px] text-[#1F9FCF]">
                     <Info className="w-4 h-4 shrink-0" />
                     <span>
                         Os <strong>Créditos Aula</strong> são carregados automaticamente das disciplinas cadastradas no Hub USP.
@@ -334,7 +334,7 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                             placeholder="Buscar disciplina..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#00A3FF]/50 transition-colors"
+                            className="w-full bg-white dark:bg-[#121212] border border-gray-200 dark:border-white/10 rounded-xl pl-10 pr-4 py-2 text-xs font-bold text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#1F9FCF]/50 transition-colors"
                         />
                     </div>
                     <div className="text-[11px] font-bold text-gray-500 dark:text-gray-400 self-end sm:self-center">
@@ -370,7 +370,7 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                             const originalIndex = subjectsList.findIndex(s => s.subjectCode === item.subjectCode);
                             const remaining = item.maxAbsences - item.absences;
 
-                            let statusColor = 'bg-[#00A3FF]/10 text-[#00A3FF] border-[#00A3FF]/20';
+                            let statusColor = 'bg-[#1F9FCF]/10 text-[#1F9FCF] border-[#1F9FCF]/25';
                             let statusText = `${remaining} faltas restantes`;
                             let StatusIcon = CheckCircle2;
 
@@ -422,7 +422,7 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                                                     type="number"
                                                     value={isNaN(item.creditsAula) ? '' : item.creditsAula}
                                                     onChange={(e) => handleCreditsInputChange(originalIndex, parseInt(e.target.value))}
-                                                    className="w-14 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl py-2 text-center text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:border-[#00A3FF]/50"
+                                                    className="w-14 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl py-2 text-center text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:border-[#1F9FCF]/50"
                                                 />
                                                 <button
                                                     type="button"
@@ -451,7 +451,7 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                                                     type="number"
                                                     value={isNaN(item.absences) ? 0 : item.absences}
                                                     onChange={(e) => handleAbsenceInputChange(originalIndex, parseInt(e.target.value))}
-                                                    className="w-14 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl py-2 text-center text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:border-[#00A3FF]/50"
+                                                    className="w-14 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl py-2 text-center text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:border-[#1F9FCF]/50"
                                                 />
                                                 <button
                                                     type="button"
@@ -473,7 +473,7 @@ export function AbsencesModal({ isOpen, onClose, events }: AbsencesModalProps) {
                                                     type="number"
                                                     value={isNaN(item.maxAbsences) ? '' : item.maxAbsences}
                                                     onChange={(e) => handleMaxAbsenceInputChange(originalIndex, parseInt(e.target.value))}
-                                                    className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl py-2 px-3 text-center text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:border-[#00A3FF]/50"
+                                                    className="w-full bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-xl py-2 px-3 text-center text-sm font-bold text-gray-900 dark:text-white focus:outline-none focus:border-[#1F9FCF]/50"
                                                 />
                                             </div>
                                             <button

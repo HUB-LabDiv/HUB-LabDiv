@@ -10,6 +10,7 @@
  */
 
 import { createBrowserClient } from '@supabase/ssr';
+import { getSharedCookieDomain } from './cookie-domain';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -21,12 +22,14 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
  */
 // Bypass native browser lock to prevent timeouts in multi-tab environments
 export function createClientSupabase() {
+    const sharedDomain = getSharedCookieDomain();
     return createBrowserClient(supabaseUrl, supabaseAnonKey, {
         auth: {
             persistSession: true,
             autoRefreshToken: true,
             detectSessionInUrl: true,
-        }
+        },
+        cookieOptions: sharedDomain ? { domain: sharedDomain } : undefined
     });
 }
 

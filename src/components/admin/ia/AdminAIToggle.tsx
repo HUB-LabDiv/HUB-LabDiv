@@ -44,12 +44,12 @@ export function AdminAIToggle() {
     };
 
     return (
-        <div className="bg-gradient-to-br from-brand-blue/5 to-purple-600/5 rounded-3xl border border-brand-blue/10 p-6 mb-10 mt-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="bg-gradient-to-br from-brand-blue/5 to-[#1F9FCF]/5 rounded-3xl border border-brand-blue/10 p-6 mb-10 mt-12 animate-in fade-in slide-in-from-bottom-4 duration-500">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                 <div>
-                    <h2 className="flex items-center gap-2 text-xl font-bold text-gray-900 dark:text-white">
+                    <h2 className="flex items-center gap-2 text-xl font-bold font-bukra text-gray-900 dark:text-white">
                         <Bot className="w-6 h-6 text-brand-blue" />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-purple-600">Auto-Moderador IAMAI</span>
+                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-blue to-[#1F9FCF]">Auto-Moderador IAMAI</span>
                         <span className="px-2 py-0.5 rounded-full bg-brand-yellow/20 text-brand-yellow text-[10px] font-black uppercase tracking-widest ml-2">Mock</span>
                     </h2>
                     <p className="text-xs text-gray-500 dark:text-gray-400 font-medium mt-1 w-full md:max-w-xl">
@@ -61,7 +61,7 @@ export function AdminAIToggle() {
                     <span className="text-xs font-bold uppercase tracking-widest text-gray-500">Status:</span>
                     <button 
                         onClick={() => setIsEnabled(!isEnabled)}
-                        className={`relative w-12 h-6 rounded-full transition-colors ${isEnabled ? 'bg-gradient-to-r from-brand-blue to-purple-600' : 'bg-gray-300 dark:bg-gray-700'}`}
+                        className={`relative w-12 h-6 rounded-full transition-colors ${isEnabled ? 'bg-gradient-to-r from-brand-blue to-[#1F9FCF]' : 'bg-gray-300 dark:bg-gray-700'}`}
                     >
                         <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all shadow-md ${isEnabled ? 'left-7' : 'left-1'}`}></div>
                     </button>
@@ -97,7 +97,7 @@ export function AdminAIToggle() {
                                             <div className="flex flex-wrap items-center gap-2 mt-1">
                                                 <span className="text-xs text-gray-500">Autor: {log.author}</span>
                                                 <span className="w-1 h-1 rounded-full bg-gray-300"></span>
-                                                <span className="text-xs text-purple-600 dark:text-purple-400 font-bold">{log.reason}</span>
+                                                <span className="text-xs text-[#0F4780] dark:text-[#1F9FCF] font-bold">{log.reason}</span>
                                             </div>
                                             <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-2 block">{log.time}</span>
                                         </div>

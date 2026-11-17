@@ -92,18 +92,18 @@ export default function AdminTrilhasPage() {
                     <span className="material-symbols-outlined text-[18px]">dashboard</span>
                     <span>Admin</span>
                     <span className="text-gray-300 dark:text-gray-600">/</span>
-                    <span className="text-[#0055ff]">Trilhas de Aprendizagem</span>
+                    <span className="text-[#1F9FCF]">Trilhas de Aprendizagem</span>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-display font-bold text-gray-900 dark:text-white tracking-tight">
-                            Trilhas de <span className="text-[#0055ff]">Aprendizagem</span>
+                            Trilhas de <span className="text-[#1F9FCF]">Aprendizagem</span>
                         </h1>
                         <p className="text-gray-500 dark:text-gray-400 mt-1">Organize playlists temáticas de artigos do Hub.</p>
                     </div>
                     <button
                         onClick={() => setShowForm(!showForm)}
-                        className="flex items-center gap-2 px-5 py-3 bg-[#0055ff] text-white rounded-xl font-bold text-sm hover:bg-[#0044cc] transition-colors shadow-lg shadow-[#0055ff]/20"
+                        className="flex items-center gap-2 px-5 py-3 bg-[#0F4780] text-white rounded-xl font-bold text-sm hover:bg-[#1F9FCF] transition-colors shadow-lg shadow-[#0F4780]/25"
                     >
                         <span className="material-symbols-outlined text-[20px]">{showForm ? 'close' : 'add'}</span>
                         {showForm ? 'Cancelar' : 'Nova Trilha'}
@@ -113,25 +113,25 @@ export default function AdminTrilhasPage() {
 
             {/* Create Form */}
             {showForm && (
-                <div className="bg-white dark:bg-card-dark rounded-3xl p-6 border border-[#0055ff]/20 shadow-lg space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
+                <div className="bg-white dark:bg-card-dark rounded-3xl p-6 border border-[#1F9FCF]/25 shadow-lg space-y-4 animate-in fade-in slide-in-from-top-4 duration-300">
                     <input
                         type="text"
                         placeholder="Título da Trilha (ex: Mecânica Quântica para Iniciantes)"
                         value={newTitle}
                         onChange={(e) => setNewTitle(e.target.value)}
-                        className="w-full bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-[#0055ff] focus:border-transparent outline-none transition-all"
+                        className="w-full bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-[#1F9FCF] focus:border-transparent outline-none transition-all"
                     />
                     <textarea
                         placeholder="Descrição opcional..."
                         value={newDescription}
                         onChange={(e) => setNewDescription(e.target.value)}
                         rows={3}
-                        className="w-full bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-[#0055ff] focus:border-transparent outline-none transition-all resize-none"
+                        className="w-full bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-sm font-medium focus:ring-2 focus:ring-[#1F9FCF] focus:border-transparent outline-none transition-all resize-none"
                     />
                     <button
                         onClick={handleCreateTrail}
                         disabled={isSaving || !newTitle.trim()}
-                        className="px-6 py-3 bg-[#0055ff] text-white rounded-xl font-bold text-sm hover:bg-[#0044cc] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="px-6 py-3 bg-[#0F4780] text-white rounded-xl font-bold text-sm hover:bg-[#1F9FCF] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         {isSaving ? 'Criando...' : 'Criar Trilha'}
                     </button>
@@ -141,7 +141,7 @@ export default function AdminTrilhasPage() {
             {/* Trails List */}
             {isLoading ? (
                 <div className="flex flex-col items-center justify-center py-20 text-gray-500 dark:text-gray-400 bg-white dark:bg-card-dark rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm">
-                    <span className="material-symbols-outlined text-4xl animate-spin text-[#0055ff] mb-4">progress_activity</span>
+                    <span className="material-symbols-outlined text-4xl animate-spin text-[#0F4780] dark:text-[#1F9FCF] mb-4">progress_activity</span>
                     <p className="font-medium animate-pulse">Carregando trilhas...</p>
                 </div>
             ) : trails.length === 0 ? (
@@ -155,19 +155,19 @@ export default function AdminTrilhasPage() {
                     {trails.map((trail) => (
                         <div
                             key={trail.id}
-                            className="group bg-white dark:bg-card-dark rounded-3xl p-6 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:border-[#0055ff]/30 transition-all overflow-hidden"
+                            className="group bg-white dark:bg-card-dark rounded-3xl p-6 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-xl hover:border-[#1F9FCF]/30 transition-all overflow-hidden"
                         >
                             <div className="flex items-start justify-between gap-4">
                                 <div className="flex-1 min-w-0">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <span className="material-symbols-outlined text-[#0055ff] text-xl">route</span>
+                                        <span className="material-symbols-outlined text-[#0F4780] dark:text-[#1F9FCF] text-xl">route</span>
                                         <h3 className="text-lg font-bold text-gray-900 dark:text-white truncate">{trail.title}</h3>
                                     </div>
                                     {trail.description && (
                                         <p className="text-sm text-gray-500 dark:text-gray-400 line-clamp-2">{trail.description}</p>
                                     )}
                                     <div className="flex items-center gap-4 mt-3">
-                                        <span className="text-[10px] font-black uppercase tracking-wider text-[#0055ff]">
+                                        <span className="text-[10px] font-black uppercase tracking-wider text-[#0F4780] dark:text-[#1F9FCF]">
                                             {trail.submissions_count} {trail.submissions_count === 1 ? 'artigo' : 'artigos'}
                                         </span>
                                         <span className="text-[10px] text-gray-400">
@@ -177,7 +177,7 @@ export default function AdminTrilhasPage() {
                                             href={`/ferramentas/trilhas/${trail.id}`}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-[10px] font-black uppercase tracking-wider text-gray-400 hover:text-[#0055ff] transition-colors flex items-center gap-1 ml-auto"
+                                            className="text-[10px] font-black uppercase tracking-wider text-gray-400 hover:text-[#1F9FCF] transition-colors flex items-center gap-1 ml-auto"
                                         >
                                             <span className="material-symbols-outlined text-[14px]">visibility</span>
                                             Ver Conteúdo

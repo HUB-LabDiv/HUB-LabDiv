@@ -1,8 +1,10 @@
 import csv
+import os
 import sys
 
-input_file = '/home/stangorlini/HUB LabDiv/HUB-LabDiv/public/data_safety_export.csv'
-output_file = '/home/stangorlini/HUB LabDiv/HUB-LabDiv/public/data_safety_export_filled.csv'
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+input_file = os.path.join(BASE_DIR, 'public', 'data_safety_export.csv')
+output_file = os.path.join(BASE_DIR, 'public', 'data_safety_export_filled.csv')
 
 # Define the exact data types we are collecting
 collected_data_types = [

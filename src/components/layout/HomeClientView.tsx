@@ -14,7 +14,6 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams, usePathname } from 'next/navigation';
-import Link from 'next/link';
 import { MediaCard, MediaCardProps } from "@/components/media/MediaCard";
 import { SkeletonCard } from "@/components/ui/SkeletonCard";
 import { fetchSubmissions } from '@/app/actions/submissions';
@@ -32,12 +31,10 @@ import {
     Image as ImageIcon,
     Video,
     FileText,
-    BarChart,
     FolderArchive,
     Edit3,
     Plus,
     Minus,
-    Flame,
     Satellite,
     Atom,
     MessageSquare,
@@ -49,7 +46,10 @@ import {
     RotateCcw
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getSplashMotionProps, SPLASH_SPRING } from '@/components/ui/SplashExpand';
 import { LogsView } from '@/components/comunidade/LogsView';
+import { ScrollJellyCard } from '@/components/ui/ScrollJellyCard';
+import { SegmentedPillSwitch } from '@/components/ui/SegmentedPillSwitch';
 
 import { useSearch } from '@/providers/SearchProvider';
 import { CATEGORIES as CATEGORY_LIST, CATEGORY_STYLES, DEFAULT_STYLE, INSTITUTES, INSTITUTE_FILTER_OPTIONS } from '@/lib/constants';
@@ -78,6 +78,7 @@ export const HomeClientView = ({
     initialCategory = 'Todos',
     trendingItems = [],
     featuredItems = [],
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     trendingTags = [],
     initialLikedIds = [],
     initialSavedIds = []
@@ -89,27 +90,14 @@ export const HomeClientView = ({
     const { trackEvent } = useTelemetry();
 
     const tabParam = searchParams.get('tab');
-    const getInitialTab = (): 'fluxo' | 'logs' | 'arte' => {
-        if (tabParam === 'logs') return 'logs';
-        if (tabParam === 'arte' || tabParam === 'artes') return 'arte';
-        return 'fluxo';
-    };
-
-    const [activeTab, setActiveTab] = useState<'fluxo' | 'logs' | 'arte'>(getInitialTab);
-
-    // Sincroniza a aba quando a URL muda (ex: navegação via Sidebar Tree View)
-    useEffect(() => {
-        if (tabParam === 'logs') {
-            setActiveTab('logs');
-        } else if (tabParam === 'arte' || tabParam === 'artes') {
-            setActiveTab('arte');
-        } else if (tabParam === 'fluxo' || !tabParam) {
-            setActiveTab('fluxo');
-        }
-    }, [tabParam]);
+    const activeTab: 'fluxo' | 'logs' | 'arte' =
+        tabParam === 'logs'
+            ? 'logs'
+            : tabParam === 'arte' || tabParam === 'artes'
+            ? 'arte'
+            : 'fluxo';
 
     const handleTabChange = (newTab: 'fluxo' | 'logs' | 'arte') => {
-        setActiveTab(newTab);
         const params = new URLSearchParams(searchParams.toString());
         params.set('tab', newTab === 'arte' ? 'artes' : newTab);
         router.push(`${pathname}?${params.toString()}`, { scroll: false });
@@ -225,8 +213,6 @@ export const HomeClientView = ({
     // Fetch user likes and saves on client side to populate hearts and stars
     useEffect(() => {
         if (!user) {
-            setLikedIds(new Set());
-            setSavedIds(new Set());
             return;
         }
 
@@ -294,8 +280,28 @@ export const HomeClientView = ({
         return () => clearTimeout(timer);
     }, [searchQuery]);
 
+    const isFirstMount = useRef(true);
+
     useEffect(() => {
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
+        }
+
         const fetchFiltered = async () => {
+            if (
+                debouncedQuery === '' &&
+                selectedCategories.length === 1 && selectedCategories[0] === 'Todos' &&
+                selectedInstitutes.length === 1 && selectedInstitutes[0] === 'Todos' &&
+                selectedMediaTypes.length === 0 &&
+                selectedYears.length === 1 && selectedYears[0] === 'Todos' &&
+                feedScope === 'todos'
+            ) {
+                setItems(initialItems);
+                setHasMore(initialHasMore);
+                return;
+            }
+
             setIsLoading(true);
             try {
                 const res = await fetchSubmissions({
@@ -324,21 +330,7 @@ export const HomeClientView = ({
             trackEvent('SEARCH_FAIL', { query: debouncedQuery });
         }
 
-        // Don't run on mount if we already have initialItems and no custom filters
-        if (
-            debouncedQuery === '' &&
-            selectedCategories.length === 1 && selectedCategories[0] === 'Todos' &&
-            selectedInstitutes.length === 1 && selectedInstitutes[0] === 'Todos' &&
-            selectedMediaTypes.length === 0 &&
-            selectedYears.length === 1 && selectedYears[0] === 'Todos' &&
-            feedScope === 'todos'
-        ) {
-            setItems(initialItems);
-            setHasMore(initialHasMore);
-            return;
-        }
-
-        fetchFiltered();
+        void fetchFiltered();
     }, [debouncedQuery, selectedCategories, selectedInstitutes, selectedMediaTypes, selectedYears, feedScope]);
 
     const loadItems = async (pageNumber: number, append = false, forceCategory = 'Todos') => {
@@ -425,13 +417,13 @@ export const HomeClientView = ({
                 const threshold = 40;
                 
                 if (Math.abs(deltaX) > threshold && Math.abs(deltaX) > Math.abs(deltaY)) {
-                    const tabs = ['logs', 'fluxo', 'arte'];
+                    const tabs: ('logs' | 'fluxo' | 'arte')[] = ['logs', 'fluxo', 'arte'];
                     const currentIndex = tabs.indexOf(activeTab);
                     
                     if (deltaX < 0 && currentIndex < tabs.length - 1) {
-                        handleTabChange(tabs[currentIndex + 1] as any);
+                        handleTabChange(tabs[currentIndex + 1]);
                     } else if (deltaX > 0 && currentIndex > 0) {
-                        handleTabChange(tabs[currentIndex - 1] as any);
+                        handleTabChange(tabs[currentIndex - 1]);
                     }
                 }
                 swipeStartX.current = null;
@@ -456,15 +448,15 @@ export const HomeClientView = ({
                     wheelAccumulator.current += e.deltaX;
                     
                     if (Math.abs(wheelAccumulator.current) > 150) {
-                        const tabs = ['logs', 'fluxo', 'arte'];
+                        const tabs: ('logs' | 'fluxo' | 'arte')[] = ['logs', 'fluxo', 'arte'];
                         const currentIndex = tabs.indexOf(activeTab);
                         
                         if (wheelAccumulator.current > 0 && currentIndex < tabs.length - 1) {
-                            handleTabChange(tabs[currentIndex + 1] as any);
+                            handleTabChange(tabs[currentIndex + 1]);
                             wheelCooldown.current = true;
                             setTimeout(() => { wheelCooldown.current = false; }, 800);
                         } else if (wheelAccumulator.current < 0 && currentIndex > 0) {
-                            handleTabChange(tabs[currentIndex - 1] as any);
+                            handleTabChange(tabs[currentIndex - 1]);
                             wheelCooldown.current = true;
                             setTimeout(() => { wheelCooldown.current = false; }, 800);
                         }
@@ -476,67 +468,41 @@ export const HomeClientView = ({
             }}
         >
             <div 
-                className="sticky z-40 flex justify-center mb-6 pointer-events-none"
+                className="sticky z-40 flex justify-center mb-4 pointer-events-none"
                 style={{ top: 'calc(4.5rem + env(safe-area-inset-top, 0px))' }}
             >
-                <div data-tour="comunidade-subnav" className="flex p-1.5 bg-white/50 dark:bg-background-dark/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
-                    <button
-                        onClick={() => handleTabChange('logs')}
-                        className={`relative flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-black font-bukra uppercase tracking-widest transition-all ${
-                            activeTab === 'logs' ? 'text-white' : 'text-gray-500 hover:text-brand-red'
-                        }`}
-                    >
-                        {activeTab === 'logs' && (
-                            <motion.div
-                                layoutId="activeTabHome"
-                                className="absolute inset-0 bg-brand-red rounded-xl shadow-lg shadow-brand-red/20"
-                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                            />
-                        )}
-                        <span className="relative z-10 flex items-center gap-2">
-                            <MessageSquare className={`w-4 h-4 ${activeTab === 'logs' ? 'animate-bounce' : ''}`} />
-                            Logs
-                        </span>
-                    </button>
-
-                    <button
-                        onClick={() => handleTabChange('fluxo')}
-                        className={`relative flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-black font-bukra uppercase tracking-widest transition-all ${
-                            activeTab === 'fluxo' ? 'text-white' : 'text-gray-500 hover:text-brand-blue'
-                        }`}
-                    >
-                        {activeTab === 'fluxo' && (
-                            <motion.div
-                                layoutId="activeTabHome"
-                                className="absolute inset-0 bg-brand-blue rounded-xl shadow-lg shadow-brand-blue/20"
-                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                            />
-                        )}
-                        <span className="relative z-10 flex items-center gap-2">
-                            <Zap className={`w-4 h-4 ${activeTab === 'fluxo' ? 'animate-pulse' : ''}`} />
-                            Fluxo
-                        </span>
-                    </button>
-
-                    <button
-                        onClick={() => handleTabChange('arte')}
-                        className={`relative flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-black font-bukra uppercase tracking-widest transition-all ${
-                            activeTab === 'arte' ? 'text-white' : 'text-gray-500 hover:text-brand-yellow'
-                        }`}
-                    >
-                        {activeTab === 'arte' && (
-                            <motion.div
-                                layoutId="activeTabHome"
-                                className="absolute inset-0 bg-brand-yellow rounded-xl shadow-lg shadow-brand-yellow/20"
-                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                            />
-                        )}
-                        <span className="relative z-10 flex items-center gap-2">
-                            <Palette className={`w-4 h-4 ${activeTab === 'arte' ? 'animate-pulse' : ''}`} />
-                            Arte
-                        </span>
-                    </button>
-                </div>
+                <SegmentedPillSwitch
+                    dataTour="comunidade-subnav"
+                    layoutId="activeTabHome"
+                    activeId={activeTab}
+                    onChange={(tab) => handleTabChange(tab)}
+                    options={[
+                        {
+                            id: 'logs',
+                            label: 'Logs',
+                            icon: <MessageSquare className="w-4 h-4" />,
+                            activeBgClass: 'bg-[#F14343] shadow-lg shadow-[#F14343]/25',
+                            hoverTextClass: 'hover:text-[#F14343]',
+                        },
+                        {
+                            id: 'fluxo',
+                            label: 'Fluxo',
+                            icon: <Zap className="w-4 h-4" />,
+                            activeBgClass: 'bg-[#0F4780] shadow-lg shadow-[#0F4780]/30',
+                            hoverTextClass: 'hover:text-[#0F4780] dark:hover:text-[#1F9FCF]',
+                            dataTour: 'fluxo-header',
+                        },
+                        {
+                            id: 'arte',
+                            label: 'Arte',
+                            icon: <Palette className="w-4 h-4" />,
+                            activeBgClass: 'bg-[#FFCC00] shadow-lg shadow-[#FFCC00]/25',
+                            activeTextClass: 'text-slate-950',
+                            hoverTextClass: 'hover:text-[#FFCC00]',
+                            dataTour: 'arte-header',
+                        },
+                    ]}
+                />
             </div>
 
             <AnimatePresence mode="wait">
@@ -558,35 +524,6 @@ export const HomeClientView = ({
                         exit={{ opacity: 0, y: -20 }}
                         transition={{ duration: 0.4 }}
                     >
-                        {activeTab === 'arte' && (
-                            <div data-tour="arte-header" className="w-full mb-8 text-left space-y-8">
-                                <div className="flex flex-col gap-3 relative mb-8">
-                                    <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-yellow/5 rounded-full blur-[60px] pointer-events-none"></div>
-                                    <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-yellow flex items-center gap-4 relative z-10">
-                                        <Palette className="w-12 h-12" />
-                                        ARTE
-                                    </h1>
-                                    <p className="text-gray-400 font-medium text-sm border-l-2 border-brand-yellow pl-4 max-w-xl leading-relaxed [text-shadow:var(--text-halo)]">
-                                        Espaço dedicado à expressão artística, cultura e criatividade da comunidade da Física USP.
-                                    </p>
-                                </div>
-                            </div>
-                        )}
-
-                        {activeTab === 'fluxo' && (
-                            <div data-tour="fluxo-header" className="w-full mb-8 text-left space-y-8">
-                                <div className="flex flex-col gap-3 relative mb-8 outline-none focus:outline-none">
-                                    <div className="absolute -top-10 -left-10 w-40 h-40 bg-brand-blue/5 rounded-full blur-[60px] pointer-events-none"></div>
-                                    <h1 className="text-5xl font-black uppercase italic tracking-tighter text-brand-blue flex items-center gap-4 relative z-10 outline-none focus:outline-none">
-                                        <Zap className="w-12 h-12" />
-                                        FLUXO
-                                    </h1>
-                                    <p className="text-gray-400 font-medium text-sm border-l-2 border-brand-blue pl-4 max-w-xl leading-relaxed [text-shadow:var(--text-halo)]">
-                                        Explore as contribuições, materiais e memórias compartilhadas pela comunidade do IFUSP.
-                                    </p>
-                                </div>
-                            </div>
-                        )}
 
 
             {/* DESTAQUES (V8.0 optimized) */}
@@ -596,10 +533,9 @@ export const HomeClientView = ({
                 </section>
             )}
 
-            {/* FILTROS MULTIDIMENSIONAIS (Hierárquico & Expansível) */}
+            {/* FILTROS MULTIDIMENSIONAIS (Hierárquico & Expansível no local) */}
             {activeTab === 'fluxo' && (
                 <section data-tour="comunidade-filtros" className="relative z-10 bg-transparent py-3 mb-8">
-                    {/* Linha 1: Botão Principal de Filtros e Categorias de Filtro */}
                     <div className="flex flex-wrap items-center gap-2">
                         {/* Botão Gatilho Principal: [ Filtros ] */}
                         <button
@@ -626,14 +562,11 @@ export const HomeClientView = ({
                             <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-300 ${isFilterExpanded ? 'rotate-180' : ''}`} />
                         </button>
 
-                        {/* Grupos de Filtros (Aparecem quando o botão Filtros é expandido) */}
+                        {/* Grupos de Filtros */}
                         <AnimatePresence>
                             {isFilterExpanded && (
                                 <motion.div
-                                    initial={{ opacity: 0, scale: 0.95, x: -10 }}
-                                    animate={{ opacity: 1, scale: 1, x: 0 }}
-                                    exit={{ opacity: 0, scale: 0.95, x: -10 }}
-                                    transition={{ duration: 0.2 }}
+                                    {...getSplashMotionProps('left center', '16px', 0)}
                                     className="flex flex-wrap items-center gap-2"
                                 >
                                     {/* 1. Formato */}
@@ -746,11 +679,19 @@ export const HomeClientView = ({
                         {isFilterExpanded && activeFilterGroup && (
                             <motion.div
                                 key={activeFilterGroup}
-                                initial={{ opacity: 0, height: 0, y: -8 }}
-                                animate={{ opacity: 1, height: 'auto', y: 0 }}
-                                exit={{ opacity: 0, height: 0, y: -8 }}
-                                transition={{ duration: 0.22, ease: 'easeOut' }}
-                                className="overflow-hidden mt-3 p-4 bg-white/80 dark:bg-[#1E1E1E]/90 backdrop-blur-xl rounded-2xl border border-gray-200 dark:border-white/10 shadow-lg"
+                                {...getSplashMotionProps(
+                                    'top left',
+                                    '16px',
+                                    -8,
+                                    activeFilterGroup === 'formato'
+                                        ? 0.08
+                                        : activeFilterGroup === 'categoria'
+                                        ? 0.28
+                                        : activeFilterGroup === 'instituto'
+                                        ? 0.5
+                                        : 0.7
+                                )}
+                                className="overflow-hidden mt-3 p-4 bg-white/95 dark:bg-[#1E1E1E]/95 rounded-2xl border border-gray-200 dark:border-white/10 shadow-lg"
                             >
                                 {/* Opções: FORMATO */}
                                 {activeFilterGroup === 'formato' && (
@@ -922,8 +863,17 @@ export const HomeClientView = ({
 
             {/* EM ÓRBITA NO [INSTITUTO] (Trending Horizontal dinâmico) */}
             {activeTab === 'fluxo' && !debouncedQuery && selectedCategories.includes('Todos') && selectedInstitutes.includes('Todos') && orbitItems.length > 0 && (
-                isOrbitCollapsed ? (
-                    <div className="w-full flex items-center justify-start mb-6">
+                <AnimatePresence initial={false}>
+                {isOrbitCollapsed ? (
+                    <motion.div
+                        key="orbit-collapsed"
+                        initial={{ opacity: 0, scale: 0.92, y: -4 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.94, transition: { duration: 0.1 } }}
+                        transition={SPLASH_SPRING}
+                        style={{ originX: 0, originY: 0, transformOrigin: 'top left', willChange: 'transform, opacity' }}
+                        className="w-full flex items-center justify-start mb-6"
+                    >
                         <button
                             type="button"
                             onClick={() => setIsOrbitCollapsed(false)}
@@ -941,21 +891,28 @@ export const HomeClientView = ({
                             </span>
                             <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-brand-blue group-hover:translate-y-0.5 transition-transform ml-1" />
                         </button>
-                    </div>
+                    </motion.div>
                 ) : (
-                    <section data-tour="comunidade-em-orbita" className="w-full py-8 bg-white dark:bg-card-dark rounded-[40px] border border-gray-100 dark:border-gray-800/50 shadow-sm mb-12">
-                        <div className="px-8">
-                            <div className="flex items-center justify-between mb-8">
-                                <div className="flex flex-col">
-                                    <div className="flex items-center gap-2">
-                                        <h2 className="text-xl font-black uppercase tracking-widest text-gray-900 dark:text-white flex items-center gap-2">
-                                            <Satellite className="w-5 h-5 text-brand-blue" />
-                                            Em Órbita no <span className="text-brand-blue">{currentInstitutionInfo.name}</span>
+                    <motion.section
+                        key="orbit-expanded"
+                        {...getSplashMotionProps('top left', '28px', -8)}
+                        data-tour="comunidade-em-orbita"
+                        className="w-full py-6 sm:py-8 bg-white dark:bg-card-dark rounded-[28px] sm:rounded-[40px] border border-gray-100 dark:border-gray-800/50 shadow-sm mb-12 overflow-hidden"
+                    >
+                        <div className="px-4 sm:px-8">
+                            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 md:gap-4 mb-6 sm:mb-8">
+                                <div className="flex flex-col w-full md:w-auto min-w-0">
+                                    <div className="flex items-center justify-between gap-2 w-full md:w-auto">
+                                        <h2 className="text-base sm:text-xl font-bukra font-black uppercase tracking-wider sm:tracking-widest text-gray-900 dark:text-white flex items-center gap-2 min-w-0">
+                                            <Satellite className="w-4 h-4 sm:w-5 sm:h-5 text-brand-blue shrink-0" />
+                                            <span>
+                                                Em Órbita no <span className="text-brand-blue">{currentInstitutionInfo.name}</span>
+                                            </span>
                                         </h2>
                                         <button
                                             type="button"
                                             onClick={() => setIsOrbitCollapsed(true)}
-                                            className="p-1.5 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-400 hover:text-brand-blue transition-all cursor-pointer"
+                                            className="md:hidden p-1.5 rounded-full bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-400 hover:text-brand-blue transition-all cursor-pointer shrink-0"
                                             title="Encolher Em Órbita"
                                             aria-label="Encolher Em Órbita"
                                         >
@@ -965,7 +922,7 @@ export const HomeClientView = ({
                                     <p className="text-[10px] font-bold text-gray-400 uppercase tracking-tighter mt-1">Contribuições em destaque na comunidade do {currentInstitutionInfo.name}</p>
                                 </div>
 
-                                <div className="flex items-center gap-4">
+                                <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto shrink-0">
                                     {/* PONTO DE NAVEGAÇÃO COLORIDO */}
                                     <div className="flex gap-2 px-3 py-1.5 rounded-full bg-white/50 dark:bg-card-dark/50 backdrop-blur-md border border-gray-100 dark:border-gray-800/50">
                                         {[0, 1, 2].map((i) => {
@@ -1003,7 +960,7 @@ export const HomeClientView = ({
                                         <button
                                             type="button"
                                             onClick={() => setIsOrbitCollapsed(true)}
-                                            className="p-2 rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-400 hover:text-brand-blue transition-all cursor-pointer ml-1"
+                                            className="hidden md:inline-flex p-2 rounded-full bg-gray-50 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-400 hover:text-brand-blue transition-all cursor-pointer ml-1"
                                             title="Encolher Em Órbita"
                                             aria-label="Encolher Em Órbita"
                                         >
@@ -1018,17 +975,21 @@ export const HomeClientView = ({
                                 className="flex gap-4 overflow-x-auto pb-4 no-scrollbar snap-x snap-proximity scroll-smooth"
                             >
                                 {orbitItems.map((item, index) => (
-                                    <div
+                                    <ScrollJellyCard
                                         key={`orbit-${item.post.id}`}
+                                        axis="horizontal"
+                                        containerRef={trendingScrollRef}
+                                        staggerIndex={index}
                                         className="min-w-[280px] md:min-w-[320px] snap-start"
                                     >
                                         <MediaCard post={item.post} priority={false} isLikedByUser={likedIds.has(item.post.id)} isSavedByUser={savedIds.has(item.post.id)} highlightQuery={searchQuery} setIsSyncing={setIsSyncing} />
-                                    </div>
+                                    </ScrollJellyCard>
                                 ))}
                             </div>
                         </div>
-                    </section>
-                )
+                    </motion.section>
+                )}
+                </AnimatePresence>
             )}
 
             {/* TOGGLE SEGUINDO VS TODOS */}
@@ -1092,7 +1053,7 @@ export const HomeClientView = ({
 
                         if (isAboveFold) {
                             return (
-                                <div key={item.post.id}>
+                                <ScrollJellyCard key={item.post.id} staggerIndex={index}>
                                     <MediaCard
                                         post={item.post}
                                         priority={true}
@@ -1101,15 +1062,14 @@ export const HomeClientView = ({
                                         highlightQuery={searchQuery}
                                         setIsSyncing={setIsSyncing}
                                     />
-                                </div>
+                                </ScrollJellyCard>
                             );
                         }
 
                         return (
-                            <div
+                            <ScrollJellyCard
                                 key={item.post.id}
-                                className="animate-fade-in-up"
-                                style={{ animationDelay: `${(index % 6) * 0.1}s` }}
+                                staggerIndex={index}
                             >
                                 <MediaCard
                                     post={item.post}
@@ -1119,7 +1079,7 @@ export const HomeClientView = ({
                                     highlightQuery={searchQuery}
                                     setIsSyncing={setIsSyncing}
                                 />
-                            </div>
+                            </ScrollJellyCard>
                         );
                     })
                 ) : !isLoading ? (
@@ -1181,10 +1141,10 @@ export const HomeClientView = ({
                             </div>
                         </div>
                         <div className="flex flex-col pr-2">
-                            <h2 className="text-[10px] font-black font-mono text-white uppercase tracking-[0.2em]">
+                            <h2 className="text-[10px] font-black font-bukra text-white uppercase tracking-[0.2em]">
                                 Sinc_Atômico
                             </h2>
-                            <p className="text-[8px] font-mono text-gray-400 uppercase tracking-widest leading-none">
+                            <p className="text-[8px] font-open-sans text-gray-400 uppercase tracking-widest leading-none">
                                 Atualizando_Comunidade_IFUSP...
                             </p>
                         </div>

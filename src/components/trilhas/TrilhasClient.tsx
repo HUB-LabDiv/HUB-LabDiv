@@ -15,14 +15,14 @@
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
-import { Zap, Atom, Microscope, Binary, LayoutGrid, Timer, Layers, ShieldCheck, Milestone, Sparkles, Link2, AlertTriangle, Play, CheckCircle2, Circle, GraduationCap, ArrowRight, User, Loader2, Globe, Network, Clock, Search, X } from 'lucide-react';
+import { Zap, Atom, Microscope, Binary, LayoutGrid, Timer, Layers, ShieldCheck, Milestone, Sparkles, Link2, AlertTriangle, CheckCircle2, Circle, GraduationCap, ArrowRight, User, Loader2, Globe, Network, Clock, Search, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Trail } from '@/types';
 import { supabase } from '@/lib/supabase';
 import { toast } from 'react-hot-toast';
 import { Download, FileText, ChevronDown, RefreshCw, Calendar, Route } from 'lucide-react';
 import { JupiterEvolutionModal } from './JupiterEvolutionModal';
+import { ScrollJellyCard } from '@/components/ui/ScrollJellyCard';
 
 const COURSE_MAPS = [
     { id: 'bach', name: 'Bacharelado em Física', image: '/unnamed.jpg', pdf: '/Manual-Bacharelado-Fisica-IFUSP-2025_0.pdf' },
@@ -30,14 +30,14 @@ const COURSE_MAPS = [
     { id: 'med', name: 'Física Médica', image: '/unnamed.jpg', pdf: '/Jupiterweb-med.pdf' },
 ];
 
-const AXIS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-    bach: { label: 'Bacharelado', color: '#00A3FF', icon: Atom },
-    med: { label: 'Física Médica', color: '#FF4B4B', icon: Microscope },
-    lic: { label: 'Licenciatura', color: '#FFD700', icon: Binary },
+const AXIS_CONFIG: Record<string, { label: string; color: string; icon: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }> }> = {
+    bach: { label: 'Bacharelado', color: '#1F9FCF', icon: Atom },
+    med: { label: 'Física Médica', color: '#F14343', icon: Microscope },
+    lic: { label: 'Licenciatura', color: '#FFCC00', icon: Binary },
     comum: { label: 'Ciclo Básico', color: '#888888', icon: Zap },
 };
 
-const CATEGORY_CONFIG: Record<string, { label: string; icon: any }> = {
+const CATEGORY_CONFIG: Record<string, { label: string; icon: React.ComponentType<{ size?: number; className?: string; style?: React.CSSProperties }> }> = {
     obrigatoria: { label: 'Obrigatória', icon: ShieldCheck },
     eletiva: { label: 'Eletiva', icon: Milestone },
     livre: { label: 'Livre', icon: Sparkles },
@@ -53,13 +53,18 @@ export default function TrilhasClient({
     initialTrails: Trail[],
     cursandoTrails?: Trail[],
     completedTrailIds?: string[],
-    userProfile?: any
+    userProfile?: {
+        course?: string;
+        email?: string;
+        institute?: string;
+        user_category?: string;
+        [key: string]: unknown;
+    } | null
 }) {
     const [axisFilter, setAxisFilter] = useState<string | null>(null);
     const [categoryFilter, setCategoryFilter] = useState<string | null>(null);
     const [semesterFilter, setSemesterFilter] = useState<number | null>(null);
     const [visibleCount, setVisibleCount] = useState(9); // Pagination: 3x3 block
-    const [visibleCountDash, setVisibleCountDash] = useState(6);
     const [completedIds, setCompletedIds] = useState<string[]>(initialCompletedIds);
     const [cursandoIds, setCursandoIds] = useState<string[]>(cursandoTrails.map(t => t.id));
     const [isUpdating, setIsUpdating] = useState<string | null>(null);
@@ -78,10 +83,16 @@ export default function TrilhasClient({
     }, []);
     const [dashboardTab, setDashboardTab] = useState<'faltam' | 'concluidas' | 'cursando'>('faltam');
     const [isDashboardCollapsed, setIsDashboardCollapsed] = useState(false);
-    const [sortOrder, setSortOrder] = useState<'trending' | 'sem-asc' | 'sem-desc'>('sem-asc');
+    const [sortOrder, setSortOrder] = useState<'trending' | 'sem-asc' | 'sem-desc' | 'course' | 'materials' | 'status'>('sem-asc');
     const [searchQuery, setSearchQuery] = useState('');
-    const [viewMode, setViewMode] = useState<'grid' | 'tree'>('grid');
-    const [selectedCourseMap, setSelectedCourseMap] = useState(COURSE_MAPS[0]);
+    const [selectedCourseMap, setSelectedCourseMap] = useState(() => {
+        if (typeof userProfile?.course === 'string') {
+            const courseStr = userProfile.course.toLowerCase();
+            if (courseStr.includes('licenciatura')) return COURSE_MAPS[1];
+            if (courseStr.includes('médica') || courseStr.includes('medica')) return COURSE_MAPS[2];
+        }
+        return COURSE_MAPS[0];
+    });
     const [isVisualMapOpen, setIsVisualMapOpen] = useState(false);
     const [isEvolutionModalOpen, setIsEvolutionModalOpen] = useState(false);
     const router = useRouter();
@@ -108,7 +119,7 @@ export default function TrilhasClient({
 
             // Caso 1: N-para-1 (Ex: Lic -> Bach) via equivalency_map
             if (trail.equivalency_map) {
-                Object.entries(trail.equivalency_map).forEach(([_, config]) => {
+                Object.values(trail.equivalency_map).forEach(config => {
                     const { codes, logic } = config;
                     const isSatisfied = logic === 'AND'
                         ? codes.every(c => completedCodes.has(c))
@@ -146,25 +157,14 @@ export default function TrilhasClient({
     }, [initialTrails]);
 
     // Reset visible count when filters change
+    const filterMountRef = useRef(true);
     useEffect(() => {
+        if (filterMountRef.current) {
+            filterMountRef.current = false;
+            return;
+        }
         setVisibleCount(9);
     }, [axisFilter, categoryFilter, semesterFilter, searchQuery]);
-
-    // Sync modal course with user profile
-    useEffect(() => {
-        if (userProfile?.course) {
-            const courseStr = userProfile.course.toLowerCase();
-            let courseId = 'bach'; // default
-            if (courseStr.includes('licenciatura')) {
-                courseId = 'lic';
-            } else if (courseStr.includes('médica') || courseStr.includes('medica')) {
-                courseId = 'med';
-            }
-            
-            const map = COURSE_MAPS.find(m => m.id === courseId);
-            if (map) setSelectedCourseMap(map);
-        }
-    }, [userProfile, isVisualMapOpen]);
 
     // Filter Logic
     const filteredTrails = useMemo(() => {
@@ -191,7 +191,7 @@ export default function TrilhasClient({
                 }
 
                 if (contextAxis && t.category_map[contextAxis] && t.category_map[contextAxis] !== 'nao_se_aplica') {
-                    effectiveCategory = t.category_map[contextAxis] as any;
+                    effectiveCategory = t.category_map[contextAxis] as Trail['category'];
                 }
             }
 
@@ -222,6 +222,41 @@ export default function TrilhasClient({
                 (t.course_code || '').toLowerCase().includes(searchQuery.toLowerCase());
             return axisMatch && categoryMatch && semesterMatch && searchMatch;
         }).sort((a, b) => {
+            if (sortOrder === 'course') {
+                const courseStr = userProfile?.course?.toLowerCase() || '';
+                const userDbAxis = courseStr.includes('licenciatura')
+                    ? 'licenciatura'
+                    : courseStr.includes('médica') || courseStr.includes('medica')
+                        ? 'fisica_medica'
+                        : courseStr.includes('bacharelado')
+                            ? 'bacharelado'
+                            : null;
+                const getCourseRank = (t: Trail) => {
+                    if (userDbAxis && t.category_map?.[userDbAxis] && t.category_map[userDbAxis] !== 'nao_se_aplica') {
+                        return t.category_map[userDbAxis] === 'obrigatoria' ? 0 : 1;
+                    }
+                    if (t.axis === 'comum') return 1;
+                    return 2;
+                };
+                const rankDiff = getCourseRank(a) - getCourseRank(b);
+                if (rankDiff !== 0) return rankDiff;
+                return (a.excitation_level || 99) - (b.excitation_level || 99);
+            }
+            if (sortOrder === 'materials') {
+                const diff = (b.submissionCount || 0) - (a.submissionCount || 0);
+                if (diff !== 0) return diff;
+                return (a.excitation_level || 99) - (b.excitation_level || 99);
+            }
+            if (sortOrder === 'status') {
+                const getStatusRank = (id: string) => {
+                    if (cursandoIds.includes(id)) return 0;
+                    if (effectiveCompletedIds.includes(id)) return 1;
+                    return 2;
+                };
+                const rankDiff = getStatusRank(a.id) - getStatusRank(b.id);
+                if (rankDiff !== 0) return rankDiff;
+                return (a.excitation_level || 99) - (b.excitation_level || 99);
+            }
             if (sortOrder === 'sem-asc') {
                 return (a.excitation_level || 99) - (b.excitation_level || 99);
             }
@@ -231,7 +266,7 @@ export default function TrilhasClient({
             // Default: trending (submissionCount)
             return (b.submissionCount || 0) - (a.submissionCount || 0);
         });
-    }, [initialTrails, axisFilter, categoryFilter, semesterFilter, sortOrder, searchQuery, userProfile]);
+    }, [initialTrails, axisFilter, categoryFilter, semesterFilter, sortOrder, searchQuery, userProfile, cursandoIds, effectiveCompletedIds]);
 
     // Dashboard Stats Logic
     const stats = useMemo(() => {
@@ -253,27 +288,6 @@ export default function TrilhasClient({
         const userAxisKey = courseStr.includes('licenciatura') ? 'licenciatura' :
             courseStr.includes('médica') || courseStr.includes('medica') ? 'fisica_medica' :
                 courseStr.includes('bacharelado') ? 'bacharelado' : null;
-
-        const userAxisFallback = courseStr.includes('licenciatura') ? 'lic' :
-            courseStr.includes('médica') || courseStr.includes('medica') ? 'med' :
-                courseStr.includes('bacharelado') ? 'bach' : null;
-
-        // Filtro Estrito: Apenas obrigatórias do eixo ESPECÍFICO do usuário (exclui Ciclo Básico 'comum')
-        const mandatoryTrails = initialTrails.filter(t => {
-            if (!userAxisKey || !userAxisFallback) return false;
-
-            // Requisito: Apenas matérias do eixo específico ou comum (CIC)
-            if (t.axis !== userAxisFallback && t.axis !== 'comum') return false;
-
-            // Prioriza category_map
-            if (t.category_map && t.category_map[userAxisKey]) {
-                if (t.category_map[userAxisKey] === 'obrigatoria') return true;
-                if (t.category_map[userAxisKey] !== 'nao_se_aplica') return false;
-            }
-
-            // Fallback (apenas se nao tiver mapa)
-            return t.category === 'obrigatoria';
-        });
 
         // Cálculo de Progresso usando IDs Efetivos (v4.20)
         const completedTotal = initialTrails.filter(t => effectiveCompletedIds.includes(t.id));
@@ -305,7 +319,7 @@ export default function TrilhasClient({
             cursandoMandatory: cursandoTotal, // Renaming key for compatibility, but holds ALL cursando
             isInvalid: false
         };
-    }, [initialTrails, completedIds, cursandoIds, userProfile, effectiveCompletedIds]);
+    }, [initialTrails, cursandoIds, userProfile, effectiveCompletedIds]);
 
     const toggleCompletion = async (e: React.MouseEvent, trailId: string) => {
         e.preventDefault();
@@ -325,7 +339,7 @@ export default function TrilhasClient({
                 setCursandoIds(prev => prev.filter(id => id !== trailId));
                 toast.success('Disciplina concluída! +10 XP', {
                     icon: '🚀',
-                    style: { background: '#121212', color: '#fff', border: '1px solid #00A3FF' }
+                    style: { background: '#121212', color: '#fff', border: '1px solid #1F9FCF' }
                 });
             } else {
                 setCompletedIds(prev => prev.filter(id => id !== trailId));
@@ -429,15 +443,15 @@ export default function TrilhasClient({
 
                             {userProfile && (
                                 <div className="dark:bg-[#1E1E1E] bg-white border border-gray-300 dark:border-gray-800 rounded-2xl p-4 flex items-center gap-4 animate-in fade-in slide-in-from-right-4 duration-700 shadow-sm dark:shadow-none">
-                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#00A3FF] to-[#0070FF]/20 flex items-center justify-center border border-gray-300 dark:border-white/10 shadow-[0_0_15px_rgba(0,163,255,0.3)]">
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#1F9FCF] to-[#0F4780]/20 flex items-center justify-center border border-gray-300 dark:border-white/10 shadow-[0_0_15px_rgba(31,159,207,0.3)]">
                                         <User className="text-white w-6 h-6" />
                                     </div>
                                     <div>
-                                        <div className="text-[10px] font-mono font-black uppercase text-[#00A3FF] tracking-widest flex items-center gap-2">
+                                        <div className="text-[10px] font-mono font-black uppercase text-[#1F9FCF] tracking-widest flex items-center gap-2">
                                             Estudante_Identificado
-                                            {['pesquisador', 'docente_pesquisador'].includes(userProfile.user_category) ? (
+                                            {['pesquisador', 'docente_pesquisador'].includes(userProfile.user_category || '') ? (
                                                 <span className="px-1.5 py-0.5 bg-brand-yellow/10 text-brand-yellow border border-brand-yellow/30 rounded text-[8px] font-black uppercase tracking-widest">PESQUISADOR</span>
-                                            ) : ['aluno_usp', 'licenciatura', 'bacharelado', 'pos_graduacao'].includes(userProfile.user_category) ? (
+                                            ) : ['aluno_usp', 'licenciatura', 'bacharelado', 'pos_graduacao'].includes(userProfile.user_category || '') ? (
                                                 <span className="px-1.5 py-0.5 bg-brand-blue/10 text-brand-blue border border-brand-blue/30 rounded text-[8px] font-black uppercase tracking-widest">ESTUDANTE USP</span>
                                             ) : (
                                                 <span className="px-1.5 py-0.5 bg-brand-red/10 text-brand-red border border-brand-red/30 rounded text-[8px] font-black uppercase tracking-widest">CURIOSO</span>
@@ -466,13 +480,13 @@ export default function TrilhasClient({
                                             <svg className="w-full h-full -rotate-90" viewBox="0 0 96 96">
                                                 <circle cx="48" cy="48" r="40" fill="transparent" stroke="currentColor" strokeWidth="4" className="text-gray-800" />
                                                 <motion.circle
-                                                    cx="48" cy="48" r="40" fill="transparent" stroke="#00A3FF" strokeWidth="4"
+                                                    cx="48" cy="48" r="40" fill="transparent" stroke="#1F9FCF" strokeWidth="4"
                                                     strokeDasharray={251}
                                                     initial={{ strokeDashoffset: 251 }}
                                                     animate={{ strokeDashoffset: 251 - (251 * stats.percentage / 100) }}
                                                     transition={{ duration: 1.5, ease: "easeOut" }}
                                                     strokeLinecap="round"
-                                                    className="drop-shadow-[0_0_10px_rgba(0,163,255,0.6)]"
+                                                    className="drop-shadow-[0_0_10px_rgba(31,159,207,0.6)]"
                                                 />
                                             </svg>
                                             <span className="absolute text-xl font-black font-mono text-gray-900 dark:text-white tracking-widest">{stats.percentage}%</span>
@@ -485,7 +499,7 @@ export default function TrilhasClient({
                                                 {stats.completedMandatoryCount} de {stats.totalMandatory} disciplinas obrigatórias concluídas
                                             </p>
                                             <div className="flex items-center gap-2 mt-2 py-1 px-3 bg-gray-100 dark:bg-white/5 rounded-lg border border-gray-300 dark:border-white/5 w-fit">
-                                                <Network className="w-3 h-3 text-[#00A3FF]" />
+                                                <Network className="w-3 h-3 text-[#1F9FCF]" />
                                                 <span className="text-[9px] font-mono font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">
                                                     Progresso para: <span className="text-gray-900 dark:text-white">{userProfile?.course || 'Geral'}</span>
                                                 </span>
@@ -495,7 +509,7 @@ export default function TrilhasClient({
                                     <div className="flex items-center gap-3">
                                         <button
                                             onClick={() => setIsEvolutionModalOpen(true)}
-                                            className="flex items-center gap-2 px-3 py-1.5 bg-[#00A3FF]/10 text-[#00A3FF] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#00A3FF]/20 transition-all border border-[#00A3FF]/20 cursor-pointer"
+                                            className="flex items-center gap-2 px-3 py-1.5 bg-[#1F9FCF]/10 text-[#1F9FCF] rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-[#1F9FCF]/20 transition-all border border-[#1F9FCF]/20 cursor-pointer"
                                         >
                                             <RefreshCw size={14} />
                                             Sincronizar Júpiter
@@ -518,12 +532,12 @@ export default function TrilhasClient({
                                     </div>
                                 </div>
 
-                                {!(stats as any).isInvalid ? (
+                                {!stats.isInvalid ? (
                                     <div className="px-8 pb-8 space-y-6">
                                         {/* Progress Detail Bar */}
                                         <div className="h-2 bg-gray-900 rounded-full overflow-hidden flex">
                                             <motion.div
-                                                className="h-full bg-gradient-to-r from-[#00A3FF] to-[#0070FF]"
+                                                className="h-full bg-gradient-to-r from-[#1F9FCF] to-[#0F4780]"
                                                 initial={{ width: 0 }}
                                                 animate={{ width: `${stats.percentage}%` }}
                                                 transition={{ duration: 1.2 }}
@@ -537,14 +551,14 @@ export default function TrilhasClient({
                                                 className={`pb-4 text-[10px] font-mono font-black uppercase tracking-widest transition-all relative ${dashboardTab === 'faltam' ? 'text-gray-900 dark:text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
                                             >
                                                 A Fazer ({stats.missingMandatory.length})
-                                                {dashboardTab === 'faltam' && <motion.div layoutId="dashTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#00A3FF]" />}
+                                                {dashboardTab === 'faltam' && <motion.div layoutId="dashTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#1F9FCF]" />}
                                             </button>
                                             <button
                                                 onClick={() => setDashboardTab('cursando')}
                                                 className={`pb-4 text-[10px] font-mono font-black uppercase tracking-widest transition-all relative ${dashboardTab === 'cursando' ? 'text-gray-900 dark:text-white' : 'text-gray-500 hover:text-gray-700 dark:hover:text-gray-300'}`}
                                             >
                                                 Cursando ({stats.cursandoMandatory.length})
-                                                {dashboardTab === 'cursando' && <motion.div layoutId="dashTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#FF4B4B]" />}
+                                                {dashboardTab === 'cursando' && <motion.div layoutId="dashTab" className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#F14343]" />}
                                             </button>
                                             <button
                                                 onClick={() => setDashboardTab('concluidas')}
@@ -594,7 +608,7 @@ export default function TrilhasClient({
                                                                 <button
                                                                     onClick={(e) => toggleCompletion(e, trail.id)}
                                                                     disabled={isUpdating === trail.id}
-                                                                    className="p-2 rounded-lg bg-[#00A3FF]/10 text-[#00A3FF] hover:bg-[#00A3FF] hover:text-white transition-all disabled:opacity-50"
+                                                                    className="p-2 rounded-lg bg-[#1F9FCF]/10 text-[#1F9FCF] hover:bg-[#1F9FCF] hover:text-white transition-all disabled:opacity-50"
                                                                 >
                                                                     <ArrowRight size={14} />
                                                                 </button>
@@ -613,8 +627,8 @@ export default function TrilhasClient({
                                                         className="grid grid-cols-1 md:grid-cols-2 gap-3"
                                                     >
                                                         {stats.cursandoMandatory.length > 0 ? stats.cursandoMandatory.map(trail => (
-                                                            <div key={trail.id} className="flex items-center gap-4 dark:bg-[#FF4B4B]/5 bg-gray-100 p-4 rounded-2xl border dark:border-[#FF4B4B]/20 border-gray-300 group">
-                                                                <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-background-dark/40 flex items-center justify-center font-mono font-black text-xs text-[#FF4B4B] border border-red-200 dark:border-[#FF4B4B]/30 animate-pulse">
+                                                            <div key={trail.id} className="flex items-center gap-4 dark:bg-[#F14343]/5 bg-gray-100 p-4 rounded-2xl border dark:border-[#F14343]/20 border-gray-300 group">
+                                                                <div className="w-10 h-10 rounded-xl bg-red-100 dark:bg-background-dark/40 flex items-center justify-center font-mono font-black text-xs text-[#F14343] border border-red-200 dark:border-[#F14343]/30 animate-pulse">
                                                                     {trail.excitation_level}º
                                                                 </div>
                                                                 <div className="flex-1 min-w-0 text-left">
@@ -690,7 +704,7 @@ export default function TrilhasClient({
                                     </div>
                                 ) : (
                                     <div className="px-8 pb-8">
-                                        <div className={`p-6 border rounded-3xl text-center space-y-2 ${isUspUser ? 'dark:bg-brand-yellow/5 bg-brand-yellow/10 border-brand-yellow/20' : 'dark:bg-[#00A3FF]/5 bg-[#00A3FF]/10 border-[#00A3FF]/20'}`}>
+                                        <div className={`p-6 border rounded-3xl text-center space-y-2 ${isUspUser ? 'dark:bg-brand-yellow/5 bg-brand-yellow/10 border-brand-yellow/20' : 'dark:bg-[#1F9FCF]/5 bg-[#1F9FCF]/10 border-[#1F9FCF]/20'}`}>
                                             {isUspUser ? (
                                                 <>
                                                     <AlertTriangle className="mx-auto text-brand-yellow" size={24} />
@@ -702,8 +716,8 @@ export default function TrilhasClient({
                                                 </>
                                             ) : (
                                                 <>
-                                                    <Globe className="mx-auto text-[#00A3FF]" size={24} />
-                                                    <p className="text-[10px] font-mono font-black uppercase text-[#00A3FF] tracking-[0.2em]">Modo Visitante Ativo</p>
+                                                    <Globe className="mx-auto text-[#1F9FCF]" size={24} />
+                                                    <p className="text-[10px] font-mono font-black uppercase text-[#1F9FCF] tracking-[0.2em]">Modo Visitante Ativo</p>
                                                     <p className="text-xs text-gray-400 font-medium">O rastreamento de disciplinas obrigatórias é exclusivo para alunos USP.</p>
                                                     <p className="text-[11px] text-gray-500 font-medium mt-1">Sinta-se livre para explorar todas as trilhas e materiais disponíveis na base Síncrotron abaixo.</p>
                                                 </>
@@ -727,7 +741,7 @@ export default function TrilhasClient({
                                     <button
                                         onClick={() => setAxisFilter(null)}
                                         className={`px-4 py-2 rounded-lg font-mono text-[10px] font-bold transition-all border ${!axisFilter
-                                            ? 'bg-[#00A3FF] text-white border-transparent shadow-lg shadow-[#00A3FF]/20'
+                                            ? 'bg-[#1F9FCF] text-white border-transparent shadow-lg shadow-[#1F9FCF]/20'
                                             : 'dark:bg-background-dark bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
                                             }`}
                                     >
@@ -757,14 +771,14 @@ export default function TrilhasClient({
                                     <button
                                         onClick={() => setCategoryFilter(null)}
                                         className={`px-4 py-2 rounded-lg font-mono text-[10px] font-bold transition-all border ${!categoryFilter
-                                            ? 'bg-[#00A3FF] text-white border-transparent shadow-lg shadow-[#00A3FF]/20'
+                                            ? 'bg-[#1F9FCF] text-white border-transparent shadow-lg shadow-[#1F9FCF]/20'
                                             : 'dark:bg-background-dark bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
                                             }`}
                                     >
                                         TODAS_AS_CATEGORIAS
                                     </button>
                                     {Object.entries(CATEGORY_CONFIG).map(([key, catCfg]) => {
-                                        const catColor = axisFilter ? AXIS_CONFIG[axisFilter]?.color || '#00A3FF' : '#00A3FF';
+                                        const catColor = axisFilter ? AXIS_CONFIG[axisFilter]?.color || '#1F9FCF' : '#1F9FCF';
                                         return (
                                             <button
                                                 key={key}
@@ -790,14 +804,14 @@ export default function TrilhasClient({
                                     <button
                                         onClick={() => setSemesterFilter(null)}
                                         className={`px-3 py-1.5 rounded-lg font-mono text-[10px] font-bold transition-all border ${!semesterFilter
-                                            ? 'bg-[#00A3FF] text-white border-transparent shadow-lg shadow-[#00A3FF]/20'
+                                            ? 'bg-[#1F9FCF] text-white border-transparent shadow-lg shadow-[#1F9FCF]/20'
                                             : 'dark:bg-background-dark bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
                                             }`}
                                     >
                                         TODOS
                                     </button>
                                     {availableSemesters.map((sem) => {
-                                        const semColor = axisFilter ? AXIS_CONFIG[axisFilter]?.color || '#00A3FF' : '#00A3FF';
+                                        const semColor = axisFilter ? AXIS_CONFIG[axisFilter]?.color || '#1F9FCF' : '#1F9FCF';
                                         return (
                                             <button
                                                 key={sem}
@@ -822,7 +836,7 @@ export default function TrilhasClient({
                                     <button
                                         onClick={() => setSortOrder('sem-asc')}
                                         className={`px-4 py-2 rounded-lg font-mono text-[10px] font-bold transition-all border flex items-center gap-2 ${sortOrder === 'sem-asc'
-                                            ? 'bg-[#00A3FF] text-white border-transparent shadow-lg shadow-[#00A3FF]/20'
+                                            ? 'bg-[#1F9FCF] text-white border-transparent shadow-lg shadow-[#1F9FCF]/20'
                                             : 'dark:bg-background-dark bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
                                             }`}
                                     >
@@ -832,7 +846,7 @@ export default function TrilhasClient({
                                     <button
                                         onClick={() => setSortOrder('sem-desc')}
                                         className={`px-4 py-2 rounded-lg font-mono text-[10px] font-bold transition-all border flex items-center gap-2 ${sortOrder === 'sem-desc'
-                                            ? 'bg-[#0070FF] text-white border-transparent shadow-lg shadow-[#0070FF]/20'
+                                            ? 'bg-[#0F4780] text-white border-transparent shadow-lg shadow-[#0F4780]/25'
                                             : 'dark:bg-background-dark bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
                                             }`}
                                     >
@@ -840,9 +854,39 @@ export default function TrilhasClient({
                                         ÚLTIMOS_SEMESTRES
                                     </button>
                                     <button
+                                        onClick={() => setSortOrder('course')}
+                                        className={`px-4 py-2 rounded-lg font-mono text-[10px] font-bold transition-all border flex items-center gap-2 cursor-pointer ${sortOrder === 'course'
+                                            ? 'bg-[#FFCC00] text-slate-950 border-transparent shadow-lg shadow-[#FFCC00]/25'
+                                            : 'dark:bg-background-dark bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
+                                            }`}
+                                    >
+                                        <Atom size={12} />
+                                        MATÉRIAS_DO_CURSO
+                                    </button>
+                                    <button
+                                        onClick={() => setSortOrder('materials')}
+                                        className={`px-4 py-2 rounded-lg font-mono text-[10px] font-bold transition-all border flex items-center gap-2 cursor-pointer ${sortOrder === 'materials'
+                                            ? 'bg-[#1F9FCF] text-white border-transparent shadow-lg shadow-[#1F9FCF]/25'
+                                            : 'dark:bg-background-dark bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
+                                            }`}
+                                    >
+                                        <FileText size={12} />
+                                        MATERIAIS_DISPONÍVEIS
+                                    </button>
+                                    <button
+                                        onClick={() => setSortOrder('status')}
+                                        className={`px-4 py-2 rounded-lg font-mono text-[10px] font-bold transition-all border flex items-center gap-2 cursor-pointer ${sortOrder === 'status'
+                                            ? 'bg-emerald-500 text-white border-transparent shadow-lg shadow-emerald-500/25'
+                                            : 'dark:bg-background-dark bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
+                                            }`}
+                                    >
+                                        <CheckCircle2 size={12} />
+                                        EM_CURSO / JÁ_FEITAS
+                                    </button>
+                                    <button
                                         onClick={() => setSortOrder('trending')}
-                                        className={`px-4 py-2 rounded-lg font-mono text-[10px] font-bold transition-all border flex items-center gap-2 ${sortOrder === 'trending'
-                                            ? 'bg-purple-600 text-white border-transparent shadow-lg shadow-purple-600/20'
+                                        className={`px-4 py-2 rounded-lg font-mono text-[10px] font-bold transition-all border flex items-center gap-2 cursor-pointer ${sortOrder === 'trending'
+                                            ? 'bg-[#F14343] text-white border-transparent shadow-lg shadow-[#F14343]/25'
                                             : 'dark:bg-background-dark bg-gray-50 dark:text-gray-500 text-gray-500 dark:border-gray-800 border-gray-300 hover:border-gray-300'
                                             }`}
                                     >
@@ -862,7 +906,7 @@ export default function TrilhasClient({
                                         value={searchQuery}
                                         onChange={(e) => setSearchQuery(e.target.value)}
                                         placeholder="Nome da disciplina ou código (ex: MAT0112)..."
-                                        className="w-full pl-11 pr-4 py-3 rounded-xl font-mono text-sm dark:bg-background-dark bg-gray-50 dark:text-white text-gray-900 dark:border-gray-800 border-gray-300 border outline-none focus:border-[#00A3FF]/50 focus:shadow-[0_0_15px_rgba(0,163,255,0.15)] transition-all placeholder:text-gray-500"
+                                        className="w-full pl-11 pr-4 py-3 rounded-xl font-mono text-sm dark:bg-background-dark bg-gray-50 dark:text-white text-gray-900 dark:border-gray-800 border-gray-300 border outline-none focus:border-[#1F9FCF]/50 focus:shadow-[0_0_15px_rgba(31,159,207,0.15)] transition-all placeholder:text-gray-500"
                                     />
                                     {searchQuery && (
                                         <button
@@ -883,7 +927,7 @@ export default function TrilhasClient({
                             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
                         >
                                 <AnimatePresence mode='popLayout'>
-                                    {slicedTrails.map((trail) => {
+                                    {slicedTrails.map((trail, idx) => {
                                         const activeAxisKey = axisFilter && axisFilter !== 'comum' ? axisFilter : trail.axis;
                                         const axisCfg = AXIS_CONFIG[activeAxisKey] || AXIS_CONFIG.comum;
                                         const catCfg = CATEGORY_CONFIG[trail.effectiveCategory || trail.category] || CATEGORY_CONFIG.eletiva;
@@ -901,6 +945,7 @@ export default function TrilhasClient({
                                                 exit={{ opacity: 0, scale: 0.9 }}
                                                 transition={{ duration: 0.2 }}
                                             >
+                                                <ScrollJellyCard staggerIndex={idx}>
                                                 <Link href={`/ferramentas/trilhas/${trail.id}`} className="group block h-full">
                                                     <div
                                                         className="relative rounded-xl p-6 border transition-all h-full flex flex-col dark:bg-[#1E1E1E] bg-white border-gray-300 dark:border-white/10 shadow-md dark:shadow-none hover:border-gray-400 dark:hover:border-white/20 group-hover:bg-gray-50/50 dark:group-hover:bg-[#252525] group-hover:shadow-2xl hover:scale-[1.02]"
@@ -979,8 +1024,8 @@ export default function TrilhasClient({
                                                                         onClick={(e) => toggleCursando(e, trail.id)}
                                                                         disabled={isUpdating === trail.id}
                                                                         className={`px-2 py-1.5 rounded-lg border transition-all flex items-center gap-1.5 group/radar ${cursandoIds.includes(trail.id)
-                                                                            ? 'bg-[#FF4B4B]/20 border-[#FF4B4B]/50 text-[#FF4B4B] shadow-[0_0_10px_rgba(255,75,75,0.2)]'
-                                                                            : 'dark:bg-white/5 bg-gray-100 dark:border-gray-800 border-gray-300 text-gray-500 hover:border-[#FF4B4B]/50 hover:text-[#FF4B4B]'
+                                                                            ? 'bg-[#F14343]/20 border-[#F14343]/50 text-[#F14343] shadow-[0_0_10px_rgba(255,75,75,0.2)]'
+                                                                            : 'dark:bg-white/5 bg-gray-100 dark:border-gray-800 border-gray-300 text-gray-500 hover:border-[#F14343]/50 hover:text-[#F14343]'
                                                                             }`}
                                                                     >
                                                                         <Clock
@@ -1080,6 +1125,7 @@ export default function TrilhasClient({
                                                 </div>
                                             </div>
                                         </Link>
+                                                </ScrollJellyCard>
                                     </motion.div>
                                 );
                             })}
@@ -1094,7 +1140,7 @@ export default function TrilhasClient({
                                 <p className="font-mono dark:text-gray-500 text-gray-400 italic uppercase text-xs tracking-widest">[ERRO_NA_BUSCA] Nenhuma partícula detectada nesta combinação de filtros.</p>
                                 <button
                                     onClick={() => { setAxisFilter(null); setCategoryFilter(null); setSemesterFilter(null); }}
-                                    className="mt-4 font-mono text-[10px] text-[#00A3FF] underline underline-offset-4"
+                                    className="mt-4 font-mono text-[10px] text-[#1F9FCF] underline underline-offset-4"
                                 >
                                     RECALIBRAR_SENSORES
                                 </button>
@@ -1114,7 +1160,7 @@ export default function TrilhasClient({
                                 <span className="font-mono text-[10px] font-black uppercase tracking-[0.3em] dark:text-gray-400 text-gray-500 relative z-10">Expandir_Matriz</span>
                                 <div className="flex items-center gap-3 relative z-10">
                                     <span className="text-sm font-bold dark:text-white text-gray-900">CARREGAR MAIS PARTICULAS</span>
-                                    <LayoutGrid size={16} className="text-[#00A3FF] group-hover:rotate-90 transition-transform duration-500" />
+                                    <LayoutGrid size={16} className="text-[#1F9FCF] group-hover:rotate-90 transition-transform duration-500" />
                                 </div>
                                 <div className="flex gap-1 mt-1 relative z-10">
                                     <div className="w-1.5 h-1.5 rounded-full bg-brand-blue/40 animate-pulse"></div>
@@ -1135,7 +1181,7 @@ export default function TrilhasClient({
                         initial={{ opacity: 0, x: 50, scale: 0.9 }}
                         animate={{ opacity: 1, x: 0, scale: 1 }}
                         exit={{ opacity: 0, x: 50, scale: 0.9 }}
-                        className="fixed top-24 right-6 z-[200] bg-background-dark/80 backdrop-blur-xl border border-brand-blue/30 rounded-2xl p-4 flex items-center gap-4 shadow-[0_0_30px_rgba(0,163,255,0.15)]"
+                        className="fixed top-24 right-6 z-[200] bg-background-dark/80 backdrop-blur-xl border border-brand-blue/30 rounded-2xl p-4 flex items-center gap-4 shadow-[0_0_30px_rgba(31,159,207,0.15)]"
                     >
                         <div className="relative w-10 h-10 flex items-center justify-center">
                             <motion.div
@@ -1147,13 +1193,13 @@ export default function TrilhasClient({
                                 <motion.div
                                     animate={{ scale: [1, 1.2, 1] }}
                                     transition={{ duration: 1, repeat: Infinity }}
-                                    className="w-2 h-2 bg-brand-blue rounded-full shadow-[0_0_10px_#00A3FF]"
+                                    className="w-2 h-2 bg-brand-blue rounded-full shadow-[0_0_10px_#1F9FCF]"
                                 />
                                 <Atom className="absolute -top-3 -left-3 w-8 h-8 text-white/10 animate-pulse" />
                             </div>
                         </div>
                         <div className="flex flex-col pr-2">
-                            <h2 className="text-[10px] font-black font-mono text-white uppercase tracking-[0.2em]">
+                            <h2 className="text-[10px] font-black font-bukra text-white uppercase tracking-[0.2em]">
                                 Sinc_Atômico
                             </h2>
                             <p className="text-[8px] font-mono text-gray-400 uppercase tracking-widest leading-none">
@@ -1167,7 +1213,7 @@ export default function TrilhasClient({
                                 initial={{ width: 0 }}
                                 animate={{ width: "100%" }}
                                 transition={{ duration: 4, ease: "linear" }}
-                                className="h-full bg-brand-blue shadow-[0_0_10px_#3b82f6]"
+                                className="h-full bg-brand-blue shadow-[0_0_10px_#1F9FCF]"
                             />
                         </div>
                     </motion.div>

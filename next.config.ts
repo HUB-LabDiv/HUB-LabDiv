@@ -62,7 +62,9 @@ const nextConfig: NextConfig = {
       { source: '/timeline', destination: '/', permanent: true },
       { source: '/guia', destination: '/manual', permanent: true },
       { source: '/labdiv', destination: '/sobre', permanent: true },
-      { source: '/colisor', destination: '/gcif', permanent: true },
+      { source: '/colisor', destination: '/informativo', permanent: true },
+      { source: '/gcif', destination: '/informativo/wiki', permanent: true },
+      { source: '/gcif/:path*', destination: '/informativo/:path*', permanent: true },
       { source: '/fluxo', destination: '/', permanent: true },
       { source: '/comunidade', destination: '/', permanent: true },
       { source: '/drops', destination: '/?tab=updates', permanent: true },
@@ -84,21 +86,22 @@ const nextConfig: NextConfig = {
     ];
   },
   async headers() {
+    const isDev = process.env.NODE_ENV !== 'production';
     const cspHeader = `
       default-src 'self';
       script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://ajax.googleapis.com https://*.supabase.co https://*.vercel-scripts.com https://*.vercel.app https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://vlibras.gov.br;
       img-src 'self' blob: data: https://*.supabase.co https://res.cloudinary.com https://storage.hublabdiv.com.br https://*.ytimg.com https://img.youtube.com https://images.unsplash.com https://*.googleusercontent.com https://*.google.com https://api.dicebear.com https://avatars.githubusercontent.com https://upload.wikimedia.org https://portal.if.usp.br https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms;
       font-src 'self' data: https://fonts.gstatic.com;
-      connect-src 'self' https://*.supabase.co wss://*.supabase.co https://storage.hublabdiv.com.br https://*.vercel.app https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms https://*.bing.com https://*.visualstudio.com https://api.cloudinary.com;
+      connect-src 'self' https://*.supabase.co wss://*.supabase.co https://storage.hublabdiv.com.br https://*.vercel.app https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms https://*.bing.com https://*.visualstudio.com https://api.cloudinary.com http://localhost:3000 http://*.localhost:3000 http://127.0.0.1:3000 http://localhost:3001 https://aurtistic.vercel.app;
       media-src 'self' https://*.supabase.co https://res.cloudinary.com https://storage.hublabdiv.com.br https://*.youtube.com;
-      frame-src * data: blob: 'unsafe-inline';
+      frame-src 'self' http://localhost:3000 http://*.localhost:3000 http://127.0.0.1:3000 https://aurtistic.vercel.app https://*.vercel.app https://*.hublabdiv.com.br https://*.youtube.com https://*.youtube-nocookie.com;
       object-src 'none';
       base-uri 'self';
       form-action 'self';
       frame-ancestors 'self';
       block-all-mixed-content;
-      upgrade-insecure-requests;
+      ${isDev ? '' : 'upgrade-insecure-requests;'}
     `.replace(/\s{2,}/g, ' ').trim();
 
     return [

@@ -12,6 +12,7 @@
  */
 
 import React from 'react';
+import Link from 'next/link';
 import { Clock, Terminal, Zap, Sparkles, GraduationCap } from 'lucide-react';
 import { InitiativeId } from '@/types';
 
@@ -92,6 +93,13 @@ export const INITIATIVE_LIST: InitiativeMeta[] = [
     INITIATIVES_CATALOG.profis,
 ];
 
+export const INITIATIVE_EIXO4_LINKS: Record<string, string> = {
+    labdiv: '/gestao?org=labdiv',
+    show_da_fisica: '/gestao?org=show-da-fisica',
+    hs: '/gestao?org=hs',
+    profis: '/gestao?org=profis',
+};
+
 interface InitiativeBadgesProps {
     initiatives?: string[] | null;
     isLabdivLegacy?: boolean;
@@ -99,6 +107,7 @@ interface InitiativeBadgesProps {
     isOwnerView?: boolean;
     size?: 'sm' | 'md';
     className?: string;
+    linkToEixo4?: boolean;
 }
 
 export function InitiativeBadges({
@@ -108,6 +117,7 @@ export function InitiativeBadges({
     isOwnerView = false,
     size = 'md',
     className = '',
+    linkToEixo4 = true,
 }: InitiativeBadgesProps) {
     const normalized = new Set<string>(Array.isArray(initiatives) ? initiatives : []);
     if (isLabdivLegacy) {
@@ -130,20 +140,13 @@ export function InitiativeBadges({
                 if (!meta) return null;
 
                 const isPendingItem = isOwnerView && pendingSet.has(rawId);
+                const targetLink = linkToEixo4 && !isPendingItem ? INITIATIVE_EIXO4_LINKS[meta.id] : null;
 
-                return (
-                    <span
-                        key={meta.id}
-                        title={
-                            isPendingItem
-                                ? `${meta.label} — Vínculo em revisão pela moderação (Visível só para você)`
-                                : meta.label
-                        }
-                        className={`inline-flex items-center font-black uppercase tracking-wider border transition-all ${sizeClasses} ${meta.badgeClasses}`}
-                    >
+                const content = (
+                    <>
                         {meta.id === 'labdiv' && (
                             <span className="inline-flex items-center gap-0.5">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#0F4780] dark:bg-[#3B82F6]" />
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#0F4780] dark:bg-[#1F9FCF]" />
                                 <span className="w-1.5 h-1.5 rounded-full bg-[#F14343]" />
                                 <span className="w-1.5 h-1.5 rounded-full bg-[#FFCC00]" />
                             </span>
@@ -169,11 +172,44 @@ export function InitiativeBadges({
                         </span>
 
                         {isPendingItem && (
-                            <span className="ml-1 inline-flex items-center gap-0.5 px-1 py-0.2 rounded bg-[#FFCC00]/20 text-[#B45309] dark:text-[#FFCC00] border border-[#FFCC00]/40 text-[8px] font-black tracking-tight">
+                            <span className="ml-1 inline-flex items-center gap-0.5 px-1 py-0.2 rounded bg-[#FFCC00]/20 text-[#1E1E1E] dark:text-[#FFCC00] border border-[#FFCC00]/40 text-[8px] font-black tracking-tight">
                                 <Clock className="w-2.5 h-2.5" />
                                 Pendente
                             </span>
                         )}
+                    </>
+                );
+
+                const badgeTitle = isPendingItem
+                    ? `${meta.label} — Vínculo em revisão pela moderação (Visível só para você)`
+                    : targetLink
+                        ? `${meta.label} — Acessar Eixo 4 (Gestão da Organização)`
+                        : meta.label;
+
+                const classes = `inline-flex items-center font-black uppercase tracking-wider border transition-all ${sizeClasses} ${meta.badgeClasses} ${
+                    targetLink ? 'hover:scale-105 hover:shadow-md cursor-pointer select-none' : ''
+                }`;
+
+                if (targetLink) {
+                    return (
+                        <Link
+                            key={meta.id}
+                            href={targetLink}
+                            title={badgeTitle}
+                            className={classes}
+                        >
+                            {content}
+                        </Link>
+                    );
+                }
+
+                return (
+                    <span
+                        key={meta.id}
+                        title={badgeTitle}
+                        className={classes}
+                    >
+                        {content}
                     </span>
                 );
             })}

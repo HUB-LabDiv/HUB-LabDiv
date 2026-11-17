@@ -70,7 +70,7 @@ const AXIS_CONFIG = {
     comunidade: { label: 'Comunidade', color: '#0F4780', border: 'border-[#0F4780]/30', bg: 'bg-[#0F4780]/10' },
     informativo: { label: 'Informativo', color: '#F14343', border: 'border-[#F14343]/30', bg: 'bg-[#F14343]/10' },
     ferramentas: { label: 'Ferramentas', color: '#FFCC00', border: 'border-[#FFCC00]/30', bg: 'bg-[#FFCC00]/10' },
-    personas: { label: 'Perfis & Docência', color: '#8B5CF6', border: 'border-purple-500/30', bg: 'bg-purple-500/10' },
+    personas: { label: 'Perfis & Docência', color: '#1F9FCF', border: 'border-[#1F9FCF]/30', bg: 'bg-[#1F9FCF]/10' },
 };
 
 function formatWaitingTime(createdAt: string): string {
@@ -306,7 +306,7 @@ export function SwipeModerationFeed() {
                 return <MessageSquare className="w-4 h-4 text-[#0F4780]" />;
             case 'profile':
             case 'profile_edit':
-                return <UserCheck className="w-4 h-4 text-purple-400" />;
+                return <UserCheck className="w-4 h-4 text-[#1F9FCF]" />;
             case 'software':
             case 'software_feedback':
                 return <Cpu className="w-4 h-4 text-[#FFCC00]" />;
@@ -470,7 +470,7 @@ export function SwipeModerationFeed() {
                         <button
                             onClick={handleExecuteBatch}
                             disabled={isSubmittingBatch}
-                            className="py-3 px-5 rounded-2xl bg-gradient-to-r from-[#0F4780] to-[#0A3056] text-white text-xs font-black uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-102 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+                            className="py-3 px-5 rounded-2xl bg-gradient-to-r from-[#0F4780] to-[#0C3A68] text-white text-xs font-black uppercase tracking-wider shadow-lg hover:shadow-xl hover:scale-102 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
                         >
                             {isSubmittingBatch ? (
                                 <>
@@ -718,13 +718,13 @@ function SwipeDeckCard({
             )}
 
             {item.type === 'initiative_request' && item.details && (
-                <div className="mb-6 p-4 rounded-2xl bg-purple-500/10 border border-purple-500/30 space-y-3">
+                <div className="mb-6 p-4 rounded-2xl bg-[#1F9FCF]/10 border border-[#1F9FCF]/30 space-y-3">
                     <div className="flex items-center justify-between gap-2">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-purple-400">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-[#1F9FCF]">
                             🏛️ Solicitação de Inclusão de Iniciativa (Eixo 04)
                         </span>
                         {item.details.acronym && (
-                            <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[10px] font-black font-mono">
+                            <span className="px-2 py-0.5 rounded-full bg-[#1F9FCF]/20 text-[#1F9FCF] text-[10px] font-black font-open-sans">
                                 {item.details.acronym}
                             </span>
                         )}
@@ -756,7 +756,7 @@ function SwipeDeckCard({
                                             href={href}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="px-3 py-1.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-colors"
+                                            className="px-3 py-1.5 rounded-xl bg-[#1F9FCF] hover:bg-[#198BB5] text-white text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-colors"
                                         >
                                             <ExternalLink className="w-3 h-3" />
                                             {isEmail ? 'Enviar E-mail' : 'Abrir WhatsApp'}

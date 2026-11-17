@@ -14,6 +14,7 @@
 
 import React, { useRef, useState, useEffect } from 'react';
 import { MediaCard, MediaCardProps } from "@/components/media/MediaCard";
+import { ScrollJellyCard } from "@/components/ui/ScrollJellyCard";
 import { m } from 'framer-motion';
 import { Star, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -124,12 +125,15 @@ export function FeaturedCarousel({ items, highlightQuery = '', hideTitle = false
                 className="flex gap-6 overflow-x-auto pb-6 px-2 no-scrollbar snap-x snap-mandatory scroll-smooth"
             >
                 {items.map((item, index) => (
-                    <div
+                    <ScrollJellyCard
                         key={item.post.id}
+                        axis="horizontal"
+                        containerRef={scrollRef}
+                        staggerIndex={index}
                         className="min-w-[300px] md:min-w-[380px] snap-start"
                     >
                         <MediaCard post={item.post} priority={index < 2} highlightQuery={highlightQuery} />
-                    </div>
+                    </ScrollJellyCard>
                 ))}
             </div>
         </div>

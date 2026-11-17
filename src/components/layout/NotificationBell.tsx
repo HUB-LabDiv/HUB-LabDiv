@@ -20,14 +20,29 @@ import { supabase } from '@/lib/supabase';
 import { useHistoryBack } from '@/hooks/useHistoryBack';
 import { toast } from 'react-hot-toast';
 
-export const NotificationBell = ({ userId }: { userId: string | undefined }) => {
+export const NotificationBell = ({
+    userId,
+    menuItemLabel,
+    onOpenChange,
+}: {
+    userId: string | undefined;
+    menuItemLabel?: string;
+    onOpenChange?: (open: boolean) => void;
+}) => {
     const [notifications, setNotifications] = useState<any[]>([]);
     const [unreadCount, setUnreadCount] = useState(0);
     const [isOpen, setIsOpen] = useState(false);
     const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
+    const [showAll, setShowAll] = useState(false);
+
+    const toggleOpen = (next?: boolean) => {
+        const value = typeof next === 'boolean' ? next : !isOpen;
+        setIsOpen(value);
+        onOpenChange?.(value);
+    };
 
     // [B14] Support hardware back button to close the menu
-    useHistoryBack(isOpen, () => setIsOpen(false));
+    useHistoryBack(isOpen, () => toggleOpen(false));
 
     useEffect(() => {
         if (!userId) {
@@ -76,7 +91,11 @@ export const NotificationBell = ({ userId }: { userId: string | undefined }) => 
 
         // Optimistic update to prevent delays
         setNotifications(prev => prev.map(n => n.id === id ? { ...n, is_read: true } : n));
-        setUnreadCount(prev => Math.max(0, prev - 1));
+        setUnreadCount(prev => {
+            const next = Math.max(0, prev - 1);
+            window.dispatchEvent(new CustomEvent('hub:notifications-unread', { detail: { count: next } }));
+            return next;
+        });
 
         // Fire Server Action
         await markNotificationAsRead(id);
@@ -89,6 +108,7 @@ export const NotificationBell = ({ userId }: { userId: string | undefined }) => 
         if (res.success) {
             setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
             setUnreadCount(0);
+            window.dispatchEvent(new CustomEvent('hub:notifications-unread', { detail: { count: 0 } }));
             toast.success('Todas as notificações foram lidas!');
         } else {
             toast.error('Erro ao marcar notificações');
@@ -107,19 +127,75 @@ export const NotificationBell = ({ userId }: { userId: string | undefined }) => 
 
     return (
         <div className="relative">
-            <button
-                data-tour="notifications-bell"
-                onClick={() => setIsOpen(!isOpen)}
-                className="relative p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all"
-                aria-label="Notificações"
-            >
-                <span className="material-symbols-outlined text-[26px]">notifications</span>
-                {unreadCount > 0 && (
-                    <span className="absolute top-1 right-1 size-5 bg-brand-red text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-background-dark">
-                        {unreadCount > 9 ? '9+' : unreadCount}
+            {menuItemLabel ? (
+                <button
+                    type="button"
+                    data-tour="notifications-bell"
+                    onClick={() => toggleOpen()}
+                    className="w-full py-2 px-3 rounded-xl bg-gray-100 dark:bg-white/5 hover:bg-[#1F9FCF]/15 text-xs font-bold text-gray-700 dark:text-gray-200 flex items-center justify-between gap-2 transition-colors cursor-pointer"
+                    aria-label="Notificações"
+                >
+                    <span className="flex items-center gap-2">
+                        {isOpen ? (
+                            <span className="material-symbols-outlined text-[16px] text-[#0F4780] dark:text-[#1F9FCF]">
+                                arrow_back
+                            </span>
+                        ) : (
+                            <m.span
+                                animate={
+                                    unreadCount > 0
+                                        ? { rotate: [0, -18, 16, -12, 8, -4, 0] }
+                                        : { rotate: 0 }
+                                }
+                                transition={
+                                    unreadCount > 0
+                                        ? { duration: 0.75, repeat: Infinity, repeatDelay: 2.8, ease: 'easeInOut' }
+                                        : { duration: 0.2 }
+                                }
+                                style={{ transformOrigin: 'top center' }}
+                                className="material-symbols-outlined text-[16px] text-[#0F4780] dark:text-[#1F9FCF] inline-block"
+                            >
+                                notifications
+                            </m.span>
+                        )}
+                        <span>{isOpen ? 'Voltar ao menu' : menuItemLabel}</span>
                     </span>
-                )}
-            </button>
+                    {unreadCount > 0 && (
+                        <span className="px-1.5 py-0.5 bg-[#F14343] text-white text-[10px] font-black rounded-full leading-none">
+                            {unreadCount > 9 ? '9+' : unreadCount}
+                        </span>
+                    )}
+                </button>
+            ) : (
+                <button
+                    data-tour="notifications-bell"
+                    onClick={() => toggleOpen()}
+                    className="relative p-2 text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-all"
+                    aria-label="Notificações"
+                >
+                    <m.span
+                        animate={
+                            unreadCount > 0
+                                ? { rotate: [0, -18, 16, -12, 8, -4, 0] }
+                                : { rotate: 0 }
+                        }
+                        transition={
+                            unreadCount > 0
+                                ? { duration: 0.75, repeat: Infinity, repeatDelay: 2.8, ease: 'easeInOut' }
+                                : { duration: 0.2 }
+                        }
+                        style={{ transformOrigin: 'top center' }}
+                        className="material-symbols-outlined text-[26px] inline-block"
+                    >
+                        notifications
+                    </m.span>
+                    {unreadCount > 0 && (
+                        <span className="absolute top-1 right-1 size-5 bg-brand-red text-white text-[10px] font-black rounded-full flex items-center justify-center border-2 border-white dark:border-background-dark">
+                            {unreadCount > 9 ? '9+' : unreadCount}
+                        </span>
+                    )}
+                </button>
+            )}
 
             <AnimatePresence>
                 {isOpen && (
@@ -127,7 +203,11 @@ export const NotificationBell = ({ userId }: { userId: string | undefined }) => 
                         initial={{ opacity: 0, y: 10, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                        className="absolute right-0 mt-2 w-80 bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden z-[100] origin-top-right"
+                        className={
+                            menuItemLabel
+                                ? 'mt-2 w-full bg-gray-50 dark:bg-[#141923] rounded-2xl border border-gray-200 dark:border-white/10 overflow-hidden z-[100]'
+                                : 'absolute right-0 mt-2 w-80 bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl border border-gray-100 dark:border-gray-800 overflow-hidden z-[100] origin-top-right'
+                        }
                     >
                         {!userId ? (
                             // [I01] Sininho Gatekeeper - Guest State
@@ -141,7 +221,7 @@ export const NotificationBell = ({ userId }: { userId: string | undefined }) => 
                                 </p>
                                 <Link
                                     href="/login"
-                                    className="block w-full py-3 bg-brand-blue text-white text-xs font-black rounded-2xl hover:bg-blue-700 transition-all shadow-md active:scale-95"
+                                    className="block w-full py-3 bg-[#0F4780] text-white text-xs font-black rounded-2xl hover:bg-[#1F9FCF] transition-all shadow-md active:scale-95"
                                 >
                                     ENTRAR NO LAB-DIV
                                 </Link>
@@ -167,61 +247,75 @@ export const NotificationBell = ({ userId }: { userId: string | undefined }) => 
                                             <p className="text-xs font-medium">Nada por aqui ainda.</p>
                                         </div>
                                     ) : (
-                                        notifications.map(notif => {
-                                            const isExpanded = expandedIds.has(notif.id);
-                                            const canExpand = notif.message?.length > 60;
+                                        <>
+                                            {(showAll ? notifications : notifications.slice(0, 3)).map(notif => {
+                                                const isExpanded = expandedIds.has(notif.id);
+                                                const canExpand = notif.message?.length > 60;
 
-                                            return (
-                                                <div
-                                                    key={notif.id}
-                                                    onClick={() => handleMarkAsRead(notif.id)}
-                                                    className={`flex gap-3 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-50 dark:border-gray-800/50 relative cursor-pointer ${!notif.is_read ? 'bg-brand-blue/5' : ''}`}
-                                                >
-                                                    <div className={`size-10 rounded-full flex items-center justify-center flex-shrink-0 ${notif.type === 'atomic' ? 'bg-brand-blue/20 text-brand-blue shadow-[0_0_10px_rgba(59,130,246,0.2)]' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
-                                                        }`}>
-                                                        <span className="material-symbols-outlined filled">
-                                                            {notif.type === 'atomic' ? 'offline_bolt' : 'notifications'}
-                                                        </span>
-                                                    </div>
-                                                    <div className="flex-1 min-w-0">
-                                                        <p className="text-xs font-bold text-gray-900 dark:text-white leading-tight mb-0.5">{notif.title}</p>
-                                                        <p className={`text-[11px] text-gray-500 leading-snug whitespace-pre-wrap ${isExpanded ? '' : 'line-clamp-2'}`}>
-                                                            {notif.message}
-                                                        </p>
-                                                        
-                                                        {canExpand && (
-                                                            <button 
-                                                                onClick={(e) => toggleExpand(e, notif.id)}
-                                                                className="text-[9px] font-black text-brand-blue uppercase tracking-tighter mt-1 hover:underline"
-                                                            >
-                                                                {isExpanded ? 'Ver Menos' : 'Ver Mais'}
-                                                            </button>
-                                                        )}
-
-                                                        <div className="flex items-center justify-between mt-2">
-                                                            <p className="text-[9px] text-gray-400 font-medium">{new Date(notif.created_at).toLocaleDateString()}</p>
-                                                            {notif.link && notif.link !== '#' && (
-                                                                <Link 
-                                                                    href={notif.link}
-                                                                    onClick={(e) => {
-                                                                        e.stopPropagation();
-                                                                        handleMarkAsRead(notif.id);
-                                                                        setIsOpen(false);
-                                                                    }}
-                                                                    className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-blue text-white hover:bg-brand-blue transition-all shadow-sm"
-                                                                >
-                                                                    <span className="material-symbols-outlined text-[10px] font-bold">link</span>
-                                                                    <span className="text-[8px] font-black uppercase tracking-tighter">LINK</span>
-                                                                </Link>
-                                                            )}
+                                                return (
+                                                    <div
+                                                        key={notif.id}
+                                                        onClick={() => handleMarkAsRead(notif.id)}
+                                                        className={`flex gap-3 p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors border-b border-gray-50 dark:border-gray-800/50 relative cursor-pointer ${!notif.is_read ? 'bg-brand-blue/5' : ''}`}
+                                                    >
+                                                        <div className={`size-10 rounded-full flex items-center justify-center flex-shrink-0 ${notif.type === 'atomic' ? 'bg-[#1F9FCF]/20 text-[#1F9FCF] shadow-[0_0_10px_rgba(31,159,207,0.25)]' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'
+                                                            }`}>
+                                                            <span className="material-symbols-outlined filled">
+                                                                {notif.type === 'atomic' ? 'offline_bolt' : 'notifications'}
+                                                            </span>
                                                         </div>
+                                                        <div className="flex-1 min-w-0">
+                                                            <p className="text-xs font-bold text-gray-900 dark:text-white leading-tight mb-0.5">{notif.title}</p>
+                                                            <p className={`text-[11px] text-gray-500 leading-snug whitespace-pre-wrap ${isExpanded ? '' : 'line-clamp-2'}`}>
+                                                                {notif.message}
+                                                            </p>
+                                                            
+                                                            {canExpand && (
+                                                                <button 
+                                                                    onClick={(e) => toggleExpand(e, notif.id)}
+                                                                    className="text-[9px] font-black text-brand-blue uppercase tracking-tighter mt-1 hover:underline"
+                                                                >
+                                                                    {isExpanded ? 'Ver Menos' : 'Ver Mais'}
+                                                                </button>
+                                                            )}
+
+                                                            <div className="flex items-center justify-between mt-2">
+                                                                <p className="text-[9px] text-gray-400 font-medium">{new Date(notif.created_at).toLocaleDateString()}</p>
+                                                                {notif.link && notif.link !== '#' && (
+                                                                    <Link 
+                                                                        href={notif.link}
+                                                                        onClick={(e) => {
+                                                                            e.stopPropagation();
+                                                                            handleMarkAsRead(notif.id);
+                                                                            setIsOpen(false);
+                                                                        }}
+                                                                        className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-brand-blue text-white hover:bg-brand-blue transition-all shadow-sm"
+                                                                    >
+                                                                        <span className="material-symbols-outlined text-[10px] font-bold">link</span>
+                                                                        <span className="text-[8px] font-black uppercase tracking-tighter">LINK</span>
+                                                                    </Link>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                        {!notif.is_read && (
+                                                            <div className="size-1.5 bg-[#1F9FCF] rounded-full absolute top-4 right-4 animate-pulse shadow-[0_0_8px_rgba(31,159,207,0.65)]" />
+                                                        )}
                                                     </div>
-                                                    {!notif.is_read && (
-                                                        <div className="size-1.5 bg-brand-blue rounded-full absolute top-4 right-4 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.6)]" />
-                                                    )}
-                                                </div>
-                                            );
-                                        })
+                                                );
+                                            })}
+                                            {notifications.length > 3 && (
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        setShowAll((prev) => !prev);
+                                                    }}
+                                                    className="w-full py-2.5 px-4 text-center text-[11px] font-bukra font-black uppercase tracking-wider text-[#0F4780] dark:text-[#1F9FCF] hover:bg-[#0F4780]/5 dark:hover:bg-[#1F9FCF]/10 transition-colors cursor-pointer border-t border-gray-100 dark:border-white/10"
+                                                >
+                                                    {showAll ? 'Mostrar menos' : `Ver mais (${notifications.length - 3})`}
+                                                </button>
+                                            )}
+                                        </>
                                     )}
                                 </div>
                             </>

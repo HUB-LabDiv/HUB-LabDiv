@@ -285,12 +285,11 @@ export const DownloadModal = ({ id, title, authors, avatarUrl, description, medi
             <div className="fixed -top-[9999px] -left-[9999px] -z-50 opacity-0 pointer-events-none" aria-hidden="true">
                 <div
                     ref={cardRef}
-                    className="w-[600px] p-10 bg-background-dark flex flex-col gap-6 text-white border-2 border-brand-blue/30 rounded-3xl"
-                    style={{ fontFamily: '"Inter", sans-serif' }}
+                    className="w-[600px] p-10 bg-background-dark flex flex-col gap-6 text-white border-2 border-brand-blue/30 rounded-3xl font-open-sans"
                 >
                     <div className="flex items-center justify-between">
                         <div className="h-10 w-32 bg-brand-blue/10 rounded flex items-center justify-center shrink-0">
-                            <span className="text-brand-blue font-black text-xs uppercase tracking-tighter" style={{ fontFamily: '"Inter", sans-serif' }}>LAB-DIV HUB</span>
+                            <span className="text-brand-blue font-bukra font-black text-xs uppercase tracking-tighter">LAB-DIV HUB</span>
                         </div>
                         <img src="/labdiv-logo.png" crossOrigin="anonymous" alt="Hub Lab-Div" className="h-10 w-10 object-contain rounded-lg opacity-90 shadow-2xl" />
                     </div>
@@ -330,24 +329,24 @@ export const DownloadModal = ({ id, title, authors, avatarUrl, description, medi
             <div className="fixed -top-[9999px] -left-[9999px] -z-50 opacity-0 pointer-events-none" aria-hidden="true">
                 <div
                     ref={pdfCardRef}
-                    className="w-[800px] p-16 bg-white flex flex-col text-black"
-                    style={{ minHeight: '1123px', fontFamily: '"Inter", sans-serif' }}
+                    className="w-[800px] p-16 bg-white flex flex-col text-black font-open-sans"
+                    style={{ minHeight: '1123px' }}
                 >
                     {/* Official Document Header */}
                     <div className="flex items-center justify-between border-b-[6px] border-brand-blue pb-8 mb-12">
                         <div className="flex items-center gap-6">
-                            <div className="h-16 w-16 bg-blue-50/50 rounded-2xl flex items-center justify-center shadow-lg border border-brand-blue/10 overflow-hidden p-1 shrink-0">
+                            <div className="h-16 w-16 bg-[#0F4780]/10 rounded-2xl flex items-center justify-center shadow-lg border border-brand-blue/10 overflow-hidden p-1 shrink-0">
                                 <img src="/labdiv-logo.png" crossOrigin="anonymous" alt="Hub Lab-Div" className="w-full h-full object-contain drop-shadow" />
                             </div>
                             <div>
-                                <h1 className="text-3xl font-black text-brand-blue tracking-tight uppercase" style={{ fontFamily: '"Inter", sans-serif' }}>Instituto de Física | USP</h1>
-                                <p className="text-sm font-bold text-gray-500 tracking-widest uppercase mt-1" style={{ fontFamily: '"Inter", sans-serif' }}>Acervo do Laboratório de Divulgação (Lab-Div)</p>
+                                <h1 className="text-3xl font-bukra font-black text-brand-blue tracking-tight uppercase">Instituto de Física | USP</h1>
+                                <p className="text-sm font-open-sans font-bold text-gray-500 tracking-widest uppercase mt-1">Acervo do Laboratório de Divulgação (Lab-Div)</p>
                             </div>
                         </div>
                     </div>
 
                     <div className="space-y-8 flex-1">
-                        <h1 className="text-5xl font-black text-wrap leading-[1.15] text-gray-900" style={{ fontFamily: '"Inter", sans-serif' }}>{title}</h1>
+                        <h1 className="text-5xl font-bukra font-black text-wrap leading-[1.15] text-gray-900">{title}</h1>
 
                         {mediaUrl && (
                             <div className="w-full aspect-video rounded-3xl overflow-hidden shadow-lg border-2 border-gray-100 bg-gray-50 mt-6 relative">

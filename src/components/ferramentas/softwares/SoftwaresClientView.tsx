@@ -16,6 +16,7 @@
 import React, { useState, useMemo } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ScrollJellyCard } from '@/components/ui/ScrollJellyCard';
 import {
     Laptop,
     Search,
@@ -131,7 +132,7 @@ export function SoftwaresClientView({
                     <div className="flex flex-col sm:flex-row md:flex-col gap-3 shrink-0">
                         <button
                             onClick={() => setIsSubmitModalOpen(true)}
-                            className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-brand-yellow hover:bg-[#FFE066] text-black font-black text-xs uppercase tracking-wider transition-all shadow-lg shadow-brand-yellow/20 hover:scale-105 active:scale-95 cursor-pointer"
+                            className="flex items-center justify-center gap-2 px-5 py-3.5 rounded-2xl bg-brand-yellow hover:bg-[#FCE055] text-black font-black text-xs uppercase tracking-wider transition-all shadow-lg shadow-brand-yellow/20 hover:scale-105 active:scale-95 cursor-pointer"
                         >
                             <Plus className="w-4 h-4" />
                             <span>Enviar Software / Código</span>
@@ -255,12 +256,13 @@ export function SoftwaresClientView({
                 </div>
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {filteredSoftwares.map((software) => (
-                        <SoftwareCard
-                            key={software.id}
-                            software={software}
-                            currentUserId={currentUserId}
-                        />
+                    {filteredSoftwares.map((software, idx) => (
+                        <ScrollJellyCard key={software.id} staggerIndex={idx}>
+                            <SoftwareCard
+                                software={software}
+                                currentUserId={currentUserId}
+                            />
+                        </ScrollJellyCard>
                     ))}
                 </div>
             )}

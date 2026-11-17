@@ -19,10 +19,7 @@ import {
     Clock, 
     MapPin, 
     User, 
-    Video, 
     ArrowRight, 
-    FileText,
-    Sparkles,
     Radio
 } from 'lucide-react';
 import { EventItem, EventType } from '@/types/events';
@@ -45,17 +42,17 @@ const TYPE_CONFIG: Record<EventType, { label: string; badgeClass: string; icon: 
     },
     'seminario': {
         label: 'Seminário Departamental',
-        badgeClass: 'bg-blue-500/15 text-brand-blue dark:text-blue-400 border-blue-500/30',
+        badgeClass: 'bg-brand-blue/15 text-brand-blue dark:text-[#1F9FCF] border-brand-blue/30',
         icon: 'psychology'
     },
     'workshop': {
         label: 'Workshop & Encontro',
-        badgeClass: 'bg-rose-500/15 text-brand-red dark:text-rose-400 border-rose-500/30',
+        badgeClass: 'bg-brand-red/15 text-brand-red border-brand-red/30',
         icon: 'groups'
     },
     'institucional': {
         label: 'Institucional',
-        badgeClass: 'bg-purple-500/15 text-purple-600 dark:text-purple-400 border-purple-500/30',
+        badgeClass: 'bg-[#1F9FCF]/15 text-[#0F4780] dark:text-[#1F9FCF] border-[#1F9FCF]/30',
         icon: 'account_balance'
     }
 };

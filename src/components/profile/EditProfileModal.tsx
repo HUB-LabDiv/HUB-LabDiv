@@ -548,8 +548,8 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                     <form onSubmit={handleSubmit(onSubmit)} className="p-8 space-y-6 max-h-[70vh] overflow-y-auto hidden-scrollbar">
                         {(currentStatus === 'pending' || hasActivePendingEdits(profileData?.pending_edits)) && !adminMode && (
                             <div className="p-4 bg-[#FFCC00]/15 dark:bg-[#FFCC00]/10 border border-[#FFCC00]/40 rounded-2xl flex items-start gap-3">
-                                <Clock className="w-5 h-5 text-[#B45309] dark:text-[#FFCC00] shrink-0 mt-0.5" />
-                                <p className="text-[11px] font-bold text-[#92400E] dark:text-[#FFCC00] leading-relaxed">
+                                <Clock className="w-5 h-5 text-[#1E1E1E] dark:text-[#FFCC00] shrink-0 mt-0.5" />
+                                <p className="text-[11px] font-bold text-[#1E1E1E] dark:text-[#FFCC00] leading-relaxed">
                                     ⏳ <span className="font-black uppercase">Alterações em análise:</span> Suas edições recentes (foto, nome, bio, iniciativas ou dados) estão aguardando aprovação da moderação. <span className="underline">Esta prévia atualizada está visível apenas para você</span> — os demais usuários continuam vendo a última versão aprovada do seu perfil.
                                 </p>
                             </div>
@@ -649,7 +649,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                         <User className="w-3 h-3" /> Nome Completo
                                     </span>
                                     {!adminMode && (
-                                        <span className="text-[9px] font-bold text-[#B45309] dark:text-[#FFCC00] uppercase">
+                                        <span className="text-[9px] font-bold text-[#1E1E1E] dark:text-[#FFCC00] uppercase">
                                             Sujeito à aprovação
                                         </span>
                                     )}
@@ -822,7 +822,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                         </p>
                                     </div>
                                     {!adminMode && Array.isArray(profileData?.pending_edits?.member_initiatives) && (
-                                        <span className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FFCC00]/20 text-[#B45309] dark:text-[#FFCC00] border border-[#FFCC00]/40 text-[9px] font-black uppercase">
+                                        <span className="shrink-0 inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FFCC00]/20 text-[#1E1E1E] dark:text-[#FFCC00] border border-[#FFCC00]/40 text-[9px] font-black uppercase">
                                             <Clock className="w-2.5 h-2.5" /> Em revisão
                                         </span>
                                     )}
@@ -1008,7 +1008,7 @@ export function EditProfileModal({ isOpen, onClose, onSuccess, adminMode = false
                                             title: 'Nerd / Geek',
                                             tone: 'Referências de Sci-Fi, Games, RPG, Fantasia e Pop Tech',
                                             example: '"O tunelamento quântico é basicamente atravessar a parede da dungeon com 1% de chance no dado."',
-                                            activeRing: 'border-[#0F4780] dark:border-[#3B82F6] bg-[#0F4780]/10 dark:bg-[#3B82F6]/15 ring-2 ring-[#3B82F6]/30',
+                                            activeRing: 'border-[#0F4780] dark:border-[#1F9FCF] bg-[#0F4780]/10 dark:bg-[#1F9FCF]/15 ring-2 ring-[#1F9FCF]/30',
                                         },
                                         {
                                             id: 'artistica',

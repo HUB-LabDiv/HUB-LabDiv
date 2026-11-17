@@ -47,17 +47,17 @@ export class EliteErrorBoundary extends Component<Props, State> {
             if (this.props.fallback) return this.props.fallback;
 
             return (
-                <div className="p-8 rounded-3xl bg-white dark:bg-card-dark border-2 border-[#0055ff]/10 shadow-xl overflow-hidden relative group">
+                <div className="p-8 rounded-3xl bg-white dark:bg-card-dark border-2 border-[#0F4780]/15 shadow-xl overflow-hidden relative group">
                     {/* Background Glow Effect */}
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#0055ff]/5 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-[#0055ff]/10 transition-all" />
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#1F9FCF]/10 rounded-full -mr-16 -mt-16 blur-2xl group-hover:bg-[#1F9FCF]/15 transition-all" />
 
                     <div className="relative z-10 flex flex-col items-center text-center">
                         <m.div
                             initial={{ scale: 0.8, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            className="size-16 bg-[#0055ff]/10 rounded-2xl flex items-center justify-center mb-6 border border-[#0055ff]/20"
+                            className="size-16 bg-[#0F4780]/10 rounded-2xl flex items-center justify-center mb-6 border border-[#1F9FCF]/25"
                         >
-                            <AlertCircle className="text-[#0055ff] size-8" />
+                            <AlertCircle className="text-[#1F9FCF] size-8" />
                         </m.div>
 
                         <h3 className="text-xl font-black text-gray-900 dark:text-white mb-2 uppercase tracking-tighter">
@@ -77,7 +77,7 @@ export class EliteErrorBoundary extends Component<Props, State> {
                                     this.setState({ hasError: false, error: undefined });
                                 });
                             }}
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-[#0055ff] text-white rounded-xl font-bold text-xs hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[#0055ff]/20"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-[#0F4780] hover:bg-[#0C3A68] text-white rounded-xl font-bold text-xs hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[#0F4780]/20"
                         >
                             <RefreshCcw size={14} />
                             RECONECTAR MÓDULO

@@ -11,38 +11,81 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
+import { useState, useEffect, useCallback } from 'react';
 
-import { useState, useEffect } from 'react';
+export type ThemeMode = 'auto' | 'light' | 'dark';
 
 export function useTheme() {
+    const [themeMode, setThemeModeState] = useState<ThemeMode>('auto');
     const [theme, setTheme] = useState<'light' | 'dark' | null>(null);
 
-    useEffect(() => {
-        const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
-        const initialTheme = savedTheme || (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-        setTheme(initialTheme);
-
-        if (initialTheme === 'dark') {
+    const applyResolvedTheme = useCallback((resolved: 'light' | 'dark', persistCookie = true) => {
+        setTheme(resolved);
+        if (resolved === 'dark') {
             document.documentElement.classList.add('dark');
         } else {
             document.documentElement.classList.remove('dark');
+        }
+        if (persistCookie) {
+            document.cookie = `theme=${resolved}; path=/; max-age=31536000`;
         }
     }, []);
 
-    const toggleTheme = () => {
-        const newTheme = theme === 'dark' ? 'light' : 'dark';
-        setTheme(newTheme);
+    useEffect(() => {
+        const savedMode = localStorage.getItem('theme_mode') as ThemeMode | null;
+        const legacyTheme = localStorage.getItem('theme') as 'light' | 'dark' | null;
+        const initialMode: ThemeMode =
+            savedMode === 'light' || savedMode === 'dark' || savedMode === 'auto'
+                ? savedMode
+                : legacyTheme === 'light' || legacyTheme === 'dark'
+                  ? legacyTheme
+                  : 'auto';
 
-        if (newTheme === 'dark') {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-            document.cookie = "theme=dark; path=/; max-age=31536000";
-        } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-            document.cookie = "theme=light; path=/; max-age=31536000";
-        }
-    };
+        setThemeModeState(initialMode);
 
-    return { theme, toggleTheme };
+        const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+
+        const syncFromMode = (mode: ThemeMode) => {
+            if (mode === 'auto') {
+                applyResolvedTheme(mediaQuery.matches ? 'dark' : 'light');
+            } else {
+                applyResolvedTheme(mode);
+            }
+        };
+
+        syncFromMode(initialMode);
+
+        const handleSystemChange = (e: MediaQueryListEvent) => {
+            const currentMode = (localStorage.getItem('theme_mode') as ThemeMode | null) || initialMode;
+            if (currentMode === 'auto') {
+                applyResolvedTheme(e.matches ? 'dark' : 'light');
+            }
+        };
+
+        mediaQuery.addEventListener('change', handleSystemChange);
+        return () => mediaQuery.removeEventListener('change', handleSystemChange);
+    }, [applyResolvedTheme]);
+
+    const setThemeMode = useCallback(
+        (mode: ThemeMode) => {
+            setThemeModeState(mode);
+            localStorage.setItem('theme_mode', mode);
+            if (mode === 'auto') {
+                localStorage.removeItem('theme');
+                const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                applyResolvedTheme(prefersDark ? 'dark' : 'light');
+            } else {
+                localStorage.setItem('theme', mode);
+                applyResolvedTheme(mode);
+            }
+        },
+        [applyResolvedTheme]
+    );
+
+    const toggleTheme = useCallback(() => {
+        const nextMode: ThemeMode = theme === 'dark' ? 'light' : 'dark';
+        setThemeMode(nextMode);
+    }, [theme, setThemeMode]);
+
+    return { theme, themeMode, setThemeMode, toggleTheme };
 }

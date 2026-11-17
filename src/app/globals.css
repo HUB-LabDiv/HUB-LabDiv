@@ -160,21 +160,42 @@ body[data-institution="ifusp"]::before {
   background-image: url('/bg-if.svg') !important;
 }
 
-/* Light mode: 75% opacity */
+/* Light mode: 12% subtle opacity, zero collision with text */
 :root:not(.dark) body::before {
-  opacity: 0.75;
-  filter: contrast(1.2);
+  opacity: 0.12;
+  pointer-events: none;
 }
 
-/* Dark mode: 75% opacity */
+/* Dark mode: 6% subtle opacity, zero collision with text */
 .dark body::before {
-  opacity: 0.75;
-  filter: brightness(1.5) contrast(1.2);
+  opacity: 0.06;
+  pointer-events: none;
 }
 
-/* Admin Mode: Same opacity and filter settings */
+/* Admin Mode: Subtle opacity */
 .admin-page::before {
-  opacity: 0.75 !important;
+  opacity: 0.06 !important;
+  pointer-events: none;
+}
+
+/* Fundo exclusivo do Show de Física (Canhão, Balão, Wimshurst, Bobina de Tesla, Baú Radioativo, Medalha Curie, Garrafa, Nitrogênio) */
+html[data-institution] body:has(.show-da-fisica-root)::before,
+html body:has(.show-da-fisica-root)::before,
+body:has(.show-da-fisica-root)::before {
+  background-image: url('/bg-show.svg') !important;
+  background-size: 220px 220px !important;
+  opacity: 0.16 !important;
+}
+html.dark[data-institution] body:has(.show-da-fisica-root)::before,
+.dark body:has(.show-da-fisica-root)::before {
+  background-image: url('/bg-show.svg') !important;
+  background-size: 220px 220px !important;
+  opacity: 0.11 !important;
+}
+.bg-show {
+  background-image: url('/bg-show.svg');
+  background-repeat: repeat;
+  background-size: 210px 210px;
 }
 
 /* Performance: CSS-only animation replaces framer-motion in hero (no JS blocking) */
@@ -781,7 +802,7 @@ body[data-institution="ifusp"]::before {
 }
 
 .hub-driver-popover .driver-popover-next-btn:hover {
-  background-color: #155ba3 !important;
+  background-color: #1F9FCF !important;
   transform: translateY(-1px) !important;
 }
 
@@ -1018,4 +1039,57 @@ body[data-institution="ifusp"]::before {
 
 .animate-border-spin-pause {
   animation: borderSpinPause 7s cubic-bezier(0.4, 0, 0.2, 1) infinite !important;
+}
+@keyframes login-soft-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.88; transform: scale(1.03); }
+}
+
+/* === M3 GLOBAL BUTTON MAGNETIC & PRESS REACTION === */
+@media (prefers-reduced-motion: no-preference) {
+  button:not(:disabled),
+  a[class*="rounded-"] {
+    transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), filter 180ms ease, background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+  }
+  button[data-mag-active="1"]:not(:disabled),
+  a[data-mag-active="1"] {
+    transform: translate3d(var(--mag-x, 0px), var(--mag-y, 0px), 0);
+  }
+  button[data-m3-pressed="1"]:not(:disabled),
+  a[data-m3-pressed="1"],
+  button:active:not(:disabled) {
+    transform: translate3d(var(--mag-x, 0px), var(--mag-y, 0px), 0) scale(0.96);
+  }
+}
+
+@keyframes m3-shake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-6px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(4px); }
+}
+
+.animate-m3-shake {
+  animation: m3-shake 0.36s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes star-activate-glow {
+  0% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 0px rgba(255, 204, 0, 0)); }
+  40% { transform: scale(1.42) rotate(18deg); filter: drop-shadow(0 0 10px rgba(255, 204, 0, 0.95)); }
+  70% { transform: scale(0.92) rotate(-6deg); filter: drop-shadow(0 0 6px rgba(255, 204, 0, 0.7)); }
+  100% { transform: scale(1) rotate(0deg); filter: drop-shadow(0 0 2px rgba(255, 204, 0, 0.4)); }
+}
+
+.animate-star-sparkle {
+  animation: star-activate-glow 0.58s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes rocket-launch-fly {
+  0% { transform: translate3d(0, 0, 0) scale(1); opacity: 1; }
+  100% { transform: translate3d(18px, -24px, 0) scale(1.25); opacity: 0.2; }
+}
+
+.animate-rocket-launch {
+  animation: rocket-launch-fly 0.32s ease-in forwards;
 }

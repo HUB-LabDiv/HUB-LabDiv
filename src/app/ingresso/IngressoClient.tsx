@@ -18,31 +18,50 @@ import { useSearchParams } from 'next/navigation';
 import { BookOpen, GraduationCap, Globe, HelpCircle, ArrowRight, Sparkles, Zap, Compass, Clock, FlaskConical, Bell, Calendar, MapPin, CheckCircle2 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
+import { SegmentedPillSwitch } from '@/components/ui/SegmentedPillSwitch';
 
-const IngressOption = ({ title, icon, description, items, color }: any) => (
-    <div className="glass-card rounded-[40px] border border-white/5 overflow-hidden hover:border-white/20 transition-all duration-500 group bg-[#1E1E1E]">
-        <div className="p-8 space-y-6">
-            <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${color} shadow-lg transition-transform group-hover:scale-110 duration-500`}>
-                {icon}
+const IngressOption = ({ title, icon, description, items, color }: any) => {
+    const [expanded, setExpanded] = useState(false);
+    return (
+        <div className="glass-card rounded-[32px] border border-white/5 overflow-hidden hover:border-white/20 transition-all duration-300 group bg-[#1E1E1E]">
+            <div className="p-8 space-y-6">
+                <div className={`w-14 h-14 rounded-2xl flex items-center justify-center ${color} shadow-lg transition-transform group-hover:scale-105 duration-300`}>
+                    {icon}
+                </div>
+                <div className="space-y-2">
+                    <h3 className="text-2xl font-bukra font-bold text-white uppercase tracking-tight">{title}</h3>
+                    <p className="text-sm text-gray-400 font-open-sans font-medium italic">{description}</p>
+                </div>
+                <ul className="space-y-3 font-open-sans">
+                    {items.map((item: string, i: number) => (
+                        <li key={i} className="flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-gray-400 group-hover:text-white transition-colors">
+                            <ArrowRight className="w-3 h-3 text-brand-blue shrink-0" />
+                            {item}
+                        </li>
+                    ))}
+                </ul>
+                {expanded && (
+                    <div className="p-4 rounded-2xl bg-black/30 border border-white/10 text-xs text-gray-300 space-y-2">
+                        <p className="font-bold text-brand-yellow uppercase tracking-wider text-[10px]">
+                            Orientações & Próximos Passos
+                        </p>
+                        <p>
+                            Consulte os editais oficiais da USP / Pró-Reitoria de Graduação e prepare seu cronograma de provas e documentação acadêmica.
+                        </p>
+                    </div>
+                )}
+                <button
+                    type="button"
+                    onClick={() => setExpanded((prev) => !prev)}
+                    aria-expanded={expanded}
+                    className="w-full py-3.5 bg-white/5 text-white/80 border border-white/10 rounded-2xl text-[10px] font-bukra font-black uppercase tracking-widest hover:bg-white/10 hover:text-white active:scale-[0.98] transition-all cursor-pointer"
+                >
+                    {expanded ? 'Recolher detalhes' : 'Mais detalhes'}
+                </button>
             </div>
-            <div className="space-y-2">
-                <h3 className="text-2xl font-bukra font-bold text-white uppercase tracking-tight">{title}</h3>
-                <p className="text-sm text-gray-400 font-open-sans font-medium italic">{description}</p>
-            </div>
-            <ul className="space-y-3 font-open-sans">
-                {items.map((item: string, i: number) => (
-                    <li key={i} className="flex items-center gap-3 text-[11px] font-black uppercase tracking-widest text-gray-400 group-hover:text-white transition-colors">
-                        <ArrowRight className="w-3 h-3 text-brand-blue shrink-0" />
-                        {item}
-                    </li>
-                ))}
-            </ul>
-            <button className="w-full py-4 bg-white/5 text-white/70 border border-white/10 rounded-2xl text-[10px] font-bukra font-black uppercase tracking-widest hover:bg-white/10 hover:text-white transition-all">
-                Mais detalhes
-            </button>
         </div>
-    </div>
-);
+    );
+};
 
 export default function IngressoClient({ profile }: { profile: any }) {
     const searchParams = useSearchParams();
@@ -78,50 +97,29 @@ export default function IngressoClient({ profile }: { profile: any }) {
                 className="sticky z-40 flex justify-center mb-6 pointer-events-none"
                 style={{ top: 'calc(4.5rem + env(safe-area-inset-top, 0px))' }}
             >
-                <div data-tour="ingresso-subnav" className="flex p-1.5 bg-white/50 dark:bg-background-dark/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
-                    <button
-                        type="button"
-                        onClick={() => setActiveTab('ingresso')}
-                        className={`relative flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-black font-bukra uppercase tracking-widest transition-all ${
-                            activeTab === 'ingresso'
-                                ? 'text-gray-950'
-                                : 'text-gray-500 hover:text-white'
-                        }`}
-                    >
-                        {activeTab === 'ingresso' && (
-                            <motion.div
-                                layoutId="activeTabIngresso"
-                                className="absolute inset-0 bg-brand-yellow rounded-xl shadow-lg shadow-brand-yellow/20"
-                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                            />
-                        )}
-                        <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
-                            <GraduationCap className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                            <span className="truncate font-bukra">Como Ingressar</span>
-                        </span>
-                    </button>
-                    <button
-                        type="button"
-                        onClick={() => setActiveTab('visitar')}
-                        className={`relative flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-black font-bukra uppercase tracking-widest transition-all ${
-                            activeTab === 'visitar'
-                                ? 'text-white'
-                                : 'text-gray-500 hover:text-white'
-                        }`}
-                    >
-                        {activeTab === 'visitar' && (
-                            <motion.div
-                                layoutId="activeTabIngresso"
-                                className="absolute inset-0 bg-[#0F4780] rounded-xl shadow-lg shadow-[#0F4780]/30"
-                                transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                            />
-                        )}
-                        <span className="relative z-10 flex items-center gap-1.5 sm:gap-2">
-                            <Compass className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
-                            <span className="truncate font-bukra">Visitas &amp; Extensão</span>
-                        </span>
-                    </button>
-                </div>
+                <SegmentedPillSwitch
+                    dataTour="ingresso-subnav"
+                    layoutId="activeTabIngresso"
+                    activeId={activeTab}
+                    onChange={(tab) => setActiveTab(tab)}
+                    options={[
+                        {
+                            id: 'ingresso',
+                            label: 'Como Ingressar',
+                            icon: <GraduationCap className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />,
+                            activeBgClass: 'bg-[#FFCC00] shadow-lg shadow-[#FFCC00]/25',
+                            activeTextClass: 'text-slate-950',
+                            hoverTextClass: 'hover:text-[#FFCC00]',
+                        },
+                        {
+                            id: 'visitar',
+                            label: 'Visitas & Extensão',
+                            icon: <Compass className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />,
+                            activeBgClass: 'bg-[#0F4780] shadow-lg shadow-[#0F4780]/30',
+                            hoverTextClass: 'hover:text-[#1F9FCF]',
+                        },
+                    ]}
+                />
             </div>
 
             {/* ABA 1: COMO INGRESSAR */}

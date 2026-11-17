@@ -22,7 +22,8 @@ export type InitiativeVisualTheme =
   | 'default'
   | 'labdiv'
   | 'show-da-fisica'
-  | 'hackerspace';
+  | 'hackerspace'
+  | 'profis';
 
 export interface InitiativeContact {
   email?: string;

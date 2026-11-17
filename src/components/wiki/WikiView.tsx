@@ -23,15 +23,11 @@ import {
     Telescope,
     Brain,
     ChevronRight,
-    AlertCircle,
-    ArrowLeft,
     HeartHandshake,
     Network,
     Microscope,
     Compass, 
     Landmark,
-    MessageSquare,
-    BookOpen,
     Search
 } from 'lucide-react';
 import { SacSection } from '@/components/sac/SacSection';
@@ -370,19 +366,6 @@ const acessoRapidoCell = {
     cta: 'Conferir o IFUSP 101'
 };
 
-const ferramentasAcademicasCell = {
-    id: 'ferramentas-academicas',
-    title: 'Aceleradores de Pesquisa',
-    subtitle: 'Sci-Hub, Google Scholar e GEM',
-    icon: <BookOpen className="w-8 h-8" />,
-    color: 'brand-blue',
-    href: '/wiki/ferramentas-academicas',
-    description: 'Acesse rapidamente as principais plataformas de busca de artigos, dados abertos e a inteligência GEM do HUB.',
-    cta: 'Acessar Ferramentas'
-};
-
-
-
 const renderIFUSP = (text: string) => {
     if (!text) return text;
     return text.replace(/IF-USP|IF USP/gi, 'IFUSP');
@@ -417,7 +400,7 @@ export function WikiView() {
                 {/* --- Wiki Matrix (Grid de Elite 3x3) --- */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
                     <AnimatePresence mode="popLayout">
-                        {wikiCells.map((cell: any, idx) => {
+                        {wikiCells.map((cell, idx) => {
                             const cStyle = CELL_COLOR_MAP[cell.color] || DEFAULT_COLOR_STYLE;
                             return (
                                 <motion.div
@@ -525,7 +508,7 @@ export function WikiView() {
                     >
                         <a
                             href={acessoRapidoCell.href}
-                            onClick={(e) => {
+                            onClick={() => {
                                 // Fallback hard redirect
                                 window.location.href = acessoRapidoCell.href;
                             }}
@@ -568,7 +551,7 @@ export function WikiView() {
                         className="relative flex flex-col md:flex-row items-center justify-between w-full p-8 md:p-12 rounded-[32px] bg-white dark:bg-card-dark backdrop-blur-2xl border border-gray-200 dark:border-white/20 hover:border-brand-red transition-all overflow-hidden shadow-[0_2px_15px_-3px_rgba(0,0,0,0.07)] dark:shadow-none"
                     >
                         <div className="absolute top-0 right-0 w-64 h-64 bg-brand-blue/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/4"></div>
-                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4"></div>
+                        <div className="absolute bottom-0 left-0 w-64 h-64 bg-brand-red/5 rounded-full blur-[100px] translate-y-1/2 -translate-x-1/4"></div>
                         <div className="flex flex-col md:flex-row items-center gap-8 relative z-10">
                             <div className="size-20 bg-brand-red/10 text-brand-red rounded-[28px] flex items-center justify-center ring-1 ring-brand-red/20 group-hover:scale-110 group-hover:rotate-12 transition-all duration-700 shadow-2xl shadow-brand-red/20">
                                 {quizCell.icon}

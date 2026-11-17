@@ -40,7 +40,7 @@ const CATEGORY_STYLES: Record<string, { label: string; badgeClass: string; icon:
     },
     'Ensino': {
         label: 'Ensino',
-        badgeClass: 'bg-purple-500/15 text-purple-600 dark:text-purple-400 border-purple-500/30',
+        badgeClass: 'bg-[#1F9FCF]/15 text-[#0F4780] dark:text-[#1F9FCF] border-[#1F9FCF]/30',
         icon: <Newspaper className="w-3.5 h-3.5" />
     },
     'Institucional': {

@@ -83,9 +83,9 @@ export default function QuizHubPage() {
                             {allCells.map((cell, idx) => {
                                 const isLocked = LOCKED_CELLS.includes(cell.id);
                                 const isInstituto = cell.id === 'instituto';
-                                const colorClass = isInstituto ? `text-[#17739A]` : `text-${cell.color}`;
-                                const bgClass = isInstituto ? `bg-[#17739A]/10 border-[#17739A]/20` : `bg-${cell.color}/10 border-${cell.color}/20`;
-                                const hoverBorderClass = isInstituto ? `hover:border-[#17739A]/50` : `hover:border-${cell.color}/50`;
+                                const colorClass = isInstituto ? `text-[#1F9FCF]` : `text-${cell.color}`;
+                                const bgClass = isInstituto ? `bg-[#1F9FCF]/10 border-[#1F9FCF]/20` : `bg-${cell.color}/10 border-${cell.color}/20`;
+                                const hoverBorderClass = isInstituto ? `hover:border-[#1F9FCF]/50` : `hover:border-${cell.color}/50`;
 
                                 return (
                                     <motion.div

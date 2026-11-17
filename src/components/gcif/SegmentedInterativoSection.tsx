@@ -15,6 +15,8 @@
 
 import React, { useState, useMemo, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getSplashMotionProps } from '@/components/ui/SplashExpand';
+import { ScrollJellyCard } from '@/components/ui/ScrollJellyCard';
 import {
     Compass,
     GraduationCap,
@@ -34,7 +36,6 @@ import {
     Search,
     Globe2,
     Layers,
-    Filter,
     ChevronDown,
     ChevronLeft,
     ChevronRight
@@ -237,7 +238,7 @@ export function SegmentedInterativoSection({
                 id: item.id,
                 titulo: item.titulo,
                 descricao: item.descricao,
-                tipo: (item.tipo as any) || 'bolsa',
+                tipo: (item.tipo as OportunidadeCurada['tipo']) || 'bolsa',
                 categoria: item.tipo === 'bolsa' ? 'Bolsas & Auxílios' : item.tipo === 'vaga' ? 'Pesquisa & IC' : 'Eventos & Palestras',
                 data: item.data || undefined,
                 local: item.local || undefined,
@@ -254,8 +255,8 @@ export function SegmentedInterativoSection({
         return allGeneralOportunidades.filter(item => {
             const matchesCategory = generalCategory === 'Todas' || item.categoria === generalCategory;
             const q = generalSearch.toLowerCase().trim();
-            const matchesSearch = !q || 
-                item.titulo.toLowerCase().includes(q) || 
+            const matchesSearch = !q ||
+                item.titulo.toLowerCase().includes(q) ||
                 item.descricao.toLowerCase().includes(q) ||
                 (item.orgao_responsavel && item.orgao_responsavel.toLowerCase().includes(q));
             return matchesCategory && matchesSearch;
@@ -385,7 +386,7 @@ export function SegmentedInterativoSection({
 
                 {/* Prévia quando recolhido (permite passar direto sem poluir o scroll) */}
                 {!isOportunidadesExpanded && (
-                    <div 
+                    <div
                         onClick={() => setIsOportunidadesExpanded(true)}
                         className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 rounded-2xl bg-white/40 dark:bg-white/5 border border-dashed border-gray-200 dark:border-white/10 hover:border-brand-red/40 transition-all cursor-pointer gap-2 group"
                     >
@@ -405,10 +406,7 @@ export function SegmentedInterativoSection({
                 <AnimatePresence initial={false}>
                     {isOportunidadesExpanded && (
                         <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            exit={{ opacity: 0, height: 0 }}
-                            transition={{ duration: 0.35, ease: 'easeInOut' }}
+                            {...getSplashMotionProps('top left', '24px')}
                             className="space-y-8 overflow-hidden"
                         >
                             {/* Barra de Filtros e Busca da Subseção Para Todos */}
@@ -419,11 +417,10 @@ export function SegmentedInterativoSection({
                                         <button
                                             key={cat}
                                             onClick={() => setGeneralCategory(cat)}
-                                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer font-bukra ${
-                                                generalCategory === cat
-                                                    ? 'bg-brand-red text-white shadow-md'
-                                                    : 'bg-white/60 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:border-brand-red/30'
-                                            }`}
+                                            className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer font-bukra ${generalCategory === cat
+                                                ? 'bg-brand-red text-white shadow-md'
+                                                : 'bg-white/60 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white hover:border-brand-red/30'
+                                                }`}
                                         >
                                             {cat}
                                         </button>
@@ -453,64 +450,71 @@ export function SegmentedInterativoSection({
                                     ref={oportunidadesScrollRef}
                                     className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-6 pb-6 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0"
                                 >
-                                    {filteredGeneralOportunidades.map(op => (
-                                        <div
+                                    {filteredGeneralOportunidades.map((op, idx) => (
+                                        <ScrollJellyCard
                                             key={op.id}
-                                            className="group snap-start shrink-0 w-[290px] sm:w-[340px] md:w-[360px] bg-white dark:bg-[#1E1E1E] rounded-3xl p-6 sm:p-7 border border-gray-200 dark:border-white/10 shadow-sm hover:shadow-xl hover:border-brand-red/40 transition-all flex flex-col justify-between"
+                                            axis="horizontal"
+                                            containerRef={oportunidadesScrollRef}
+                                            staggerIndex={idx}
+                                            className="snap-start shrink-0 flex"
                                         >
-                                            <div>
-                                                <div className="flex items-center justify-between gap-3 mb-4">
-                                                    <span className="px-3 py-1 bg-brand-red/10 text-brand-red border border-brand-red/20 rounded-full text-[10px] font-black uppercase tracking-wider font-bukra">
-                                                        {op.remuneracao || op.categoria}
-                                                    </span>
-                                                    <span className="text-[10px] font-mono text-gray-400 uppercase bg-gray-100 dark:bg-white/5 px-2.5 py-0.5 rounded-full font-bold">
-                                                        {op.tipo}
-                                                    </span>
+                                            <div
+                                                className="group w-[290px] sm:w-[340px] md:w-[360px] bg-white dark:bg-[#1E1E1E] rounded-3xl p-6 sm:p-7 border border-gray-200 dark:border-white/10 shadow-sm hover:shadow-xl hover:border-brand-red/40 transition-all flex flex-col justify-between"
+                                            >
+                                                <div>
+                                                    <div className="flex items-center justify-between gap-3 mb-4">
+                                                        <span className="px-3 py-1 bg-brand-red/10 text-brand-red border border-brand-red/20 rounded-full text-[10px] font-black uppercase tracking-wider font-bukra">
+                                                            {op.remuneracao || op.categoria}
+                                                        </span>
+                                                        <span className="text-[10px] font-mono text-gray-400 uppercase bg-gray-100 dark:bg-white/5 px-2.5 py-0.5 rounded-full font-bold">
+                                                            {op.tipo}
+                                                        </span>
+                                                    </div>
+
+                                                    <h3 className="text-base sm:text-lg font-black text-gray-900 dark:text-white font-bukra group-hover:text-brand-red transition-colors mb-2 leading-snug">
+                                                        {op.titulo}
+                                                    </h3>
+                                                    <p className="text-xs text-gray-600 dark:text-gray-400 font-open-sans leading-relaxed line-clamp-3 mb-4">
+                                                        {op.descricao}
+                                                    </p>
+
+                                                    <div className="space-y-1.5 pt-3 border-t border-gray-100 dark:border-white/5 text-[11px] font-open-sans text-gray-500 dark:text-gray-400">
+                                                        {op.prazo && (
+                                                            <div className="flex items-center gap-2">
+                                                                <Calendar className="w-3.5 h-3.5 text-brand-yellow shrink-0" />
+                                                                <span className="truncate">{op.prazo}</span>
+                                                            </div>
+                                                        )}
+                                                        {op.local && (
+                                                            <div className="flex items-center gap-2">
+                                                                <MapPin className="w-3.5 h-3.5 text-brand-red shrink-0" />
+                                                                <span className="truncate">{op.local}</span>
+                                                            </div>
+                                                        )}
+                                                        {op.orgao_responsavel && (
+                                                            <div className="flex items-center gap-2 font-mono text-[10px] text-gray-400">
+                                                                <Building2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
+                                                                <span className="truncate">{op.orgao_responsavel}</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
                                                 </div>
 
-                                                <h3 className="text-base sm:text-lg font-black text-gray-900 dark:text-white font-bukra group-hover:text-brand-red transition-colors mb-2 leading-snug">
-                                                    {op.titulo}
-                                                </h3>
-                                                <p className="text-xs text-gray-600 dark:text-gray-400 font-open-sans leading-relaxed line-clamp-3 mb-4">
-                                                    {op.descricao}
-                                                </p>
-
-                                                <div className="space-y-1.5 pt-3 border-t border-gray-100 dark:border-white/5 text-[11px] font-open-sans text-gray-500 dark:text-gray-400">
-                                                    {op.prazo && (
-                                                        <div className="flex items-center gap-2">
-                                                            <Calendar className="w-3.5 h-3.5 text-brand-yellow shrink-0" />
-                                                            <span className="truncate">{op.prazo}</span>
-                                                        </div>
-                                                    )}
-                                                    {op.local && (
-                                                        <div className="flex items-center gap-2">
-                                                            <MapPin className="w-3.5 h-3.5 text-brand-red shrink-0" />
-                                                            <span className="truncate">{op.local}</span>
-                                                        </div>
-                                                    )}
-                                                    {op.orgao_responsavel && (
-                                                        <div className="flex items-center gap-2 font-mono text-[10px] text-gray-400">
-                                                            <Building2 className="w-3.5 h-3.5 text-blue-400 shrink-0" />
-                                                            <span className="truncate">{op.orgao_responsavel}</span>
-                                                        </div>
-                                                    )}
-                                                </div>
+                                                {op.link && (
+                                                    <div className="pt-4 mt-4 border-t border-gray-100 dark:border-white/5">
+                                                        <a
+                                                            href={op.link}
+                                                            target={op.link.startsWith('/') ? '_self' : '_blank'}
+                                                            rel="noopener noreferrer"
+                                                            className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-brand-red hover:gap-3 transition-all font-bukra"
+                                                        >
+                                                            <span>Acessar Edital / Inscrição</span>
+                                                            <ArrowUpRight className="w-4 h-4" />
+                                                        </a>
+                                                    </div>
+                                                )}
                                             </div>
-
-                                            {op.link && (
-                                                <div className="pt-4 mt-4 border-t border-gray-100 dark:border-white/5">
-                                                    <a
-                                                        href={op.link}
-                                                        target={op.link.startsWith('/') ? '_self' : '_blank'}
-                                                        rel="noopener noreferrer"
-                                                        className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-brand-red hover:gap-3 transition-all font-bukra"
-                                                    >
-                                                        <span>Acessar Edital / Inscrição</span>
-                                                        <ArrowUpRight className="w-4 h-4" />
-                                                    </a>
-                                                </div>
-                                            )}
-                                        </div>
+                                        </ScrollJellyCard>
                                     ))}
                                 </div>
                             )}
@@ -525,7 +529,7 @@ export function SegmentedInterativoSection({
             <div className="space-y-8 p-6 sm:p-10 rounded-[36px] bg-gradient-to-b from-white/70 via-white/40 to-transparent dark:from-[#1E1E1E]/70 dark:via-[#161616]/40 dark:to-transparent border border-gray-200 dark:border-white/10 shadow-lg">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-gray-200 dark:border-white/10">
                     <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0F4780]/15 border border-[#0F4780]/30 text-[#0F4780] dark:text-blue-300 text-xs font-black uppercase tracking-wider mb-2">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0F4780]/15 border border-[#0F4780]/30 text-[#0F4780] dark:text-[#1F9FCF] text-xs font-black uppercase tracking-wider mb-2">
                             <Layers className="w-3.5 h-3.5" />
                             Subseção 02 • Recursos Segmentados
                         </div>
@@ -545,33 +549,30 @@ export function SegmentedInterativoSection({
                     <div className="inline-flex p-1.5 rounded-2xl bg-gray-100 dark:bg-black/30 border border-gray-200 dark:border-white/10 shadow-inner">
                         <button
                             onClick={() => onPersonaChange('curioso')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bukra text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                                activePersona === 'curioso'
-                                    ? 'bg-[#FFCC00] text-gray-950 shadow-md'
-                                    : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
-                            }`}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bukra text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${activePersona === 'curioso'
+                                ? 'bg-[#FFCC00] text-gray-950 shadow-md'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
+                                }`}
                         >
                             <Compass className="w-4 h-4" />
                             <span>Curiosos</span>
                         </button>
                         <button
                             onClick={() => onPersonaChange('aluno')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bukra text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                                activePersona === 'aluno'
-                                    ? 'bg-[#0F4780] text-white shadow-md'
-                                    : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
-                            }`}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bukra text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${activePersona === 'aluno'
+                                ? 'bg-[#0F4780] text-white shadow-md'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
+                                }`}
                         >
                             <GraduationCap className="w-4 h-4" />
                             <span>Alunos</span>
                         </button>
                         <button
                             onClick={() => onPersonaChange('professor')}
-                            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bukra text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
-                                activePersona === 'professor'
-                                    ? 'bg-[#F14343] text-white shadow-md'
-                                    : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
-                            }`}
+                            className={`flex items-center gap-2 px-4 py-2 rounded-xl font-bukra text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${activePersona === 'professor'
+                                ? 'bg-[#F14343] text-white shadow-md'
+                                : 'text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
+                                }`}
                         >
                             <Briefcase className="w-4 h-4" />
                             <span>Docentes</span>
@@ -586,11 +587,10 @@ export function SegmentedInterativoSection({
                             <button
                                 key={cat}
                                 onClick={() => setPersonaCategory(cat)}
-                                className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${
-                                    personaCategory === cat
-                                        ? 'bg-[#0F4780] text-white shadow-md'
-                                        : 'bg-white/60 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
-                                }`}
+                                className={`px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider whitespace-nowrap transition-all cursor-pointer ${personaCategory === cat
+                                    ? 'bg-[#0F4780] text-white shadow-md'
+                                    : 'bg-white/60 dark:bg-white/5 border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:text-black dark:hover:text-white'
+                                    }`}
                             >
                                 {cat}
                             </button>
@@ -674,7 +674,7 @@ export function SegmentedInterativoSection({
                                         >
                                             <div>
                                                 <div className="flex items-center justify-between gap-4 mb-4">
-                                                    <span className="px-3 py-1 bg-[#0F4780]/15 text-[#0F4780] dark:text-blue-300 border border-[#0F4780]/30 rounded-full text-[10px] font-black uppercase tracking-wider">
+                                                    <span className="px-3 py-1 bg-[#0F4780]/15 text-[#0F4780] dark:text-[#1F9FCF] border border-[#0F4780]/30 rounded-full text-[10px] font-black uppercase tracking-wider">
                                                         {card.badge}
                                                     </span>
                                                     <div className="w-10 h-10 rounded-2xl bg-[#0F4780]/10 flex items-center justify-center text-[#0F4780] dark:text-blue-400 group-hover:scale-110 transition-transform">
@@ -693,7 +693,7 @@ export function SegmentedInterativoSection({
                                                     href={card.link}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#0F4780] dark:text-blue-300 hover:gap-3 transition-all"
+                                                    className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-wider text-[#0F4780] dark:text-[#1F9FCF] hover:gap-3 transition-all"
                                                 >
                                                     <span>Acessar Portal &amp; Editais</span>
                                                     <ExternalLink className="w-4 h-4" />
@@ -762,7 +762,7 @@ export function SegmentedInterativoSection({
                                 {filteredFomento.length > 0 && (
                                     <div>
                                         <div className="flex items-center gap-3 mb-4">
-                                            <div className="p-2 bg-blue-500/10 rounded-xl text-blue-500">
+                                            <div className="p-2 bg-[#1F9FCF]/10 rounded-xl text-[#1F9FCF]">
                                                 <Briefcase className="w-5 h-5" />
                                             </div>
                                             <div>
@@ -782,10 +782,10 @@ export function SegmentedInterativoSection({
                                                     href={edital.link}
                                                     target="_blank"
                                                     rel="noopener noreferrer"
-                                                    className="bg-white dark:bg-[#1E1E1E] rounded-3xl p-6 border border-gray-200 dark:border-white/10 hover:border-blue-500/40 hover:shadow-md transition-all flex items-center justify-between"
+                                                    className="bg-white dark:bg-[#1E1E1E] rounded-3xl p-6 border border-gray-200 dark:border-white/10 hover:border-[#1F9FCF]/40 hover:shadow-md transition-all flex items-center justify-between"
                                                 >
                                                     <div>
-                                                        <span className="text-[10px] font-black uppercase text-blue-500 tracking-wider">
+                                                        <span className="text-[10px] font-black uppercase text-[#0F4780] dark:text-[#1F9FCF] tracking-wider">
                                                             {edital.category}
                                                         </span>
                                                         <h4 className="text-base font-black text-gray-900 dark:text-white font-bukra mt-1">
@@ -795,7 +795,7 @@ export function SegmentedInterativoSection({
                                                             {edital.description}
                                                         </p>
                                                     </div>
-                                                    <ExternalLink className="w-5 h-5 text-gray-400 group-hover:text-blue-500 transition-colors shrink-0 ml-4" />
+                                                    <ExternalLink className="w-5 h-5 text-gray-400 group-hover:text-[#1F9FCF] transition-colors shrink-0 ml-4" />
                                                 </a>
                                             ))}
                                         </div>

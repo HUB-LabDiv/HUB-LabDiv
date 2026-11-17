@@ -246,21 +246,29 @@ export default function ConfigPage() {
                                 <div className="space-y-1 max-w-lg">
                                     <div className="flex items-center gap-2">
                                         <span className="text-lg">🧭</span>
-                                        <span className="text-sm font-bold text-white uppercase tracking-wide font-bukra">Aviso de Como Usar o HUB</span>
+                                        <span className="text-sm font-bold text-white uppercase tracking-wide font-bukra">Apresentação e Guia do HUB (?)</span>
                                     </div>
                                     <p className="text-xs text-gray-400 leading-relaxed font-sans">
-                                        Exibe a barra no topo da tela com atalho para o tutorial interativo pelos 3 eixos e menus da plataforma.
+                                        Os tutoriais interativos (Global, Eixo e Sub-aba) agora ficam no botão <strong className="text-white">?</strong> da barra superior. Você também pode iniciar por aqui.
                                     </p>
                                 </div>
 
-                                <div className="flex items-center gap-3 self-end sm:self-center">
+                                <div className="flex items-center gap-2.5 self-end sm:self-center">
+                                    <button
+                                        type="button"
+                                        onClick={() => window.dispatchEvent(new CustomEvent('hub:open-welcome'))}
+                                        className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bukra text-[10px] font-black uppercase tracking-wider border border-white/10 transition-all active:scale-95 whitespace-nowrap cursor-pointer"
+                                        title="Reabrir apresentação inicial do HUB"
+                                    >
+                                        Apresentação
+                                    </button>
                                     <button
                                         type="button"
                                         onClick={() => runOnboardingTour()}
-                                        className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white font-bukra text-[10px] font-black uppercase tracking-wider border border-white/10 transition-all active:scale-95 whitespace-nowrap"
+                                        className="px-3 py-1.5 rounded-xl bg-[#0F4780] hover:bg-[#1F9FCF] text-white font-bukra text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 whitespace-nowrap cursor-pointer"
                                         title="Iniciar o tutorial interativo agora"
                                     >
-                                        Iniciar Agora
+                                        Iniciar Tour
                                     </button>
                                     <button
                                         type="button"
@@ -297,7 +305,7 @@ export default function ConfigPage() {
                                             onClick={isSubscribed ? unsubscribe : subscribe}
                                             className={`flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-bukra text-[10px] font-black uppercase tracking-wider transition-all active:scale-95 shadow-md ${
                                                 isSubscribed
-                                                    ? 'bg-red-500/10 text-red-400 border border-red-500/20 hover:bg-red-500/20'
+                                                    ? 'bg-brand-red/10 text-brand-red border border-brand-red/20 hover:bg-brand-red/20'
                                                     : 'bg-brand-blue text-white shadow-brand-blue/20 hover:bg-brand-blue-hover border border-white/10'
                                             }`}
                                         >
@@ -780,7 +788,7 @@ export default function ConfigPage() {
                         </section>
 
                         {/* SEÇÃO 2: GERENCIAMENTO DE DADOS E CONTA */}
-                        <section data-tour="config-danger" className="bg-red-500/5 border border-red-500/10 rounded-2xl overflow-hidden p-6 md:p-8 space-y-6">
+                        <section data-tour="config-danger" className="bg-brand-red/5 border border-brand-red/15 rounded-2xl overflow-hidden p-6 md:p-8 space-y-6">
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2 text-brand-red">
                                     <Trash2 size={20} />
@@ -803,7 +811,7 @@ export default function ConfigPage() {
                                 <button
                                     onClick={() => setIsDeleting(true)}
                                     disabled={!user}
-                                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-red-600/20 border border-red-500/30 hover:bg-red-600 text-red-400 hover:text-white font-bold rounded-xl transition-all active:scale-95 text-xs uppercase tracking-widest disabled:opacity-50 font-bukra"
+                                    className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 bg-brand-red/15 border border-brand-red/30 hover:bg-brand-red text-brand-red hover:text-white font-bold rounded-xl transition-all active:scale-95 text-xs uppercase tracking-widest disabled:opacity-50 font-bukra"
                                 >
                                     <Trash2 size={16} />
                                     Excluir Minha Conta

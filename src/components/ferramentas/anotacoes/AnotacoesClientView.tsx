@@ -15,6 +15,7 @@ import React, { useState, useEffect, useTransition, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ScrollJellyCard } from '@/components/ui/ScrollJellyCard';
 import {
     BookOpen,
     RefreshCw,
@@ -218,7 +219,7 @@ export function AnotacoesClientView({
             <section className="space-y-4">
                 <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2.5">
-                        <GraduationCap className="w-5 h-5 text-amber-600 dark:text-brand-yellow" />
+                        <GraduationCap className="w-5 h-5 text-[#1E1E1E] dark:text-brand-yellow" />
                         <h2 className="text-lg sm:text-xl font-black font-bukra uppercase tracking-wider text-gray-900 dark:text-white">
                             Minhas Disciplinas em Curso
                         </h2>
@@ -230,15 +231,15 @@ export function AnotacoesClientView({
 
                 {enrolledSubjects.length > 0 ? (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3.5">
-                        {enrolledSubjects.map(sub => {
+                        {enrolledSubjects.map((sub, idx) => {
                             const isSelected = selectedSubject?.code === sub.code;
                             return (
+                                <ScrollJellyCard key={sub.code} staggerIndex={idx}>
                                 <motion.div
-                                    key={sub.code}
                                     whileHover={{ scale: 1.015 }}
                                     whileTap={{ scale: 0.985 }}
                                     onClick={() => setSelectedSubject(sub)}
-                                    className={`relative p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+                                    className={`relative h-full p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-3 ${
                                         isSelected
                                             ? 'bg-brand-blue/15 border-brand-blue shadow-lg shadow-brand-blue/15 ring-2 ring-brand-blue/30'
                                             : 'bg-white dark:bg-[#1E1E1E]/90 hover:bg-gray-50 dark:hover:bg-[#252525] border-gray-200 dark:border-white/10 hover:border-brand-blue/40 shadow-sm'
@@ -246,14 +247,14 @@ export function AnotacoesClientView({
                                 >
                                     <div className="space-y-1.5">
                                         <div className="flex items-center justify-between gap-2">
-                                            <span className="px-2.5 py-0.5 rounded-lg bg-yellow-400/15 text-amber-700 dark:text-brand-yellow dark:bg-white/10 font-bukra font-black text-[10px] tracking-wider uppercase">
+                                            <span className="px-2.5 py-0.5 rounded-lg bg-yellow-400/15 text-[#1E1E1E] dark:text-brand-yellow dark:bg-white/10 font-bukra font-black text-[10px] tracking-wider uppercase">
                                                 {sub.code}
                                             </span>
                                             <span className="text-[10px] font-bukra font-bold text-gray-500 dark:text-gray-400 uppercase">
                                                 {sub.institute || 'IFUSP'}
                                             </span>
                                         </div>
-                                        <h3 className="text-sm font-bold font-sans text-gray-900 dark:text-white line-clamp-2 leading-snug">
+                                        <h3 className="text-sm font-bold font-bukra text-gray-900 dark:text-white line-clamp-2 leading-snug">
                                             {sub.title}
                                         </h3>
                                     </div>
@@ -263,11 +264,12 @@ export function AnotacoesClientView({
                                             <BookMarked className="w-3.5 h-3.5 text-brand-blue" />
                                             <strong className="text-gray-900 dark:text-white">{sub.notesCount}</strong> {sub.notesCount === 1 ? 'anotação' : 'anotações'}
                                         </span>
-                                        <span className={`text-[10px] font-bukra font-bold uppercase tracking-wider flex items-center gap-1 ${isSelected ? 'text-amber-600 dark:text-brand-yellow font-black' : 'text-gray-500'}`}>
+                                        <span className={`text-[10px] font-bukra font-bold uppercase tracking-wider flex items-center gap-1 ${isSelected ? 'text-[#1E1E1E] dark:text-brand-yellow font-black' : 'text-gray-500'}`}>
                                             {isSelected ? 'Ativa' : 'Abrir'} <ChevronRight className="w-3 h-3" />
                                         </span>
                                     </div>
                                 </motion.div>
+                                </ScrollJellyCard>
                             );
                         })}
                     </div>
@@ -298,7 +300,7 @@ export function AnotacoesClientView({
                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-6 border-b border-gray-200 dark:border-white/10">
                         <div className="space-y-1.5">
                             <div className="flex items-center gap-2">
-                                <span className="px-3 py-1 rounded-xl bg-yellow-400/15 text-amber-700 dark:text-brand-yellow text-xs font-black font-bukra uppercase tracking-wider border border-brand-yellow/30">
+                                <span className="px-3 py-1 rounded-xl bg-yellow-400/15 text-[#1E1E1E] dark:text-brand-yellow text-xs font-black font-bukra uppercase tracking-wider border border-brand-yellow/30">
                                     {selectedSubject.code}
                                 </span>
                                 <span className="text-xs text-gray-500 dark:text-gray-400 font-bukra font-bold uppercase">
@@ -386,15 +388,15 @@ export function AnotacoesClientView({
                         </div>
                     ) : subjectNotes.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pt-2">
-                            {subjectNotes.map(({ post, topicIndex }) => {
+                            {subjectNotes.map(({ post, topicIndex }, idx) => {
                                 const urls = parseMediaUrl(post.mediaUrl);
                                 const previewUrl = urls[0] ? getOptimizedUrl(urls[0], 400, 70, post.category, post.mediaType) : null;
 
                                 return (
+                                    <ScrollJellyCard key={post.id} staggerIndex={idx}>
                                     <motion.article
-                                        key={post.id}
                                         whileHover={{ y: -3 }}
-                                        className="group rounded-2xl bg-gray-50/90 dark:bg-[#171717] border border-gray-200 dark:border-white/10 hover:border-brand-blue/50 overflow-hidden flex flex-col justify-between transition-all shadow-sm hover:shadow-md"
+                                        className="group h-full rounded-2xl bg-gray-50/90 dark:bg-[#171717] border border-gray-200 dark:border-white/10 hover:border-brand-blue/50 overflow-hidden flex flex-col justify-between transition-all shadow-sm hover:shadow-md"
                                     >
                                         <div className="p-4 space-y-3">
                                             {/* Top info */}
@@ -438,13 +440,14 @@ export function AnotacoesClientView({
 
                                             <Link
                                                 href={`/arquivo/${post.id}`}
-                                                className="inline-flex items-center gap-1 text-[11px] font-bukra font-bold text-amber-700 dark:text-brand-yellow hover:underline uppercase tracking-wider"
+                                                className="inline-flex items-center gap-1 text-[11px] font-bukra font-bold text-[#1E1E1E] dark:text-brand-yellow hover:underline uppercase tracking-wider"
                                             >
                                                 <span>Acessar</span>
                                                 <ExternalLink className="w-3 h-3" />
                                             </Link>
                                         </div>
                                     </motion.article>
+                                    </ScrollJellyCard>
                                 );
                             })}
                         </div>
@@ -516,17 +519,17 @@ export function AnotacoesClientView({
 
                 {/* Grid do Catálogo */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                    {filteredCatalog.map(item => {
+                    {filteredCatalog.map((item, idx) => {
                         const isSelected = selectedSubject?.code === item.code;
                         return (
+                            <ScrollJellyCard key={item.id} staggerIndex={idx}>
                             <motion.div
-                                key={item.id}
                                 whileHover={{ scale: 1.01 }}
                                 onClick={() => {
                                     setSelectedSubject(item);
                                     window.scrollTo({ top: 400, behavior: 'smooth' });
                                 }}
-                                className={`p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-3 ${
+                                className={`h-full p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-3 ${
                                     isSelected
                                         ? 'bg-brand-blue/15 border-brand-blue'
                                         : 'bg-white dark:bg-[#1E1E1E] hover:bg-gray-50 dark:hover:bg-[#252525] border-gray-200 dark:border-white/10 shadow-sm'
@@ -534,14 +537,14 @@ export function AnotacoesClientView({
                             >
                                 <div className="space-y-1">
                                     <div className="flex items-center justify-between">
-                                        <span className="px-2 py-0.5 rounded-lg bg-yellow-400/15 text-amber-700 dark:text-brand-yellow dark:bg-white/10 font-bukra font-black text-[10px] tracking-wider uppercase">
+                                        <span className="px-2 py-0.5 rounded-lg bg-yellow-400/15 text-[#1E1E1E] dark:text-brand-yellow dark:bg-white/10 font-bukra font-black text-[10px] tracking-wider uppercase">
                                             {item.code}
                                         </span>
                                         <span className="text-[10px] font-bukra font-bold text-gray-500 dark:text-gray-400 uppercase">
                                             {item.institute || 'IFUSP'}
                                         </span>
                                     </div>
-                                    <h4 className="text-xs font-bold font-sans text-gray-900 dark:text-white line-clamp-2">
+                                    <h4 className="text-xs font-bold font-bukra text-gray-900 dark:text-white line-clamp-2">
                                         {item.title}
                                     </h4>
                                 </div>
@@ -550,11 +553,12 @@ export function AnotacoesClientView({
                                     <span>
                                         <strong className="text-gray-900 dark:text-white">{item.notesCount}</strong> {item.notesCount === 1 ? 'material' : 'materiais'}
                                     </span>
-                                    <span className="text-amber-700 dark:text-brand-yellow font-bukra font-bold uppercase">
+                                    <span className="text-[#1E1E1E] dark:text-brand-yellow font-bukra font-bold uppercase">
                                         Ver Acervo →
                                     </span>
                                 </div>
                             </motion.div>
+                            </ScrollJellyCard>
                         );
                     })}
                 </div>

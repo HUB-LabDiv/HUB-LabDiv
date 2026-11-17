@@ -49,8 +49,6 @@ export function ContentReportModal() {
         }
     }, [isContentReportModalOpen]);
 
-    if (!isContentReportModalOpen) return null;
-
     const reportMutation = useMutation({
         mutationFn: async (formData: FormData) => {
             const res = await submitContentReport(formData);
@@ -69,6 +67,8 @@ export function ContentReportModal() {
             }
         }
     });
+
+    if (!isContentReportModalOpen) return null;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

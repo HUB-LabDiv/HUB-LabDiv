@@ -119,15 +119,15 @@ export async function sendAdminNotification(data: NotificationData) {
             // details contém o tipo real: 'bug' | 'sugestao' | 'outro'
             const reportTypeLabel = data.details === 'sugestao' ? 'Sugestão' : data.details === 'outro' ? 'Outro' : 'Falha (Bug)';
             const reportBorderColor = data.details === 'sugestao' ? '#FFCC00' : data.details === 'outro' ? '#0F4780' : '#F14343';
-            const reportBgColor = data.details === 'sugestao' ? '#FFFBEB' : data.details === 'outro' ? '#EFF6FF' : '#FFF8F8';
-            const reportLabelColor = data.details === 'sugestao' ? '#92400E' : data.details === 'outro' ? '#1E3A5F' : '#991B1B';
+            const reportBgColor = '#F8FAFC';
+            const reportLabelColor = data.details === 'sugestao' ? '#0F172A' : data.details === 'outro' ? '#0F4780' : '#F14343';
             const reportEmoji = data.details === 'sugestao' ? '💡' : data.details === 'outro' ? '💬' : '🚨';
             subject = `${reportEmoji} Hub: ${reportTypeLabel} — Enviado por ${data.userName || 'Anônimo'}`;
             dashboardLink = `${baseUrl}/admin/reports`;
             emailTemplate = `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">${reportEmoji} ${reportTypeLabel} Recebida</h2>
+                <h2 style="color: #121212; margin-top: 0; font-size: 20px;">${reportEmoji} ${reportTypeLabel} Recebida</h2>
                 
-                <div style="background-color: #F0F7FF; border: 1px solid #BFDBFE; padding: 16px 20px; margin: 24px 0; border-radius: 8px; display: flex; align-items: center; gap: 12px;">
+                <div style="background-color: #F8FAFC; border: 1px solid #E2E8F0; padding: 16px 20px; margin: 24px 0; border-radius: 8px; display: flex; align-items: center; gap: 12px;">
                     <div style="width: 44px; height: 44px; background-color: #0F4780; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 18px; font-weight: 900; color: white; text-align: center; line-height: 44px;">
                         ${(data.userName || 'A').charAt(0).toUpperCase()}
                     </div>
@@ -140,7 +140,7 @@ export async function sendAdminNotification(data: NotificationData) {
                 <table style="width: 100%; border-collapse: collapse; margin: 0 0 24px 0;">
                     <tr>
                         <td style="padding: 8px 12px; background: #F8FAFC; border: 1px solid #E2E8F0; font-size: 12px; font-weight: 700; color: #64748B; text-transform: uppercase; width: 30%;">Tipo</td>
-                        <td style="padding: 8px 12px; background: white; border: 1px solid #E2E8F0; font-size: 13px; color: #1a1a1a; font-weight: 600;">${reportTypeLabel}</td>
+                        <td style="padding: 8px 12px; background: white; border: 1px solid #E2E8F0; font-size: 13px; color: #121212; font-weight: 600;">${reportTypeLabel}</td>
                     </tr>
                     <tr>
                         <td style="padding: 8px 12px; background: #F8FAFC; border: 1px solid #E2E8F0; font-size: 12px; font-weight: 700; color: #64748B; text-transform: uppercase;">URL</td>
@@ -150,7 +150,7 @@ export async function sendAdminNotification(data: NotificationData) {
 
                 <div style="background-color: ${reportBgColor}; border-left: 4px solid ${reportBorderColor}; padding: 20px; border-radius: 4px;">
                     <strong style="display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 11px; color: ${reportLabelColor}; letter-spacing: 0.1em;">Mensagem:</strong>
-                    <p style="color: #2d3748; margin: 0; line-height: 1.7; font-size: 15px;">${data.content}</p>
+                    <p style="color: #334155; margin: 0; line-height: 1.7; font-size: 15px;">${data.content}</p>
                 </div>`;
             break;
         }
@@ -159,11 +159,11 @@ export async function sendAdminNotification(data: NotificationData) {
             subject = `🏆 Arena: Nova Proposta de Desafio - ${data.title}`;
             dashboardLink = `${baseUrl}/admin/desafios`;
             emailTemplate = `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Nova Proposta de Desafio</h2>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">O pesquisador <strong>${data.userName}</strong> enviou uma nova proposta para a Arena.</p>
-                <div style="background-color: #f8fafc; border-left: 4px solid #FFCC00; padding: 16px; margin: 24px 0; border-radius: 4px;">
-                    <p style="margin: 0 0 8px 0; font-size: 14px;"><strong style="color: #1a1a1a;">Título:</strong> <span style="color: #4a5568;">${data.title}</span></p>
-                    <p style="margin: 0; font-size: 14px;"><strong style="color: #1a1a1a;">Descrição:</strong> <span style="color: #4a5568;">${data.content}</span></p>
+                <h2 style="color: #121212; margin-top: 0; font-size: 20px;">Nova Proposta de Desafio</h2>
+                <p style="color: #475569; line-height: 1.6; font-size: 15px;">O pesquisador <strong>${data.userName}</strong> enviou uma nova proposta para a Arena.</p>
+                <div style="background-color: #F8FAFC; border-left: 4px solid #FFCC00; padding: 16px; margin: 24px 0; border-radius: 4px;">
+                    <p style="margin: 0 0 8px 0; font-size: 14px;"><strong style="color: #121212;">Título:</strong> <span style="color: #475569;">${data.title}</span></p>
+                    <p style="margin: 0; font-size: 14px;"><strong style="color: #121212;">Descrição:</strong> <span style="color: #475569;">${data.content}</span></p>
                 </div>`;
             break;
 
@@ -171,13 +171,13 @@ export async function sendAdminNotification(data: NotificationData) {
             subject = `💡 Hub: Sugestão de Melhoria - ${data.userName}`;
             dashboardLink = `${baseUrl}/admin/desafios`;
             emailTemplate = `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Sugestão de Melhoria do HUB</h2>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">Um pesquisador enviou uma ideia para melhorar a plataforma.</p>
-                <div style="background-color: #f0f9ff; border: 1px solid #bae6fd; padding: 20px; margin: 24px 0; border-radius: 8px; color: #0369a1;">
+                <h2 style="color: #121212; margin-top: 0; font-size: 20px;">Sugestão de Melhoria do HUB</h2>
+                <p style="color: #475569; line-height: 1.6; font-size: 15px;">Um pesquisador enviou uma ideia para melhorar a plataforma.</p>
+                <div style="background-color: #F8FAFC; border: 1px solid #1F9FCF; padding: 20px; margin: 24px 0; border-radius: 8px; color: #0F4780;">
                     <strong style="display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 12px;">Sugestão:</strong>
                     "${data.content}"
                 </div>
-                <p style="font-size: 12px; color: #718096;">Enviado por: ${data.userName}</p>`;
+                <p style="font-size: 12px; color: #64748B;">Enviado por: ${data.userName}</p>`;
             break;
 
         case 'drop_submission':
@@ -206,23 +206,23 @@ export async function sendAdminNotification(data: NotificationData) {
             subject = `⚠️ Hub: Erro de Sincronização do Júpiter Web`;
             dashboardLink = `${baseUrl}/admin`;
             emailTemplate = `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Erro no Scraper do Júpiter</h2>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">O sistema tentou sincronizar a grade de um aluno, mas encontrou um erro ou não conseguiu capturar as disciplinas.</p>
-                <div style="background-color: #FEF2F2; border: 1px solid #FEE2E2; padding: 20px; margin: 24px 0; border-radius: 8px; color: #991B1B;">
+                <h2 style="color: #121212; margin-top: 0; font-size: 20px;">Erro no Scraper do Júpiter</h2>
+                <p style="color: #475569; line-height: 1.6; font-size: 15px;">O sistema tentou sincronizar a grade de um aluno, mas encontrou um erro ou não conseguiu capturar as disciplinas.</p>
+                <div style="background-color: #F8FAFC; border: 1px solid #F14343; border-left: 4px solid #F14343; padding: 20px; margin: 24px 0; border-radius: 8px; color: #F14343;">
                     <strong style="display: block; margin-bottom: 8px; text-transform: uppercase; font-size: 12px;">Detalhes do Erro:</strong>
                     "${data.content}"
                 </div>
-                <p style="font-size: 12px; color: #718096;">Usuário Afetado: ${data.userName || 'N/A'}</p>`;
+                <p style="font-size: 12px; color: #64748B;">Usuário Afetado: ${data.userName || 'N/A'}</p>`;
             break;
 
         case 'beta_registration':
             subject = `🚀 Acesso Liberado: App HUB Lab-Div (Beta)`;
             dashboardLink = `https://play.google.com/apps/testing/com.hublabdiv.app`; // O link do Google Play Testing
             emailTemplate = `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">Você já pode baixar o App Lab-Div!</h2>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">A Google aprovou o seu e-mail <strong>${data.targetEmail}</strong> para a fase de testes (Closed Beta).</p>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">Para instalar no seu Android, certifique-se de que está logado no Google Play com este e-mail e clique no botão abaixo para aceitar o convite e fazer o download.</p>
-                <div style="background-color: #f8fafc; border-left: 4px solid #0F4780; padding: 20px; margin: 24px 0; border-radius: 8px; font-style: italic; color: #2d3748;">
+                <h2 style="color: #121212; margin-top: 0; font-size: 20px;">Você já pode baixar o App Lab-Div!</h2>
+                <p style="color: #475569; line-height: 1.6; font-size: 15px;">A Google aprovou o seu e-mail <strong>${data.targetEmail}</strong> para a fase de testes (Closed Beta).</p>
+                <p style="color: #475569; line-height: 1.6; font-size: 15px;">Para instalar no seu Android, certifique-se de que está logado no Google Play com este e-mail e clique no botão abaixo para aceitar o convite e fazer o download.</p>
+                <div style="background-color: #F8FAFC; border-left: 4px solid #0F4780; padding: 20px; margin: 24px 0; border-radius: 8px; font-style: italic; color: #334155;">
                     <strong>Dica:</strong> Se não conseguir baixar de primeira, aguarde alguns minutos, o Play Store pode levar um tempo para propagar a permissão.
                 </div>`;
             break;
@@ -233,9 +233,9 @@ export async function sendAdminNotification(data: NotificationData) {
             subject = data.title || `📡 Torre de Controle LabDiv: Itens aguardando revisão`;
             dashboardLink = `${baseUrl}/admin`;
             emailTemplate = data.customHtml || `
-                <h2 style="color: #1a1a1a; margin-top: 0; font-size: 20px;">📡 Resumo da Fila de Moderação</h2>
-                <p style="color: #4a5568; line-height: 1.6; font-size: 15px;">${data.content || 'Existem novos itens aguardando revisão na Torre de Controle.'}</p>
-                ${data.details ? `<p style="margin: 12px 0 0 0; font-size: 14px; color: #4a5568;">${data.details}</p>` : ''}`;
+                <h2 style="color: #121212; margin-top: 0; font-size: 20px;">📡 Resumo da Fila de Moderação</h2>
+                <p style="color: #475569; line-height: 1.6; font-size: 15px;">${data.content || 'Existem novos itens aguardando revisão na Torre de Controle.'}</p>
+                ${data.details ? `<p style="margin: 12px 0 0 0; font-size: 14px; color: #475569;">${data.details}</p>` : ''}`;
             break;
         }
 
@@ -245,10 +245,10 @@ export async function sendAdminNotification(data: NotificationData) {
     }
 
     const finalHtml = `
-        <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; border: 1px solid #eaeaea; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
+        <div style="max-width: 600px; margin: 0 auto; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; border: 1px solid #E2E8F0; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.05);">
             <div style="background-color: #0F4780; padding: 32px 24px; text-align: center;">
                 <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -0.5px;">LAB-DIV HUB</h1>
-                <p style="color: #8bb8e8; margin: 6px 0 0 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Instituto de Física | USP</p>
+                <p style="color: #1F9FCF; margin: 6px 0 0 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px;">Instituto de Física | USP</p>
             </div>
             <div style="padding: 40px 32px; background-color: #ffffff;">
                 ${emailTemplate}

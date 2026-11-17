@@ -99,7 +99,7 @@ export default function PrivacyPolicyPage() {
                                     <tr>
                                         <td className="py-3 px-3 font-semibold text-gray-900 dark:text-white">Telemetria de Usabilidade (Opcional)</td>
                                         <td className="py-3 px-3 text-gray-500">Cliques e tempo de carregamento de páginas (exclusivo para maiores).</td>
-                                        <td className="py-3 px-3 text-purple-400 font-medium">Consentimento Expresso e Específico (Art. 7º, I - Opt-In Real).</td>
+                                        <td className="py-3 px-3 text-[#1F9FCF] font-medium">Consentimento Expresso e Específico (Art. 7º, I - Opt-In Real).</td>
                                     </tr>
                                 </tbody>
                             </table>

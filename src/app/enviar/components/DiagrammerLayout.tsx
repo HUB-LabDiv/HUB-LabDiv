@@ -1151,7 +1151,7 @@ export function DiagrammerLayout({ editId }: DiagrammerLayoutProps) {
                                                 <span className="text-xs font-medium text-gray-600 dark:text-gray-300 mt-1">Estatísticas do Público do HUB</span>
                                             </div>
                                         </div>
-                                        <button className="w-full py-2.5 bg-brand-red hover:bg-[#D93030] text-white text-xs font-black uppercase rounded-lg transition-colors shadow-md pointer-events-none">
+                                        <button className="w-full py-2.5 bg-brand-red hover:bg-[#D93838] text-white text-xs font-black uppercase rounded-lg transition-colors shadow-md pointer-events-none">
                                             Ver Estatísticas
                                         </button>
                                     </div>

@@ -68,18 +68,31 @@ export function useMediaInteraction({ id, initialLikes, initialSaves, initialLik
                 setLiked(context.prevLiked);
                 setLikes(context.prevLikes);
             }
-            if (navigator.onLine) toast.error(err.message || "Erro ao curtir");
+            if (navigator.onLine) {
+                toast.error(err.message || "Erro ao curtir", { id: context?.toastId });
+            } else if (context?.toastId) {
+                toast.dismiss(context.toastId);
+            }
         },
         onSuccess: (data, variables, context: any) => {
             if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate([10]);
-            if (!context?.prevLiked && navigator.onLine) {
-                toast.success('Curtida sincronizada!', { icon: '❤️' });
+            if (navigator.onLine) {
+                if (!context?.prevLiked) {
+                    toast.success('Atomizado e sincronizado!', { id: context?.toastId, icon: '⚛️' });
+                } else {
+                    toast.success('Reação removida.', { id: context?.toastId });
+                }
+            } else if (context?.toastId) {
+                toast.dismiss(context.toastId);
             }
         },
         onMutate: () => {
             const prevLiked = liked;
             const prevLikes = likes;
-            return { prevLiked, prevLikes };
+            const toastId = navigator.onLine
+                ? toast.loading(prevLiked ? 'Atualizando reação...' : 'Atomizando e sincronizando...')
+                : undefined;
+            return { prevLiked, prevLikes, toastId };
         }
     });
 
@@ -94,18 +107,30 @@ export function useMediaInteraction({ id, initialLikes, initialSaves, initialLik
                 setSaved(context.prevSaved);
                 setSaves(context.prevSaves);
             }
-            if (navigator.onLine) toast.error(err.message || "Erro ao salvar");
+            if (navigator.onLine) {
+                toast.error(err.message || "Erro ao salvar", { id: context?.toastId });
+            } else if (context?.toastId) {
+                toast.dismiss(context.toastId);
+            }
         },
         onSuccess: (data, variables, context: any) => {
             if (typeof navigator !== 'undefined' && navigator.vibrate) navigator.vibrate([8]);
-            if (!context?.prevSaved && navigator.onLine) {
-                toast.success('Acervo atualizado!', { icon: '📂' });
+            if (navigator.onLine) {
+                toast.success(context?.prevSaved ? 'Removido dos favoritos.' : 'Salvo e sincronizado!', {
+                    id: context?.toastId,
+                    icon: context?.prevSaved ? undefined : '⭐',
+                });
+            } else if (context?.toastId) {
+                toast.dismiss(context.toastId);
             }
         },
         onMutate: () => {
             const prevSaved = saved;
             const prevSaves = saves;
-            return { prevSaved, prevSaves };
+            const toastId = navigator.onLine
+                ? toast.loading('Sincronizando favorito...')
+                : undefined;
+            return { prevSaved, prevSaves, toastId };
         }
     });
 

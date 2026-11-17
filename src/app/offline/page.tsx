@@ -382,7 +382,7 @@ export default function OfflinePage() {
                             type="button"
                             onClick={handleReconnect}
                             disabled={isReconnecting}
-                            className="px-6 py-3 bg-[#0F4780] hover:bg-[#15599e] text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-[#0F4780]/30 flex items-center gap-2 disabled:opacity-50"
+                            className="px-6 py-3 bg-[#0F4780] hover:bg-[#1F9FCF] text-white font-bold text-sm rounded-xl transition-all shadow-lg shadow-[#0F4780]/30 flex items-center gap-2 disabled:opacity-50"
                         >
                             <RefreshCw className={`w-4 h-4 ${isReconnecting ? 'animate-spin' : ''}`} />
                             Tentar Reconectar
@@ -448,10 +448,10 @@ export default function OfflinePage() {
                         <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-3xl p-6 shadow-xl space-y-4">
                             <div className="flex items-center justify-between border-b border-gray-100 dark:border-white/10 pb-4">
                                 <h2 className="text-lg font-bold text-gray-900 dark:text-white font-bukra flex items-center gap-2">
-                                    <Calendar className="w-5 h-5 text-[#0F4780] dark:text-[#00A3FF]" />
+                                    <Calendar className="w-5 h-5 text-[#0F4780] dark:text-[#1F9FCF]" />
                                     Grade Horária Semanal
                                 </h2>
-                                <span className="text-[10px] uppercase font-black px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-700 dark:text-[#FFCC00]">
+                                <span className="text-[10px] uppercase font-black px-2.5 py-1 rounded-full bg-[#FFCC00]/15 border border-[#FFCC00]/40 text-[#0F4780] dark:text-[#FFCC00]">
                                     Armazenamento Local
                                 </span>
                             </div>
@@ -472,7 +472,7 @@ export default function OfflinePage() {
                                         onClick={() => setSelectedDay(d.day)}
                                         className={`px-3 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
                                             selectedDay === d.day
-                                                ? 'bg-[#0F4780] text-white border border-[#0F4780] dark:border-[#00A3FF]'
+                                                ? 'bg-[#0F4780] text-white border border-[#0F4780] dark:border-[#1F9FCF]'
                                                 : 'bg-gray-100 dark:bg-white/5 text-gray-700 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/10'
                                         }`}
                                     >
@@ -495,9 +495,9 @@ export default function OfflinePage() {
                                         {dayEvents.map((ev, idx) => (
                                             <div
                                                 key={idx}
-                                                className="p-4 rounded-2xl bg-gray-50 dark:bg-[#262626] border border-gray-200 dark:border-white/10 border-l-4 border-l-[#0F4780] dark:border-l-[#00A3FF] space-y-1"
+                                                className="p-4 rounded-2xl bg-gray-50 dark:bg-[#262626] border border-gray-200 dark:border-white/10 border-l-4 border-l-[#0F4780] dark:border-l-[#1F9FCF] space-y-1"
                                             >
-                                                <div className="flex items-center gap-2 text-xs font-bold text-[#0F4780] dark:text-[#00A3FF]">
+                                                <div className="flex items-center gap-2 text-xs font-bold text-[#0F4780] dark:text-[#1F9FCF]">
                                                     <Clock className="w-3.5 h-3.5" />
                                                     {ev.start_time ? ev.start_time.substring(0, 5) : '08:00'} - {ev.end_time ? ev.end_time.substring(0, 5) : '10:00'}
                                                 </div>
@@ -560,7 +560,7 @@ export default function OfflinePage() {
                                 value={quickNotes}
                                 onChange={e => handleNotesChange(e.target.value)}
                                 placeholder="Anote lembretes rápidos de aula, horários ou recados aqui. Eles ficam salvos no seu dispositivo mesmo sem internet..."
-                                className="w-full h-28 bg-gray-50 dark:bg-[#262626] border border-gray-300 dark:border-white/10 rounded-2xl p-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0F4780] dark:focus:border-[#00A3FF] transition-colors resize-y"
+                                className="w-full h-28 bg-gray-50 dark:bg-[#262626] border border-gray-300 dark:border-white/10 rounded-2xl p-4 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:border-[#0F4780] dark:focus:border-[#1F9FCF] transition-colors resize-y"
                             />
                         </div>
                     </div>
@@ -571,10 +571,10 @@ export default function OfflinePage() {
                     <div className="bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 rounded-3xl p-6 sm:p-8 shadow-xl space-y-6 animate-fade-in">
                         <div className="flex items-center justify-between border-b border-gray-100 dark:border-white/10 pb-4">
                             <h2 className="text-lg font-bold text-gray-900 dark:text-white font-bukra flex items-center gap-2">
-                                <UserIcon className="w-5 h-5 text-amber-500 dark:text-[#FFCC00]" />
+                                <UserIcon className="w-5 h-5 text-[#FFCC00]" />
                                 Identidade Estudantil • Lab Pessoal
                             </h2>
-                            <span className="text-[10px] uppercase font-black px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-600 dark:text-blue-400">
+                            <span className="text-[10px] uppercase font-black px-2.5 py-1 rounded-full bg-[#1F9FCF]/15 border border-[#1F9FCF]/30 text-[#0F4780] dark:text-[#1F9FCF]">
                                 {profile ? 'Perfil Sincronizado' : 'Dispositivo Local'}
                             </span>
                         </div>
@@ -633,7 +633,7 @@ export default function OfflinePage() {
                         <div className="flex items-center justify-between border-b border-gray-100 dark:border-white/10 pb-4">
                             <div>
                                 <h2 className="text-lg font-bold text-gray-900 dark:text-white font-bukra flex items-center gap-2">
-                                    <BookOpen className="w-5 h-5 text-[#0F4780] dark:text-[#00A3FF]" />
+                                    <BookOpen className="w-5 h-5 text-[#0F4780] dark:text-[#1F9FCF]" />
                                     GCIF • Guia de Convivência do IFUSP
                                 </h2>
                                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">

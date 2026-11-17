@@ -42,7 +42,7 @@ const CATEGORY_LABELS: Record<string, { label: string; color: string }> = {
     divulgacao: { label: 'Divulgação Científica', color: 'bg-brand-blue/20 text-brand-blue border-brand-blue/30' },
     escolar: { label: 'Extensão Escolar', color: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' },
     maker: { label: 'Cultura Maker & Hardware', color: 'bg-brand-yellow/20 text-brand-yellow border-brand-yellow/30' },
-    inclusao: { label: 'Ações Afirmativas & Inclusão', color: 'bg-purple-500/20 text-purple-400 border-purple-500/30' },
+    inclusao: { label: 'Ações Afirmativas & Inclusão', color: 'bg-[#1F9FCF]/20 text-[#1F9FCF] border-[#1F9FCF]/30' },
     academica: { label: 'Extensão Acadêmica', color: 'bg-brand-red/20 text-brand-red border-brand-red/30' }
 };
 
@@ -199,7 +199,7 @@ export function InitiativeDetailsModal({ initiative, isOpen, onClose }: Initiati
                                 <Link
                                     href={initiative.links.interno}
                                     onClick={onClose}
-                                    className="flex-1 py-3.5 px-6 rounded-2xl bg-[#FFCC00] hover:bg-[#ffe066] text-[#0F4780] font-black uppercase tracking-widest text-xs text-center flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
+                                    className="flex-1 py-3.5 px-6 rounded-2xl bg-[#FFCC00] hover:bg-[#FCE055] text-[#0F4780] font-black uppercase tracking-widest text-xs text-center flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
                                 >
                                     Acessar no HUB <ArrowRight className="w-4 h-4" />
                                 </Link>
@@ -208,7 +208,7 @@ export function InitiativeDetailsModal({ initiative, isOpen, onClose }: Initiati
                                     href={initiative.links.oficial}
                                     target="_blank"
                                     rel="noreferrer"
-                                    className="flex-1 py-3.5 px-6 rounded-2xl bg-[#0F4780] hover:bg-[#1359a0] text-white font-black uppercase tracking-widest text-xs text-center flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
+                                    className="flex-1 py-3.5 px-6 rounded-2xl bg-[#0F4780] hover:bg-[#0C3A68] text-white font-black uppercase tracking-widest text-xs text-center flex items-center justify-center gap-2 shadow-lg transition-transform hover:scale-[1.02]"
                                 >
                                     Portal Oficial CCEx <ExternalLink className="w-4 h-4" />
                                 </a>

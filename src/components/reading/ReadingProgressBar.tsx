@@ -6,11 +6,7 @@
  * * Este programa é software livre: você pode redistribuí-lo e/ou modificá-lo
  * sob os termos da Licença Pública Geral Affero GNU (AGPLv3) conforme
  * publicada pela Free Software Foundation.
- * * Este programa é distribuído na esperança de que seja útil, mas SEM
- * QUALQUER GARANTIA; sem mesmo a garantia implícita de COMERCIALIZAÇÃO
- * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
-
 
 import React, { useState, useEffect } from 'react';
 
@@ -22,7 +18,7 @@ export function ReadingProgressBar() {
             const scrollTop = window.scrollY;
             const docHeight = document.documentElement.scrollHeight - window.innerHeight;
             if (docHeight > 0) {
-                setProgress(Math.min(100, (scrollTop / docHeight) * 100));
+                setProgress(Math.min(1, Math.max(0, scrollTop / docHeight)));
             }
         };
 
@@ -31,10 +27,17 @@ export function ReadingProgressBar() {
     }, []);
 
     return (
-        <div className="fixed left-0 right-0 z-[200] h-[3px] bg-transparent print:hidden" style={{ top: 'env(safe-area-inset-top, 0px)' }}>
+        <div
+            className="fixed left-0 right-0 z-[200] h-[3px] bg-transparent print:hidden pointer-events-none"
+            style={{ top: 'env(safe-area-inset-top, 0px)' }}
+        >
             <div
-                className="h-full bg-gradient-brand transition-[width] duration-150 ease-out"
-                style={{ width: `${progress}%` }}
+                className="h-full w-full origin-left transition-transform duration-100 ease-out"
+                style={{
+                    transform: `scaleX(${progress})`,
+                    background: 'linear-gradient(90deg, #1F9FCF 0%, #FFCC00 50%, #F14343 100%)',
+                    willChange: 'transform',
+                }}
             />
         </div>
     );

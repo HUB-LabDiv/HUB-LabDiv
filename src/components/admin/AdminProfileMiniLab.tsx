@@ -175,7 +175,7 @@ export function AdminProfileMiniLab({
                     <button
                         type="button"
                         onClick={() => onImpersonate(profile)}
-                        className="px-3.5 py-2 rounded-xl bg-[#FFCC00]/15 hover:bg-[#FFCC00]/25 text-[#B45309] dark:text-[#FFCC00] border border-[#FFCC00]/40 text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer"
+                        className="px-3.5 py-2 rounded-xl bg-[#FFCC00]/15 hover:bg-[#FFCC00]/25 text-[#1E1E1E] dark:text-[#FFCC00] border border-[#FFCC00]/40 text-[10px] font-black uppercase tracking-wider flex items-center gap-1.5 transition-all cursor-pointer"
                     >
                         <UserCheck className="w-3.5 h-3.5" />
                         Impersonar
@@ -294,7 +294,7 @@ export function AdminProfileMiniLab({
                             {effectiveInterests.map((hobby: string, idx: number) => (
                                 <span
                                     key={idx}
-                                    className="px-2 py-0.5 rounded-lg bg-brand-yellow/15 text-[#B45309] dark:text-[#FFCC00] border border-brand-yellow/30 text-[10px] font-bold"
+                                    className="px-2 py-0.5 rounded-lg bg-brand-yellow/15 text-[#1E1E1E] dark:text-[#FFCC00] border border-brand-yellow/30 text-[10px] font-bold"
                                 >
                                     {hobby}
                                 </span>

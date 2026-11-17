@@ -420,8 +420,8 @@ export const FluxoView = ({
                             </div>
                         </div>
                         <div className="flex flex-col pr-2">
-                            <h2 className="text-[10px] font-black font-mono text-white uppercase tracking-[0.2em]">Sinc_Atômico</h2>
-                            <p className="text-[8px] font-mono text-gray-400 uppercase tracking-widest leading-none">Atualizando_Partículas...</p>
+                            <h2 className="text-[10px] font-black font-bukra text-white uppercase tracking-[0.2em]">Sinc_Atômico</h2>
+                            <p className="text-[8px] font-open-sans text-gray-400 uppercase tracking-widest leading-none">Atualizando_Partículas...</p>
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/5 rounded-b-2xl overflow-hidden">
                             <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 4, ease: "linear" }} className="h-full bg-brand-blue-accent shadow-[0_0_10px_#1F9FCF]" />

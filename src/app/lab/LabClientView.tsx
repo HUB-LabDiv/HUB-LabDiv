@@ -299,11 +299,11 @@ export function LabClientView({
                 {isViewingOwn && (viewedProfile?.review_status === 'pending' || hasActivePendingEdits(viewedProfile?.pending_edits)) && (
                     <div className="mb-6 p-4 rounded-2xl bg-[#FFCC00]/15 dark:bg-[#1E1E1E] border border-[#FFCC00]/50 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                         <div className="flex items-start gap-3">
-                            <div className="p-2 rounded-xl bg-[#FFCC00]/25 text-[#B45309] dark:text-[#FFCC00] shrink-0">
+                            <div className="p-2 rounded-xl bg-[#FFCC00]/25 text-[#1E1E1E] dark:text-[#FFCC00] shrink-0">
                                 <Clock className="w-5 h-5" />
                             </div>
                             <p className="text-xs text-gray-800 dark:text-gray-200 leading-relaxed">
-                                <strong className="text-[#92400E] dark:text-[#FFCC00] uppercase tracking-wider">⏳ Alterações em análise:</strong>{' '}
+                                <strong className="text-[#121212] dark:text-[#FFCC00] uppercase tracking-wider">⏳ Alterações em análise:</strong>{' '}
                                 Suas edições recentes (foto, nome, bio ou dados) estão aguardando aprovação da moderação.{' '}
                                 <strong className="underline decoration-[#FFCC00]">Esta prévia atualizada está visível apenas para você</strong> — os demais usuários continuam vendo a última versão aprovada do seu perfil.
                             </p>
@@ -340,7 +340,7 @@ export function LabClientView({
                                 <h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 dark:text-white flex flex-wrap items-center justify-center sm:justify-start gap-2">
                                     {getProfileDisplayName(viewedProfile)}
                                     {isViewingOwn && (viewedProfile?.pending_edits?.full_name || viewedProfile?.pending_edits?.username) && (
-                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FFCC00]/20 text-[#B45309] dark:text-[#FFCC00] border border-[#FFCC00]/40 text-[9px] font-black uppercase">
+                                        <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-[#FFCC00]/20 text-[#1E1E1E] dark:text-[#FFCC00] border border-[#FFCC00]/40 text-[9px] font-black uppercase">
                                             <Clock className="w-2.5 h-2.5" /> Pendente • Visível só para você
                                         </span>
                                     )}
@@ -367,7 +367,7 @@ export function LabClientView({
                                 {isViewingOwn && (
                                     <div className="mt-2 flex items-center justify-center sm:justify-start gap-2 flex-wrap">
                                         {viewedProfile?.use_nickname && viewedProfile?.username ? (
-                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-yellow/15 border border-brand-yellow/30 text-xs font-bold text-[#B45309] dark:text-[#FFCC00]">
+                                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-yellow/15 border border-brand-yellow/30 text-xs font-bold text-[#1E1E1E] dark:text-[#FFCC00]">
                                                 <span>Apelido público ativo: <strong>@{viewedProfile.username}</strong></span>
                                                 <span className="text-[9px] font-black uppercase bg-[#1E1E1E] text-[#FFCC00] px-2 py-0.5 rounded-full border border-[#FFCC00]/40">
                                                     🔒 Nome real protegido

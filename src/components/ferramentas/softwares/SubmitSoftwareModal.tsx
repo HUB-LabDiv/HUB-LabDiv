@@ -408,7 +408,7 @@ export function SubmitSoftwareModal({
                             <button
                                 type="submit"
                                 disabled={isSubmitting}
-                                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-brand-yellow hover:bg-[#FFE066] text-black text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-brand-yellow/20 disabled:opacity-50"
+                                className="flex items-center gap-2 px-6 py-2.5 rounded-xl bg-brand-yellow hover:bg-[#FCE055] text-black text-xs font-black uppercase tracking-wider transition-all shadow-md shadow-brand-yellow/20 disabled:opacity-50"
                             >
                                 {isSubmitting ? (
                                     <span>Enviando...</span>

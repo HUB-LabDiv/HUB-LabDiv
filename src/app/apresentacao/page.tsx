@@ -10,7 +10,10 @@
  */
 
 import { Metadata } from 'next';
+import { Orbitron } from 'next/font/google';
 import { ApresentacaoClient } from './ApresentacaoClient';
+
+const orbitron = Orbitron({ subsets: ['latin'], weight: ['400', '700', '900'] });
 
 export const metadata: Metadata = {
     title: 'Apresentação do HUB | LabDiv',
@@ -18,5 +21,5 @@ export const metadata: Metadata = {
 };
 
 export default function ApresentacaoPage() {
-    return <ApresentacaoClient />;
+    return <ApresentacaoClient orbitronClassName={orbitron.className} />;
 }

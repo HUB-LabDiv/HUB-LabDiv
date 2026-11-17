@@ -20,6 +20,7 @@ import { LabTabContent } from './LabTabContent';
 import { PerguntasTabContent } from './PerguntasTabContent';
 import { EmaranhamentoTabContent } from './EmaranhamentoTabContent';
 import { useSwipe } from '@/hooks/useSwipe';
+import { SegmentedPillSwitch } from '@/components/ui/SegmentedPillSwitch';
 
 export default function InteracaoClient() {
     const router = useRouter();
@@ -70,38 +71,23 @@ export default function InteracaoClient() {
                     className="sticky z-40 flex justify-center mb-6 pointer-events-none"
                     style={{ top: 'calc(4.5rem + env(safe-area-inset-top, 0px))' }}
                 >
-                    <div data-tour="interacao-subnav" className="flex p-1.5 bg-white/50 dark:bg-background-dark/40 backdrop-blur-2xl border border-gray-200 dark:border-white/10 rounded-2xl shadow-2xl pointer-events-auto">
-                        {tabConfig.map((tab) => {
-                            const isActive = activeTab === tab.id;
-                            return (
-                                <button
-                                    key={tab.id}
-                                    onClick={() => handleTabChange(tab.id)}
-                                    className={`relative flex items-center gap-1 sm:gap-2 px-3 py-2 sm:px-6 sm:py-2.5 rounded-xl text-[9px] sm:text-xs font-black font-bukra uppercase tracking-widest transition-all ${
-                                        isActive
-                                            ? 'text-white'
-                                            : 'text-gray-500 hover:text-brand-blue'
-                                    }`}
-                                >
-                                    {isActive && (
-                                        <motion.div
-                                            layoutId="activeTabInteracao"
-                                            className="absolute inset-0 bg-brand-blue rounded-xl shadow-lg shadow-brand-blue/20"
-                                            transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
-                                        />
-                                    )}
-                                    <span className="relative z-10 flex items-center gap-2">
-                                        <span className="material-symbols-outlined text-[16px] sm:text-[18px] shrink-0">
-                                            {tab.icon}
-                                        </span>
-                                        <span className="truncate font-bukra">
-                                            {tab.label}
-                                        </span>
-                                    </span>
-                                </button>
-                            );
-                        })}
-                    </div>
+                    <SegmentedPillSwitch
+                        dataTour="interacao-subnav"
+                        layoutId="activeTabInteracao"
+                        activeId={activeTab}
+                        onChange={(tab) => handleTabChange(tab)}
+                        options={tabConfig.map((tab) => ({
+                            id: tab.id,
+                            label: tab.label,
+                            icon: (
+                                <span className="material-symbols-outlined text-[16px] sm:text-[18px] shrink-0">
+                                    {tab.icon}
+                                </span>
+                            ),
+                            activeBgClass: 'bg-[#1F9FCF] shadow-lg shadow-[#1F9FCF]/25',
+                            hoverTextClass: 'hover:text-[#1F9FCF]',
+                        }))}
+                    />
                 </div>
 
                 <header className="mb-12 pt-4">

@@ -90,7 +90,7 @@ export default function AdminEmaranhamentoPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 pb-6 border-b border-white/10">
                 <div>
                     <h1 className="text-2xl sm:text-3xl font-black italic uppercase text-gray-900 dark:text-white flex items-center gap-3 font-bukra">
-                        <Network className="w-8 h-8 text-purple-400" />
+                        <Network className="w-8 h-8 text-[#1F9FCF]" />
                         Emaranhamento Quântico
                     </h1>
                     <p className="text-gray-400 mt-1 text-xs sm:text-sm font-open-sans">
@@ -189,7 +189,7 @@ export default function AdminEmaranhamentoPage() {
                                 onClick={() => setStatusFilter(sf.id as any)}
                                 className={`px-3 py-1.5 rounded-xl text-[10px] font-bold font-bukra uppercase tracking-wider transition-all ${
                                     statusFilter === sf.id
-                                        ? 'bg-purple-600 text-white shadow-md'
+                                        ? 'bg-[#0F4780] text-white shadow-md'
                                         : 'text-gray-400 hover:text-white'
                                 }`}
                             >
@@ -201,7 +201,7 @@ export default function AdminEmaranhamentoPage() {
 
                 {isLoading ? (
                     <div className="p-16 flex items-center justify-center">
-                        <Loader2 className="size-8 animate-spin text-purple-400" />
+                        <Loader2 className="size-8 animate-spin text-[#1F9FCF]" />
                     </div>
                 ) : filteredReports.length === 0 ? (
                     <div className="p-16 rounded-3xl bg-[#1E1E1E] border border-white/10 text-center space-y-3">
@@ -218,7 +218,7 @@ export default function AdminEmaranhamentoPage() {
                         {filteredReports.map((report) => (
                             <div
                                 key={report.id}
-                                className="p-6 rounded-3xl bg-[#1E1E1E] border border-white/10 space-y-4 hover:border-purple-500/40 transition-all shadow-xl"
+                                className="p-6 rounded-3xl bg-[#1E1E1E] border border-white/10 space-y-4 hover:border-[#1F9FCF]/40 transition-all shadow-xl"
                             >
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                                     <div className="flex items-center gap-2">
@@ -251,10 +251,10 @@ export default function AdminEmaranhamentoPage() {
                                 </div>
 
                                 {/* Snapshot Forense da Mensagem */}
-                                <div className="p-4 rounded-2xl bg-black/50 border border-purple-500/30 space-y-2">
-                                    <div className="flex items-center justify-between text-[10px] font-mono text-purple-300 uppercase">
+                                <div className="p-4 rounded-2xl bg-black/50 border border-[#1F9FCF]/30 space-y-2">
+                                    <div className="flex items-center justify-between text-[10px] font-open-sans text-[#1F9FCF] uppercase">
                                         <span>Mensagem Denunciada (Autor: <strong>{report.metadata?.sender_name || 'Desconhecido'}</strong>)</span>
-                                        <span className="text-[8px] px-2 py-0.5 rounded bg-purple-500/20">Snapshot Forense</span>
+                                        <span className="text-[8px] px-2 py-0.5 rounded bg-[#1F9FCF]/20">Snapshot Forense</span>
                                     </div>
                                     <p className="text-xs sm:text-sm font-mono text-gray-100 bg-white/5 p-3 rounded-xl border border-white/5 whitespace-pre-wrap leading-relaxed">
                                         "{report.metadata?.message_content || report.justification}"

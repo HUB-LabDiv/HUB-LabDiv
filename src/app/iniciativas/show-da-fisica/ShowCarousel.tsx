@@ -18,12 +18,12 @@ import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const EXPERIMENTS = [
-    { id: 1, title: 'Gerador de Van de Graaff', desc: 'Eletricidade estática e arrepios!', img: '/show/IMG_00004.JPG' },
-    { id: 2, title: 'Cadeira de Pregos', desc: 'A física da pressão e distribuição de força.', img: '/show/IMG_00031.JPG' },
-    { id: 3, title: 'Bobina de Tesla', desc: 'Raios e campos eletromagnéticos.', img: '/show/IMG_00143.JPG' },
-    { id: 4, title: 'Levitação Magnética', desc: 'Supercondutores e o efeito Meissner.', img: '/show/IMG_00224.JPG' },
-    { id: 5, title: 'Óptica e Cores', desc: 'Composição da luz e ilusões visuais.', img: '/show/IMG_00312.JPG' },
-    { id: 6, title: 'Gases e Termodinâmica', desc: 'Experiências com nitrogênio líquido.', img: '/show/IMG_8793.JPG' },
+    { id: 1, title: 'Máquina de Wimshurst', desc: 'Eletricidade estática e corrente humana no palco!', img: '/show/show-wimshurst.jpg' },
+    { id: 2, title: 'Canhão de Vórtice', desc: 'Anéis de fumaça e conservação de momento linear.', img: '/show/show-canhao-vortice.jpg' },
+    { id: 3, title: 'Bobina de Tesla', desc: 'Campos eletromagnéticos acendendo lâmpadas sem fio.', img: '/show/show-bobina-tesla.jpg' },
+    { id: 4, title: 'Nitrogênio Líquido', desc: 'Nuvem criogênica e contração de gases a -196°C.', img: '/show/show-nuvem-nitrogenio.jpg' },
+    { id: 5, title: 'Garrafa de Combustão', desc: 'Expansão rápida de gases e termodinâmica.', img: '/show/show-garrafa-combustao.jpg' },
+    { id: 6, title: 'Dewar & Criogenia', desc: 'Armazenamento térmico e propriedades a baixas temperaturas.', img: '/show/show-dewar-nitrogenio.jpg' },
 ];
 
 export function ShowCarousel() {

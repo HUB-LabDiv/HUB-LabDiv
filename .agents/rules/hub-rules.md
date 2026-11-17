@@ -16,9 +16,11 @@ Stack: Next.js 14+ (App Router), TypeScript, Supabase, Tailwind v4, Capacitor (A
 - **Temas (Dual-Theme Obrigatório com Hierarquia Tonal M3):**
   - Todo componente deve funcionar perfeitamente tanto no **Modo Escuro** (Base `#121212`, Surfaces `#1E1E1E` e variações de *Surface Container Low/High/Highest*) quanto no **Modo Claro**, respeitando a preferência do dispositivo (`prefers-color-scheme`) e o seletor do HUB.
 - **Paleta Oficial LabDiv (Mapeada nos Papéis Semânticos M3):**
-  - Amarelo: `#FFCC00` (Eixo 03 - Ferramentas / Destaques / Tertiary Accent)
-  - Azul: `#0F4780` (Eixo 01 - Comunidade / Primária / Primary Accent)
-  - Vermelho: `#F14343` (Eixo 02 - Informativo / Alertas / Secondary & Error Accent)
+  - Amarelo: `#FFCC00` (Eixo 03 - Ferramentas / Destaques / Secondary Accent)
+  - Azul Profundo: `#0F4780` (Eixo 01 - Comunidade / Primária Container / Primary Container)
+  - Azul Ciano: `#1F9FCF` (Eixo 01 - Comunidade / Primária / Primary Accent)
+  - Vermelho: `#F14343` (Eixo 02 - Informativo / Alertas / Tertiary & Error Accent)
+  - **Regra de Conformidade LabDiv:** Qualquer código na pasta ou contexto do LabDiv no HUB deve usar **exclusivamente** esses quatro tons (`#FFCC00`, `#F14343`, `#0F4780`, `#1F9FCF`) além dos neutros de superfície (`#121212`, `#1E1E1E`, `#FFFFFF`), preservando paletas próprias apenas para iniciativas específicas (`Show da Física`, `Hackerspace`, `Pró-Física`).
 - **Tipografia Oficial LabDiv (Mapeada na Type Scale M3):**
   - *Display & Headline* (Títulos de destaque e cabeçalhos): **29LT Bukra Semi Wide Bold**.
   - *Title, Body & Label* (Textos longos, apoio, subtítulos, CTAs, descritivos e legendas): **Open Sans** (e suas variações de peso).

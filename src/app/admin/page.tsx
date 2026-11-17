@@ -290,9 +290,9 @@ export default function AdminDashboardOverview() {
         {
             id: 'eixo4',
             title: 'Eixo 04 — Perfis, Personas & Governança',
-            color: '#8B5CF6',
-            borderColor: 'border-purple-500/30',
-            bgBadge: 'bg-purple-500/20 text-purple-400 border-purple-500/40',
+            color: '#1F9FCF',
+            borderColor: 'border-[#1F9FCF]/30',
+            bgBadge: 'bg-[#1F9FCF]/15 text-[#1F9FCF] border-[#1F9FCF]/40',
             icon: 'manage_accounts',
             cards: [
                 { title: 'Novos Cadastros USP', subtitle: 'Aprovação de Perfis', count: counts.pendentesPerfis, icon: 'how_to_reg', href: '/admin/profiles', urgent: counts.pendentesPerfis > 0 },
@@ -313,17 +313,17 @@ export default function AdminDashboardOverview() {
                     <span className="material-symbols-outlined text-[18px]">dashboard</span>
                     <span>Dashboard</span>
                     <span className="text-gray-300 dark:text-gray-600">/</span>
-                    <span className="text-[#0055ff]">Torre de Controle</span>
+                    <span className="text-[#1F9FCF]">Torre de Controle</span>
                 </div>
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
                     <div>
                         <h1 className="text-3xl font-display font-bold text-gray-900 dark:text-white tracking-tight">
-                            Torre de <span className="text-[#0055ff]">Controle</span>
+                            Torre de <span className="text-[#1F9FCF]">Controle</span>
                         </h1>
                         <p className="text-gray-500 dark:text-gray-400 mt-1">Centro de comando e governança do Hub Lab-Div v3.1.5</p>
                     </div>
                     <div className="hidden sm:flex items-center gap-2 bg-white/5 dark:bg-card-dark/5 backdrop-blur-md px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm">
-                        <div className="w-2 h-2 rounded-full bg-[#0055ff] animate-pulse"></div>
+                        <div className="w-2 h-2 rounded-full bg-[#1F9FCF] animate-pulse"></div>
                         <div className="w-2 h-2 rounded-full bg-brand-red animate-pulse delay-75"></div>
                         <div className="w-2 h-2 rounded-full bg-brand-yellow animate-pulse delay-150"></div>
                         <span className="text-xs font-semibold text-gray-400 ml-2 uppercase tracking-wider">Status: Online</span>
@@ -333,7 +333,7 @@ export default function AdminDashboardOverview() {
 
             {isLoading ? (
                 <div className="flex flex-col items-center justify-center py-20 text-gray-500 dark:text-gray-400 bg-white/5 dark:bg-card-dark/5 backdrop-blur-md rounded-3xl border border-gray-100 dark:border-gray-800 shadow-sm">
-                    <span className="material-symbols-outlined text-4xl animate-spin text-[#0055ff] mb-4">progress_activity</span>
+                    <span className="material-symbols-outlined text-4xl animate-spin text-[#1F9FCF] mb-4">progress_activity</span>
                     <p className="font-medium animate-pulse">Carregando a Torre de Controle...</p>
                 </div>
             ) : (
@@ -346,7 +346,7 @@ export default function AdminDashboardOverview() {
                             className="w-full p-5 sm:p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-left hover:bg-white/5 transition-colors cursor-pointer"
                         >
                             <div className="flex items-center gap-3.5">
-                                <div className="w-11 h-11 rounded-2xl bg-[#0055ff]/10 text-[#0055ff] flex items-center justify-center shrink-0 border border-[#0055ff]/20">
+                                <div className="w-11 h-11 rounded-2xl bg-[#0F4780]/15 text-[#1F9FCF] flex items-center justify-center shrink-0 border border-[#1F9FCF]/25">
                                     <span className="material-symbols-outlined text-2xl">account_tree</span>
                                 </div>
                                 <div>
@@ -354,7 +354,7 @@ export default function AdminDashboardOverview() {
                                         <h2 className="text-base font-black font-bukra text-gray-900 dark:text-white uppercase tracking-tight">
                                             Métricas & Moderações por Eixo da Marca
                                         </h2>
-                                        <span className="text-[10px] font-mono px-2.5 py-0.5 rounded-full bg-brand-yellow/15 text-brand-yellow font-black border border-brand-yellow/30 uppercase">
+                                        <span className="text-[10px] font-open-sans px-2.5 py-0.5 rounded-full bg-brand-yellow/15 text-brand-yellow font-black border border-brand-yellow/30 uppercase">
                                             {totalPendenciasGerais} Pendências Totais
                                         </span>
                                     </div>
@@ -368,17 +368,17 @@ export default function AdminDashboardOverview() {
 
                             {/* Resumo visual rápido por Eixo + Botão com setinha animada */}
                             <div className="flex items-center gap-3 self-end sm:self-center">
-                                <div className="hidden lg:flex items-center gap-2 text-[10px] font-mono font-bold">
-                                    <span className="px-2.5 py-1 rounded-xl bg-[#0F4780]/20 text-[#0F4780] dark:text-blue-300 border border-[#0F4780]/30">
+                                <div className="hidden lg:flex items-center gap-2 text-[10px] font-open-sans font-bold">
+                                    <span className="px-2.5 py-1 rounded-xl bg-[#0F4780]/20 text-[#0F4780] dark:text-[#1F9FCF] border border-[#0F4780]/30">
                                         Eixo 1: {totalComunidade}
                                     </span>
                                     <span className="px-2.5 py-1 rounded-xl bg-[#F14343]/20 text-[#F14343] border border-[#F14343]/30">
                                         Eixo 2: {totalInformativo}
                                     </span>
-                                    <span className="px-2.5 py-1 rounded-xl bg-[#FFCC00]/20 text-yellow-600 dark:text-brand-yellow border border-[#FFCC00]/30">
+                                    <span className="px-2.5 py-1 rounded-xl bg-[#FFCC00]/20 text-[#FFCC00] border border-[#FFCC00]/30">
                                         Eixo 3: {totalFerramentas}
                                     </span>
-                                    <span className="px-2.5 py-1 rounded-xl bg-purple-500/20 text-purple-400 border border-purple-500/30">
+                                    <span className="px-2.5 py-1 rounded-xl bg-[#1F9FCF]/20 text-[#1F9FCF] border border-[#1F9FCF]/30">
                                         Eixo 4: {totalPerfis}
                                     </span>
                                 </div>
@@ -481,7 +481,7 @@ export default function AdminDashboardOverview() {
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
                             <div>
                                 <h2 className="text-xl font-black font-bukra text-gray-900 dark:text-white flex items-center gap-2.5">
-                                    <span className="material-symbols-outlined text-[#0055ff] text-2xl">swipe</span>
+                                    <span className="material-symbols-outlined text-[#0F4780] dark:text-[#1F9FCF] text-2xl">swipe</span>
                                     Fila Unificada de Moderação
                                 </h2>
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 font-open-sans">
@@ -503,7 +503,7 @@ export default function AdminDashboardOverview() {
                             <div className="bg-white/40 dark:bg-card-dark/5 backdrop-blur-md rounded-3xl p-6 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
                                 <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Total Autores</span>
                                 <div className="text-3xl font-black text-gray-900 dark:text-white mt-1">{counts.totalAutores}</div>
-                                <div className="text-[10px] font-bold text-[#0055ff] mt-1">PESQUISADORES ATIVOS</div>
+                                <div className="text-[10px] font-bold text-[#0F4780] dark:text-[#1F9FCF] mt-1">PESQUISADORES ATIVOS</div>
                             </div>
                             <div className="bg-white/40 dark:bg-card-dark/5 backdrop-blur-md rounded-3xl p-6 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
                                 <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Frequentes (3+)</span>
@@ -518,7 +518,7 @@ export default function AdminDashboardOverview() {
                             <div className="bg-white/40 dark:bg-card-dark/5 backdrop-blur-md rounded-3xl p-6 border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-all">
                                 <span className="text-[10px] font-black uppercase text-gray-400 tracking-wider">Oportunidades</span>
                                 <div className="text-3xl font-black text-gray-900 dark:text-white mt-1">{counts.oportunidadesPendentes}</div>
-                                <div className="text-[10px] font-bold text-[#0055ff] mt-1">MURAL ATIVO</div>
+                                <div className="text-[10px] font-bold text-[#0F4780] dark:text-[#1F9FCF] mt-1">MURAL ATIVO</div>
                             </div>
                         </div>
                     </div>

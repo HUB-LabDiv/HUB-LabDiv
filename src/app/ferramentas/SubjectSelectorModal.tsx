@@ -96,14 +96,14 @@ export function SubjectSelectorModal({
                 {/* Header */}
                 <div className="p-6 border-b border-white/5 flex items-center justify-between shrink-0 bg-white/[0.02]">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-[#00A3FF]/20 flex items-center justify-center border border-[#00A3FF]/30 text-[#00A3FF]">
+                        <div className="w-10 h-10 rounded-xl bg-[#1F9FCF]/20 flex items-center justify-center border border-[#1F9FCF]/30 text-[#1F9FCF]">
                             <Map className="w-5 h-5" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-black text-white uppercase tracking-tighter">
+                            <h2 className="text-xl font-bukra font-black text-white uppercase tracking-tighter">
                                 Turmas disponíveis
                             </h2>
-                            <p className="text-[10px] font-mono text-gray-400 uppercase tracking-widest">
+                            <p className="text-[10px] font-open-sans text-gray-400 uppercase tracking-widest">
                                 Adicione matrículas diretamente na sua grade
                             </p>
                         </div>
@@ -118,19 +118,19 @@ export function SubjectSelectorModal({
                     <div className="flex gap-2 p-1 bg-white/5 rounded-xl border border-white/10">
                         <button
                             onClick={() => { setInstitute('IF'); setExpandedSubject(null); }}
-                            className={`flex-1 py-2 text-xs font-black uppercase tracking-widest rounded-lg transition-all ${institute === 'IF' ? 'bg-[#00A3FF] text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                            className={`flex-1 py-2 text-xs font-black uppercase tracking-widest rounded-lg transition-all ${institute === 'IF' ? 'bg-[#0F4780] text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                         >
                             IFUSP
                         </button>
                         <button
                             onClick={() => { setInstitute('IME'); setExpandedSubject(null); }}
-                            className={`flex-1 py-2 text-xs font-black uppercase tracking-widest rounded-lg transition-all ${institute === 'IME' ? 'bg-[#00A3FF] text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                            className={`flex-1 py-2 text-xs font-black uppercase tracking-widest rounded-lg transition-all ${institute === 'IME' ? 'bg-[#0F4780] text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                         >
                             IME
                         </button>
                         <button
                             onClick={() => { setInstitute('FM'); setExpandedSubject(null); }}
-                            className={`flex-1 py-2 text-xs font-black uppercase tracking-widest rounded-lg transition-all ${institute === 'FM' ? 'bg-[#00A3FF] text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                            className={`flex-1 py-2 text-xs font-black uppercase tracking-widest rounded-lg transition-all ${institute === 'FM' ? 'bg-[#0F4780] text-white shadow-lg' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
                         >
                             FÍSICA MÉDICA
                         </button>
@@ -143,7 +143,7 @@ export function SubjectSelectorModal({
                             placeholder="Buscar por código (ex: MAC0110) ou nome..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 text-white rounded-xl py-3 pl-10 pr-4 text-sm font-medium placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00A3FF] focus:border-transparent transition-all"
+                            className="w-full bg-white/5 border border-white/10 text-white rounded-xl py-3 pl-10 pr-4 text-sm font-medium placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-[#1F9FCF] focus:border-transparent transition-all"
                         />
                     </div>
                 </div>
@@ -152,8 +152,8 @@ export function SubjectSelectorModal({
                 <div className="flex-1 overflow-y-auto px-6 pb-6 custom-scrollbar">
                     {isLoading ? (
                         <div className="flex flex-col items-center justify-center py-12 text-gray-400">
-                            <Loader2 className="w-8 h-8 animate-spin text-[#00A3FF] mb-4" />
-                            <p className="text-xs font-mono uppercase tracking-widest">Calculando matrizes Júpiter...</p>
+                            <Loader2 className="w-8 h-8 animate-spin text-[#1F9FCF] mb-4" />
+                            <p className="text-xs font-open-sans uppercase tracking-widest">Calculando matrizes Júpiter...</p>
                         </div>
                     ) : filteredSubjects.length > 0 ? (
                         <div className="space-y-3">
@@ -164,14 +164,14 @@ export function SubjectSelectorModal({
                                         className="p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 cursor-pointer"
                                     >
                                         <div className="flex items-center gap-4">
-                                            <div className="px-2.5 py-1 rounded bg-[#00A3FF]/10 border border-[#00A3FF]/20 text-[#00A3FF] font-mono text-[10px] uppercase font-black tracking-wider w-fit">
+                                            <div className="px-2.5 py-1 rounded bg-[#1F9FCF]/15 border border-[#1F9FCF]/25 text-[#1F9FCF] font-open-sans text-[10px] uppercase font-black tracking-wider w-fit">
                                                 {sub.codigo}
                                             </div>
                                             <div className="font-bold text-gray-200 text-sm">
                                                 {sub.nome}
                                             </div>
                                         </div>
-                                        <div className="text-[10px] font-mono text-[#00A3FF] uppercase font-black px-3 py-1 bg-[#00A3FF]/5 rounded-lg whitespace-nowrap hidden sm:block w-fit">
+                                        <div className="text-[10px] font-open-sans text-[#1F9FCF] uppercase font-black px-3 py-1 bg-[#1F9FCF]/10 rounded-lg whitespace-nowrap hidden sm:block w-fit">
                                             {sub.turmas.length} {sub.turmas.length === 1 ? 'Turma' : 'Turmas'}
                                         </div>
                                     </div>
@@ -216,7 +216,7 @@ export function SubjectSelectorModal({
                                                                     className={`w-full sm:w-auto px-4 py-2 border text-[10px] font-black uppercase tracking-widest rounded-xl transition-all flex items-center justify-center gap-2 shrink-0 ${
                                                                         isEnrolled 
                                                                         ? 'bg-brand-red/10 text-brand-red border-brand-red/20 hover:bg-brand-red hover:text-white shadow-lg shadow-brand-red/10' 
-                                                                        : 'bg-[#00A3FF]/10 text-[#00A3FF] border-[#00A3FF]/20 hover:bg-[#00A3FF] hover:text-white shadow-lg shadow-[#00A3FF]/10'
+                                                                        : 'bg-[#1F9FCF]/10 text-[#1F9FCF] border-[#1F9FCF]/20 hover:bg-[#1F9FCF] hover:text-white shadow-lg shadow-[#1F9FCF]/10'
                                                                     }`}
                                                                 >
                                                                     {isEnrolled ? <X className="w-3 h-3" /> : <Plus className="w-3 h-3" />}

@@ -388,8 +388,8 @@ export function PlanoAulaSlideViewer() {
     const isExternal = link.url.startsWith('http');
     const colorClasses = {
       yellow: 'bg-[#FFCC00] text-black hover:bg-[#e6b800] shadow-md shadow-brand-yellow/30',
-      blue: 'bg-[#0F4780] text-white hover:bg-[#0c3866] shadow-md shadow-brand-blue/40 border border-brand-blue/50',
-      red: 'bg-[#F14343] text-white hover:bg-[#d63838] shadow-md shadow-brand-red/40 border border-brand-red/50',
+      blue: 'bg-[#0F4780] text-white hover:bg-[#0C3A68] shadow-md shadow-brand-blue/40 border border-brand-blue/50',
+      red: 'bg-[#F14343] text-white hover:bg-[#D93838] shadow-md shadow-brand-red/40 border border-brand-red/50',
       outline: 'bg-white/10 text-white hover:bg-white/20 border border-white/20'
     }[link.variant || 'yellow'];
 

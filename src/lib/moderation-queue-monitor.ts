@@ -297,7 +297,7 @@ export async function checkModerationQueueThresholds(): Promise<{
                     return `
                         <div style="border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 14px; background-color: #f8fafc;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                                <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #0F4780; background: #e0f2fe; padding: 2px 8px; border-radius: 99px;">
+                                <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; color: #0F4780; background: rgba(31, 159, 207, 0.12); padding: 2px 8px; border-radius: 99px;">
                                     ${item.label}
                                 </span>
                                 <span style="font-size: 11px; color: #64748b; font-weight: 600;">

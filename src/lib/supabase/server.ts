@@ -11,6 +11,7 @@
 
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
+import { getSharedCookieDomain } from './cookie-domain';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
@@ -35,9 +36,13 @@ export async function createServerSupabase() {
             },
             setAll(cookiesToSet) {
                 try {
-                    cookiesToSet.forEach(({ name, value, options }) =>
-                        cookieStore.set(name, value, options)
-                    );
+                    const sharedDomain = getSharedCookieDomain();
+                    cookiesToSet.forEach(({ name, value, options }) => {
+                        const mergedOptions = sharedDomain
+                            ? { ...options, domain: sharedDomain }
+                            : options;
+                        cookieStore.set(name, value, mergedOptions);
+                    });
                 } catch {
                     // setAll may fail in Server Components (read-only context).
                 }

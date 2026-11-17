@@ -289,15 +289,15 @@ const pageContent: Record<string, any> = {
                 title: 'Conheça o Instituto de Física',
                 fullWidth: true,
                 content: (
-                    <div className="p-8 rounded-[40px] border-2 border-[#17739A]/30 bg-gradient-to-br from-[#17739A]/15 via-[#17739A]/5 to-transparent group hover:border-[#17739A]/50 transition-all duration-500 overflow-hidden relative">
-                        <div className="absolute inset-0 bg-gradient-to-r from-[#17739A]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="p-8 rounded-[40px] border-2 border-[#1F9FCF]/30 bg-gradient-to-br from-[#0F4780]/15 via-[#1F9FCF]/5 to-transparent group hover:border-[#1F9FCF]/50 transition-all duration-500 overflow-hidden relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[#1F9FCF]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                         <div className="relative flex flex-col md:flex-row md:items-center gap-8">
                             <div className="flex-1">
                                 <div className="flex items-center gap-3 mb-4">
-                                    <div className="p-2.5 rounded-2xl bg-[#17739A]/20 border border-[#17739A]/30">
-                                        <Landmark className="w-6 h-6 text-[#17739A]" />
+                                    <div className="p-2.5 rounded-2xl bg-[#1F9FCF]/20 border border-[#1F9FCF]/30">
+                                        <Landmark className="w-6 h-6 text-[#1F9FCF]" />
                                     </div>
-                                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#17739A]">Física USP</span>
+                                    <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#1F9FCF]">Física USP</span>
                                 </div>
                                 <h5 className="text-gray-900 dark:text-white text-lg font-black uppercase italic mb-3">O seu Instituto por Dentro</h5>
                                 <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed mb-6">
@@ -819,7 +819,7 @@ const pageContent: Record<string, any> = {
         title: 'O Instituto de Física',
         subtitle: 'Estrutura, História e Espaços IFUSP',
         icon: <Landmark className="w-12 h-12" />,
-        color: '#17739A',
+        color: '#1F9FCF',
         sections: [
             {
                 title: 'Em Desenvolvimento',

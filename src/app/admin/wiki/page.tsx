@@ -126,7 +126,7 @@ export default function AdminWikiModerationPage() {
                 );
             case 'related_topic':
                 return (
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-purple-500/15 text-purple-400 border border-purple-500/30 text-[10px] font-black uppercase rounded-full tracking-wider">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#1F9FCF]/15 text-[#1F9FCF] border border-[#1F9FCF]/30 text-[10px] font-black uppercase rounded-full tracking-wider">
                         <GitBranch className="w-3 h-3 shrink-0" />
                         Tópico Conexo {targetTitle ? `• Ref: ${targetTitle}` : ''}
                     </span>

@@ -210,7 +210,7 @@ export function SoftwareGuideView({
                             href={software.access_url}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-brand-yellow hover:bg-[#FFE066] text-black font-black text-xs sm:text-sm uppercase tracking-wider transition-all shadow-xl shadow-brand-yellow/25 hover:scale-105"
+                            className="flex items-center gap-2.5 px-6 py-3.5 rounded-2xl bg-brand-yellow hover:bg-[#FCE055] text-black font-black text-xs sm:text-sm uppercase tracking-wider transition-all shadow-xl shadow-brand-yellow/25 hover:scale-105"
                         >
                             <ExternalLink className="w-4 h-4" />
                             <span>Acessar / Usar {software.title}</span>

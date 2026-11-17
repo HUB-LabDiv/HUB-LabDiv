@@ -62,7 +62,9 @@ export async function createDrop(content: string, parentId?: string) {
 
     // 3. Trigger Email Notification (Non-blocking)
     try {
-        const username = (drop.profiles as any)?.username || user.email?.split('@')[0] || 'membro';
+        const dropProfiles = drop.profiles as { username?: string | null } | { username?: string | null }[] | null;
+        const dropProfile = Array.isArray(dropProfiles) ? dropProfiles[0] : dropProfiles;
+        const username = dropProfile?.username || user.email?.split('@')[0] || 'membro';
         
         const { sendAdminNotification } = await import('@/lib/notifications.server');
         await sendAdminNotification({
@@ -242,8 +244,12 @@ export async function fetchUserDrops(userId: string) {
         .order('created_at', { ascending: false });
 
     if (error) {
-        console.error('Error fetching user drops:', error);
-        return [];
+        const { data: plainData } = await supabase
+            .from('micro_articles')
+            .select('*')
+            .eq('author_id', userId)
+            .order('created_at', { ascending: false });
+        return plainData || [];
     }
 
     return data || [];

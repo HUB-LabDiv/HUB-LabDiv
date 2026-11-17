@@ -13,9 +13,9 @@
 
 
 import React from 'react';
-import Link from 'next/link';
+import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
-import { m, AnimatePresence } from 'framer-motion';
+import { m } from 'framer-motion';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { SidebarLeft } from './SidebarLeft';
@@ -23,13 +23,24 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { BottomNavBar } from './BottomNavBar';
 import { useNavigationStore } from '@/store/useNavigationStore';
 import { useAuth } from '@/providers/AuthProvider';
-import { ContentReportModal } from '../modals/ContentReportModal';
-import { ReportModal } from '../feedback/ReportModal';
-
 import { usePersonalizacaoStore } from '@/store/usePersonalizacaoStore';
-import { OnboardingBanner } from '../onboarding/OnboardingBanner';
 import { EixoInformacaoDisclaimerBanner } from './EixoInformacaoDisclaimerBanner';
 import { PullToRefreshWrapper } from '@/components/ui/PullToRefreshWrapper';
+import { GlobalButtonEffects } from '@/components/ui/GlobalButtonEffects';
+import { HubInitiativeBackdrop } from './HubInitiativeBackdrop';
+
+const ContentReportModal = dynamic(
+    () => import('../modals/ContentReportModal').then((mod) => mod.ContentReportModal),
+    { ssr: false }
+);
+const ReportModal = dynamic(
+    () => import('../feedback/ReportModal').then((mod) => mod.ReportModal),
+    { ssr: false }
+);
+const HubWelcomeModal = dynamic(
+    () => import('../onboarding/HubWelcomeModal').then((mod) => mod.HubWelcomeModal),
+    { ssr: false }
+);
 
 interface MainLayoutWrapperProps {
     children: React.ReactNode;
@@ -66,10 +77,10 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = true, fu
         }
     }, [institution]);
 
-    // Left Sidebar é oculta em < xl (1280px). Quando visível (xl+): 80px (recolhida) ou 280px (expandida)
+    // Left Sidebar é oculta em < lg (1024px). Quando visível (lg+): 80px (recolhida) ou 280px (expandida)
     const leftPaddingClass = isSidebarCollapsed 
-        ? 'xl:pl-[calc(80px+1.5rem)]' 
-        : 'xl:pl-[calc(280px+1.5rem)]';
+        ? 'lg:pl-[calc(80px+1.5rem)]' 
+        : 'lg:pl-[calc(280px+1.5rem)]';
 
     // Right Sidebar é oculta em < lg (1024px). Quando presente e visível (lg+): 80px (recolhida) ou 320px (expandida)
     const rightPaddingClass = rightSidebar 
@@ -77,14 +88,16 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = true, fu
         : '';
 
     return (
-        <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col overflow-x-clip">
+        <div className="min-h-screen bg-transparent font-sans text-gray-900 dark:text-gray-100 flex flex-col overflow-x-clip relative">
+            <GlobalButtonEffects />
+            <HubInitiativeBackdrop />
             {!hideHeader && <Header />}
 
             {!focusMode ? (
                 <div className="flex-1 w-full flex relative">
                     {/* Left Sidebar — fixada na borda esquerda do viewport */}
                     <aside
-                        className={`hidden xl:flex flex-col fixed left-0 top-20 ${isSidebarCollapsed ? 'w-20' : 'w-[280px]'} h-[calc(100vh-5rem)] border-r border-gray-200 dark:border-gray-800 bg-transparent overflow-y-auto hidden-scrollbar transition-all duration-300 z-30`}
+                        className={`hidden lg:flex flex-col fixed left-0 top-20 ${isSidebarCollapsed ? 'w-20' : 'w-[280px]'} h-[calc(100vh-5rem)] border-r border-gray-200 dark:border-gray-800 bg-transparent overflow-y-auto hidden-scrollbar transition-all duration-300 z-30`}
                     >
                         <SidebarLeft userId={userId} />
                     </aside>
@@ -127,19 +140,15 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = true, fu
                             >
                                 <div className="w-full flex flex-col min-h-full">
                                     <EixoInformacaoDisclaimerBanner />
-                                    <OnboardingBanner />
-                                    <AnimatePresence mode="wait">
-                                        <m.div
-                                            key={pathname}
-                                            initial={{ opacity: 0, y: 10 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            exit={{ opacity: 0, y: -10 }}
-                                            transition={{ duration: 0.2 }}
-                                            className="flex-1 w-full"
-                                        >
-                                            {children}
-                                        </m.div>
-                                    </AnimatePresence>
+                                    <m.div
+                                        key={pathname}
+                                        initial={{ opacity: 0.4, y: 6 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ duration: 0.14, ease: 'easeOut' }}
+                                        className="flex-1 w-full"
+                                    >
+                                        {children}
+                                    </m.div>
                                     <Footer />
                                 </div>
                             </main>
@@ -158,19 +167,15 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = true, fu
                         >
                             <div className="w-full flex flex-col min-h-full">
                                 <EixoInformacaoDisclaimerBanner />
-                                <OnboardingBanner />
-                                <AnimatePresence mode="wait">
-                                    <m.div
-                                        key={pathname}
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: -10 }}
-                                        transition={{ duration: 0.2 }}
-                                        className="flex-1 w-full"
-                                    >
-                                        {children}
-                                    </m.div>
-                                </AnimatePresence>
+                                <m.div
+                                    key={pathname}
+                                    initial={{ opacity: 0.4, y: 6 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.14, ease: 'easeOut' }}
+                                    className="flex-1 w-full"
+                                >
+                                    {children}
+                                </m.div>
                             </div>
                         </main>
                     </PullToRefreshWrapper>
@@ -178,19 +183,7 @@ export function MainLayoutWrapper({ children, focusMode = false, wide = true, fu
             )}
 
             <BottomNavBar />
-
-            {/* Nova Submissão FAB (Desktop Only — xl+) */}
-            {!focusMode && (profile?.is_adult === true || profile?.user_category === 'pesquisador' || profile?.user_category === 'docente_pesquisador') && (
-                <Link
-                    href="/enviar"
-                    data-tour="desktop-fab-enviar"
-                    className="hidden xl:flex fixed bottom-8 right-8 z-[60] bg-brand-blue hover:bg-brand-blue-hover text-white px-6 h-14 rounded-full shadow-2xl items-center justify-center gap-3 hover:scale-105 active:scale-95 transition-all group border border-white/10"
-                    title="Lançar à Órbita"
-                >
-                    <span className="material-symbols-outlined font-black text-2xl group-hover:-translate-y-1 transition-transform">rocket_launch</span>
-                    <span className="font-bukra text-[11px] uppercase tracking-wider">Lançar</span>
-                </Link>
-            )}
+            <HubWelcomeModal />
 
             {/* Modais Globais */}
             <ContentReportModal />

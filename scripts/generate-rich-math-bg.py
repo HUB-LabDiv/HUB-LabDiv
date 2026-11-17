@@ -135,8 +135,10 @@ def generate_svg():
     return '\n'.join(svg_parts)
 
 if __name__ == '__main__':
+    import os
     svg_content = generate_svg()
-    out_path = '/home/stangorlini/HUB LabDiv/HUB-LabDiv/public/divulgacao/poster5/math-bg.svg'
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    out_path = os.path.join(base_dir, 'public', 'divulgacao', 'poster5', 'math-bg.svg')
     with open(out_path, 'w', encoding='utf-8') as f:
         f.write(svg_content)
     print(f'✅ Arquivo math-bg.svg gerado com sucesso ({len(svg_content)} bytes)!')

@@ -389,7 +389,7 @@ function EmaranhamentoContent() {
                                             value={searchQuery}
                                             onChange={(e) => setSearchQuery(e.target.value)}
                                             placeholder="Digite o nome do usuário..."
-                                            className="w-full pl-11 pr-10 py-3 rounded-2xl font-mono text-sm bg-white/5 text-white border border-white/10 outline-none focus:border-brand-blue/50 focus:shadow-[0_0_15px_rgba(0,163,255,0.15)] transition-all placeholder:text-gray-500"
+                                            className="w-full pl-11 pr-10 py-3 rounded-2xl font-open-sans text-sm bg-white/5 text-white border border-white/10 outline-none focus:border-brand-blue/50 focus:shadow-[0_0_15px_rgba(31,159,207,0.18)] transition-all placeholder:text-gray-500"
                                         />
                                         {searchQuery && (
                                             <button onClick={() => { setSearchQuery(''); setSearchResults([]); }} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition-colors">
@@ -490,7 +490,7 @@ function EmaranhamentoContent() {
                                                         key={group.id} 
                                                         className={`flex flex-col p-5 rounded-[32px] border transition-all duration-500 relative overflow-hidden group/hub ${
                                                             matchesUser 
-                                                            ? 'bg-gradient-to-br from-brand-blue/10 to-transparent border-brand-blue/30 shadow-[0_0_30px_rgba(0,163,255,0.1)] hover:shadow-[0_0_40px_rgba(0,163,255,0.2)]' 
+                                                            ? 'bg-gradient-to-br from-brand-blue/10 to-transparent border-brand-blue/30 shadow-[0_0_30px_rgba(31,159,207,0.12)] hover:shadow-[0_0_40px_rgba(31,159,207,0.22)]' 
                                                             : 'bg-white/5 border-white/5 hover:border-white/20 hover:bg-white/[0.07]'
                                                         }`}
                                                     >
@@ -528,7 +528,7 @@ function EmaranhamentoContent() {
                                                                 className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
                                                                     isAlreadyMember 
                                                                     ? 'bg-white/10 text-white hover:bg-white/20' 
-                                                                    : 'bg-brand-blue text-white hover:shadow-[0_0_20px_rgba(0,163,255,0.4)] hover:scale-105 active:scale-95'
+                                                                    : 'bg-brand-blue text-white hover:shadow-[0_0_20px_rgba(31,159,207,0.4)] hover:scale-105 active:scale-95'
                                                                 }`}
                                                             >
                                                                 {isAlreadyMember ? 'Participar' : 'Entrar no Hub'}

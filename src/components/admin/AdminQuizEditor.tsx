@@ -134,7 +134,7 @@ export function AdminQuizEditor({ submissionId, submissionTitle, initialQuiz, on
 
     return (
         <div className="fixed inset-0 z-[300] flex items-center justify-center bg-background-dark/70 backdrop-blur-sm p-4" onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}>
-            <div className="bg-white dark:bg-[#1A1A2E] rounded-3xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800">
+            <div className="bg-white dark:bg-[#1E1E1E] rounded-3xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col border border-gray-200 dark:border-gray-800">
 
                 {/* Header */}
                 <div className="flex items-center justify-between p-5 border-b border-gray-100 dark:border-gray-800 shrink-0">
@@ -245,7 +245,7 @@ export function AdminQuizEditor({ submissionId, submissionTitle, initialQuiz, on
                     <button
                         onClick={handleSave}
                         disabled={isSaving || isDeleting}
-                        className="px-6 py-2.5 bg-brand-blue hover:bg-brand-blue/80 text-white rounded-xl text-xs font-bold transition-all disabled:opacity-50 flex items-center gap-2 shadow-[0_0_15px_rgba(0,163,255,0.3)]"
+                        className="px-6 py-2.5 bg-brand-blue hover:bg-brand-blue/80 text-white rounded-xl text-xs font-bold transition-all disabled:opacity-50 flex items-center gap-2 shadow-[0_0_15px_rgba(31,159,207,0.3)]"
                     >
                         <Save size={14} />
                         {isSaving ? 'Salvando...' : 'Salvar Quiz'}

@@ -17,6 +17,7 @@ import { useRouter } from 'next/navigation';
 import { supabase } from "@/lib/supabase";
 import { FilePenLine, Send, Atom, Clock, Star, Hash, GitCommit, Loader2, Zap, ArrowUp, ArrowDown, Radio } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getSplashMotionProps, SplashExpand } from '@/components/ui/SplashExpand';
 import { toast } from 'react-hot-toast';
 import { fetchThreads, createDrop, reactToDrop } from '@/app/actions/drops';
 import { SkeletonLog } from '@/components/ui/SkeletonLog';
@@ -331,20 +332,20 @@ export function LogsView() {
 
             <AnimatePresence>
                 {isSyncing && (
-                    <motion.div initial={{ opacity: 0, x: 50, scale: 0.9 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: 50, scale: 0.9 }} className="fixed top-6 right-6 z-[100] bg-white/90 dark:bg-background-dark/80 backdrop-blur-xl border border-brand-blue/30 rounded-2xl p-4 flex items-center gap-4 shadow-xl dark:shadow-[0_0_30px_rgba(0,163,255,0.15)]">
+                    <motion.div initial={{ opacity: 0, x: 50, scale: 0.9 }} animate={{ opacity: 1, x: 0, scale: 1 }} exit={{ opacity: 0, x: 50, scale: 0.9 }} className="fixed top-6 right-6 z-[100] bg-white/90 dark:bg-background-dark/80 backdrop-blur-xl border border-brand-blue/30 rounded-2xl p-4 flex items-center gap-4 shadow-xl dark:shadow-[0_0_30px_rgba(31,159,207,0.18)]">
                         <div className="relative w-10 h-10 flex items-center justify-center">
                             <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }} className="absolute inset-0 border border-brand-blue/30 rounded-full" />
                             <div className="relative">
-                                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1, repeat: Infinity }} className="w-2 h-2 bg-brand-blue rounded-full shadow-[0_0_10px_#00A3FF]" />
+                                <motion.div animate={{ scale: [1, 1.2, 1] }} transition={{ duration: 1, repeat: Infinity }} className="w-2 h-2 bg-[#1F9FCF] rounded-full shadow-[0_0_10px_#1F9FCF]" />
                                 <Atom className="absolute -top-3 -left-3 w-8 h-8 text-brand-blue/20 dark:text-white/10 animate-pulse" />
                             </div>
                         </div>
                         <div className="flex flex-col pr-2">
-                            <h2 className="text-[10px] font-black font-mono text-gray-900 dark:text-white uppercase tracking-[0.2em]">Sinc_Atômico</h2>
-                            <p className="text-[8px] font-mono text-gray-500 dark:text-gray-400 uppercase tracking-widest leading-none">Atualizando_Partículas...</p>
+                            <h2 className="text-[10px] font-black font-bukra text-gray-900 dark:text-white uppercase tracking-[0.2em]">Sinc_Atômico</h2>
+                            <p className="text-[8px] font-open-sans text-gray-500 dark:text-gray-400 uppercase tracking-widest leading-none">Atualizando_Partículas...</p>
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 h-1 bg-gray-100 dark:bg-white/5 rounded-b-2xl overflow-hidden">
-                            <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 4, ease: "linear" }} className="h-full bg-brand-blue shadow-[0_0_10px_#3b82f6]" />
+                            <motion.div initial={{ width: 0 }} animate={{ width: "100%" }} transition={{ duration: 4, ease: "linear" }} className="h-full bg-[#1F9FCF] shadow-[0_0_10px_#1F9FCF]" />
                         </div>
                     </motion.div>
                 )}
@@ -485,21 +486,31 @@ export function ThreadNode({ drop, level = 0, onRefresh, setIsSyncing }: { drop:
                     </div>
                 </div>
 
-                <div className={`overflow-hidden transition-all duration-300 ${showReplyInput ? 'mt-4 opacity-100' : 'max-h-0 opacity-0'}`} style={{ maxHeight: showReplyInput ? '500px' : '0' }}>
-                    <form onSubmit={handleReply} className="flex gap-2">
-                        <input value={replyContent} onChange={(e) => setReplyContent(e.target.value)} placeholder="Adicionar ao fio..." className="flex-1 bg-gray-50 dark:bg-background-dark/40 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2 text-xs focus:ring-1 focus:ring-brand-red outline-none text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500" maxLength={260} autoFocus={showReplyInput} />
-                        <button type="submit" disabled={isSubmittingReply || !replyContent.trim()} className="bg-brand-red p-2 rounded-xl text-white hover:scale-105 transition-all text-xs font-black flex items-center justify-center min-w-[36px]">
-                            {isSubmittingReply ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
-                        </button>
-                    </form>
-                </div>
+                <AnimatePresence initial={false}>
+                    {showReplyInput && (
+                        <motion.form
+                            {...getSplashMotionProps('top right', '12px', -6)}
+                            onSubmit={handleReply}
+                            className="mt-4 flex gap-2 overflow-hidden"
+                        >
+                            <input value={replyContent} onChange={(e) => setReplyContent(e.target.value)} placeholder="Adicionar ao fio..." className="flex-1 bg-gray-50 dark:bg-background-dark/40 border border-gray-200 dark:border-white/10 rounded-xl px-4 py-2 text-xs focus:ring-1 focus:ring-brand-red outline-none text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500" maxLength={260} autoFocus={showReplyInput} />
+                            <button type="submit" disabled={isSubmittingReply || !replyContent.trim()} className="bg-brand-red p-2 rounded-xl text-white hover:scale-105 transition-all text-xs font-black flex items-center justify-center min-w-[36px]">
+                                {isSubmittingReply ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
+                            </button>
+                        </motion.form>
+                    )}
+                </AnimatePresence>
             </div>
 
-            <div className={`grid transition-all duration-300 ease-in-out ${isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`} style={{ gridTemplateRows: isExpanded ? '1fr' : '0fr' }}>
-                <div className="overflow-hidden space-y-3">
-                    {threads.map(reply => <ThreadNode key={reply.id} drop={reply} level={level + 1} onRefresh={fetchCurrentThreads} setIsSyncing={setIsSyncing} />)}
-                </div>
-            </div>
+            <SplashExpand
+                isOpen={isExpanded}
+                origin="top left"
+                targetRadius="12px"
+                yOffset={-6}
+                className="overflow-hidden space-y-3"
+            >
+                {threads.map(reply => <ThreadNode key={reply.id} drop={reply} level={level + 1} onRefresh={fetchCurrentThreads} setIsSyncing={setIsSyncing} />)}
+            </SplashExpand>
         </div>
     );
 }

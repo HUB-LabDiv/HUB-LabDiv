@@ -72,7 +72,7 @@ export function EixoInformacaoDisclaimerBanner() {
     };
 
     return (
-        <div className="w-[calc(100%-4.5rem)] md:w-full mx-auto md:mx-0 mb-3 sm:mb-4 relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-500/15 via-red-500/10 to-amber-500/15 dark:from-amber-500/20 dark:via-red-500/15 dark:to-amber-500/20 border-2 border-amber-400/80 dark:border-amber-400/70 shadow-[0_0_25px_rgba(255,204,0,0.22)] backdrop-blur-2xl transition-all animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="w-[calc(100%-4.5rem)] md:w-full mx-auto md:mx-0 mb-3 sm:mb-4 relative overflow-hidden rounded-2xl bg-gradient-to-r from-[#FFCC00]/15 via-[#F14343]/10 to-[#FFCC00]/15 dark:from-[#FFCC00]/20 dark:via-[#F14343]/15 dark:to-[#FFCC00]/20 border-2 border-[#FFCC00]/80 dark:border-[#FFCC00]/70 shadow-[0_0_25px_rgba(255,204,0,0.22)] backdrop-blur-2xl transition-all animate-in fade-in slide-in-from-top-2 duration-300">
             {/* Faixa decorativa superior com gradiente animado */}
             <div className="h-1 w-full bg-gradient-to-r from-[#FFCC00] via-[#F14343] to-[#FFCC00] animate-pulse" />
 
@@ -80,7 +80,7 @@ export function EixoInformacaoDisclaimerBanner() {
                 {/* Lado Esquerdo: Ícone Grande com Cores dos Eixos + Título + Mensagem Explicativa */}
                 <div className="flex items-start sm:items-center gap-3 sm:gap-4 flex-1 min-w-0">
                     <div className="relative shrink-0 mt-0.5 sm:mt-0">
-                        <span className="flex items-center justify-center size-10 sm:size-11 rounded-2xl bg-gradient-to-br from-[#FFCC00] to-[#F14343] text-gray-950 shadow-md shadow-amber-500/40 border border-white/20">
+                        <span className="flex items-center justify-center size-10 sm:size-11 rounded-2xl bg-gradient-to-br from-[#FFCC00] to-[#F14343] text-gray-950 shadow-md shadow-[#FFCC00]/40 border border-white/20">
                             <AlertTriangle className="size-5 sm:size-6 text-gray-950 stroke-[2.5] animate-bounce" style={{ animationDuration: '2.5s' }} />
                         </span>
                         <span className="absolute -top-1 -right-1 flex h-3 w-3">
@@ -91,7 +91,7 @@ export function EixoInformacaoDisclaimerBanner() {
 
                     <div className="flex flex-col gap-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                            <span className="font-bukra font-black text-xs sm:text-sm text-amber-600 dark:text-[#FFCC00] tracking-wide uppercase">
+                            <span className="font-bukra font-black text-xs sm:text-sm text-[#1E1E1E] dark:text-[#FFCC00] tracking-wide uppercase">
                                 Aviso de Revisão Comunitária
                             </span>
                             <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-red-500/15 border border-red-500/30 text-red-600 dark:text-red-400 font-mono text-[9px] font-black uppercase tracking-wider">

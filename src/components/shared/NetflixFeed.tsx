@@ -15,6 +15,7 @@
 
 import React, { useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ScrollJellyCard } from '@/components/ui/ScrollJellyCard';
 
 interface NetflixFeedProps {
     title: string;
@@ -103,7 +104,16 @@ export function NetflixFeed({
                 ref={scrollContainerRef}
                 className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory gap-5 sm:gap-6 pb-6 no-scrollbar -mx-4 px-4 sm:mx-0 sm:px-0 [&>*]:shrink-0"
             >
-                {children}
+                {React.Children.map(children, (child, idx) => (
+                    <ScrollJellyCard
+                        axis="horizontal"
+                        containerRef={scrollContainerRef}
+                        staggerIndex={idx}
+                        className="snap-start shrink-0 flex"
+                    >
+                        {child}
+                    </ScrollJellyCard>
+                ))}
             </div>
         </section>
     );

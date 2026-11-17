@@ -290,9 +290,13 @@ export type Particle = Submission;
 // PERSONALIZAÇÃO TEMAS
 export type ThemeInstitution = 'ifusp' | 'ime' | 'iag' | 'igc' | 'io';
 
+export type ThemeInitiative = 'hub' | 'labdiv' | 'show-da-fisica' | 'hs' | 'profis';
+
 export interface PersonalizacaoStoreState {
     institution: ThemeInstitution;
     setInstitution: (inst: ThemeInstitution) => void;
+    initiativeTheme: ThemeInitiative;
+    setInitiativeTheme: (theme: ThemeInitiative) => void;
 }
 
 // 🛡️ TORRE DE CONTROLE & MODERAÇÃO UNIFICADA

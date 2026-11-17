@@ -14,6 +14,7 @@
 
 import React, { Suspense } from 'react';
 import Link from 'next/link';
+import { SplashExpand } from '@/components/ui/SplashExpand';
 import { usePathname, useSearchParams } from 'next/navigation';
 import {
     Megaphone,
@@ -45,12 +46,11 @@ import { useUserRoleNavigation } from '@/hooks/useUserRoleNavigation';
 
 const mainLinks = [
     { name: 'Social', href: '/', icon: <span className="material-symbols-outlined text-2xl">groups</span>, color: 'brand-blue', dataTour: 'sidebar-eixo-comunidade' },
-    { name: 'Informativo', href: '/gcif', icon: <ColisorIcon className="w-6 h-6" />, color: 'brand-red', dataTour: 'sidebar-eixo-cgif' },
+    { name: 'Informativo', href: '/informativo', icon: <ColisorIcon className="w-6 h-6" />, color: 'brand-red', dataTour: 'sidebar-eixo-cgif' },
 ];
 
 const secondaryLinks = [
     { name: 'Configurações', href: '/configuracoes', icon: <Settings className="w-5 h-5" /> },
-    { name: 'Painel Admin', href: '/admin', icon: <ShieldAlert className="w-5 h-5" /> },
 ];
 
 type SubColorKey = 'brand-yellow' | 'brand-blue' | 'brand-red';
@@ -96,9 +96,9 @@ const socialTreeItems: TreeItem[] = [
 ];
 
 const informativoTreeItems: TreeItem[] = [
-    { label: 'Instituto', href: '/gcif/instituto', color: 'brand-blue' },
-    { label: 'Wiki', href: '/gcif/wiki', color: 'brand-red' },
-    { label: 'Interativo', href: '/gcif/interativo', color: 'brand-yellow' },
+    { label: 'Instituto', href: '/informativo/instituto', color: 'brand-blue' },
+    { label: 'Wiki', href: '/informativo/wiki', color: 'brand-red' },
+    { label: 'Interativo', href: '/informativo/interativo', color: 'brand-yellow' },
 ];
 
 const ferramentasTreeItems: TreeItem[] = [
@@ -316,6 +316,60 @@ function SidebarLeftInner({ userId }: { userId?: string }) {
                 </div>
             )}
 
+            {/* Topo da Sidebar: Botão [🚀 Lançar à Órbita] (Opção B) ou Convite Não-Intrusivo */}
+            {!isLoggedIn ? (
+                !isSidebarCollapsed ? (
+                    <div className="mx-2 mb-3 p-3.5 rounded-2xl bg-gradient-to-br from-brand-blue/15 via-brand-blue/5 to-transparent border border-brand-blue/20 shadow-sm animate-in fade-in duration-200">
+                        <div className="flex items-center gap-2 mb-1.5">
+                            <span className="material-symbols-outlined text-brand-blue text-[18px]">rocket_launch</span>
+                            <span className="text-xs font-black font-bukra text-gray-900 dark:text-white uppercase tracking-wider">Faça parte do HUB</span>
+                        </div>
+                        <p className="text-[11px] text-gray-500 dark:text-gray-400 mb-2.5 leading-snug">
+                            Publique projetos, salve materiais e acesse sua organização.
+                        </p>
+                        <Link
+                            href="/login?next=/enviar"
+                            data-tour="desktop-fab-enviar"
+                            className="inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl bg-brand-blue hover:bg-brand-blue-hover text-white text-[11px] font-bold font-bukra uppercase tracking-wider shadow-md shadow-brand-blue/20 hover:scale-[1.02] active:scale-95 transition-all"
+                        >
+                            <span className="material-symbols-outlined text-[15px]">login</span>
+                            <span>Entrar / Criar Conta</span>
+                        </Link>
+                    </div>
+                ) : (
+                    <div className="flex justify-center mb-3">
+                        <Link
+                            href="/login?next=/enviar"
+                            data-tour="desktop-fab-enviar"
+                            className="size-11 rounded-2xl bg-brand-blue text-white flex items-center justify-center shadow-lg shadow-brand-blue/25 hover:scale-105 active:scale-95 transition-all"
+                            title="Entrar para publicar no HUB"
+                        >
+                            <span className="material-symbols-outlined text-xl">login</span>
+                        </Link>
+                    </div>
+                )
+            ) : (
+                <div className={`mb-3 ${isSidebarCollapsed ? 'flex justify-center' : 'px-2'}`}>
+                    <Link
+                        href="/enviar"
+                        data-tour="desktop-fab-enviar"
+                        className={`flex items-center justify-center gap-2.5 bg-brand-blue hover:bg-brand-blue-hover text-white shadow-lg shadow-brand-blue/25 transition-all duration-200 group active:scale-95 ${
+                            isSidebarCollapsed 
+                                ? 'size-11 rounded-2xl' 
+                                : 'w-full py-2.5 px-4 rounded-xl'
+                        }`}
+                        title="Lançar à Órbita"
+                    >
+                        <span className="material-symbols-outlined text-xl group-hover:-translate-y-0.5 transition-transform">rocket_launch</span>
+                        {!isSidebarCollapsed && (
+                            <span className="font-bukra text-xs font-black uppercase tracking-wider">
+                                Lançar à Órbita
+                            </span>
+                        )}
+                    </Link>
+                </div>
+            )}
+
             {/* Primary Navigation Tree View */}
             <nav className={`flex flex-col gap-1 ${isSidebarCollapsed ? 'items-center' : ''}`}>
                 {/* 1. Eixo Social */}
@@ -366,11 +420,15 @@ function SidebarLeftInner({ userId }: { userId?: string }) {
                             </div>
 
                             {/* Sub-tree branches */}
-                            {!isSidebarCollapsed && isExpanded && (
-                                <div className="border-l border-white/10 ml-6 pl-2.5 space-y-1 my-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                                    {socialTreeItems.map(renderTreeSubItem)}
-                                </div>
-                            )}
+                            <SplashExpand
+                                isOpen={!isSidebarCollapsed && isExpanded}
+                                origin="top left"
+                                targetRadius="12px"
+                                yOffset={-6}
+                                className="border-l border-white/10 ml-6 pl-2.5 space-y-1 my-1.5"
+                            >
+                                {socialTreeItems.map(renderTreeSubItem)}
+                            </SplashExpand>
                         </div>
                     );
                 })()}
@@ -423,11 +481,15 @@ function SidebarLeftInner({ userId }: { userId?: string }) {
                             </div>
 
                             {/* Sub-tree branches */}
-                            {!isSidebarCollapsed && isExpanded && (
-                                <div className="border-l border-white/10 ml-6 pl-2.5 space-y-1 my-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                                    {informativoTreeItems.map(renderTreeSubItem)}
-                                </div>
-                            )}
+                            <SplashExpand
+                                isOpen={!isSidebarCollapsed && isExpanded}
+                                origin="top left"
+                                targetRadius="12px"
+                                yOffset={-6}
+                                className="border-l border-white/10 ml-6 pl-2.5 space-y-1 my-1.5"
+                            >
+                                {informativoTreeItems.map(renderTreeSubItem)}
+                            </SplashExpand>
                         </div>
                     );
                 })()}
@@ -483,20 +545,24 @@ function SidebarLeftInner({ userId }: { userId?: string }) {
                             </div>
 
                             {/* Sub-tree branches */}
-                            {!isSidebarCollapsed && isExpanded && (
-                                <div className="border-l border-white/10 ml-6 pl-2.5 space-y-1 my-1.5 animate-in fade-in slide-in-from-top-1 duration-200">
-                                    {thirdAxisSubItems.map((sub, sIdx) => (
-                                        <React.Fragment key={sub.href}>
-                                            {sub.group && (sIdx === 0 || thirdAxisSubItems[sIdx - 1]?.group !== sub.group) && (
-                                                <div className="pt-2 pb-0.5 px-2 text-[9px] font-black uppercase text-gray-500 tracking-wider">
-                                                    {sub.group}
-                                                </div>
-                                            )}
-                                            {renderTreeSubItem(sub)}
-                                        </React.Fragment>
-                                    ))}
-                                </div>
-                            )}
+                            <SplashExpand
+                                isOpen={!isSidebarCollapsed && isExpanded}
+                                origin="top left"
+                                targetRadius="12px"
+                                yOffset={-6}
+                                className="border-l border-white/10 ml-6 pl-2.5 space-y-1 my-1.5"
+                            >
+                                {thirdAxisSubItems.map((sub, sIdx) => (
+                                    <React.Fragment key={sub.href}>
+                                        {sub.group && (sIdx === 0 || thirdAxisSubItems[sIdx - 1]?.group !== sub.group) && (
+                                            <div className="pt-2 pb-0.5 px-2 text-[9px] font-black uppercase text-gray-500 tracking-wider">
+                                                {sub.group}
+                                            </div>
+                                        )}
+                                        {renderTreeSubItem(sub)}
+                                    </React.Fragment>
+                                ))}
+                            </SplashExpand>
                         </div>
                     );
                 })()}
@@ -508,159 +574,136 @@ function SidebarLeftInner({ userId }: { userId?: string }) {
                     </div>
                 )}
 
+                {/* Links Principais Diretos: Laboratório e Gestão Eixo 4 */}
+                <div className="flex flex-col gap-0.5 mt-1">
+                    <Link
+                        href="/lab"
+                        className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-3.5 px-4'} py-2 transition-all group border-l-[3px] rounded-r-xl ${pathname === '/lab'
+                            ? 'bg-brand-blue/10 text-brand-blue border-l-brand-blue font-bold'
+                            : 'border-l-transparent hover:border-l-brand-blue text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'}`}
+                    >
+                        <span className="material-symbols-outlined text-2xl text-brand-blue">science</span>
+                        {!isSidebarCollapsed && (
+                            <span className="text-sm font-bold">Meu Laboratório</span>
+                        )}
+                    </Link>
+
+                    <Link
+                        href="/gestao"
+                        className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-3.5 px-4'} py-2 transition-all group border-l-[3px] rounded-r-xl ${pathname.startsWith('/gestao')
+                            ? 'bg-brand-blue/10 text-brand-blue border-l-brand-blue font-bold'
+                            : 'border-l-transparent hover:border-l-brand-blue text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'}`}
+                    >
+                        <LayoutDashboard className="w-5 h-5 text-brand-blue" />
+                        {!isSidebarCollapsed && (
+                            <span className="text-sm font-bold">Eixo 4: Gestão</span>
+                        )}
+                    </Link>
+                </div>
+
                 <div className={`h-px bg-gray-100 dark:bg-white/5 my-2 ${isSidebarCollapsed ? 'mx-0 w-8' : 'mx-4'}`} />
             </nav>
 
-            {/* Interaction Section */}
-            <div className={`mt-4 flex flex-col gap-1 ${isSidebarCollapsed ? 'items-center' : ''}`}>
-                <Link
-                    href="/interacao?tab=emaranhamento"
-                    data-tour="sidebar-interacoes"
-                    onClick={() => trackEvent('TAB_CHANGE', { tab: 'Central de Interações', hub: 'sidebar' })}
-                    className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-4 px-6'} py-3 transition-all group border-l-[3px] rounded-r-xl ${pathname.startsWith('/interacao') 
-                        ? 'bg-brand-blue/10 text-brand-blue border-l-brand-blue' 
-                        : 'border-l-transparent hover:border-l-brand-blue text-gray-500 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white'}`}
-                >
-                    <span className={`material-symbols-outlined text-2xl group-hover:scale-110 transition-transform ${pathname.startsWith('/interacao') ? 'text-brand-blue' : ''}`}>hub</span>
-                    {!isSidebarCollapsed && (
-                        <div className="flex flex-col overflow-hidden">
-                            <span className={`font-bold text-sm ${pathname.startsWith('/interacao') ? 'text-gray-900 dark:text-white' : ''}`}>Central de Interações</span>
-                            <span className="text-[9px] opacity-60 uppercase tracking-wider font-bold truncate">Nexus de Conexões</span>
+            {/* Bloco 2: Comunicação & Emaranhamento (Acordeão Colapsável) */}
+            <div className={`flex flex-col gap-1 ${isSidebarCollapsed ? 'items-center' : ''}`}>
+                <div className="w-full">
+                    <button
+                        type="button"
+                        onClick={() => toggleAxis('emaranhamento')}
+                        className={`flex items-center w-full ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'justify-between px-4'} py-2 rounded-xl text-gray-500 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5 transition-all cursor-pointer`}
+                        title="Emaranhamento & Mensagens"
+                    >
+                        <div className="flex items-center gap-3">
+                            <span className="material-symbols-outlined text-2xl text-brand-blue">hub</span>
+                            {!isSidebarCollapsed && (
+                                <span className="font-bold text-xs uppercase tracking-wider">Emaranhamento</span>
+                            )}
                         </div>
-                    )}
-                </Link>
+                        {!isSidebarCollapsed && (
+                            <ChevronDown size={14} className={`transition-transform duration-200 ${expandedAxes['emaranhamento'] ? 'rotate-180 text-brand-blue' : ''}`} />
+                        )}
+                    </button>
 
-                {/* Quick Access Buttons */}
-                {!isSidebarCollapsed && (
-                    <div className="px-6 my-2">
-                        <div className="grid grid-cols-2 gap-2">
-                            <Link
-                                href="/lab"
-                                className="flex flex-col items-center justify-center p-2 rounded-xl bg-white dark:bg-white/5 border border-gray-300 dark:border-white/5 hover:border-brand-blue/30 transition-all text-center group shadow-sm dark:shadow-none"
-                            >
-                                <span className="material-symbols-outlined text-lg text-brand-blue mb-1">person</span>
-                                <span className="text-[9px] font-black uppercase tracking-tighter text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white">Laboratório</span>
-                            </Link>
-                            <Link
-                                href="/perguntas"
-                                className="flex flex-col items-center justify-center p-2 rounded-xl bg-white dark:bg-white/5 border border-gray-300 dark:border-white/5 hover:border-brand-blue/30 transition-all text-center group shadow-sm dark:shadow-none"
-                            >
-                                <span className="material-symbols-outlined text-lg text-brand-blue mb-1">quiz</span>
-                                <span className="text-[9px] font-black uppercase tracking-tighter text-gray-500 group-hover:text-gray-900 dark:group-hover:text-white">Pergunte</span>
-                            </Link>
-                        </div>
-                    </div>
-                )}
-
-                <div className={`flex flex-col mt-2 ${isSidebarCollapsed ? 'items-center' : ''}`}>
-                    <h2 className={`text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-3 ${isSidebarCollapsed ? 'hidden' : 'px-5'}`}>Partículas Emaranhadas</h2>
-                    <div className="space-y-1">
-                        {isLoading && recentEntanglements.length === 0 ? (
-                            // Robust Profile Skeleton as requested by user
-                            <div className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-3 px-6'} py-3 animate-pulse`}>
-                                <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-white/5 shrink-0" />
-                                {!isSidebarCollapsed && (
-                                    <div className="flex flex-col gap-2 flex-1 overflow-hidden">
-                                        <div className="h-3 w-3/4 bg-gray-200 dark:bg-white/5 rounded-full" />
-                                        <div className="h-2 w-1/2 bg-gray-100 dark:bg-white/5 rounded-full opacity-60" />
-                                    </div>
-                                )}
+                    {/* Conteúdo Expansível do Emaranhamento */}
+                    {(!isSidebarCollapsed && expandedAxes['emaranhamento']) && (
+                        <div className="mt-2 space-y-1.5 pl-2 animate-in fade-in slide-in-from-top-1 duration-200">
+                            <div className="grid grid-cols-2 gap-1.5 mb-2">
+                                <Link
+                                    href="/interacao?tab=emaranhamento"
+                                    data-tour="sidebar-interacoes"
+                                    className="p-1.5 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-brand-blue/10 text-center text-[10px] font-bold text-gray-600 dark:text-gray-300 hover:text-brand-blue transition-colors flex items-center justify-center gap-1"
+                                >
+                                    <span className="material-symbols-outlined text-sm text-brand-blue">forum</span>
+                                    <span>Chat Central</span>
+                                </Link>
+                                <Link
+                                    href="/perguntas"
+                                    className="p-1.5 rounded-lg bg-gray-100 dark:bg-white/5 hover:bg-brand-blue/10 text-center text-[10px] font-bold text-gray-600 dark:text-gray-300 hover:text-brand-blue transition-colors flex items-center justify-center gap-1"
+                                >
+                                    <span className="material-symbols-outlined text-sm text-brand-blue">quiz</span>
+                                    <span>Pergunte</span>
+                                </Link>
                             </div>
-                        ) : recentEntanglements.length > 0 ? (
-                            <>
-                                {recentEntanglements.map((profile) => (
+
+                            {/* Contatos Recentes */}
+                            <div className="space-y-1 max-h-48 overflow-y-auto">
+                                {recentEntanglements.slice(0, 4).map((profile) => (
                                     <Link
                                         key={profile.id}
                                         href={`/emaranhamento?userId=${profile.id}`}
-                                        className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-3 px-6'} py-2 transition-all group relative border-l-[3px] border-l-transparent rounded-r-xl hover:border-white/5 ${pathname === '/emaranhamento' && userId === profile.id ? 'bg-white/10' : 'hover:bg-gray-100 dark:hover:bg-white/5'}`}
+                                        className="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 dark:hover:bg-white/5 transition-colors group"
                                     >
                                         <Avatar
                                             src={profile.avatar}
                                             name={profile.name}
-                                            size="md"
-                                            className="border border-white/10 shrink-0"
-                                            xp={profile.xp}
-                                            level={profile.level}
+                                            size="sm"
+                                            className="shrink-0"
                                         />
-                                        <div className={`absolute ${isSidebarCollapsed ? 'bottom-2 right-2' : 'bottom-2 left-12'} size-3 bg-brand-blue border-2 border-white dark:border-[#121212] rounded-full`} />
-                                        {!isSidebarCollapsed && (
-                                            <div className="flex flex-col overflow-hidden min-w-0">
-                                                <div className="flex items-center justify-between gap-2">
-                                                    <span className="text-xs font-bold text-gray-900 dark:text-white truncate">{profile.name}</span>
-                                                    {profile.lastAt && (
-                                                        <span className="text-[8px] text-gray-500 font-bold shrink-0">
-                                                            {new Date(profile.lastAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                        </span>
-                                                    )}
-                                                </div>
-                                                {profile.lastMessage && (
-                                                    <span className="text-[10px] text-gray-400 font-medium truncate italic opacity-80 group-hover:opacity-100">
-                                                        {profile.lastMessage}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        )}
+                                        <div className="flex flex-col min-w-0 flex-1">
+                                            <span className="text-xs font-semibold text-gray-900 dark:text-white truncate">{profile.name}</span>
+                                            {profile.lastMessage && (
+                                                <span className="text-[10px] text-gray-400 truncate opacity-75">{profile.lastMessage}</span>
+                                            )}
+                                        </div>
                                     </Link>
                                 ))}
-                                {!isSidebarCollapsed && (
-                                    <Link href="/emaranhamento" className="mx-6 mt-3 flex items-center justify-center gap-2 p-2 rounded-xl bg-gray-100 dark:bg-white/5 hover:bg-brand-blue/10 text-gray-500 hover:text-brand-blue transition-colors text-xs font-bold">
-                                        <span className="material-symbols-outlined text-[16px]">forum</span>
-                                        Ir para o Emaranhamento
-                                    </Link>
-                                )}
-                            </>
-                        ) : isAdult ? (
-                            <Link href="/emaranhamento" className={`mx-auto flex flex-col items-center gap-1.5 ${isSidebarCollapsed ? 'w-12 h-12 justify-center border-0 p-0' : 'mx-5 px-4 py-4 border border-dashed border-gray-300 dark:border-white/10 rounded-2xl'} hover:border-brand-blue/40 hover:bg-brand-blue/5 transition-all text-center cursor-pointer group`}>
-                                <MessageSquare className={`w-4 h-4 text-gray-400 group-hover:text-brand-blue transition-colors ${isSidebarCollapsed ? 'w-5 h-5' : ''}`} />
-                                {!isSidebarCollapsed && (
-                                    <>
-                                        <span className="text-[10px] font-bold text-gray-500 group-hover:text-gray-300 uppercase tracking-widest transition-colors">Sem conexões ativas</span>
-                                        <span className="text-[10px] text-brand-blue font-medium opacity-70 group-hover:opacity-100 transition-opacity">Iniciar emaranhamento →</span>
-                                    </>
-                                )}
-                            </Link>
-                        ) : (
-                            <div className={`mx-auto flex flex-col items-center gap-1.5 ${isSidebarCollapsed ? 'w-12 h-12 justify-center border-0 p-0' : 'mx-5 px-4 py-4 border border-dashed border-gray-200 dark:border-white/5 rounded-2xl'} opacity-50`}>
-                                <MessageSquare className={`w-4 h-4 text-gray-400 ${isSidebarCollapsed ? 'w-5 h-5' : ''}`} />
-                                {!isSidebarCollapsed && (
-                                    <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest text-center leading-tight">Conexão Pública Desativada</span>
-                                )}
                             </div>
-                        )}
-                    </div>
+                        </div>
+                    )}
                 </div>
             </div>
 
-            {/* Suporte e Dúvidas */}
-            <div className={`mt-auto mb-2 flex flex-col pt-4 ${isSidebarCollapsed ? 'items-center' : ''}`}>
-                <h2 className={`text-[10px] font-black uppercase tracking-[0.2em] text-gray-400 mb-2 ${isSidebarCollapsed ? 'hidden' : 'px-5'}`}>Suporte do hub</h2>
-                <div className="flex flex-col gap-1">
-                    <a href="https://wa.me/5511968401823" target="_blank" rel="noopener noreferrer" className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-4 px-6'} py-3 text-sm text-gray-500 hover:bg-brand-yellow/10 hover:text-[#FFCC00] transition-colors group border-l-[3px] border-l-transparent rounded-r-xl`}>
-                        <MessageCircle className="w-5 h-5 opacity-60 group-hover:opacity-100 shrink-0" />
-                        {!isSidebarCollapsed && <span className="font-bold">WhatsApp Direto</span>}
-                    </a>
-                    <a href="mailto:joaopaulostangorlini@usp.br" className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-4 px-6'} py-3 text-sm text-gray-500 hover:bg-brand-red/10 hover:text-brand-red transition-colors group border-l-[3px] border-l-transparent rounded-r-xl`}>
-                        <MessageSquare className="w-5 h-5 opacity-60 group-hover:opacity-100 shrink-0" />
-                        {!isSidebarCollapsed && <span className="font-bold">Enviar e-mail</span>}
-                    </a>
-                </div>
-            </div>
-
-            {/* Secondary/Institutional Links */}
-            <nav className={`border-t border-gray-100 dark:border-gray-800 pt-6 flex flex-col gap-1 relative z-20 ${isSidebarCollapsed ? 'items-center' : ''}`}>
-                {secondaryLinks.map((link) => (
-                    <Link
-                        key={link.name}
-                        href={link.href}
-                        className={`flex items-center ${isSidebarCollapsed ? 'justify-center w-12 h-12 px-0' : 'gap-4 px-6'} py-3 text-sm text-gray-500 hover:text-brand-blue transition-colors group border-l-[3px] border-l-transparent rounded-r-xl`}
+            {/* Suporte Compacto no Rodapé */}
+            <div className={`mt-auto pt-2 flex flex-col gap-1 border-t border-gray-100 dark:border-white/5 ${isSidebarCollapsed ? 'items-center' : 'px-2'}`}>
+                <div className="flex items-center justify-between gap-1 text-[11px] text-gray-400">
+                    <a
+                        href="https://wa.me/5511968401823"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="p-1.5 hover:text-brand-yellow transition-colors flex items-center gap-1 rounded-lg hover:bg-white/5"
+                        title="WhatsApp Direto"
                     >
-                        <span className="opacity-60 group-hover:opacity-100 shrink-0">
-                            {link.icon}
-                        </span>
-                        {!isSidebarCollapsed && <span className="font-medium">{link.name}</span>}
+                        <MessageCircle className="w-4 h-4 shrink-0" />
+                        {!isSidebarCollapsed && <span>WhatsApp</span>}
+                    </a>
+                    <a
+                        href="mailto:joaopaulostangorlini@usp.br"
+                        className="p-1.5 hover:text-brand-red transition-colors flex items-center gap-1 rounded-lg hover:bg-white/5"
+                        title="Enviar e-mail"
+                    >
+                        <Mail className="w-4 h-4 shrink-0" />
+                        {!isSidebarCollapsed && <span>E-mail</span>}
+                    </a>
+                    <Link
+                        href="/configuracoes"
+                        className="p-1.5 hover:text-brand-blue transition-colors flex items-center gap-1 rounded-lg hover:bg-white/5"
+                        title="Configurações"
+                    >
+                        <Settings className="w-4 h-4 shrink-0" />
+                        {!isSidebarCollapsed && <span>Ajustes</span>}
                     </Link>
-                ))}
-            </nav>
+                </div>
+            </div>
         </div>
     );
 }

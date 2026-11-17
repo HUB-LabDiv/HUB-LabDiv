@@ -70,7 +70,7 @@ export function InstitutoTimeline() {
                         <div className={`absolute -left-[9px] top-1 size-4 rounded-full border-2 border-[#121212] ${
                             item.color === 'brand-blue' ? 'bg-brand-blue' :
                             item.color === 'brand-red' ? 'bg-brand-red' : 'bg-brand-yellow'
-                        } shadow-[0_0_15px_rgba(59,130,246,0.3)] group-hover:scale-125 transition-transform`} />
+                        } shadow-[0_0_15px_rgba(31,159,207,0.3)] group-hover:scale-125 transition-transform`} />
 
                         <div className="flex flex-col md:flex-row md:items-baseline gap-2 md:gap-6">
                             <span className="text-2xl font-black text-gray-900 dark:text-white italic shrink-0">{item.year}</span>

@@ -17,13 +17,11 @@ import React from 'react';
 import Link from 'next/link';
 import { 
     ExternalLink, 
-    Info, 
     Sparkles, 
     GraduationCap, 
     Wrench, 
     HeartHandshake, 
-    BookOpen,
-    Users
+    BookOpen
 } from 'lucide-react';
 import { Initiative, InitiativeCategory } from '@/types/initiatives';
 
@@ -36,7 +34,7 @@ const CATEGORY_ICONS: Record<InitiativeCategory, React.ReactNode> = {
     divulgacao: <Sparkles className="w-5 h-5 text-brand-blue" />,
     escolar: <GraduationCap className="w-5 h-5 text-emerald-400" />,
     maker: <Wrench className="w-5 h-5 text-brand-yellow" />,
-    inclusao: <HeartHandshake className="w-5 h-5 text-purple-400" />,
+    inclusao: <HeartHandshake className="w-5 h-5 text-[#1F9FCF]" />,
     academica: <BookOpen className="w-5 h-5 text-brand-red" />
 };
 
@@ -52,7 +50,7 @@ export function InitiativeCard({ initiative, onOpenDetails }: InitiativeCardProp
                         <div className="flex items-baseline justify-center text-[56px] md:text-[64px] font-black leading-none tracking-tighter font-bukra drop-shadow-md">
                             <span className="text-white relative z-10">La</span>
                             <div className="relative flex items-baseline justify-center mx-[2px]">
-                                <div className="absolute w-[70%] h-[120%] bg-[#22a5d8] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 shadow-sm" />
+                                <div className="absolute w-[70%] h-[120%] bg-[#1F9FCF] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-0 shadow-sm" />
                                 <div className="relative z-10 flex items-baseline isolate">
                                     <span className="text-[#F14343] relative z-10">b</span>
                                     <span className="text-[#FFCC00] relative z-20 mix-blend-multiply" style={{ marginLeft: '-0.35em' }}>d</span>
@@ -69,20 +67,13 @@ export function InitiativeCard({ initiative, onOpenDetails }: InitiativeCardProp
                     </p>
                 </div>
                 
-                <div className="relative z-10 mt-auto flex items-center gap-2 w-full">
+                <div className="relative z-10 mt-auto w-full">
                     <Link 
                         href="/iniciativas/labdiv" 
-                        className="flex-1 px-6 py-3.5 bg-[#FFCC00] hover:bg-[#ffe066] text-[#0F4780] rounded-xl font-black uppercase tracking-widest text-[11px] text-center shadow-lg transition-all group-hover:scale-105"
+                        className="w-full block px-4 py-3 bg-[#FFCC00] hover:bg-[#FCE055] text-[#0F4780] rounded-xl font-black uppercase tracking-wider text-[11px] text-center shadow-lg transition-all group-hover:scale-[1.02]"
                     >
                         Conhecer o LabDiv
                     </Link>
-                    <button
-                        onClick={() => onOpenDetails(initiative)}
-                        title="Ver ficha técnica"
-                        className="p-3 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-colors"
-                    >
-                        <Info className="w-4 h-4" />
-                    </button>
                 </div>
             </div>
         );
@@ -108,20 +99,13 @@ export function InitiativeCard({ initiative, onOpenDetails }: InitiativeCardProp
                     </p>
                 </div>
                 
-                <div className="relative z-10 mt-auto flex items-center gap-2">
+                <div className="relative z-10 mt-auto w-full">
                     <Link 
                         href="/iniciativas/show-da-fisica" 
-                        className="flex-1 px-6 py-3 bg-gray-950 dark:bg-black text-white rounded-xl font-black uppercase tracking-widest text-[10px] text-center transition-all border border-[#01f300] hover:bg-[#01f300] hover:text-black shadow-[0_0_15px_rgba(1,243,0,0.4)] group-hover:scale-105"
+                        className="w-full block px-4 py-3 bg-gray-950 dark:bg-black text-white rounded-xl font-black uppercase tracking-wider text-[10px] text-center transition-all border border-[#01f300] hover:bg-[#01f300] hover:text-black shadow-[0_0_15px_rgba(1,243,0,0.4)] group-hover:scale-[1.02]"
                     >
                         Conhecer o Show
                     </Link>
-                    <button
-                        onClick={() => onOpenDetails(initiative)}
-                        title="Ver ficha técnica"
-                        className="p-3 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-400 hover:text-white rounded-xl transition-colors border border-gray-200 dark:border-white/10"
-                    >
-                        <Info className="w-4 h-4" />
-                    </button>
                 </div>
             </div>
         );
@@ -146,26 +130,55 @@ export function InitiativeCard({ initiative, onOpenDetails }: InitiativeCardProp
                     </p>
                 </div>
                 
-                <div className="mt-auto flex items-center gap-2">
+                <div className="mt-auto w-full">
                     <Link 
                         href="/espacos/hackerspace" 
-                        className="flex-1 px-6 py-3 border border-brand-yellow/40 text-amber-700 dark:text-brand-yellow rounded-xl font-black uppercase tracking-widest text-[10px] text-center hover:bg-brand-yellow/10 transition-colors"
+                        className="w-full block px-4 py-3 border border-brand-yellow/40 text-amber-700 dark:text-brand-yellow rounded-xl font-black uppercase tracking-wider text-[10px] text-center hover:bg-brand-yellow/10 transition-colors"
                     >
                         Acessar Espaço
                     </Link>
-                    <button
-                        onClick={() => onOpenDetails(initiative)}
-                        title="Ver detalhes"
-                        className="p-3 bg-gray-100 dark:bg-white/5 hover:bg-gray-200 dark:hover:bg-white/10 text-gray-400 hover:text-white rounded-xl transition-colors"
-                    >
-                        <Info className="w-4 h-4" />
-                    </button>
                 </div>
             </div>
         );
     }
 
-    // 4. Tema Padrão Dinâmico (Para todas as demais iniciativas da CCEx e coletivos)
+    // 4. Tema Especial: Pró-Física (ProFis)
+    if (
+        initiative.temaVisual === 'profis' ||
+        initiative.id === 'profis' ||
+        initiative.id === 'profis-licenciatura' ||
+        initiative.sigla?.toLowerCase() === 'profis'
+    ) {
+        return (
+            <div className="snap-center shrink-0 w-[300px] md:w-[350px] bg-[#0F1320] rounded-[40px] p-8 border border-amber-500/40 shadow-[0_0_20px_rgba(245,158,11,0.2)] relative overflow-hidden group flex flex-col justify-between transition-all hover:border-amber-400">
+                <div className="absolute top-0 right-0 bg-amber-500/90 text-black text-[9px] font-bold uppercase tracking-widest py-1.5 px-4 rounded-bl-2xl shadow-md backdrop-blur-sm z-10">
+                    Ensino & Pesquisa
+                </div>
+                <div>
+                    <div className="size-14 bg-amber-500/10 rounded-2xl flex items-center justify-center text-amber-400 mb-6 border border-amber-500/20">
+                        <GraduationCap className="w-7 h-7" />
+                    </div>
+                    <h3 className="text-xl font-black uppercase mb-2 text-white font-bukra">
+                        {initiative.nome}
+                    </h3>
+                    <p className="text-xs text-gray-300 font-open-sans leading-relaxed mb-6">
+                        {initiative.resumo}
+                    </p>
+                </div>
+                
+                <div className="mt-auto w-full">
+                    <Link 
+                        href={initiative.links.interno || "/iniciativas/profis"} 
+                        className="w-full block px-4 py-3 bg-[#FFCC00] hover:bg-[#FCE055] text-black rounded-xl font-black uppercase tracking-wider text-[10px] text-center shadow-lg transition-all group-hover:scale-[1.02]"
+                    >
+                        Conhecer ProFis
+                    </Link>
+                </div>
+            </div>
+        );
+    }
+
+    // 5. Tema Padrão Dinâmico (Para todas as demais iniciativas da CCEx e coletivos)
     const icon = CATEGORY_ICONS[initiative.categoria] || CATEGORY_ICONS.divulgacao;
 
     return (

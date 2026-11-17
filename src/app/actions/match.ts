@@ -68,42 +68,9 @@ export async function fetchClassmates(subjectCode: string) {
 
     const results = Array.from(uniqueUsers.values());
 
-    // Provide diverse dummy profiles for testing/demo fallback
-    const dummyProfiles = [
-        { 
-            id: 'dummy-alice', 
-            full_name: 'Alice Oliveira (Beta)', 
-            role: 'student', 
-            bio: 'Estudante de Física (IFUSP). Curto astronomia e estou procurando grupo para ' + cleanSubjectCode,
-            avatar_url: null,
-            user_category: 'aluno_usp',
-            entrance_year: 2024
-        },
-        { 
-            id: 'dummy-bob', 
-            full_name: 'Roberto "Bob" Silva (Beta)', 
-            role: 'student', 
-            bio: 'Cibersegurança e Algoritmos no IME. Bora estudar ' + cleanSubjectCode + '?',
-            avatar_url: null,
-            user_category: 'bacharelado',
-            entrance_year: 2023
-        },
-        { 
-            id: 'dummy-carla', 
-            full_name: 'Carla Beatriz (Beta)', 
-            role: 'student', 
-            bio: 'Buscando monitoria e grupos de estudo para as matérias do ciclo básico.',
-            avatar_url: null,
-            user_category: 'licenciatura',
-            entrance_year: 2025
-        }
-    ];
-
-    const finalData = [...results, ...dummyProfiles].slice(0, 10);
-
     return { 
         success: true, 
-        data: finalData,
-        isMock: results.length === 0 
+        data: results.slice(0, 10),
+        isMock: false 
     };
 }

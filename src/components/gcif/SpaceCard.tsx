@@ -52,17 +52,17 @@ const CATEGORY_CONFIG: Record<SpaceCategory, { label: string; badgeClass: string
     },
     'oficina-tecnica': {
         label: 'Oficina Técnica',
-        badgeClass: 'bg-rose-500/15 text-brand-red dark:text-rose-400 border-rose-500/30',
+        badgeClass: 'bg-[#F14343]/15 text-[#F14343] border-[#F14343]/30',
         icon: 'handyman'
     },
     'servico-alimentacao': {
         label: 'Serviço & Alimentação',
-        badgeClass: 'bg-orange-500/15 text-orange-600 dark:text-orange-400 border-orange-500/30',
+        badgeClass: 'bg-[#FFCC00]/15 text-[#0F4780] dark:text-[#FFCC00] border-[#FFCC00]/35',
         icon: 'coffee'
     },
     'laboratorio-pesquisa': {
         label: 'Pesquisa & Acelerador',
-        badgeClass: 'bg-purple-500/15 text-purple-600 dark:text-purple-400 border-purple-500/30',
+        badgeClass: 'bg-[#1F9FCF]/15 text-[#0F4780] dark:text-[#1F9FCF] border-[#1F9FCF]/30',
         icon: 'cyclone'
     }
 };

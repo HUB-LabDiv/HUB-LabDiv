@@ -11,11 +11,16 @@
 
 import { createServerClient } from '@supabase/ssr';
 import { NextRequest, NextResponse } from 'next/server';
+import { resolveSafeNextUrl } from '@/lib/subdomain-urls';
+import { getSharedCookieDomain } from '@/lib/supabase/cookie-domain';
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const code = searchParams.get('code');
-    const next = searchParams.get('next') ?? '/lab';
+    const cookieNext = request.cookies.get('hub_sso_return_url')?.value;
+    const rawParamNext = searchParams.get('next');
+    const rawNext = rawParamNext || (cookieNext ? decodeURIComponent(cookieNext) : null);
+    const next = rawNext ?? '/lab';
 
     // Improved Origin Detection for Local/Prod
     const getPublicOrigin = () => {
@@ -40,22 +45,17 @@ export async function GET(request: NextRequest) {
 
     const publicOrigin = getPublicOrigin();
 
-    // Sanitize redirect target against Open Redirects
-    const sanitizeRedirectPath = (url: string | null): string => {
-        if (!url || url === '/') return '/lab';
-        if (!url.startsWith('/') || url.startsWith('//') || url.startsWith('/\\')) {
-            return '/lab';
-        }
-        if (url === '/login' || url.startsWith('/login?') || url.startsWith('/login/')) {
-            return '/lab';
-        }
-        return url;
-    };
-
     if (code) {
-        const safeTarget = sanitizeRedirectPath(next);
-        const redirectUrl = new URL(safeTarget, publicOrigin);
+        const safeTarget = resolveSafeNextUrl(next, '/lab');
+        const redirectUrl = safeTarget.startsWith('http://') || safeTarget.startsWith('https://')
+            ? new URL(safeTarget)
+            : new URL(safeTarget, publicOrigin);
         const response = NextResponse.redirect(redirectUrl.toString());
+        if (cookieNext) {
+            response.cookies.delete('hub_sso_return_url');
+        }
+
+        const sharedDomain = getSharedCookieDomain(request.headers.get('host'));
 
         const supabase = createServerClient(
             process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -67,8 +67,11 @@ export async function GET(request: NextRequest) {
                     },
                     setAll(cookiesToSet) {
                         cookiesToSet.forEach(({ name, value, options }) => {
+                            const mergedOptions = sharedDomain
+                                ? { ...options, domain: sharedDomain }
+                                : options;
                             request.cookies.set(name, value);
-                            response.cookies.set(name, value, options);
+                            response.cookies.set(name, value, mergedOptions);
                         });
                     },
                 },

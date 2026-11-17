@@ -39,7 +39,7 @@ export default async function AdminGlossarioPage() {
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-gray-800 pb-6">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight text-white flex items-center gap-3">
-                        <span className="material-symbols-outlined text-[#0055ff] text-4xl">menu_book</span>
+                        <span className="material-symbols-outlined text-[#1F9FCF] text-4xl">menu_book</span>
                         Glossário Translacional
                     </h1>
                     <p className="text-gray-400 mt-2 max-w-2xl">
@@ -51,7 +51,7 @@ export default async function AdminGlossarioPage() {
                         <span className="material-symbols-outlined text-sm">hub</span>
                         Montar Mapa de Constelações
                     </Link>
-                    <button className="px-4 py-2 bg-[#0055ff] hover:bg-[#0044cc] text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 cursor-not-allowed opacity-50" title="Em breve">
+                    <button className="px-4 py-2 bg-[#0F4780] hover:bg-[#0C3A68] text-white rounded-lg font-medium transition-colors flex items-center justify-center gap-2 cursor-not-allowed opacity-50" title="Em breve">
                         <span className="material-symbols-outlined text-sm">add</span>
                         Nova Palavra Geradora
                     </button>

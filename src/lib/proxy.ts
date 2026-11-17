@@ -13,9 +13,15 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { verifyAdminToken } from './auth/admin-token';
+import { getInitiativeConfigByHost } from './subdomain-urls';
+import { getSharedCookieDomain } from './supabase/cookie-domain';
 
 export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
+    const host = (request.headers.get('host') || '').toLowerCase();
+    const initiativeConfig = getInitiativeConfigByHost(host);
+    const sharedDomain = getSharedCookieDomain(host);
+
     let response = NextResponse.next({ request });
 
     // --- Supabase Session Refresh ---
@@ -36,9 +42,12 @@ export async function proxy(request: NextRequest) {
                         request.cookies.set(name, value)
                     );
                     response = NextResponse.next({ request });
-                    cookiesToSet.forEach(({ name, value, options }) =>
-                        response.cookies.set(name, value, options)
-                    );
+                    cookiesToSet.forEach(({ name, value, options }) => {
+                        const mergedOptions = sharedDomain
+                            ? { ...options, domain: sharedDomain }
+                            : options;
+                        response.cookies.set(name, value, mergedOptions);
+                    });
                 },
             },
         }
@@ -46,7 +55,11 @@ export async function proxy(request: NextRequest) {
 
     // Performance: Only refresh auth token on routes that need it
     // Public routes skip getUser() to save ~100-200ms TTFB and prevent DB bottleneck on media/auth
-    const isPublicRoute = pathname === '/' ||
+    const isInitiativePublic = (initiativeConfig && !pathname.startsWith('/painel') && !pathname.startsWith('/admin')) ||
+        (pathname.startsWith('/sites/') && !pathname.includes('/painel'));
+
+    const isPublicRoute = isInitiativePublic ||
+        pathname === '/' ||
         pathname.startsWith('/gcif') ||
         pathname.startsWith('/comunidade') ||
         pathname.startsWith('/sobre') ||
@@ -70,9 +83,9 @@ export async function proxy(request: NextRequest) {
         style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
         img-src 'self' blob: data: https://api.dicebear.com https://*.supabase.co https://*.cloudinary.com https://storage.hublabdiv.com.br https://i.ytimg.com https://*.ytimg.com https://*.googleusercontent.com https://*.google.com https://avatars.githubusercontent.com https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://c.bing.com https://*.bing.com;
         font-src 'self' data: https://fonts.gstatic.com;
-        connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.cloudinary.com https://storage.hublabdiv.com.br https://*.resend.com https://fonts.googleapis.com https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://*.bing.com https://c.bing.com;
+        connect-src 'self' http://localhost:3000 http://*.localhost:3000 http://127.0.0.1:3000 https://aurtistic.vercel.app https://*.vercel.app https://*.supabase.co wss://*.supabase.co https://*.cloudinary.com https://storage.hublabdiv.com.br https://*.resend.com https://fonts.googleapis.com https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://*.bing.com https://c.bing.com;
         media-src 'self' https://*.supabase.co https://*.cloudinary.com https://storage.hublabdiv.com.br https://*.youtube.com;
-        frame-src 'self' https://*.youtube.com https://*.youtube-nocookie.com;
+        frame-src 'self' http://localhost:3000 http://*.localhost:3000 http://127.0.0.1:3000 https://aurtistic.vercel.app https://*.vercel.app https://*.hublabdiv.com.br https://*.youtube.com https://*.youtube-nocookie.com;
         object-src 'none';
         base-uri 'self';
         form-action 'self';
@@ -190,6 +203,74 @@ export async function proxy(request: NextRequest) {
             const adminHomeUrl = new URL('/admin', request.url);
             return applyHeaders(NextResponse.redirect(adminHomeUrl));
         }
+    }
+
+    // --- Subdomínios de Iniciativas: Guarda de Acesso aos Bastidores (/painel) ---
+    const isLocal = host.includes('localhost') || host.includes('127.0.0.1');
+    const isPainelRoute = (initiativeConfig && pathname.startsWith('/painel')) ||
+        pathname === '/painel' || pathname.startsWith('/painel/') ||
+        pathname.startsWith('/sites/show-da-fisica/painel');
+
+    if (isPainelRoute && isProd && !isLocal) {
+        // 1. Checar HMAC Admin Session ou Bypass
+        const adminSession = request.cookies.get('admin_session')?.value;
+        const adminBypass = request.cookies.get('admin_bypass')?.value;
+        const bypassCheck = await verifyAdminToken(adminBypass);
+        const sessionCheck = await verifyAdminToken(adminSession);
+        const tokenCheck = bypassCheck.valid ? bypassCheck : sessionCheck;
+
+        if (!tokenCheck.valid || (tokenCheck.role !== 'admin' && tokenCheck.role !== 'moderator')) {
+            const { data: { user } } = await supabase.auth.getUser();
+
+            if (!user) {
+                const loginOrigin = host.includes('localhost')
+                    ? `http://localhost:${host.split(':')[1] || '3000'}`
+                    : 'https://hublabdiv.com.br';
+                const loginUrl = new URL(`/login?next=${encodeURIComponent(request.url)}`, loginOrigin);
+                return applyHeaders(NextResponse.redirect(loginUrl));
+            }
+
+            const { data: profile } = await supabase
+                .from('profiles')
+                .select('role, member_initiatives')
+                .eq('id', user.id)
+                .single();
+
+            const isStaff = profile?.role === 'admin' || profile?.role === 'moderator';
+            const isMember = Array.isArray(profile?.member_initiatives) && profile.member_initiatives.includes('show_da_fisica');
+
+            if (!isStaff && !isMember) {
+                const forbiddenRedirect = initiativeConfig
+                    ? new URL('/?restricted=1', request.url)
+                    : new URL('/sites/show-da-fisica?restricted=1', request.url);
+                return applyHeaders(NextResponse.redirect(forbiddenRedirect));
+            }
+        }
+    }
+
+    // --- Subdomínios de Iniciativas: Reescrita Transparente de Rota ---
+    if (initiativeConfig && !pathname.startsWith('/api') && !pathname.startsWith('/_next')) {
+        const internalFolder = `/sites/${initiativeConfig.folder}`;
+        if (!pathname.startsWith(internalFolder)) {
+            const internalPath = `${internalFolder}${pathname === '/' ? '' : pathname}`;
+            const rewriteUrl = new URL(internalPath, request.url);
+            return applyHeaders(NextResponse.rewrite(rewriteUrl, {
+                headers: response.headers,
+            }));
+        }
+    } else if (!initiativeConfig && (
+        pathname === '/painel' || pathname.startsWith('/painel/') ||
+        pathname === '/conheca' || pathname.startsWith('/conheca/') ||
+        pathname === '/experimentos' || pathname.startsWith('/experimentos/') ||
+        pathname === '/monte-seu-show' || pathname.startsWith('/monte-seu-show/') ||
+        pathname === '/acompanhe' || pathname.startsWith('/acompanhe/') ||
+        pathname === '/noticias-e-eventos' || pathname.startsWith('/noticias-e-eventos/')
+    )) {
+        // Redirecionamento amigável para desenvolvimento/preview quando acessado diretamente sem subdomínio
+        const rewriteUrl = new URL(`/sites/show-da-fisica${pathname}`, request.url);
+        return applyHeaders(NextResponse.rewrite(rewriteUrl, {
+            headers: response.headers,
+        }));
     }
 
     return applyHeaders(response);

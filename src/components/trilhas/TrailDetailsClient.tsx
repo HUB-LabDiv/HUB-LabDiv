@@ -21,8 +21,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 
 const AXIS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-    bach: { label: 'Bacharelado', color: '#00A3FF', icon: Atom },
-    med: { label: 'Física Médica', color: '#FF4B4B', icon: Microscope },
+    bach: { label: 'Bacharelado', color: '#1F9FCF', icon: Atom },
+    med: { label: 'Física Médica', color: '#F14343', icon: Microscope },
     lic: { label: 'Licenciatura', color: '#FFCC00', icon: Binary },
     comum: { label: 'Núcleo Comum', color: '#FFFFFF', icon: Zap },
 };
@@ -242,14 +242,14 @@ export default function TrailDetailsClient({
                                     </span>
                                 )}
                                 {trail.is_experimental && (
-                                    <span className="font-mono text-[9px] px-2 py-0.5 rounded bg-amber-900/30 border border-amber-700/30 text-amber-400 uppercase min-h-[28px] flex items-center">
+                                    <span className="font-mono text-[9px] px-2 py-0.5 rounded bg-[#FFCC00]/15 border border-[#FFCC00]/30 text-[#FFCC00] uppercase min-h-[28px] flex items-center">
                                         🔬 Experimental
                                     </span>
                                 )}
                                 {hasEquivalences && (
                                     <button
                                         onClick={() => setShowEquivalences(!showEquivalences)}
-                                        className="font-mono text-[9px] px-2 py-0.5 rounded bg-cyan-900/20 border border-cyan-700/30 text-cyan-400 uppercase min-h-[28px] flex items-center gap-1 hover:bg-cyan-900/40 transition-all cursor-pointer"
+                                        className="font-mono text-[9px] px-2 py-0.5 rounded bg-[#1F9FCF]/15 border border-[#1F9FCF]/30 text-[#1F9FCF] uppercase min-h-[28px] flex items-center gap-1 hover:bg-[#1F9FCF]/25 transition-all cursor-pointer"
                                         title="Ver disciplinas equivalentes"
                                     >
                                         <Link2 size={10} /> 🔗 {equivalentTrails.length} Equiv.
@@ -307,7 +307,7 @@ export default function TrailDetailsClient({
                                 <div className="relative group">
                                     <div className="absolute -inset-1 bg-gradient-to-r from-brand-blue-accent/10 to-transparent rounded-2xl blur opacity-25 group-hover:opacity-50 transition-all"></div>
                                     <div className="relative p-6 bg-gray-50 dark:bg-[#1E1E1E]/50 border border-gray-200 dark:border-gray-800 rounded-2xl backdrop-blur-sm">
-                                        <h3 className="font-mono text-[9px] text-brand-blue dark:text-brand-blue-accent uppercase tracking-widest mb-3 flex items-center gap-2">
+                                        <h3 className="font-bukra text-[10px] text-brand-blue dark:text-brand-blue-accent uppercase tracking-widest mb-3 flex items-center gap-2">
                                             <Info size={12} /> [EMENTA_DA_DISCIPLINA]
                                         </h3>
                                         <p className="text-gray-600 dark:text-gray-300 font-mono text-sm leading-relaxed italic">
@@ -363,13 +363,13 @@ export default function TrailDetailsClient({
                                         exit={{ opacity: 0, height: 0 }}
                                         className="overflow-hidden"
                                     >
-                                        <div className="p-4 bg-gradient-to-r from-cyan-500/5 via-cyan-500/3 to-transparent border border-cyan-500/20 rounded-xl space-y-3">
+                                        <div className="p-4 bg-gradient-to-r from-[#1F9FCF]/10 via-[#1F9FCF]/5 to-transparent border border-[#1F9FCF]/25 rounded-xl space-y-3">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 shrink-0 rounded-full bg-cyan-500/20 flex items-center justify-center">
-                                                    <Link2 size={14} className="text-cyan-400" />
+                                                <div className="w-8 h-8 shrink-0 rounded-full bg-[#1F9FCF]/20 flex items-center justify-center">
+                                                    <Link2 size={14} className="text-[#1F9FCF]" />
                                                 </div>
                                                 <div>
-                                                    <h4 className="text-cyan-400 font-bold font-mono text-[10px] uppercase tracking-wider">
+                                                    <h4 className="text-[#1F9FCF] font-bold font-bukra text-[10px] uppercase tracking-wider">
                                                         [EMARANHAMENTO_CURRICULAR]
                                                     </h4>
                                                     <p className="text-gray-500 text-[10px] font-mono mt-0.5">
@@ -383,8 +383,8 @@ export default function TrailDetailsClient({
                                             {trail.equivalency_map && Object.keys(trail.equivalency_map).length > 0 && (
                                                 <div className="pl-11 pt-2 space-y-3">
                                                     {Object.entries(trail.equivalency_map).map(([ruleName, rule]: [string, any]) => (
-                                                        <div key={ruleName} className="p-3 bg-gray-50 dark:bg-background-dark/60 rounded-lg border border-cyan-500/20">
-                                                            <div className="text-[9px] font-mono text-cyan-500/80 mb-2 uppercase tracking-widest font-black leading-tight border-b border-cyan-500/10 pb-1">
+                                                        <div key={ruleName} className="p-3 bg-gray-50 dark:bg-background-dark/60 rounded-lg border border-[#1F9FCF]/20">
+                                                            <div className="text-[9px] font-mono text-[#1F9FCF]/85 mb-2 uppercase tracking-widest font-black leading-tight border-b border-[#1F9FCF]/10 pb-1">
                                                                 VIA: {ruleName}
                                                             </div>
                                                             <div className="flex flex-wrap items-center gap-2">
@@ -393,15 +393,15 @@ export default function TrailDetailsClient({
                                                                     return (
                                                                         <div key={code} className="flex items-center gap-2">
                                                                             {eqData ? (
-                                                                                <Link href={`/ferramentas/trilhas/${eqData.id}`} className="px-2 py-1 bg-gray-100 dark:bg-[#1E1E1E] border border-cyan-500/20 rounded flex items-center gap-2 group/eqlink hover:border-cyan-500/40 transition-colors">
-                                                                                    <span className="font-mono text-[10px] font-bold text-gray-800 dark:text-gray-300 group-hover/eqlink:text-cyan-600 dark:group-hover/eqlink:text-cyan-400">{code}</span>
+                                                                                <Link href={`/ferramentas/trilhas/${eqData.id}`} className="px-2 py-1 bg-gray-100 dark:bg-[#1E1E1E] border border-[#1F9FCF]/20 rounded flex items-center gap-2 group/eqlink hover:border-[#1F9FCF]/40 transition-colors">
+                                                                                    <span className="font-mono text-[10px] font-bold text-gray-800 dark:text-gray-300 group-hover/eqlink:text-[#0F4780] dark:group-hover/eqlink:text-[#1F9FCF]">{code}</span>
                                                                                     <span className="text-[10px] text-gray-500 max-w-[120px] truncate">{eqData.title}</span>
                                                                                 </Link>
                                                                             ) : (
                                                                                 <span className="px-2 py-1 bg-gray-100 dark:bg-[#1E1E1E] border border-gray-200 dark:border-gray-800 rounded font-mono text-[10px] text-gray-500">{code}</span>
                                                                             )}
                                                                             {idx < rule.codes.length - 1 && (
-                                                                                <span className="text-[9px] font-mono font-black text-cyan-600/50 px-1 border border-cyan-600/20 rounded bg-cyan-600/10">{rule.logic}</span>
+                                                                                <span className="text-[9px] font-mono font-black text-[#1F9FCF]/70 px-1 border border-[#1F9FCF]/20 rounded bg-[#1F9FCF]/10">{rule.logic}</span>
                                                                             )}
                                                                         </div>
                                                                     );
@@ -420,7 +420,7 @@ export default function TrailDetailsClient({
                                                             <Link
                                                                 key={eq.id}
                                                                 href={`/ferramentas/trilhas/${eq.id}`}
-                                                                className="group flex items-center gap-3 p-3 bg-gray-50 dark:bg-background-dark/60 border border-cyan-500/10 rounded-lg hover:border-cyan-500/30 transition-all"
+                                                                className="group flex items-center gap-3 p-3 bg-gray-50 dark:bg-background-dark/60 border border-[#1F9FCF]/15 rounded-lg hover:border-[#1F9FCF]/35 transition-all"
                                                             >
                                                                 <eqCfg.icon size={12} style={{ color: eqCfg.color }} className="shrink-0" />
                                                                 <div className="min-w-0">
@@ -453,11 +453,11 @@ export default function TrailDetailsClient({
                                 >
                                     <div className="p-5 bg-gradient-to-r from-[#FF4B4B]/10 via-[#FF4B4B]/05 to-transparent border border-[#FF4B4B]/30 rounded-xl space-y-4">
                                         <div className="flex gap-4 items-center">
-                                            <div className="w-10 h-10 shrink-0 rounded-full bg-[#FF4B4B] flex items-center justify-center animate-pulse shadow-[0_0_20px_#FF4B4B80]">
+                                            <div className="w-10 h-10 shrink-0 rounded-full bg-[#F14343] flex items-center justify-center animate-pulse shadow-[0_0_20px_rgba(241,67,67,0.5)]">
                                                 <AlertTriangle size={18} className="text-[#121212]" />
                                             </div>
                                             <div>
-                                                <h3 className="text-[#FF4B4B] font-bold font-mono text-xs uppercase italic tracking-wider">
+                                                <h3 className="text-[#F14343] font-bold font-bukra text-xs uppercase italic tracking-wider">
                                                     [INSTABILIDADE_DE_PARTÍCULA_DETECTADA]
                                                 </h3>
                                                 <p className="text-gray-400 text-[11px] font-mono mt-1">
@@ -472,12 +472,12 @@ export default function TrailDetailsClient({
                                                 <Link
                                                     key={prereq.course_code}
                                                     href={`/ferramentas/trilhas/${prereq.id}`}
-                                                    className="group flex items-center gap-3 p-3 bg-background-dark/60 border border-[#FF4B4B]/15 rounded-lg hover:border-[#FF4B4B]/40 transition-all"
+                                                    className="group flex items-center gap-3 p-3 bg-background-dark/60 border border-[#F14343]/15 rounded-lg hover:border-[#F14343]/40 transition-all"
                                                 >
-                                                    <Lock size={12} className="text-[#FF4B4B] shrink-0 group-hover:hidden" />
-                                                    <Unlock size={12} className="text-[#FF4B4B] shrink-0 hidden group-hover:block" />
+                                                    <Lock size={12} className="text-[#F14343] shrink-0 group-hover:hidden" />
+                                                    <Unlock size={12} className="text-[#F14343] shrink-0 hidden group-hover:block" />
                                                     <div className="min-w-0">
-                                                        <span className="block font-mono text-[9px] text-[#FF4B4B]/70 uppercase">{prereq.course_code}</span>
+                                                        <span className="block font-mono text-[9px] text-[#F14343]/70 uppercase">{prereq.course_code}</span>
                                                         <span className="block text-[11px] text-gray-300 truncate group-hover:text-white transition-colors">{prereq.title}</span>
                                                     </div>
                                                 </Link>
@@ -497,17 +497,17 @@ export default function TrailDetailsClient({
                                     exit={{ opacity: 0, height: 0 }}
                                     className="overflow-hidden"
                                 >
-                                    <div className="p-5 bg-gradient-to-r from-amber-500/10 via-amber-500/05 to-transparent border border-amber-500/30 rounded-xl space-y-3">
+                                    <div className="p-5 bg-gradient-to-r from-[#FFCC00]/10 via-[#FFCC00]/5 to-transparent border border-[#FFCC00]/30 rounded-xl space-y-3">
                                         <div className="flex gap-4 items-center">
-                                            <div className="w-10 h-10 shrink-0 rounded-full bg-amber-500/20 flex items-center justify-center shadow-[0_0_15px_#F59E0B40]">
-                                                <ShieldAlert size={18} className="text-amber-400" />
+                                            <div className="w-10 h-10 shrink-0 rounded-full bg-[#FFCC00]/20 flex items-center justify-center shadow-[0_0_15px_rgba(255,204,0,0.25)]">
+                                                <ShieldAlert size={18} className="text-[#FFCC00]" />
                                             </div>
                                             <div>
-                                                <h3 className="text-amber-400 font-bold font-mono text-xs uppercase italic tracking-wider">
+                                                <h3 className="text-[#FFCC00] font-bold font-bukra text-xs uppercase italic tracking-wider">
                                                     [VALIDAÇÃO_PCC_REQUERIDA]
                                                 </h3>
                                                 <p className="text-gray-400 text-[11px] font-mono mt-1 max-w-xl leading-relaxed">
-                                                    Esta disciplina contém Práticas como Componente Curricular (PCC). Alunos migrando do <strong className="text-amber-300">Bacharelado → Licenciatura</strong> precisam compensar a carga prática via disciplinas do &quot;Bloco de Ensino&quot; (ex: EDM0425/EDM0426, 4300356, 4300390).
+                                                    Esta disciplina contém Práticas como Componente Curricular (PCC). Alunos migrando do <strong className="text-[#FFCC00]">Bacharelado → Licenciatura</strong> precisam compensar a carga prática via disciplinas do &quot;Bloco de Ensino&quot; (ex: EDM0425/EDM0426, 4300356, 4300390).
                                                 </p>
                                             </div>
                                         </div>
@@ -525,23 +525,23 @@ export default function TrailDetailsClient({
                                     exit={{ opacity: 0, height: 0 }}
                                     className="overflow-hidden"
                                 >
-                                    <div className="p-5 bg-gradient-to-r from-fuchsia-500/10 via-fuchsia-500/05 to-transparent border border-fuchsia-500/30 rounded-xl space-y-3">
+                                    <div className="p-5 bg-gradient-to-r from-[#F14343]/10 via-[#F14343]/5 to-transparent border border-[#F14343]/30 rounded-xl space-y-3">
                                         <div className="flex gap-4 items-center">
-                                            <div className="w-10 h-10 shrink-0 rounded-full bg-fuchsia-500/20 flex items-center justify-center shadow-[0_0_15px_#D946EF40]">
-                                                <Ban size={18} className="text-fuchsia-400" />
+                                            <div className="w-10 h-10 shrink-0 rounded-full bg-[#F14343]/20 flex items-center justify-center shadow-[0_0_15px_rgba(241,67,67,0.25)]">
+                                                <Ban size={18} className="text-[#F14343]" />
                                             </div>
                                             <div>
-                                                <h3 className="text-fuchsia-400 font-bold font-mono text-xs uppercase italic tracking-wider">
+                                                <h3 className="text-[#F14343] font-bold font-bukra text-xs uppercase italic tracking-wider">
                                                     [EXCLUSÃO_MÚTUA_DETECTADA]
                                                 </h3>
                                                 <p className="text-gray-400 text-[11px] font-mono mt-1 max-w-xl leading-relaxed">
-                                                    Esta disciplina possui exclusão mútua (XOR). Completar ambas <strong className="text-fuchsia-300">não acumula XP</strong> — apenas a primeira concluída contabiliza energia atômica.
+                                                    Esta disciplina possui exclusão mútua (XOR). Completar ambas <strong className="text-[#F14343]">não acumula XP</strong> — apenas a primeira concluída contabiliza energia atômica.
                                                 </p>
                                             </div>
                                         </div>
                                         <div className="pl-14 space-y-1">
                                             {xorExclusions.map((xor, i) => (
-                                                <div key={i} className="font-mono text-[10px] text-fuchsia-300/70">
+                                                <div key={i} className="font-mono text-[10px] text-[#F14343]/80">
                                                     ⊕ {xor.group_a} ↔ {xor.group_b}: <span className="text-gray-500">{xor.reason}</span>
                                                 </div>
                                             ))}
@@ -608,12 +608,12 @@ export default function TrailDetailsClient({
                                                 </div>
 
                                                 <div className="flex items-start gap-4 mb-4">
-                                                    <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-background-dark flex items-center justify-center text-gray-400 dark:text-gray-500 group-hover:text-brand-blue dark:group-hover:text-[#00A3FF] transition-colors shrink-0">
+                                                    <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-background-dark flex items-center justify-center text-gray-400 dark:text-gray-500 group-hover:text-brand-blue dark:group-hover:text-[#1F9FCF] transition-colors shrink-0">
                                                         {item.media_type === 'video' ? <Play size={20} /> : <FileText size={20} />}
                                                     </div>
                                                     <div className="flex-1 min-w-0">
                                                         <div className="flex items-center gap-2 mb-1">
-                                                            <span className="font-mono text-[9px] text-[#00A3FF] uppercase font-bold tracking-tighter">
+                                                            <span className="font-mono text-[9px] text-[#1F9FCF] uppercase font-bold tracking-tighter">
                                                                 {item.media_type}
                                                             </span>
                                                             {!isOriginalSubject && item.course_code && (
@@ -634,7 +634,7 @@ export default function TrailDetailsClient({
                                                     </span>
                                                     <Link
                                                         href={`/arquivo/${item.id}`}
-                                                        className="font-mono text-[9px] font-bold text-[#00A3FF] hover:underline flex items-center gap-1 shrink-0"
+                                                        className="font-mono text-[9px] font-bold text-[#1F9FCF] hover:underline flex items-center gap-1 shrink-0"
                                                     >
                                                         ACESSAR_DADOS <Play size={8} />
                                                     </Link>
@@ -649,7 +649,7 @@ export default function TrailDetailsClient({
                                         <Zap size={30} className="opacity-20" />
                                     </div>
                                     <div className="text-center">
-                                        <h3 className="font-bold text-gray-400 font-mono uppercase tracking-widest">[NENHUMA_PARTICULA_DETECTADA]</h3>
+                                        <h3 className="font-bold text-gray-400 font-bukra uppercase tracking-widest">[NENHUMA_PARTICULA_DETECTADA]</h3>
                                         <p className="text-xs text-gray-600 font-mono mt-1">Seja o primeiro a colidir conhecimento nesta trilha.</p>
                                     </div>
                                     <Link
@@ -746,7 +746,7 @@ export default function TrailDetailsClient({
                             {/* Info Card */}
                             <div className="bg-gray-50 dark:bg-[#1E1E1E] p-6 rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm space-y-6" style={{ borderColor: `${cfg.color}15` }}>
                                 <div className="space-y-2 pb-4 border-b border-gray-200 dark:border-gray-800">
-                                    <h3 className="font-mono text-[10px] font-bold text-gray-500 uppercase tracking-widest">[METADADOS]</h3>
+                                    <h3 className="font-bukra text-[10px] font-bold text-gray-500 uppercase tracking-widest">[METADADOS]</h3>
                                     <div className="grid grid-cols-2 gap-4 pt-2">
                                         <div>
                                             <span className="block text-[10px] text-gray-600 font-mono tracking-tighter uppercase">Créditos Aula</span>
@@ -816,8 +816,8 @@ export default function TrailDetailsClient({
                                                 disabled={isUpdatingStatus}
                                                 onClick={() => toggleStatus('cursando')}
                                                 className={`flex-1 flex items-center justify-center gap-2 py-3 font-black font-mono text-[10px] uppercase rounded-lg transition-all ${status === 'cursando'
-                                                    ? 'bg-[#00A3FF] text-white shadow-[0_0_20px_rgba(0,163,255,0.4)]'
-                                                    : 'bg-gray-100 dark:bg-[#1E1E1E] text-gray-700 dark:text-gray-400 border border-gray-200 dark:border-gray-800 hover:border-[#00A3FF]/50 hover:text-brand-blue dark:hover:text-white'
+                                                    ? 'bg-[#1F9FCF] text-white shadow-[0_0_20px_rgba(31,159,207,0.4)]'
+                                                    : 'bg-gray-100 dark:bg-[#1E1E1E] text-gray-700 dark:text-gray-400 border border-gray-200 dark:border-gray-800 hover:border-[#1F9FCF]/50 hover:text-brand-blue dark:hover:text-white'
                                                     }`}
                                             >
                                                 <Play size={12} fill={status === 'cursando' ? 'currentColor' : 'none'} />
@@ -830,16 +830,16 @@ export default function TrailDetailsClient({
 
                             {/* Prerequisites Sidebar Card (if any) */}
                             {hasPrerequisites && (
-                                <div className="bg-white dark:bg-[#1E1E1E] p-6 rounded-xl border border-gray-200 dark:border-[#FF4B4B]/15 space-y-4">
-                                    <h4 className="font-mono text-[10px] text-[#FF4B4B] uppercase tracking-widest font-bold">[PRÉ-REQUISITOS]</h4>
+                                <div className="bg-white dark:bg-[#1E1E1E] p-6 rounded-xl border border-gray-200 dark:border-[#F14343]/15 space-y-4">
+                                    <h4 className="font-bukra text-[10px] text-[#F14343] uppercase tracking-widest font-bold">[PRÉ-REQUISITOS]</h4>
                                     <div className="space-y-2">
                                         {prerequisiteTrails.map((prereq) => (
                                             <Link
                                                 key={prereq.course_code}
                                                 href={`/ferramentas/trilhas/${prereq.id}`}
-                                                className="flex items-center gap-2 p-2 rounded bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-gray-800 hover:border-[#FF4B4B]/30 transition-all group"
+                                                className="flex items-center gap-2 p-2 rounded bg-gray-50 dark:bg-background-dark border border-gray-200 dark:border-gray-800 hover:border-[#F14343]/30 transition-all group"
                                             >
-                                                <Lock size={10} className="text-[#FF4B4B]/50 shrink-0" />
+                                                <Lock size={10} className="text-[#F14343]/50 shrink-0" />
                                                 <div className="min-w-0">
                                                     <span className="block font-mono text-[8px] text-gray-500 dark:text-gray-600">{prereq.course_code}</span>
                                                     <span className="block text-[10px] text-gray-700 dark:text-gray-400 truncate group-hover:text-brand-red dark:group-hover:text-white transition-colors">{prereq.title}</span>
@@ -852,8 +852,8 @@ export default function TrailDetailsClient({
 
                             {/* Equivalences Sidebar Card */}
                             {hasEquivalences && (
-                                <div className="bg-white dark:bg-[#1E1E1E] p-6 rounded-xl border border-gray-200 dark:border-cyan-500/15 space-y-4">
-                                    <h4 className="font-mono text-[10px] text-cyan-600 dark:text-cyan-400 uppercase tracking-widest font-bold flex items-center gap-2">
+                                <div className="bg-white dark:bg-[#1E1E1E] p-6 rounded-xl border border-gray-200 dark:border-[#1F9FCF]/20 space-y-4">
+                                    <h4 className="font-bukra text-[10px] text-[#0F4780] dark:text-[#1F9FCF] uppercase tracking-widest font-bold flex items-center gap-2">
                                         <Link2 size={12} /> [EMARANHAMENTO]
                                     </h4>
                                     <p className="text-[10px] text-gray-500 font-mono">
@@ -866,7 +866,7 @@ export default function TrailDetailsClient({
                                                 <Link
                                                     key={eq.id}
                                                     href={`/ferramentas/trilhas/${eq.id}`}
-                                                    className="flex items-center gap-2 p-2 rounded bg-background-dark border border-gray-800 hover:border-cyan-500/30 transition-all group"
+                                                    className="flex items-center gap-2 p-2 rounded bg-background-dark border border-gray-800 hover:border-[#1F9FCF]/40 transition-all group"
                                                 >
                                                     <eqCfg.icon size={10} style={{ color: eqCfg.color }} className="shrink-0" />
                                                     <div className="min-w-0">
@@ -896,7 +896,7 @@ export default function TrailDetailsClient({
                                 <motion.div
                                     animate={{ rotate: 360 }}
                                     transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
-                                    className="absolute inset-0 border-2 border-dashed border-[#00A3FF]/40 rounded-full"
+                                    className="absolute inset-0 border-2 border-dashed border-[#1F9FCF]/40 rounded-full"
                                 />
                                 <motion.div
                                     animate={{ rotate: -360 }}
@@ -909,14 +909,14 @@ export default function TrailDetailsClient({
                                     <motion.div
                                         animate={{ scale: [1, 1.2, 1] }}
                                         transition={{ duration: 1, repeat: Infinity }}
-                                        className="w-4 h-4 bg-[#00A3FF] rounded-full shadow-[0_0_20px_#00A3FF]"
+                                        className="w-4 h-4 bg-[#1F9FCF] rounded-full shadow-[0_0_20px_#1F9FCF]"
                                     />
                                     <Atom className="absolute -top-6 -left-6 w-16 h-16 text-white/20 animate-pulse" />
                                 </div>
                             </div>
 
                             <div className="mt-8 text-center space-y-2">
-                                <h2 className="text-lg font-black font-mono text-white uppercase tracking-[0.3em] animate-pulse">
+                                <h2 className="text-lg font-black font-bukra text-white uppercase tracking-[0.2em] animate-pulse">
                                     Sincronizando_Partículas
                                 </h2>
                                 <p className="text-[10px] font-mono text-gray-400 uppercase tracking-widest">
@@ -930,7 +930,7 @@ export default function TrailDetailsClient({
                                     initial={{ width: 0 }}
                                     animate={{ width: "100%" }}
                                     transition={{ duration: 2.0, ease: "linear" }}
-                                    className="h-full bg-[#00A3FF] shadow-[0_0_10px_#00A3FF]"
+                                    className="h-full bg-[#1F9FCF] shadow-[0_0_10px_#1F9FCF]"
                                 />
                             </div>
                         </motion.div>

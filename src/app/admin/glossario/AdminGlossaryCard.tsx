@@ -142,7 +142,7 @@ export function AdminGlossaryCard({ palavra, allConstellations = [] }: { palavra
 
     return (
         <div className="bg-neutral-900 border border-gray-800 rounded-2xl p-6 shadow-xl relative overflow-hidden group">
-            <div className={`absolute top-0 left-0 w-1 h-full bg-gradient-to-b ${palavra.is_pending ? 'from-brand-yellow to-brand-red' : 'from-[#0055ff] to-brand-yellow'} opacity-50 group-hover:opacity-100 transition-opacity`}></div>
+            <div className={`absolute top-0 left-0 w-1 h-full bg-gradient-to-b ${palavra.is_pending ? 'from-brand-yellow to-brand-red' : 'from-[#1F9FCF] to-brand-yellow'} opacity-50 group-hover:opacity-100 transition-opacity`}></div>
             
             <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
                 {/* Academic Core */}
@@ -184,7 +184,7 @@ export function AdminGlossaryCard({ palavra, allConstellations = [] }: { palavra
                             )}
                         </div>
                     </div>
-                    <span className="text-xs font-semibold uppercase tracking-wider text-[#0055ff] mt-2 block">Codificação Acadêmica</span>
+                    <span className="text-xs font-semibold uppercase tracking-wider text-[#1F9FCF] mt-2 block">Codificação Acadêmica</span>
                     {isEditingMain ? (
                         <textarea 
                             value={mainForm.codificacao_academica}

@@ -696,7 +696,7 @@ export function MatchAcademicoTab({ profile }: MatchAcademicoTabProps) {
                                                         {modalDisplayName}
                                                     </h2>
                                                     {isSelectedResearcher && (
-                                                        <span className="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider bg-brand-yellow/15 text-[#B45309] dark:text-brand-yellow border border-brand-yellow/30">
+                                                        <span className="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-wider bg-brand-yellow/15 text-[#1E1E1E] dark:text-brand-yellow border border-brand-yellow/30">
                                                             🔬 Pesquisador / Docente
                                                         </span>
                                                     )}

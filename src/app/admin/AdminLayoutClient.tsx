@@ -120,7 +120,7 @@ export default function AdminLayoutClient({
                             prefetch={true}
                             className={`flex-shrink-0 size-9 flex items-center justify-center rounded-xl transition-all border ${
                                 isActive 
-                                    ? 'bg-[#0F4780] dark:bg-[#0055ff] border-[#0F4780]/50 dark:border-[#0055ff]/50 text-white shadow-lg shadow-[#0F4780]/20 dark:shadow-[#0055ff]/20' 
+                                    ? 'bg-[#0F4780] dark:bg-[#1F9FCF] border-[#0F4780]/50 dark:border-[#1F9FCF]/50 text-white shadow-lg shadow-[#0F4780]/20 dark:shadow-[#1F9FCF]/25' 
                                     : 'bg-gray-100 dark:bg-[#1e1e1e] border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white'
                             }`}
                             title={link.name}
@@ -137,7 +137,7 @@ export default function AdminLayoutClient({
                 className={`${isMobileMenuOpen ? 'flex' : 'hidden'} md:flex w-full md:w-72 bg-white dark:bg-[#1E1E1E] border-r border-gray-200 dark:border-white/10 flex-col justify-between shrink-0 fixed md:sticky inset-x-0 bottom-0 z-50 md:z-40 transition-all duration-300 shadow-xl dark:shadow-2xl overflow-hidden`}
                 style={{ top: 'var(--admin-sidebar-top)', height: 'var(--admin-sidebar-height)' }}
             >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-[#0F4780]/10 dark:bg-[#0055ff]/10 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-[#0F4780]/10 dark:bg-[#1F9FCF]/15 rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"></div>
                 <div className="absolute bottom-0 left-0 w-40 h-40 bg-brand-red/10 rounded-full blur-2xl translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
 
                 <div className="flex flex-col gap-4 p-6 relative z-10 flex-1 overflow-hidden">
@@ -170,7 +170,7 @@ export default function AdminLayoutClient({
                                     prefetch={true}
                                     onClick={() => setIsMobileMenuOpen(false)}
                                     className={`flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-2xl transition-all group ${isActive
-                                        ? 'bg-[#0F4780] dark:bg-[#0055ff] border border-[#0F4780]/50 dark:border-[#0055ff]/50 text-white shadow-lg shadow-[#0F4780]/20 dark:shadow-[#0055ff]/20'
+                                        ? 'bg-[#0F4780] dark:bg-[#1F9FCF] border border-[#0F4780]/50 dark:border-[#1F9FCF]/50 text-white shadow-lg shadow-[#0F4780]/20 dark:shadow-[#1F9FCF]/25'
                                         : 'text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/5 hover:text-gray-900 dark:hover:text-white border border-transparent'
                                         }`}
                                 >

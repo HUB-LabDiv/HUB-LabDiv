@@ -106,6 +106,31 @@ export const initiativesData: Record<string, Initiative> = {
     destaque: true,
     tags: ["maker", "impressão 3d", "arduino", "eletrônica", "hardware livre"],
   },
+  profis: {
+    id: "profis",
+    nome: "Pró-Física (ProFis)",
+    sigla: "ProFis",
+    categoria: "academica",
+    resumo:
+      "Apoio pedagógico, nivelamento, monitorias, pesquisa e divulgação no Instituto de Física.",
+    descricao:
+      "O Programa Pró-Física (ProFis) oferece monitorias e nivelamento em cálculo e física básica para calouros e graduandos do IFUSP, além de articular grupos de estudo e seminários.",
+    publicoAlvo: "Estudantes de graduação, ingressantes e pesquisadores do IFUSP",
+    coordenacao: "Coordenação Pró-Física / IFUSP",
+    comoParticipar: "Monitorias abertas, grupos de estudo e participação nos plantões do ProFis.",
+    modalidadeBolsa: ["PUB", "AEx", "Voluntariado"],
+    temaVisual: "profis",
+    contatos: {
+      email: "profis@if.usp.br",
+      website: "https://fep.if.usp.br/~profis/",
+    },
+    links: {
+      interno: "/iniciativas/profis",
+      oficial: "https://fep.if.usp.br/~profis/",
+    },
+    destaque: true,
+    tags: ["ensino", "nivelamento", "pesquisa", "profis", "ifusp"],
+  },
   "grupo-noether": {
     id: "grupo-noether",
     nome: "Grupo Emmy Noether",

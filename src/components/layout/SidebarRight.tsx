@@ -175,7 +175,7 @@ export const SidebarRight = ({ tags: propTags, authors: propAuthors }: SidebarRi
                     <h2 className="text-sm font-black uppercase tracking-widest text-brand-blue">Isótopos em Órbita</h2>
                     <div className="flex gap-1">
                         {Array.from({ length: totalPages }).map((_, i) => (
-                            <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all ${page === i ? 'bg-brand-blue w-4 shadow-[0_0_8px_rgba(59,130,246,0.5)]' : 'bg-gray-300 dark:bg-gray-700'}`} />
+                            <div key={i} className={`w-1.5 h-1.5 rounded-full transition-all ${page === i ? 'bg-[#1F9FCF] w-4 shadow-[0_0_8px_rgba(31,159,207,0.5)]' : 'bg-gray-300 dark:bg-gray-700'}`} />
                         ))}
                     </div>
                 </div>

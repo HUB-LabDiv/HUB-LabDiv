@@ -27,6 +27,8 @@ import { Browser } from '@capacitor/browser';
 
 
 import { useAuth } from '@/providers/AuthProvider';
+import { resolveSafeNextUrl } from '@/lib/subdomain-urls';
+import { launchHubConfetti } from '@/lib/confetti';
 
 function LoginContent() {
     const [isLoading, setIsLoading] = useState(false);
@@ -34,11 +36,62 @@ function LoginContent() {
     const router = useRouter();
     const { user, loading: authLoading } = useAuth();
 
+    // Recupera destino com redundância (Query param -> SessionStorage -> Cookie)
+    const getTargetRedirect = () => {
+        const queryNext = searchParams.get('next');
+        if (queryNext) return resolveSafeNextUrl(queryNext, '/lab');
+
+        if (typeof window !== 'undefined') {
+            try {
+                const sessionUrl = sessionStorage.getItem('hub_sso_return_url');
+                if (sessionUrl) return resolveSafeNextUrl(sessionUrl, '/lab');
+            } catch {}
+        }
+        if (typeof document !== 'undefined') {
+            const match = document.cookie.match(/(?:^|; )hub_sso_return_url=([^;]*)/);
+            if (match) {
+                try {
+                    return resolveSafeNextUrl(decodeURIComponent(match[1]), '/lab');
+                } catch {}
+            }
+        }
+        return '/lab';
+    };
+
+    const clearSsoSession = () => {
+        if (typeof document !== 'undefined') {
+            document.cookie = 'hub_sso_return_url=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+        }
+        if (typeof window !== 'undefined') {
+            try {
+                sessionStorage.removeItem('hub_sso_return_url');
+            } catch {}
+        }
+    };
+
+    // Salva o destino se presente na URL ao carregar a página
+    useEffect(() => {
+        const rawNext = searchParams.get('next');
+        if (rawNext) {
+            const target = resolveSafeNextUrl(rawNext, '/lab');
+            if (typeof document !== 'undefined') {
+                document.cookie = `hub_sso_return_url=${encodeURIComponent(target)}; path=/; max-age=600; SameSite=Lax`;
+            }
+            if (typeof window !== 'undefined') {
+                try {
+                    sessionStorage.setItem('hub_sso_return_url', target);
+                } catch {}
+            }
+        }
+    }, [searchParams]);
+
     // Redireciona imediatamente se já autenticado
     useEffect(() => {
         if (!authLoading && user) {
-            const rawNext = searchParams.get('next');
-            const target = (!rawNext || rawNext === '/' || rawNext === '/login' || rawNext.startsWith('/login')) ? '/lab' : rawNext;
+            const target = getTargetRedirect();
+            if (target.startsWith('/auth/sso/authorize')) {
+                clearSsoSession();
+            }
             window.location.href = target;
         }
     }, [user, authLoading, searchParams]);
@@ -52,10 +105,15 @@ function LoginContent() {
             });
             if (error) throw error;
             
-            const rawNext = searchParams.get('next');
-            const target = (!rawNext || rawNext === '/' || rawNext === '/login' || rawNext.startsWith('/login')) ? '/lab' : rawNext;
+            const target = getTargetRedirect();
+            if (target.startsWith('/auth/sso/authorize')) {
+                clearSsoSession();
+            }
             toast.success("Login automático realizado com sucesso!");
-            window.location.href = target;
+            launchHubConfetti();
+            setTimeout(() => {
+                window.location.href = target;
+            }, 420);
         } catch (error: any) {
             console.error('One Tap Error:', error.message);
             toast.error("Erro no login automático.");
@@ -65,8 +123,11 @@ function LoginContent() {
 
     const triggerOAuthLogin = async (track: 'usp' | 'external', category?: 'aluno_usp' | 'pesquisador') => {
         const isNative = typeof window !== 'undefined' && Capacitor.isNativePlatform();
-        const rawNext = searchParams.get('next');
-        const next = (!rawNext || rawNext === '/' || rawNext === '/login' || rawNext.startsWith('/login')) ? '/lab' : rawNext;
+        const next = getTargetRedirect();
+
+        if (typeof document !== 'undefined' && next.startsWith('/auth/sso/authorize')) {
+            document.cookie = `hub_sso_return_url=${encodeURIComponent(next)}; path=/; max-age=600; SameSite=Lax`;
+        }
         
         let redirectTo = isNative
             ? `hublabdiv://auth/callback?next=${encodeURIComponent(next)}&track=${track}`
@@ -241,19 +302,45 @@ function LoginContent() {
                         Voltar
                     </Link>
 
-                    <div className="flex flex-col items-center text-center space-y-4 mb-10">
-                        <HubLogo size={72} className="mb-4" />
-                        <h1 className="text-3xl font-bukra font-bold text-gray-900 dark:text-white tracking-tight">
-                            Bem-vindo à <span className="text-[#0F4780] dark:text-[#0F4780]">Comunidade</span>
+                    <div className="flex flex-col items-center text-center space-y-3 mb-6">
+                        <HubLogo size={68} className="mb-2" />
+                        <h1 className="text-2xl sm:text-3xl font-bukra font-bold text-gray-900 dark:text-white tracking-tight">
+                            Entre como <span className="text-[#1F9FCF]">Membro USP</span>
                         </h1>
-                        <p className="text-gray-500 dark:text-gray-400 text-sm leading-relaxed max-w-[280px] font-open-sans">
-                            Conecte-se para compartilhar suas descobertas e acessar ferramentas exclusivas.
+                        <p className="text-gray-500 dark:text-gray-400 text-xs sm:text-sm leading-relaxed max-w-[320px] font-open-sans">
+                            Use seu e-mail institucional <strong className="text-gray-800 dark:text-gray-200">@usp.br</strong> para desbloquear todos os recursos do ecossistema.
                         </p>
                     </div>
 
-                    <div className="space-y-4">
+                    {/* Benefícios exclusivos & Segurança USP */}
+                    <div className="mb-6 p-4 rounded-2xl bg-[#0F4780]/10 dark:bg-[#0F4780]/20 border border-[#1F9FCF]/25 space-y-2.5 text-left">
+                        <div className="flex items-center gap-2 text-[11px] font-black uppercase tracking-wider text-[#1F9FCF]">
+                            <span className="material-symbols-outlined text-[16px]">verified_user</span>
+                            <span>Benefícios da Conta USP (@usp.br)</span>
+                        </div>
+                        <ul className="space-y-1.5 text-xs text-gray-600 dark:text-gray-300">
+                            <li className="flex items-center gap-2">
+                                <span className="material-symbols-outlined text-[15px] text-emerald-400">check_circle</span>
+                                <span>Grade horária, Júpiter e acompanhamento semestral</span>
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <span className="material-symbols-outlined text-[15px] text-emerald-400">check_circle</span>
+                                <span>Publicações no Fluxo, Arena de Pesquisa & Match Acadêmico</span>
+                            </li>
+                            <li className="flex items-center gap-2">
+                                <span className="material-symbols-outlined text-[15px] text-emerald-400">check_circle</span>
+                                <span>Acesso integrado ao Aurtistic, Cofre e Organizações</span>
+                            </li>
+                        </ul>
+                        <div className="pt-2 border-t border-[#1F9FCF]/15 flex items-center gap-2 text-[11px] text-gray-500 dark:text-gray-400">
+                            <span className="material-symbols-outlined text-[15px] text-[#FFCC00]">lock</span>
+                            <span>Login oficial via <strong>Google Workspace USP</strong>. Nunca vemos ou salvamos sua senha.</span>
+                        </div>
+                    </div>
+
+                    <div className="space-y-3">
                         {errorParam === 'usp-domain-required' && (
-                            <div className="p-3 rounded-xl bg-brand-red/10 border border-brand-red/20 text-brand-red text-xs text-center font-bold animate-pulse">
+                            <div className="p-3 rounded-xl bg-[#F14343]/10 border border-[#F14343]/25 text-[#F14343] text-xs text-center font-bold animate-m3-shake">
                                 Acesso Negado: E-mail @usp.br obrigatório.
                             </div>
                         )}
@@ -261,7 +348,7 @@ function LoginContent() {
                         <button
                             onClick={() => handleLogin('usp', 'aluno_usp')}
                             disabled={isLoading}
-                            className="w-full flex items-center justify-center gap-4 bg-[#0F4780] hover:bg-[#0c3966] text-white py-4 px-6 rounded-2xl font-bukra font-bold transition-all transform hover:-translate-y-1 active:scale-[0.98] shadow-lg shadow-[#0F4780]/20 disabled:opacity-50 disabled:cursor-not-allowed group uppercase tracking-widest text-sm"
+                            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-[#0F4780] to-[#1F9FCF] hover:brightness-110 text-white py-4 px-6 rounded-2xl font-bukra font-black transition-all transform hover:-translate-y-0.5 active:scale-[0.98] shadow-lg shadow-[#1F9FCF]/25 disabled:opacity-50 disabled:cursor-not-allowed group uppercase tracking-wider text-xs sm:text-sm cursor-pointer"
                         >
                             {isLoading ? (
                                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
@@ -273,18 +360,20 @@ function LoginContent() {
                                         <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.25.81-.59z" />
                                         <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 12-4.53z" />
                                     </svg>
-                                    Sou USP
+                                    Entrar com conta @usp.br
                                 </span>
                             )}
                         </button>
 
-                        <button
-                            onClick={() => handleLogin('external')}
-                            disabled={isLoading}
-                            className="w-full flex items-center justify-center gap-4 bg-transparent hover:bg-white/5 text-gray-400 border-2 border-gray-100 dark:border-gray-800 py-3 px-6 rounded-2xl font-bold transition-all active:scale-[0.98] disabled:opacity-50"
-                        >
-                            Curioso / Outras Instituições
-                        </button>
+                        <div className="pt-2 flex justify-center">
+                            <button
+                                onClick={() => handleLogin('external')}
+                                disabled={isLoading}
+                                className="inline-flex items-center justify-center gap-1.5 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 py-1.5 px-3 rounded-lg text-[11px] font-medium transition-colors disabled:opacity-50 cursor-pointer underline-offset-4 hover:underline"
+                            >
+                                Não sou da USP (acesso externo limitado)
+                            </button>
+                        </div>
 
                         <div className="relative py-4">
                             <div className="absolute inset-0 flex items-center">

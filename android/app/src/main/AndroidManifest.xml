@@ -57,6 +57,16 @@
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/hub_profile_widget_info" />
         </receiver>
 
+        <receiver
+            android:name=".HubGestaoWidgetProvider"
+            android:exported="true"
+            android:label="HUB LabDiv - Gestão (1x1)">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/hub_gestao_widget_info" />
+        </receiver>
+
         <!-- 3. Widget Global (4x3) -->
         <receiver
             android:name=".HubGlobalWidgetProvider"

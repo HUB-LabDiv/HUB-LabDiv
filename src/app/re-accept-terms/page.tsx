@@ -428,7 +428,7 @@ export default function ReAcceptTermsPage() {
 
                         <button 
                             type="submit" 
-                            className="w-full bg-[#0F4780] hover:bg-[#0c3966] text-white py-4 rounded-2xl font-bukra font-bold text-lg transition-all transform hover:shadow-xl hover:shadow-brand-blue/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest"
+                            className="w-full bg-[#0F4780] hover:bg-[#0C3A68] text-white py-4 rounded-2xl font-bukra font-bold text-lg transition-all transform hover:shadow-xl hover:shadow-brand-blue/20 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed uppercase tracking-widest"
                             disabled={loading || cpf.replace(/\D/g, '').length < 11 || !birthdate || !termsAccepted || (!isMinor && !privacyAccepted) || (isMinor && !guardianEmail)}
                         >
                             {loading ? (

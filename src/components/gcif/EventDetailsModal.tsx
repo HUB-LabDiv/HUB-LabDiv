@@ -215,7 +215,7 @@ export function EventDetailsModal({ event, isOpen, onClose }: EventDetailsModalP
                                 href={generateGoogleCalendarUrl(event)} 
                                 target="_blank" 
                                 rel="noopener noreferrer"
-                                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-[#FFCC00] hover:bg-[#ffe066] text-[#0F4780] font-black uppercase tracking-wider text-xs flex items-center justify-center gap-2 transition-all shadow-md hover:scale-[1.02]"
+                                className="w-full sm:w-auto px-5 py-3 rounded-xl bg-[#FFCC00] hover:bg-[#FCE055] text-[#0F4780] font-black uppercase tracking-wider text-xs flex items-center justify-center gap-2 transition-all shadow-md hover:scale-[1.02]"
                             >
                                 <CalendarPlus className="w-4 h-4" />
                                 Adicionar à Agenda

@@ -191,7 +191,7 @@ export const ShareMenu = ({ id, title, author, onClose }: ShareMenuProps) => {
                                                 } : {}}
                                                 transition={{ duration: 0.6, ease: 'easeOut' }}
                                             >
-                                                <div className={`rounded-full transition-all duration-300 ${wasSent ? 'ring-2 ring-green-500 shadow-[0_0_12px_rgba(34,197,94,0.4)]' : 'ring-2 ring-transparent group-hover:ring-brand-blue group-hover:shadow-[0_0_12px_rgba(0,150,255,0.3)]'}`}>
+                                                <div className={`rounded-full transition-all duration-300 ${wasSent ? 'ring-2 ring-green-500 shadow-[0_0_12px_rgba(34,197,94,0.4)]' : 'ring-2 ring-transparent group-hover:ring-brand-blue group-hover:shadow-[0_0_12px_rgba(31,159,207,0.3)]'}`}>
                                                     <Avatar
                                                         src={fu.avatar_url}
                                                         name={fu.full_name || 'Usuário'}

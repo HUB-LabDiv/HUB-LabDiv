@@ -17,12 +17,13 @@ import React, { useRef, useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BookOpen, Landmark, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { useNavigationStore } from '@/store/useNavigationStore';
 
 const gcifTabs = [
-    { name: 'Wiki', href: '/gcif/wiki', icon: BookOpen },
-    { name: 'Instituto', href: '/gcif/instituto', icon: Landmark },
-    { name: 'Interativo', href: '/gcif/interativo', icon: Sparkles },
+    { name: 'Wiki', href: '/informativo/wiki', icon: BookOpen },
+    { name: 'Instituto', href: '/informativo/instituto', icon: Landmark },
+    { name: 'Interativo', href: '/informativo/interativo', icon: Sparkles },
 ];
 
 export function GcifSubNav() {
@@ -34,8 +35,14 @@ export function GcifSubNav() {
     const [canScrollRight, setCanScrollRight] = useState(false);
 
     const isActive = (href: string) => {
-        if (pathname === '/gcif' && href === '/gcif/wiki') return true;
-        return pathname === href || pathname.startsWith(href + '/');
+        const suffix = href.split('/').pop();
+        if ((pathname === '/gcif' || pathname === '/informativo') && suffix === 'wiki') return true;
+        return (
+            pathname === href ||
+            pathname.startsWith(href + '/') ||
+            pathname === `/gcif/${suffix}` ||
+            pathname.startsWith(`/gcif/${suffix}/`)
+        );
     };
 
     const checkScroll = useCallback(() => {
@@ -88,13 +95,13 @@ export function GcifSubNav() {
     return (
         <nav 
             data-tour="gcif-subnav"
-            className="w-full mb-6 sticky z-40 py-2 pointer-events-none"
-            style={{ top: 'calc(4rem + env(safe-area-inset-top, 0px))' }}
+            className="w-full mb-6 sticky z-40 flex justify-center pointer-events-none"
+            style={{ top: 'calc(4.5rem + env(safe-area-inset-top, 0px))' }}
         >
             <div className={`flex items-center justify-center transition-all duration-300 pointer-events-auto px-2 sm:px-0 ${
                 isSidebarCollapsed 
-                    ? 'xl:-translate-x-[calc((80px+1.5rem)/2)]' 
-                    : 'xl:-translate-x-[calc((280px+1.5rem)/2)]'
+                    ? 'lg:-translate-x-[calc((80px+1.5rem)/2)]' 
+                    : 'lg:-translate-x-[calc((280px+1.5rem)/2)]'
             }`}>
                 <div className="flex items-center justify-center gap-1.5 sm:gap-2 max-w-full">
                     {/* Left Scroll Arrow */}
@@ -122,18 +129,28 @@ export function GcifSubNav() {
                                     key={tab.href}
                                     ref={active ? activeTabRef : null}
                                     href={tab.href}
+                                    prefetch={true}
                                     data-tour={`gcif-tab-${tabTourKey}`}
                                     className={`
-                                        flex items-center gap-1.5 sm:gap-2.5 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-[16px] text-[8px] sm:text-[9px] font-black uppercase tracking-widest
-                                        transition-all duration-300 whitespace-nowrap shrink-0
+                                        relative flex items-center gap-1.5 sm:gap-2.5 px-3 py-1.5 sm:px-5 sm:py-2.5 rounded-[16px] text-[9px] sm:text-[10px] font-black font-bukra uppercase tracking-widest
+                                        transition-colors whitespace-nowrap shrink-0
                                         ${active
-                                            ? 'bg-brand-red text-white shadow-lg shadow-brand-red/20'
+                                            ? 'text-white'
                                             : 'text-gray-500 hover:text-black dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
                                         }
                                     `}
                                 >
-                                    <tab.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-                                    <span>{tab.name}</span>
+                                    {active && (
+                                        <motion.div
+                                            layoutId="activeTabInformativo"
+                                            transition={{ type: 'spring', stiffness: 420, damping: 24 }}
+                                            className="absolute inset-0 rounded-[16px] bg-[#F14343] shadow-lg shadow-[#F14343]/25"
+                                        />
+                                    )}
+                                    <span className="relative z-10 flex items-center gap-1.5 sm:gap-2.5">
+                                        <tab.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                                        <span>{tab.name}</span>
+                                    </span>
                                 </Link>
                             );
                         })}

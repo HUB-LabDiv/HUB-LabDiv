@@ -135,7 +135,7 @@ export default function AdminSoftwaresApprovalPage() {
                                         </a>
                                     )}
                                     {software.repository_url && (
-                                        <a href={software.repository_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[11px] text-purple-400 hover:underline bg-purple-400/10 px-3 py-1.5 rounded-lg border border-purple-400/20">
+                                        <a href={software.repository_url} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 text-[11px] text-[#1F9FCF] hover:underline bg-[#1F9FCF]/10 px-3 py-1.5 rounded-lg border border-[#1F9FCF]/25">
                                             <ExternalLink className="w-3 h-3" /> Repositório / Drive
                                         </a>
                                     )}

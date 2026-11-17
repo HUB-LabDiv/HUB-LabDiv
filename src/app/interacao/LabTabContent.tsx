@@ -207,7 +207,7 @@ export function LabTabContent() {
                         <div className="flex flex-wrap gap-2 pt-2 justify-center md:justify-start">
                             {viewedProfile.linkedin_url && <a href={viewedProfile.linkedin_url} target="_blank" className="p-2 bg-white/5 hover:bg-brand-blue/20 rounded-lg transition-all text-gray-500 hover:text-brand-blue border border-white/5"><Linkedin className="size-4" /></a>}
                             {viewedProfile.github_url && <a href={viewedProfile.github_url} target="_blank" className="p-2 bg-white/5 hover:bg-gray-800 rounded-lg transition-all text-gray-500 hover:text-white border border-white/5"><Github className="size-4" /></a>}
-                            {viewedProfile.instagram_url && <a href={viewedProfile.instagram_url} target="_blank" className="p-2 bg-white/5 hover:bg-pink-600/20 rounded-lg transition-all text-gray-500 hover:text-pink-500 border border-white/5"><Instagram className="size-4" /></a>}
+                            {viewedProfile.instagram_url && <a href={viewedProfile.instagram_url} target="_blank" className="p-2 bg-white/5 hover:bg-[#F14343]/20 rounded-lg transition-all text-gray-500 hover:text-[#F14343] border border-white/5"><Instagram className="size-4" /></a>}
                             {viewedProfile.portfolio_url && <a href={viewedProfile.portfolio_url} target="_blank" className="p-2 bg-white/5 hover:bg-brand-blue/20 rounded-lg transition-all text-gray-500 hover:text-brand-blue border border-white/5"><Globe className="size-4" /></a>}
                         </div>
                     </div>

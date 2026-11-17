@@ -61,14 +61,26 @@ export function OnboardingBanner() {
         };
     }, []);
 
-    if (isDismissed) return null;
+    if (isDismissed) {
+        return (
+            <div className="w-full flex justify-end mb-2">
+                <button
+                    onClick={() => dismissOnboarding(false)}
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/70 dark:bg-[#1E1E1E]/80 backdrop-blur-md border border-gray-200 dark:border-white/10 text-gray-600 dark:text-gray-300 hover:text-brand-blue text-[11px] font-bold font-bukra transition-all shadow-sm hover:shadow active:scale-95 cursor-pointer"
+                    title="Abrir opções de tour e tutorial do HUB"
+                >
+                    <Sparkles className="size-3.5 text-brand-blue" />
+                    <span>Como usar o HUB?</span>
+                </button>
+            </div>
+        );
+    }
 
     const currentPath = pathname || '/';
     const pageTour = getPageTourInfo(currentPath, searchParams);
     const eixoTour = getEixoTourInfo(currentPath);
     const isSocial = eixoTour.key === 'eixo-social';
     const isFerramentas = eixoTour.key === 'eixo-ferramentas' || eixoTour.key === 'eixo-observatorio' || eixoTour.key === 'eixo-ingresso';
-    const isInformativo = eixoTour.key === 'eixo-informativo';
 
     const eixoColorConfig = isSocial
         ? {

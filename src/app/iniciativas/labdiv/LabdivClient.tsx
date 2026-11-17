@@ -8,19 +8,22 @@
  * publicada pela Free Software Foundation.
  */
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import { MainLayoutWrapper } from "@/components/layout/MainLayoutWrapper";
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, LayoutDashboard, Palette, Lock, X, ShieldCheck } from 'lucide-react';
 import { PostDTO } from '@/dtos/media';
 import { MediaCard } from '@/components/media/MediaCard';
 import { Breadcrumbs } from '@/components/wiki/WikiComponents';
+import { AurtisticOrgEmbedFrame } from '@/components/aurtistic/AurtisticOrgEmbedFrame';
 
 interface LabdivClientProps {
     posts: PostDTO[];
 }
 
 export function LabdivClient({ posts }: LabdivClientProps) {
+    const [isMemberModalOpen, setIsMemberModalOpen] = useState(false);
+    const [embedMode, setEmbedMode] = useState<'org' | 'studio'>('org');
     return (
         <MainLayoutWrapper fullWidth={true}>
             <div className="max-w-7xl mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
@@ -85,7 +88,7 @@ export function LabdivClient({ posts }: LabdivClientProps) {
                                 O Papel do <span className="text-brand-blue">Lab-Div</span>
                             </h2>
                             <p className="text-lg text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
-                                O Laboratório de Divulgação Científica do IFUSP atua como o motor técnico e curatorial desta plataforma. Inspirado no modelo do <strong>MIT Comm Lab</strong>, nosso trabalho se estende da produção de conteúdo "Padrão Ouro" à moderação, suporte e mentoria contínua para garantir a qualidade da comunicação.
+                                O Laboratório de Divulgação Científica do IFUSP atua como o motor técnico e curatorial desta plataforma. Inspirado no modelo do <strong>MIT Comm Lab</strong>, nosso trabalho se estende da produção de conteúdo &quot;Padrão Ouro&quot; à moderação, suporte e mentoria contínua para garantir a qualidade da comunicação.
                             </p>
                             <div className="flex flex-wrap gap-4">
                                 <a 
@@ -175,7 +178,7 @@ export function LabdivClient({ posts }: LabdivClientProps) {
 
                 {/* Lab-Div Posts Carousel */}
                 {posts && posts.length > 0 && (
-                    <section className="mb-20">
+                    <section className="mb-16">
                         <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 uppercase italic tracking-tighter">
                             Produções Recentes
                         </h3>

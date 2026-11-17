@@ -233,6 +233,27 @@ export const getFeaturedSubmissions = unstable_cache(
     { revalidate: 60 }
 );
 
+export const getInstitutoMapSubmissions = unstable_cache(
+    async (limit: number = 60): Promise<{ post: PostDTO }[]> => {
+        const supabaseServer = await createSupabaseStatic();
+        const { data: submissions, error } = await supabaseServer
+            .from('submissions')
+            .select('*, profiles(avatar_url, xp, level, is_labdiv)')
+            .eq('status', 'aprovado')
+            .neq('moderation_status', 'suspended')
+            .order('created_at', { ascending: false })
+            .limit(limit);
+
+        if (error || !submissions) return [];
+
+        return submissions.map(sub => ({
+            post: mapToPostDTO(sub)
+        }));
+    },
+    ['instituto-map-submissions-v1'],
+    { revalidate: 60 }
+);
+
 export async function getUserPseudonyms() {
     const serverSupabase = await createServerSupabase();
     const { data: { user } } = await serverSupabase.auth.getUser();

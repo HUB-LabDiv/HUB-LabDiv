@@ -17,6 +17,7 @@ import { Breadcrumbs } from '@/components/wiki/WikiComponents';
 import { ChromeDino } from '@/components/espacos/ChromeDino';
 import { MatrixCodeRain } from '@/components/espacos/MatrixCodeRain';
 import { DinoMiniGame } from '@/components/espacos/DinoMiniGame';
+import { HackerspaceMemberPanelButton } from '@/components/espacos/HackerspaceMemberPanelButton';
 import { 
     ExternalLink, 
     Calendar, 

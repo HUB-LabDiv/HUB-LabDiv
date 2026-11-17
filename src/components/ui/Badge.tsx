@@ -33,18 +33,18 @@ const badgeStyles = {
         gradient: 'from-brand-blue/20 to-transparent'
     },
     curador: {
-        color: 'text-purple-500',
-        bg: 'bg-purple-500/10',
-        border: 'border-purple-500/20',
+        color: 'text-[#F14343]',
+        bg: 'bg-[#F14343]/10',
+        border: 'border-[#F14343]/25',
         icon: <ShieldCheck size={24} />,
-        gradient: 'from-purple-500/20 to-transparent'
+        gradient: 'from-[#F14343]/20 to-transparent'
     },
     elite: {
-        color: 'text-[#0055ff]',
-        bg: 'bg-[#0055ff]/10',
-        border: 'border-[#0055ff]/20',
+        color: 'text-[#1F9FCF]',
+        bg: 'bg-[#1F9FCF]/10',
+        border: 'border-[#1F9FCF]/25',
         icon: <Star size={24} />,
-        gradient: 'from-[#0055ff]/20 to-transparent'
+        gradient: 'from-[#1F9FCF]/20 to-transparent'
     },
     colaborador: {
         color: 'text-green-500',

@@ -97,17 +97,17 @@ export default function AdminComunidadeHubPage() {
                 </Link>
 
                 {/* Emaranhamento */}
-                <Link href="/admin/emaranhamento" className="group p-8 rounded-3xl bg-white dark:bg-card-dark border border-gray-100 dark:border-white/5 hover:border-purple-500 transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
+                <Link href="/admin/emaranhamento" className="group p-8 rounded-3xl bg-white dark:bg-card-dark border border-gray-100 dark:border-white/5 hover:border-[#1F9FCF] transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all">
-                        <Network className="w-32 h-32 text-purple-500" />
+                        <Network className="w-32 h-32 text-[#1F9FCF]" />
                     </div>
                     <div className="flex flex-col h-full relative z-10">
-                        <div className="p-4 bg-purple-500/10 rounded-2xl w-max mb-6">
-                            <Network className="w-8 h-8 text-purple-500" />
+                        <div className="p-4 bg-[#1F9FCF]/10 rounded-2xl w-max mb-6">
+                            <Network className="w-8 h-8 text-[#1F9FCF]" />
                         </div>
                         <h2 className="text-xl font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-2">Emaranhamento</h2>
                         <p className="text-sm text-gray-500 mb-8 flex-grow">Painel administrativo de conexões e networking da comunidade acadêmica.</p>
-                        <div className="flex items-center gap-2 text-purple-500 font-bold text-xs uppercase tracking-widest">
+                        <div className="flex items-center gap-2 text-[#1F9FCF] font-bold text-xs uppercase tracking-widest">
                             Acessar Painel <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                         </div>
                     </div>

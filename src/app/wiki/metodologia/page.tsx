@@ -116,7 +116,7 @@ const BORROWING_CATEGORIES = [
         role: 'Alunos de Pós-Graduação',
         items: '15 itens',
         days: '20 dias',
-        color: 'border-brand-blue/40 bg-brand-blue/5 text-[#00A3FF]'
+        color: 'border-brand-blue/40 bg-brand-blue/5 text-[#1F9FCF]'
     },
     {
         role: 'Docentes da USP',
@@ -188,7 +188,7 @@ const TOOLS_LIST = [
         category: 'Motor de Busca',
         desc: 'A ferramenta mais ampla para encontrar artigos, citações, patentes e exportar referências em BibTeX.',
         href: 'https://scholar.google.com.br',
-        color: '#4285F4'
+        color: '#1F9FCF'
     },
     {
         name: 'Portal de Busca Integrada (Dedalus USP)',
@@ -209,14 +209,14 @@ const TOOLS_LIST = [
         category: 'Produção Acadêmica USP',
         desc: 'Acesso aberto e digital a todos os trabalhos de mestrado e doutorado defendidos na Universidade de São Paulo.',
         href: 'https://www.teses.usp.br',
-        color: '#10b981'
+        color: '#10B981'
     },
     {
         name: 'Portal de Revistas da USP',
         category: 'Revistas Científicas',
         desc: 'Biblioteca eletrônica com as revistas periódicas credenciadas produzidas pela USP.',
         href: 'https://www.revistas.usp.br',
-        color: '#EC4899'
+        color: '#F14343'
     },
     {
         name: 'arXiv.org',
@@ -230,7 +230,7 @@ const TOOLS_LIST = [
         category: 'Gerenciador de Referências',
         desc: 'Extensão gratuita e open-source para salvar artigos com 1 clique, organizar PDFs e gerar citações para LaTeX / Overleaf.',
         href: 'https://www.zotero.org',
-        color: '#8B5CF6'
+        color: '#0F4780'
     }
 ];
 
@@ -280,7 +280,7 @@ export default function MetodologiaPage() {
                             Wiki do IFUSP
                         </Link>
                         <span className="text-gray-400 dark:text-gray-600">/</span>
-                        <span className="text-brand-blue dark:text-[#00A3FF] italic">Biblioteca & Metodologia</span>
+                        <span className="text-brand-blue dark:text-[#1F9FCF] italic">Biblioteca & Metodologia</span>
                     </nav>
 
                     {/* Hero Header */}
@@ -289,7 +289,7 @@ export default function MetodologiaPage() {
                         <div className="absolute -bottom-10 -left-10 w-80 h-80 bg-brand-yellow/10 dark:bg-brand-yellow/5 rounded-full blur-[100px] pointer-events-none" />
 
                         <div className="relative z-10 max-w-4xl">
-                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-blue/10 dark:bg-brand-blue/15 border border-brand-blue/30 text-brand-blue dark:text-[#00A3FF] text-[10px] font-black uppercase tracking-widest mb-4">
+                            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-blue/10 dark:bg-brand-blue/15 border border-brand-blue/30 text-brand-blue dark:text-[#1F9FCF] text-[10px] font-black uppercase tracking-widest mb-4">
                                 <Sparkles className="w-3.5 h-3.5" />
                                 Guia Oficial de Sobrevivência Acadêmica 2026
                             </div>
@@ -312,7 +312,7 @@ export default function MetodologiaPage() {
                                 </div>
                                 <div>
                                     <div className="text-[10px] font-black font-bukra uppercase tracking-wider text-gray-500 dark:text-gray-400">Renovações Online</div>
-                                    <div className="text-lg sm:text-xl font-black font-bukra text-brand-blue dark:text-[#00A3FF]">Até 3x no PBI</div>
+                                    <div className="text-lg sm:text-xl font-black font-bukra text-brand-blue dark:text-[#1F9FCF]">Até 3x no PBI</div>
                                 </div>
                                 <div>
                                     <div className="text-[10px] font-black font-bukra uppercase tracking-wider text-gray-500 dark:text-gray-400">Rede de Bibliotecas</div>
@@ -410,7 +410,7 @@ export default function MetodologiaPage() {
                                 <div className="p-8 sm:p-10 rounded-[36px] bg-gradient-to-br from-blue-50/70 via-white to-gray-50 dark:from-[#1E1E1E] dark:via-[#1A1A1A] dark:to-[#121212] border border-gray-200 dark:border-white/10 shadow-xl dark:shadow-2xl">
                                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
                                         <div className="space-y-4 max-w-3xl">
-                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 dark:bg-brand-blue/15 border border-brand-blue/30 text-brand-blue dark:text-[#00A3FF] text-[10px] font-black uppercase tracking-wider">
+                                            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-blue/10 dark:bg-brand-blue/15 border border-brand-blue/30 text-brand-blue dark:text-[#1F9FCF] text-[10px] font-black uppercase tracking-wider">
                                                 <Library className="w-3.5 h-3.5" />
                                                 Criada na década de 1970 • IFUSP
                                             </div>
@@ -441,7 +441,7 @@ export default function MetodologiaPage() {
                                                 className="px-6 py-3.5 rounded-2xl bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 border border-gray-200 dark:border-white/10 text-gray-900 dark:text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 transition-all"
                                             >
                                                 <span>Buscar no PBI / Dedalus</span>
-                                                <Search className="w-4 h-4 text-brand-blue dark:text-[#00A3FF]" />
+                                                <Search className="w-4 h-4 text-brand-blue dark:text-[#1F9FCF]" />
                                             </a>
                                         </div>
                                     </div>
@@ -481,7 +481,7 @@ export default function MetodologiaPage() {
                                 {/* Como Encontrar um Livro (Número de Chamada) */}
                                 <div className="p-8 rounded-[36px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-2xl">
                                     <div className="flex items-center gap-3 mb-6">
-                                        <div className="w-10 h-10 rounded-xl bg-brand-blue/10 dark:bg-brand-blue/15 text-brand-blue dark:text-[#00A3FF] flex items-center justify-center border border-brand-blue/20 dark:border-brand-blue/30">
+                                        <div className="w-10 h-10 rounded-xl bg-brand-blue/10 dark:bg-brand-blue/15 text-brand-blue dark:text-[#1F9FCF] flex items-center justify-center border border-brand-blue/20 dark:border-brand-blue/30">
                                             <Tag className="w-5 h-5" />
                                         </div>
                                         <div>
@@ -498,7 +498,7 @@ export default function MetodologiaPage() {
                                     <div className="p-6 rounded-3xl bg-gray-50 dark:bg-black/60 border border-gray-200 dark:border-white/10 mb-6">
                                         <div className="flex flex-wrap items-center justify-center gap-3 text-center sm:text-left">
                                             <div className="p-3 rounded-2xl bg-brand-blue/10 dark:bg-brand-blue/20 border border-brand-blue/30 dark:border-brand-blue/40">
-                                                <div className="text-xl font-black font-mono text-brand-blue dark:text-[#00A3FF]">370</div>
+                                                <div className="text-xl font-black font-mono text-brand-blue dark:text-[#1F9FCF]">370</div>
                                                 <div className="text-[9px] uppercase font-bold text-gray-500 dark:text-gray-400 mt-1">Assunto (CDU/CDD)</div>
                                             </div>
                                             <div className="p-3 rounded-2xl bg-brand-yellow/10 dark:bg-brand-yellow/20 border border-brand-yellow/30 dark:border-brand-yellow/40">
@@ -605,11 +605,11 @@ export default function MetodologiaPage() {
                                 <div className="p-8 rounded-[32px] bg-gradient-to-br from-blue-50 via-white to-gray-50 dark:from-[#0F4780]/20 dark:via-[#1E1E1E] dark:to-[#1E1E1E] border border-brand-blue/30 shadow-lg dark:shadow-xl relative overflow-hidden">
                                     <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                                         <div className="flex items-start gap-5">
-                                            <div className="w-14 h-14 rounded-2xl bg-brand-blue/15 dark:bg-brand-blue/20 text-brand-blue dark:text-[#00A3FF] border border-brand-blue/30 flex items-center justify-center shrink-0">
+                                            <div className="w-14 h-14 rounded-2xl bg-brand-blue/15 dark:bg-brand-blue/20 text-brand-blue dark:text-[#1F9FCF] border border-brand-blue/30 flex items-center justify-center shrink-0">
                                                 <GraduationCap className="w-7 h-7" />
                                             </div>
                                             <div>
-                                                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-brand-blue/10 dark:bg-brand-blue/20 text-brand-blue dark:text-[#00A3FF] text-[9px] font-black uppercase tracking-wider mb-2">
+                                                <div className="inline-flex items-center gap-2 px-2.5 py-0.5 rounded-full bg-brand-blue/10 dark:bg-brand-blue/20 text-brand-blue dark:text-[#1F9FCF] text-[9px] font-black uppercase tracking-wider mb-2">
                                                     Passo Essencial
                                                 </div>
                                                 <h3 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white font-bukra mb-2">
@@ -867,7 +867,7 @@ export default function MetodologiaPage() {
                             >
                                 <div>
                                     <h2 className="text-xl sm:text-2xl font-black text-gray-900 dark:text-white font-bukra flex items-center gap-3 mb-2">
-                                        <Globe className="w-6 h-6 text-brand-blue dark:text-[#00A3FF]" />
+                                        <Globe className="w-6 h-6 text-brand-blue dark:text-[#1F9FCF]" />
                                         Como Ler Artigos Pagos Diretamente da sua Casa
                                     </h2>
                                     <p className="text-xs sm:text-sm text-gray-500 dark:text-gray-400 font-open-sans mb-8">
@@ -884,7 +884,7 @@ export default function MetodologiaPage() {
                                                     {step.step}
                                                 </div>
                                                 <div className="relative z-10">
-                                                    <div className="w-10 h-10 rounded-xl bg-brand-blue/10 dark:bg-brand-blue/15 text-brand-blue dark:text-[#00A3FF] border border-brand-blue/20 dark:border-brand-blue/30 flex items-center justify-center font-black font-bukra text-sm mb-4">
+                                                    <div className="w-10 h-10 rounded-xl bg-brand-blue/10 dark:bg-brand-blue/15 text-brand-blue dark:text-[#1F9FCF] border border-brand-blue/20 dark:border-brand-blue/30 flex items-center justify-center font-black font-bukra text-sm mb-4">
                                                         {step.step}
                                                     </div>
                                                     <h3 className="text-lg font-black text-gray-900 dark:text-white font-bukra mb-3">
@@ -1019,7 +1019,7 @@ export default function MetodologiaPage() {
 
                                         <div className="p-6 rounded-[28px] bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-lg dark:shadow-xl space-y-2">
                                             <div className="text-[10px] font-black uppercase tracking-wider text-gray-500 dark:text-gray-400 font-bukra">Seção de Graduação IFUSP</div>
-                                            <div className="text-sm font-bold text-brand-blue dark:text-[#00A3FF] font-mono">salunosif@usp.br</div>
+                                            <div className="text-sm font-bold text-brand-blue dark:text-[#1F9FCF] font-mono">salunosif@usp.br</div>
                                             <p className="text-[11px] text-gray-500 dark:text-gray-400">Matrículas, trancamentos e requerimentos.</p>
                                         </div>
 

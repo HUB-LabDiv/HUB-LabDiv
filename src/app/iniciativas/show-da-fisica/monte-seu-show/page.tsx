@@ -12,26 +12,12 @@
  */
 
 import { redirect } from 'next/navigation';
-import { Metadata } from 'next';
-import { getAdminSessionRole } from '@/app/actions/admin';
-import { MonteSeuShowClient } from './MonteSeuShowClient';
-import { Orbitron } from 'next/font/google';
+import { headers } from 'next/headers';
+import { getShowSiteHref } from '@/lib/subdomain-urls';
 
-const orbitron = Orbitron({ subsets: ['latin'], weight: ['400', '700', '900'] });
-
-export const metadata: Metadata = {
-    title: 'Monte seu Show | Show de Física IFUSP',
-    description: 'Monte o roteiro personalizado de experimentos do Show de Física e envie a solicitação de agendamento da sua escola.',
-};
-
-export default async function MonteSeuShowPage() {
-    const adminSession = await getAdminSessionRole();
-    const isAdmin = adminSession.role === 'admin' || adminSession.role === 'moderator';
-
-    if (!isAdmin) {
-        redirect('/iniciativas/show-da-fisica');
-    }
-
-    return <MonteSeuShowClient orbitronClassName={orbitron.className} />;
+export default async function MonteSeuShowRedirectPage() {
+    const headersList = await headers();
+    const host = headersList.get('host');
+    const targetUrl = getShowSiteHref('/monte-seu-show', host);
+    redirect(targetUrl);
 }
-

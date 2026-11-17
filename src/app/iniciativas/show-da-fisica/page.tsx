@@ -28,11 +28,11 @@ const orbitron = Orbitron({ subsets: ['latin'], weight: ['400', '700', '900'] })
 
 export default async function ShowDaFisicaPage() {
     const adminSession = await getAdminSessionRole();
-    const isAdmin = adminSession.role === 'admin';
+    const isStaff = adminSession.role === 'admin' || adminSession.role === 'moderator';
 
     return (
         <MainLayoutWrapper fullWidth={true}>
-            <div className={`min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white ${orbitron.className} transition-colors duration-300`}>
+            <div className={`show-da-fisica-root min-h-screen bg-transparent text-gray-900 dark:text-white ${orbitron.className} transition-colors duration-300`}>
                 <style dangerouslySetInnerHTML={{__html: `
                     .neon-text-blue {
                         color: #002ffe;
@@ -165,7 +165,7 @@ export default async function ShowDaFisicaPage() {
                             </div>
                         </div>
                         
-                        <ShowActionButtons initialIsAdmin={isAdmin} />
+                        <ShowActionButtons initialIsStaff={isStaff} />
                     </div>
 
                 </div>

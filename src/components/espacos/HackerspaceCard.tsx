@@ -73,7 +73,7 @@ export function HackerspaceCard({ className = '' }: HackerspaceCardProps) {
                 </p>
             </div>
 
-            {/* Navigation Button */}
+            {/* Navigation Button & Shortcuts */}
             <div className="relative z-10 mt-auto pt-2">
                 <Link 
                     href="/espacos/hackerspace" 

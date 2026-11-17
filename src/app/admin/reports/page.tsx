@@ -367,7 +367,7 @@ export default function AdminReportsPage() {
                     {[
                         { id: 'all' as ScopeCategory, label: 'Todas as Ocorrências', count: counts.all, icon: Layers },
                         { id: 'wiki' as ScopeCategory, label: 'Wiki IFUSP', count: counts.wiki, icon: BookOpen, color: 'text-brand-yellow' },
-                        { id: 'emaranhamento' as ScopeCategory, label: 'Emaranhamento', count: counts.emaranhamento, icon: MessageSquare, color: 'text-purple-400' },
+                        { id: 'emaranhamento' as ScopeCategory, label: 'Emaranhamento', count: counts.emaranhamento, icon: MessageSquare, color: 'text-[#1F9FCF]' },
                         { id: 'content' as ScopeCategory, label: 'Conteúdo Comunitário', count: counts.content, icon: ShieldAlert, color: 'text-brand-red' },
                         { id: 'bug' as ScopeCategory, label: 'Falhas Técnicas', count: counts.bug, icon: AlertCircle, color: 'text-brand-red' },
                         { id: 'sugestao' as ScopeCategory, label: 'Sugestões', count: counts.sugestao, icon: Lightbulb, color: 'text-brand-blue' },
@@ -695,10 +695,10 @@ export default function AdminReportsPage() {
 
                                             {/* Transcrição Forense se for Mensagem de Chat */}
                                             {selectedReport.contentDetails?.itemType === 'emaranhamento_message' && (
-                                                <div className="p-4 rounded-xl bg-black/50 border border-purple-500/30 space-y-2">
-                                                    <div className="flex items-center justify-between text-[10px] uppercase font-bold text-purple-400 font-mono">
+                                                <div className="p-4 rounded-xl bg-black/50 border border-[#1F9FCF]/30 space-y-2">
+                                                    <div className="flex items-center justify-between text-[10px] uppercase font-bold text-[#1F9FCF] font-mono">
                                                         <span>Autor: <strong>{selectedReport.raw?.metadata?.sender_name || 'Usuário'}</strong></span>
-                                                        <span className="px-2 py-0.5 rounded-md bg-purple-500/20 text-[8px]">Snapshot Forense</span>
+                                                        <span className="px-2 py-0.5 rounded-md bg-[#1F9FCF]/20 text-[8px]">Snapshot Forense</span>
                                                     </div>
                                                     <p className="text-xs sm:text-sm font-mono text-gray-100 bg-white/5 p-3 rounded-lg border border-white/5 whitespace-pre-wrap">
                                                         "{selectedReport.raw?.metadata?.message_content || selectedReport.description}"

@@ -296,7 +296,7 @@ export default function ParentalConsentPage() {
                         <button
                             type="submit"
                             disabled={!isFormValid || submitting}
-                            className={`w-full py-5 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-lg ${isFormValid ? 'bg-[#0F4780] hover:bg-[#0c3966] text-white transform hover:scale-[1.01] active:scale-95' : 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'}`}
+                            className={`w-full py-5 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2 shadow-lg ${isFormValid ? 'bg-[#0F4780] hover:bg-[#0C3A68] text-white transform hover:scale-[1.01] active:scale-95' : 'bg-gray-200 dark:bg-gray-800 text-gray-400 cursor-not-allowed'}`}
                         >
                             {submitting ? 'Validando Parceria...' : 'Conceder Autorização e Liberar Acesso'}
                         </button>

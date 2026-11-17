@@ -68,7 +68,7 @@ export default function Error({
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                     <button
                         onClick={() => window.location.reload()}
-                        className="px-6 py-3 bg-[#0055ff] hover:bg-[#0044cc] text-white rounded-xl font-bold transition-all shadow-lg shadow-[#0055ff]/20 active:scale-95"
+                        className="px-6 py-3 bg-[#0F4780] hover:bg-[#0C3A68] text-white rounded-xl font-bold transition-all shadow-lg shadow-[#0F4780]/20 active:scale-95"
                     >
                         Tentar Novamente
                     </button>

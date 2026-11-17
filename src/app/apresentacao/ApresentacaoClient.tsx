@@ -18,10 +18,11 @@ import Image from 'next/image';
 import { PlanoAulaSlideViewer } from './components/PlanoAulaSlideViewer';
 import { HubSlideViewer } from './components/HubSlideViewer';
 import { ReuniaoSlideViewer } from './components/ReuniaoSlideViewer';
+import { IniciativasSlideViewer } from './components/IniciativasSlideViewer';
 import { HubFlowchartViewer } from './components/HubFlowchartViewer';
 
-export function ApresentacaoClient() {
-    const [viewMode, setViewMode] = useState<'reuniao-slides' | 'aula-slides' | 'fluxograma' | 'hub-text' | 'plano-aula'>('reuniao-slides');
+export function ApresentacaoClient({ orbitronClassName = '' }: { orbitronClassName?: string }) {
+    const [viewMode, setViewMode] = useState<'reuniao-slides' | 'iniciativas-slides' | 'aula-slides' | 'fluxograma' | 'hub-text' | 'plano-aula'>('reuniao-slides');
     const [activeSection, setActiveSection] = useState<string>(apresentacaoData.sections[0].id);
     const sectionRefs = useRef<(HTMLElement | null)[]>([]);
 
@@ -78,13 +79,14 @@ export function ApresentacaoClient() {
                     </nav>
                 </div>
             ) : (
-                <div className="glass-card rounded-3xl p-6 border-white/5 space-y-4">
-                    <div className="flex items-center gap-3 text-brand-yellow">
+                <div className="glass-card rounded-3xl p-6 border-gray-200 dark:border-white/5 space-y-4">
+                    <div className="flex items-center gap-3 text-[#0F4780] dark:text-brand-yellow">
                         <BookOpen className="w-5 h-5" />
-                        <h3 className="font-extrabold text-sm uppercase tracking-wider text-white">Navegação Rápida</h3>
+                        <h3 className="font-extrabold text-sm uppercase tracking-wider text-gray-900 dark:text-white">Navegação Rápida</h3>
                     </div>
-                    <p className="text-xs text-gray-400 leading-relaxed font-medium">
+                    <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed font-medium">
                         {viewMode === 'reuniao-slides' && 'Apresentação de Reunião (10 Slides em Tópicos): Do LabDiv aos 3 Eixos e Perfis de Usuário.'}
+                        {viewMode === 'iniciativas-slides' && 'Apresentação Eixo 4 & Iniciativas (15 Slides): Piloto Show de Física, Preview e Bastidores.'}
                         {viewMode === 'aula-slides' && 'Apresentação Aula em Linhas Gerais (5 Slides Tricolores salvos).'}
                         {viewMode === 'fluxograma' && 'Fluxograma Interativo Completo de Interações e Navegação do HUB.'}
                         {viewMode === 'plano-aula' && 'Apresentação Interativa em Slides do Plano de Aula (Processos Criativos & Paulo Freire).'}
@@ -92,9 +94,9 @@ export function ApresentacaoClient() {
                 </div>
             )}
             
-            <Link href="/" className="glass-card rounded-3xl p-6 border-white/5 hover:border-white/20 transition-colors flex flex-col items-center justify-center text-center group">
-                <ArrowLeft className="w-6 h-6 text-gray-400 group-hover:text-white transition-colors mb-2 group-hover:-translate-x-1" />
-                <span className="text-xs font-black uppercase tracking-widest text-gray-400 group-hover:text-white">Voltar para o HUB</span>
+            <Link href="/" className="glass-card rounded-3xl p-6 border-gray-200 dark:border-white/5 hover:border-gray-300 dark:hover:border-white/20 transition-colors flex flex-col items-center justify-center text-center group">
+                <ArrowLeft className="w-6 h-6 text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white transition-colors mb-2 group-hover:-translate-x-1" />
+                <span className="text-xs font-black uppercase tracking-widest text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white">Voltar para o HUB</span>
             </Link>
         </div>
     );
@@ -104,11 +106,11 @@ export function ApresentacaoClient() {
             rightSidebar={rightSidebarContent}
             fullWidth={true}
         >
-            <div className="max-w-5xl mx-auto px-4 py-8 pb-32">
+            <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-8 pb-32 bg-science min-h-screen">
                 
                 {/* Switch / Toggle Control Bar */}
-                <div className="mb-10 flex flex-col items-center gap-3">
-                    <div className="bg-[#14171F] p-1.5 rounded-full border border-white/10 shadow-2xl inline-flex items-center gap-1 flex-wrap justify-center">
+                <div className="mb-8 flex flex-col items-center gap-3">
+                    <div className="bg-white/95 dark:bg-[#14171F] p-1.5 rounded-full border border-gray-200 dark:border-white/10 shadow-xl inline-flex items-center gap-1 flex-wrap justify-center">
                         
                         {/* Option 1: Apresentação Reunião (10 Slides em Tópicos) */}
                         <button
@@ -116,11 +118,24 @@ export function ApresentacaoClient() {
                             className={`px-4.5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 flex items-center gap-2 ${
                                 viewMode === 'reuniao-slides'
                                     ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/30 scale-105'
-                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                    : 'text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
                             }`}
                         >
                             <Presentation className="w-4 h-4" />
                             Apresentação Reunião
+                        </button>
+
+                        {/* Option 1B: Apresentação Eixo 4 & Iniciativas */}
+                        <button
+                            onClick={() => setViewMode('iniciativas-slides')}
+                            className={`px-4.5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 flex items-center gap-2 ${
+                                viewMode === 'iniciativas-slides'
+                                    ? 'bg-emerald-500 text-black shadow-lg shadow-emerald-500/30 scale-105'
+                                    : 'text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
+                            }`}
+                        >
+                            <Sparkles className="w-4 h-4" />
+                            Eixo 4 &amp; Iniciativas
                         </button>
 
                         {/* Option 2: Apresentação Aula (5 Slides Salvos) */}
@@ -129,7 +144,7 @@ export function ApresentacaoClient() {
                             className={`px-4.5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 flex items-center gap-2 ${
                                 viewMode === 'aula-slides'
                                     ? 'bg-brand-blue text-white shadow-lg shadow-brand-blue/30 scale-105'
-                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                    : 'text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
                             }`}
                         >
                             <Presentation className="w-4 h-4" />
@@ -142,7 +157,7 @@ export function ApresentacaoClient() {
                             className={`px-4.5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 flex items-center gap-2 ${
                                 viewMode === 'fluxograma'
                                     ? 'bg-brand-red text-white shadow-lg shadow-brand-red/30 scale-105'
-                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                    : 'text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
                             }`}
                         >
                             <Network className="w-4 h-4" />
@@ -154,8 +169,8 @@ export function ApresentacaoClient() {
                             onClick={() => setViewMode('hub-text')}
                             className={`px-4.5 py-2.5 rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 flex items-center gap-2 ${
                                 viewMode === 'hub-text'
-                                    ? 'bg-white/20 text-white shadow-lg scale-105'
-                                    : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                    ? 'bg-gray-900 text-white dark:bg-white/20 dark:text-white shadow-lg scale-105'
+                                    : 'text-gray-700 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/5'
                             }`}
                         >
                             <FileText className="w-4 h-4" />
@@ -165,6 +180,12 @@ export function ApresentacaoClient() {
                 </div>
 
                 {/* VIEW MODES */}
+                {viewMode === 'iniciativas-slides' && (
+                    <div className="space-y-12">
+                        <IniciativasSlideViewer orbitronClassName={orbitronClassName} />
+                    </div>
+                )}
+
                 {viewMode === 'reuniao-slides' && (
                     <div className="space-y-12">
                         <ReuniaoSlideViewer />
@@ -186,7 +207,7 @@ export function ApresentacaoClient() {
                                 </div>
                                 <button
                                     onClick={() => setViewMode('fluxograma')}
-                                    className="px-5 py-2.5 rounded-xl bg-brand-red hover:bg-[#d63838] text-white font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 self-start font-bukra shadow-md"
+                                    className="px-5 py-2.5 rounded-xl bg-brand-red hover:bg-[#D93838] text-white font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 self-start font-bukra shadow-md"
                                 >
                                     <span>Abrir Fluxograma</span>
                                     <ArrowRight className="w-4 h-4" />
@@ -208,7 +229,7 @@ export function ApresentacaoClient() {
                                 </div>
                                 <button
                                     onClick={() => setViewMode('aula-slides')}
-                                    className="px-5 py-2.5 rounded-xl bg-brand-blue hover:bg-[#0c3866] text-white font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 self-start font-bukra shadow-md"
+                                    className="px-5 py-2.5 rounded-xl bg-brand-blue hover:bg-[#0C3A68] text-white font-black text-xs uppercase tracking-wider transition-all flex items-center gap-2 self-start font-bukra shadow-md"
                                 >
                                     <span>Abrir Slides Aula</span>
                                     <ArrowRight className="w-4 h-4" />
@@ -407,7 +428,7 @@ export function ApresentacaoClient() {
                             </div>
                             <button
                                 onClick={() => setViewMode('reuniao-slides')}
-                                className="px-6 py-3.5 rounded-2xl bg-brand-blue hover:bg-[#0c3866] text-white font-black text-xs uppercase tracking-wider border border-brand-blue/50 transition-all transform hover:scale-105 active:scale-95 shadow-xl flex items-center gap-2 shrink-0"
+                                className="px-6 py-3.5 rounded-2xl bg-brand-blue hover:bg-[#0C3A68] text-white font-black text-xs uppercase tracking-wider border border-brand-blue/50 transition-all transform hover:scale-105 active:scale-95 shadow-xl flex items-center gap-2 shrink-0"
                             >
                                 <span>Abrir Slides do HUB</span>
                                 <ArrowRight className="w-4 h-4" />

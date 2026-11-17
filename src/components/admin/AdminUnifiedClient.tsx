@@ -112,9 +112,25 @@ export function AdminUnifiedClient() {
     };
 
     useEffect(() => {
+        let active = true;
         if (activeTab === 'papeis') {
-            fetchProfiles();
+            void (async () => {
+                const { data, error } = await supabase
+                    .from('profiles')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+                if (!active) return;
+                if (error) {
+                    toast.error("Erro ao carregar perfis.");
+                } else {
+                    setProfiles(data || []);
+                }
+                setIsLoading(false);
+            })();
         }
+        return () => {
+            active = false;
+        };
     }, [activeTab]);
 
     // Roles Actions
@@ -181,7 +197,7 @@ export function AdminUnifiedClient() {
         
         setIsDangerLoading(true);
         const formData = new FormData(e.currentTarget);
-        const result = await executeNuclearReset(formData) as any;
+        const result = (await executeNuclearReset(formData)) as { success?: boolean; message?: string; error?: string };
         
         if (result.success) {
             toast.success(result.message || 'Reset Nuclear Concluído');
@@ -198,7 +214,7 @@ export function AdminUnifiedClient() {
         setIsDangerLoading(true);
         const formData = new FormData();
         formData.append('secret_key', secretKey);
-        const result = await executeProfileWipe(formData) as any;
+        const result = (await executeProfileWipe(formData)) as { success?: boolean; message?: string; error?: string };
 
         if (result.success) {
             toast.success(result.message || 'Wipe de Perfis Concluído');
@@ -215,7 +231,7 @@ export function AdminUnifiedClient() {
         setIsDangerLoading(true);
         const formData = new FormData();
         formData.append('secret_key', secretKey);
-        const result = await executeContentWipe(formData) as any;
+        const result = (await executeContentWipe(formData)) as { success?: boolean; message?: string; error?: string };
 
         if (result.success) {
             toast.success(result.message || 'Wipe de Conteúdo Concluído');
@@ -230,7 +246,7 @@ export function AdminUnifiedClient() {
         if (!confirm(`Apagar todos os dados do usuário ${targetUid}?`)) return;
 
         setIsDangerLoading(true);
-        const result = await executeSpecificUserWipe(targetUid, secretKey) as any;
+        const result = (await executeSpecificUserWipe(targetUid, secretKey)) as { success?: boolean; message?: string; error?: string };
 
         if (result.success) {
             toast.success(result.message || 'Usuário Removido com Sucesso');
@@ -248,7 +264,7 @@ export function AdminUnifiedClient() {
         setIsDangerLoading(true);
         const formData = new FormData();
         formData.append('secret_key', secretKey);
-        const result = await executeTrailsWipe(formData) as any;
+        const result = (await executeTrailsWipe(formData)) as { success?: boolean; message?: string; error?: string };
 
         if (result.success) {
             toast.success(result.message || 'Wipe de Trilhas Concluído');
@@ -267,7 +283,7 @@ export function AdminUnifiedClient() {
         const formData = new FormData(e.currentTarget);
         formData.append('secret_key', secretKey);
         
-        const result = await executeSelectiveWipe(formData) as any;
+        const result = (await executeSelectiveWipe(formData)) as { success?: boolean; message?: string; error?: string };
         
         if (result.success) {
             toast.success(result.message || 'Wipe Seletivo Concluído');
@@ -501,13 +517,13 @@ export function AdminUnifiedClient() {
                                 <button
                                     onClick={handleProfileWipe}
                                     disabled={isDangerLoading}
-                                    className="p-8 bg-orange-600/5 border border-orange-500/20 rounded-[32px] hover:bg-orange-500/10 transition-all text-left"
+                                    className="p-8 bg-[#F14343]/5 border border-[#F14343]/25 rounded-[32px] hover:bg-[#F14343]/10 transition-all text-left"
                                 >
                                     <div className="flex items-center justify-between mb-2">
-                                        <span className="font-black text-orange-500 uppercase tracking-widest text-sm">Wipe de Perfis</span>
-                                        <span className="material-symbols-outlined text-orange-500">person_remove</span>
+                                        <span className="font-black text-[#F14343] uppercase tracking-widest text-sm">Wipe de Perfis</span>
+                                        <span className="material-symbols-outlined text-[#F14343]">person_remove</span>
                                     </div>
-                                    <p className="text-xs text-orange-200/40">Remove usuários mas mantém trilhas.</p>
+                                    <p className="text-xs text-[#F14343]/60">Remove usuários mas mantém trilhas.</p>
                                 </button>
 
                                 <button
@@ -560,12 +576,12 @@ export function AdminUnifiedClient() {
                         </div>
                     </section>
                     
-                    <section className="mt-8 p-8 bg-purple-900/10 border border-purple-500/30 rounded-[32px] group">
-                        <h2 className="text-xl font-black text-purple-500 mb-4 flex items-center gap-3">
+                    <section className="mt-8 p-8 bg-[#F14343]/10 border border-[#F14343]/30 rounded-[32px] group">
+                        <h2 className="text-xl font-black text-[#F14343] font-bukra mb-4 flex items-center gap-3">
                             <span className="material-symbols-outlined text-[24px]">filter_alt_off</span>
                             Wipe Seletivo
                         </h2>
-                        <p className="text-xs text-purple-200/50 mb-6 leading-relaxed">
+                        <p className="text-xs text-gray-300 mb-6 leading-relaxed">
                             Apaga todo o conteúdo do sistema (posts, logs, feedbacks) e <b>todos os perfis</b> exceto as contas dos e-mails listados abaixo. As <b>Trilhas de Aprendizagem</b> serão mantidas intactas.
                         </p>
                         <form onSubmit={handleSelectiveWipe} className="flex flex-col gap-4">
@@ -576,12 +592,12 @@ export function AdminUnifiedClient() {
                                 placeholder="E-mails para preservar (ex: admin@usp.br, coordenacao@if.usp.br)"
                                 rows={3}
                                 required
-                                className="w-full bg-background-dark/40 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm placeholder:text-gray-700 focus:outline-none focus:border-purple-500 transition-colors"
+                                className="w-full bg-background-dark/40 border border-white/10 rounded-2xl px-5 py-4 text-white text-sm placeholder:text-gray-700 focus:outline-none focus:border-[#F14343] transition-colors"
                             />
                             <button
                                 type="submit"
                                 disabled={isDangerLoading}
-                                className="py-4 bg-purple-600 disabled:bg-neutral-800 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-purple-500 shadow-lg shadow-purple-900/20 active:scale-95 transition-all w-full flex items-center justify-center gap-2"
+                                className="py-4 bg-[#F14343] disabled:bg-neutral-800 text-white font-black uppercase tracking-widest text-[10px] rounded-2xl hover:bg-[#D93838] shadow-lg shadow-[#F14343]/20 active:scale-95 transition-all w-full flex items-center justify-center gap-2"
                             >
                                 <span className="material-symbols-outlined text-sm">cleaning_services</span>
                                 EXECUTAR WIPE SELETIVO
@@ -606,7 +622,6 @@ export function AdminUnifiedClient() {
                 <EditProfileModal
                     isOpen={editModal.isOpen}
                     onClose={() => setEditModal({ isOpen: false, profile: null })}
-                    // @ts-ignore
                     adminMode={true}
                     adminUserId={editModal.profile?.id}
                     onSuccess={fetchProfiles}

@@ -71,7 +71,7 @@ export const EXPERIMENTS_CATALOG: ExperimentOption[] = [
         subtitle: 'Cinemática & Física do Esporte',
         concept: 'Mecânica e Lançamento Oblíquo',
         description: 'Um desafio interativo de arremesso que desmistifica parábolas, conservação de momento e gravidade no palco.',
-        image: '/show/IMG_8833.JPG',
+        image: '/show/show-canhao-vortice.jpg',
         themeColor: 'green'
     },
     {
@@ -81,7 +81,7 @@ export const EXPERIMENTS_CATALOG: ExperimentOption[] = [
         subtitle: 'Pressão Atmosférica & Vácuo',
         concept: 'Termodinâmica e Pressão dos Gases',
         description: 'O impressionante efeito da pressão atmosférica esmagando instantaneamente um galão resistente sob vácuo.',
-        image: '/show/IMG_8869.JPG',
+        image: '/show/show-bobina-tesla.jpg',
         themeColor: 'green'
     },
     {
@@ -91,7 +91,7 @@ export const EXPERIMENTS_CATALOG: ExperimentOption[] = [
         subtitle: 'Giroscópios & Momento Angular',
         concept: 'Rotação e Leis de Conservação',
         description: 'A força invisível da conservação do momento angular com rodas giratórias e bancos giratórios que desafiam a intuição.',
-        image: '/show/IMG_8876.JPG',
+        image: '/show/show-wimshurst.jpg',
         themeColor: 'green'
     },
 
@@ -103,7 +103,7 @@ export const EXPERIMENTS_CATALOG: ExperimentOption[] = [
         subtitle: 'A Pioneira da Radioatividade',
         concept: 'História da Ciência e Física Nuclear',
         description: 'Uma imersão teatral na vida e nas descobertas da única cientista laureada com dois Prêmios Nobel em áreas distintas.',
-        image: '/show/IMG_8891.JPG',
+        image: '/show/show-garrafa-combustao.jpg',
         themeColor: 'blue'
     },
     {
@@ -113,7 +113,7 @@ export const EXPERIMENTS_CATALOG: ExperimentOption[] = [
         subtitle: 'Relatividade & O Pensamento Curioso',
         concept: 'Física Moderna e Pensamento Científico',
         description: 'Uma abertura instigante baseada nas experiências de pensamento de Einstein sobre a luz, o espaço e a mecânica quântica.',
-        image: '/show/IMG_8990.JPG',
+        image: '/show/show-dewar-nitrogenio.jpg',
         themeColor: 'blue'
     },
 
@@ -125,7 +125,7 @@ export const EXPERIMENTS_CATALOG: ExperimentOption[] = [
         subtitle: 'Alta Tensão Eletrostática',
         concept: 'Indução Eletrostática e Descargas',
         description: 'Máquina clássica geradora de dezenas de milhares de volts, demonstrando acúmulo de cargas e relâmpagos em miniatura.',
-        image: '/show/IMG_00004.JPG',
+        image: '/show/show-nuvem-nitrogenio.jpg',
         themeColor: 'blue'
     },
     {
@@ -135,7 +135,7 @@ export const EXPERIMENTS_CATALOG: ExperimentOption[] = [
         subtitle: 'Vórtices Toroidais & Fluidos',
         concept: 'Aerodinâmica e Dinâmica de Vórtices',
         description: 'Disparo de anéis de fumaça gigantes que viajam pelo auditório mostrando o transporte de momento e energia em fluidos.',
-        image: '/show/IMG_00031.JPG',
+        image: '/show/show-balao-nitrogenio.jpg',
         themeColor: 'blue'
     },
     {
@@ -145,7 +145,7 @@ export const EXPERIMENTS_CATALOG: ExperimentOption[] = [
         subtitle: 'Raios & Eletromagnetismo Sem Fio',
         concept: 'Resonância Eletromagnética e Alta Frequência',
         description: 'Centelhas espetaculares no ar e lâmpadas acendendo nas mãos sem qualquer fio conectado, homenageando Nikola Tesla.',
-        image: '/show/IMG_00143.JPG',
+        image: '/show/show-bobina-tesla.jpg',
         themeColor: 'blue'
     },
 
@@ -157,7 +157,7 @@ export const EXPERIMENTS_CATALOG: ExperimentOption[] = [
         subtitle: 'Criogenia Extrema (-196°C)',
         concept: 'Termodinâmica e Transição de Fase',
         description: 'O ápice térmico: nuvens colossais de vapor, contração de gases e efeitos fascinantes do frio extremo no palco.',
-        image: '/show/IMG_8793.JPG',
+        image: '/show/show-nuvem-nitrogenio.jpg',
         themeColor: 'red'
     },
     {
@@ -167,7 +167,7 @@ export const EXPERIMENTS_CATALOG: ExperimentOption[] = [
         subtitle: 'Transição Vítrea Instantânea',
         concept: 'Propriedades dos Materiais em Baixas Temperaturas',
         description: 'Alimentos e materiais orgânicos submetidos a congelamento instantâneo se quebrando como vidro diante do público.',
-        image: '/show/IMG_8797.JPG',
+        image: '/show/show-caixa-experimento.jpg',
         themeColor: 'red'
     },
     {
@@ -177,7 +177,7 @@ export const EXPERIMENTS_CATALOG: ExperimentOption[] = [
         subtitle: 'O Momento Visual & Redes Sociais',
         concept: 'Divulgação Científica e Engajamento Visual',
         description: 'Experimentos com iluminação estroboscópica e efeitos cinematográficos desenhados sob medida para os alunos gravarem.',
-        image: '/show/IMG_00224.JPG',
+        image: '/show/show-wimshurst.jpg',
         themeColor: 'red'
     }
 ];

@@ -178,10 +178,19 @@ export function Footer() {
                                 Observatório de Pesquisa
                             </Link>
                         </li>
+                    </ul>
+                </div>
+
+                {/* EIXO 4: GESTÃO (Barra Azul Clara) */}
+                <div className="space-y-2 border-l-2 border-[#1F9FCF] pl-3 py-0.5">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-[#1F9FCF] font-bukra block">
+                        4. Gestão
+                    </span>
+                    <ul className="space-y-1.5">
                         <li>
-                            <Link href="/admin" className="flex items-center gap-2 text-[10px] text-white/60 hover:text-white transition-colors pt-1">
-                                <span className="material-symbols-outlined text-[14px] w-4 h-4 flex items-center justify-center flex-shrink-0 text-white/60">admin_panel_settings</span>
-                                Painel de Controle
+                            <Link href="/gestao" className="flex items-center gap-2 text-xs text-white/80 hover:text-white transition-colors">
+                                <span className="material-symbols-outlined text-[16px] w-4 h-4 flex items-center justify-center flex-shrink-0 text-white/90">admin_panel_settings</span>
+                                Central de Gestão
                             </Link>
                         </li>
                     </ul>
