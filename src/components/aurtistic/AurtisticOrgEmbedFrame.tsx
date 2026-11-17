@@ -58,6 +58,27 @@ export function AurtisticOrgEmbedFrame({
     return () => clearTimeout(timer);
   }, []);
 
+  // Preconnect e DNS-Prefetch dinâmicos para zerar latência TLS no handshake sem duplicação
+  useEffect(() => {
+    if (typeof document === 'undefined' || !aurtisticBase) return;
+    const createdLinks: HTMLLinkElement[] = [];
+    ['preconnect', 'dns-prefetch'].forEach((rel) => {
+      const selector = `link[rel="${rel}"][href="${aurtisticBase}"]`;
+      if (!document.head.querySelector(selector)) {
+        const link = document.createElement('link');
+        link.rel = rel;
+        link.href = aurtisticBase;
+        document.head.appendChild(link);
+        createdLinks.push(link);
+      }
+    });
+    return () => {
+      createdLinks.forEach((l) => l.remove());
+    };
+  }, [aurtisticBase]);
+
+  const [isIframeReady, setIsIframeReady] = useState(false);
+
   // Modal de Publicação do Studio no HUB
   const [studioPostData, setStudioPostData] = useState<{
     orgSlug: string;
@@ -76,9 +97,12 @@ export function AurtisticOrgEmbedFrame({
   const [publishSuccess, setPublishSuccess] = useState(false);
   const [copiedCaption, setCopiedCaption] = useState(false);
 
-  // Listener para capturar posts do Studio e navegação de retorno
+  // Listener para capturar posts do Studio, handshake pronto e navegação de retorno
   useEffect(() => {
     const handleStudioMessage = (event: MessageEvent) => {
+      if (event.data?.type === 'AURTISTIC_EMBED_READY') {
+        setIsIframeReady(true);
+      }
       if (event.data?.type === 'AURTISTIC_STUDIO_PUBLISH_HUB') {
         const payload = event.data.payload;
         setStudioPostData(payload);
@@ -95,8 +119,12 @@ export function AurtisticOrgEmbedFrame({
 
   const targetPath =
     currentMode === 'studio'
-      ? `/embed/studio?org=${encodeURIComponent(selectedSlug)}`
+      ? `/embed/org/${encodeURIComponent(selectedSlug)}?view=studio`
       : `/embed/org/${encodeURIComponent(selectedSlug)}`;
+
+  useEffect(() => {
+    setIsIframeReady(false);
+  }, [targetPath, aurtisticBase]);
 
   const requestKey = `${aurtisticBase}::${targetPath}`;
   const loading = authState.path !== requestKey;
@@ -183,9 +211,19 @@ export function AurtisticOrgEmbedFrame({
     setTimeout(() => setCopiedCaption(false), 2500);
   };
 
-  const iframeSrc = ticket
-    ? `${aurtisticBase}${targetPath}${targetPath.includes('?') ? '&' : '?'}ticket=${encodeURIComponent(ticket)}`
-    : `${aurtisticBase}${targetPath}`;
+  const iframeSrc = (() => {
+    try {
+      const url = new URL(targetPath, aurtisticBase);
+      if (ticket) {
+        url.searchParams.set('ticket', ticket);
+      }
+      return url.toString();
+    } catch {
+      return ticket
+        ? `${aurtisticBase}${targetPath}${targetPath.includes('?') ? '&' : '?'}ticket=${encodeURIComponent(ticket)}`
+        : `${aurtisticBase}${targetPath}`;
+    }
+  })();
 
   return (
     <div className={`w-full rounded-2xl border border-white/15 bg-[#07090e] overflow-hidden shadow-2xl flex flex-col ${heightClassName.includes('h-full') ? 'h-full flex-1' : ''}`}>
@@ -338,11 +376,25 @@ export function AurtisticOrgEmbedFrame({
       )}
 
       {!hideInternalBar ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 bg-black/60 border-b border-white/10">
+        <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-2.5 bg-white/90 dark:bg-black/75 border-b border-slate-200 dark:border-white/10 backdrop-blur-md transition-colors">
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-slate-200">
-              <Sparkles className="w-4 h-4 text-[#FFCC00]" />
-              <span className="hidden sm:inline">Aurtistic Ecossistema</span>
+            {/* Identidade Visual Aurtistic com Conexão Bilateral */}
+            <div className="flex items-center gap-2">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/aurtistic/icon.png"
+                alt="Aurtistic Icon"
+                className="w-5 h-5 object-contain rounded-md shadow-sm"
+              />
+              <div className="flex items-center gap-1.5 text-xs font-mono font-bold text-slate-800 dark:text-slate-100">
+                <span className="font-extrabold tracking-tight bg-gradient-to-r from-[#9D4EDD] via-[#C77DFF] to-[#FFCC00] bg-clip-text text-transparent">
+                  Aurtistic
+                </span>
+                <span className="text-[10px] text-slate-400 font-normal">⇄</span>
+                <span className="hidden sm:inline text-[10px] font-sans font-bold text-[#1F9FCF]">
+                  HUB LabDiv
+                </span>
+              </div>
             </div>
 
             {/* Alternador de Modo / Botão Voltar */}
@@ -351,7 +403,7 @@ export function AurtisticOrgEmbedFrame({
                 <button
                   type="button"
                   onClick={() => setCurrentMode('org')}
-                  className="flex items-center gap-1 px-3 py-1 rounded-lg text-xs font-bold text-[#FFCC00] bg-[#FFCC00]/15 border border-[#FFCC00]/30 hover:bg-[#FFCC00]/25 transition-all cursor-pointer"
+                  className="flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-bold text-[#FFCC00] bg-[#FFCC00]/15 border border-[#FFCC00]/30 hover:bg-[#FFCC00]/25 transition-all cursor-pointer"
                   title="Voltar para a gestão de operações da organização"
                 >
                   <ChevronLeft className="w-3.5 h-3.5" />
@@ -359,14 +411,14 @@ export function AurtisticOrgEmbedFrame({
                 </button>
               )}
 
-              <div className="flex items-center gap-1 bg-white/5 p-1 rounded-xl border border-white/10">
+              <div className="flex items-center gap-1 bg-slate-100 dark:bg-white/5 p-1 rounded-xl border border-slate-200 dark:border-white/10">
                 <button
                   type="button"
                   onClick={() => setCurrentMode('org')}
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     currentMode === 'org'
                       ? 'bg-[#FFCC00] text-black shadow-sm font-black'
-                      : 'text-slate-300 hover:text-white'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   <LayoutDashboard className="w-3.5 h-3.5" />
@@ -378,7 +430,7 @@ export function AurtisticOrgEmbedFrame({
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
                     currentMode === 'studio'
                       ? 'bg-[#1F9FCF] text-white shadow-sm font-black'
-                      : 'text-slate-300 hover:text-white'
+                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
                   }`}
                 >
                   <Palette className="w-3.5 h-3.5" />
@@ -409,7 +461,7 @@ export function AurtisticOrgEmbedFrame({
               }
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-300 hover:text-white"
+              className="inline-flex items-center gap-1 text-[11px] font-bold text-slate-300 hover:text-white transition-colors px-2 py-1 rounded-lg hover:bg-white/5"
             >
               <span>Abrir em nova aba</span>
               <ExternalLink className="w-3.5 h-3.5" />
@@ -434,12 +486,7 @@ export function AurtisticOrgEmbedFrame({
         </div>
       )}
 
-      {loading ? (
-        <div className={`w-full ${heightClassName} flex items-center justify-center gap-2 text-xs text-slate-300`}>
-          <Loader2 className="w-4 h-4 animate-spin text-[#FFCC00]" />
-          <span>Emitindo ticket SSO seguro...</span>
-        </div>
-      ) : errorMsg ? (
+      {errorMsg ? (
         <div className="p-8 text-center space-y-4 rounded-3xl bg-[#0c1220] border border-white/10 max-w-lg mx-auto my-12">
           <div className="size-12 mx-auto rounded-2xl bg-brand-blue/20 text-brand-blue flex items-center justify-center">
             <Sparkles className="w-6 h-6 text-[#FFCC00]" />
@@ -461,12 +508,36 @@ export function AurtisticOrgEmbedFrame({
           </Link>
         </div>
       ) : (
-        <iframe
-          src={iframeSrc}
-          title={mode === 'studio' ? 'Studio de Posts Aurtistic' : 'Gestão de Tarefas Aurtistic'}
-          className={`w-full ${heightClassName} ${heightClassName.includes('h-full') ? 'flex-1 min-h-[580px]' : ''} border-0 bg-[#07090e]`}
-          allow="clipboard-write; clipboard-read"
-        />
+        <>
+          {(loading || !isIframeReady) && (
+            <div className={`w-full ${heightClassName} flex flex-col items-center justify-center gap-4 text-xs text-slate-300 p-8`}>
+              <div className="relative flex items-center justify-center">
+                <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#9D4EDD]/30 via-[#C77DFF]/20 to-[#FFCC00]/20 animate-pulse border border-white/10 flex items-center justify-center">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/aurtistic/icon.png"
+                    alt="Aurtistic"
+                    className="w-6 h-6 object-contain opacity-80"
+                  />
+                </div>
+                <Loader2 className="w-16 h-16 animate-spin text-[#1F9FCF]/40 absolute -inset-2" />
+              </div>
+              <div className="text-center space-y-1">
+                <p className="font-bold text-white tracking-wide">Conectando ecossistema integrado...</p>
+                <p className="text-[11px] text-slate-400">Validando sessão segura SSO e liberando ferramentas</p>
+              </div>
+            </div>
+          )}
+          <iframe
+            src={iframeSrc}
+            title={currentMode === 'studio' ? 'Studio de Posts Aurtistic' : 'Gestão de Tarefas Aurtistic'}
+            loading="eager"
+            onLoad={() => setIsIframeReady(true)}
+            sandbox="allow-scripts allow-same-origin allow-forms allow-popups allow-popups-to-escape-sandbox allow-downloads allow-modals"
+            className={`w-full ${heightClassName} ${heightClassName.includes('h-full') ? 'flex-1 min-h-[580px]' : ''} border-0 bg-[#07090e] ${loading || !isIframeReady ? 'hidden' : ''}`}
+            allow="camera; microphone; clipboard-write; clipboard-read"
+          />
+        </>
       )}
     </div>
   );
