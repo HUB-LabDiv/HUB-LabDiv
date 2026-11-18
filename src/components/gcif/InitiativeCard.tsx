@@ -142,7 +142,7 @@ export function InitiativeCard({ initiative, onOpenDetails }: InitiativeCardProp
         );
     }
 
-    // 4. Tema Especial: Pró-Física (ProFis)
+    // 4. Tema Especial: PROFIS (Espaço de Apoio, Pesquisa e Cooperação)
     if (
         initiative.temaVisual === 'profis' ||
         initiative.id === 'profis' ||

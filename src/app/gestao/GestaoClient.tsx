@@ -37,7 +37,7 @@ import { AurtisticOrgEmbedFrame } from '@/components/aurtistic/AurtisticOrgEmbed
 
 
 export type GestaoTab = 'moderacao' | 'studio' | 'admin';
-export type OrgSlug = 'labdiv' | 'show-da-fisica' | 'profis' | 'hs';
+export type OrgSlug = 'labdiv' | 'show-da-fisica' | 'hs' | 'profis';
 export type AdminSubModule = 'escolha' | 'orgs';
 
 interface ProfileRow {
@@ -84,17 +84,6 @@ export const ORG_OPTIONS: OrgCardDefinition[] = [
     badgeStyle: 'border-[#01f300]/40 bg-[#01f300]/10 text-[#01f300]',
     activeRing: 'ring-2 ring-[#01f300] shadow-[0_0_25px_rgba(1,243,0,0.25)] border-[#01f300]/60',
     glowOverlay: 'from-[#01f300]/10 via-[#002ffe]/10 to-transparent',
-  },
-  {
-    slug: 'profis',
-    label: 'Pró-Física (ProFis)',
-    badge: '🔬 PROFIS',
-    subtitle: 'Ensino, Nivelamento & Pesquisa',
-    primaryColor: '#FFCC00',
-    accentColor: '#F59E0B',
-    badgeStyle: 'border-amber-400/40 bg-amber-400/10 text-amber-400',
-    activeRing: 'ring-2 ring-amber-400 shadow-[0_0_25px_rgba(255,204,0,0.25)] border-amber-400/60',
-    glowOverlay: 'from-amber-500/10 via-orange-950/20 to-transparent',
   },
   {
     slug: 'hs',
@@ -615,7 +604,6 @@ export function GestaoClient({
                           <th className="py-3 pr-4">Usuário</th>
                           <th className="py-3 px-3 text-center">LabDiv</th>
                           <th className="py-3 px-3 text-center">Show de Física</th>
-                          <th className="py-3 px-3 text-center">Pró-Física</th>
                           <th className="py-3 px-3 text-center">Hackerspace</th>
                         </tr>
                       </thead>
@@ -627,10 +615,6 @@ export function GestaoClient({
                           const isLabdiv = Boolean(p.is_labdiv || inits.includes('labdiv'));
                           const isShow =
                             inits.includes('show_da_fisica') || inits.includes('show-da-fisica');
-                          const isProfis =
-                            inits.includes('profis') ||
-                            inits.includes('pro-fis') ||
-                            inits.includes('pro_fis');
                           const isHs = inits.includes('hs') || inits.includes('hackerspace');
 
                           return (
@@ -667,19 +651,6 @@ export function GestaoClient({
                                   }`}
                                 >
                                   {isShow ? 'Membro' : 'Liberar'}
-                                </button>
-                              </td>
-                              <td className="py-3.5 px-3 text-center">
-                                <button
-                                  type="button"
-                                  onClick={() => handleToggleMembership(p.id, 'profis', isProfis)}
-                                  className={`px-3 py-1 rounded-lg font-bold text-[11px] border cursor-pointer transition-colors ${
-                                    isProfis
-                                      ? 'bg-amber-400/20 border-amber-400 text-amber-300'
-                                      : 'bg-transparent border-white/10 text-gray-500 hover:text-white'
-                                  }`}
-                                >
-                                  {isProfis ? 'Membro' : 'Liberar'}
                                 </button>
                               </td>
                               <td className="py-3.5 px-3 text-center">

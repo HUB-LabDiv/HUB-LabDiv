@@ -280,7 +280,7 @@ export const spacesData: Record<string, SpaceItem> = {
   },
   "profis-licenciatura": {
     id: "profis-licenciatura",
-    nome: "Espaço Pró-Física (PROFIS)",
+    nome: "Espaço PROFIS (Espaço de Apoio, Pesquisa e Cooperação de Professores de Física)",
     sigla: "PROFIS",
     categoria: "maker-convivencia",
     predio: "Edifício da Física Experimental (FEP)",

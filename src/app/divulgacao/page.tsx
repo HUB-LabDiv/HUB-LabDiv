@@ -44,7 +44,7 @@ const HIGHLIGHTS = [
     icon: 'hub',
     color: 'text-[#1F9FCF] bg-[#0F4780]/30 border-[#1F9FCF]/30',
     title: 'Ecossistema Integrado',
-    desc: 'Conectado ao Aurtistic, Show de Física, Hackerspace e Pró-Física em uma única conta.',
+    desc: 'Conectado ao Aurtistic, Show de Física, Hackerspace e PROFIS em uma única conta.',
   },
 ];
 

@@ -108,16 +108,16 @@ export const initiativesData: Record<string, Initiative> = {
   },
   profis: {
     id: "profis",
-    nome: "Pró-Física (ProFis)",
-    sigla: "ProFis",
+    nome: "PROFIS (Espaço de Apoio, Pesquisa e Cooperação de Professores de Física)",
+    sigla: "PROFIS",
     categoria: "academica",
     resumo:
-      "Apoio pedagógico, nivelamento, monitorias, pesquisa e divulgação no Instituto de Física.",
+      "Espaço de apoio pedagógico, pesquisa, cooperação docente e monitorias no Instituto de Física.",
     descricao:
-      "O Programa Pró-Física (ProFis) oferece monitorias e nivelamento em cálculo e física básica para calouros e graduandos do IFUSP, além de articular grupos de estudo e seminários.",
-    publicoAlvo: "Estudantes de graduação, ingressantes e pesquisadores do IFUSP",
-    coordenacao: "Coordenação Pró-Física / IFUSP",
-    comoParticipar: "Monitorias abertas, grupos de estudo e participação nos plantões do ProFis.",
+      "O PROFIS é o Espaço de Apoio, Pesquisa e Cooperação de Professores de Física do IFUSP, oferecendo suporte a práticas pedagógicas, acolhimento de graduandos e articulação entre docentes e pesquisadores.",
+    publicoAlvo: "Estudantes de graduação, futuros docentes e professores do IFUSP",
+    coordenacao: "Coordenação PROFIS / IFUSP",
+    comoParticipar: "Encontros de apoio, pesquisa em ensino, grupos de estudo e projetos de cooperação docente.",
     modalidadeBolsa: ["PUB", "AEx", "Voluntariado"],
     temaVisual: "profis",
     contatos: {

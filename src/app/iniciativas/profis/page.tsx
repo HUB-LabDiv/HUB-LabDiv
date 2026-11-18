@@ -9,8 +9,8 @@ import React from 'react';
 import { ProfisClient } from './ProfisClient';
 
 export const metadata = {
-  title: 'Pró-Física (ProFis) | Iniciativas IFUSP',
-  description: 'Incentivo à formação acadêmica, nivelamento e pesquisa científica no IFUSP.',
+  title: 'PROFIS (Espaço de Apoio, Pesquisa e Cooperação de Professores de Física) | Iniciativas IFUSP',
+  description: 'Espaço de apoio, pesquisa e cooperação de professores e estudantes de física no IFUSP.',
 };
 
 export const dynamic = 'force-dynamic';

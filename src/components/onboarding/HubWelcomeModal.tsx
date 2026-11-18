@@ -60,7 +60,6 @@ const INITIATIVE_THEMES: { id: ThemeInitiative; label: string }[] = [
   { id: 'labdiv', label: 'LabDiv' },
   { id: 'show-da-fisica', label: 'Show de Física' },
   { id: 'hs', label: 'Hackerspace' },
-  { id: 'profis', label: 'Pró-Física' },
 ];
 
 export function HubWelcomeModal() {
@@ -83,7 +82,6 @@ export function HubWelcomeModal() {
     if (profile.is_labdiv || memberInits.includes('labdiv')) list.push('labdiv');
     if (memberInits.some((s: string) => s.includes('show'))) list.push('show-da-fisica');
     if (memberInits.some((s: string) => s === 'hs' || s.includes('hacker'))) list.push('hs');
-    if (memberInits.some((s: string) => s.includes('profis'))) list.push('profis');
     return list;
   }, [profile]);
 

@@ -69,7 +69,7 @@ export function Header() {
         { id: 'labdiv', label: 'LabDiv' },
         { id: 'show-da-fisica', label: 'Show' },
         { id: 'hs', label: 'Hackerspace' },
-        { id: 'profis', label: 'Pró-Física' },
+        { id: 'profis', label: 'PROFIS' },
     ];
 
     // Sharded UI State (V8.0 Navigation Store)

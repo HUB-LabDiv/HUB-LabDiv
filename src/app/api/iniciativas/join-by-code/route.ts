@@ -89,7 +89,7 @@ export async function POST(request: Request) {
       labdiv: 'LabDiv IFUSP',
       'show-da-fisica': 'Show de Física',
       hs: 'Hackerspace IFUSP',
-      profis: 'Pró-Física (ProFis)',
+      profis: 'PROFIS (Espaço de Apoio, Pesquisa e Cooperação de Professores de Física)',
     };
 
     return NextResponse.json({

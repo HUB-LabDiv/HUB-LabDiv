@@ -131,7 +131,7 @@ export const INICIATIVAS_SLIDES: IniciativaSlideItem[] = [
     title: 'Criação de um quarto eixo',
     subtitle: 'Iniciativas do IFUSP na sua própria IDV conectadas pelos 3 Eixos',
     category: '04 • O 4º EIXO • INICIATIVAS',
-    description: 'Show de Física (azul/neon oficial), Hackerspace, Pró-Física e LabDiv com os ícones de Social, Informativo e Ferramentas.',
+    description: 'Show de Física (azul/neon oficial), Hackerspace, PROFIS e LabDiv com os ícones de Social, Informativo e Ferramentas.',
     idv: 'labdiv',
     idvBadge: 'IDV das Iniciativas',
     accentColor: 'tricolor',
@@ -645,12 +645,12 @@ export function IniciativasSlideViewer({ orbitronClassName = '' }: { orbitronCla
                 </div>
               </div>
 
-              {/* Pró-Física (ProFis) */}
+              {/* PROFIS */}
               <div className="p-5 rounded-2xl bg-slate-950 border-2 border-[#f59e0b] shadow-[0_0_20px_rgba(245,158,11,0.25)] flex flex-col justify-between gap-4">
                 <div>
                   <span className="text-[10px] font-black text-amber-400 tracking-widest uppercase">Iniciativa 03</span>
-                  <h4 className="text-lg font-black text-white mt-1.5">PRÓ-FÍSICA (PROFIS)</h4>
-                  <p className="text-xs text-gray-300 mt-2">Monitoria, acolhimento e iniciação científica.</p>
+                  <h4 className="text-lg font-black text-white mt-1.5">PROFIS</h4>
+                  <p className="text-xs text-gray-300 mt-2">Apoio, pesquisa e cooperação de professores de física.</p>
                 </div>
                 <div className="flex items-center gap-2 pt-2.5 border-t border-white/10">
                   <span className="p-1.5 rounded-lg bg-[#0F4780]/40 border border-blue-400/50" title="Social"><Users className="w-4 h-4 text-blue-300" /></span>

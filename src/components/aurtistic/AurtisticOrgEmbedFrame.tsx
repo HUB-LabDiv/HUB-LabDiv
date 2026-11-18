@@ -32,7 +32,7 @@ export function AurtisticOrgEmbedFrame({
 }: AurtisticOrgEmbedFrameProps) {
   const [aurtisticBase, setAurtisticBase] = useState(getAurtisticBase);
   const [prevOrgSlug, setPrevOrgSlug] = useState(orgSlug);
-  const [selectedSlug, setSelectedSlug] = useState<'show-da-fisica' | 'labdiv' | 'hs' | 'profis'>(orgSlug);
+  const [selectedSlug, setSelectedSlug] = useState<'show-da-fisica' | 'labdiv' | 'hs'>(orgSlug);
   const [prevMode, setPrevMode] = useState(mode);
   const [currentMode, setCurrentMode] = useState<'org' | 'studio'>(mode);
   const [authState, setAuthState] = useState<{
@@ -415,11 +415,10 @@ export function AurtisticOrgEmbedFrame({
                 <button
                   type="button"
                   onClick={() => setCurrentMode('org')}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    currentMode === 'org'
-                      ? 'bg-[#FFCC00] text-black shadow-sm font-black'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-                  }`}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${currentMode === 'org'
+                    ? 'bg-[#FFCC00] text-black shadow-sm font-black'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                    }`}
                 >
                   <LayoutDashboard className="w-3.5 h-3.5" />
                   <span>Painel da Equipe</span>
@@ -427,11 +426,10 @@ export function AurtisticOrgEmbedFrame({
                 <button
                   type="button"
                   onClick={() => setCurrentMode('studio')}
-                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    currentMode === 'studio'
-                      ? 'bg-[#1F9FCF] text-white shadow-sm font-black'
-                      : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
-                  }`}
+                  className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${currentMode === 'studio'
+                    ? 'bg-[#1F9FCF] text-white shadow-sm font-black'
+                    : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'
+                    }`}
                 >
                   <Palette className="w-3.5 h-3.5" />
                   <span>HUB Studio</span>
@@ -444,13 +442,12 @@ export function AurtisticOrgEmbedFrame({
             {allowOrgSwitch && (
               <select
                 value={selectedSlug}
-                onChange={(e) => setSelectedSlug(e.target.value as 'show-da-fisica' | 'labdiv' | 'hs' | 'profis')}
+                onChange={(e) => setSelectedSlug(e.target.value as 'show-da-fisica' | 'labdiv' | 'hs')}
                 className="rounded-lg border border-white/20 bg-black px-2.5 py-1 text-xs font-bold text-white"
               >
                 <option value="show-da-fisica">Show de Física</option>
                 <option value="labdiv">LabDiv IFUSP</option>
                 <option value="hs">Hackerspace IFUSP</option>
-                <option value="profis">Pró-Física (ProFis)</option>
               </select>
             )}
             <a

@@ -11,8 +11,8 @@ import type { InitiativeIdvDefinition } from './types';
 
 export const PROFIS_IDV: InitiativeIdvDefinition = {
   id: 'profis',
-  name: 'Pró-Física (ProFis)',
-  shortLabel: 'Pró-Física',
+  name: 'PROFIS (Espaço de Apoio, Pesquisa e Cooperação de Professores de Física)',
+  shortLabel: 'PROFIS',
   colors: {
     primary: '#F59E0B',
     primaryContainer: '#78350F',

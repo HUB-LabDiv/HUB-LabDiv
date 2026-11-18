@@ -35,7 +35,7 @@ export function ProfisClient() {
     <MainLayoutWrapper fullWidth={true}>
       <div className="max-w-7xl mx-auto px-4 py-8 animate-in fade-in slide-in-from-bottom-5 duration-700">
         <Breadcrumbs
-          title="Pró-Física (ProFis)"
+          title="PROFIS (Espaço de Apoio, Pesquisa e Cooperação de Professores de Física)"
           section="Iniciativas de Impacto"
           sectionHref="/gcif/instituto"
           backHref="/gcif/instituto"
@@ -49,17 +49,15 @@ export function ProfisClient() {
           <div className="relative z-10 max-w-3xl space-y-4">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-mono font-bold uppercase tracking-wider">
               <GraduationCap className="w-4 h-4 text-amber-400" />
-              <span>Ensino • Nivelamento &amp; Apoio Acadêmico</span>
+              <span>Ensino • Apoio, Pesquisa &amp; Cooperação</span>
             </div>
 
             <h1 className="text-3xl sm:text-5xl font-black font-bukra text-white tracking-tight uppercase">
-              Pró-Física <span className="text-amber-400">(ProFis)</span>
+              PROFIS <span className="text-amber-400 text-xl sm:text-2xl font-normal normal-case block sm:inline">(Espaço de Apoio, Pesquisa e Cooperação)</span>
             </h1>
 
             <p className="text-sm sm:text-base text-slate-300 leading-relaxed">
-              O Programa Pró-Física do IFUSP apoia calouros e graduandos na transição para a universidade,
-              oferecendo plantões de dúvidas, monitorias temáticas de Cálculo e Física Básica, além de
-              seminários e nivelamento conceitual.
+              O PROFIS (Espaço de Apoio, Pesquisa e Cooperação de Professores de Física) apoia professores, calouros e graduandos na transição e cooperação acadêmica, oferecendo plantões de dúvidas, monitorias temáticas de Cálculo e Física Básica, além de seminários e nivelamento conceitual.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">

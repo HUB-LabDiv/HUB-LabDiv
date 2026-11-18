@@ -444,8 +444,8 @@ export function GrandeColisorView({ oportunidades, mapItems, glossario }: Grande
                                 <span className="material-symbols-outlined text-4xl">school</span>
                             </div>
                             <h3 className="text-2xl font-black uppercase mb-4 text-gray-900 dark:text-white">PROFIS</h3>
-                            <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">O espaço Pró-Física. Ambiente dedicado ao acolhimento e suporte dos estudantes da Licenciatura.</p>
-                            <a href="https://fep.if.usp.br/~profis/" target="_blank" className="px-8 py-3 bg-gray-100 dark:bg-brand-yellow/10 hover:bg-gray-200 dark:hover:bg-brand-yellow/20 text-gray-900 dark:text-brand-yellow border border-transparent dark:border-brand-yellow/30 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-colors inline-block">Conhecer a PROFIS</a>
+                            <p className="text-gray-600 dark:text-gray-400 font-medium leading-relaxed mb-8">O PROFIS (Espaço de Apoio, Pesquisa e Cooperação de Professores de Física). Ambiente dedicado ao acolhimento, pesquisa e suporte dos estudantes e docentes da Licenciatura.</p>
+                            <a href="https://fep.if.usp.br/~profis/" target="_blank" className="px-8 py-3 bg-gray-100 dark:bg-brand-yellow/10 hover:bg-gray-200 dark:hover:bg-brand-yellow/20 text-gray-900 dark:text-brand-yellow border border-transparent dark:border-brand-yellow/30 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-colors inline-block">Conhecer o PROFIS</a>
                         </div>
                     </NetflixFeed>
                 </div>
