@@ -112,7 +112,37 @@ export async function GET(request: NextRequest) {
                 .update(profileUpdate)
                 .eq('id', session.user.id);
 
-            return response;
+            // ⚠️ Fix: cookies de sessão com SameSite=Lax não propagam corretamente
+            // em chains de redirect cross-origin (OAuth → callback → destino).
+            // Retornar uma página HTML que usa window.location.replace() APÓS os cookies
+            // serem assentados pelo browser, garantindo que a próxima request já tenha sessão.
+            const finalUrl = redirectUrl.toString();
+
+            const responseHeaders = new Headers({
+                'Content-Type': 'text/html; charset=utf-8',
+                'Cache-Control': 'no-store, no-cache, must-revalidate',
+                'X-Robots-Tag': 'noindex',
+            });
+
+            // Propagar cada cookie de sessão em seu próprio header Set-Cookie
+            response.cookies.getAll().forEach(c => {
+                const opts: string[] = [`${c.name}=${c.value}`];
+                opts.push(`Path=${c.path || '/'}`);
+                if (c.maxAge != null) opts.push(`Max-Age=${c.maxAge}`);
+                if (c.httpOnly) opts.push('HttpOnly');
+                if (c.secure) opts.push('Secure');
+                opts.push('SameSite=Lax');
+                if (sharedDomain) opts.push(`Domain=${sharedDomain}`);
+                responseHeaders.append('Set-Cookie', opts.join('; '));
+            });
+
+            const html = `<!doctype html><html><head><meta charset="utf-8">
+<title>Autenticando...</title></head><body>
+<script>window.location.replace(${JSON.stringify(finalUrl)});<\/script>
+<noscript><meta http-equiv="refresh" content="0;url=${finalUrl}"></noscript>
+</body></html>`;
+
+            return new NextResponse(html, { status: 200, headers: responseHeaders });
         }
 
         if (process.env.NODE_ENV === 'development') {

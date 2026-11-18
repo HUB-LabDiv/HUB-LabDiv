@@ -29,8 +29,8 @@ interface ScrollJellyCardProps {
 
 /**
  * Squash & Stretch bidirecional baseado na velocidade de scroll:
- * - Vertical: estica em Y e achata nas laterais (X) ao subir/descer rápido.
- * - Horizontal: estica em X e achata em cima/embaixo (Y) ao ir para os lados rápido.
+ * - Vertical  : achata topo/base (scaleY↓) e compensa nas laterais (scaleX↑) ao subir/descer rápido.
+ * - Horizontal: achata as laterais (scaleX↓) e compensa em cima/baixo (scaleY↑) ao ir para os lados.
  */
 export function ScrollJellyCard({
   children,
@@ -50,16 +50,21 @@ export function ScrollJellyCard({
 
   const clampRatio = (v: number, denom = 950) => Math.min(Math.abs(v) / denom, 1);
 
+  // Squash & Stretch correto:
+  // Vertical  → scroll ↕ achata topo/base (scaleY−) e compensa nas laterais (scaleX+)
+  // Horizontal → scroll ↔ achata laterais  (scaleX−) e compensa em cima/baixo (scaleY+)
+  const isHoriz = axis === 'horizontal' || !!containerRef;
+
   const rawScaleX = useTransform([velX, velY], ([vx, vy]: number[]) => {
-    const xBoost = axis === 'horizontal' || containerRef ? clampRatio(vx, 650) * 0.065 : 0;
-    const ySquash = clampRatio(vy) * 0.05;
-    return 1 + xBoost - ySquash;
+    const xBoost = isHoriz ? clampRatio(vx, 650) * 0.065 : clampRatio(vy) * 0.04; // estica X ao scrollar vertical
+    const xSquash = isHoriz ? clampRatio(vx, 650) * 0.065 : 0; // eixo H: próprio squash
+    return isHoriz ? 1 - xSquash : 1 + xBoost;
   });
 
   const rawScaleY = useTransform([velX, velY], ([vx, vy]: number[]) => {
-    const yBoost = clampRatio(vy) * 0.055;
-    const xSquash = axis === 'horizontal' || containerRef ? clampRatio(vx, 650) * 0.06 : 0;
-    return 1 + yBoost - xSquash;
+    const ySquash = !isHoriz ? clampRatio(vy) * 0.055 : 0; // achata topo/base ao scrollar vertical
+    const yBoost  = isHoriz  ? clampRatio(vx, 650) * 0.04 : 0; // estica Y ao scrollar horizontal
+    return isHoriz ? 1 + yBoost : 1 - ySquash;
   });
 
   const springConfig = { stiffness: 300, damping: 18, mass: 0.45 };
