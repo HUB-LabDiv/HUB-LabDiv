@@ -93,7 +93,7 @@ export function ShowAvailabilityClient() {
                     Agenda & Disponibilidade
                 </h1>
                 <p className="text-gray-500">
-                    Bloqueie experimentos do Show da Física por dias específicos ou dias da semana para evitar que os professores montem roteiros que o laboratório não pode atender.
+                    Bloqueie experimentos do Show de Física por dias específicos ou dias da semana para evitar que os professores montem roteiros que o laboratório não pode atender.
                 </p>
             </div>
 

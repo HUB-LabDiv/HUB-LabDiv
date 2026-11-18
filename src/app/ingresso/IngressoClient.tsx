@@ -162,7 +162,7 @@ export default function IngressoClient({ profile }: { profile: any }) {
                         />
                     </div>
 
-                    {/* Banner Promocional do Show da Física para Futuros Alunos */}
+                    {/* Banner Promocional do Show de Física para Futuros Alunos */}
                     <div className="glass-card rounded-[36px] border border-[#FFCC00]/30 bg-gradient-to-br from-[#1E1E1E] via-[#1E1E1E] to-[#FFCC00]/10 p-8 relative overflow-hidden shadow-2xl group">
                         <div className="absolute top-0 right-0 w-80 h-80 bg-[#FFCC00]/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none group-hover:bg-[#FFCC00]/15 transition-all duration-700" />
                         <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
@@ -172,10 +172,10 @@ export default function IngressoClient({ profile }: { profile: any }) {
                                     Experiência Pré-Vestibular
                                 </div>
                                 <h3 className="text-2xl md:text-3xl font-bukra font-black text-white uppercase tracking-tight">
-                                    Conheça o IFUSP através do <span className="text-[#FFCC00]">Show da Física</span>
+                                    Conheça o IFUSP através do <span className="text-[#FFCC00]">Show de Física</span>
                                 </h3>
                                 <p className="text-sm text-gray-300 font-open-sans font-medium leading-relaxed max-w-2xl">
-                                    Quer sentir a vibração da ciência antes mesmo do vestibular? O Show da Física realiza demonstrações de bobinas de Tesla, giroscópios e levitação quântica. É a melhor porta de entrada para se apaixonar pelo curso!
+                                    Quer sentir a vibração da ciência antes mesmo do vestibular? O Show de Física realiza demonstrações de bobinas de Tesla, giroscópios e levitação quântica. É a melhor porta de entrada para se apaixonar pelo curso!
                                 </p>
                             </div>
                             <div className="shrink-0">
@@ -183,7 +183,7 @@ export default function IngressoClient({ profile }: { profile: any }) {
                                     href="/iniciativas/show-da-fisica"
                                     className="px-6 py-4 bg-[#FFCC00] text-black rounded-2xl text-xs font-bukra font-black uppercase tracking-widest hover:bg-[#FFCC00]/90 transition-all flex items-center gap-2 shadow-lg shadow-[#FFCC00]/20 hover:scale-105"
                                 >
-                                    <span>Explorar Show da Física</span>
+                                    <span>Explorar Show de Física</span>
                                     <ArrowRight className="w-4 h-4" />
                                 </Link>
                             </div>
@@ -252,7 +252,7 @@ export default function IngressoClient({ profile }: { profile: any }) {
                                     Sistema Integrado de Agendamento em Breve
                                 </h3>
                                 <p className="text-sm text-gray-300 font-open-sans leading-relaxed max-w-2xl">
-                                    Estamos finalizando a plataforma automatizada para agendamento de caravanas escolares, confirmação de vagas no <strong>Show da Física</strong> e reservas em roteiros temáticos pelos laboratórios do IFUSP.
+                                    Estamos finalizando a plataforma automatizada para agendamento de caravanas escolares, confirmação de vagas no <strong>Show de Física</strong> e reservas em roteiros temáticos pelos laboratórios do IFUSP.
                                 </p>
                             </div>
                         </div>
@@ -260,7 +260,7 @@ export default function IngressoClient({ profile }: { profile: any }) {
 
                     {/* Cards de Atividades de Extensão */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {/* Card 1: Show da Física */}
+                        {/* Card 1: Show de Física */}
                         <div className="glass-card rounded-[40px] border border-[#FFCC00]/40 overflow-hidden hover:border-[#FFCC00]/80 transition-all duration-500 group bg-[#1E1E1E] shadow-xl relative">
                             <div className="absolute top-4 right-4 z-10">
                                 <span className="inline-flex items-center gap-1.5 text-[9px] font-bukra font-black uppercase tracking-wider px-3 py-1 rounded-full bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm">
@@ -273,7 +273,7 @@ export default function IngressoClient({ profile }: { profile: any }) {
                                     <Zap className="w-8 h-8 fill-current" />
                                 </div>
                                 <div className="space-y-2">
-                                    <h3 className="text-2xl font-bukra font-bold text-white uppercase tracking-tight">Show da Física</h3>
+                                    <h3 className="text-2xl font-bukra font-bold text-white uppercase tracking-tight">Show de Física</h3>
                                     <p className="text-sm text-gray-400 font-open-sans font-medium italic">Demonstrações lúdicas e eletrizantes.</p>
                                 </div>
                                 <ul className="space-y-3 font-open-sans">

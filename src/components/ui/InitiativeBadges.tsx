@@ -44,10 +44,10 @@ export const INITIATIVES_CATALOG: Record<InitiativeId, InitiativeMeta> = {
     },
     show_da_fisica: {
         id: 'show_da_fisica',
-        label: 'Show da Física',
-        shortLabel: 'Show da Física',
+        label: 'Show de Física',
+        shortLabel: 'Show de Física',
         subtitle: 'Paleta Neon Oficial (#002FFE • #F60011 • #01F300)',
-        // Paleta Neon do Card do Show da Física
+        // Paleta Neon do Card do Show de Física
         badgeClasses:
             'bg-[#050510] dark:bg-[#050510] text-white border-[#002ffe] shadow-[0_0_12px_rgba(0,47,254,0.45),inset_0_0_8px_rgba(246,0,17,0.25)]',
         chipSelectedClasses:

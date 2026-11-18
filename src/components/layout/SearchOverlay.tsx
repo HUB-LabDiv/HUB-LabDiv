@@ -179,7 +179,7 @@ const navRoutes: NavRoute[] = [
         keywords: ['show', 'fisica', 'show da fisica', 'show de fisica', 'demonstracoes', 'experimentos', 'ludico', 'bobina', 'tesla', 'escolas', 'visita'] 
     },
     { 
-        label: 'Monte seu Show da Física', 
+        label: 'Monte seu Show de Física', 
         href: '/iniciativas/show-da-fisica/monte-seu-show', 
         icon: 'tune', 
         color: 'text-brand-red', 

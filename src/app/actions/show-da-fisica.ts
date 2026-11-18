@@ -442,7 +442,7 @@ export async function getSessionData(sessionId: string) {
                 teacher_code: 'PROF-DEMO',
                 student_code: 'ALUNO-DEMO',
                 status: 'active',
-                title: 'Sessão Demonstrativa (Show da Física)',
+                title: 'Sessão Demonstrativa (Show de Física)',
                 current_stage: 'interaction'
             }
         };

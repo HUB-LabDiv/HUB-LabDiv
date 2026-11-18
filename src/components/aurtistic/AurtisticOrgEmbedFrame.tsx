@@ -447,7 +447,7 @@ export function AurtisticOrgEmbedFrame({
                 onChange={(e) => setSelectedSlug(e.target.value as 'show-da-fisica' | 'labdiv' | 'hs' | 'profis')}
                 className="rounded-lg border border-white/20 bg-black px-2.5 py-1 text-xs font-bold text-white"
               >
-                <option value="show-da-fisica">Show da Física</option>
+                <option value="show-da-fisica">Show de Física</option>
                 <option value="labdiv">LabDiv IFUSP</option>
                 <option value="hs">Hackerspace IFUSP</option>
                 <option value="profis">Pró-Física (ProFis)</option>

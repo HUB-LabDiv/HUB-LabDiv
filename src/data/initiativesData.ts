@@ -43,16 +43,16 @@ export const initiativesData: Record<string, Initiative> = {
   },
   "show-da-fisica": {
     id: "show-da-fisica",
-    nome: "Show da Física",
+    nome: "Show de Física",
     sigla: "SDF",
     categoria: "divulgacao",
     resumo:
       "Demonstrações teatrais e lúdicas de fenômenos físicos para escolas e público geral.",
     descricao:
-      "O Show da Física é uma das mais tradicionais iniciativas de extensão universitária do Brasil. Por meio de apresentações interativas com experimentos de mecânica, termodinâmica, eletromagnetismo e óptica, aproxima conceitos complexos de física de estudantes do ensino fundamental e médio.",
+      "O Show de Física é uma das mais tradicionais iniciativas de extensão universitária do Brasil. Por meio de apresentações interativas com experimentos de mecânica, termodinâmica, eletromagnetismo e óptica, aproxima conceitos complexos de física de estudantes do ensino fundamental e médio.",
     publicoAlvo:
       "Estudantes dos Ensinos Fundamental e Médio, professores e famílias",
-    coordenacao: "Gelson & Equipe de Monitores do Show da Física",
+    coordenacao: "Gelson & Equipe de Monitores do Show de Física",
     comoParticipar:
       "Seleção semestral de monitores bolsistas e voluntários entre graduandos do IFUSP.",
     modalidadeBolsa: ["PUB", "AEx", "Voluntariado"],
@@ -61,7 +61,7 @@ export const initiativesData: Record<string, Initiative> = {
       email: "showdefisica@if.usp.br",
       website: "https://portal.if.usp.br/extensao/pt-br/node/607",
       localizacao:
-        "Auditório Adma Jafet / Sala de Experimentos do Show da Física",
+        "Auditório Adma Jafet / Sala de Experimentos do Show de Física",
     },
     links: {
       oficial: "http://portal.if.usp.br/showdefisica/",

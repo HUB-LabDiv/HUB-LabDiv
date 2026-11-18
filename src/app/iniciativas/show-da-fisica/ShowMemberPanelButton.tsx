@@ -23,13 +23,13 @@ export function ShowMemberPanelButton() {
         <div className="space-y-2 max-w-2xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#002ffe]/10 border border-[#002ffe]/30 text-blue-300 text-xs font-mono font-bold uppercase tracking-wider">
             <Zap className="w-3.5 h-3.5 text-[#01f300]" />
-            <span>SF-OPS • ÁREA DO MEMBRO • SHOW DA FÍSICA</span>
+            <span>SF-OPS • ÁREA DO MEMBRO • SHOW DE FÍSICA</span>
           </div>
           <h3 className="text-xl md:text-3xl font-black text-white font-bukra uppercase tracking-wider">
             Painel de Gestão &amp; HUB Studio
           </h3>
           <p className="text-xs md:text-sm text-slate-300 leading-relaxed font-sans">
-            Acesso reservado aos membros ativos do Show da Física credenciados pelo administrador.
+            Acesso reservado aos membros ativos do Show de Física credenciados pelo administrador.
             Membros entram diretamente via SSO do HUB; novos integrantes utilizam o código de convite da equipe.
           </p>
         </div>
@@ -70,7 +70,7 @@ export function ShowMemberPanelButton() {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-white flex items-center gap-2 font-sans">
-                    <span>Painel de Membro Show da Física</span>
+                    <span>Painel de Membro Show de Física</span>
                     <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-[#002ffe]/20 text-blue-300 border border-[#002ffe]/30">
                       {mode === 'studio' ? 'HUB Studio' : 'Aurtistic Gestão'}
                     </span>

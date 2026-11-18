@@ -447,7 +447,7 @@ export const EIXO_CGIF_TOUR_STEPS: TourStepConfig[] = [
         element: '[data-tour="gcif-tab-instituto"], [data-tour="gcif-instituto-departamentos"]',
         popover: {
             title: '3. Subaba Instituto: Espaços, Iniciativas & Mapa',
-            description: 'História do IFUSP, projetos de extensão (LabDiv, Show da Física), laboratórios abertos (Hackerspace, CEFISMA) e o mapa geográfico do campus.',
+            description: 'História do IFUSP, projetos de extensão (LabDiv, Show de Física), laboratórios abertos (Hackerspace, CEFISMA) e o mapa geográfico do campus.',
             side: 'top',
             align: 'center',
         }
@@ -871,7 +871,7 @@ export const CGIF_INSTITUTO_TOUR_STEPS: TourStepConfig[] = [
         element: '[data-tour="gcif-instituto-iniciativas"]',
         popover: {
             title: '3. Iniciativas de Impacto & Extensão',
-            description: 'Carrossel com coletivos e projetos: Lab-Div, HUB LabDiv, Show da Física, Boletim Supernova, BIFUSP e Grupo Noether.',
+            description: 'Carrossel com coletivos e projetos: Lab-Div, HUB LabDiv, Show de Física, Boletim Supernova, BIFUSP e Grupo Noether.',
             side: 'top',
             align: 'center',
         }

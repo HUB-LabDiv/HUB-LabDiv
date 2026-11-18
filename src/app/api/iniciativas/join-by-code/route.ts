@@ -87,7 +87,7 @@ export async function POST(request: Request) {
 
     const orgDisplayNames: Record<string, string> = {
       labdiv: 'LabDiv IFUSP',
-      'show-da-fisica': 'Show da Física',
+      'show-da-fisica': 'Show de Física',
       hs: 'Hackerspace IFUSP',
       profis: 'Pró-Física (ProFis)',
     };

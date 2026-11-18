@@ -110,7 +110,7 @@ const ferramentasTreeItems: TreeItem[] = [
 const ingressoTreeItems: TreeItem[] = [
     { label: 'Formas de Ingresso', href: '/ingresso', color: 'brand-yellow' },
     { label: 'Visitas & Extensão', href: '/ingresso?tab=visitar', tab: 'visitar', color: 'brand-blue' },
-    { label: 'Show da Física', href: '/iniciativas/show-da-fisica', color: 'brand-red' },
+    { label: 'Show de Física', href: '/iniciativas/show-da-fisica', color: 'brand-red' },
 ];
 
 const arenaTreeItems: TreeItem[] = [

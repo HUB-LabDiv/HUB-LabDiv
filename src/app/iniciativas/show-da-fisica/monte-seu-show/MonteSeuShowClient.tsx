@@ -322,7 +322,7 @@ export function MonteSeuShowClient({ orbitronClassName = '' }: MonteSeuShowClien
                         <Link 
                             href="/iniciativas/show-da-fisica" 
                             className="p-2 -ml-2 text-gray-400 hover:text-white hover:bg-white/5 rounded-lg transition-colors flex items-center gap-1.5 text-xs font-open-sans uppercase tracking-wider"
-                            title="Voltar ao Show da Física"
+                            title="Voltar ao Show de Física"
                         >
                             <ArrowLeft className="w-4 h-4" />
                             <span>Voltar</span>

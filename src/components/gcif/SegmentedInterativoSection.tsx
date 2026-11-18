@@ -65,7 +65,7 @@ interface SegmentedInterativoSectionProps {
 const CURIOSOS_CONTENT = [
     {
         id: 'c1',
-        title: 'Show da Física (Visitação & Agendamento)',
+        title: 'Show de Física (Visitação & Agendamento)',
         category: 'Extensão & Divulgação',
         description: 'Demonstrações interativas ao vivo de óptica, mecânica, eletromagnetismo e termodinâmica para escolas e público geral.',
         badge: 'Aberto à Comunidade',
@@ -541,7 +541,7 @@ export function SegmentedInterativoSection({
                         <p className="text-xs sm:text-sm text-gray-600 dark:text-gray-400 font-open-sans mt-1 max-w-2xl">
                             {activePersona === 'aluno' && 'Bolsas institucionais da graduação, monitorias, auxílios de permanência e centrais pedagógicas.'}
                             {activePersona === 'professor' && 'Ordens de serviço predial, almoxarifado, reservas de auditórios, suporte DTI e editais FAPESP/CNPq.'}
-                            {activePersona === 'curioso' && 'Visitas guiadas aos aceleradores, mostras interativas do Show da Física e cursos abertos à terceira idade.'}
+                            {activePersona === 'curioso' && 'Visitas guiadas aos aceleradores, mostras interativas do Show de Física e cursos abertos à terceira idade.'}
                         </p>
                     </div>
 

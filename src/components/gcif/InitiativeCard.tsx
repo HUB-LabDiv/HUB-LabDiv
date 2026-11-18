@@ -79,7 +79,7 @@ export function InitiativeCard({ initiative, onOpenDetails }: InitiativeCardProp
         );
     }
 
-    // 2. Tema Especial: Show da Física (Neon Edition)
+    // 2. Tema Especial: Show de Física (Neon Edition)
     if (initiative.temaVisual === 'show-da-fisica') {
         return (
             <div className="snap-center shrink-0 w-[300px] md:w-[400px] bg-white dark:bg-[#0a0a0c] rounded-[40px] p-8 border border-[#002ffe] shadow-[0_4px_20px_rgba(0,47,254,0.15)] dark:shadow-[0_0_20px_rgba(0,47,254,0.25)] relative overflow-hidden group flex flex-col justify-between transition-all hover:shadow-[0_4px_30px_rgba(1,243,0,0.25)] dark:hover:shadow-[0_0_30px_rgba(1,243,0,0.3)] hover:border-[#01f300]">

@@ -105,13 +105,13 @@ export const oportunidadesCuradas: OportunidadeCurada[] = [
     },
     {
         id: 'show-da-fisica-monitores',
-        titulo: 'Show da Física: Seleção de Novos Monitores e Divulgadores',
+        titulo: 'Show de Física: Seleção de Novos Monitores e Divulgadores',
         descricao: 'Processo seletivo contínuo para voluntários e bolsistas que queiram atuar diretamente em apresentações científicas interativas para escolas públicas e privadas.',
         tipo: 'vaga',
         categoria: 'Extensão & Cursos',
         prazo: 'Fluxo contínuo',
-        local: 'Anfiteatro do Show da Física (IFUSP)',
-        orgao_responsavel: 'Coordenação Show da Física / CCEx',
+        local: 'Anfiteatro do Show de Física (IFUSP)',
+        orgao_responsavel: 'Coordenação Show de Física / CCEx',
         link: '/iniciativas/show-da-fisica',
         target_persona: 'geral'
     },

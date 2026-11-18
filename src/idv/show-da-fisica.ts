@@ -11,7 +11,7 @@ import type { InitiativeIdvDefinition } from './types';
 
 export const SHOW_DA_FISICA_IDV: InitiativeIdvDefinition = {
   id: 'show-da-fisica',
-  name: 'Show da Física',
+  name: 'Show de Física',
   shortLabel: 'Show',
   colors: {
     primary: '#00D4FF',

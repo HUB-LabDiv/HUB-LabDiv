@@ -67,7 +67,7 @@ export function ComoLabDivAjudaSection({ onRequestPartnership }: ComoLabDivAjuda
                 </p>
             </div>
 
-            {/* Case de Sucesso em Destaque: Show da Física */}
+            {/* Case de Sucesso em Destaque: Show de Física */}
             <div className="glass-card rounded-[36px] border border-[#FFCC00]/40 bg-gradient-to-br from-[#1E1E1E] via-[#1E1E1E] to-[#FFCC00]/10 p-8 md:p-10 relative overflow-hidden shadow-2xl group">
                 <div className="absolute top-0 right-0 w-96 h-96 bg-[#FFCC00]/10 rounded-full blur-3xl -mr-48 -mt-48 pointer-events-none group-hover:bg-[#FFCC00]/15 transition-all duration-700" />
                 
@@ -75,13 +75,13 @@ export function ComoLabDivAjudaSection({ onRequestPartnership }: ComoLabDivAjuda
                     <div className="lg:col-span-8 space-y-4">
                         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FFCC00]/20 text-[#FFCC00] text-[10px] font-black uppercase tracking-wider font-bukra border border-[#FFCC00]/30">
                             <Zap className="w-3.5 h-3.5 fill-current" />
-                            Case Real de Sucesso: Show da Física
+                            Case Real de Sucesso: Show de Física
                         </div>
                         <h3 className="text-2xl md:text-4xl font-bukra font-bold text-white uppercase tracking-tight">
                             Da bancada ao ecossistema digital interativo
                         </h3>
                         <p className="text-sm md:text-base text-gray-300 font-open-sans leading-relaxed">
-                            O tradicional <strong>Show da Física</strong> do IFUSP uniu forças com o LabDiv para modernizar sua identidade visual, estruturar o sistema interativo <em>Monte seu Show</em> (onde o público e professores escolhem experimentos em tempo real) e recrutar uma nova geração de monitores pelo HUB.
+                            O tradicional <strong>Show de Física</strong> do IFUSP uniu forças com o LabDiv para modernizar sua identidade visual, estruturar o sistema interativo <em>Monte seu Show</em> (onde o público e professores escolhem experimentos em tempo real) e recrutar uma nova geração de monitores pelo HUB.
                         </p>
                         
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
@@ -106,13 +106,13 @@ export function ComoLabDivAjudaSection({ onRequestPartnership }: ComoLabDivAjuda
                         </div>
                         <div className="space-y-1">
                             <span className="text-xs font-black uppercase text-white font-bukra block">Experiência Completa</span>
-                            <span className="text-[11px] text-gray-400 font-open-sans">Veja na prática o que o LabDiv construiu para o Show da Física</span>
+                            <span className="text-[11px] text-gray-400 font-open-sans">Veja na prática o que o LabDiv construiu para o Show de Física</span>
                         </div>
                         <Link
                             href="/iniciativas/show-da-fisica"
                             className="w-full py-3 px-4 bg-[#FFCC00] text-black font-bukra font-black text-xs uppercase tracking-widest rounded-xl hover:bg-[#FFCC00]/90 transition-all flex items-center justify-center gap-2 shadow-lg shadow-[#FFCC00]/20 hover:scale-105"
                         >
-                            <span>Ver Show da Física</span>
+                            <span>Ver Show de Física</span>
                             <ArrowRight className="w-4 h-4" />
                         </Link>
                     </div>

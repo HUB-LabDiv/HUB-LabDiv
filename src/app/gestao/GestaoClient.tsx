@@ -76,8 +76,8 @@ export const ORG_OPTIONS: OrgCardDefinition[] = [
   },
   {
     slug: 'show-da-fisica',
-    label: 'Show da Física',
-    badge: '⚡ SHOW DA FÍSICA',
+    label: 'Show de Física',
+    badge: '⚡ SHOW DE FÍSICA',
     subtitle: 'Bastidores, Aparatos & Telão Ao Vivo',
     primaryColor: '#01F300',
     accentColor: '#002FFE',
@@ -614,7 +614,7 @@ export function GestaoClient({
                         <tr className="border-b border-white/10 text-gray-400 uppercase font-mono text-[10px]">
                           <th className="py-3 pr-4">Usuário</th>
                           <th className="py-3 px-3 text-center">LabDiv</th>
-                          <th className="py-3 px-3 text-center">Show da Física</th>
+                          <th className="py-3 px-3 text-center">Show de Física</th>
                           <th className="py-3 px-3 text-center">Pró-Física</th>
                           <th className="py-3 px-3 text-center">Hackerspace</th>
                         </tr>

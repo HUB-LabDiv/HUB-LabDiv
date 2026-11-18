@@ -189,7 +189,7 @@ export function InteractivePamphlet() {
                     <ul className="space-y-1.5 text-[11px] text-gray-400">
                       <li>• Guia do Ingressante e Veterano</li>
                       <li>• Mapa, Laboratórios & Entidades</li>
-                      <li>• Show da Física & Hackerspace</li>
+                      <li>• Show de Física & Hackerspace</li>
                     </ul>
                   </div>
                   <div className="pt-2 border-t border-white/10 text-[10px] font-bold uppercase tracking-wider text-[#F14343]">

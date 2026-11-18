@@ -423,7 +423,7 @@ export default function BachareladoView() {
                         </div>
                         <div className="p-2.5 rounded-xl bg-black/30 border border-white/5">
                             <strong className="text-white font-bukra text-[11px] block">AACCE (Cultura e Extensão):</strong>
-                            Organização de eventos culturais, mostras do Show da Física, visitas guiadas.
+                            Organização de eventos culturais, mostras do Show de Física, visitas guiadas.
                         </div>
                         <div className="p-2.5 rounded-xl bg-black/30 border border-white/5">
                             <strong className="text-white font-bukra text-[11px] block">AACPq (Pesquisa):</strong>

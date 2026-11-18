@@ -58,7 +58,7 @@ const HUB_MODULES_GUIDE = [
 const INITIATIVE_THEMES: { id: ThemeInitiative; label: string }[] = [
   { id: 'hub', label: 'Padrão HUB' },
   { id: 'labdiv', label: 'LabDiv' },
-  { id: 'show-da-fisica', label: 'Show da Física' },
+  { id: 'show-da-fisica', label: 'Show de Física' },
   { id: 'hs', label: 'Hackerspace' },
   { id: 'profis', label: 'Pró-Física' },
 ];
