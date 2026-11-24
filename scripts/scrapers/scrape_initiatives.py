@@ -28,6 +28,9 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) HUB-LabDiv-InitiativesAuditor/1.0"
 }
 
+from http_client import create_resilient_session
+_SESSION = create_resilient_session(headers=HEADERS)
+
 def decode_cloudflare_email(cf_hex: str) -> str:
     """Decodifica e-mails protegidos pelo Cloudflare Email Protection."""
     try:
@@ -62,7 +65,7 @@ def fetch_with_cache(url: str, ttl_hours: int = 24) -> str:
 
     try:
         print(f"  [GET] {url}")
-        resp = requests.get(url, headers=HEADERS, timeout=8, verify=False)
+        resp = _SESSION.get(url, timeout=25, verify=False)
         if resp.status_code == 200:
             with open(cache_path, "w", encoding="utf-8") as f:
                 f.write(resp.text)

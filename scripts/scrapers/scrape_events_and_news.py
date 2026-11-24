@@ -30,6 +30,9 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) HUB-LabDiv-EventsAuditor/1.0"
 }
 
+from http_client import create_resilient_session
+_SESSION = create_resilient_session(headers=HEADERS)
+
 def slugify(text: str) -> str:
     n = unicodedata.normalize('NFKD', text).encode('ASCII', 'ignore').decode('utf-8').lower()
     clean = re.sub(r'[^a-z0-9]+', '-', n).strip('-')
@@ -48,7 +51,7 @@ def fetch_with_cache(url: str, ttl_hours: int = 24) -> str:
 
     try:
         time.sleep(0.3)
-        resp = requests.get(url, headers=HEADERS, timeout=12)
+        resp = _SESSION.get(url, timeout=25)
         if resp.status_code == 200:
             with open(cache_path, "w", encoding="utf-8") as f:
                 f.write(resp.text)

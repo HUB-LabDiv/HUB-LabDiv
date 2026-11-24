@@ -112,8 +112,10 @@ class IFUSPDepartmentScraper:
         self.ctx = ssl._create_unverified_context()
         self.headers = {"User-Agent": self.config["settings"]["user_agent"]}
         self.ttl = timedelta(hours=self.config["settings"]["cache_ttl_hours"])
-        self.timeout = self.config["settings"]["request_timeout_seconds"]
+        self.timeout = max(int(self.config["settings"]["request_timeout_seconds"]), 25)
         self.delay = self.config["settings"]["rate_limit_delay_seconds"]
+        from http_client import create_resilient_session
+        self.session = create_resilient_session(headers=self.headers)
 
     def _fetch_url(self, url: str) -> str:
         """Busca uma URL com cache em disco e tolerância a falhas."""
@@ -126,16 +128,19 @@ class IFUSPDepartmentScraper:
                 with open(cache_file, "r", encoding="utf-8", errors="ignore") as f:
                     return f.read()
 
-        # Download HTTP resiliente
+        # Download HTTP resiliente (Session + Retry 3x + Backoff)
         try:
-            req = urllib.request.Request(url, headers=self.headers)
-            with urllib.request.urlopen(req, context=self.ctx, timeout=self.timeout) as resp:
-                content = resp.read().decode("utf-8", errors="ignore")
+            resp = self.session.get(url, timeout=self.timeout, verify=False)
+            if resp.status_code == 200:
+                resp.encoding = resp.encoding or "utf-8"
+                content = resp.text
                 with open(cache_file, "w", encoding="utf-8") as f:
                     f.write(content)
                 time.sleep(self.delay)
                 return content
-        except Exception:
+            return ""
+        except Exception as exc:
+            print(f"[WARN] Falha ao buscar {url}: {exc}")
             return ""
 
     def scrape_user_profile(self, user_url: str) -> dict:

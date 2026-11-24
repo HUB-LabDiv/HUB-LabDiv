@@ -320,17 +320,30 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     const [query, setQuery] = useState('');
     const [dbResults, setDbResults] = useState<SubmissionResult[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [activeDisciplines, setActiveDisciplines] = useState(disciplinesData);
+    const [catalogSynced, setCatalogSynced] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
     const router = useRouter();
 
-    // Focus input when overlay opens
+    // Focus input when overlay opens & refresh official disciplines snapshot once
     useEffect(() => {
         if (isOpen) {
             setTimeout(() => inputRef.current?.focus(), 100);
             setQuery('');
             setDbResults([]);
+            if (!catalogSynced) {
+                setCatalogSynced(true);
+                fetch('/api/catalog/disciplines')
+                    .then((res) => (res.ok ? res.json() : null))
+                    .then((data) => {
+                        if (data && typeof data === 'object') {
+                            setActiveDisciplines(data);
+                        }
+                    })
+                    .catch(() => undefined);
+            }
         }
-    }, [isOpen]);
+    }, [isOpen, catalogSynced]);
 
     // Close on Escape
     useEffect(() => {
@@ -397,7 +410,7 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
     // Disciplinas & Matrizes Curriculares (JúpiterWeb)
     const filteredDisciplines = qNorm.length < 2
         ? []
-        : Object.values(disciplinesData).filter(d => {
+        : Object.values(activeDisciplines).filter(d => {
             const codeMatch = normalizeSearchText(d.codigo).includes(qNorm);
             const nameMatch = normalizeSearchText(d.nome).includes(qNorm);
             const deptMatch = normalizeSearchText(d.departamento || '').includes(qNorm);

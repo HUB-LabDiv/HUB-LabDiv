@@ -27,7 +27,21 @@ export default function AdminCGIFHubPage() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
+
+                {/* Hub Data Pipeline */}
+                <Link href="/admin/cgif/pipeline" className="group p-8 rounded-3xl bg-white dark:bg-[#1E1E1E] border border-gray-100 dark:border-white/10 hover:border-[#FFCC00] transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
+                    <div className="flex flex-col h-full relative z-10">
+                        <div className="p-4 bg-[#FFCC00]/15 rounded-2xl w-max mb-6">
+                            <Calendar className="w-8 h-8 text-[#FFCC00]" />
+                        </div>
+                        <h2 className="text-xl font-bold uppercase tracking-widest text-gray-900 dark:text-white mb-2">Data Pipeline (IFUSP)</h2>
+                        <p className="text-sm text-gray-500 dark:text-gray-300 mb-8 flex-grow">Aprove ou rejeite atualizações diárias raspadas do portal IFUSP e JúpiterWeb antes de publicar.</p>
+                        <div className="flex items-center gap-2 text-[#0F4780] dark:text-[#1F9FCF] font-bold text-xs uppercase tracking-widest">
+                            Revisar Fila <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                        </div>
+                    </div>
+                </Link>
+
                 {/* USP 101 */}
                 <Link href="/admin/dicas" className="group p-8 rounded-3xl bg-white dark:bg-card-dark border border-gray-100 dark:border-white/5 hover:border-brand-blue transition-all shadow-sm hover:shadow-xl relative overflow-hidden">
                     <div className="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 group-hover:scale-110 transition-all">

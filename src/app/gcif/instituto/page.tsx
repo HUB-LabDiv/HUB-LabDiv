@@ -14,6 +14,13 @@
 import React from 'react';
 import { GcifInstitutoView } from '@/components/gcif/GcifInstitutoView';
 import { fetchSubmissions } from '@/app/actions/submissions';
+import {
+    getOfficialEventsData,
+    getOfficialInitiativesData,
+    getOfficialInstitutoData,
+    getOfficialNewsData,
+    getOfficialSpacesData,
+} from '@/lib/official-data.server';
 
 export const metadata = {
     title: 'Instituto, Iniciativas & Espaços | Grande Colisor do IF',
@@ -23,12 +30,35 @@ export const metadata = {
 export const dynamic = 'force-dynamic';
 
 export default async function GcifInstitutoPage() {
-    const { items: mapItems } = await fetchSubmissions({
-        page: 1,
-        limit: 100,
-        query: '',
-        sort: 'recentes'
-    });
+    const [
+        { items: mapItems },
+        departmentsData,
+        initiativesData,
+        eventsData,
+        newsData,
+        spacesData,
+    ] = await Promise.all([
+        fetchSubmissions({
+            page: 1,
+            limit: 100,
+            query: '',
+            sort: 'recentes'
+        }),
+        getOfficialInstitutoData(),
+        getOfficialInitiativesData(),
+        getOfficialEventsData(),
+        getOfficialNewsData(),
+        getOfficialSpacesData(),
+    ]);
 
-    return <GcifInstitutoView mapItems={mapItems || []} />;
+    return (
+        <GcifInstitutoView
+            mapItems={mapItems || []}
+            departmentsData={departmentsData}
+            initiativesData={initiativesData}
+            eventsData={eventsData}
+            newsData={newsData}
+            spacesData={spacesData}
+        />
+    );
 }

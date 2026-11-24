@@ -18,8 +18,10 @@ import { InstitutoTimeline } from '@/components/wiki/instituto/InstitutoTimeline
 import { HistoricalPosts } from '@/components/wiki/instituto/HistoricalPosts';
 import Link from 'next/link';
 import { ChevronLeft } from 'lucide-react';
+import { getOfficialInstitutoData } from '@/lib/official-data.server';
 
-export default function WikiInstitutoPage() {
+export default async function WikiInstitutoPage() {
+    const officialInstituto = await getOfficialInstitutoData();
     return (
         <MainLayoutWrapper>
             <div className="flex flex-col gap-4 w-full overflow-x-hidden pb-12">
@@ -35,7 +37,7 @@ export default function WikiInstitutoPage() {
                 <InstitutoHero />
                 
                 <div className="space-y-12">
-                    <DepartmentGrid />
+                    <DepartmentGrid departmentsData={officialInstituto} />
                     <InstitutoHistory />
                     <InstitutoTimeline />
                     <HistoricalPosts />

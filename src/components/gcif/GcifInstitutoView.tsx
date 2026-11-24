@@ -64,8 +64,15 @@ const CampusMap = dynamic(() => import('@/components/map/CampusMap').then(mod =>
     )
 });
 
+import type { Department } from '@/data/institutoData';
+
 interface GcifInstitutoViewProps {
     mapItems: any[];
+    departmentsData?: Record<string, Department>;
+    initiativesData?: Record<string, Initiative>;
+    eventsData?: Record<string, EventItem>;
+    newsData?: NewsItem[];
+    spacesData?: Record<string, SpaceItem>;
 }
 
 const influencers = [
@@ -132,7 +139,19 @@ const getPlatformIcon = (platform: string) => {
     return <span className="material-symbols-outlined text-[18px]">open_in_new</span>;
 };
 
-export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
+export function GcifInstitutoView({
+    mapItems,
+    departmentsData,
+    initiativesData: initiativesOverride,
+    eventsData: eventsOverride,
+    newsData: newsOverride,
+    spacesData: spacesOverride,
+}: GcifInstitutoViewProps) {
+    const activeInitiatives = initiativesOverride || initiativesData;
+    const activeEvents = eventsOverride || eventsData;
+    const activeNews = newsOverride || newsData;
+    const activeSpaces = spacesOverride || spacesData;
+
     const [selectedInitiative, setSelectedInitiative] = useState<Initiative | null>(null);
     const [selectedEvent, setSelectedEvent] = useState<EventItem | null>(null);
     const [selectedNews, setSelectedNews] = useState<NewsItem | null>(null);
@@ -142,17 +161,17 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
     const [newsFilter, setNewsFilter] = useState<string>('todas');
     const [newsSearch, setNewsSearch] = useState<string>('');
 
-    const eventsList = Object.values(eventsData);
+    const eventsList = Object.values(activeEvents);
     const filteredEvents = eventFilter === 'todos' 
         ? eventsList 
         : eventsList.filter(evt => evt.tipo === eventFilter);
 
-    const spacesList = Object.values(spacesData);
+    const spacesList = Object.values(activeSpaces);
     const filteredSpaces = spaceFilter === 'todos'
         ? spacesList
         : spacesList.filter(sp => sp.categoria === spaceFilter);
 
-    const filteredNews = newsData.filter(item => {
+    const filteredNews = activeNews.filter(item => {
         const matchesCategory = newsFilter === 'todas' || item.categoria?.toLowerCase() === newsFilter.toLowerCase();
         const matchesSearch = !newsSearch.trim() || 
             item.titulo.toLowerCase().includes(newsSearch.toLowerCase()) ||
@@ -223,7 +242,7 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
 
             {/* 1. Departamentos */}
             <div id="estrutura-departamentos" data-tour="gcif-instituto-departamentos" className="scroll-mt-24">
-                <DepartmentGrid />
+                <DepartmentGrid departmentsData={departmentsData} />
             </div>
 
             {/* 2. Agenda de Eventos & Colóquios */}
@@ -295,7 +314,7 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
                                     )}
                                 </div>
                                 <div className="text-[11px] font-mono font-bold text-gray-500 dark:text-gray-400 shrink-0">
-                                    Exibindo {filteredNews.length} de {newsData.length} notícias
+                                    Exibindo {filteredNews.length} de {activeNews.length} notícias
                                 </div>
                             </div>
 
@@ -303,8 +322,8 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
                             <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-1">
                                 {newsCategories.map(cat => {
                                     const count = cat.id === 'todas' 
-                                        ? newsData.length 
-                                        : newsData.filter(n => n.categoria?.toLowerCase() === cat.id.toLowerCase()).length;
+                                        ? activeNews.length 
+                                        : activeNews.filter(n => n.categoria?.toLowerCase() === cat.id.toLowerCase()).length;
                                     if (count === 0 && cat.id !== 'todas') return null;
                                     const isActive = newsFilter.toLowerCase() === cat.id.toLowerCase();
                                     return (
@@ -359,7 +378,7 @@ export function GcifInstitutoView({ mapItems }: GcifInstitutoViewProps) {
                     title="Iniciativas de Impacto" 
                     icon={<div className="p-2 bg-brand-blue/10 rounded-xl text-brand-blue"><ColisorIcon size={20} animate={false} /></div>}
                 >
-                    {Object.values(initiativesData).map((initiative) => (
+                    {Object.values(activeInitiatives).map((initiative) => (
                         <InitiativeCard 
                             key={initiative.id} 
                             initiative={initiative} 

@@ -1721,6 +1721,9 @@ SEMESTER_GRIDS_CONFIG = {
     }
 }
 
+from http_client import create_resilient_session
+_JUPITER_SESSION = create_resilient_session(headers=HEADERS)
+
 def fetch_jupiterweb_safe(cod_disciplina: str) -> str:
     """
     Tenta consultar a ementa oficial no JúpiterWeb com tratamento de timeout e encoding ISO-8859-1.
@@ -1728,7 +1731,7 @@ def fetch_jupiterweb_safe(cod_disciplina: str) -> str:
     """
     url = f"https://uspdigital.usp.br/jupiterweb/obterDisciplina?sgldis={cod_disciplina}"
     try:
-        resp = requests.get(url, headers=HEADERS, timeout=6)
+        resp = _JUPITER_SESSION.get(url, timeout=25)
         if resp.status_code == 200:
             # JúpiterWeb utiliza ISO-8859-1 / Windows-1252
             resp.encoding = "iso-8859-1"

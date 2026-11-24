@@ -37,6 +37,7 @@ export default function AdminLayoutClient({
         { name: 'Torre de Controle', href: '/admin', icon: 'security' },
         { name: 'Moderação do Eixo Social', href: '/admin/moderacao', icon: 'verified_user' },
         { name: 'Moderação do Eixo de Informação', href: '/admin/cgif', icon: 'admin_panel_settings' },
+        { name: 'Fila Data Pipeline (IFUSP)', href: '/admin/cgif/pipeline', icon: 'sync', adminOnly: true },
         { name: 'Moderação do Eixo de Ferramentas', href: '/admin/ferramentas', icon: 'construction' },
         { name: 'Central de Notificações', href: '/admin/notificacoes', icon: 'notifications' },
         { name: 'Aprovação de Perfis', href: '/admin/profiles', icon: 'manage_accounts' },

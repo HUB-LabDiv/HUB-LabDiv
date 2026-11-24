@@ -77,11 +77,12 @@ const MODULES: ModuleStep[] = [
 async function main() {
     const args = process.argv.slice(2);
     const isApply = args.includes('--mode=apply') || args.includes('--apply');
+    const isStage = args.includes('--mode=stage') || args.includes('--stage');
     const skipScrape = args.includes('--skip-scrape');
 
     console.log('\n\x1b[1m\x1b[34m====================================================================\x1b[0m');
     console.log(`\x1b[1m\x1b[33m  HUB LAB-DIV V3.0 — PIPELINE UNIFICADO DE DADOS IFUSP\x1b[0m`);
-    console.log(`  Modo de Execução: \x1b[1m${isApply ? '\x1b[31mAPLICAÇÃO (ESCRITA EM SRC/DATA/)\x1b[0m' : '\x1b[32mDRY-RUN AUDIT (LEITURA & VALIDAÇÃO)\x1b[0m'}`);
+    console.log(`  Modo de Execução: \x1b[1m${isApply ? '\x1b[31mAPLICAÇÃO LOCAL\x1b[0m' : isStage ? '\x1b[36mSTAGING -> TORRE DE CONTROLE (/admin)\x1b[0m' : '\x1b[32mDRY-RUN AUDIT (LEITURA & VALIDAÇÃO)\x1b[0m'}`);
     console.log('\x1b[1m\x1b[34m====================================================================\x1b[0m\n');
 
     const results: { module: string; status: 'SUCCESS' | 'FAILED' | 'SKIPPED'; duration: number }[] = [];
@@ -129,6 +130,11 @@ async function main() {
     const hasFailure = results.some(r => r.status === 'FAILED');
     if (hasFailure) {
         process.exit(1);
+    }
+
+    if (isStage) {
+        const { runStageToAdmin } = await import('./stage_to_admin');
+        await runStageToAdmin();
     }
 }
 

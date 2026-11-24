@@ -55,7 +55,7 @@ interface PageProps {
     params: Promise<{ id: string }>;
 }
 
-import { institutoData } from '@/data/institutoData';
+import { getOfficialInstitutoData } from '@/lib/official-data.server';
 
 async function getSubmission(id: string) {
     // 1. Try Supabase if ID is UUID-like
@@ -73,8 +73,9 @@ async function getSubmission(id: string) {
         if (data && !error) return data;
     }
 
-    // 2. Fallback: Search in institutoData static winners
-    const allWinners = Object.values(institutoData).flatMap(dept => dept.postsGanhadores.map(w => ({ ...w, dept })));
+    // 2. Fallback: Search in official institutoData winners
+    const officialInstituto = await getOfficialInstitutoData();
+    const allWinners = Object.values(officialInstituto).flatMap(dept => dept.postsGanhadores.map(w => ({ ...w, dept })));
     const staticWinner = allWinners.find(w => w.postId === id || w.id === id);
 
     if (staticWinner) {

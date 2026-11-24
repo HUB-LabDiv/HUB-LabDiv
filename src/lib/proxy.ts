@@ -78,6 +78,7 @@ export async function proxy(request: NextRequest) {
         pathname.startsWith('/.well-known/') ||
         pathname.startsWith('/api/well-known/') ||
         pathname.startsWith('/api/app/desktop-release') ||
+        pathname.startsWith('/api/admin/data-sync/') ||
         pathname.startsWith('/divulgacao');
 
     const isProd = process.env.NODE_ENV === 'production';

@@ -26,7 +26,7 @@ import {
 import Link from 'next/link';
 import { useTelemetry } from '@/hooks/useTelemetry';
 import { useNavigationStore } from '@/store/useNavigationStore';
-import { institutoData } from '@/data/institutoData';
+import { institutoData, type Department } from '@/data/institutoData';
 
 const departments = [
     {
@@ -73,9 +73,10 @@ const departments = [
     }
 ];
 
-export function DepartmentGrid() {
+export function DepartmentGrid({ departmentsData }: { departmentsData?: Record<string, Department> } = {}) {
     const { trackEvent } = useTelemetry();
     const { setReportModalOpen } = useNavigationStore();
+    const activeCatalog = departmentsData || institutoData;
 
     return (
         <section className="py-6 sm:py-10 md:py-12">
@@ -92,7 +93,7 @@ export function DepartmentGrid() {
             {/* Grid: 2 colunas no mobile (3 linhas) e 2 a 3 colunas em telas maiores */}
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-4 md:gap-6">
                 {departments.map((dept, idx) => {
-                    const deptData = institutoData[dept.id.toLowerCase()];
+                    const deptData = activeCatalog[dept.id.toLowerCase()];
                     const researchersCount = deptData ? deptData.pesquisadores.length : dept.metrics.researchers;
                     const labsCount = deptData ? deptData.laboratorios.length : dept.metrics.labs;
                     const Icon = dept.Icon;

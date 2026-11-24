@@ -39,6 +39,7 @@ interface DashboardCounts {
     oportunidadesPendentes: number;
     knowledgePendentes: number;
     reportsPendentes: number;
+    pipelinePendentes: number;
 
     // Eixo 03 - Ferramentas
     softwaresPendentes: number;
@@ -76,6 +77,7 @@ export default function AdminDashboardOverview() {
         oportunidadesPendentes: 0,
         knowledgePendentes: 0,
         reportsPendentes: 0,
+        pipelinePendentes: 0,
 
         softwaresPendentes: 0,
         softwareFeedbacksPendentes: 0,
@@ -103,7 +105,7 @@ export default function AdminDashboardOverview() {
                 const [
                     pendentesRes, aprovadosRes, rejeitadosRes, subEditsRes,
                     comPendentesRes, dicasRes, microArticlesRes, palavrasRes, constelacoesRes, logsPendentesRes,
-                    pergPendentesRes, pergRespondidasRes, oportunidadesRes, wikiPropostasRes, reportsPendentesRes,
+                    pergPendentesRes, pergRespondidasRes, oportunidadesRes, wikiPropostasRes, reportsPendentesRes, pipelinePendentesRes,
                     softwaresRes, softwareFeedbacksRes, arenaRes, trilhasRes, tagsRes,
                     profilesPendentesRes, teacherVerifsRes, profileEditsRes, initiativeReqsRes,
                     tempoEsperaRes, subsWithAuthorsRes
@@ -128,6 +130,7 @@ export default function AdminDashboardOverview() {
                     supabase.from('oportunidades').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
                     supabase.from('wiki_topic_proposals').select('*', { count: 'exact', head: true }).eq('status', 'pendente'),
                     supabase.from('reports').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
+                    supabase.from('data_pipeline_proposals').select('*', { count: 'exact', head: true }).eq('status', 'pending'),
 
                     // Ferramentas
                     supabase.from('academic_softwares').select('*', { count: 'exact', head: true }).eq('status', 'pendente'),
@@ -208,6 +211,7 @@ export default function AdminDashboardOverview() {
                     oportunidadesPendentes: oportunidadesRes.count || 0,
                     knowledgePendentes: wikiPropostasRes.count || 0,
                     reportsPendentes: reportsPendentesRes.count || 0,
+                    pipelinePendentes: pipelinePendentesRes.count || 0,
 
                     softwaresPendentes: softwaresRes.count || 0,
                     softwareFeedbacksPendentes: softwareFeedbacksRes.count || 0,
@@ -234,7 +238,7 @@ export default function AdminDashboardOverview() {
     }, []);
 
     const totalComunidade = counts.comentariosPendentes + counts.dicasPendentes + counts.microArticlesPendentes + counts.palavrasPendentes + counts.constelacoesPendentes + counts.logsPendentes;
-    const totalInformativo = counts.pendentes + counts.subEditsPendentes + counts.perguntasPendentes + counts.oportunidadesPendentes + counts.knowledgePendentes + counts.reportsPendentes;
+    const totalInformativo = counts.pendentes + counts.subEditsPendentes + counts.perguntasPendentes + counts.oportunidadesPendentes + counts.knowledgePendentes + counts.reportsPendentes + counts.pipelinePendentes;
     const totalFerramentas = counts.softwaresPendentes + counts.softwareFeedbacksPendentes + counts.arenaPendentes;
     const totalPerfis = counts.pendentesPerfis + counts.teacherVerifsPendentes + counts.profileEditsPendentes + counts.initiativeReqsPendentes;
     const totalPendenciasGerais = totalComunidade + totalInformativo + totalFerramentas + totalPerfis;
@@ -270,6 +274,7 @@ export default function AdminDashboardOverview() {
                 { title: 'Mural de Oportunidades', subtitle: 'Bolsas & Estágios', count: counts.oportunidadesPendentes, icon: 'campaign', href: '/admin/moderacao?tab=oportunidades', urgent: counts.oportunidadesPendentes > 0 },
                 { title: 'Wiki / Conhecimento', subtitle: 'Propostas de Artigos', count: counts.knowledgePendentes, icon: 'auto_stories', href: '/admin/wiki', urgent: counts.knowledgePendentes > 0 },
                 { title: 'Denúncias de Posts', subtitle: 'Conteúdo Reportado', count: counts.reportsPendentes, icon: 'flag', href: '/admin/reports', urgent: counts.reportsPendentes > 0 },
+                { title: 'Data Pipeline (IFUSP)', subtitle: 'Atualizações Raspadas', count: counts.pipelinePendentes, icon: 'sync', href: '/admin/cgif/pipeline', urgent: counts.pipelinePendentes > 0 },
             ]
         },
         {

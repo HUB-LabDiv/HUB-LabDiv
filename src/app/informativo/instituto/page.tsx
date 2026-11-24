@@ -10,6 +10,13 @@
 import React from 'react';
 import { GcifInstitutoView } from '@/components/gcif/GcifInstitutoView';
 import { getInstitutoMapSubmissions } from '@/app/actions/submissions';
+import {
+    getOfficialEventsData,
+    getOfficialInitiativesData,
+    getOfficialInstitutoData,
+    getOfficialNewsData,
+    getOfficialSpacesData,
+} from '@/lib/official-data.server';
 
 export const metadata = {
     title: 'Instituto, Iniciativas & Espaços | Informativo HUB LabDiv',
@@ -17,7 +24,25 @@ export const metadata = {
 };
 
 export default async function InformativoInstitutoPage() {
-    const mapItems = await getInstitutoMapSubmissions(60);
-    return <GcifInstitutoView mapItems={mapItems} />;
+    const [mapItems, departmentsData, initiativesData, eventsData, newsData, spacesData] =
+        await Promise.all([
+            getInstitutoMapSubmissions(60),
+            getOfficialInstitutoData(),
+            getOfficialInitiativesData(),
+            getOfficialEventsData(),
+            getOfficialNewsData(),
+            getOfficialSpacesData(),
+        ]);
+
+    return (
+        <GcifInstitutoView
+            mapItems={mapItems}
+            departmentsData={departmentsData}
+            initiativesData={initiativesData}
+            eventsData={eventsData}
+            newsData={newsData}
+            spacesData={spacesData}
+        />
+    );
 }
 

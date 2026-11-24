@@ -41,14 +41,18 @@ function normalizeStr(str: string): string {
 /**
  * 🧠 Detector inteligente de docentes do IFUSP a partir de e-mail ou nome cadastrado
  */
-export function detectFacultyMember(email?: string | null, name?: string | null): FacultyMatch | null {
+export function detectFacultyMember(
+    email?: string | null,
+    name?: string | null,
+    catalogOverride?: Record<string, Department>
+): FacultyMatch | null {
     if (!email && !name) return null;
 
     const cleanEmail = email ? email.toLowerCase().trim() : '';
     const emailUser = cleanEmail ? cleanEmail.split('@')[0] : '';
     const cleanName = name ? normalizeStr(name) : '';
 
-    const departments = Object.values(institutoData);
+    const departments = Object.values(catalogOverride || institutoData);
 
     const buildMatch = (res: Researcher, dept: Department, matchType: FacultyMatch['matchType'], confidence: FacultyMatch['confidence']): FacultyMatch => ({
         researcher: res,
