@@ -103,10 +103,11 @@ debug/*.txt
 # Open source exclusions
 /public/*
 !/public/.gitkeep
-/scripts/
+/scripts/*
+!/scripts/scrapers/
 
 # Scraper caches and raw data
-scripts/scrapers/cache/
+/scripts/scrapers/cache/
 
 # Desktop (Electron) Build Outputs
 desktop/node_modules/
