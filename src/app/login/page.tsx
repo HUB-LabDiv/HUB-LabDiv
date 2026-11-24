@@ -166,10 +166,6 @@ function LoginContent() {
             options.skipBrowserRedirect = true;
         }
 
-        if (track === 'usp') {
-            options.queryParams.hd = 'usp.br';
-        }
-
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options,
