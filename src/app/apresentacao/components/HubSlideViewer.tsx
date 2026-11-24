@@ -70,7 +70,7 @@ export const HUB_INSTITUCIONAL_SLIDES: HubSlideItem[] = [
       'Destacar as 3 cores da marca LabDiv (Amarelo, Azul e Vermelho).'
     ],
     links: [
-      { label: 'Acessar WebApp', url: 'https://hub-lab-div.vercel.app', variant: 'yellow' },
+      { label: 'Acessar WebApp', url: 'https://www.hublabdiv.com.br', variant: 'yellow' },
       { label: 'Google PlayStore', url: 'https://play.google.com/store/apps/details?id=br.usp.ifusp.hublabdiv', variant: 'blue' },
       { label: 'Repositório GitHub', url: 'https://github.com/JoaoStangorlini/HUB-LabDiv', variant: 'outline' }
     ]

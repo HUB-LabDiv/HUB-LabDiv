@@ -22,11 +22,11 @@ import toast from 'react-hot-toast';
 import { HubLogo } from '@/components/shared/HubLogo';
 import Script from 'next/script';
 import { Capacitor } from '@capacitor/core';
-import { App as CapacitorApp } from '@capacitor/app';
 import { Browser } from '@capacitor/browser';
 
 
 import { useAuth } from '@/providers/AuthProvider';
+import { getHubDesktopBridge, isDesktopApp, isNativeOrDesktop } from '@/lib/desktop-bridge';
 import { resolveSafeNextUrl } from '@/lib/subdomain-urls';
 import { launchHubConfetti } from '@/lib/confetti';
 
@@ -122,19 +122,37 @@ function LoginContent() {
     };
 
     const triggerOAuthLogin = async (track: 'usp' | 'external', category?: 'aluno_usp' | 'pesquisador') => {
-        const isNative = typeof window !== 'undefined' && Capacitor.isNativePlatform();
+        const isCapacitorNative = typeof window !== 'undefined' && Capacitor.isNativePlatform();
+        const desktopBridge = getHubDesktopBridge();
+        const isDesktop = Boolean(desktopBridge) || isDesktopApp();
+        const isExternalClient = isCapacitorNative || isDesktop;
         const next = getTargetRedirect();
+
+        if (typeof window !== 'undefined') {
+            try {
+                sessionStorage.setItem('hub_oauth_next', next);
+            } catch {}
+        }
 
         if (typeof document !== 'undefined' && next.startsWith('/auth/sso/authorize')) {
             document.cookie = `hub_sso_return_url=${encodeURIComponent(next)}; path=/; max-age=600; SameSite=Lax`;
         }
-        
-        let redirectTo = isNative
-            ? `hublabdiv://auth/callback?next=${encodeURIComponent(next)}&track=${track}`
-            : `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}&track=${track}`;
-        
-        if (category) {
-            redirectTo += `&category=${category}`;
+
+        let redirectTo: string;
+        if (isDesktop && desktopBridge) {
+            // OAuth RFC 8252 via servidor HTTP loopback efêmero em 127.0.0.1 (compatível com .AppImage, .appx e dev)
+            const { callbackUrl } = await desktopBridge.beginOAuthLoopback();
+            redirectTo = callbackUrl;
+        } else if (isCapacitorNative) {
+            redirectTo = `hublabdiv://auth/callback?next=${encodeURIComponent(next)}&track=${track}`;
+            if (category) {
+                redirectTo += `&category=${category}`;
+            }
+        } else {
+            redirectTo = `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}&track=${track}`;
+            if (category) {
+                redirectTo += `&category=${category}`;
+            }
         }
 
         const options: any = {
@@ -144,7 +162,7 @@ function LoginContent() {
             },
         };
 
-        if (isNative) {
+        if (isExternalClient) {
             options.skipBrowserRedirect = true;
         }
 
@@ -156,10 +174,19 @@ function LoginContent() {
             provider: 'google',
             options,
         });
-        
-        if (error) throw error;
 
-        if (isNative && data?.url) {
+        if (error) {
+            if (isDesktop && desktopBridge) {
+                await desktopBridge.cancelOAuthLoopback().catch(() => {});
+            }
+            throw error;
+        }
+
+        if (isDesktop && desktopBridge && data?.url) {
+            await desktopBridge.openExternalUrl(data.url);
+            toast.success('Conclua o login no navegador para retornar ao HUB LabDiv.');
+            setIsLoading(false);
+        } else if (isCapacitorNative && data?.url) {
             await Browser.open({ url: data.url });
         }
     };
@@ -167,6 +194,10 @@ function LoginContent() {
     const handleLogin = async (track: 'usp' | 'external', category?: 'aluno_usp' | 'pesquisador') => {
         setIsLoading(true);
         try {
+            if (isNativeOrDesktop()) {
+                await triggerOAuthLogin(track, category);
+                return;
+            }
             if (typeof window !== 'undefined' && (window as any).google) {
                 (window as any).google.accounts.id.prompt((notification: any) => {
                     if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
@@ -205,6 +236,8 @@ function LoginContent() {
     };
 
     useEffect(() => {
+        if (isNativeOrDesktop()) return;
+
         const tryInitGoogle = () => {
             if (typeof window !== 'undefined' && (window as any).google && process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID) {
                 try {
@@ -234,60 +267,6 @@ function LoginContent() {
         return () => clearInterval(interval);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
-    useEffect(() => {
-        if (typeof window !== 'undefined' && Capacitor.isNativePlatform()) {
-            const listener = CapacitorApp.addListener('appUrlOpen', async (data: any) => {
-                if (data.url && (data.url.startsWith('hublabdiv://') || data.url.includes('auth/callback'))) {
-                    try {
-                        await Browser.close();
-                    } catch (e) {
-                        console.error('Failed to close browser', e);
-                    }
-                    
-                    try {
-                        const cleanUrl = data.url.replace('hublabdiv://', 'https://hub-lab-div.vercel.app/');
-                        const urlObj = new URL(cleanUrl);
-                        const rawNext = urlObj.searchParams.get('next');
-                        const target = (!rawNext || rawNext === '/' || rawNext === '/login' || rawNext.startsWith('/login')) ? '/lab' : rawNext;
-                        
-                        // Hash tokens (#access_token=...&refresh_token=...)
-                        if (urlObj.hash && urlObj.hash.includes('access_token')) {
-                            const hashParams = new URLSearchParams(urlObj.hash.replace(/^#/, ''));
-                            const accessToken = hashParams.get('access_token');
-                            const refreshToken = hashParams.get('refresh_token');
-                            if (accessToken && refreshToken) {
-                                await supabase.auth.setSession({
-                                    access_token: accessToken,
-                                    refresh_token: refreshToken
-                                });
-                                window.location.href = target;
-                                return;
-                            }
-                        }
-
-                        // PKCE code
-                        const code = urlObj.searchParams.get('code');
-                        if (code) {
-                            const { data: sessionData, error } = await supabase.auth.exchangeCodeForSession(code);
-                            if (!error && sessionData?.session) {
-                                window.location.href = target;
-                                return;
-                            }
-                        }
-
-                        window.location.href = target;
-                    } catch (err) {
-                        console.error('Error handling deep link:', err);
-                        window.location.href = '/';
-                    }
-                }
-            });
-            return () => {
-                listener.then(l => l.remove());
-            };
-        }
-    }, [router]);
 
     return (
         <main className="min-h-[80vh] flex items-center justify-center p-4 bg-gray-50 dark:bg-background-dark/30">

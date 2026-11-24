@@ -108,3 +108,9 @@ debug/*.txt
 # Scraper caches and raw data
 scripts/scrapers/cache/
 
+# Desktop (Electron) Build Outputs
+desktop/node_modules/
+desktop/dist/
+desktop/release/
+desktop/build-meta.json
+

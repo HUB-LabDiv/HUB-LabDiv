@@ -55,6 +55,14 @@ const nextConfig: NextConfig = {
     '/api/**/*': ['./node_modules/@sparticuz/chromium/bin/**/*'],
   },
   transpilePackages: ['recharts'],
+  async rewrites() {
+    return [
+      {
+        source: '/.well-known/assetlinks.json',
+        destination: '/api/well-known/assetlinks',
+      },
+    ];
+  },
   async redirects() {
     return [
       { source: '/perfil', destination: '/lab', permanent: true },
@@ -91,9 +99,9 @@ const nextConfig: NextConfig = {
       default-src 'self';
       script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://ajax.googleapis.com https://*.supabase.co https://*.vercel-scripts.com https://*.vercel.app https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms;
       style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://vlibras.gov.br;
-      img-src 'self' blob: data: https://*.supabase.co https://res.cloudinary.com https://storage.hublabdiv.com.br https://*.ytimg.com https://img.youtube.com https://images.unsplash.com https://*.googleusercontent.com https://*.google.com https://api.dicebear.com https://avatars.githubusercontent.com https://upload.wikimedia.org https://portal.if.usp.br https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms;
+      img-src 'self' blob: data: https://www.hublabdiv.com.br https://hublabdiv.com.br https://*.hublabdiv.com.br https://*.supabase.co https://res.cloudinary.com https://storage.hublabdiv.com.br https://*.ytimg.com https://img.youtube.com https://images.unsplash.com https://*.googleusercontent.com https://*.google.com https://api.dicebear.com https://avatars.githubusercontent.com https://upload.wikimedia.org https://portal.if.usp.br https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms;
       font-src 'self' data: https://fonts.gstatic.com;
-      connect-src 'self' https://*.supabase.co wss://*.supabase.co https://storage.hublabdiv.com.br https://*.vercel.app https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms https://*.bing.com https://*.visualstudio.com https://api.cloudinary.com http://localhost:3000 http://*.localhost:3000 http://127.0.0.1:3000 http://localhost:3001 https://aurtistic.vercel.app;
+      connect-src 'self' https://www.hublabdiv.com.br https://hublabdiv.com.br https://*.hublabdiv.com.br https://*.supabase.co wss://*.supabase.co https://storage.hublabdiv.com.br https://*.vercel.app https://vlibras.gov.br https://*.google-analytics.com https://*.clarity.ms https://*.bing.com https://*.visualstudio.com https://api.cloudinary.com http://localhost:3000 http://*.localhost:3000 http://127.0.0.1:3000 http://localhost:3001 https://aurtistic.vercel.app;
       media-src 'self' https://*.supabase.co https://res.cloudinary.com https://storage.hublabdiv.com.br https://*.youtube.com;
       frame-src 'self' http://localhost:3000 http://*.localhost:3000 http://127.0.0.1:3000 https://aurtistic.vercel.app https://*.vercel.app https://*.hublabdiv.com.br https://*.youtube.com https://*.youtube-nocookie.com;
       object-src 'none';

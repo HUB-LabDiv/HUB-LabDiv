@@ -1,0 +1,115 @@
+appId: br.usp.ifusp.hublabdiv.desktop
+productName: HUB LabDiv
+copyright: Copyright © 2026 João Paulo Stangorlini de Carvalho — HUB LabDiv / IFUSP (AGPLv3)
+asar: true
+asarUnpack:
+  - build/*.png
+  - build/*.ico
+  - build-meta.json
+
+directories:
+  buildResources: build
+  output: release
+
+files:
+  - dist/**/*
+  - src/renderer/offline.html
+  - build-meta.json
+  - build/icon.png
+  - build/icon.ico
+  - build/tray.png
+  - build/trayTemplate.png
+  - build/trayTemplate@2x.png
+  - package.json
+  - "!**/*.map"
+
+protocols:
+  - name: HUB LabDiv
+    schemes:
+      - hublabdiv
+
+publish:
+  provider: github
+  owner: HUB-LabDiv
+  repo: HUB-LabDiv
+  releaseType: release
+
+win:
+  icon: build/icon.ico
+  artifactName: HUB-LabDiv-Setup-${version}.${ext}
+  target:
+    - target: nsis
+      arch:
+        - x64
+    - target: appx
+      arch:
+        - x64
+
+appx:
+  applicationId: HUBLabDiv
+  identityName: JooStangorlini.HUBLabDiv
+  publisher: CN=B4F0EDDB-3261-4276-8056-5EDB60A56FBA
+  publisherDisplayName: João Stangorlini
+  displayName: HUB LabDiv
+  artifactName: HUB-LabDiv-${version}-${arch}.${ext}
+  languages:
+    - pt-BR
+    - en-US
+
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: HUB LabDiv
+
+linux:
+  maintainer: João Stangorlini <hublabdiv@gmail.com>
+  executableName: hub-labdiv
+  icon: build/icon.png
+  category: Education;Science;Utility;
+  desktop:
+    entry:
+      Name: HUB LabDiv
+      Comment: HUB de Comunicação Científica LabDiv — IFUSP
+      StartupWMClass: hub-labdiv
+      MimeType: x-scheme-handler/hublabdiv;
+      Categories: Education;Science;Utility;
+  target:
+    - target: deb
+      arch:
+        - x64
+    - target: AppImage
+      arch:
+        - x64
+
+deb:
+  packageName: hub-labdiv
+  artifactName: hub-labdiv_${version}_${arch}.${ext}
+  depends:
+    - libnotify4
+    - libnss3
+    - libxss1
+    - libxtst6
+    - xdg-utils
+    - libatspi2.0-0
+    - libuuid1
+    - libsecret-1-0
+    - libayatana-appindicator3-1 | libappindicator3-1
+
+appImage:
+  artifactName: HUB-LabDiv-${version}-${arch}.${ext}
+
+mac:
+  icon: build/icon.png
+  category: public.app-category.education
+  target:
+    - target: dmg
+      arch:
+        - universal
+    - target: zip
+      arch:
+        - universal
+
+dmg:
+  artifactName: HUB-LabDiv-${version}-${arch}.${ext}

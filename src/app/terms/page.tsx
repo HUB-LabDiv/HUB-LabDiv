@@ -48,7 +48,7 @@ export default function TermsOfServicePage() {
                             Objeto, Partes e Escopo da Aplicação
                         </h2>
                         <p className="mb-3">
-                            O presente instrumento estabelece as cláusulas contratuais de adesão entre o <strong>HUB LabDiv</strong> — iniciativa do Laboratório de Expressão e Divulgação Científica do <strong>Instituto de Física da Universidade de São Paulo (IFUSP)</strong> — e você, usuário da plataforma em suas versões Web (<code>hub-lab-div.vercel.app</code>) e aplicativo móvel para Android.
+                            O presente instrumento estabelece as cláusulas contratuais de adesão entre o <strong>HUB LabDiv</strong> — iniciativa do Laboratório de Expressão e Divulgação Científica do <strong>Instituto de Física da Universidade de São Paulo (IFUSP)</strong> — e você, usuário da plataforma em suas versões Web (<code>www.hublabdiv.com.br</code>), aplicativo móvel para Android e aplicativo Desktop (Linux, Windows e macOS).
                         </p>
                         <p>
                             A plataforma é um ecossistema acadêmico-colaborativo destinado a promover competências de comunicação científica, repositório de mídias e ferramentas de apoio à pesquisa. O acesso e o uso dos serviços condicionam-se à aceitação expressa e integral destes Termos de Serviço e da nossa <Link href="/privacy" className="text-brand-blue hover:underline font-bold">Política e Aviso de Privacidade</Link>.
@@ -164,7 +164,7 @@ export default function TermsOfServicePage() {
                         </p>
                         <ul className="list-disc pl-6 space-y-2 mb-3">
                             <li><strong>No aplicativo móvel:</strong> Acessando <em>Configurações &gt; Conta &gt; Excluir Conta</em>.</li>
-                            <li><strong>Pela Web:</strong> Acessando diretamente a nossa página pública de exclusão em <Link href="/delete-account" className="text-brand-blue font-bold hover:underline">hub-lab-div.vercel.app/delete-account</Link> sem necessidade de ter o app instalado.</li>
+                            <li><strong>Pela Web:</strong> Acessando diretamente a nossa página pública de exclusão em <Link href="/delete-account" className="text-brand-blue font-bold hover:underline">www.hublabdiv.com.br/delete-account</Link> sem necessidade de ter o app instalado.</li>
                         </ul>
                     </section>
                 </main>

@@ -1,0 +1,34 @@
+{
+  "name": "hub-labdiv-desktop",
+  "version": "1.0.0",
+  "description": "Aplicativo Desktop oficial do HUB LabDiv — IFUSP (Linux, Windows e macOS)",
+  "author": {
+    "name": "João Paulo Stangorlini de Carvalho",
+    "email": "hublabdiv@gmail.com",
+    "url": "https://www.hublabdiv.com.br"
+  },
+  "homepage": "https://www.hublabdiv.com.br",
+  "license": "AGPL-3.0-only",
+  "main": "dist/main/index.js",
+  "private": true,
+  "scripts": {
+    "write-meta": "node scripts/write-build-meta.mjs",
+    "build": "npm run write-meta && tsc -p tsconfig.json",
+    "icons": "node scripts/generate-icons.mjs",
+    "start": "electron .",
+    "test": "node --test tests/desktop-core.test.mjs",
+    "pack:dir": "npm run build && electron-builder --config electron-builder.yml --linux --dir --publish never",
+    "pack:linux": "npm run build && electron-builder --config electron-builder.yml --linux deb AppImage --publish never"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.3",
+    "electron-updater": "^6.3.9"
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.12",
+    "png-to-ico": "^2.1.8",
+    "sharp": "^0.34.5",
+    "typescript": "^5.9.3"
+  }
+}

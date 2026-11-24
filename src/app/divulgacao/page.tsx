@@ -12,9 +12,13 @@
  */
 
 import { InteractivePamphlet } from '@/components/divulgacao/InteractivePamphlet';
+import { DivulgacaoDesktopCta } from '@/components/desktop/DivulgacaoDesktopCta';
+import { getLatestDesktopRelease } from '@/lib/desktop-release.server';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
+
+export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: 'Já testou o HUB? | HUB LabDiv',
@@ -48,7 +52,8 @@ const HIGHLIGHTS = [
   },
 ];
 
-export default function DivulgacaoPage() {
+export default async function DivulgacaoPage() {
+  const initialRelease = await getLatestDesktopRelease();
   return (
     <main className="min-h-screen bg-[#070b14] text-white relative overflow-hidden font-open-sans">
       {/* Background Decorativo + Padrão Científico Oficial */}
@@ -135,6 +140,8 @@ export default function DivulgacaoPage() {
                 <span className="material-symbols-outlined text-[16px] sm:text-[18px] shrink-0">shop</span>
                 <span className="truncate">Play Store</span>
               </a>
+
+              <DivulgacaoDesktopCta initialRelease={initialRelease} />
             </div>
 
             {/* Bento Grid Compacto dos 4 Diferenciais */}

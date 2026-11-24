@@ -6,6 +6,18 @@
   "display": "standalone",
   "background_color": "#121212",
   "theme_color": "#121212",
+  "prefer_related_applications": false,
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://www.hublabdiv.com.br/manifest.json"
+    },
+    {
+      "platform": "play",
+      "url": "https://play.google.com/store/apps/details?id=br.usp.ifusp.hublabdiv",
+      "id": "br.usp.ifusp.hublabdiv"
+    }
+  ],
   "icons": [
     {
       "src": "/icons/icon-48.webp",

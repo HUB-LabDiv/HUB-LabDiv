@@ -261,7 +261,7 @@ export async function checkModerationQueueThresholds(): Promise<{
         if (now - state.lastDigestSentAt >= COOLDOWN_DIGEST_MS) {
             state.lastDigestSentAt = now;
 
-            const rawBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hub-lab-div.vercel.app';
+            const rawBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hublabdiv.com.br';
             const baseUrl = rawBaseUrl.split(' ')[0].replace(/\/$/, '');
 
             const batchApproveToken = signEmailActionToken({

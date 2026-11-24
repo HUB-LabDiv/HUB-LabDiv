@@ -19,6 +19,7 @@ import { flushOfflineQueueToSupabase } from '@/lib/offlineQueueManager';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Capacitor } from '@capacitor/core';
+import { getHubDesktopBridge } from '@/lib/desktop-bridge';
 
 export function PwaManager() {
     const [isOffline, setIsOffline] = useState(false);
@@ -117,6 +118,38 @@ export function PwaManager() {
             }
         });
 
+        // Listeners do Desktop Electron (Tray, Deep Links não-auth e Ações de Estudo)
+        const desktopBridge = getHubDesktopBridge();
+        const offDesktopDeepLink = desktopBridge?.onDeepLink((urlString) => {
+            if (!urlString.startsWith('hublabdiv://')) return;
+            if (urlString.includes('auth/callback') || urlString.includes('code=')) return;
+            const path = urlString.replace('hublabdiv://', '').replace(/^\/+/, '');
+            if (!path || path === 'comunidade' || path === 'menu') router.push('/');
+            else if (path === 'gcif') router.push('/informativo');
+            else if (path === 'enviar') router.push('/enviar');
+            else if (path === 'ferramentas') router.push('/ferramentas');
+            else if (path === 'lab-pessoal') router.push('/lab');
+            else if (path === 'trilhas') router.push('/ferramentas/trilhas');
+            else router.push(`/${path}`);
+        });
+        const offDesktopNav = desktopBridge?.onNavigate((route) => {
+            if (route && route.startsWith('/')) {
+                router.push(route);
+            }
+        });
+        const offWater = desktopBridge?.onQuickWater(() => {
+            toast.success('💧 +1 copo de água registrado! Hidratação em dia.');
+        });
+        const offEye = desktopBridge?.onTriggerEyeRest(() => {
+            toast('👀 Pausa Visual 20-20-20: olhe a 6 metros por 20 segundos.', {
+                icon: '🌿',
+                duration: 8000,
+            });
+        });
+        const offHyperfocus = desktopBridge?.onToggleHyperfocus(() => {
+            toast('🎯 Modo Hiperfoco alternado para sua sessão de estudos.', { icon: '⚡' });
+        });
+
         // --- INÍCIO: CACHE WARMER (Primeiro uso - Baixa Grade/Trilhas/Rascunho/GCIF) ---
         const warmerTimer = setTimeout(() => {
             if (process.env.NODE_ENV === 'development') return;
@@ -199,6 +232,11 @@ export function PwaManager() {
         return () => {
             backListener.then(l => l.remove());
             listener.then(l => l.remove());
+            offDesktopDeepLink?.();
+            offDesktopNav?.();
+            offWater?.();
+            offEye?.();
+            offHyperfocus?.();
             clearTimeout(warmerTimer);
         };
     }, [router]);

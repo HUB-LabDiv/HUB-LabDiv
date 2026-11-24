@@ -34,6 +34,7 @@ import { getNotificationPreferences, updateNotificationPreferences, Notification
 import { runOnboardingTour } from '@/lib/tour/tour-runner';
 import { useOnboarding } from '@/hooks/useOnboarding';
 import { getProfileDisplayName } from '@/lib/profile-visibility';
+import { DesktopControlPanel } from '@/components/desktop/DesktopControlPanel';
 
 type ConfigTab = 'gerais' | 'armazenamento' | 'conta';
 
@@ -472,6 +473,11 @@ export default function ConfigPage() {
                                         </button>
                                     </div>
                                 </div>
+                            </div>
+
+                            {/* 1.3 APLICATIVO DESKTOP & DISPOSITIVOS */}
+                            <div className="border-t border-brand-blue/10 pt-4">
+                                <DesktopControlPanel />
                             </div>
                         </section>
 

@@ -5,10 +5,13 @@ const config: CapacitorConfig = {
   appName: 'HUB LabDiv',
   webDir: 'out',
   server: {
-    url: 'https://hub-lab-div.vercel.app/',
+    url: 'https://www.hublabdiv.com.br/',
     cleartext: true,
     errorPath: 'offline.html',
     allowNavigation: [
+      'www.hublabdiv.com.br',
+      'hublabdiv.com.br',
+      '*.hublabdiv.com.br',
       'hub-lab-div.vercel.app',
       '*.vercel.app',
       'localhost',

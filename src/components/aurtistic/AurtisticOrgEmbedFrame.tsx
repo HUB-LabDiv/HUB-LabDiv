@@ -32,7 +32,7 @@ export function AurtisticOrgEmbedFrame({
 }: AurtisticOrgEmbedFrameProps) {
   const [aurtisticBase, setAurtisticBase] = useState(getAurtisticBase);
   const [prevOrgSlug, setPrevOrgSlug] = useState(orgSlug);
-  const [selectedSlug, setSelectedSlug] = useState<'show-da-fisica' | 'labdiv' | 'hs'>(orgSlug);
+  const [selectedSlug, setSelectedSlug] = useState<'show-da-fisica' | 'labdiv' | 'hs' | 'profis'>(orgSlug);
   const [prevMode, setPrevMode] = useState(mode);
   const [currentMode, setCurrentMode] = useState<'org' | 'studio'>(mode);
   const [authState, setAuthState] = useState<{

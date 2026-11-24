@@ -188,7 +188,7 @@
     </div>
 
     <script>
-        const VERCEL_URL = 'https://hub-lab-div.vercel.app/';
+        const PROD_URL = 'https://www.hublabdiv.com.br/';
         
         function retryConnection() {
             document.getElementById('spinner').style.display = 'flex';
@@ -205,7 +205,7 @@
                 showError();
             } else {
                 localStorage.setItem('hub_offline_attempt', now.toString());
-                window.location.replace(VERCEL_URL);
+                window.location.replace(PROD_URL);
             }
         }
 

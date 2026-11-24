@@ -39,6 +39,7 @@ import { runGlobalTour, runEixoTour, runPageTour } from '@/lib/tour/tour-runner'
 import { getEixoTourInfo, getPageTourInfo } from '@/lib/tour/tour-data';
 import { HUB_WELCOME_KEY } from '../onboarding/HubWelcomeModal';
 import { Globe, Layers, Sparkles, Compass } from 'lucide-react';
+import { NavbarInstallButton } from '../desktop/NavbarInstallButton';
 
 /**
  * V8.0 Header - Fort Knox Edition
@@ -87,7 +88,7 @@ export function Header() {
     const [isCacheModalOpen, setCacheModalOpen] = useState(false);
 
     const handleShareHub = async () => {
-        const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://hub-lab-div.vercel.app';
+        const shareUrl = typeof window !== 'undefined' ? window.location.origin : 'https://www.hublabdiv.com.br';
         try {
             if (typeof navigator !== 'undefined' && navigator.share) {
                 await navigator.share({
@@ -397,6 +398,7 @@ export function Header() {
 
 
                             <div className="flex items-center gap-2 sm:gap-3">
+                                <NavbarInstallButton />
                                 <div className="relative" id="help-menu-container" data-tour="navbar-help">
                                     <span className="absolute -inset-0.5 rounded-xl bg-gradient-to-tr from-[#0F4780] via-[#FFCC00] to-[#F14343] opacity-55 blur-[3px] animate-pulse pointer-events-none" />
                                     <button

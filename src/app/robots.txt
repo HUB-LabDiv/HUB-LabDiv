@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin/
 Disallow: /api/
 
-Sitemap: https://hub-lab-div.vercel.app/sitemap.xml
+Sitemap: https://www.hublabdiv.com.br/sitemap.xml

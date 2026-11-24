@@ -74,18 +74,22 @@ export async function proxy(request: NextRequest) {
         pathname.startsWith('/api/auth') ||
         pathname.startsWith('/api/avatar') ||
         pathname.startsWith('/api/og') ||
-        pathname.startsWith('/api/webpush');
+        pathname.startsWith('/api/webpush') ||
+        pathname.startsWith('/.well-known/') ||
+        pathname.startsWith('/api/well-known/') ||
+        pathname.startsWith('/api/app/desktop-release') ||
+        pathname.startsWith('/divulgacao');
 
     const isProd = process.env.NODE_ENV === 'production';
     const cspHeader = `
         default-src 'self';
         script-src 'self' 'unsafe-eval' 'unsafe-inline' blob: https://*.supabase.co https://*.cloudinary.com https://*.youtube.com https://www.clarity.ms https://scripts.clarity.ms https://c.bing.com https://ajax.googleapis.com;
         style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-        img-src 'self' blob: data: https://api.dicebear.com https://*.supabase.co https://*.cloudinary.com https://storage.hublabdiv.com.br https://i.ytimg.com https://*.ytimg.com https://*.googleusercontent.com https://*.google.com https://avatars.githubusercontent.com https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://c.bing.com https://*.bing.com;
+        img-src 'self' blob: data: https://www.hublabdiv.com.br https://hublabdiv.com.br https://*.hublabdiv.com.br https://api.dicebear.com https://*.supabase.co https://*.cloudinary.com https://storage.hublabdiv.com.br https://i.ytimg.com https://*.ytimg.com https://*.googleusercontent.com https://*.google.com https://avatars.githubusercontent.com https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://c.bing.com https://*.bing.com;
         font-src 'self' data: https://fonts.gstatic.com;
-        connect-src 'self' http://localhost:3000 http://*.localhost:3000 http://127.0.0.1:3000 https://aurtistic.vercel.app https://*.vercel.app https://*.supabase.co wss://*.supabase.co https://*.cloudinary.com https://storage.hublabdiv.com.br https://*.resend.com https://fonts.googleapis.com https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://*.bing.com https://c.bing.com;
+        connect-src 'self' http://localhost:3000 http://*.localhost:3000 http://127.0.0.1:3000 https://www.hublabdiv.com.br https://hublabdiv.com.br https://*.hublabdiv.com.br https://aurtistic.vercel.app https://*.vercel.app https://*.supabase.co wss://*.supabase.co https://*.cloudinary.com https://storage.hublabdiv.com.br https://*.resend.com https://fonts.googleapis.com https://*.google-analytics.com https://*.googletagmanager.com https://*.clarity.ms https://*.bing.com https://c.bing.com;
         media-src 'self' https://*.supabase.co https://*.cloudinary.com https://storage.hublabdiv.com.br https://*.youtube.com;
-        frame-src 'self' http://localhost:3000 http://*.localhost:3000 http://127.0.0.1:3000 https://aurtistic.vercel.app https://*.vercel.app https://*.hublabdiv.com.br https://*.youtube.com https://*.youtube-nocookie.com;
+        frame-src 'self' http://localhost:3000 http://*.localhost:3000 http://127.0.0.1:3000 https://aurtistic.vercel.app https://*.vercel.app https://www.hublabdiv.com.br https://hublabdiv.com.br https://*.hublabdiv.com.br https://*.youtube.com https://*.youtube-nocookie.com;
         object-src 'none';
         base-uri 'self';
         form-action 'self';
@@ -225,7 +229,7 @@ export async function proxy(request: NextRequest) {
             if (!user) {
                 const loginOrigin = host.includes('localhost')
                     ? `http://localhost:${host.split(':')[1] || '3000'}`
-                    : 'https://hublabdiv.com.br';
+                    : 'https://www.hublabdiv.com.br';
                 const loginUrl = new URL(`/login?next=${encodeURIComponent(request.url)}`, loginOrigin);
                 return applyHeaders(NextResponse.redirect(loginUrl));
             }

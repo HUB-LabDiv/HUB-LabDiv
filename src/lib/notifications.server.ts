@@ -51,9 +51,9 @@ export async function sendAdminNotification(data: NotificationData) {
 
     let subject = '';
     let emailTemplate = '';
-    let dashboardLink = 'https://hub-lab-div.vercel.app/admin';
+    let dashboardLink = 'https://www.hublabdiv.com.br/admin';
 
-    const rawBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://hub-lab-div.vercel.app';
+    const rawBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hublabdiv.com.br';
     const baseUrl = rawBaseUrl.split(' ')[0];
 
     switch (data.type) {

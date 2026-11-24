@@ -44,17 +44,16 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
 
       - name: Instalar Dependências Python
         run: |
           python -m pip install --upgrade pip
           pip install requests beautifulsoup4
 
-      - name: Setup do Node.js 20
+      - name: Setup do Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       - name: Instalar Dependências Node.js
