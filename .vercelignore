@@ -1,7 +1,7 @@
-desktop/
-android/
-debug/
-tmp/
+/desktop/
+/android/
+/debug/
+/tmp/
 *.keystore
 *.jks
 *.apk
