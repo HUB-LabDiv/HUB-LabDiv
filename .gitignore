@@ -103,6 +103,8 @@ debug/*.txt
 # Open source exclusions
 /public/*
 !/public/.gitkeep
+!/public/aurtistic/
+!/public/aurtistic/icon.png
 /scripts/*
 !/scripts/scrapers/
 
