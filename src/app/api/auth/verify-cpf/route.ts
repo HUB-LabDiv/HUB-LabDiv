@@ -9,13 +9,14 @@
  * ou ADEQUAÇÃO A UM DETERMINADO FIM.
  */
 
-import { NextResponse } from 'next/server';
+import { NextResponse, after } from 'next/server';
 import { revalidatePath } from 'next/cache';
 import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 import { argon2id } from 'hash-wasm';
 import { z } from 'zod';
 import nodemailer from 'nodemailer';
+import { CURRENT_TERMS_VERSION } from '@/constants/terms';
 
 // Validação rigorosa do payload
 const RequestSchema = z.object({
@@ -141,13 +142,42 @@ export async function POST(req: Request) {
         birthdate: birthdate,
         guardian_email: !isAdult ? guardianEmail : null,
         is_audit_mode: isAuditMode,
-        accepted_terms_version: 'v2.0',
+        accepted_terms_version: CURRENT_TERMS_VERSION,
         accepted_at: new Date().toISOString()
       }).eq('id', user.id);
 
       if (updateError) {
         console.error('[CPF-API] Profile update failed:', updateError);
         return NextResponse.json({ error: 'Falha ao salvar dados no perfil.' }, { status: 500 });
+      }
+
+      // Garante notificação única na fila se o cadastro foi concluído sem aviso prévio
+      const { data: claimedProfile } = await supabaseAdmin
+        .from('profiles')
+        .update({ admin_notified_at: new Date().toISOString() })
+        .eq('id', user.id)
+        .is('admin_notified_at', null)
+        .is('approved_at', null)
+        .select('id, full_name')
+        .maybeSingle();
+
+      if (claimedProfile) {
+        const displayLabel = claimedProfile.full_name || user.email?.split('@')[0] || 'Novo Usuário';
+        after(async () => {
+          try {
+            const { notifyAdminsInApp } = await import('@/lib/notifications.server');
+            const { checkModerationQueueThresholds } = await import('@/lib/moderation-queue-monitor');
+            await notifyAdminsInApp({
+              title: `Cadastro regularizado aguardando aprovação: ${displayLabel}`,
+              message: `Termos ${CURRENT_TERMS_VERSION} e verificação concluídos (${user.email || 'sem e-mail'}).`,
+              link: '/admin/profiles',
+              type: 'profile_creation',
+            });
+            await checkModerationQueueThresholds();
+          } catch (err) {
+            console.error('[verify-cpf after()] Erro ao notificar admins:', err);
+          }
+        });
       }
 
       if (!isAdult && guardianEmail) {

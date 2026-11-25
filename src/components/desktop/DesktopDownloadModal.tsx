@@ -30,6 +30,7 @@ import toast from 'react-hot-toast';
 import { getDesktopReleaseAction } from '@/app/actions/desktop';
 import { detectClientPlatform, dismissNavbarInstall } from '@/lib/desktop-bridge';
 import type { DesktopPlatform, DesktopReleasePayload } from '@/types/desktop';
+import { ModalPortal } from '@/components/ui/ModalPortal';
 
 export interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -134,17 +135,18 @@ export function DesktopDownloadModal({
   const fallbackReleasesUrl = release?.releasePageUrl || 'https://github.com/HUB-LabDiv/HUB-LabDiv/releases';
 
   return (
-    <div
-      className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center bg-[#121212]/75 backdrop-blur-sm p-0 sm:p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="hub-download-modal-title"
-      onClick={onClose}
-    >
+    <ModalPortal>
       <div
-        className="w-full max-w-xl max-h-[90vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-white dark:bg-[#1E1E1E] text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-white/10 shadow-2xl p-5 sm:p-7 space-y-5 font-open-sans"
-        onClick={(e) => e.stopPropagation()}
+        className="fixed inset-0 z-[120] flex items-end sm:items-center justify-center bg-[#121212]/75 backdrop-blur-sm p-0 sm:p-4"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="hub-download-modal-title"
+        onClick={onClose}
       >
+        <div
+          className="w-full max-w-xl max-h-[90dvh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-white dark:bg-[#1E1E1E] text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-white/10 shadow-2xl p-5 sm:p-7 space-y-5 font-open-sans"
+          onClick={(e) => e.stopPropagation()}
+        >
         {/* Cabeçalho M3 */}
         <div className="flex items-start justify-between gap-3">
           <div className="space-y-1 min-w-0">
@@ -446,5 +448,6 @@ export function DesktopDownloadModal({
         </div>
       </div>
     </div>
+    </ModalPortal>
   );
 }

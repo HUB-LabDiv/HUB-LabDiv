@@ -17,6 +17,7 @@ import { createServerSupabase } from '@/lib/supabase/server';
 import { createAdminSupabase } from '@/lib/supabase/admin';
 import { requireAdminOrModerator } from '@/app/actions/admin';
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
 import { z } from 'zod';
 import { AcademicSoftware, SoftwareFeedback, SubmitSoftwareInput } from '@/types/softwares';
 import { isUserAllowedSoftwaresTab } from '@/constants/softwares';
@@ -464,6 +465,22 @@ export async function submitSoftware(rawInput: SubmitSoftwareInput) {
             console.error('Erro no insert de software:', error);
             return { success: false, error: 'Erro ao salvar no banco de dados: ' + error.message };
         }
+
+        after(async () => {
+            try {
+                const { notifyAdminsInApp } = await import('@/lib/notifications.server');
+                const { checkModerationQueueThresholds } = await import('@/lib/moderation-queue-monitor');
+                await notifyAdminsInApp({
+                    title: `Novo software submetido: ${validated.title}`,
+                    message: `Categoria: ${validated.category}`,
+                    link: '/admin/softwares',
+                    type: 'software',
+                });
+                await checkModerationQueueThresholds();
+            } catch (notifyErr) {
+                console.error('[submitSoftware after()] Erro ao notificar:', notifyErr);
+            }
+        });
 
         revalidatePath('/ferramentas/softwares');
         return { success: true, software: data };

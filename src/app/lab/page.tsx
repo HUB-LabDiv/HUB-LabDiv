@@ -17,6 +17,8 @@ import { fetchUserDrops } from '@/app/actions/drops';
 import { getUserInterest } from '@/app/actions/recommendations';
 import { fetchUserAcademicdata } from '@/app/actions/disciplines';
 import { sanitizeProfileForViewer } from '@/lib/profile-visibility';
+import { MainLayoutWrapper } from '@/components/layout/MainLayoutWrapper';
+import Link from 'next/link';
 
 interface LabPageProps {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -47,6 +49,34 @@ export default async function LabPage({ searchParams }: LabPageProps) {
     ]);
 
     const isViewerAdmin = rawCurrProfile?.role === 'admin' || rawCurrProfile?.role === 'moderator';
+    const isViewingOwn = targetUserId === currentUser.id;
+
+    if (!isViewingOwn && !isViewerAdmin && (!rawProfileData || !rawProfileData.approved_at || !rawProfileData.is_visible || !rawProfileData.is_public)) {
+        return (
+            <MainLayoutWrapper userId={currentUser.id}>
+                <div className="max-w-xl mx-auto my-12 p-8 rounded-3xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-sm text-center space-y-4">
+                    <div className="w-14 h-14 mx-auto rounded-2xl bg-[#FFCC00]/15 text-[#FFCC00] flex items-center justify-center">
+                        <span className="material-symbols-outlined text-3xl">hourglass_top</span>
+                    </div>
+                    <h1 className="text-xl font-bukra font-black text-gray-900 dark:text-white tracking-tight">
+                        Perfil em verificação
+                    </h1>
+                    <p className="text-sm font-open-sans text-gray-600 dark:text-gray-400 leading-relaxed">
+                        Este perfil ainda está aguardando aprovação inicial da moderação ou está oculto no momento.
+                    </p>
+                    <div className="pt-2">
+                        <Link
+                            href="/lab"
+                            className="inline-flex items-center justify-center px-6 py-3 rounded-full bg-[#0F4780] text-white text-xs font-bukra font-bold uppercase tracking-wider hover:bg-[#0F4780]/90 transition-colors"
+                        >
+                            Ir para meu Lab
+                        </Link>
+                    </div>
+                </div>
+            </MainLayoutWrapper>
+        );
+    }
+
     const currProfile = sanitizeProfileForViewer(rawCurrProfile, currentUser.id, isViewerAdmin);
     const profileData = sanitizeProfileForViewer(rawProfileData, currentUser.id, isViewerAdmin);
     

@@ -15,6 +15,7 @@ import type { NextRequest } from 'next/server';
 import { verifyAdminToken } from './auth/admin-token';
 import { getInitiativeConfigByHost } from './subdomain-urls';
 import { getSharedCookieDomain } from './supabase/cookie-domain';
+import { CURRENT_TERMS_VERSION } from '@/constants/terms';
 
 export async function proxy(request: NextRequest) {
     const { pathname } = request.nextUrl;
@@ -133,7 +134,7 @@ export async function proxy(request: NextRequest) {
                 .single();
 
             // Gatekeeper de Termos (Fase 2)
-            if (profile?.accepted_terms_version !== 'v2.0') {
+            if (profile?.accepted_terms_version !== CURRENT_TERMS_VERSION) {
                  const reacceptUrl = new URL('/re-accept-terms', request.url);
                  return applyHeaders(NextResponse.redirect(reacceptUrl));
             }

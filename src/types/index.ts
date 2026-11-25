@@ -80,6 +80,8 @@ export interface Profile {
     is_visible: boolean;
     is_public: boolean;
     review_status: 'pending' | 'approved' | 'rejected';
+    approved_at?: string | null;
+    admin_notified_at?: string | null;
     cultural_language?: string;
     bio_draft?: string;
     completion_year?: number;

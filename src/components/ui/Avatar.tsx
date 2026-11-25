@@ -159,24 +159,28 @@ function TierLapelCrest({
 
 export const Avatar = ({ src, name = 'Usuário', size = 'md', className = '', customSize, xp, level, isLabDiv, userId, onClick }: AvatarProps) => {
     const [currentSrc, setCurrentSrc] = useState<string>(() => getAvatarUrl(src));
-    const [hasFailedOnce, setHasFailedOnce] = useState(false);
+    const [fallbackStep, setFallbackStep] = useState<0 | 1 | 2>(0);
     const [error, setError] = useState(false);
 
     // Reseta estado sempre que a URL prop 'src' mudar
     useEffect(() => {
         setCurrentSrc(getAvatarUrl(src));
-        setHasFailedOnce(false);
+        setFallbackStep(0);
         setError(false);
     }, [src]);
 
     const handleImageError = () => {
-        // Se a URL otimizada/processada falhar e for diferente da original bruta, tenta a original
-        if (!hasFailedOnce && src && currentSrc !== src) {
-            setHasFailedOnce(true);
+        if (fallbackStep === 0 && src && currentSrc !== src) {
+            setFallbackStep(1);
             setCurrentSrc(src);
-        } else {
-            setError(true);
+            return;
         }
+        if (fallbackStep < 2 && src && src.startsWith('https://')) {
+            setFallbackStep(2);
+            setCurrentSrc(`/api/avatar?url=${encodeURIComponent(src)}`);
+            return;
+        }
+        setError(true);
     };
 
     // Tier calculations
@@ -210,6 +214,7 @@ export const Avatar = ({ src, name = 'Usuário', size = 'md', className = '', cu
                     className="w-full h-full object-cover rounded-full"
                     loading="lazy"
                     decoding="async"
+                    referrerPolicy="no-referrer"
                     onError={handleImageError}
                 />
             );

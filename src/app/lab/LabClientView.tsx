@@ -296,7 +296,26 @@ export function LabClientView({
             userId={currentUser.id}
         >
             <div className="animate-in fade-in slide-in-from-top-4 duration-500">
-                {isViewingOwn && (viewedProfile?.review_status === 'pending' || hasActivePendingEdits(viewedProfile?.pending_edits)) && (
+                {isViewingOwn && !viewedProfile?.approved_at && (
+                    <div className="mb-6 p-4 rounded-2xl bg-[#1F9FCF]/10 dark:bg-[#1E1E1E] border border-[#1F9FCF]/40 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                        <div className="flex items-start gap-3">
+                            <div className="p-2 rounded-xl bg-[#1F9FCF]/20 text-[#0F4780] dark:text-[#1F9FCF] shrink-0">
+                                <Clock className="w-5 h-5" />
+                            </div>
+                            <p className="text-xs text-gray-800 dark:text-gray-200 leading-relaxed">
+                                <strong className="text-[#0F4780] dark:text-[#1F9FCF] uppercase tracking-wider">🛡️ Conta em verificação pela moderação:</strong>{' '}
+                                Você já pode usar o HUB normalmente (incluindo Ferramentas e estudos), mas seu perfil e apelido só ficarão visíveis para outros membros após a primeira aprovação.
+                            </p>
+                        </div>
+                        <button
+                            onClick={() => setIsEditModalOpen(true)}
+                            className="shrink-0 px-3 py-1.5 rounded-xl bg-[#1F9FCF] text-[#121212] text-[10px] font-black uppercase tracking-wider hover:brightness-105 transition-all cursor-pointer"
+                        >
+                            Completar Perfil
+                        </button>
+                    </div>
+                )}
+                {isViewingOwn && viewedProfile?.approved_at && (viewedProfile?.review_status === 'pending' || hasActivePendingEdits(viewedProfile?.pending_edits)) && (
                     <div className="mb-6 p-4 rounded-2xl bg-[#FFCC00]/15 dark:bg-[#1E1E1E] border border-[#FFCC00]/50 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                         <div className="flex items-start gap-3">
                             <div className="p-2 rounded-xl bg-[#FFCC00]/25 text-[#1E1E1E] dark:text-[#FFCC00] shrink-0">

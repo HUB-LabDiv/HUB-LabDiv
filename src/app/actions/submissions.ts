@@ -17,6 +17,7 @@ import { createAdminSupabase } from '@/lib/supabase/admin';
 import { PostDTO, mapToPostDTO, mapToAdminPostDTO } from '@/dtos/media';
 import { unstable_cache, revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
+import { after } from 'next/server';
 import { SubmissionSchema } from '@/lib/validations';
 import { z } from 'zod';
 import { sendAutomaticNotification } from './notifications';
@@ -1012,7 +1013,7 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
     }
 
     // Determinar status inicial: Lab-Div aprovado automaticamente se for do time
-    const { data: profile } = await serverSupabase.from('profiles').select('role').eq('id', user.id).single();
+    const { data: profile } = await serverSupabase.from('profiles').select('role, approved_at').eq('id', user.id).single();
     const isAuthorized = ['admin', 'labdiv', 'moderator', 'labdiv adm'].includes(profile?.role || '');
     const initialStatus = (validated.data.category === 'Lab-Div' && isAuthorized) ? 'aprovado' : 'pendente';
 
@@ -1020,8 +1021,11 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
         ? Array.from(new Set(insertData.tags.map((t: any) => String(t).trim().toLowerCase()).filter((t: string) => t.length > 0 && t.length <= 50)))
         : [];
 
+    const safeAuthors = !profile?.approved_at ? 'Membro em verificação' : insertData.authors;
+
     const insertPayload = {
         ...insertData,
+        authors: safeAuthors,
         tags: sanitizedTags,
         co_author_ids,
         event_date,
@@ -1074,8 +1078,21 @@ export async function createSubmission(formData: z.infer<typeof SubmissionSchema
             });
 
             if (initialStatus === 'pendente') {
-                const { checkModerationQueueThresholds } = await import('@/lib/moderation-queue-monitor');
-                void checkModerationQueueThresholds().catch(() => {});
+                after(async () => {
+                    try {
+                        const { notifyAdminsInApp } = await import('@/lib/notifications.server');
+                        const { checkModerationQueueThresholds } = await import('@/lib/moderation-queue-monitor');
+                        await notifyAdminsInApp({
+                            title: `Nova submissão: ${newSub.title}`,
+                            message: `Categoria: ${newSub.category || 'Geral'} • Autor: ${newSub.authors}`,
+                            link: '/admin/moderacao',
+                            type: 'submission',
+                        });
+                        await checkModerationQueueThresholds();
+                    } catch (err) {
+                        console.error('[submitContent after()] Erro no monitor de fila:', err);
+                    }
+                });
 
                 await sendAutomaticNotification({
                     userId: user.id,
@@ -1204,19 +1221,22 @@ export async function updateSubmission(id: string, formData: any) {
         return { error: { database: [`Erro ao submeter edição (${stageError.code}): ${stageError.message}`] } };
     }
 
-    // Notifica admins sobre a edição pendente
-    try {
-        const { sendAdminNotification } = await import('@/lib/notifications.server');
-        await sendAdminNotification({
-            type: 'submission',
-            authors: authors || user.email?.split('@')[0] || 'Autor',
-            title: `[Edição Pendente] ${title || 'Post'}`
-        });
-        const { checkModerationQueueThresholds } = await import('@/lib/moderation-queue-monitor');
-        void checkModerationQueueThresholds().catch(() => {});
-    } catch (e) {
-        // Notificação não bloqueante
-    }
+    // Notifica admins sobre a edição pendente via Sino In-App + Monitor pós-resposta
+    after(async () => {
+        try {
+            const { notifyAdminsInApp } = await import('@/lib/notifications.server');
+            const { checkModerationQueueThresholds } = await import('@/lib/moderation-queue-monitor');
+            await notifyAdminsInApp({
+                title: `Edição de post pendente: ${title || 'Post'}`,
+                message: `Autor: ${authors || user.email?.split('@')[0] || 'Autor'}`,
+                link: '/admin/moderacao',
+                type: 'submission_edit',
+            });
+            await checkModerationQueueThresholds();
+        } catch (e) {
+            console.error('[submitSubmissionEdit after()] Erro ao notificar:', e);
+        }
+    });
 
     revalidatePath('/lab');
     revalidatePath('/admin');

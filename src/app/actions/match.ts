@@ -48,7 +48,10 @@ export async function fetchClassmates(subjectCode: string) {
                 bio,
                 avatar_url,
                 user_category,
-                entrance_year
+                entrance_year,
+                approved_at,
+                is_visible,
+                is_public
             )
         `)
         .eq('type', `aula:${cleanSubjectCode}`);
@@ -58,11 +61,19 @@ export async function fetchClassmates(subjectCode: string) {
         return { success: false, error: error.message };
     }
 
-    // Deduplicate users (one user might have multiple events for the same subject)
+    // Deduplicate users and hide profiles not yet approved or set private
     const uniqueUsers = new Map();
     data?.forEach((item: any) => {
-        if (item.profiles && !uniqueUsers.has(item.user_id) && item.user_id !== user.id) {
-            uniqueUsers.set(item.user_id, item.profiles);
+        const p = item.profiles;
+        if (
+            p &&
+            p.approved_at &&
+            p.is_visible !== false &&
+            p.is_public !== false &&
+            !uniqueUsers.has(item.user_id) &&
+            item.user_id !== user.id
+        ) {
+            uniqueUsers.set(item.user_id, p);
         }
     });
 

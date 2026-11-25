@@ -27,10 +27,12 @@ export interface EmailActionTokenPayload {
 
 function getSigningSecret(): string {
     const secret =
+        process.env.EMAIL_ACTION_SECRET ||
         process.env.ADMIN_JWT_SECRET ||
-        process.env.SUPABASE_SERVICE_ROLE_KEY ||
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
-        'hub-labdiv-fallback-hmac-secret';
+        process.env.SUPABASE_SERVICE_ROLE_KEY;
+    if (!secret) {
+        throw new Error('Segredo HMAC ausente no servidor (defina EMAIL_ACTION_SECRET ou ADMIN_JWT_SECRET).');
+    }
     return secret;
 }
 

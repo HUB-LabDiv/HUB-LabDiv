@@ -27,7 +27,9 @@ export default function Error({
         console.error('🔴 Application Error:', error);
     }, [error]);
 
-    const isOfflineError = (typeof window !== 'undefined' && !navigator.onLine) || error.message.includes('503') || error.message.includes('fetch');
+    const isOfflineError =
+        (typeof window !== 'undefined' && !navigator.onLine) ||
+        Boolean(error?.message?.includes('503') || error?.message?.includes('fetch'));
 
     if (isOfflineError) {
         return (

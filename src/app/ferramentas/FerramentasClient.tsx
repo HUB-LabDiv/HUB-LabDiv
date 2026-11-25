@@ -80,6 +80,15 @@ const fixEncoding = (text: string) => {
 };
 
 const formatEventWithRecurrence = (e: any): CalendarEvent => {
+    if (!e || typeof e !== 'object') {
+        return {
+            id: Math.random().toString(),
+            title: 'Evento',
+            start: new Date().toISOString(),
+            end: new Date(Date.now() + 2 * 60 * 60 * 1000).toISOString(),
+            color: DISCIPLINE_COLORS[0].bg,
+        };
+    }
     const isRecurring = e.extendedProps?.type === 'aula' || e.extendedProps?.type === 'estudo';
     const startDate = new Date(e.start);
     const endDate = e.end ? new Date(e.end) : new Date(startDate.getTime() + 2 * 60 * 60 * 1000);
@@ -543,8 +552,11 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                 hasCache = true;
             }
             if (cachedBlocks) {
-                setCustomBlocks(JSON.parse(cachedBlocks));
-                hasCache = true;
+                const parsedBlocks = JSON.parse(cachedBlocks);
+                if (Array.isArray(parsedBlocks)) {
+                    setCustomBlocks(parsedBlocks);
+                    hasCache = true;
+                }
             }
 
             if (hasCache) {
@@ -1262,10 +1274,10 @@ export default function FerramentasClient({ profile }: { profile: any }) {
                                                                                     {e.extendedProps?.code ? (
                                                                                         <>
                                                                                             <span className="opacity-70 font-mono text-[9px] block mb-0.5">{e.extendedProps.code}</span>
-                                                                                            {e.title.replace('🎓 Aula: ', '').replace('📚 Estudo: ', '')}
+                                                                                            {(e.title || '').replace('🎓 Aula: ', '').replace('📚 Estudo: ', '')}
                                                                                         </>
                                                                                     ) : (
-                                                                                        e.title
+                                                                                        e.title || 'Bloco'
                                                                                     )}
                                                                                 </div>
                                                                             </div>

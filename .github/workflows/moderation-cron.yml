@@ -1,0 +1,38 @@
+name: Moderation Queue Cron Safety Net
+
+on:
+  schedule:
+    # Rede de segurança a cada 3 horas para digerir itens pendentes na Torre de Controle
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+
+jobs:
+  check-moderation-queue:
+    if: github.event_name == 'workflow_dispatch' || github.repository == 'HUB-LabDiv/HUB-LabDiv'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Acionar /api/cron/check-moderation-queue
+        env:
+          CRON_SECRET: ${{ secrets.CRON_SECRET }}
+        run: |
+          if [ -z "$CRON_SECRET" ]; then
+            echo "Erro: secret CRON_SECRET não configurado no repositório."
+            exit 1
+          fi
+
+          RESPONSE=$(curl -sS -w "\n%{http_code}" \
+            -H "Authorization: Bearer ${CRON_SECRET}" \
+            "https://www.hublabdiv.com.br/api/cron/check-moderation-queue")
+
+          HTTP_CODE=$(printf '%s\n' "$RESPONSE" | tail -n1)
+          BODY=$(printf '%s\n' "$RESPONSE" | sed '$d')
+
+          echo "HTTP $HTTP_CODE"
+          echo "$BODY"
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "Falha ao executar check-moderation-queue (HTTP $HTTP_CODE)"
+            exit 1
+          fi

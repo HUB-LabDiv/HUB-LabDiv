@@ -14,6 +14,7 @@
 
 import { createServerSupabase } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
 import { z } from 'zod';
 
 const CreateDropSchema = z.object({
@@ -60,21 +61,26 @@ export async function createDrop(content: string, parentId?: string) {
         return { error: 'Erro ao salvar o log no banco de dados.' };
     }
 
-    // 3. Trigger Email Notification (Non-blocking)
-    try {
-        const dropProfiles = drop.profiles as { username?: string | null } | { username?: string | null }[] | null;
-        const dropProfile = Array.isArray(dropProfiles) ? dropProfiles[0] : dropProfiles;
-        const username = dropProfile?.username || user.email?.split('@')[0] || 'membro';
-        
-        const { sendAdminNotification } = await import('@/lib/notifications.server');
-        await sendAdminNotification({
-            type: parentId ? 'thread_reply' : 'drop_submission',
-            content: content.trim(),
-            userName: username
-        });
-    } catch (notifyError) {
-        console.error('Failed to send drop notification email:', notifyError);
-    }
+    // 3. Notifica admins via Sino In-App + Digest pós-resposta (sem bloqueio e sem duplicação)
+    const dropProfiles = drop.profiles as { username?: string | null } | { username?: string | null }[] | null;
+    const dropProfile = Array.isArray(dropProfiles) ? dropProfiles[0] : dropProfiles;
+    const username = dropProfile?.username || user.email?.split('@')[0] || 'membro';
+
+    after(async () => {
+        try {
+            const { notifyAdminsInApp } = await import('@/lib/notifications.server');
+            const { checkModerationQueueThresholds } = await import('@/lib/moderation-queue-monitor');
+            await notifyAdminsInApp({
+                title: parentId ? `Nova resposta de @${username}` : `Novo drop de @${username}`,
+                message: content.trim().slice(0, 140),
+                link: '/admin/drops',
+                type: parentId ? 'thread_reply' : 'drop_submission',
+            });
+            await checkModerationQueueThresholds();
+        } catch (notifyError) {
+            console.error('[createDrop after()] Falha ao notificar:', notifyError);
+        }
+    });
 
     revalidatePath('/');
     revalidatePath('/admin/drops');

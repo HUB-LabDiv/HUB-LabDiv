@@ -156,7 +156,7 @@ export async function updateFAQStatus(id: string, status: string, resposta?: str
         if (status === 'approved' && updateData.resposta && faqItem.email && resend) {
             try {
                 await resend.emails.send({
-                    from: 'HUB Lab-Div <noreply@labdiv.com.br>', // Ajuste o domínio depois se necessário
+                    from: process.env.EMAIL_FROM || 'HUB LabDiv <noreply@hublabdiv.com.br>',
                     to: faqItem.email,
                     subject: 'Sua dúvida no HUB Lab-Div foi respondida!',
                     html: `

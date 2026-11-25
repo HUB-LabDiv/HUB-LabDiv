@@ -248,7 +248,7 @@ export async function submitHubAdoption(data: { discipline_name: string; summary
 
         try {
             await resend.emails.send({
-                from: 'HUB Lab-Div <noreply@labdiv.com.br>',
+                from: process.env.EMAIL_FROM || 'HUB LabDiv <noreply@hublabdiv.com.br>',
                 to: 'hublabdiv@gmail.com',
                 subject: `Novo Pedido de Adoção de Disciplina: ${data.discipline_name}`,
                 html: `
@@ -383,7 +383,7 @@ export async function submitLabdivPartnershipRequest(rawInput: PartnershipReques
 
         if (resend) {
             await resend.emails.send({
-                from: 'HUB Lab-Div <noreply@labdiv.com.br>',
+                from: process.env.EMAIL_FROM || 'HUB LabDiv <noreply@hublabdiv.com.br>',
                 to: 'hublabdiv@gmail.com',
                 subject: `Nova Proposta de Parceria LabDiv: ${data.project_name}`,
                 html: `

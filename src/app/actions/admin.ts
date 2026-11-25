@@ -369,9 +369,21 @@ export async function executeBatchModeration(actions: z.infer<typeof QueueDecisi
             try {
                 if (item.itemType === 'profile') {
                     const isPromo = item.feedback === 'promote_professor' || item.editedPayload?.promote_to_professor;
+                    const { data: curProf } = await adminSupabase
+                        .from('profiles')
+                        .select('approved_at')
+                        .eq('id', item.itemId)
+                        .single();
+                    const isFirstApproval = !curProf?.approved_at;
                     await adminSupabase.from('profiles').update({
                         review_status: item.decision === 'approve' ? 'approved' : 'rejected',
                         pending_edits: null,
+                        ...(item.decision === 'approve'
+                            ? {
+                                  approved_at: curProf?.approved_at || new Date().toISOString(),
+                                  ...(isFirstApproval ? { is_public: true, is_visible: true } : {}),
+                              }
+                            : {}),
                         ...(item.decision === 'approve' && isPromo ? { 
                             persona: 'professor', 
                             teacher_verification_status: 'approved', 
@@ -396,14 +408,17 @@ export async function executeBatchModeration(actions: z.infer<typeof QueueDecisi
                         await adminSupabase.from('submissions').update({ pending_edits: null }).eq('id', item.itemId);
                     }
                 } else if (item.itemType === 'profile_edit') {
-                    const { data: prof } = await adminSupabase.from('profiles').select('pending_edits, full_name').eq('id', item.itemId).single();
+                    const { data: prof } = await adminSupabase.from('profiles').select('pending_edits, full_name, approved_at').eq('id', item.itemId).single();
                     if (item.decision === 'approve') {
                         if (prof?.pending_edits) {
                             const { pending_avatar_url, _submitted_at, ...cleanEdits } = prof.pending_edits;
+                            const isFirstApproval = !prof.approved_at;
                             const updatePayload: Record<string, any> = {
                                 ...cleanEdits,
                                 pending_edits: null,
-                                review_status: 'approved'
+                                review_status: 'approved',
+                                approved_at: prof.approved_at || new Date().toISOString(),
+                                ...(isFirstApproval ? { is_public: true, is_visible: true } : {}),
                             };
                             if (pending_avatar_url) {
                                 updatePayload.avatar_url = pending_avatar_url;
@@ -414,7 +429,7 @@ export async function executeBatchModeration(actions: z.infer<typeof QueueDecisi
                             await adminSupabase.from('profiles').update(updatePayload).eq('id', item.itemId);
                         }
                     } else {
-                        const alreadyHadApprovedProfile = Boolean(prof?.full_name && prof.full_name.trim().length > 0);
+                        const alreadyHadApprovedProfile = Boolean(prof?.approved_at || (prof?.full_name && prof.full_name.trim().length > 0));
                         await adminSupabase.from('profiles').update({
                             pending_edits: null,
                             review_status: alreadyHadApprovedProfile ? 'approved' : 'rejected'

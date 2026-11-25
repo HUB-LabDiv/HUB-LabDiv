@@ -53,10 +53,11 @@ interface DigestQueueItem {
  * 📡 Monitor de Resumo Inteligente da Fila de Moderação (Torre de Controle LabDiv)
  * Envia um Digest limpo com botões assinados (HMAC-SHA256) para aprovar/rejeitar cada item direto do e-mail.
  */
-export async function checkModerationQueueThresholds(): Promise<{
+export async function checkModerationQueueThresholds(options?: { force?: boolean }): Promise<{
     checked: boolean;
     totalCount: number;
     oldestAgeMinutes: number;
+    digestSent?: boolean;
 }> {
     if (state.isChecking) {
         return { checked: false, totalCount: 0, oldestAgeMinutes: 0 };
@@ -81,6 +82,7 @@ export async function checkModerationQueueThresholds(): Promise<{
             dicasRes,
             dropsRes,
             perguntasRes,
+            wikiProposalsRes,
         ] = await Promise.all([
             adminSupabase.from('submissions').select('id, title, authors, category, created_at').eq('status', 'pendente').limit(20),
             adminSupabase.from('submissions').select('id, title, authors, created_at').not('pending_edits', 'is', null).limit(15),
@@ -94,6 +96,7 @@ export async function checkModerationQueueThresholds(): Promise<{
             adminSupabase.from('dicas_veteranos').select('id, titulo, created_at').eq('status', 'pending').limit(10),
             adminSupabase.from('micro_articles').select('id, content, created_at').eq('status', 'pending').limit(10),
             adminSupabase.from('perguntas').select('id, pergunta, nome_autor, created_at').eq('status', 'pendente').limit(10),
+            adminSupabase.from('wiki_topic_proposals').select('id, title, motivation, created_at').eq('status', 'pendente').limit(10),
         ]);
 
         const digestItems: DigestQueueItem[] = [];
@@ -249,17 +252,43 @@ export async function checkModerationQueueThresholds(): Promise<{
             });
         });
 
+        (wikiProposalsRes.data || []).forEach((wp) => {
+            digestItems.push({
+                id: wp.id,
+                type: 'wiki_proposal',
+                label: 'Proposta de Tópico Wiki',
+                title: wp.title || 'Novo Tópico',
+                author: 'Comunidade',
+                summary: (wp.motivation || '').slice(0, 120),
+                timestampMs: new Date(wp.created_at).getTime() || now,
+            });
+        });
+
         const totalCount = digestItems.length;
         if (totalCount === 0) {
-            return { checked: true, totalCount: 0, oldestAgeMinutes: 0 };
+            return { checked: true, totalCount: 0, oldestAgeMinutes: 0, digestSent: false };
         }
 
         const oldestTs = Math.min(...digestItems.map((i) => i.timestampMs));
         const oldestAgeMinutes = Math.max(0, Math.floor((now - oldestTs) / (60 * 1000)));
 
-        // Dispara o Digest somente se respeitar o cooldown de 30 minutos
-        if (now - state.lastDigestSentAt >= COOLDOWN_DIGEST_MS) {
-            state.lastDigestSentAt = now;
+        // Reserva slot atômico no Postgres (cooldown de 30 minutos resistente a cold start/concorrência)
+        let shouldSendDigest = Boolean(options?.force);
+        if (!shouldSendDigest) {
+            const { data: claimed, error: rpcError } = await adminSupabase.rpc(
+                'try_claim_moderation_digest_slot',
+                { cooldown_minutes: 30 }
+            );
+            if (!rpcError) {
+                shouldSendDigest = Boolean(claimed);
+            } else if (now - state.lastDigestSentAt >= COOLDOWN_DIGEST_MS) {
+                state.lastDigestSentAt = now;
+                shouldSendDigest = true;
+            }
+        }
+
+        let digestSent = false;
+        if (shouldSendDigest) {
 
             const rawBaseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.hublabdiv.com.br';
             const baseUrl = rawBaseUrl.split(' ')[0].replace(/\/$/, '');
@@ -335,17 +364,19 @@ export async function checkModerationQueueThresholds(): Promise<{
                 </div>
             `;
 
-            await sendAdminNotification({
+            const emailRes = await sendAdminNotification({
                 type: 'queue_digest',
                 title: `📡 Torre de Controle LabDiv: ${totalCount} item(ns) aguardando revisão`,
                 customHtml: digestHtml,
             });
+            digestSent = Boolean(emailRes?.success);
         }
 
         return {
             checked: true,
             totalCount,
             oldestAgeMinutes,
+            digestSent,
         };
     } catch (error) {
         console.error('[QueueMonitor] Erro na geração do digest da fila:', error);

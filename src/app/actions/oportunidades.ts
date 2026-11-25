@@ -16,6 +16,7 @@
 import { z } from 'zod';
 import { createServerSupabase } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { after } from 'next/server';
 
 const submitOportunidadeSchema = z.object({
     titulo: z.string().min(3, 'O título deve ter pelo menos 3 caracteres').max(150, 'Título muito longo'),
@@ -71,18 +72,21 @@ export async function submitOportunidade(rawInput: unknown) {
             return { success: false, error: 'Falha ao registrar oportunidade no banco de dados.' };
         }
 
-        try {
-            const { sendAdminNotification } = await import('@/lib/notifications.server');
-            await sendAdminNotification({
-                type: 'hub_improvement',
-                title: `Nova oportunidade: "${data.titulo}"`,
-                details: data.descricao
-            });
-            const { checkModerationQueueThresholds } = await import('@/lib/moderation-queue-monitor');
-            void checkModerationQueueThresholds().catch(() => {});
-        } catch {
-            // Notificação não bloqueante
-        }
+        after(async () => {
+            try {
+                const { notifyAdminsInApp } = await import('@/lib/notifications.server');
+                const { checkModerationQueueThresholds } = await import('@/lib/moderation-queue-monitor');
+                await notifyAdminsInApp({
+                    title: `Nova oportunidade: "${data.titulo}"`,
+                    message: data.descricao.slice(0, 140),
+                    link: '/admin/moderacao',
+                    type: 'oportunidade',
+                });
+                await checkModerationQueueThresholds();
+            } catch {
+                // Notificação não bloqueante
+            }
+        });
 
         revalidatePath('/gcif/interativo');
         revalidatePath('/admin');

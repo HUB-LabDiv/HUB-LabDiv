@@ -19,7 +19,7 @@ import { flushOfflineQueueToSupabase } from '@/lib/offlineQueueManager';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import { Capacitor } from '@capacitor/core';
-import { getHubDesktopBridge } from '@/lib/desktop-bridge';
+import { getHubDesktopBridge, isDesktopApp } from '@/lib/desktop-bridge';
 
 export function PwaManager() {
     const [isOffline, setIsOffline] = useState(false);
@@ -37,7 +37,7 @@ export function PwaManager() {
                 window.location.hostname.match(/^127(?:\.(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)){3}$/)
             );
 
-            if (process.env.NODE_ENV === 'development') {
+            if (process.env.NODE_ENV === 'development' || isDesktopApp()) {
                 navigator.serviceWorker.getRegistrations().then((registrations) => {
                     for (const registration of registrations) {
                         registration.unregister();

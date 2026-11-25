@@ -10,9 +10,10 @@
  */
 
 import { createServerClient } from '@supabase/ssr';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { resolveSafeNextUrl } from '@/lib/subdomain-urls';
 import { getSharedCookieDomain } from '@/lib/supabase/cookie-domain';
+import { createAdminSupabase } from '@/lib/supabase/admin';
 
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
@@ -95,7 +96,9 @@ export async function GET(request: NextRequest) {
                 conflictUrl.searchParams.set('email', email);
                 conflictUrl.searchParams.set('next', next);
                 const conflictResponse = NextResponse.redirect(conflictUrl.toString());
-                response.cookies.getAll().forEach(c => conflictResponse.cookies.set(c.name, c.value));
+                response.headers.getSetCookie().forEach(cookieHeader => {
+                    conflictResponse.headers.append('Set-Cookie', cookieHeader);
+                });
                 return conflictResponse;
             }
 
@@ -112,6 +115,40 @@ export async function GET(request: NextRequest) {
                 .update(profileUpdate)
                 .eq('id', session.user.id);
 
+            // Claim atômico para notificar moderação apenas no primeiro cadastro (nunca em logins recorrentes)
+            try {
+                const adminSupabase = createAdminSupabase();
+                const { data: claimedProfile } = await adminSupabase
+                    .from('profiles')
+                    .update({ admin_notified_at: new Date().toISOString() })
+                    .eq('id', session.user.id)
+                    .is('admin_notified_at', null)
+                    .is('approved_at', null)
+                    .select('id')
+                    .maybeSingle();
+
+                if (claimedProfile) {
+                    const userLabel = session.user.user_metadata?.full_name || email.split('@')[0] || 'Novo Usuário';
+                    after(async () => {
+                        try {
+                            const { notifyAdminsInApp } = await import('@/lib/notifications.server');
+                            const { checkModerationQueueThresholds } = await import('@/lib/moderation-queue-monitor');
+                            await notifyAdminsInApp({
+                                title: `Novo cadastro aguardando aprovação: ${userLabel}`,
+                                message: `Conta criada via OAuth (${email || 'sem e-mail'}).`,
+                                link: '/admin/profiles',
+                                type: 'profile_creation',
+                            });
+                            await checkModerationQueueThresholds();
+                        } catch (err) {
+                            console.error('[auth/callback after()] Erro ao notificar admins:', err);
+                        }
+                    });
+                }
+            } catch (claimErr) {
+                console.warn('[auth/callback] Falha no claim de notificação inicial:', claimErr);
+            }
+
             // ⚠️ Fix: cookies de sessão com SameSite=Lax não propagam corretamente
             // em chains de redirect cross-origin (OAuth → callback → destino).
             // Retornar uma página HTML que usa window.location.replace() APÓS os cookies
@@ -124,16 +161,9 @@ export async function GET(request: NextRequest) {
                 'X-Robots-Tag': 'noindex',
             });
 
-            // Propagar cada cookie de sessão em seu próprio header Set-Cookie
-            response.cookies.getAll().forEach(c => {
-                const opts: string[] = [`${c.name}=${c.value}`];
-                opts.push(`Path=${c.path || '/'}`);
-                if (c.maxAge != null) opts.push(`Max-Age=${c.maxAge}`);
-                if (c.httpOnly) opts.push('HttpOnly');
-                if (c.secure) opts.push('Secure');
-                opts.push('SameSite=Lax');
-                if (sharedDomain) opts.push(`Domain=${sharedDomain}`);
-                responseHeaders.append('Set-Cookie', opts.join('; '));
+            // Propagar exatamente os headers Set-Cookie gerados pelo NextResponse (com encoding e Domain corretos)
+            response.headers.getSetCookie().forEach(cookieHeader => {
+                responseHeaders.append('Set-Cookie', cookieHeader);
             });
 
             const html = `<!doctype html><html><head><meta charset="utf-8">

@@ -12,6 +12,7 @@
 import { NextResponse } from 'next/server';
 import { createAdminSupabase } from '@/lib/supabase/admin';
 import { z } from 'zod';
+import { CURRENT_TERMS_VERSION } from '@/constants/terms';
 
 const ConfirmSchema = z.object({
   tokenId: z.string().uuid(),
@@ -73,7 +74,7 @@ export async function POST(req: Request) {
     const { error: childUpdateError } = await supabaseAdmin
       .from('profiles')
       .update({
-        accepted_terms_version: 'v2.0',
+        accepted_terms_version: CURRENT_TERMS_VERSION,
         accepted_at: new Date().toISOString(),
         is_adult: false, 
         guardian_email: tokenData.guardian_email 

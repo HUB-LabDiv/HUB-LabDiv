@@ -10,7 +10,7 @@
  */
 
 import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { cookies, headers } from 'next/headers';
 import { getSharedCookieDomain } from './cookie-domain';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -28,6 +28,8 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
  */
 export async function createServerSupabase() {
     const cookieStore = await cookies();
+    const headerStore = await headers();
+    const sharedDomain = getSharedCookieDomain(headerStore.get('host'));
 
     const client = createServerClient(supabaseUrl, supabaseAnonKey, {
         cookies: {
@@ -36,7 +38,6 @@ export async function createServerSupabase() {
             },
             setAll(cookiesToSet) {
                 try {
-                    const sharedDomain = getSharedCookieDomain();
                     cookiesToSet.forEach(({ name, value, options }) => {
                         const mergedOptions = sharedDomain
                             ? { ...options, domain: sharedDomain }

@@ -17,9 +17,12 @@ import { createServerSupabase } from '@/lib/supabase/server';
 import { createAdminSupabase } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
+import { after } from 'next/server';
 import { verifyAdminToken } from '@/lib/auth/admin-token';
 import { z } from 'zod';
 import { getProfileDisplayName } from '@/lib/profile-visibility';
+import { notifyAdminsInApp } from '@/lib/notifications.server';
+import { checkModerationQueueThresholds } from '@/lib/moderation-queue-monitor';
 
 const AddCommentSchema = z.object({
     submissionId: z.string().uuid("ID de submissão inválido"),
@@ -70,10 +73,12 @@ export async function addComment(submissionId: string, authorName: string, conte
     if (user) {
         const { data: profile } = await supabase
             .from('profiles')
-            .select('full_name, username, use_nickname')
+            .select('full_name, username, use_nickname, approved_at')
             .eq('id', user.id)
             .single();
-        if (profile) {
+        if (profile && !profile.approved_at) {
+            resolvedAuthorName = 'Membro em verificação';
+        } else if (profile) {
             resolvedAuthorName = getProfileDisplayName(profile) || resolvedAuthorName;
         }
     }
@@ -93,6 +98,20 @@ export async function addComment(submissionId: string, authorName: string, conte
         console.error("Error adding comment:", error);
         return { success: false, error: 'Falha ao adicionar comentário.' };
     }
+
+    after(async () => {
+        try {
+            await notifyAdminsInApp({
+                title: `Novo comentário de ${resolvedAuthorName}`,
+                message: validated.data.content.slice(0, 140),
+                link: '/admin/moderacao',
+                type: 'comment',
+            });
+            await checkModerationQueueThresholds();
+        } catch (err) {
+            console.error('[addComment after()] Erro ao notificar:', err);
+        }
+    });
 
     return { success: true };
 }

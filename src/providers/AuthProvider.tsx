@@ -194,6 +194,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (!error && sessionData?.session) {
                 await loadAuth();
                 window.location.href = target;
+            } else {
+                window.location.href = '/login?error=auth_callback_error';
             }
         };
 

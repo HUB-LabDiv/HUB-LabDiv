@@ -33,8 +33,9 @@ export default async function FerramentasPage() {
         .single();
 
     const isStudent = ['aluno_usp', 'licenciatura', 'bacharelado', 'pos_graduacao'].includes(profile?.user_category);
+    const hasFerramentasAccess = Boolean(profile?.is_usp_member) || isStudent;
 
-    if (!profile || !isStudent) {
+    if (!profile || !hasFerramentasAccess) {
         redirect('/lab');
     }
 

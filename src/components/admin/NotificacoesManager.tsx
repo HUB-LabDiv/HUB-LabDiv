@@ -33,9 +33,12 @@ import {
 import { 
     sendAdminNotificationAction, 
     fetchAdminNotificationHistory, 
-    searchUsersForNotification 
+    searchUsersForNotification,
+    testAdminNotificationChannelsAction,
+    type NotificationDiagnosticsReport,
 } from '@/app/actions/admin-notifications';
 import { toast } from 'react-hot-toast';
+import { BellRing, Loader2, MailCheck } from 'lucide-react';
 
 interface HistoryItem {
     id: string;
@@ -57,6 +60,8 @@ interface HistoryItem {
 
 export default function NotificacoesManager() {
     const [isLoading, setIsLoading] = useState(false);
+    const [isTestingChannels, setIsTestingChannels] = useState(false);
+    const [diagnostics, setDiagnostics] = useState<NotificationDiagnosticsReport | null>(null);
     const [history, setHistory] = useState<HistoryItem[]>([]);
     const [showOnlyAutomatic, setShowOnlyAutomatic] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -154,20 +159,119 @@ export default function NotificacoesManager() {
         }
     };
 
+    const handleTestChannels = async () => {
+        setIsTestingChannels(true);
+        try {
+            const report = await testAdminNotificationChannelsAction();
+            setDiagnostics(report);
+            if (report.gmail.ok && report.resend.ok && report.inApp.ok) {
+                toast.success('Todos os canais (Gmail, Resend e Sino) confirmaram entrega!');
+            } else if (report.gmail.ok || report.resend.ok || report.inApp.ok) {
+                toast('Teste concluído com alertas parciais. Veja os detalhes abaixo.', { icon: '⚠️' });
+            } else {
+                toast.error(report.error || 'Falha em todos os canais de notificação.');
+            }
+        } catch {
+            toast.error('Erro ao executar diagnóstico de notificações.');
+        } finally {
+            setIsTestingChannels(false);
+        }
+    };
+
     const filteredHistory = showOnlyAutomatic ? history.filter(h => h.target_type === 'automatic') : history;
 
     return (
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             {/* Header Area */}
-            <div className="flex flex-col gap-1">
-                <h2 className="text-3xl font-black text-white uppercase tracking-tighter flex items-center gap-3">
-                    <div className="p-2 bg-brand-blue/20 rounded-xl">
-                        <Send className="w-6 h-6 text-brand-blue" />
-                    </div>
-                    Central de Notificações
-                </h2>
-                <p className="text-gray-500 text-sm font-medium">Gerencie comunicados e alertas para a comunidade Lab-Div.</p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div className="flex flex-col gap-1">
+                    <h2 className="text-3xl font-black text-gray-900 dark:text-white uppercase tracking-tighter flex items-center gap-3">
+                        <div className="p-2 bg-[#1F9FCF]/15 rounded-xl">
+                            <Send className="w-6 h-6 text-[#1F9FCF]" />
+                        </div>
+                        Central de Notificações
+                    </h2>
+                    <p className="text-gray-600 dark:text-gray-400 text-sm font-medium">Gerencie comunicados, alertas da moderação e diagnóstico de canais.</p>
+                </div>
+
+                <button
+                    type="button"
+                    onClick={handleTestChannels}
+                    disabled={isTestingChannels}
+                    className="min-h-[48px] px-5 py-3 rounded-full bg-[#FFCC00] text-[#121212] font-black text-xs uppercase tracking-wider shadow-lg shadow-[#FFCC00]/20 hover:brightness-105 active:scale-95 transition-all flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer shrink-0"
+                >
+                    {isTestingChannels ? (
+                        <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Testando Canais...
+                        </>
+                    ) : (
+                        <>
+                            <MailCheck className="w-4 h-4" />
+                            Testar Notificações
+                        </>
+                    )}
+                </button>
             </div>
+
+            {diagnostics && (
+                <div className="p-5 rounded-3xl bg-white dark:bg-[#1E1E1E] border border-gray-200 dark:border-white/10 shadow-sm space-y-4">
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                        <div className="flex items-center gap-2">
+                            <BellRing className="w-4 h-4 text-[#1F9FCF]" />
+                            <h3 className="text-xs font-black uppercase tracking-widest text-gray-900 dark:text-white">
+                                Diagnóstico de Entrega (Primário: {diagnostics.primaryConfigured})
+                            </h3>
+                        </div>
+                        <span className="text-[11px] font-medium text-gray-500 dark:text-gray-400">
+                            Destinatários: {diagnostics.recipientsMasked.join(', ') || 'nenhum'}
+                        </span>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        {[
+                            { label: 'Gmail SMTP', data: diagnostics.gmail },
+                            { label: 'Resend API', data: diagnostics.resend },
+                            { label: 'Sino In-App', data: diagnostics.inApp },
+                        ].map((item) => (
+                            <div
+                                key={item.label}
+                                className={`p-4 rounded-2xl border ${
+                                    item.data.ok
+                                        ? 'bg-emerald-500/5 border-emerald-500/30'
+                                        : 'bg-[#F14343]/5 border-[#F14343]/30'
+                                }`}
+                            >
+                                <div className="flex items-center justify-between gap-2 mb-1.5">
+                                    <span className="text-xs font-black uppercase tracking-wider text-gray-900 dark:text-white">
+                                        {item.label}
+                                    </span>
+                                    <span
+                                        className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase ${
+                                            item.data.ok
+                                                ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400'
+                                                : 'bg-[#F14343]/15 text-[#F14343]'
+                                        }`}
+                                    >
+                                        {item.data.ok ? 'OK' : 'Falha'}
+                                    </span>
+                                </div>
+                                {item.data.ok ? (
+                                    <p className="text-[11px] text-gray-600 dark:text-gray-300 break-all">
+                                        {item.data.messageId
+                                            ? `ID: ${item.data.messageId} (${item.data.latencyMs ?? 0} ms)`
+                                            : `Entregue para ${item.data.count ?? 0} admin(s)`}
+                                    </p>
+                                ) : (
+                                    <p className="text-[11px] text-[#F14343] break-words">
+                                        {item.data.error || 'Erro desconhecido'}
+                                    </p>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
                 {/* Form Section */}

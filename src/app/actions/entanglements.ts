@@ -186,6 +186,19 @@ export async function sendEntanglementMessage(recipientId: string, content: stri
 
     if (!user) return { success: false, error: 'Não autenticado' };
 
+    const { data: senderProfile } = await supabaseServer
+        .from('profiles')
+        .select('approved_at')
+        .eq('id', user.id)
+        .single();
+
+    if (!senderProfile?.approved_at) {
+        return {
+            success: false,
+            error: 'Seu perfil ainda está em verificação pela moderação. Assim que for aprovado, você poderá enviar mensagens no Emaranhamento.',
+        };
+    }
+
     const trimmed = content.trim();
     if (!trimmed && !attachmentId) {
         return { success: false, error: 'Mensagem vazia.' };

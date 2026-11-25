@@ -21,8 +21,11 @@ export async function GET(request: Request) {
         const cronSecret = process.env.CRON_SECRET;
         const authHeader = request.headers.get('authorization');
 
-        // Se CRON_SECRET estiver configurado, exige validação do Bearer token
-        if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+        // Fail-closed: sem CRON_SECRET configurado ou sem Bearer token válido, recusa execução
+        if (!cronSecret) {
+            return NextResponse.json({ error: 'CRON_SECRET não configurado no servidor.' }, { status: 503 });
+        }
+        if (authHeader !== `Bearer ${cronSecret}`) {
             return NextResponse.json({ error: 'Não autorizado' }, { status: 401 });
         }
 

@@ -15,6 +15,13 @@
 import { createServerSupabase } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
+import {
+    maskEmailAddress,
+    notifyAdminsInApp,
+    resolveAdminEmails,
+    sendEmailViaGmail,
+    sendEmailViaResend,
+} from '@/lib/notifications.server';
 
 // ============================================================
 // Schema Validation
@@ -259,4 +266,147 @@ export async function processScheduledNotifications() {
     }
 
     return { processed };
+}
+
+const TestChannelsSchema = z.object({
+    customRecipient: z.string().email('E-mail de teste inválido').optional().or(z.literal('')),
+});
+
+export interface NotificationDiagnosticChannelResult {
+    ok: boolean;
+    messageId?: string;
+    latencyMs?: number;
+    count?: number;
+    error?: string;
+}
+
+export interface NotificationDiagnosticsReport {
+    success: boolean;
+    recipientsMasked: string[];
+    primaryConfigured: string;
+    gmail: NotificationDiagnosticChannelResult;
+    resend: NotificationDiagnosticChannelResult;
+    inApp: NotificationDiagnosticChannelResult;
+    error?: string;
+}
+
+/**
+ * Testa de forma independente Gmail SMTP, Resend e Sino In-App para diagnóstico admin.
+ */
+export async function testAdminNotificationChannelsAction(
+    rawInput?: z.infer<typeof TestChannelsSchema>
+): Promise<NotificationDiagnosticsReport> {
+    const parsed = TestChannelsSchema.safeParse(rawInput || {});
+    if (!parsed.success) {
+        const errMsg = parsed.error.issues[0]?.message || 'Parâmetros inválidos.';
+        return {
+            success: false,
+            recipientsMasked: [],
+            primaryConfigured: process.env.EMAIL_PRIMARY_PROVIDER || 'gmail',
+            gmail: { ok: false, error: errMsg },
+            resend: { ok: false, error: errMsg },
+            inApp: { ok: false, error: errMsg },
+            error: errMsg,
+        };
+    }
+
+    const supabase = await createServerSupabase();
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+        const msg = 'Não autenticado';
+        return {
+            success: false,
+            recipientsMasked: [],
+            primaryConfigured: process.env.EMAIL_PRIMARY_PROVIDER || 'gmail',
+            gmail: { ok: false, error: msg },
+            resend: { ok: false, error: msg },
+            inApp: { ok: false, error: msg },
+            error: msg,
+        };
+    }
+
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single();
+
+    if (!profile || profile.role !== 'admin') {
+        const msg = 'Apenas administradores podem executar o teste de canais.';
+        return {
+            success: false,
+            recipientsMasked: [],
+            primaryConfigured: process.env.EMAIL_PRIMARY_PROVIDER || 'gmail',
+            gmail: { ok: false, error: msg },
+            resend: { ok: false, error: msg },
+            inApp: { ok: false, error: msg },
+            error: msg,
+        };
+    }
+
+    const recipients = parsed.data.customRecipient
+        ? [parsed.data.customRecipient.trim()]
+        : await resolveAdminEmails();
+    const recipientsMasked = recipients.map(maskEmailAddress);
+    const nowLabel = new Date().toLocaleString('pt-BR', { timeZone: 'America/Sao_Paulo' });
+
+    const buildHtml = (channelLabel: string) => `
+        <div style="font-family: Open Sans, Arial, sans-serif; max-width: 560px; margin: 0 auto; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden;">
+            <div style="background: #0F4780; color: #ffffff; padding: 20px 24px;">
+                <h2 style="margin: 0; font-size: 18px;">HUB LabDiv • Diagnóstico de Notificações</h2>
+                <p style="margin: 4px 0 0 0; font-size: 12px; color: #FFCC00;">Canal testado: ${channelLabel}</p>
+            </div>
+            <div style="padding: 24px; background: #ffffff; color: #1e293b; font-size: 14px; line-height: 1.6;">
+                <p>Este é um disparo técnico de verificação iniciado pelo painel <strong>/admin</strong> em <strong>${nowLabel}</strong>.</p>
+                <p>Se você recebeu esta mensagem, o provedor <strong>${channelLabel}</strong> está autenticado e entregando corretamente.</p>
+            </div>
+        </div>
+    `;
+
+    const [gmailRes, resendRes, inAppRes] = await Promise.all([
+        sendEmailViaGmail({
+            recipients,
+            subject: `[HUB LabDiv] Teste Técnico • Gmail SMTP (${nowLabel})`,
+            html: buildHtml('Gmail SMTP (Nodemailer)'),
+            eventType: 'admin_diagnostic_gmail',
+        }),
+        sendEmailViaResend({
+            recipients,
+            subject: `[HUB LabDiv] Teste Técnico • Resend (${nowLabel})`,
+            html: buildHtml('Resend Transacional'),
+            eventType: 'admin_diagnostic_resend',
+        }),
+        notifyAdminsInApp({
+            title: 'Teste de Notificações In-App',
+            message: `Diagnóstico disparado em ${nowLabel} pelo painel administrativo.`,
+            link: '/admin',
+            type: 'admin_diagnostic',
+        }),
+    ]);
+
+    return {
+        success: gmailRes.success || resendRes.success || inAppRes.success,
+        recipientsMasked,
+        primaryConfigured: process.env.EMAIL_PRIMARY_PROVIDER || 'gmail',
+        gmail: {
+            ok: gmailRes.success,
+            messageId: gmailRes.messageId,
+            latencyMs: gmailRes.latencyMs,
+            error: gmailRes.error,
+        },
+        resend: {
+            ok: resendRes.success,
+            messageId: resendRes.messageId,
+            latencyMs: resendRes.latencyMs,
+            error: resendRes.error,
+        },
+        inApp: {
+            ok: inAppRes.success,
+            count: inAppRes.count,
+            error: inAppRes.error,
+        },
+    };
 }

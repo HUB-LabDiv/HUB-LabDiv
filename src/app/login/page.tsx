@@ -162,6 +162,10 @@ function LoginContent() {
             },
         };
 
+        if (track === 'usp') {
+            options.queryParams.hd = 'usp.br';
+        }
+
         if (isExternalClient) {
             options.skipBrowserRedirect = true;
         }
@@ -194,7 +198,7 @@ function LoginContent() {
                 await triggerOAuthLogin(track, category);
                 return;
             }
-            if (typeof window !== 'undefined' && (window as any).google) {
+            if (track !== 'usp' && typeof window !== 'undefined' && (window as any).google) {
                 (window as any).google.accounts.id.prompt((notification: any) => {
                     if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
                         console.log("One Tap not displayed, falling back to OAuth...");

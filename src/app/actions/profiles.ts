@@ -16,9 +16,11 @@ import { createServerSupabase } from '@/lib/supabase/server';
 import { createAdminSupabase } from '@/lib/supabase/admin';
 import { revalidatePath } from 'next/cache';
 import { cookies } from 'next/headers';
+import { after } from 'next/server';
 import { z } from 'zod';
 import { Profile, Freshman, UserPersona } from '@/types';
-import { sendAdminNotification } from '@/lib/notifications.server';
+import { notifyAdminsInApp, sendAdminNotification } from '@/lib/notifications.server';
+import { checkModerationQueueThresholds } from '@/lib/moderation-queue-monitor';
 import { sendAutomaticNotification } from './notifications';
 import { verifyAdminToken } from '@/lib/auth/admin-token';
 import { sanitizeProfileForViewer, getProfileDisplayName } from '@/lib/profile-visibility';
@@ -221,15 +223,8 @@ export async function updateProfile(updates: Partial<Profile> & { pending_avatar
             delete mergedPendingEdits.avatar_url;
         }
 
-        // Caso seja o primeiro preenchimento de um perfil recém-criado sem full_name,
-        // grava full_name inicial na coluna para identificação básica, mantendo o resto em pending_edits
-        const initialBootstrap: Record<string, any> = {};
-        if (!currentProfile?.full_name && sanitizedUpdates.full_name) {
-            initialBootstrap.full_name = sanitizedUpdates.full_name;
-        }
-
+        // Mantém nome/apelido/bio apenas em pending_edits até aprovação da moderação (não grava na coluna pública antes)
         updatePayload = {
-            ...initialBootstrap,
             pending_edits: mergedPendingEdits,
             review_status: 'pending'
         };
@@ -251,13 +246,32 @@ export async function updateProfile(updates: Partial<Profile> & { pending_avatar
     revalidatePath('/admin');
     revalidatePath('/admin/profiles');
 
-    // Notify Admins
-    const isFirstTime = !currentProfile?.full_name;
-    await sendAdminNotification({
-        type: isFirstTime ? 'profile_creation' : 'profile_update',
-        userName: data.full_name || sanitizedUpdates.full_name || user.email?.split('@')[0] || 'Novo Usuário',
-        details: isFirstTime ? user.email : undefined
-    });
+    // Notifica Admins via Sino In-App + Digest da Fila após resposta (evita e-mail duplicado e corte serverless)
+    if (!isAdmin) {
+        const isFirstTime = !currentProfile?.approved_at;
+        const displayLabel =
+            sanitizedUpdates.full_name ||
+            data.full_name ||
+            user.email?.split('@')[0] ||
+            'Novo Usuário';
+        after(async () => {
+            try {
+                await notifyAdminsInApp({
+                    title: isFirstTime
+                        ? `Novo perfil aguardando aprovação: ${displayLabel}`
+                        : `Edição de perfil pendente: ${displayLabel}`,
+                    message: isFirstTime
+                        ? `O usuário ${displayLabel} (${user.email || 'sem e-mail'}) enviou dados iniciais para aprovação.`
+                        : `O usuário ${displayLabel} atualizou informações do perfil.`,
+                    link: '/admin/profiles',
+                    type: isFirstTime ? 'profile_creation' : 'profile_update',
+                });
+                await checkModerationQueueThresholds();
+            } catch (err) {
+                console.error('[updateProfile after()] Erro ao notificar moderação:', err);
+            }
+        });
+    }
 
     return {
         success: true,
@@ -286,10 +300,13 @@ export async function approveProfile(profileId: string, assignedPersona?: UserPe
     const { pending_avatar_url } = sanitizedEdits;
     const physicalEdits = stripVirtualProfileFields(sanitizedEdits);
 
+    const isFirstApproval = !profile.approved_at;
     const finalData: any = {
         ...physicalEdits,
         pending_edits: null,
-        review_status: 'approved'
+        review_status: 'approved',
+        approved_at: profile.approved_at || new Date().toISOString(),
+        ...(isFirstApproval ? { is_public: true, is_visible: true } : {}),
     };
 
     if (assignedPersona) {
@@ -1161,7 +1178,8 @@ export async function fetchStudentsSeekingIC() {
         .from('profiles')
         .select('*, pending_edits')
         .eq('seeking_ic', true)
-        .in('review_status', ['approved', 'pending'])
+        .not('approved_at', 'is', null)
+        .eq('is_public', true)
         .eq('is_visible', true);
 
     if (excludedIds.length > 0) {
@@ -1193,7 +1211,8 @@ export async function fetchResearchersSeekingAssistants() {
         .from('profiles')
         .select('*, pending_edits')
         .eq('seeking_assistant', true)
-        .in('review_status', ['approved', 'pending'])
+        .not('approved_at', 'is', null)
+        .eq('is_public', true)
         .eq('is_visible', true)
         .order('created_at', { ascending: false });
 
@@ -1264,7 +1283,8 @@ export async function searchUsersByName(query: string) {
         .from('profiles')
         .select('id, full_name, username, use_nickname, avatar_url, course, institute, user_category')
         .eq('is_visible', true)
-        .in('review_status', ['approved', 'pending'])
+        .eq('is_public', true)
+        .not('approved_at', 'is', null)
         .not('full_name', 'is', null) // Only find users who finished profile setup
         .neq('id', user.id)
         .or(`full_name.ilike.${searchTerm},username.ilike.${searchTerm}`)
@@ -1320,7 +1340,7 @@ export async function fetchTargetProfileStats() {
     const { data: profiles, error } = await supabase
         .from('profiles')
         .select('cultural_language, education_level, course')
-        .in('review_status', ['approved', 'pending']);
+        .not('approved_at', 'is', null);
 
     if (error) {
         console.error('Error fetching profiles for stats:', error);
